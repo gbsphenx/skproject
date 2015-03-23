@@ -1,0 +1,252 @@
+SYSTEM ERRORS:
+
+30: Invalid header in graphics.dat (LOAD_ENT1)
+31: No graphics2.dat
+32: Corrupted graphics2.dat
+
+39: Out of EMS memory
+40: Out of main memory
+
+41: No graphics.dat
+42: Pb in READ_GRAPHICS_STRUCTURE
+43: Pb in GUARANTEE_FREE_CPXHEAP_SIZE
+44: Pb in LOAD_DYN4
+45: Too many timer entries to hold one more (TIMER)
+46: Corrupted graphics.dat
+
+ 
+49: Pb in ADD_MEM_TO_FREE_POOL
+
+50: No dungeon.dat
+
+70: Invalid status on game timer (TIMER)
+71: No more creature assoc record availability?
+72: Pb in APPEND_RECORD_TO
+
+================================================================================
+
+GLOBAL VARIABLES
+
+
+================================================================================
+
+MESSAGES (CAT 3) => ACTUATOR!
+
+00 00 00 (SND)	Special Activation?
+01 00 00 (SND)	Special Activation?
+
+81 00 00 (SND)	Explosion
+88 00 00 (SND)	Switch Button
+89 00 00 (SND)	Teleport
+8B 00 00 (SND)	Magic Spell (Cast / Explosion?)
+
+WALLSETS 	(0x08)
+
+68 00 00 (0x0B)	 Default highest light level (0 being full light)
+69 00 00 (0x0B)	 Fog graphicsset ? (I tested without success)
+
+WALL / FLOOR ORNATES		(0x09 / 0x0A)
+---------------------------------------------
+00 00 00
+	0001:	allow +15 charges?
+
+0D 00 00	Number of cycled animated frame (on lower byte) (see fountain)
+0D 00 00 (TXT)	Sequence of animated frame (up to 10 different frames?) (see fire crater, window)
+		When beginning a new cycle, the activation sound will be fired again.
+
+11 00 00				1 = Ladder going up (if not present, then ladder going down)
+
+88 00 00 (SND)	Activation sound (can be used for loop sound)
+
+
+
+DOOR		(0x0E)
+----------------------
+
+0F 00 00	Door Strength
+
+20 00 00	NEW: Used for displaying an animated mirrored door like DM1 force field.
+        (this has no particular use in DM2 standard)
+
+40 00 00  ??
+
+Note: The second clan door type (0x0A) is actually used for the Skullkeep Dragon door.
+
+04 00 00	Color key 1 (generally cyan)		Let's see the door graphics behind
+0C 00 00	Color key 2 (generally dark green)	Let's see through the door (what's behind)
+
+
+CREATURE
+---------------------------
+
+
+05 00 00	AI creature
+
+0A 00 00  Drop 1 (item ID + counts + random)
+0B 00 00  Drop 2
+:
+14 00 00  Drop 11
+
+1E 00 00	Something about teleporter or floating??? What to throw?
+
+// General slots used as sound
+00 00 00 (SND)	Walk
+01 00 00 (SND)	Turn
+02 00 00 (SND)	Get Hit
+03 00 00 (SND)	Eat/Drink
+05 00 00 (SND)	Swing
+06 00 00 (SND)	War cry?
+07 00 00 (SND)	Attack
+08 00 00 (SND)	Pick Steal
+09 00 00 (SND)	Wince ?
+0A 00 00 (SND)	? hit ?
+0B 00 00 (SND)	Merchant think
+0C 00 00 (SND)	Merchant accept
+0D 00 00 (SND)	Merchant refuse
+0E 00 00 (SND)	Spawn
+0F 00 00 (SND)	Growl (vegmouth)
+10 00 00 (SND)	Merchant
+11 00 00 (SND)	Death
+12 00 00 (SND)	Brow? Second Attack?
+84 00 00 (SND)	Default sound (of what?)
+8D 00 00 (SND)	Knock (get hit)
+
+
+ITEM (GENERAL)
+---------------------------
+
+00 00 00	Flags
+		0x0010 must recompute light
+    0x2000 ? if set no bonus are computed ?
+		0x8000 has an animation (check 06 00 00)
+01 00 00	Weight (Dg)
+02 00 00	Money value
+03 00 00 	Food Value (misc)
+04 00 00	Equip flags
+	x0001	Head
+	x0002	Necklace
+	x0004	Body
+	x0008	Legs
+	x0010	Foot
+	x0020	Pouch (Left, 2 slots)
+	x0040	Scabbard (Right, 4 slots)
+	x0080	Scabbard Main (Right, 1st of the 4 slots : for weapons generally)
+	x0100	?Chest / Bag? // Can be activated in hand??
+	x0200	? minion / Meteor metal /Shields / scarab
+	x0400
+	x0800
+	x1000
+	x2000
+	x4000
+	x8000	Cannot be chested?
+06 00 00	Animation : e.g. 0x0504 has 4 animated frames (range from 18 08 00 to 1B 08 00)
+08 00 00	Attack strength
+09 00 00	Throw strength
+0A 00 00	Accuracy
+0D 00 00	Missile strength
+
+14 00 00	Mana
+15 00 00	Luck
+16 00 00	Strength
+17 00 00	Dexterity
+18 00 00	Wisdom
+19 00 00	Vitality
+1A 00 00	Anti-magic
+1B 00 00	Anti fire
+
+1E 00 00	Fighter global
+1F 00 00	Ninja global
+20 00 00	Priest global
+21 00 00	Wizard global
+
+22 00 00	Fighter 1
+23 00 00	Fighter 2
+24 00 00	Fighter 3
+25 00 00	Fighter 4
+
+26 00 00	Ninja 1
+27 00 00	Ninja 2
+28 00 00	Ninja 3
+29 00 00	Ninja 4
+
+2A 00 00	Priest 1
+2B 00 00	Priest 2
+2C 00 00	Priest 3
+2D 00 00	Priest 4
+
+2E 00 00	Wizard 1
+2F 00 00	Wizard 2
+30 00 00	Wizard 3
+31 00 00	Wizard 4
+
+32 00 00	Recalc light
+33 00 00	Speed
+34 00 00	Additionnal weight per charge?
+
+
+
+WEAPON:
+09 00 00	Missile strength
+0D 00 00	Missile strength
+
+85 00 00 (SND)	Knock (Hit obstacle)
+
+CLOTHES:
+0B 00 00	Armour resistance
+
+POTION:
+05 00 00	CUSTOM/NEW: Used as Potion behaviour (~similar to AI creature)(i.e. what type of potion it is)
+43 00 00	CUSTOM/NEW: Used for water value
+4D 00 00	CUSTOM/NEW: Used for spell missile (explosion) to be associated to potion (bomb)
+
+MISC
+00 00 00
+	0001:	is drinkable
+	
+	
+CHAMPION	(0x16)
+00 00 00 (SND)	Attack?
+01 00 00 (SND)	Shoot?
+82 00 00 (SND)	Get Hit
+83 00 00 (SND)	Eat/Drink
+87 00 00 (SND)	Death/Falling pit
+8A 00 00 (SND)	Bumping into wall
+
+TELEPORTER	(0x18)
+
+89 00 00 (SND)	Teleport
+
+
+=========================
+
+GRAPHICS SET
+
+
+67 00 00        Default ambiant light (possibly 0 - 100)
+68 00 00        Lowest acceptable light (level 0 - 5)
+6A 00 00        Set Void Fall behaviour (search random markers)
+6D 00 00        Ambient darkness (or SIGHT DISTANCE ?) 0 = full light / 3 = medium / 8 = dark
+
+=========================
+
+QUEUE_NOISE_GEN2
+	GDAT2 Category
+	Primary Index
+	Entry
+	Default Index
+	x
+	y
+	tick
+	96?
+	80?
+  
+=========================
+
+HeroFlags: (is this for refreshing some viewport)
+
+0x0800  Updated ?  (bonus mana added ?)    => 
+0x1000  Weight calculated ?
+0x2000  Skill boost done
+0x3000  Leader? / attributes boost done
+0x4000  Put when invisibility ?
+  
