@@ -2,5 +2,8 @@
 *.user
 *.ncb
 
+bin
+obj
+
 /SKWIN/Debug
 /SKWIN/Release
