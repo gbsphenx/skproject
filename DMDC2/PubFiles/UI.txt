@@ -1,0 +1,21 @@
+Common:
+
+Ctrl + Arrow	Scroll the view area.
+Space + Mouse Move	Scroll the view area (photoshop like)
+Ctrl + Space + Mouse Move	Scroll the view area (alt method)
+Ctrl + PageUp	Go up level depth
+Ctrl + PageDown	Go down leve depth
+
+"Unselected" state:
+
+Shift + Left Click	Select the map at pointing device. Goto "Selected" state.
+
+"Selected" state:
+
+Esc	Back to "Unselected" state.
+Shift + Left Click	Select the next possible map at pointing device.
+
+Left Double-click	Edit record at the tile.
+Ctrl + Left Click	Show tile property.
+
+Alt + Left Button and Drag	Move the map in the world.
