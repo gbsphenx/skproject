@@ -44,6 +44,46 @@ typedef X32 X32ptr;
 #define MAX_VRAM (1024U*64)		// VRAM memory space: 64 KiB
 
 namespace DM2Internal {
+#if DM2_EXTENDED_MAP == 1
+	// 
+	struct Ax3 { // 4 bytes
+		U8 x;
+		U8 y;
+		U8 z;
+		U8 w; // unused.
+
+		U16 GetX() const { return x; }
+		U16 GetY() const { return y; }
+		U16 GetMap() const { return z; }
+
+		void SetX(U16 val);
+		void SetY(U16 val);
+		void SetMap(U16 val);
+
+		static const Ax3 Invalid;
+
+		bool Is0() const { return x == 0 && y == 0 && z == 0; }
+		bool IsInvalid() const { return x == 255 && y == 255 && z == 255; }
+		bool IsValid() const { return !IsInvalid(); }
+
+		Ax3() { }
+		explicit Ax3(U8 x, U8 y, U8 z): x(x), y(y), z(z), w(0) { }
+
+		static Ax3 Frm(U32 v) {
+			return Ax3(
+				U8(v >> 0),
+				U8(v >> 8),
+				U8(v >> 16)
+				);
+		}
+
+#ifdef _MSC_VER
+		__declspec(property(get = GetX)) U16 X;
+		__declspec(property(get = GetY)) U16 Y;
+		__declspec(property(get = GetMap)) U16 Z;
+#endif
+	};
+#else
 	// 
 	struct Ax3 { // 2 bytes
 		U16 w0;
@@ -81,6 +121,7 @@ namespace DM2Internal {
 		__declspec(property(get = GetMap)) U16 Z;
 #endif
 	};
+#endif
 };
 
 namespace DMEncyclopaedia {
@@ -458,6 +499,9 @@ namespace DMEncyclopaedia {
 		U16 w12; // Hit points of creature 4
 		U8 b14; // 
 		U8 b15;
+#if DM2_EXTENDED_MAP == 1
+		DM2Internal::Ax3 pos12;
+#endif
 
 		ObjectID GetPossessionObject() { return possession; }
 		void SetPossessionObject(ObjectID val) { possession = val; }
@@ -470,6 +514,27 @@ namespace DMEncyclopaedia {
 
 		void HP3(Bit16u val) { w10 = val; }
 
+#if DM2_EXTENDED_MAP == 1
+		Bit16u TriggerX() const {
+			return pos12.x;
+		}
+		Bit16u TriggerY() const {
+			return pos12.y;
+		}
+		Bit16u TriggerMap() const {
+			return pos12.z;
+		}
+
+		void SetTriggerXPos(Bit16u val) { // ondie trigger x-pos
+			pos12.x = val;
+		}
+		void SetTriggerYPos(Bit16u val) { // ondie trigger y-pos
+			pos12.y = val;
+		}
+		void SetTriggerMap(Bit16u val) { // ondie trigger map#
+			pos12.z = val;
+		}
+#else
 		Bit16u TriggerX() const { // M!C,0,1F
 			return w12 & 0x001f;
 		}
@@ -498,6 +563,8 @@ namespace DMEncyclopaedia {
 			w12 &= 0x03ff;
 			w12 |= val << 10;
 		}
+#endif
+
 		Bit8u b14_7_7() const { return (b14 >> 7)&1; }
 		Bit8u b15_2_2() const { return (b15 >> 2)&1; }
 		void b15_2_2(U8 val) {
@@ -634,6 +701,9 @@ namespace DMEncyclopaedia {
 		U8 b4;
 		U8 b5;
 		U16 w6; // Unused
+#if DM2_EXTENDED_MAP == 1
+		DM2Internal::Ax3 pos6;
+#endif
 
 		ObjectID GetContainedObject() { return w2; }
 		void SetContainedObject(ObjectID val) { w2 = val; }
@@ -659,10 +729,33 @@ namespace DMEncyclopaedia {
 
 		//U8 b7_2_7() const { return U8((w6 >> 10)&0x3f); } // =GetDestMap
 
+#if DM2_EXTENDED_MAP == 1
+		U16 GetDestX() const {
+			return pos6.x;
+		}
+		U16 GetDestY() const { 
+			return pos6.y;
+		}
+		U16 GetDestMap() const {
+			return pos6.z;
+		}
+		DM2Internal::Ax3 GetDest() const {
+			return pos6;
+		}
+
+		void SetDestX(U16 val) {
+			pos6.x = val;
+		}
+		void SetDestY(U16 val) {
+			pos6.y = val;
+		}
+		void SetDestMap(U16 val) {
+			pos6.z = val;
+		}
+#else
 		U16 GetDestX() const { return ((w6     )&0x1f); }
 		U16 GetDestY() const { return ((w6 >> 5)&0x1f); }
 		U16 GetDestMap() const { return ((w6 >>10)&0x3f); }
-
 		DM2Internal::Ax3 GetDest() const {
 			return DM2Internal::Ax3::Frm(w6);
 		}
@@ -682,6 +775,8 @@ namespace DMEncyclopaedia {
 			w6 &= 0x03ff;
 			w6 |= val << 10;
 		}
+#endif
+
 		void b7_2_2(U16 val) {
 			val &= 0x0001;
 			w6 &= 0xfbff;
@@ -729,6 +824,9 @@ namespace DMEncyclopaedia {
 		U8 b4_; //  Energy remaining
 		U8 b5_; // Energy remaining 2
 		U16 w6; //  Timer index
+#if DM2_EXTENDED_MAP == 1
+		DM2Internal::Ax3 pos4;
+#endif
 
 		ObjectID GetMissileObject() const { return w2; }
 		void SetMissileObject(ObjectID val) { w2 = val; }
@@ -743,16 +841,35 @@ namespace DMEncyclopaedia {
 		U16 TimerIndex() const { return w6; }
 		void TimerIndex(U16 val) { w6 = val; }
 
-		Bit16u GetX() const { return (w4())&0x1f; }
-		Bit16u GetY() const { return (w4()>>5)&0x1f; }
-		Bit16u GetMap() const { return (w4()>>10)&0x3f; }
-
 		U16 w4() const { return b4_ | (b5_ << 8); }
 		void w4(U16 val) {
 			b4_ = U8(val);
 			b5_ = U8(val >> 8);
 		}
 
+#if DM2_EXTENDED_MAP == 1
+		Bit16u GetX() const { 
+			return pos4.x;
+		}
+		Bit16u GetY() const {
+			return pos4.y;
+		}
+		Bit16u GetMap() const {
+			return pos4.z;
+		}
+		void SetX(U16 val) { 
+			pos4.x = val;
+		}
+		void SetY(U16 val) { 
+			pos4.y = val;
+		}
+		void SetMap(U16 val) { 
+			pos4.z = val;
+		}
+#else
+		Bit16u GetX() const { return (w4())&0x1f; }
+		Bit16u GetY() const { return (w4()>>5)&0x1f; }
+		Bit16u GetMap() const { return (w4()>>10)&0x3f; }
 		void SetX(U16 val) {
 			val &= 0x001f;
 			U16 w = w4();
@@ -774,6 +891,7 @@ namespace DMEncyclopaedia {
 			w |= val << 10;
 			w4(w);
 		}
+#endif
 		void b6_0_0(U16 val) {
 			val &= 0x0001;
 			w6 &= 0xfffe;

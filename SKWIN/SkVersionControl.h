@@ -5,7 +5,7 @@
 
 // SPHENX: Define DM2_EXTENDED_MODE to change behaviour over the original code
 #define	DM2_EXTENDED_MODE		1	// Load custom GDAT categories, enhance some code
-#define DM2_EXTENDED_MAP		0	// Load a +128 maps test dungeon. (to increase maps from 64 to 256)
+#define DM2_EXTENDED_MAP		0	// Load a +128 maps test dungeon. (to increase maps from 64 to 256). Use Conv2XMAP to get DUNGEON_XMAP.DAT
 #define DM2_EXTENDED_DATABASE	1	// Make usage of db11 db12 and db13 - partially implemented (tested with db11)
 #define DM2_EXTENDED_OBJECT_DEF	0	// Allow OBJECT structure to hold more items per database - EXPERIMENTAL
 #define DM2_EXTENDED_BUFFER		1	// Allow more memsize for loading objects

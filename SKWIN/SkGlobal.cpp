@@ -221,6 +221,20 @@ namespace kkBitBlt
 
 
 namespace DM2Internal {
+#if DM2_EXTENDED_MAP == 1
+	void Ax3::SetX(U16 val) {
+		ATLASSERT(val <= 255 || val == 0xFFFFU);
+		x = (U8)val;
+	}
+	void Ax3::SetY(U16 val) {
+		ATLASSERT(val <= 255 || val == 0xFFFFU);
+		y = (U8)val;
+	}
+	void Ax3::SetMap(U16 val) {
+		ATLASSERT(val < MAXMAPS);
+		z = (U8)val;
+	}
+#else
 	void Ax3::SetX(U16 val) {
 		if (bUsePowerDebug) val = min(31, val);
 		ATLASSERT(val <= 31 || val == 0xFFFFU);
@@ -236,11 +250,12 @@ namespace DM2Internal {
 		w0 |= val << 5;
 	}
 	void Ax3::SetMap(U16 val) {
-		ATLASSERT(val <= MAXMAPS);
+		ATLASSERT(val < MAXMAPS);
 		val &= 0x003f;
 		w0 &= 0x03ff;
 		w0 |= val << 10;
 	}
+#endif
 };
 
 
@@ -290,6 +305,30 @@ int stdTickBalance = TICK_BALANCE;
 /*static*/ const void *_4976_3b07 = "\x00\x00\xFF\xFF";
 /*static*/ const void *_4976_3b0b = "\x00\x00\x00\x00\xFF\xFF\x01\x00";
 
+#if (DM2_EXTENDED_MAP == 1)
+/*static*/ const void *sksaveMaskMons = "\x00\x00\x00\x00\x00\x00\xFF\x3F\xFF\xFF\xFF\xFF\xFF\xFF\x80\x07\xFF\xFF\xFF\xFF";
+/*static*/ const void *sksaveMaskChes = "\x00\x00\x00\x00\x00\xE0\x00\x04\xFF\xFF\xFF\xFF";
+/*static*/ const void *sksaveMaskProj = "\x00\x00\x00\x00\xFF\xFF\xFF\x03\xFF\xFF\xFF\xFF";
+
+/*static*/const void *_4976_3b13[16] = {
+	_4976_3aa7, //DOOR
+	NULL,       //TELE
+	_4976_3aab, //TEXT
+	_4976_3aaf, //ACTU
+	sksaveMaskMons, //MONS
+	_4976_3ad7, //WEAP
+	_4976_3adb, //CLOT
+	_4976_3adf, //SCRO
+	_4976_3ae3, //POTI
+	sksaveMaskChes, //CHES
+	_4976_3af7, //MISC
+	NULL,
+	NULL,
+	NULL,
+	sksaveMaskProj, //PROJ
+	_4976_3b07, //CLOU
+};
+#else
 //#4976:3B13
 /*static*/const void *_4976_3b13[16] = {
 	_4976_3aa7,
@@ -309,6 +348,7 @@ int stdTickBalance = TICK_BALANCE;
 	_4976_3aff,
 	_4976_3b07,
 };
+#endif
 
 
 
@@ -327,11 +367,19 @@ int stdTickBalance = TICK_BALANCE;
 
 //{{SKSTRTBL
 
+#if DM2_EXTENDED_MAP == 1
+const Bit8u * const _4976_395a = (const Bit8u *)
+	"\xFF\xFF\xFF\x00\xFF\xFF\x00\x00\x07\x00\x1F\x00\x1F\x00\x03\x00"
+	"\xFF\x00\x03\x00\xFF\x01\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x00\x07\x00"
+	"\x07\x00\x03\x00\x01\x00\xFF\x00\x01\x00\x01\x03\xFF\xFF\xFF\x03"
+	"\xFF\x00\x1F\x03\xFF\xFF\xFF";
+#else
 const Bit8u * const _4976_395a = (const Bit8u *)
 	"\xFF\xFF\xFF\x00\xFF\xFF\x00\x00\x07\x00\x1F\x00\x1F\x00\x03\x00"
 	"\x3F\x00\x03\x00\xFF\x01\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x00\x07\x00"
 	"\x07\x00\x03\x00\x01\x00\xFF\x00\x01\x00\x01\x03\xFF\xFF\xFF\x03"
 	"\xFF\x00\x1F\x03\xFF\xFF\xFF";
+#endif
 const Bit8u * const _4976_3956 = (const Bit8u *)
 	"\xFF\xFF";
 const Bit8u * const _4976_3992 = (const Bit8u *)
@@ -388,12 +436,17 @@ const Bit8u * const strZxxxTable[] = {
 	strZT_EndOfString,strZT_F,strZT_G,strZT_strData1,
 	strZT_strData2,strZT_strData3,strZT_strData4,strZT_strData5,
 };
+#if (DM2_EXTENDED_MAP == 1)
+const Bit8u * const strSKSave_dat = (const Bit8u *)".Z022SKSAVE.Z023_XMAP.DAT";
+const Bit8u * const strSKSave_bak = (const Bit8u *)".Z022SKSAVE.Z023_XMAP.BAK";
+#else
 // SPX: _4976_1a3e renamed strSKSave_dat
 const Bit8u * const strSKSave_dat = (const Bit8u *)
 	"\x2E\x5A\x30\x32\x32\x53\x4B\x53\x41\x56\x45\x2E\x5A\x30\x32\x33\x2E\x44\x41\x54\x00"; // .Z022SKSAVE.Z023.DAT
 // SPX: _4976_1a53 renamed strSKSave_bak
 const Bit8u * const strSKSave_bak = (const Bit8u *)
 	"\x2E\x5A\x30\x32\x32\x53\x4B\x53\x41\x56\x45\x2E\x5A\x30\x32\x33\x2E\x42\x41\x4B\x00"; // .Z022SKSAVE.Z023.BAK
+#endif
 // SPX: _4976_19ee renamed strDungeon_ftl
 const Bit8u * const strDungeon_ftl = (const Bit8u *)
 	"\x2E\x5A\x30\x32\x30\x44\x55\x4E\x47\x45\x4F\x4E\x2E\x5A\x30\x32\x34\x2E\x46\x54\x4C"; // .Z020DUNGEON.Z024.FTL

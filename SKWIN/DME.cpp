@@ -10,7 +10,11 @@ using namespace DM2Internal;
 
 
 
+#if DM2_EXTENDED_MAP == 1
+const Ax3 Ax3::Invalid(Ax3::Frm(0xFFFFFFFF));
+#else
 const Ax3 Ax3::Invalid(Ax3::Frm(0xFFFF));
+#endif
 
 
 

@@ -278,6 +278,26 @@ enum SkillLevel {
 //------------------------------------------------------------------------------
 
 // DB size
+#if DM2_EXTENDED_MAP == 1
+
+#define DB_SIZE_DOOR					0x04
+#define DB_SIZE_TELEPORTER				0x06
+#define DB_SIZE_TEXT					0x04
+	#define DB_SIZE_SIMPLE_ACTUATOR			0x04
+#define DB_SIZE_ACTUATOR				0x08
+#define DB_SIZE_CREATURE				0x14 // <- 0x10
+#define DB_SIZE_WEAPON					0x04
+#define DB_SIZE_CLOTHING				0x04
+#define DB_SIZE_SCROLL					0x04
+#define DB_SIZE_POTION					0x04
+#define DB_SIZE_CONTAINER				0x0C // <- 0x08
+#define DB_SIZE_MISC_ITEM				0x04
+#define DB_SIZE_UNUSED					0x00
+#define DB_SIZE_MISSILE					0x0C // <- 0x08
+#define DB_SIZE_CLOUD					0x04
+
+#else
+
 #define DB_SIZE_DOOR					0x04
 #define DB_SIZE_TELEPORTER				0x06
 #define DB_SIZE_TEXT					0x04
@@ -293,6 +313,8 @@ enum SkillLevel {
 #define DB_SIZE_UNUSED					0x00
 #define DB_SIZE_MISSILE					0x08
 #define DB_SIZE_CLOUD					0x04
+
+#endif
 
 #define DB_CATEGORY_DOOR				0x00
 #define DB_CATEGORY_TELEPORTER			0x01

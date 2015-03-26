@@ -2571,7 +2571,8 @@ GenericRecord *SkWinCore::GET_ADDRESS_OF_RECORD(ObjectID rl)
 	// MARK: on some games, some items are on index 1023 (meaning freed)
 	// Effectively, that must not return a valid record since there is nothing.
 	// Do we have a "dummy" record for that case ?
-	else if (SkCodeParam::bUsePowerDebug && rl.DBIndex() >= 1023 ) {	// In case of specific DEBUG mode, give a dummy record and let's see what happen next ...
+	// kkdf2: ACTU1 #1023 should work.
+	else if (SkCodeParam::bUsePowerDebug && rl.DBIndex() >= 1024 ) {	// In case of specific DEBUG mode, give a dummy record and let's see what happen next ...
 		static int countBadRecords = 0;
 		static GenericRecord gr;
 		gr.w0 = OBJECT_END_MARKER;
@@ -24451,7 +24452,11 @@ Bit8u SkWinCore::WRITE_RECORD_CHECKCODE(ObjectID recordLink, Bit8u writeDir, Bit
 			//^2066:0704
 			if (WRITE_1BIT(1)) // write#more-record=true
 				return 1;
+#if DM2_EXTENDED_DATABASE == 1
+			Bit8u data = recordLink.RealDBType();
+#else
 			Bit8u data = db;
+#endif
 			Bit8u mask = 0x0F;
 			if (SUPPRESS_WRITER(&data, &mask, 1, 1)) // write#dbtype
 				return 1;
@@ -39192,6 +39197,16 @@ int SkWinCore::READ_RECORD_CHECKCODE(__int16 xpos, __int16 ypos, ObjectID *recor
 		if (!SkCodeParam::bUsePowerDebug)
 			ATLASSERT(si != OBJECT_END_MARKER && si != OBJECT_NULL);
 		
+#if DM2_EXTENDED_DATABASE == 1
+		switch (di) {
+			case db11:
+			case db12:
+			case db13:
+				di = dbActuator;
+				break;
+		}
+#endif
+
 		si.Dir(bp0a);
 		//^2066:169E
 		APPEND_RECORD_TO(si, recordLinkPtr, xpos, ypos);
