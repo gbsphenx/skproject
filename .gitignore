@@ -1,0 +1,6 @@
+*.suo
+*.user
+*.ncb
+
+/SKWIN/Debug
+/SKWIN/Release
