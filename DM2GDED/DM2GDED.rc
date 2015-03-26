@@ -1,0 +1,2198 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// 日本語 resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_JPN)
+#ifdef _WIN32
+LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
+#pragma code_page(932)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\DM2GDED.rc2""  // Microsoft Visual C++ 以外のツールで編集されたリソース\r\n"
+    "#include ""afxres.rc""         // 標準のコンポーネント\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+#endif    // 日本語 resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// 英語 (米国) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\DM2GDED.ico"
+IDI_CmDEF               ICON                    "res\\CmdDef.ico"
+IDI_CmWIZ               ICON                    "res\\CmdWiz.ico"
+IDI_CmXXX               ICON                    "res\\CmdXXX.ico"
+IDI_CmATT               ICON                    "res\\CmdATT.ico"
+IDI_CmEAT               ICON                    "res\\CmdEat.ico"
+IDI_PaBALL              ICON                    "res\\paball.ico"
+IDI_CmMIN               ICON                    "res\\cmxxx1.ico"
+IDI_CmWAY               ICON                    "res\\cmway.ico"
+IDI_PaPush              ICON                    "res\\papush.ico"
+IDI_PaPull              ICON                    "res\\papull.ico"
+IDI_PaOH                ICON                    "res\\paoh.ico"
+IDI_PaDES               ICON                    "res\\paoh1.ico"
+IDI_PaEW                ICON                    "res\\paew.ico"
+IDI_PaVEN               ICON                    "res\\paven.ico"
+IDI_PaZO                ICON                    "res\\pazo.ico"
+IDI_CmMAP               ICON                    "res\\cmmap.ico"
+IDI_GRPJ                ICON                    "res\\GrpJ.ico"
+IDI_GRPW                ICON                    "res\\GrpW.ico"
+IDI_GRPA                ICON                    "res\\GrpA.ico"
+IDI_GRPP                ICON                    "res\\GrpP.ico"
+IDI_GRPC                ICON                    "res\\GrpC.ico"
+IDI_GRPS                ICON                    "res\\GrpS.ico"
+IDI_GRPM                ICON                    "res\\GrpM.ico"
+IDR_GDEDCTX             ICON                    "res\\idr_gded.ico"
+#if defined(APSTUDIO_INVOKED) || defined(DO_NOT_INCLUDE)
+#if defined(APSTUDIO_INVOKED)
+IDR_VWSCENE$(DO_NOT_INCLUDE) ICON                    "res\\idr_vwsc.ico"
+#else
+IDR_VWSCENE             ICON                    "res\\idr_vwsc.ico"
+#endif
+#endif
+IDR_EDPIC               ICON                    "res\\icon1.ico"
+IDR_DM2GDETYPE          ICON                    "res\\DM2GDEDDoc.ico"
+IDR_HEXEDIT             ICON                    "res\\idr_dm2g.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_SHOWCLS MENU 
+BEGIN
+    POPUP "0"
+    BEGIN
+        MENUITEM "All creatures",               ID_SEL0
+    END
+    POPUP "1"
+    BEGIN
+        MENUITEM "All",                         ID_SELF
+        MENUITEM SEPARATOR
+        MENUITEM "All weapons",                 ID_SEL0
+        MENUITEM "All clothes",                 ID_SEL1
+        MENUITEM "All misc items",              ID_SEL2
+        MENUITEM "All potions",                 ID_SEL3
+        MENUITEM "All containers",              ID_SEL4
+        MENUITEM "All scrolls",                 ID_SEL5
+    END
+END
+
+IDR_GDEDCTX MENU 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
+        MENUITEM "&Save\tCtrl+S",               ID_FILE_SAVE
+        MENUITEM "Save &As...",                 ID_FILE_SAVE_AS
+        MENUITEM SEPARATOR
+        MENUITEM "Diff &Export",                ID_FILE_EXPORT_DIFF
+        MENUITEM "Diff &Import",                ID_FILE_IMPORT_DIFF
+        MENUITEM SEPARATOR
+        MENUITEM "Display DAT Info...",         ID_FILE_DISPLAY_OPI
+        MENUITEM SEPARATOR
+        MENUITEM "Export &csv files",           ID_FILE_EXPORT_CSV
+        MENUITEM SEPARATOR
+        MENUITEM "Recent File",                 ID_FILE_MRU_FILE1, GRAYED
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+    END
+    POPUP "&Options"
+    BEGIN
+        MENUITEM "Reload descriptors",          ID_OPT_RELOAD_RULES
+        MENUITEM "Auto format detection on open", ID_OPT_USE_DETECTIVE
+        MENUITEM "----- Unknown Word value format -----", IDC_STATIC, GRAYED
+        MENUITEM "SIGNED",                      ID_OPT_UWV_SIGNED
+        MENUITEM "UNSIGNED",                    ID_OPT_UWV_UNSIGNED
+        MENUITEM "HEX",                         ID_OPT_UWV_HEX
+        MENUITEM "FLAGS",                       ID_OPT_UWV_FLAGS
+        MENUITEM "----- Creature Name -----",   IDC_STATIC, GRAYED
+        MENUITEM "No",                          ID_OPT_CLANG_NO
+        MENUITEM "00 00 00 - English (PC Beta ver)", ID_OPT_CLANG_EN_PLAIN
+        MENUITEM "00 F0 00 - English (PC, Macintosh, Amiga ver)", ID_OPT_CLANG_EN
+        MENUITEM "----- Item Name -----",       IDC_STATIC, GRAYED
+        MENUITEM "No",                          ID_OPT_LANG_NO
+        MENUITEM "18 00 00 - English (PC Beta ver)", ID_OPT_LANG_EN_PLAIN
+        MENUITEM "18 10 00 - English (PC, Macintosh, Amiga, Sega ver)", ID_OPT_LANG_EN
+        MENUITEM "18 20 00 - Japanese (PC-9801, PS/V, Mac JP, FM-Towns ver)", ID_OPT_LANG_JA
+        MENUITEM "18 30 00 - German (PC, Amiga ver)", ID_OPT_LANG_DE
+        MENUITEM "18 40 00 - French (PC, Amiga ver)", ID_OPT_LANG_FR
+    END
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "&Cascade",                    ID_WINDOW_CASCADE
+        MENUITEM "&Tile",                       ID_WINDOW_TILE_HORZ
+        MENUITEM "&Arrange Icons",              ID_WINDOW_ARRANGE
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About DM2GDED...",           ID_APP_ABOUT
+    END
+END
+
+#if defined(APSTUDIO_INVOKED) || defined(DO_NOT_INCLUDE)
+#if defined(APSTUDIO_INVOKED)
+IDR_VWSCENE$(DO_NOT_INCLUDE) MENU 
+#else
+IDR_VWSCENE MENU 
+#endif
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "OK",                          ID_FILE_OK
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&Edit"
+    BEGIN
+        MENUITEM "&Copy to Clipbrd",            ID_EDIT_COPY
+        POPUP "&Paste from Clipbrd"
+        BEGIN
+            MENUITEM "As 4-bpp Image",              ID_EDIT_PASTE_4BPP
+            MENUITEM "As 8-bpp Image",              ID_EDIT_PASTE_8BPP
+        END
+    END
+    POPUP "&Driving"
+    BEGIN
+        MENUITEM "PC Ver",                      ID_DRIVING_PCAT
+        MENUITEM "Amiga/Sega Ver",              ID_DRIVING_AMIGA
+        MENUITEM "PC-9801 Ver",                 ID_DRIVING_PC98
+    END
+    POPUP "&Scene"
+    BEGIN
+        MENUITEM "No",                          ID_SCENE_NO
+        MENUITEM "Scene &1",                    ID_SCENE_1
+        MENUITEM "Scene &2",                    ID_SCENE_2
+        MENUITEM "Scene &3",                    ID_SCENE_3
+        MENUITEM "Scene &4",                    ID_SCENE_4
+        MENUITEM "Scene &5",                    ID_SCENE_5
+    END
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "&Cascade",                    ID_WINDOW_CASCADE
+        MENUITEM "&Tile",                       ID_WINDOW_TILE_HORZ
+        MENUITEM "&Arrange Icons",              ID_WINDOW_ARRANGE
+    END
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(DO_NOT_INCLUDE)
+#if defined(APSTUDIO_INVOKED)
+IDR_VWPIC$(DO_NOT_INCLUDE) MENU 
+#else
+IDR_VWPIC MENU 
+#endif
+BEGIN
+    MENUITEM "Close",                       ID_FILE_CLOSE_VIEW
+    MENUITEM "&Copy",                       ID_EDIT_COPY
+    POPUP "&View"
+    BEGIN
+        MENUITEM "&Palette",                    ID_VIEW_PAL
+    END
+    MENUITEM "&Fit",                        ID_VIEW_FIT
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(DO_NOT_INCLUDE)
+#if defined(APSTUDIO_INVOKED)
+IDR_EDPIC$(DO_NOT_INCLUDE) MENU 
+#else
+IDR_EDPIC MENU 
+#endif
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "Enter &Preview Mode",         ID_FILE_MODE_PREVIEW
+        MENUITEM "Enter &Edit Mode",            ID_FILE_MODE_EDIT
+        MENUITEM SEPARATOR
+        MENUITEM "Save",                        ID_FILE_SAVE_PIC
+        MENUITEM SEPARATOR
+        MENUITEM "&Close",                      ID_FILE_CLOSE_VIEW
+    END
+    POPUP "&Edit"
+    BEGIN
+        MENUITEM "&Copy",                       ID_EDIT_COPY
+        MENUITEM "Paste as 4-bpp",              ID_EDIT_PASTE_4BPP
+        MENUITEM "Paste as 8-bpp",              ID_EDIT_PASTE_8BPP
+        MENUITEM SEPARATOR
+        MENUITEM "Edit Image &flags...",        ID_EDIT_IMAGE_FLGS
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "Sim - PC, Macintosh, PC Beta", ID_DRIVING_PCAT
+        MENUITEM "Sim - Amiga, Sega",           ID_DRIVING_AMIGA
+        MENUITEM "Sim - PC-9801",               ID_DRIVING_PC98
+        MENUITEM SEPARATOR
+        MENUITEM "Toolbar",                     ID_VIEW_TOOLBAR
+        MENUITEM SEPARATOR
+        MENUITEM "Enable &Transparent",         ID_VIEW_ENABLE_TRANSPARENT
+    END
+    POPUP "4-bpp"
+    BEGIN
+        MENUITEM "Image Palette - Best Match (Amiga, Sega)", ID_4BPP_BEST_MATCH
+        MENUITEM "Image Palette - Best Quality (PC, Macintosh, PC Beta, PC-9801)", ID_4BPP_BEST_QUALITY
+        MENUITEM SEPARATOR
+        MENUITEM "Palette - Dungeon Graphics (Amiga, Sega)", ID_4BPP_PALETTE_DUNGEON
+        MENUITEM "Palette - Interface (Amiga, Sega)", ID_4BPP_PALETTE_INTERFACE
+        MENUITEM "Palette - Specific Color Pal (Sega)", ID_4BPP_PALETTE_COLOR_PAL
+        MENUITEM SEPARATOR
+        MENUITEM "Palette Conversion - Rewrite Palette", ID_4BPP_PALCONV_MASTER
+        MENUITEM "Palette Conversion - Respect Palette", ID_4BPP_PALCONV_SLAVE
+        MENUITEM SEPARATOR
+        MENUITEM "Generate &Independent Palette (PC Beta)", ID_4BPP_MK_INDEPENDENT_PALETTE
+    END
+    POPUP "8-bpp"
+    BEGIN
+        MENUITEM "Enabled (PC, Macintosh)",     ID_8BPP_ENABLED
+    END
+    POPUP "Scene"
+    BEGIN
+        MENUITEM "Sim Scene 0",                 ID_SCENE_NO
+        MENUITEM "Sim Scene 1",                 ID_SCENE_1
+        MENUITEM "Sim Scene 2",                 ID_SCENE_2
+        MENUITEM "Sim Scene 3",                 ID_SCENE_3
+        MENUITEM "Sim Scene 4",                 ID_SCENE_4
+        MENUITEM "Sim Scene 5",                 ID_SCENE_5
+        MENUITEM SEPARATOR
+        MENUITEM "Force Palette - No",          ID_SCENE_FORCE_PAL_NO
+        MENUITEM "Force Palette - Scene 0",     ID_SCENE_FORCE_PAL_0
+        MENUITEM "Force Palette - Scene 1",     ID_SCENE_FORCE_PAL_1
+        MENUITEM "Force Palette - Scene 2",     ID_SCENE_FORCE_PAL_2
+        MENUITEM "Force Palette - Scene 3",     ID_SCENE_FORCE_PAL_3
+        MENUITEM "Force Palette - Scene 4",     ID_SCENE_FORCE_PAL_4
+        MENUITEM "Force Palette - Scene 5",     ID_SCENE_FORCE_PAL_5
+        MENUITEM SEPARATOR
+        MENUITEM "Force Scene color key",       ID_SCENE_FORCE_SCENE_KEY
+    END
+END
+#endif
+
+IDR_MAINFRAME MENU 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "Recent File",                 ID_FILE_MRU_FILE1, GRAYED
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+    END
+    POPUP "Options"
+    BEGIN
+        MENUITEM "Auto format detection on open", ID_OPT_USE_DETECTIVE
+    END
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "&Cascade",                    ID_WINDOW_CASCADE
+        MENUITEM "&Tile",                       ID_WINDOW_TILE_HORZ
+        MENUITEM "&Arrange Icons",              ID_WINDOW_ARRANGE
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About DM2GDED...",           ID_APP_ABOUT
+    END
+END
+
+#if defined(APSTUDIO_INVOKED) || defined(DO_NOT_INCLUDE)
+#if defined(APSTUDIO_INVOKED)
+IDR_CELLCMD$(DO_NOT_INCLUDE) MENU 
+#else
+IDR_CELLCMD MENU 
+#endif
+BEGIN
+    POPUP "No"
+    BEGIN
+        MENUITEM "&Add Image...",               ID_POPUP_ADD_IMAGE
+        MENUITEM "Add &Text...",                ID_POPUP_ADD_TEXT
+        MENUITEM "Add &Sound...",               ID_POPUP_ADD_PCM
+        MENUITEM "Add Word value...",           ID_POPUP_ADD_0B
+        MENUITEM "Add Image offset...",         ID_POPUP_ADD_0C
+        MENUITEM "Add 04 (raw)...",             ID_POPUP_ADD_04
+        MENUITEM "Add 07 (raw)...",             ID_POPUP_ADD_07
+        MENUITEM "Add 08",                      ID_POPUP_ADD_08
+        MENUITEM "Add 09 (raw)...",             ID_POPUP_ADD_09
+        MENUITEM "Add 0E (raw)...",             ID_POPUP_ADD_0E
+    END
+    POPUP "Any"
+    BEGIN
+        MENUITEM "Copy selected items",         ID_POPUP_COPY_SELED
+        MENUITEM "Paste items",                 ID_POPUP_PASTE_ITEMS
+        MENUITEM SEPARATOR
+        MENUITEM "&Add Image...",               ID_POPUP_ADD_IMAGE
+        MENUITEM "Add &Text...",                ID_POPUP_ADD_TEXT
+        MENUITEM "Add &Sound...",               ID_POPUP_ADD_PCM
+        MENUITEM "Add Word value...",           ID_POPUP_ADD_0B
+        MENUITEM "Add Image offset...",         ID_POPUP_ADD_0C
+        MENUITEM "Add 04 (raw)...",             ID_POPUP_ADD_04
+        MENUITEM "Add 07 (raw)...",             ID_POPUP_ADD_07
+        MENUITEM "Add 09 (raw)...",             ID_POPUP_ADD_09
+        MENUITEM SEPARATOR
+        MENUITEM "&Delete Entry",               ID_POPUP_DELETE_ENTRY
+    END
+    POPUP "Image"
+    BEGIN
+        MENUITEM "View Image",                  ID_POPUP_VIEW_IMAGE
+        MENUITEM "Edit Image...",               ID_POPUP_EDIT_IMAGE
+        MENUITEM "Edit2",                       ID_POPUP_EDIT_IMAGE_EXTERNAL
+        MENUITEM "&Rename Entry",               ID_POPUP_RENAME_ENTRY
+        MENUITEM SEPARATOR
+        MENUITEM "IPF",                         ID_POPUP_EDIT_IMAGE_IPF
+        MENUITEM SEPARATOR
+        MENUITEM "Copy",                        ID_POPUP_COPY_BMP
+        MENUITEM "Paste",                       ID_POPUP_PASTE_BMP
+        MENUITEM "Import",                      ID_POPUP_IMPORT_BMP
+        MENUITEM "Export",                      ID_POPUP_EXPORT_BMP
+        MENUITEM SEPARATOR
+        MENUITEM "Export Raw",                  ID_POPUP_EXPORT_RAW
+        MENUITEM SEPARATOR
+        MENUITEM "&Delete Entry",               ID_POPUP_DELETE_ENTRY
+        MENUITEM SEPARATOR
+        MENUITEM "&Add Image...",               ID_POPUP_ADD_IMAGE
+        MENUITEM "Add &Text...",                ID_POPUP_ADD_TEXT
+        MENUITEM "Add &Sound...",               ID_POPUP_ADD_PCM
+        MENUITEM "Add Word value...",           ID_POPUP_ADD_0B
+        MENUITEM "Add Image offset...",         ID_POPUP_ADD_0C
+        MENUITEM "Add 04 (raw)...",             ID_POPUP_ADD_04
+        MENUITEM "Add 07 (raw)...",             ID_POPUP_ADD_07
+        MENUITEM "Add 09 (raw)...",             ID_POPUP_ADD_09
+    END
+    POPUP "Text"
+    BEGIN
+        MENUITEM "Edit Text...",                ID_POPUP_EDIT_TEXT
+        MENUITEM "&Rename Entry",               ID_POPUP_RENAME_ENTRY
+        MENUITEM SEPARATOR
+        MENUITEM "&Delete Entry",               ID_POPUP_DELETE_ENTRY
+        MENUITEM SEPARATOR
+        MENUITEM "&Add Image...",               ID_POPUP_ADD_IMAGE
+        MENUITEM "Add &Text...",                ID_POPUP_ADD_TEXT
+        MENUITEM "Add &Sound...",               ID_POPUP_ADD_PCM
+        MENUITEM "Add Word value...",           ID_POPUP_ADD_0B
+        MENUITEM "Add Image offset...",         ID_POPUP_ADD_0C
+        MENUITEM "Add 04 (raw)...",             ID_POPUP_ADD_04
+        MENUITEM "Add 07 (raw)...",             ID_POPUP_ADD_07
+        MENUITEM "Add 09 (raw)...",             ID_POPUP_ADD_09
+    END
+    POPUP "0B"
+    BEGIN
+        MENUITEM "Edit 0B...",                  ID_POPUP_EDIT_0B
+        MENUITEM "&Rename Entry",               ID_POPUP_RENAME_ENTRY
+        MENUITEM SEPARATOR
+        MENUITEM "&Delete Entry",               ID_POPUP_DELETE_ENTRY
+        MENUITEM SEPARATOR
+        MENUITEM "&Add Image...",               ID_POPUP_ADD_IMAGE
+        MENUITEM "Add &Text...",                ID_POPUP_ADD_TEXT
+        MENUITEM "Add &Sound...",               ID_POPUP_ADD_PCM
+        MENUITEM "Add Word value...",           ID_POPUP_ADD_0B
+        MENUITEM "Add Image offset...",         ID_POPUP_ADD_0C
+        MENUITEM "Add 04 (raw)...",             ID_POPUP_ADD_04
+        MENUITEM "Add 07 (raw)...",             ID_POPUP_ADD_07
+        MENUITEM "Add 09 (raw)...",             ID_POPUP_ADD_09
+    END
+    POPUP "0C"
+    BEGIN
+        MENUITEM "Edit Image offset...",        ID_POPUP_EDIT_0C
+        MENUITEM "&Rename Entry",               ID_POPUP_RENAME_ENTRY
+        MENUITEM SEPARATOR
+        MENUITEM "&Delete Entry",               ID_POPUP_DELETE_ENTRY
+        MENUITEM SEPARATOR
+        MENUITEM "&Add Image...",               ID_POPUP_ADD_IMAGE
+        MENUITEM "Add &Text...",                ID_POPUP_ADD_TEXT
+        MENUITEM "Add &Sound...",               ID_POPUP_ADD_PCM
+        MENUITEM "Add Word value...",           ID_POPUP_ADD_0B
+        MENUITEM "Add Image offset...",         ID_POPUP_ADD_0C
+        MENUITEM "Add 04 (raw)...",             ID_POPUP_ADD_04
+        MENUITEM "Add 07 (raw)...",             ID_POPUP_ADD_07
+        MENUITEM "Add 09 (raw)...",             ID_POPUP_ADD_09
+    END
+    POPUP "Sound"
+    BEGIN
+        MENUITEM "Play Sound",                  ID_POPUP_PLAY_ENTRY
+        MENUITEM "Edit Sound...",               ID_POPUP_EDIT_PCM
+        MENUITEM "&Rename Entry",               ID_POPUP_RENAME_ENTRY
+        MENUITEM "Copy",                        ID_POPUP_COPY_PCM
+        MENUITEM "Paste",                       ID_POPUP_PASTE_PCM
+        MENUITEM "Import",                      ID_POPUP_IMPORT_WAV
+        MENUITEM "Export",                      ID_POPUP_EXPORT_WAV
+        MENUITEM SEPARATOR
+        MENUITEM "&Delete Entry",               ID_POPUP_DELETE_ENTRY
+        MENUITEM SEPARATOR
+        MENUITEM "&Add Image...",               ID_POPUP_ADD_IMAGE
+        MENUITEM "Add &Text...",                ID_POPUP_ADD_TEXT
+        MENUITEM "Add &Sound...",               ID_POPUP_ADD_PCM
+        MENUITEM "Add Word value...",           ID_POPUP_ADD_0B
+        MENUITEM "Add Image offset...",         ID_POPUP_ADD_0C
+        MENUITEM "Add 04 (raw)...",             ID_POPUP_ADD_04
+        MENUITEM "Add 07 (raw)...",             ID_POPUP_ADD_07
+        MENUITEM "Add 09 (raw)...",             ID_POPUP_ADD_09
+    END
+    POPUP "Raw"
+    BEGIN
+        MENUITEM "Edit Raw...",                 ID_POPUP_EDIT_RAW
+        MENUITEM "Import from file...",         ID_POPUP_IMPORT_RAW
+        MENUITEM "Export to file...",           ID_POPUP_EXPORT_RAW
+        MENUITEM "&Rename Entry",               ID_POPUP_RENAME_ENTRY
+        MENUITEM "Edit champ stat...",          ID_POPUP_EDIT_CHAMP_STAT
+        MENUITEM SEPARATOR
+        MENUITEM "&Delete Entry",               ID_POPUP_DELETE_ENTRY
+        MENUITEM SEPARATOR
+        MENUITEM "&Add Image...",               ID_POPUP_ADD_IMAGE
+        MENUITEM "Add &Text...",                ID_POPUP_ADD_TEXT
+        MENUITEM "Add &Sound...",               ID_POPUP_ADD_PCM
+        MENUITEM "Add Word value...",           ID_POPUP_ADD_0B
+        MENUITEM "Add Image offset...",         ID_POPUP_ADD_0C
+        MENUITEM "Add 04 (raw)...",             ID_POPUP_ADD_04
+        MENUITEM "Add 07 (raw)...",             ID_POPUP_ADD_07
+        MENUITEM "Add 09 (raw)...",             ID_POPUP_ADD_09
+    END
+END
+#endif
+
+IDR_TREECLS MENU 
+BEGIN
+    POPUP "0"
+    BEGIN
+        MENUITEM "&Add new Class",              ID_POPUP_ADD_C0
+        MENUITEM SEPARATOR
+        MENUITEM "&Import from a file",         ID_POPUP_IMPORT_FROM
+        MENUITEM SEPARATOR
+        MENUITEM "&Paste from clipboard",       ID_POPUP_PASTE_FROM
+    END
+    POPUP "1"
+    BEGIN
+        MENUITEM "&Add new Class",              ID_POPUP_ADD_C0
+        MENUITEM SEPARATOR
+        MENUITEM "&Replicate to new sub-class", ID_POPUP_REPLICATE_C1
+        MENUITEM SEPARATOR
+        MENUITEM "&Delete this sub-class",      ID_POPUP_DELETE_THIS
+        MENUITEM SEPARATOR
+        MENUITEM "&Export this sub-class to a new file", ID_POPUP_EXPORT_THIS
+        MENUITEM "&Import from a file",         ID_POPUP_IMPORT_FROM
+        MENUITEM SEPARATOR
+        MENUITEM "&Copy this sub-class to clipboard", ID_POPUP_COPY_THIS
+        MENUITEM "&Paste from clipboard",       ID_POPUP_PASTE_FROM
+    END
+END
+
+IDR_HEXEDIT MENU 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Apply",                      ID_FILE_APPLY
+        MENUITEM "&Close",                      ID_FILE_CLOSE
+    END
+    POPUP "&Edit"
+    BEGIN
+        MENUITEM "Cu&t\tCtrl+X",                ID_EDIT_CUT
+        MENUITEM "&Copy\tCtrl+C",               ID_EDIT_COPY
+        MENUITEM "&Paste\tCtrl+V",              ID_EDIT_PASTE
+    END
+END
+
+#if defined(APSTUDIO_INVOKED) || defined(DO_NOT_INCLUDE)
+#if defined(APSTUDIO_INVOKED)
+IDR_EXPORTDATFRAMEA$(DO_NOT_INCLUDE) MENU 
+#else
+IDR_EXPORTDATFRAMEA MENU 
+#endif
+BEGIN
+    POPUP "File"
+    BEGIN
+        MENUITEM "Quick Export",                ID_FILE_EXPORT_QUICK_NOW
+        MENUITEM "Export to Folder...",         ID_FILE_EXPORT_NOW
+        MENUITEM SEPARATOR
+        MENUITEM "&Close",                      ID_FILE_CLOSE
+    END
+    POPUP "&Edit"
+    BEGIN
+        MENUITEM "&Comment...",                 ID_EDIT_EXPORT_COMMENT
+    END
+END
+#endif
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_RUNES               BITMAP                  "res\\runes.bmp"
+#if defined(APSTUDIO_INVOKED) || defined(DO_NOT_INCLUDE)
+#if defined(APSTUDIO_INVOKED)
+IDR_DM2SIIV$(DO_NOT_INCLUDE) BITMAP                  "res\\bmp00001.bmp"
+#else
+IDR_DM2SIIV             BITMAP                  "res\\bmp00001.bmp"
+#endif
+#endif
+#if defined(APSTUDIO_INVOKED) || defined(DO_NOT_INCLUDE)
+#if defined(APSTUDIO_INVOKED)
+IDR_EDPIC$(DO_NOT_INCLUDE) BITMAP                  "res\\bmp00002.bmp"
+#else
+IDR_EDPIC               BITMAP                  "res\\bmp00002.bmp"
+#endif
+#endif
+IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
+#if defined(APSTUDIO_INVOKED) || defined(DO_NOT_INCLUDE)
+#if defined(APSTUDIO_INVOKED)
+IDB_320BY200$(DO_NOT_INCLUDE) BITMAP                  "res\\bmp320by.bmp"
+#else
+IDB_320BY200            BITMAP                  "res\\bmp320by.bmp"
+#endif
+#endif
+#if defined(APSTUDIO_INVOKED) || defined(DO_NOT_INCLUDE)
+#if defined(APSTUDIO_INVOKED)
+IDR_EXPORTDATFRAME$(DO_NOT_INCLUDE) BITMAP                  "res\\toolbar1.bmp"
+#else
+IDR_EXPORTDATFRAME      BITMAP                  "res\\toolbar1.bmp"
+#endif
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_PP_NI1 DIALOGEX 0, 0, 235, 185
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Color depth"
+FONT 10, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "",IDC_STATIC_FRAME,5,5,222,139,SS_SUNKEN | NOT WS_VISIBLE
+    LTEXT           "Select color depth which you like",IDC_STATIC,5,148,222,8
+    CONTROL         "4bpp (Fast to compress, lesser image quality)",IDC_RADIO_4BPP,
+                    "Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,5,160,222,10
+    CONTROL         "8bpp (Slow to compress, greater image quality)",IDC_RADIO_8BPP,
+                    "Button",BS_AUTORADIOBUTTON,5,172,222,10
+END
+
+IDD_PP_NI2 DIALOGEX 0, 0, 235, 191
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Transparent Color"
+FONT 10, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "",IDC_STATIC_FRAME,5,5,222,139,SS_SUNKEN | NOT WS_VISIBLE
+    LTEXT           "Click at the pixel in image to decide another color.",IDC_STATIC,5,148,222,8
+    CONTROL         "Color key1",IDC_RADIO_COLOR_KEY1,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,5,160,56,10
+    COMBOBOX        IDC_COMBO_PAL1,68,160,68,131,CBS_DROPDOWNLIST | CBS_OWNERDRAWFIXED | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Color key2",IDC_RADIO_COLOR_KEY2,"Button",BS_AUTORADIOBUTTON,5,174,56,10
+    COMBOBOX        IDC_COMBO_PAL2,68,174,68,131,CBS_DROPDOWNLIST | CBS_OWNERDRAWFIXED | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_PP_NI3 DIALOGEX 0, 0, 235, 185
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "External Palette"
+FONT 10, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "",IDC_STATIC_FRAME,5,5,222,139,SS_SUNKEN | NOT WS_VISIBLE
+    LTEXT           "Select care of the color palette for new image",IDC_STATIC,5,148,222,8
+    CONTROL         "Keep: Respect prior palette",IDC_RADIO_KEEP_PAL,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,5,160,222,10
+    CONTROL         "Overwrite: Overwrite prior one to obtain best quality",IDC_RADIO_OVERWRITE_PAL,
+                    "Button",BS_AUTORADIOBUTTON,5,172,222,10
+END
+
+IDD_DIFF_EXPORT DIALOGEX 0, 0, 211, 127
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Export Diff"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "ORG:",IDC_STATIC,7,7,197,8
+    EDITTEXT        IDC_EDIT_FILE_ORG,7,16,171,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDC_BUTTON_REF_ORG,182,16,18,14
+    LTEXT           "MOD:",IDC_STATIC,7,35,197,8
+    EDITTEXT        IDC_EDIT_FILE_MOD,7,45,171,14,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Diff output folder:",IDC_STATIC,7,65,197,8
+    EDITTEXT        IDC_EDIT_OUTPUT,7,75,171,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDC_BUTTON_REF_OUT,182,75,18,14
+    DEFPUSHBUTTON   "OK",IDOK,7,106,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,62,106,50,14
+END
+
+IDD_DIFF_IMPORT DIALOGEX 0, 0, 215, 111
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Import Diff"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "Diff (Diff.ini):",IDC_STATIC,7,35,201,8
+    EDITTEXT        IDC_EDIT_FILE_DIFF,7,45,171,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDC_BUTTON_REF_DIFF,182,45,18,14
+    DEFPUSHBUTTON   "OK",IDOK,7,90,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,65,90,50,14
+    LTEXT           "ORG:",IDC_STATIC,7,7,201,8
+    EDITTEXT        IDC_EDIT_FILE_ORG,7,16,171,14,ES_AUTOHSCROLL | ES_READONLY
+END
+
+IDD_PP_NI4 DIALOGEX 0, 0, 235, 162
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Finished"
+FONT 10, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "",IDC_STATIC_FRAME,5,5,222,139,SS_SUNKEN | NOT WS_VISIBLE
+    LTEXT           "Click finish to import your image.",IDC_STATIC,5,148,222,8
+END
+
+IDD_WAIT_EDIT DIALOGEX 0, 0, 185, 71
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Standby..."
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Import &Now",IDOK,73,50,50,14
+    PUSHBUTTON      "Close",IDCLOSE,130,50,50,14
+    LTEXT           "Standby until you finish editing image.",IDC_STATIC,5,5,180,8
+    LTEXT           "Use 'Close' to close this window.",IDC_STATIC,5,20,180,8
+    LTEXT           "Use 'Import Now' to try importing from modified image.",IDC_STATIC,5,30,180,8
+    PUSHBUTTON      "&Edit again",IDRETRY,5,50,50,14
+END
+
+IDD_QUERY_OF DIALOGEX 0, 0, 145, 25
+STYLE DS_SETFONT | DS_3DLOOK | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPSIBLINGS
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    CONTROL         "Auto format detection",IDC_CHECK_USE_DETECTIVE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,5,101,10
+END
+
+IDD_OPEN_INFO DIALOGEX 0, 0, 271, 129
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Agreement Info for File Edit"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Close",IDCLOSE,7,108,50,14
+    LTEXT           "File Path:",IDC_STATIC,7,7,58,8
+    EDITTEXT        IDC_EDIT_PATH,65,7,199,14,ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER
+    LTEXT           "Charset:",IDC_STATIC,7,25,58,8
+    EDITTEXT        IDC_EDIT_TL,65,25,199,14,ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER
+    LTEXT           "Endian Type:",IDC_STATIC,7,40,58,8
+    EDITTEXT        IDC_EDIT_LE,65,40,199,14,ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER
+    LTEXT           "Snd Type:",IDC_STATIC,7,55,58,8
+    EDITTEXT        IDC_EDIT_ST,65,55,199,14,ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER
+    LTEXT           "Image Palette:",IDC_STATIC,7,70,58,8
+    EDITTEXT        IDC_EDIT_PM,65,70,199,14,ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER
+    LTEXT           "Restricted Pal:",IDC_STATIC,7,85,58,8
+    EDITTEXT        IDC_EDIT_RP,65,85,199,14,ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER
+END
+
+IDD_SEL_CM DIALOGEX 0, 0, 335, 224
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Select CM/PA"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    CONTROL         "List1",IDC_LIST_CM,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,7,321,188
+    DEFPUSHBUTTON   "OK",IDOK,224,203,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,278,203,50,14
+    LTEXT           "* CM/PA list is provided by Suule.",IDC_STATIC,7,201,105,8
+END
+
+IDD_EDIT_HEROSTAT DIALOGEX 0, 0, 291, 190
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Edit Champion stats"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "Health",IDC_STATIC,7,7,21,8
+    EDITTEXT        IDC_EDIT1,53,7,40,14,ES_AUTOHSCROLL
+    CONTROL         "Spin1",IDC_SPIN1,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,99,7,10,14
+    LTEXT           "Stamina (x10)",IDC_STATIC,7,24,45,8
+    EDITTEXT        IDC_EDIT2,53,24,40,14,ES_AUTOHSCROLL
+    CONTROL         "Spin2",IDC_SPIN2,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,99,24,10,14
+    LTEXT           "Mana",IDC_STATIC,7,41,17,8
+    EDITTEXT        IDC_EDIT3,53,41,40,14,ES_AUTOHSCROLL
+    CONTROL         "Spin3",IDC_SPIN3,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,99,41,10,14
+    LTEXT           "Luck",IDC_STATIC,7,58,15,8
+    EDITTEXT        IDC_EDIT4,53,58,40,14,ES_AUTOHSCROLL
+    CONTROL         "Spin4",IDC_SPIN4,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,99,58,10,14
+    LTEXT           "Strength",IDC_STATIC,7,75,29,8
+    EDITTEXT        IDC_EDIT5,53,75,40,14,ES_AUTOHSCROLL
+    CONTROL         "Spin5",IDC_SPIN5,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,99,75,10,14
+    LTEXT           "Dexterity",IDC_STATIC,7,92,30,8
+    EDITTEXT        IDC_EDIT6,53,92,40,14,ES_AUTOHSCROLL
+    CONTROL         "Spin6",IDC_SPIN6,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,99,92,10,14
+    LTEXT           "Wisdom",IDC_STATIC,7,109,26,8
+    EDITTEXT        IDC_EDIT7,53,109,40,14,ES_AUTOHSCROLL
+    CONTROL         "Spin7",IDC_SPIN7,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,99,109,10,14
+    LTEXT           "Vitality",IDC_STATIC,7,126,22,8
+    EDITTEXT        IDC_EDIT8,53,126,40,14,ES_AUTOHSCROLL
+    CONTROL         "Spin8",IDC_SPIN8,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,99,126,10,14
+    LTEXT           "Anti-magic",IDC_STATIC,7,143,34,8
+    EDITTEXT        IDC_EDIT9,53,143,40,14,ES_AUTOHSCROLL
+    CONTROL         "Spin9",IDC_SPIN9,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,99,143,10,14
+    LTEXT           "Anti-fire",IDC_STATIC,7,160,26,8
+    EDITTEXT        IDC_EDIT10,53,160,40,14,ES_AUTOHSCROLL
+    CONTROL         "Spin10",IDC_SPIN10,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,99,160,10,14
+    LTEXT           "FIGHTER",IDC_STATIC,112,110,28,8
+    EDITTEXT        IDC_EDITF1,144,110,32,14,ES_AUTOHSCROLL
+    CONTROL         "Spin11",IDC_SPIN11,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,114,39,10,14
+    EDITTEXT        IDC_EDITF2,177,110,32,14,ES_AUTOHSCROLL
+    CONTROL         "Spin11",IDC_SPIN12,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,130,39,10,14
+    EDITTEXT        IDC_EDITF3,210,110,32,14,ES_AUTOHSCROLL
+    CONTROL         "Spin11",IDC_SPIN13,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,144,39,10,14
+    EDITTEXT        IDC_EDITF4,243,110,32,14,ES_AUTOHSCROLL
+    CONTROL         "Spin11",IDC_SPIN14,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,159,39,10,14
+    LTEXT           "NINJA",IDC_STATIC,112,127,20,8
+    EDITTEXT        IDC_EDITN1,144,127,32,14,ES_AUTOHSCROLL
+    CONTROL         "Spin11",IDC_SPIN15,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,114,56,10,14
+    EDITTEXT        IDC_EDITN2,177,127,32,14,ES_AUTOHSCROLL
+    CONTROL         "Spin11",IDC_SPIN16,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,130,56,10,14
+    EDITTEXT        IDC_EDITN3,210,127,32,14,ES_AUTOHSCROLL
+    CONTROL         "Spin11",IDC_SPIN17,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,144,56,10,14
+    EDITTEXT        IDC_EDITN4,243,127,32,14,ES_AUTOHSCROLL
+    CONTROL         "Spin11",IDC_SPIN18,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,159,56,10,14
+    LTEXT           "Wizard",IDC_STATIC,112,143,20,8
+    EDITTEXT        IDC_EDITW1,144,143,32,14,ES_AUTOHSCROLL
+    CONTROL         "Spin11",IDC_SPIN19,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,114,73,10,14
+    EDITTEXT        IDC_EDITW2,177,143,32,14,ES_AUTOHSCROLL
+    CONTROL         "Spin11",IDC_SPIN20,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,130,73,10,14
+    EDITTEXT        IDC_EDITW3,210,143,32,14,ES_AUTOHSCROLL
+    CONTROL         "Spin11",IDC_SPIN21,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,146,73,10,14
+    EDITTEXT        IDC_EDITW4,243,143,32,14,ES_AUTOHSCROLL
+    CONTROL         "Spin11",IDC_SPIN22,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,159,73,10,14
+    LTEXT           "PRIEST.",IDC_STATIC,112,159,26,8
+    EDITTEXT        IDC_EDITP1,144,159,32,14,ES_AUTOHSCROLL
+    CONTROL         "Spin11",IDC_SPIN23,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,114,89,10,14
+    EDITTEXT        IDC_EDITP2,177,159,32,14,ES_AUTOHSCROLL
+    CONTROL         "Spin11",IDC_SPIN24,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,130,89,10,14
+    EDITTEXT        IDC_EDITP3,210,159,32,14,ES_AUTOHSCROLL
+    CONTROL         "Spin11",IDC_SPIN25,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,144,89,10,14
+    EDITTEXT        IDC_EDITP4,243,159,32,14,ES_AUTOHSCROLL
+    CONTROL         "Spin11",IDC_SPIN26,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS | UDS_HOTTRACK,159,89,10,14
+    DEFPUSHBUTTON   "OK",IDOK,234,7,50,20
+    PUSHBUTTON      "Cancel",IDCANCEL,234,32,50,20
+    PUSHBUTTON      "Yuk man",IDC_BUTTON_YUKMAN,234,63,50,20
+END
+
+IDD_REPL_C1 DIALOGEX 0, 0, 187, 98
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Replicate sub-class"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_EDIT8,34,50,20,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT9,56,50,20,14,ES_AUTOHSCROLL | WS_DISABLED
+    EDITTEXT        IDC_EDIT10,78,50,20,14,ES_AUTOHSCROLL | WS_DISABLED
+    EDITTEXT        IDC_EDIT11,100,50,20,14,ES_AUTOHSCROLL | WS_DISABLED
+    EDITTEXT        IDC_EDIT12,122,50,20,14,ES_AUTOHSCROLL | WS_DISABLED
+    DEFPUSHBUTTON   "OK",IDOK,74,77,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,130,77,50,14
+    LTEXT           "Copy from:",IDC_STATIC,7,7,39,9
+    EDITTEXT        IDC_EDIT1,12,20,20,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT2,34,20,20,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT3,56,20,20,14,ES_AUTOHSCROLL | WS_DISABLED
+    EDITTEXT        IDC_EDIT4,78,20,20,14,ES_AUTOHSCROLL | WS_DISABLED
+    EDITTEXT        IDC_EDIT5,100,20,20,14,ES_AUTOHSCROLL | WS_DISABLED
+    EDITTEXT        IDC_EDIT6,122,20,20,14,ES_AUTOHSCROLL | WS_DISABLED
+    LTEXT           "Copy to:",IDC_STATIC,7,39,32,8
+    EDITTEXT        IDC_EDIT7,12,50,20,14,ES_AUTOHSCROLL
+END
+
+#if defined(APSTUDIO_INVOKED) || defined(DO_NOT_INCLUDE)
+#if defined(APSTUDIO_INVOKED)
+IDD_EDIT_COMMENT$(DO_NOT_INCLUDE) DIALOG  0, 0, 205, 203
+#else
+IDD_EDIT_COMMENT DIALOG  0, 0, 205, 203
+#endif
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Edit Comment"
+FONT 9, "MS Sans Serif"
+BEGIN
+    LTEXT           "&Name:",IDC_STATIC,7,7,19,8
+    EDITTEXT        IDC_EDIT_NAME,45,7,105,14,ES_AUTOHSCROLL
+    LTEXT           "&Version:",IDC_STATIC,7,27,24,8
+    EDITTEXT        IDC_EDIT_VER,45,27,105,14,ES_AUTOHSCROLL
+    LTEXT           "&Platform:",IDC_STATIC,7,46,27,8
+    EDITTEXT        IDC_EDIT_PLATFORM,45,47,105,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDC_BUTTON_SELECT_PLATFORM,155,47,30,14,NOT WS_VISIBLE | WS_DISABLED
+    LTEXT           "&Author:",IDC_STATIC,7,67,22,8
+    EDITTEXT        IDC_EDIT_AUTHOR,45,67,105,14,ES_AUTOHSCROLL
+    LTEXT           "&Date:",IDC_STATIC,7,87,18,8
+    EDITTEXT        IDC_EDIT_DATE,45,87,105,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Today",IDC_BUTTON_TODAY,155,87,30,14
+    LTEXT           "&Comments:",IDC_STATIC,7,107,33,8
+    EDITTEXT        IDC_EDIT_COMMENTS,45,107,105,42,ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,88,182,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,148,182,50,14
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(DO_NOT_INCLUDE)
+#if defined(APSTUDIO_INVOKED)
+IDD_QUERY_IMPORT$(DO_NOT_INCLUDE) DIALOG  0, 0, 230, 110
+#else
+IDD_QUERY_IMPORT DIALOG  0, 0, 230, 110
+#endif
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Import Query"
+FONT 9, "MS Sans Serif"
+BEGIN
+    LTEXT           "File:",IDC_STATIC,7,7,216,8
+    EDITTEXT        IDC_EDIT_FILE_IN,7,17,185,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDC_BUTTON_BROWSE,197,17,20,14
+    LTEXT           "When your dat file has already occupied same entry to be imported:",IDC_STATIC,7,35,216,8
+    COMBOBOX        IDC_COMBO_OVERWRITE,7,47,95,105,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Import",IDOK,7,80,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,65,80,50,14
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(DO_NOT_INCLUDE)
+#if defined(APSTUDIO_INVOKED)
+IDD_RES_IMPORT$(DO_NOT_INCLUDE) DIALOG  0, 0, 238, 136
+#else
+IDD_RES_IMPORT DIALOG  0, 0, 238, 136
+#endif
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Import Result"
+FONT 9, "MS Sans Serif"
+BEGIN
+    LTEXT           "Log:",IDC_STATIC,7,7,14,8
+    EDITTEXT        IDC_EDIT_LOG,7,17,220,85,ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_NOHIDESEL | ES_READONLY | WS_VSCROLL
+    LTEXT           "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",IDC_STATIC_RES,7,107,165,16
+    PUSHBUTTON      "Close",IDOK,177,109,50,14
+END
+#endif
+
+IDD_EDITV_WV DIALOGEX 0, 0, 175, 87
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "WV"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "Value:",IDC_STATIC,0,0,140,8
+    EDITTEXT        IDC_EDIT_VAL,0,10,140,14,ES_AUTOHSCROLL
+    LTEXT           "Type:",IDC_STATIC,0,30,140,8
+    CONTROL         "Signed decimal integer",IDC_RADIO_D10S,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,0,41,140,10
+    CONTROL         "Unsgned decimal integer",IDC_RADIO_D10U,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,0,51,140,10
+    CONTROL         "Hexadecimal integer",IDC_RADIO_D16,"Button",BS_AUTORADIOBUTTON,0,61,140,10
+    CONTROL         "Binary",IDC_RADIO_D2,"Button",BS_AUTORADIOBUTTON,0,71,140,10
+END
+
+IDD_EDITV_FLAGS DIALOGEX 0, 0, 175, 175
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Flags"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "Flags:",IDC_STATIC,0,0,174,8
+    LISTBOX         IDC_LIST_FLAGS,0,10,165,140,NOT LBS_NOTIFY | LBS_MULTIPLESEL | LBS_NOINTEGRALHEIGHT | LBS_DISABLENOSCROLL | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_EDITV_B1313 DIALOGEX 0, 0, 175, 175
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "B1313"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "First byte:",IDC_STATIC_LB,0,0,165,8
+    COMBOBOX        IDC_COMBO_L3,0,10,65,200,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "IGNORE",IDC_CHECK_L3,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,0,30,65,10
+    CONTROL         "-",IDC_CHECK_L4,"Button",BS_AUTOCHECKBOX,0,40,65,10
+    CONTROL         "-",IDC_CHECK_L5,"Button",BS_AUTOCHECKBOX,0,50,65,10
+    CONTROL         "-",IDC_CHECK_L6,"Button",BS_AUTOCHECKBOX,0,60,65,10
+    CONTROL         "-",IDC_CHECK_L7,"Button",BS_AUTOCHECKBOX,0,70,55,10
+    LTEXT           "Second byte:",IDC_STATIC_HB,0,85,165,8
+    COMBOBOX        IDC_COMBO_H3,0,95,65,200,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "IGNORE",IDC_CHECK_H3,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,0,115,65,10
+    CONTROL         "-",IDC_CHECK_H4,"Button",BS_AUTOCHECKBOX,0,125,65,10
+    CONTROL         "-",IDC_CHECK_H5,"Button",BS_AUTOCHECKBOX,0,135,65,10
+    CONTROL         "-",IDC_CHECK_H6,"Button",BS_AUTOCHECKBOX,0,145,65,10
+    CONTROL         "-",IDC_CHECK_H7,"Button",BS_AUTOCHECKBOX,0,155,65,10
+END
+
+IDD_EDITV_MSITEMS DIALOGEX 0, 0, 207, 192
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "MSITEMS"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "Selected items:",IDC_STATIC,0,0,101,8
+    CONTROL         "List1",IDC_LIST_SEL,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | WS_BORDER | WS_TABSTOP,0,10,101,146
+    LTEXT           "All usable items:",IDC_STATIC,103,0,103,8
+    CONTROL         "",IDC_LIST_ALL,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,103,10,103,146
+    LTEXT           "* Add item: Drag item(s) from right view, and drop to left view.",IDC_STATIC_HLP1,0,158,206,8
+    LTEXT           "* Delete item: Drag item(s) from left, and drop to right.",IDC_STATIC_HLP2,0,168,206,8
+    LTEXT           "* Order item: Drag and drop item(s) inside left view.",IDC_STATIC_HLP3,0,178,206,8
+END
+
+IDD_ADD_IMAGE2 DIALOGEX 0, 0, 190, 83
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Edit"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    CONTROL         "Tab1",IDC_TAB_INPLACE,"SysTabControl32",TCS_BUTTONS | NOT WS_VISIBLE,7,40,176,16
+    LTEXT           "Entry:",IDC_STATIC,7,7,176,8
+    EDITTEXT        IDC_EDIT_C1,7,20,20,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_C2,30,20,20,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_C3,53,20,20,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_C4,76,20,20,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_C5,99,20,20,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_C6,122,20,20,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,75,62,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,131,62,50,14
+END
+
+IDD_EDITV_TEXT DIALOGEX 0, 0, 175, 76
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "TEXT"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "Text:",IDC_STATIC,0,0,140,8
+    EDITTEXT        IDC_EDIT_VAL,0,10,140,56,ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL
+END
+
+IDD_EDITV_OOFITEM DIALOGEX 0, 0, 175, 175
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "OOFITEM"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "Category:",IDC_STATIC,0,0,165,8
+    COMBOBOX        IDC_COMBO_CAT,0,10,75,135,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Item:",IDC_STATIC,0,25,165,8
+    LISTBOX         IDC_LIST_ITEM,0,35,165,70,NOT LBS_NOTIFY | LBS_NOINTEGRALHEIGHT | LBS_DISABLENOSCROLL | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Count:",IDC_STATIC_CNT,0,110,165,8
+    EDITTEXT        IDC_EDIT_COUNT,0,120,40,14,ES_AUTOHSCROLL
+    LTEXT           "Random (plus factor?):",IDC_STATIC_RND,0,135,165,8
+    EDITTEXT        IDC_EDIT_RAND,0,145,40,14,ES_AUTOHSCROLL
+END
+
+IDD_EDITV_SKTEXT DIALOGEX 0, 0, 241, 297
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "SKTEXT"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "Command:",IDC_STATIC,0,0,165,8
+    EDITTEXT        IDC_EDIT_NAME,0,10,105,14,ES_AUTOHSCROLL
+    LTEXT           "Contents:",IDC_STATIC,0,25,165,8
+    LTEXT           "",IDC_STATIC_GRIDCTRL,0,35,234,239,SS_SUNKEN | NOT WS_VISIBLE
+    LTEXT           "These interpretations are supplied by Suule and Sphenx, thanks!",IDC_STATIC_THX1,0,278,241,8
+    LTEXT           "Check'em at: Digging deeper into the data files",IDC_STATIC_SEE_POST,0,288,241,8
+END
+
+#if defined(APSTUDIO_INVOKED) || defined(DO_NOT_INCLUDE)
+#if defined(APSTUDIO_INVOKED)
+IDD_SIIV_ATLAS$(DO_NOT_INCLUDE) DIALOGEX 0, 0, 55, 70
+#else
+IDD_SIIV_ATLAS DIALOGEX 0, 0, 55, 70
+#endif
+STYLE DS_SETFONT | WS_CHILD
+FONT 9, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    LTEXT           "Atlas:",IDC_STATIC,3,3,18,8
+    LTEXT           "",IDC_STATIC_ATLAS,3,15,45,50,SS_NOTIFY,WS_EX_CLIENTEDGE
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(DO_NOT_INCLUDE)
+#if defined(APSTUDIO_INVOKED)
+IDD_NOOP$(DO_NOT_INCLUDE) DIALOG  0, 0, 187, 93
+#else
+IDD_NOOP DIALOG  0, 0, 187, 93
+#endif
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+FONT 9, "MS Sans Serif"
+BEGIN
+END
+#endif
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 327, 267
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About DM2GDED for skwinspx"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "DM2GDED DM2_EXTENDED_DATABASE Rev.* ... ####-##-##",IDC_STATIC_VER,7,7,313,8
+    CONTROL         "",IDC_RICHEDIT_THX,"RICHEDIT",TCS_HOTTRACK | TCS_VERTICAL | TCS_RAGGEDRIGHT | TCS_MULTISELECT | WS_BORDER | WS_VSCROLL | WS_TABSTOP,7,20,313,101
+    CONTROL         "",IDC_RICHEDIT_CHANGES,"RichEdit20A",ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_READONLY | WS_BORDER | WS_VSCROLL | WS_TABSTOP,7,123,313,114
+    PUSHBUTTON      "OK",IDOK,270,246,50,14
+END
+
+IDD_QUERY_FILE_TYPE DIALOGEX 0, 0, 203, 260
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Open Query"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    GROUPBOX        "Platform selection",IDC_STATIC,7,47,189,36
+    COMBOBOX        IDC_COMBO_PLATFORM,20,61,110,135,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Advanced",IDC_STATIC,7,87,189,144
+    LTEXT           "Charset for TEXT data",IDC_STATIC,20,101,111,8
+    COMBOBOX        IDC_COMBO_LANG,20,111,166,90,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "SND type for Sound entry",IDC_STATIC,20,126,111,8
+    COMBOBOX        IDC_COMBO_SND,20,136,166,120,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Image palette",IDC_STATIC,20,151,111,8
+    COMBOBOX        IDC_COMBO_PAL,20,161,110,120,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Image format",IDC_STATIC,20,180,111,8
+    COMBOBOX        IDC_COMBO_PICFMT,20,189,110,120,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Restrict image palette",IDC_CHECK_FREEDOM_PALETTE,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,20,209,111,10
+    PUSHBUTTON      "&Auto detect",IDRETRY,7,239,50,14
+    DEFPUSHBUTTON   "Open",IDOK,90,239,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,146,239,50,14
+    LTEXT           "File:",IDC_STATIC,7,7,13,8
+    EDITTEXT        IDC_EDIT_FILEIN,7,17,189,14,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Just exact selection make it load correctly.",IDC_STATIC,7,35,189,8
+END
+
+IDD_ADD_IMAGE DIALOGEX 0, 0, 195, 243
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Add Image"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "Entry:",IDC_STATIC,7,7,181,8
+    EDITTEXT        IDC_EDIT_C1,7,20,20,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_C2,30,20,20,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_C3,53,20,20,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_C4,76,20,20,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_C5,99,20,20,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_C6,122,20,20,14,ES_AUTOHSCROLL
+    LTEXT           "Value:",IDC_STATIC,7,40,181,8
+    EDITTEXT        IDC_EDIT_VAL,7,50,140,14,ES_AUTOHSCROLL
+    LTEXT           "Flags:",IDC_STATIC,7,68,181,8
+    LISTBOX         IDC_LIST_FLAGS,7,78,165,50,NOT LBS_NOTIFY | LBS_MULTIPLESEL | LBS_NOINTEGRALHEIGHT | LBS_DISABLENOSCROLL | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Text:",IDC_STATIC,7,130,181,8
+    EDITTEXT        IDC_EDIT_TEXT,7,142,165,36,ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL
+    LTEXT           "Sound:",IDC_STATIC,7,182,181,8
+    PUSHBUTTON      "Edit...",IDC_BUTTON_EDIT,7,197,50,14
+    DEFPUSHBUTTON   "Add",IDOK,7,219,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,64,219,50,14
+END
+
+IDD_EDIT_PCM DIALOGEX 0, 0, 145, 135
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Edit PCM"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "Approximate size:",IDC_STATIC,7,7,60,8
+    EDITTEXT        IDC_EDIT_HINT,73,7,65,14,ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER
+    PUSHBUTTON      "Play",IDC_BUTTON_SND_PLAY,7,25,50,14
+    PUSHBUTTON      "From File...",IDC_BUTTON_SND_FROM_FILE,7,45,50,14
+    PUSHBUTTON      "Copy",IDC_BUTTON_SND_COPY,7,65,50,14
+    PUSHBUTTON      "Paste",IDC_BUTTON_SND_PASTE,7,85,50,14
+    DEFPUSHBUTTON   "Close",IDOK,88,114,50,14
+END
+
+#if defined(APSTUDIO_INVOKED) || defined(DO_NOT_INCLUDE)
+#if defined(APSTUDIO_INVOKED)
+IDD_IMAGE_FLAGS$(DO_NOT_INCLUDE) DIALOG  0, 0, 155, 105
+#else
+IDD_IMAGE_FLAGS DIALOG  0, 0, 155, 105
+#endif
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "More"
+FONT 9, "MS Sans Serif"
+BEGIN
+    LTEXT           "Width:",IDC_STATIC,7,7,41,8
+    CONTROL         "0x8000:",IDC_CHECK_W8000,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,20,41,10
+    CONTROL         "0x4000:",IDC_CHECK_W4000,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,30,41,10
+    CONTROL         "0x2000:",IDC_CHECK_W2000,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,40,41,10
+    CONTROL         "0x1000:",IDC_CHECK_W1000,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,50,41,10
+    CONTROL         "0x0800:",IDC_CHECK_W0800,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,60,41,10
+    CONTROL         "0x0400:",IDC_CHECK_W0400,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,70,41,10
+    CONTROL         "0x0200:",IDC_CHECK_W0200,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,80,41,10
+    LTEXT           "Height:",IDC_STATIC,50,7,41,8
+    CONTROL         "0x8000:",IDC_CHECK_H8000,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,50,20,41,10
+    CONTROL         "0x4000:",IDC_CHECK_H4000,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,50,30,41,10
+    CONTROL         "0x2000:",IDC_CHECK_H2000,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,50,40,41,10
+    CONTROL         "0x1000:",IDC_CHECK_H1000,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,50,50,41,10
+    CONTROL         "0x0800:",IDC_CHECK_H0800,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,50,60,41,10
+    CONTROL         "0x0400:",IDC_CHECK_H0400,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,50,70,41,10
+    CONTROL         "0x0200:",IDC_CHECK_H0200,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,50,80,41,10
+    DEFPUSHBUTTON   "OK",IDOK,98,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,98,25,50,14
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(DO_NOT_INCLUDE)
+#if defined(APSTUDIO_INVOKED)
+IDD_EXPORT_HINT$(DO_NOT_INCLUDE) DIALOG  0, 0, 135, 55
+#else
+IDD_EXPORT_HINT DIALOG  0, 0, 135, 55
+#endif
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Export Inprogress"
+FONT 9, "MS Sans Serif"
+BEGIN
+    LTEXT           "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",IDC_STATIC_CUR_FILE,7,12,104,8
+    LTEXT           "xxxxx/xxxxx",IDC_STATIC_CUR_PERCENT,72,27,39,8
+END
+#endif
+
+IDD_EDIT_IMG_FLG DIALOGEX 0, 0, 187, 93
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Edit image flags"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "X offset:",IDC_STATIC,7,7,26,8
+    LTEXT           "Min = -128, Max = 127",IDC_STATIC_RANGE_X,40,7,81,8
+    EDITTEXT        IDC_EDIT_POS_X,7,17,40,14,ES_AUTOHSCROLL
+    CONTROL         "Spin1",IDC_SPIN_POS_X,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS,51,17,9,14
+    LTEXT           "Y offset:",IDC_STATIC,7,35,26,8
+    LTEXT           "Min = -128, Max = 127",IDC_STATIC_RANGE_Y,40,35,81,8
+    EDITTEXT        IDC_EDIT_POS_Y,7,45,40,14,ES_AUTOHSCROLL
+    CONTROL         "Spin1",IDC_SPIN_POS_Y,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS,51,45,9,14
+    CONTROL         "Exist image uses image offset entry",IDC_CHECK_USE0C,
+                    "Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,7,65,173,10
+    DEFPUSHBUTTON   "OK",IDOK,130,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,130,24,50,14
+END
+
+IDD_INPROGRESS DIALOGEX 3, 3, 211, 43
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
+CAPTION "Inprogress..."
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    CONTROL         "This action takes a while. wait please...",IDC_STATIC,
+                    "Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | WS_GROUP,7,7,197,16
+    CONTROL         "Progress1",IDC_PROGRESS_HINT,"msctls_progress32",WS_BORDER | 0x1,7,26,191,10
+END
+
+IDD_EDITV_ICONANIM DIALOGEX 0, 0, 175, 175
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Icon anim"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "Anim starts when you ...",IDC_STATIC,0,0,71,8
+    CONTROL         "Equip the item (e.g. Torch)",IDC_CHECK_AF8000,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,10,103,10
+    CONTROL         "Invoke command selection (e.g. Tech shield)",IDC_CHECK_AF4000,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,20,158,10
+    LTEXT           "Anim type.",IDC_STATIC,0,36,32,8
+    CONTROL         "Always invoke anim. (e.g. Vi Potion)",IDC_RADIO_ASF0,
+                    "Button",BS_AUTORADIOBUTTON | WS_GROUP,0,47,129,10
+    CONTROL         "Compass",IDC_RADIO_ASF2,"Button",BS_AUTORADIOBUTTON,0,57,43,10
+    CONTROL         "Charge rate. (e.g. Bota, Tunkard)",IDC_RADIO_ASF3,
+                    "Button",BS_AUTORADIOBUTTON,0,67,122,10
+    CONTROL         "Always invoke anim on random frame rate.",IDC_RADIO_ASF5,
+                    "Button",BS_AUTORADIOBUTTON,0,77,149,10
+    CONTROL         "Combo. Charge rate && invoke anim. (e.g. Torch)",IDC_RADIO_ASF6,
+                    "Button",BS_AUTORADIOBUTTON,0,87,168,10
+    LTEXT           "Number of frames.",IDC_STATIC,0,102,59,8
+    LTEXT           "Simple count:",IDC_STATIC_SIMPLE,0,116,40,8
+    COMBOBOX        IDC_COMBO_FRAMECNT,0,126,48,172,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Complex count:",IDC_STATIC_COMPLEX,60,116,50,8
+    LTEXT           "Max frames",IDC_STATIC,60,130,36,8
+    COMBOBOX        IDC_COMBO_MAXFRAMECNT,105,126,36,168,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Frames/anim",IDC_STATIC,60,145,40,8
+    COMBOBOX        IDC_COMBO_FPA,105,141,36,167,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_EDITV_IOFF DIALOGEX 0, 0, 175, 68
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Image offset"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "X offset:",IDC_STATIC,0,0,26,8
+    LTEXT           "Min = -128, Max = 127",IDC_STATIC_RANGE_X,33,0,81,8
+    EDITTEXT        IDC_EDIT_POS_X,0,10,40,14,ES_AUTOHSCROLL
+    CONTROL         "Spin1",IDC_SPIN_POS_X,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS,44,10,10,14
+    LTEXT           "Y offset:",IDC_STATIC,0,28,26,8
+    LTEXT           "Min = -128, Max = 127",IDC_STATIC_RANGE_Y,33,28,81,8
+    EDITTEXT        IDC_EDIT_POS_Y,0,38,40,14,ES_AUTOHSCROLL
+    CONTROL         "Spin1",IDC_SPIN_POS_Y,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS,44,38,10,14
+END
+
+IDD_EDITV_RUNE DIALOGEX 0, 0, 151, 110
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Rune selector"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "Select a rune:",IDC_STATIC,0,0,146,8
+    LTEXT           "18 RUNES HERE",IDC_RUNE_SEL,0,10,141,59,SS_NOTIFY,WS_EX_CLIENTEDGE
+END
+
+IDD_EDITV_SELECT DIALOGEX 0, 0, 175, 190
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Selection"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "Select one item:",IDC_STATIC,0,0,174,8
+    CONTROL         "",IDC_LIST_SELECT,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,0,15,165,175
+END
+
+IDD_EDITV_CREATURE DIALOGEX 0, 0, 175, 190
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Creature"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "Select one creature:",IDC_STATIC,0,0,174,8
+    CONTROL         "",IDC_PORTRAIT,"Static",SS_BITMAP | SS_CENTERIMAGE | WS_DISABLED,0,12,170,155
+    COMBOBOX        IDC_COMBO_CREATURE,0,175,174,133,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_PP_NI2, DIALOG
+    BEGIN
+        VERTGUIDE, 227
+    END
+
+    IDD_DIFF_EXPORT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 204
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 120
+    END
+
+    IDD_DIFF_IMPORT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 208
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 104
+    END
+
+    IDD_WAIT_EDIT, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 70
+    END
+
+    IDD_OPEN_INFO, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 264
+        VERTGUIDE, 65
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 122
+        HORZGUIDE, 25
+        HORZGUIDE, 40
+        HORZGUIDE, 55
+        HORZGUIDE, 70
+        HORZGUIDE, 85
+    END
+
+    IDD_SEL_CM, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 328
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 217
+    END
+
+    IDD_EDIT_HEROSTAT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 284
+        VERTGUIDE, 53
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 183
+    END
+
+    IDD_REPL_C1, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 91
+    END
+
+    "IDD_EDIT_COMMENT$(DO_NOT_INCLUDE)", DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 198
+        VERTGUIDE, 45
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 196
+    END
+
+    "IDD_QUERY_IMPORT$(DO_NOT_INCLUDE)", DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 223
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 103
+    END
+
+    "IDD_RES_IMPORT$(DO_NOT_INCLUDE)", DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 231
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 129
+    END
+
+    IDD_EDITV_MSITEMS, DIALOG
+    BEGIN
+        VERTGUIDE, 101
+        BOTTOMMARGIN, 182
+    END
+
+    IDD_ADD_IMAGE2, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 183
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 76
+    END
+
+    IDD_EDITV_TEXT, DIALOG
+    BEGIN
+        RIGHTMARGIN, 147
+    END
+
+    IDD_EDITV_SKTEXT, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 247
+    END
+
+    "IDD_NOOP$(DO_NOT_INCLUDE)", DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 86
+    END
+
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 320
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 260
+    END
+
+    IDD_QUERY_FILE_TYPE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 196
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 253
+    END
+
+    IDD_ADD_IMAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 188
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 236
+        HORZGUIDE, 20
+    END
+
+    IDD_EDIT_PCM, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 138
+        VERTGUIDE, 73
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 128
+    END
+
+    "IDD_IMAGE_FLAGS$(DO_NOT_INCLUDE)", DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 148
+        VERTGUIDE, 50
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 98
+    END
+
+    "IDD_EXPORT_HINT$(DO_NOT_INCLUDE)", DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 128
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+
+    IDD_EDIT_IMG_FLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 86
+    END
+
+    IDD_INPROGRESS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 204
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 36
+    END
+
+    IDD_EDITV_IOFF, DIALOG
+    BEGIN
+        RIGHTMARGIN, 114
+    END
+
+    IDD_EDITV_SELECT, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 175
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+#if defined(APSTUDIO_INVOKED) || defined(DO_NOT_INCLUDE)
+#if defined(APSTUDIO_INVOKED)
+IDD_QUERY_IMPORT$(DO_NOT_INCLUDE) DLGINIT
+#else
+IDD_QUERY_IMPORT DLGINIT
+#endif
+BEGIN
+    IDC_COMBO_OVERWRITE, 0x403, 17, 0
+0x4c41, 0x4157, 0x5359, 0x4f20, 0x4556, 0x5752, 0x4952, 0x4554, "\000" 
+    IDC_COMBO_OVERWRITE, 0x403, 12, 0
+0x4c41, 0x4157, 0x5359, 0x5320, 0x494b, 0x0050, 
+    0
+END
+#endif
+
+IDD_EDITV_B1313 DLGINIT
+BEGIN
+    IDC_COMBO_L3, 0x403, 2, 0
+0x0030, 
+    IDC_COMBO_L3, 0x403, 2, 0
+0x0031, 
+    IDC_COMBO_L3, 0x403, 2, 0
+0x0032, 
+    IDC_COMBO_L3, 0x403, 2, 0
+0x0033, 
+    IDC_COMBO_L3, 0x403, 2, 0
+0x0034, 
+    IDC_COMBO_L3, 0x403, 2, 0
+0x0035, 
+    IDC_COMBO_L3, 0x403, 2, 0
+0x0036, 
+    IDC_COMBO_L3, 0x403, 2, 0
+0x0037, 
+    IDC_COMBO_H3, 0x403, 2, 0
+0x0030, 
+    IDC_COMBO_H3, 0x403, 2, 0
+0x0031, 
+    IDC_COMBO_H3, 0x403, 2, 0
+0x0032, 
+    IDC_COMBO_H3, 0x403, 2, 0
+0x0033, 
+    IDC_COMBO_H3, 0x403, 2, 0
+0x0034, 
+    IDC_COMBO_H3, 0x403, 2, 0
+0x0035, 
+    IDC_COMBO_H3, 0x403, 2, 0
+0x0036, 
+    IDC_COMBO_H3, 0x403, 2, 0
+0x0037, 
+    0
+END
+
+IDD_EDITV_OOFITEM DLGINIT
+BEGIN
+    IDC_COMBO_CAT, 0x403, 8, 0
+0x6557, 0x7061, 0x6e6f, 0x0073, 
+    IDC_COMBO_CAT, 0x403, 8, 0
+0x6c43, 0x746f, 0x6568, 0x0073, 
+    IDC_COMBO_CAT, 0x403, 14, 0
+0x694d, 0x6373, 0x6c65, 0x616c, 0x656e, 0x756f, 0x0073, 
+    IDC_COMBO_CAT, 0x403, 8, 0
+0x6f50, 0x6974, 0x6e6f, 0x0073, 
+    0
+END
+
+IDD_QUERY_FILE_TYPE DLGINIT
+BEGIN
+    IDC_COMBO_LANG, 0x403, 6, 0
+0x614c, 0x6974, 0x006e, 
+    IDC_COMBO_LANG, 0x403, 14, 0
+0x614c, 0x6974, 0x206e, 0x5028, 0x616c, 0x6e69, 0x0029, 
+    IDC_COMBO_LANG, 0x403, 24, 0
+0x4350, 0x3839, 0x7878, 0x4c20, 0x7461, 0x6e69, 0x2620, 0x4a20, 0x7061, 
+0x6e61, 0x7365, 0x0065, 
+    IDC_COMBO_LANG, 0x403, 45, 0
+0x5350, 0x562f, 0x6f20, 0x2072, 0x614d, 0x2063, 0x504a, 0x6f20, 0x2072, 
+0x4d46, 0x542d, 0x776f, 0x736e, 0x202c, 0x614c, 0x6974, 0x206e, 0x2026, 
+0x614a, 0x6170, 0x656e, 0x6573, "\000" 
+    IDC_COMBO_SND, 0x403, 8, 0
+0x6e55, 0x6e6b, 0x776f, 0x006e, 
+    IDC_COMBO_SND, 0x403, 10, 0
+0x4e53, 0x3544, 0x532f, 0x444e, 0x0036, 
+    IDC_COMBO_SND, 0x403, 5, 0
+0x4e53, 0x3344, "\000" 
+    IDC_COMBO_SND, 0x403, 5, 0
+0x4e53, 0x3744, "\000" 
+    IDC_COMBO_SND, 0x403, 5, 0
+0x4e53, 0x4144, "\000" 
+    IDC_COMBO_SND, 0x403, 5, 0
+0x4e53, 0x3944, "\000" 
+    IDC_COMBO_PAL, 0x403, 11, 0
+0x7246, 0x6d6f, 0x6920, 0x616d, 0x6567, "\000" 
+    IDC_COMBO_PAL, 0x403, 17, 0
+0x7246, 0x6d6f, 0x7220, 0x7761, 0x7020, 0x6c61, 0x7465, 0x6574, "\000" 
+    IDC_COMBO_PAL, 0x403, 19, 0
+0x7246, 0x6d6f, 0x7320, 0x6563, 0x656e, 0x7020, 0x6c61, 0x7465, 0x6574, 
+"\000" 
+    IDC_COMBO_PICFMT, 0x403, 27, 0
+0x4d44, 0x2032, 0x6576, 0x7372, 0x6f69, 0x736e, 0x6320, 0x616c, 0x7373, 
+0x6369, 0x7320, 0x7974, 0x656c, "\000" 
+    IDC_COMBO_PICFMT, 0x403, 20, 0
+0x4d44, 0x2032, 0x4350, 0x202c, 0x614d, 0x2c63, 0x4d20, 0x6361, 0x4a20, 
+0x0050, 
+    IDC_COMBO_PICFMT, 0x403, 9, 0
+0x4d44, 0x2032, 0x6553, 0x6167, "\000" 
+    IDC_COMBO_PICFMT, 0x403, 13, 0
+0x4d44, 0x2032, 0x4d46, 0x542d, 0x776f, 0x736e, "\000" 
+    0
+END
+
+IDD_EDITV_ICONANIM DLGINIT
+BEGIN
+    IDC_COMBO_FRAMECNT, 0x403, 2, 0
+0x0030, 
+    IDC_COMBO_FRAMECNT, 0x403, 2, 0
+0x0031, 
+    IDC_COMBO_FRAMECNT, 0x403, 2, 0
+0x0032, 
+    IDC_COMBO_FRAMECNT, 0x403, 2, 0
+0x0033, 
+    IDC_COMBO_FRAMECNT, 0x403, 2, 0
+0x0034, 
+    IDC_COMBO_FRAMECNT, 0x403, 2, 0
+0x0035, 
+    IDC_COMBO_FRAMECNT, 0x403, 2, 0
+0x0036, 
+    IDC_COMBO_FRAMECNT, 0x403, 2, 0
+0x0037, 
+    IDC_COMBO_FRAMECNT, 0x403, 2, 0
+0x0038, 
+    IDC_COMBO_FRAMECNT, 0x403, 2, 0
+0x0039, 
+    IDC_COMBO_FRAMECNT, 0x403, 3, 0
+0x3031, "\000" 
+    IDC_COMBO_FRAMECNT, 0x403, 3, 0
+0x3131, "\000" 
+    IDC_COMBO_FRAMECNT, 0x403, 3, 0
+0x3231, "\000" 
+    IDC_COMBO_FRAMECNT, 0x403, 3, 0
+0x3331, "\000" 
+    IDC_COMBO_FRAMECNT, 0x403, 3, 0
+0x3431, "\000" 
+    IDC_COMBO_FRAMECNT, 0x403, 3, 0
+0x3531, "\000" 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 2, 0
+0x0030, 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 2, 0
+0x0031, 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 2, 0
+0x0032, 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 2, 0
+0x0033, 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 2, 0
+0x0034, 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 2, 0
+0x0035, 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 2, 0
+0x0036, 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 2, 0
+0x0037, 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 2, 0
+0x0038, 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 2, 0
+0x0039, 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 3, 0
+0x3031, "\000" 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 3, 0
+0x3131, "\000" 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 3, 0
+0x3231, "\000" 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 3, 0
+0x3331, "\000" 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 3, 0
+0x3431, "\000" 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 3, 0
+0x3531, "\000" 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 3, 0
+0x3631, "\000" 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 3, 0
+0x3731, "\000" 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 3, 0
+0x3831, "\000" 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 3, 0
+0x3931, "\000" 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 3, 0
+0x3032, "\000" 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 3, 0
+0x3132, "\000" 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 3, 0
+0x3232, "\000" 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 3, 0
+0x3332, "\000" 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 3, 0
+0x3432, "\000" 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 3, 0
+0x3532, "\000" 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 3, 0
+0x3632, "\000" 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 3, 0
+0x3732, "\000" 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 3, 0
+0x3832, "\000" 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 3, 0
+0x3932, "\000" 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 3, 0
+0x3033, "\000" 
+    IDC_COMBO_MAXFRAMECNT, 0x403, 3, 0
+0x3133, "\000" 
+    IDC_COMBO_FPA, 0x403, 2, 0
+0x0030, 
+    IDC_COMBO_FPA, 0x403, 2, 0
+0x0031, 
+    IDC_COMBO_FPA, 0x403, 2, 0
+0x0032, 
+    IDC_COMBO_FPA, 0x403, 2, 0
+0x0033, 
+    IDC_COMBO_FPA, 0x403, 2, 0
+0x0034, 
+    IDC_COMBO_FPA, 0x403, 2, 0
+0x0035, 
+    IDC_COMBO_FPA, 0x403, 2, 0
+0x0036, 
+    IDC_COMBO_FPA, 0x403, 2, 0
+0x0037, 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+#if defined(APSTUDIO_INVOKED) || defined(DO_NOT_INCLUDE)
+#if defined(APSTUDIO_INVOKED)
+IDR_DM2SIIV$(DO_NOT_INCLUDE) ACCELERATORS 
+#else
+IDR_DM2SIIV ACCELERATORS 
+#endif
+BEGIN
+    VK_F4,          ID_FILE_CLOSE,          VIRTKEY, ALT, NOINVERT
+END
+#endif
+
+IDR_MAINFRAME ACCELERATORS 
+BEGIN
+    "0",            ID_CTRL_TREEVIEW,       VIRTKEY, ALT, NOINVERT
+    "0",            ID_CTRL_GRIDVIEW,       VIRTKEY, SHIFT, ALT, NOINVERT
+    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
+    VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
+    VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
+    VK_PROCESSKEY,  ID_TEST,                VIRTKEY, SHIFT, NOINVERT
+END
+
+IDR_HEXEDIT ACCELERATORS 
+BEGIN
+    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL, NOINVERT
+    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT, NOINVERT
+    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT, NOINVERT
+    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+#if defined(APSTUDIO_INVOKED) || defined(DO_NOT_INCLUDE)
+#if defined(APSTUDIO_INVOKED)
+IDR_DM2SIIV$(DO_NOT_INCLUDE) TOOLBAR  16, 15
+#else
+IDR_DM2SIIV TOOLBAR  16, 15
+#endif
+BEGIN
+    BUTTON      ID_RENDER_ENGINE_PCAT
+    BUTTON      ID_RENDER_ENGINE_AMIGA
+    BUTTON      ID_RENDER_ENGINE_PC9801
+    SEPARATOR
+    BUTTON      ID_RENDER_SCENE_0
+    BUTTON      ID_RENDER_SCENE_1
+    BUTTON      ID_RENDER_SCENE_2
+    BUTTON      ID_RENDER_SCENE_3
+    BUTTON      ID_RENDER_SCENE_4
+    BUTTON      ID_RENDER_SCENE_5
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(DO_NOT_INCLUDE)
+#if defined(APSTUDIO_INVOKED)
+IDR_EDPIC$(DO_NOT_INCLUDE) TOOLBAR  16, 15
+#else
+IDR_EDPIC TOOLBAR  16, 15
+#endif
+BEGIN
+    BUTTON      ID_FILE_SAVE_PIC
+    SEPARATOR
+    BUTTON      ID_MOVE_BACK
+    BUTTON      ID_MOVE_FRONT
+    SEPARATOR
+    BUTTON      ID_FILE_MODE_PREVIEW
+    BUTTON      ID_FILE_MODE_EDIT
+    SEPARATOR
+    BUTTON      ID_SCENE_NO
+    BUTTON      ID_SCENE_0
+    BUTTON      ID_SCENE_1
+    BUTTON      ID_SCENE_2
+    BUTTON      ID_SCENE_3
+    BUTTON      ID_SCENE_4
+    BUTTON      ID_SCENE_5
+    SEPARATOR
+    BUTTON      ID_SCENE_FORCE_PAL_NO
+    BUTTON      ID_SCENE_FORCE_PAL_0
+    BUTTON      ID_SCENE_FORCE_PAL_1
+    BUTTON      ID_SCENE_FORCE_PAL_2
+    BUTTON      ID_SCENE_FORCE_PAL_3
+    BUTTON      ID_SCENE_FORCE_PAL_4
+    BUTTON      ID_SCENE_FORCE_PAL_5
+END
+#endif
+
+IDR_MAINFRAME TOOLBAR  16, 15
+BEGIN
+    BUTTON      ID_FILE_OPEN
+    BUTTON      ID_FILE_SAVE
+    SEPARATOR
+    BUTTON      ID_OPT_UWV_SIGNED
+    BUTTON      ID_OPT_UWV_UNSIGNED
+    BUTTON      ID_OPT_UWV_HEX
+    BUTTON      ID_OPT_UWV_FLAGS
+    SEPARATOR
+    BUTTON      ID_APP_ABOUT
+END
+
+#if defined(APSTUDIO_INVOKED) || defined(DO_NOT_INCLUDE)
+#if defined(APSTUDIO_INVOKED)
+IDR_EXPORTDATFRAME$(DO_NOT_INCLUDE) TOOLBAR  16, 15
+#else
+IDR_EXPORTDATFRAME TOOLBAR  16, 15
+#endif
+BEGIN
+    BUTTON      ID_FILE_EXPORT_NOW
+    BUTTON      ID_FILE_EXPORT_QUICK_NOW
+END
+#endif
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 0,0,0,0
+ PRODUCTVERSION 0,0,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "FileDescription", "DM2GDED for skwinspx"
+            VALUE "FileVersion", "0, 0, 0, 0"
+            VALUE "InternalName", "DM2GDED"
+            VALUE "LegalCopyright", "Copyright (C) 2003, 2007, 2010, 2011, 2014"
+            VALUE "OriginalFilename", "DM2GDED.EXE"
+            VALUE "ProductName", "DM2GDED Application"
+            VALUE "ProductVersion", "0, 0, 0, 0"
+            VALUE "ReleaseDate", "2014-03-18"
+            VALUE "Rev", "9"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// RTF
+//
+
+IDR_RTF_ABOUT           RTF                     "res\\About.rtf"
+IDR_RTF_CHANGES         RTF                     "res\\CHANGES.rtf"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDR_MAINFRAME           "DM2GDED\nOnly top-level frame resource purpose"
+    IDR_EXPORTDATFRAME      "DM2GDED"
+END
+
+STRINGTABLE 
+BEGIN
+    IDR_HEXEDIT             "HexEdit"
+END
+
+STRINGTABLE 
+BEGIN
+    AFX_IDS_APP_TITLE       "DM2GDED"
+    AFX_IDS_IDLEMESSAGE     "Ready"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_INDICATOR_EXT        "EXT"
+    ID_INDICATOR_CAPS       "CAP"
+    ID_INDICATOR_NUM        "NUM"
+    ID_INDICATOR_SCRL       "SCRL"
+    ID_INDICATOR_OVR        "OVR"
+    ID_INDICATOR_REC        "REC"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_FILE_NEW             "Create a new document\nNew"
+    ID_FILE_OPEN            "Open an existing document\nOpen"
+    ID_FILE_CLOSE           "Close the active document\nClose"
+    ID_FILE_SAVE            "Save the active document\nSave"
+    ID_FILE_SAVE_AS         "Save the active document with a new name\nSave As"
+    ID_FILE_NEW2            "Create a new document\nNew"
+    ID_FILE_OPEN2           "Open an existing document\nOpen"
+    ID_FILE_SAVE2           "Save the active document\nSave"
+    ID_FILE_SAVE_AS2        "Save the active document with a new name\nSave As"
+    ID_FILE_NEW3            "Create a new document\nNew"
+    ID_FILE_OPEN3           "Open an existing document\nOpen"
+    ID_FILE_SAVE3           "Save the active document\nSave"
+    ID_FILE_SAVE_AS3        "Save the active document with a new name\nSave As"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_APP_ABOUT            "Display program information, version number and copyright\nAbout"
+    ID_APP_EXIT             "Quit the application; prompts to save documents\nExit"
+    ID_APP_ABOUT2           "Display program information, version number and copyright\nAbout"
+    ID_APP_EXIT2            "Quit the application; prompts to save documents\nExit"
+    ID_APP_EXIT3            "Quit the application; prompts to save documents\nExit"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_FILE_MRU_FILE1       "Open this document"
+    ID_FILE_MRU_FILE2       "Open this document"
+    ID_FILE_MRU_FILE3       "Open this document"
+    ID_FILE_MRU_FILE4       "Open this document"
+    ID_FILE_MRU_FILE5       "Open this document"
+    ID_FILE_MRU_FILE6       "Open this document"
+    ID_FILE_MRU_FILE7       "Open this document"
+    ID_FILE_MRU_FILE8       "Open this document"
+    ID_FILE_MRU_FILE9       "Open this document"
+    ID_FILE_MRU_FILE10      "Open this document"
+    ID_FILE_MRU_FILE11      "Open this document"
+    ID_FILE_MRU_FILE12      "Open this document"
+    ID_FILE_MRU_FILE13      "Open this document"
+    ID_FILE_MRU_FILE14      "Open this document"
+    ID_FILE_MRU_FILE15      "Open this document"
+    ID_FILE_MRU_FILE16      "Open this document"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_NEXT_PANE            "Switch to the next window pane\nNext Pane"
+    ID_PREV_PANE            "Switch back to the previous window pane\nPrevious Pane"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_WINDOW_NEW           "Open another window for the active document\nNew Window"
+    ID_WINDOW_ARRANGE       "Arrange icons at the bottom of the window\nArrange Icons"
+    ID_WINDOW_CASCADE       "Arrange windows so they overlap\nCascade Windows"
+    ID_WINDOW_TILE_HORZ     "Arrange windows as non-overlapping tiles\nTile Windows"
+    ID_WINDOW_NEW2          "Open another window for the active document\nNew Window"
+    ID_WINDOW_SPLIT         "Split the active window into panes\nSplit"
+    ID_WINDOW_ARRANGE2      "Arrange icons at the bottom of the window\nArrange Icons"
+    ID_WINDOW_CASCADE2      "Arrange windows so they overlap\nCascade Windows"
+    ID_WINDOW_TILE_HORZ2    "Arrange windows as non-overlapping tiles\nTile Windows"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_EDIT_CLEAR           "Erase the selection\nErase"
+    ID_EDIT_CLEAR_ALL       "Erase everything\nErase All"
+    ID_EDIT_COPY            "Copy the selection and put it on the Clipboard\nCopy"
+    ID_EDIT_CUT             "Cut the selection and put it on the Clipboard\nCut"
+    ID_EDIT_FIND            "Find the specified text\nFind"
+    ID_EDIT_PASTE           "Insert Clipboard contents\nPaste"
+    ID_FILE_MRU_FILE17      "Open this document"
+    ID_FILE_MRU_FILE18      "Open this document"
+    ID_EDIT_REPEAT          "Repeat the last action\nRepeat"
+    ID_EDIT_REPLACE         "Replace specific text with different text\nReplace"
+    ID_EDIT_SELECT_ALL      "Select the entire document\nSelect All"
+    ID_EDIT_UNDO            "Undo the last action\nUndo"
+    ID_EDIT_REDO            "Redo the previously undone action\nRedo"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_VIEW_TOOLBAR         "Show or hide the toolbar\nToggle ToolBar"
+    ID_VIEW_STATUS_BAR      "Show or hide the status bar\nToggle StatusBar"
+    ID_VIEW_TOOLBAR2        "Show or hide the toolbar\nToggle ToolBar"
+    ID_VIEW_STATUS_BAR2     "Show or hide the status bar\nToggle StatusBar"
+END
+
+STRINGTABLE 
+BEGIN
+    AFX_IDS_SCSIZE          "Change the window size"
+    AFX_IDS_SCMOVE          "Change the window position"
+    AFX_IDS_SCMINIMIZE      "Reduce the window to an icon"
+    AFX_IDS_SCMAXIMIZE      "Enlarge the window to full size"
+    AFX_IDS_SCNEXTWINDOW    "Switch to the next document window"
+    AFX_IDS_SCPREVWINDOW    "Switch to the previous document window"
+    AFX_IDS_SCCLOSE         "Close the active window and prompts to save the documents"
+END
+
+STRINGTABLE 
+BEGIN
+    AFX_IDS_SCRESTORE       "Restore the window to normal size"
+    AFX_IDS_SCTASKLIST      "Activate Task List"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_STR_HINT_OBS4       "\n\n\n\n\n\n\n\n\n\nExisting Image in Preview:\nYou'll see the selected image in preview.\nYou can copy from/paste to/compress the Preview image.\n\nAbout '16 colors':\nYour selected image selects 16 colors from 256 colors in DM2 system palette.\nYou have to complete Compress4 before you try to edit the '16 colors'."
+    IDS_STR_HINT_OBS8       "Existing Image in Preview:\nYou'll see the selected image in preview.\nYou can copy from/paste to/compress the Preview image."
+    IDS_STR_ENCHINT_NO      "Still Compressed yet."
+    IDS_ERR_CVTIMG4_GEN     "Pre-conversion failed.\n\nPossible reasons:\n- No image supplied.\n- Too large image supplied."
+    IDS_ERR_CVTIMG4_BAD_PAL "Try Normalize4, first.\n\nPalette conversion requires."
+    IDS_ERR_CVTIMG4_TOO_MANY_CLR 
+                            "Try Normalize4, first.\n\nImage cannot contain more than 16 colors."
+    IDS_STR_ENCHINT_C4      "Compress4 Done: %1!d! bytes"
+    IDS_STR_ENCHINT_C8      "Compress8 Done: %1!d! bytes"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_ERR_CVTIMG8_GEN     "Pre-conversion failed.\n\nPossible reasons:\n- No image supplied.\n- Too large image supplied."
+    IDS_ERR_CVTIMG8_BAD_PAL "Try Normalize8, first.\n\nPalette conversion requires."
+    IDS_STR_ENC_NO          "No"
+    IDS_STR_ENC_C4          "4-bit Compressed"
+    IDS_STR_ENC_U4          "4-bit Plain (Uncompressed)"
+    IDS_STR_ENC_C8          "8-bit Compressed"
+    IDS_STR_ENC_U8          "8-bit Plain (Uncompressed)"
+    IDS_STR_BTN_ADD         "Add"
+    IDS_STR_BTN_OK          "OK"
+    IDS_ERR_NO_SMILY        "No smily exists.\n\nYou'll have to open existing GRAPHICS.DAT to use any editing functions."
+    IDS_ERR_ENTRY_DUPE      "Same entry already exists. Try other one."
+    IDS_WARN_DELETE_ENTRY   "Do you really want to remove entry?"
+    IDS_STR_FMT_PCM         "%1!d! bytes"
+    IDS_STR_FILTER_WAV      "WAV files (*.wav)|*.wav|All (*.*)|*.*||"
+    IDS_WARN_SAVE           "Do you really want to overwrite?"
+    IDS_WARN_NOT_CP932      "Although your windows platform does not activate CP932, you have selected Japanese for Language of Text Data.\nTheir specific DBCS characters found in Japanese are definitely displayed incorrectly.\n\nWould you retry?"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_FONTTEMP_DMHEXEDIT  "-"
+    IDS_INFO_EXPLORE_EXPORT_DIR 
+                            "Export to folder ""%1"" succeeded.\n\nWould you like to show that folder with explorer?"
+    IDS_ERR_EXPORT_DIR      "Export to folder ""%1"" has failed."
+    IDS_STR_SEL_EXPORT_DEST "Select empty folder to write down export contents."
+    IDS_STR_ADD_TEXT        "Add text"
+    IDS_STR_ADD_0B          "Add Word value"
+    IDS_STR_ADD_0C          "Add Image offset"
+    IDS_STR_EDIT_TEXT       "Edit text"
+    IDS_STR_EDIT_0B         "Edit Word value"
+    IDS_STR_EDIT_0C         "Edit Image offset"
+    IDS_STR_EDIT_PCM        "Edit sound"
+    IDS_STR_ADD_PCM         "Add sound"
+    IDS_STR_ADD_CLASS_2     "Add new class"
+    IDS_STR_ADD_RAW         "Add raw"
+    IDS_STR_RENAME_ENTRY    "Rename entry"
+    IDS_STR_FILTER_INI      "DM2DATEx.ini (*.ini)|*.ini||"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_FILE_EXPORT_NOW      "Select folder and export selected contents\nExport to Folder"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_FILE_EXPORT_QUICK_NOW 
+                            "Export selected contents immediately\nQuick Export"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_STR_IMPORT_OK       "Import succeeded."
+    IDS_STR_IMPORT_ERR      "Import failed."
+    IDS_STR_IMPORT_PART_OK  "Import partially succeeded."
+    IDS_ERR_ILLEGAL_INT     "Invalid number format."
+    IDS_WARN_SET_NEW_COLORKEY "Is it new transparent color?"
+    IDS_STR_SAVE_MOD        "Would you save the changes?"
+    IDS_ERR_FAILED_PASTE_IMAGE "Failed to paste image"
+    IDS_ERR_FAILED_COPY_IMAGE "Failed to copy image"
+    IDS_ERR_COLORKEY_TOO_LARGE "Color key is too large for your platform."
+    IDS_ERR_EXPORT_DIFF     "Failed to export diff."
+    IDS_STR_EXPORT_DIFF_DONE "Export diff done."
+    IDS_STR_IMPORT_DIFF_DONE "Import diff done."
+    IDS_ERR_IMPORT_DIFF     "Failed to import diff."
+    IDS_WARN_IMPORT_DIFF    "Careless Import Diff may cause corruption of your GRAPHICS.DAT structure due to applying low level patch.\n\nWould you proceed with any corruption risk?"
+    IDS_ERR_ANOTHER_OPEN_FLAGS 
+                            "This Diff package does not apply to type of your GRAPHICS.DAT.\n\nImport process'll abort."
+    IDS_ERR_FAILED_EXPORT_TEMP_BMP "Exporting to temp file failed."
+END
+
+STRINGTABLE 
+BEGIN
+    IDR_GDEDCTX             "DM2GDED\nDoc\nDM2GDED Core Doc\nDM2 GRAPHICS.DAT (*.dat)\n.dat\nDM2GDED.Document\nDM2GDED Core Doc"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_FILE_MODE_PREVIEW    "Preview Mode\nPreview Mode"
+    ID_FILE_MODE_EDIT       "Edit Mode\nEdit Mode"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_FILE_SAVE_PIC        "Save image\nSave image"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_SCENE_FORCE_PAL_4    "Force scene 4 palette\nForce scene 4 palette"
+    ID_SCENE_FORCE_PAL_5    "Force scene 5 palette\nForce scene 5 palette"
+    ID_MOVE_BACK            "Back\nBack"
+    ID_MOVE_FRONT           "Next\nNext"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_SCENE_NO             "No scene\nNo scene"
+    ID_SCENE_0              "Scene 0\nScene 0"
+    ID_SCENE_1              "Scene 1\nScene 1"
+    ID_SCENE_2              "Scene 2\nScene 2"
+    ID_SCENE_3              "Scene 3\nScene 3"
+    ID_SCENE_4              "Scene 4\nScene 4"
+    ID_SCENE_5              "Scene 5\nScene 5"
+    ID_SCENE_FORCE_PAL_NO   "Force no scene palette\nForce no scene palette"
+    ID_SCENE_FORCE_PAL_0    "Force scene 0 palette\nForce scene 0 palette"
+    ID_SCENE_FORCE_PAL_1    "Force scene 1 palette\nForce scene 1 palette"
+    ID_SCENE_FORCE_PAL_2    "Force scene 2 palette\nForce scene 2 palette"
+    ID_SCENE_FORCE_PAL_3    "Force scene 3 palette\nForce scene 3 palette"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_ERR_FAILED_OPEN_TEMP_BMP "Opening temp file failed."
+    IDS_ERR_FAILED_IMPORT_TEMP_BMP "Importing from temp file failed."
+    IDS_URL_SUULE_DIGGING   "http://www.dungeon-master.com/forum/viewtopic.php?t=24695"
+    IDS_WARN_DELETE_THIS    "Would you really delete this?"
+    IDS_STR_EXPORT_DONE     "Export has been done."
+    IDS_ERR_EXPORT          "Export has failed."
+    IDS_STR_IMPORT_DONE     "Import has been done."
+    IDS_ERR_IMPORT          "Import has failed."
+    IDS_ERR_COPY_DAT        "Copy failed."
+    IDS_ERR_PASTE_DAT       "Failed paste."
+    IDS_EXPORT_DONE         "Export done."
+END
+
+#endif    // 英語 (米国) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif //_WIN32
+#include "res\DM2GDED.rc2"  // Microsoft Visual C++ 以外のツールで編集されたリソース
+#include "afxres.rc"         // 標準のコンポーネント
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
