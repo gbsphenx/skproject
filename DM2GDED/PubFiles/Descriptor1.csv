@@ -1,0 +1,108 @@
+GENERIC,,,,,
+$08,,$09,$000000,Scene palette,
+$08;$0F,,$0B,$040000,Colorkey,unsigned
+$09;$0A,,$0B,$040000,Colorkey1,unsigned
+$09;$0A,,$0B,$110000,Colorkey2,unsigned
+$09;$0A,,$02,$880000,Noise,
+$09;$0A,,$0B,$0E0000,Key for hole,keyitem
+$09;$0A,,$0B,$120000,Respawn wait period,unsigned
+$0E,,$0B,$040000,Colorkey1,unsigned
+$0E,,$0B,$120000,Colorkey2,unsigned
+UNKNOWN,,,,,
+$01,,$04,$000000,?,
+$01,,$07,$020800,?,
+$01,,$07,$000000,font?,
+$01,,$09,$FE0800,system palette?,
+$01,,$07,$0A0000,?,
+FOR CREATURES,,,,
+$0F,,$02,$000000,Walking
+$0F,,$02,$010000,Turning
+$0F,,$02,$020000,Slashing
+$0F,,$02,$030000,?
+$0F,,$02,$040000,?
+$0F,,$02,$050000,Swing
+$0F,,$02,$060000,War-crying
+$0F,,$02,$070000,Attacking
+$0F,,$02,$080000,Stealing/Picking up
+$0F,,$02,$090000,Wincing?
+$0F,,$02,$0A0000,?
+$0F,,$02,$0B0000,Merchant (?)
+$0F,,$02,$0C0000,Merchant (?)
+$0F,,$02,$0D0000,Merchant (?)
+$0F,,$02,$0E0000,?
+$0F,,$02,$0F0000,Tick,
+$0F,,$02,$100000,Spawning,
+$0F,,$02,$110000,Dying,
+$0F,,$02,$120000,Browing,
+$0F,,$02,$8D0000,Knocking,
+$0F,,$0B,$0A0000,Battle prize,prizeitem
+$0F,,$0B,$0B0000,Battle prize,prizeitem
+$0F,,$05,$100000,My enemies,creatures
+$0F,,$05,$110000,Cooperative with,creatures
+$0F,,$05,$130000,Items1,items
+$0F,,$05,$150000,Fetchable?,items
+$0F,,$05,$160000,Items2,items
+$0F,,$05,$170000,Merchant0A,items
+$0F,,$05,$180000,Items3,items
+$0F,,$05,$190000,Creatures1,creatures
+$0F,,$05,$1B0000,Items4,items
+$0F,,$05,$1C0000,Items5,items
+$0F,,$05,$1E0000,Throw weapon?,items
+$0F,,$05,$200000,Merchant2A,items
+$0F,,$05,$210000,Merchant2B,items
+$0F,,$05,$220000,Merchant2C,items
+$0F,,$05,$230000,Merchant2D,items
+$0F,,$05,$240000,Merchant2E,items
+$0F,,$05,$250000,Merchant2F,items
+$0F,,$05,$260000,Merchant3A,items
+$0F,,$05,$270000,Merchant3B,items
+$0F,,$05,$280000,Merchant3C,items
+$0F,,$05,$290000,Merchant3D,items
+$0F,,$05,$2A0000,Merchant3E,items
+$0F,,$05,$2B0000,Merchant3F,items
+$0F,,$05,$2C0000,Merchant4A,items
+$0F,,$05,$2D0000,Merchant4B,items
+$0F,,$05,$2E0000,Merchant4C,items,
+FOR ITEMS,,,,,,
+$10;$11;$12;$13;$14;$15,,$0B,$010000,Weight in Kg (x10),unsigned,
+$10;$11;$12;$13;$14;$15,,$0B,$020000,Money value,unsigned,
+$10;$11;$12;$13;$14;$15,,$0B,$030000,Food value,unsigned,
+$10;$11;$12;$13;$14;$15,,$0B,$040000,"Equip, Portability",flags,Helm/Neckless/Wear or Plate/Pants/Boots/Left 2 Pouches/Right 4 Pouches/Right first Pouch/Chest or Bag
+$10;$11;$12;$13;$14;$15,,$0B,$080000,Attack strength,signed,
+$10;$11;$12;$13;$14;$15,,$0B,$090000,Throw strength,signed,
+$10;$11;$12;$13;$14;$15,,$0B,$0A0000,Accuracy,signed,
+$10;$11;$12;$13;$14;$15,,$0B,$140000,MANA bonus,signed,
+$10;$11;$12;$13;$14;$15,,$0B,$160000,Strength bonus,signed,
+$10;$11;$12;$13;$14;$15,,$0B,$170000,Dexterity bonus,signed,
+$10;$11;$12;$13;$14;$15,,$0B,$190000,Vitality bonus,signed,
+$10;$11;$12;$13;$14;$15,,$0B,$1A0000,Anti-magic bonus,signed,
+$10;$11;$12;$13;$14;$15,,$0B,$1B0000,Anti-fire bonus,signed,
+$10;$11;$12;$13;$14;$15,,$01,$00xx00,Placed image,,
+$10;$11;$12;$13;$14;$15,,$01,$18xx00,Inventory image,,
+$10;$11;$12;$13;$14;$15,,$01,$19xx00,Inventory image (open),,
+$10;$11;$12;$13;$14;$15;$16,,$05,$081000,Command1 (English),command,
+$10;$11;$12;$13;$14;$15;$16,,$05,$083000,Command1 (German),command,
+$10;$11;$12;$13;$14;$15;$16,,$05,$084000,Command1 (French),command,
+$10;$11;$12;$13;$14;$15;$16,,$05,$091000,Command2 (English),command,
+$10;$11;$12;$13;$14;$15;$16,,$05,$093000,Command2 (German),command,
+$10;$11;$12;$13;$14;$15;$16,,$05,$094000,Command2 (French),command,
+$10;$11;$12;$13;$14;$15;$16,,$05,$0A1000,Command3 (English),command,
+$10;$11;$12;$13;$14;$15;$16,,$05,$0A3000,Command3 (German),command,
+$10;$11;$12;$13;$14;$15;$16,,$05,$0A4000,Command3 (French),command,
+$10;$11;$12;$13;$14;$15;$16,,$05,$082000,Command1 (Japanese),command,
+$10;$11;$12;$13;$14;$15;$16,,$05,$092000,Command2 (Japanese),command,
+$10;$11;$12;$13;$14;$15;$16,,$05,$0A2000,Command3 (Japanese),command,
+$10;$11;$12;$13;$14;$15,,$0B,$0B0000,Sharp Resistance / Armor Value,b5353,Sharp resistance/Armor strength
+$10;$11;$12;$13;$14;$15,,$0B,$0B0100,Sharp Resistance / Armor Value,b5353,Sharp resistance/Armor strength
+$10;$11;$12;$13;$14;$15,,$05,$181000,English text
+$10;$11;$12;$13;$14;$15,,$05,$183000,German text
+$10;$11;$12;$13;$14;$15,,$05,$184000,French text
+$12;$14,,$01,$190800,In hand image
+$12;$14,,$01,$190000,In hand image
+$10,,$01,$080800,Flying item (coming)
+$10,,$01,$0A0800,Flying item (going)
+$10,,$01,$0C0800,Flying item (passing)
+$14,,$05,$400000,Currency
+$08;$09;$0A;$0D;$0F;$10;$11;$12;$13;$14;$15;$18,,$01,$F90000,Map chip
+$10;$11;$12;$13;$14;$15,,$02,$850000,Knocking
+$10;$11;$12;$13;$14;$15,,$02,$860000,Throwing
