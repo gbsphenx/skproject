@@ -44,7 +44,9 @@ UninstPage uninstConfirm
 UninstPage instfiles
 
 Function showComponents
-  SetBrandingImage "brand.bmp"
+  InitPluginsDir
+  File      "/oname=$PLUGINSDIR\brand.bmp" "brand.bmp"
+  SetBrandingImage "$PLUGINSDIR\brand.bmp"
 FunctionEnd
 
 ; http://nsis.sourceforge.net/Cool_CheckBox_Bitmaps
