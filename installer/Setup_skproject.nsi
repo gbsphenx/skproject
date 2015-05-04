@@ -8,7 +8,7 @@
 ;--------------------------------
 
 !define APP "skproject"
-!define VER "20150409"
+!define VER "20150504"
 
 !define TTL "skproject" ; uninst-title
 
@@ -30,7 +30,7 @@ RequestExecutionLevel user
 
 XPStyle on
 
-AddBrandingImage left 138
+AddBrandingImage right 320 13
 
 ;--------------------------------
 
