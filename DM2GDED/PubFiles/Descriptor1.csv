@@ -1,108 +1,315 @@
-GENERIC,,,,,
-$08,,$09,$000000,Scene palette,
-$08;$0F,,$0B,$040000,Colorkey,unsigned
-$09;$0A,,$0B,$040000,Colorkey1,unsigned
-$09;$0A,,$0B,$110000,Colorkey2,unsigned
-$09;$0A,,$02,$880000,Noise,
-$09;$0A,,$0B,$0E0000,Key for hole,keyitem
-$09;$0A,,$0B,$120000,Respawn wait period,unsigned
-$0E,,$0B,$040000,Colorkey1,unsigned
-$0E,,$0B,$120000,Colorkey2,unsigned
-UNKNOWN,,,,,
-$01,,$04,$000000,?,
-$01,,$07,$020800,?,
-$01,,$07,$000000,font?,
-$01,,$09,$FE0800,system palette?,
-$01,,$07,$0A0000,?,
-FOR CREATURES,,,,
-$0F,,$02,$000000,Walking
-$0F,,$02,$010000,Turning
-$0F,,$02,$020000,Slashing
-$0F,,$02,$030000,?
-$0F,,$02,$040000,?
-$0F,,$02,$050000,Swing
-$0F,,$02,$060000,War-crying
-$0F,,$02,$070000,Attacking
-$0F,,$02,$080000,Stealing/Picking up
-$0F,,$02,$090000,Wincing?
-$0F,,$02,$0A0000,?
-$0F,,$02,$0B0000,Merchant (?)
-$0F,,$02,$0C0000,Merchant (?)
-$0F,,$02,$0D0000,Merchant (?)
-$0F,,$02,$0E0000,?
-$0F,,$02,$0F0000,Tick,
-$0F,,$02,$100000,Spawning,
-$0F,,$02,$110000,Dying,
-$0F,,$02,$120000,Browing,
-$0F,,$02,$8D0000,Knocking,
-$0F,,$0B,$0A0000,Battle prize,prizeitem
-$0F,,$0B,$0B0000,Battle prize,prizeitem
-$0F,,$05,$100000,My enemies,creatures
-$0F,,$05,$110000,Cooperative with,creatures
-$0F,,$05,$130000,Items1,items
-$0F,,$05,$150000,Fetchable?,items
-$0F,,$05,$160000,Items2,items
-$0F,,$05,$170000,Merchant0A,items
-$0F,,$05,$180000,Items3,items
-$0F,,$05,$190000,Creatures1,creatures
-$0F,,$05,$1B0000,Items4,items
-$0F,,$05,$1C0000,Items5,items
-$0F,,$05,$1E0000,Throw weapon?,items
-$0F,,$05,$200000,Merchant2A,items
-$0F,,$05,$210000,Merchant2B,items
-$0F,,$05,$220000,Merchant2C,items
-$0F,,$05,$230000,Merchant2D,items
-$0F,,$05,$240000,Merchant2E,items
-$0F,,$05,$250000,Merchant2F,items
-$0F,,$05,$260000,Merchant3A,items
-$0F,,$05,$270000,Merchant3B,items
-$0F,,$05,$280000,Merchant3C,items
-$0F,,$05,$290000,Merchant3D,items
-$0F,,$05,$2A0000,Merchant3E,items
-$0F,,$05,$2B0000,Merchant3F,items
-$0F,,$05,$2C0000,Merchant4A,items
-$0F,,$05,$2D0000,Merchant4B,items
-$0F,,$05,$2E0000,Merchant4C,items,
-FOR ITEMS,,,,,,
-$10;$11;$12;$13;$14;$15,,$0B,$010000,Weight in Kg (x10),unsigned,
-$10;$11;$12;$13;$14;$15,,$0B,$020000,Money value,unsigned,
-$10;$11;$12;$13;$14;$15,,$0B,$030000,Food value,unsigned,
-$10;$11;$12;$13;$14;$15,,$0B,$040000,"Equip, Portability",flags,Helm/Neckless/Wear or Plate/Pants/Boots/Left 2 Pouches/Right 4 Pouches/Right first Pouch/Chest or Bag
-$10;$11;$12;$13;$14;$15,,$0B,$080000,Attack strength,signed,
-$10;$11;$12;$13;$14;$15,,$0B,$090000,Throw strength,signed,
-$10;$11;$12;$13;$14;$15,,$0B,$0A0000,Accuracy,signed,
-$10;$11;$12;$13;$14;$15,,$0B,$140000,MANA bonus,signed,
-$10;$11;$12;$13;$14;$15,,$0B,$160000,Strength bonus,signed,
-$10;$11;$12;$13;$14;$15,,$0B,$170000,Dexterity bonus,signed,
-$10;$11;$12;$13;$14;$15,,$0B,$190000,Vitality bonus,signed,
-$10;$11;$12;$13;$14;$15,,$0B,$1A0000,Anti-magic bonus,signed,
-$10;$11;$12;$13;$14;$15,,$0B,$1B0000,Anti-fire bonus,signed,
-$10;$11;$12;$13;$14;$15,,$01,$00xx00,Placed image,,
-$10;$11;$12;$13;$14;$15,,$01,$18xx00,Inventory image,,
-$10;$11;$12;$13;$14;$15,,$01,$19xx00,Inventory image (open),,
-$10;$11;$12;$13;$14;$15;$16,,$05,$081000,Command1 (English),command,
-$10;$11;$12;$13;$14;$15;$16,,$05,$083000,Command1 (German),command,
-$10;$11;$12;$13;$14;$15;$16,,$05,$084000,Command1 (French),command,
-$10;$11;$12;$13;$14;$15;$16,,$05,$091000,Command2 (English),command,
-$10;$11;$12;$13;$14;$15;$16,,$05,$093000,Command2 (German),command,
-$10;$11;$12;$13;$14;$15;$16,,$05,$094000,Command2 (French),command,
-$10;$11;$12;$13;$14;$15;$16,,$05,$0A1000,Command3 (English),command,
-$10;$11;$12;$13;$14;$15;$16,,$05,$0A3000,Command3 (German),command,
-$10;$11;$12;$13;$14;$15;$16,,$05,$0A4000,Command3 (French),command,
-$10;$11;$12;$13;$14;$15;$16,,$05,$082000,Command1 (Japanese),command,
-$10;$11;$12;$13;$14;$15;$16,,$05,$092000,Command2 (Japanese),command,
-$10;$11;$12;$13;$14;$15;$16,,$05,$0A2000,Command3 (Japanese),command,
-$10;$11;$12;$13;$14;$15,,$0B,$0B0000,Sharp Resistance / Armor Value,b5353,Sharp resistance/Armor strength
-$10;$11;$12;$13;$14;$15,,$0B,$0B0100,Sharp Resistance / Armor Value,b5353,Sharp resistance/Armor strength
-$10;$11;$12;$13;$14;$15,,$05,$181000,English text
-$10;$11;$12;$13;$14;$15,,$05,$183000,German text
-$10;$11;$12;$13;$14;$15,,$05,$184000,French text
-$12;$14,,$01,$190800,In hand image
-$12;$14,,$01,$190000,In hand image
-$10,,$01,$080800,Flying item (coming)
-$10,,$01,$0A0800,Flying item (going)
-$10,,$01,$0C0800,Flying item (passing)
-$14,,$05,$400000,Currency
-$08;$09;$0A;$0D;$0F;$10;$11;$12;$13;$14;$15;$18,,$01,$F90000,Map chip
-$10;$11;$12;$13;$14;$15,,$02,$850000,Knocking
-$10;$11;$12;$13;$14;$15,,$02,$860000,Throwing
+SPX:Spell Definition,Rev.4,,,,,,
+$02,,$05,$18xxxx,spell name,,,
+$02,,$0B,$01xxxx,rune1,select,"102*YA.ico=YA|
+103*VI.ico=VI|
+104*OH.ico=OH|
+105*FUL.ico=FUL|
+106*DES.ico=DES|
+107*ZO.ico=ZO",
+$02,,$0B,$02xxxx,rune2,select,"108*VEN.ico=VEN|
+109*EW.ico=EW|
+110*KATH.ico=KATH|
+111*IR.ico=IR|
+112*BRO.ico=BRO|
+113*GOR.ico=GOR",
+$02,,$0B,$03xxxx,rune3,select,"114*KU.ico=KU|
+115*ROS.ico=ROS|
+116*DAIN.ico=DAIN|
+117*NETA.ico=NETA|
+118*RA.ico=RA|
+119*SAR.ico=SAR",
+$02,,$0B,$04xxxx,difficulty,unsigned,,
+$02,,$0B,$05xxxx,requiredSkill,unsigned,,
+$02,,$0B,$06xxxx,type,select,"1*Flask.ico=transform flask to potion|
+2*Shoot.ico=shoot spell|
+4*Summon.ico=summon creature|
+3*Enhance.ico=enchantments",
+$02,,$0B,$07xxxx,creature:,creature,,"forth:
+C1 C2 11 6 0 0 
+GETVALUE
+4 ="
+$02,,$0B,$07xxxx,enchantments:,select,"0*RA.ico=Long Light|
+1*SAR.ico=Darkness|
+5*FUL.ico=Light|
+3=Invisibility|
+2*SpellSh.ico=Spell shield|
+8*FireSh.ico=Fire shield|
+4*PartySh.ico=Party shield|
+6*WizAura.ico=Aura of Wisdom|
+7*DexAura.ico=Aura of Dexterity|
+9*VitAura.ico=Aura of Vitality|
+10*StrAura.ico=Aura of Strength|
+11*ROS.ico=Aura of Speed|
+14*NETA.ico=Spell reflector|
+15=Magical Marker => Item creator!|
+12=NEW, used for restoring current champion health|
+13=NEW, used for restoring current champion health","forth:
+C1 C2 11 6 0 0 
+GETVALUE
+3 ="
+$02,,$0B,$07xxxx,shoot spell:,select,"0*paball.ico=Fireball|
+2*paball.ico=Spell bolt|
+3*paew.ico=Harm unmaterialed|
+4*pazo.ico=Open door|
+6*paven.ico=Poison bolt|
+7*paoh.ico=Poison cloud|
+9*papush.ico=Push|
+10*papull.ico=Pull|
+11=Thunder in beta|
+12=Electric Shock in beta|
+13=? ?|
+14=Reflect spell|
+15=YA EW","forth:
+C1 C2 11 6 0 0 
+GETVALUE
+2 ="
+$02,,$0B,$07xxxx,potion:,select,"0=MON|
+1=UM|
+2*DES.ico=DES|
+3*VEN.ico=VEN BOMB|
+4*SAR.ico=SAR|
+5*ZO.ico=ZO|
+6*ROS.ico=Secret potion: ROS|
+7*KU.ico=Secret potion: KU|
+8*DAIN.ico=Secret potion: DAIN|
+9*NETA.ico=Secret potion: NETA|
+10=Cure Poison|
+11=Secret potion: MON|
+12*YA.ico=Secret potion: YA|
+13=Secret potion: EE|
+14*VI.ico=VI|
+15=Water flask|
+16*KATH.ico=KATH|
+17*EW.ico=PEW|
+18*RA.ico=RA|
+19*FUL.ico=FUL BOMB|
+20=Empty flask","forth:
+C1 C2 11 6 0 0 
+GETVALUE
+1 ="
+SPX:Creature AI,,,,,,,
+GENERIC,,,,,,,
+$08,,$09,$00xxxx,Scene palette (6 sets),,,
+$08,,$0B,$640000,Scene colorkey,unsigned,,
+$08,,$07,$01xxxx,Fog cvt tbl1,,,
+$08,,$07,$02xxxx,Fog cvt tbl2,,,
+$08,,$07,$03xxxx,Fog cvt tbl3,,,
+$08,,$07,$04xxxx,Fog cvt tbl4,,,
+$08,,$0B,$630000,1=window,unsigned,,
+$08,,$0B,$680000,Default highest light level (0 being full light),unsigned,,
+$08,,$0B,$690000,Fog graphicsset ? (I tested without success),unsigned,,
+$0F,,$0B,$040000,Colorkey,unsigned,,
+$09;$0A,,$0B,$040000,Colorkey1,unsigned,,
+$09;$0A,,$0B,$110000,Colorkey2,unsigned,,
+$09;$0A,,$02,$880000,Noise,,,
+$09;$0A,,$0B,$0E0000,Key for hole,keyitem,,
+$09;$0A,,$0B,$120000,Respawn,unsigned,,
+$09;$0A,,$0B,$120000,Recharge,unsigned,,
+$0E,,$0B,$040000,Colorkey1,unsigned,,
+$0E,,$0B,$120000,Colorkey2,unsigned,,
+$09,,$0B,$050000,Ornate position,unsigned,,
+$09,,$0B,$0D0000,Anim count,unsigned,,
+$09,,$0B,$0A0000,"1=alcove, 3=sleep device",unsigned,,
+$09,,$0B,$0B0000,1=water spring,unsigned,,
+$09;$0A,,$0B,$880000,Noise on frame#,unsigned,,
+$09;$0A,,$02,$880000,Activation sound (can be used for loop sound),,,
+UNKNOWN,,,,,,,
+$01,,$04,$000000,Rectangles structure,,,
+$01,,$07,$020800,?,,,
+$01,,$07,$000000,Latin font 6x6 (128x6),,,
+$01,,$09,$xxxxxx,IRGB palset for Sega/FM-Towns,,,
+$01,,$09,$FE0800,system palette?,,,
+FOR CREATURES,,,,,,,
+$0F,,$0B,$050000,AI creature,hex,,
+$0F,,$02,$000000,Walk,,,
+$0F,,$02,$010000,Turn,,,
+$0F,,$02,$020000,Get Hit,,,
+$0F,,$02,$030000,Eat/Drink,,,
+$0F,,$02,$040000,?,,,
+$0F,,$02,$050000,Swing,,,
+$0F,,$02,$060000,War cry?,,,
+$0F,,$02,$070000,Attack,,,
+$0F,,$02,$080000,Pick Steal,,,
+$0F,,$02,$090000,Wince ?,,,
+$0F,,$02,$0A0000,? hit ?,,,
+$0F,,$02,$0B0000,Merchant think,,,
+$0F,,$02,$0C0000,Merchant accept,,,
+$0F,,$02,$0D0000,Merchant refuse,,,
+$0F,,$02,$0E0000,Spawn,,,
+$0F,,$02,$0F0000,Growl (vegmouth),,,
+$0F,,$02,$100000,Merchant,,,
+$0F,,$02,$110000,Death,,,
+$0F,,$02,$120000,Brow? Second Attack?,,,
+$0F,,$02,$840000,Default sound (of what?),,,
+$0F,,$02,$8D0000,Knock (get hit),,,
+$0F,,$0B,$0A0000,Battle prize1,prizeitem,,
+$0F,,$0B,$0B0000,Battle prize2,prizeitem,,
+$0F,,$0B,$0C0000,Battle prize3,prizeitem,,
+$0F,,$0B,$0D0000,Battle prize4,prizeitem,,
+$0F,,$0B,$0E0000,Battle prize5,prizeitem,,
+$0F,,$0B,$0F0000,Battle prize6,prizeitem,,
+$0F,,$0B,$100000,Battle prize7,prizeitem,,
+$0F,,$0B,$110000,Battle prize8,prizeitem,,
+$0F,,$0B,$120000,Battle prize9,prizeitem,,
+$0F,,$0B,$130000,Battle prize10,prizeitem,,
+$0F,,$0B,$140000,Battle prize11,prizeitem,,
+$0F,,$0B,$1E0000,Something about teleporter or floating??? What to throw?,unsigned,,
+$0F,,$05,$100000,My enemies,creatures,,
+$0F,,$05,$110000,Cooperative with,creatures,,
+$0F,,$05,$130000,Items1,items,,
+$0F,,$05,$150000,Fetchable?,items,,
+$0F,,$05,$160000,Items2,items,,
+$0F,,$05,$170000,Merchant0A,items,,
+$0F,,$05,$180000,Items3,items,,
+$0F,,$05,$190000,Creatures1,creatures,,
+$0F,,$05,$1B0000,Items4,items,,
+$0F,,$05,$1C0000,Items5,items,,
+$0F,,$05,$1E0000,Throw weapon?,items,,
+$0F,,$05,$200000,Merchant2A,items,,
+$0F,,$05,$210000,Merchant2B,items,,
+$0F,,$05,$220000,Merchant2C,items,,
+$0F,,$05,$230000,Merchant2D,items,,
+$0F,,$05,$240000,Merchant2E,items,,
+$0F,,$05,$250000,Merchant2F,items,,
+$0F,,$05,$260000,Merchant3A,items,,
+$0F,,$05,$270000,Merchant3B,items,,
+$0F,,$05,$280000,Merchant3C,items,,
+$0F,,$05,$290000,Merchant3D,items,,
+$0F,,$05,$2A0000,Merchant3E,items,,
+$0F,,$05,$2B0000,Merchant3F,items,,
+$0F,,$05,$2C0000,Merchant4A,items,,
+$0F,,$05,$2D0000,Merchant4B,items,,
+$0F,,$05,$2E0000,Merchant4C,items,,
+FOR ITEMS,,,,,,,
+$10;$11;$12;$13;$14;$15,,$01,$00xx00,Placed image,,,
+$10,,$01,$080800,Flying item (coming),,,
+$10,,$01,$0A0800,Flying item (going),,,
+$10,,$01,$0C0800,Flying item (passing),,,
+$10;$11;$12;$13;$14;$15,,$01,$18xx00,Inventory image,,,
+$12;$14,,$01,$190000,In hand image,,,
+$12;$14,,$01,$190800,In hand image,,,
+$10;$11;$12;$13;$14;$15,,$01,$19xx00,Inventory image (open),,,
+$08;$09;$0A;$0D;$0F;$10;$11;$12;$13;$14;$15;$18,,$01,$F9xx00,Map chip,,,
+$10;$11;$12;$13;$14;$15,,$02,$850000,Knock (Hit obstacle),,,
+$10;$11;$12;$13;$14;$15,,$02,$860000,Throwing,,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$081000,Command1 (English),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$082000,Command1 (Japanese),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$083000,Command1 (German),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$084000,Command1 (French),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$091000,Command2 (English),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$092000,Command2 (Japanese),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$093000,Command2 (German),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$094000,Command2 (French),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$0A1000,Command3 (English),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$0A2000,Command3 (Japanese),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$0A3000,Command3 (German),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$0A4000,Command3 (French),command,,
+$10;$11;$12;$13;$14;$15,,$05,$181000,English text,,,
+$10;$11;$12;$13;$14;$15,,$05,$183000,German text,,,
+$10;$11;$12;$13;$14;$15,,$05,$184000,French text,,,
+$14,,$05,$400000,Currency,items,,
+$10;$11;$12;$13;$14;$15,,$0B,$000000,Flags,flags,"Drinkable/
+2/
+4/
+8/
+Light/
+32/
+64/
+128/
+256/
+512/
+1024/
+2048/
+4096/
+8192/
+Currency/
+32768",
+$10;$11;$12;$13;$14;$15,,$0B,$010000,Weight in Kg (x10),unsigned,,
+$10;$11;$12;$13;$14;$15,,$0B,$020000,Money value,unsigned,,
+$10;$11;$12;$13;$14;$15,,$0B,$030000,Food value,unsigned,,
+$10;$11;$12;$13;$14;$15,,$0B,$040000,"Equip, Portability",flags,"Helm/
+Neckless/
+Wear or Plate/
+Pants/
+Boots/
+Left 2 Pouches/
+Right 4 Pouches/
+Right first Pouch/
+Chest or Bag/
+/
+/
+/
+/
+/
+/
+Container",
+$10;$11;$12;$13;$14;$15,,$0B,$050000,Projectile facility,flags,"1/
+2/
+4/
+8/
+16/
+32/
+64/
+128/
+256/
+512/
+1024/
+2048/
+4096/
+8192/
+16384/
+Launcher",
+$10;$11;$12;$13;$14;$15,,$0B,$060000,Icon anim,iconanim,,
+$10;$11;$12;$13;$14;$15,,$0B,$080000,Attack strength,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$090000,Throw strength,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$0A0000,Accuracy,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$0B0000,Sharp Resistance / Armor Value,b5353,Sharp resistance/Armor strength,
+$10;$11;$12;$13;$14;$15,,$0B,$0B0100,Sharp Resistance / Armor Value,b5353,Sharp resistance/Armor strength,
+$10;$11;$12;$13;$14;$15,,$0B,$0D0000,Missile strength,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$140000,MANA bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$160000,Strength bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$170000,Dexterity bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$190000,Vitality bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$1A0000,Anti-magic bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$1B0000,Anti-fire bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$340000,Max charge count,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$350000,Additional money value per charge?,signed,,
+FOR CHESTS,,,,,,,
+$14,,$05,$020000,,command,,
+$14,,$05,$080000,Btn1,command,,
+$14,,$05,$090000,Btn2,command,,
+$14,,$05,$0A0000,Btn3,command,,
+$14,,$05,$0B0000,Btn4,command,,
+$14,,$01,$41xxxx,Btn1(Up),command,,
+$14,,$01,$42xxxx,Btn1(Down),command,,
+$14,,$01,$43xxxx,Btn2(Up),command,,
+$14,,$01,$44xxxx,Btn2(Down),command,,
+$14,,$01,$45xxxx,Btn3(Up),command,,
+$14,,$01,$46xxxx,Btn3(Down),command,,
+$14,,$01,$47xxxx,Btn4(Up),command,,
+$14,,$01,$48xxxx,Btn4(Down),command,,
+FOR CHAMPS,,,,,,,
+$16,,$08,$000000,Initial status,champstat,,
+$16,,$02,$000000,Attack?,,,
+$16,,$02,$010000,Shoot?,,,
+$16,,$02,$820000,Get Hit,,,
+$16,,$02,$830000,Eat/Drink,,,
+$16,,$02,$870000,Death/Falling pit,,,
+$16,,$02,$8A0000,Bumping into wall,,,
+FOR DOORS,,,,,,,
+$0E,,$0B,$0E0000,Damage resist,unsigned,,
+$0E,,$0B,$0F0000,Door Strength,unsigned,,
+$0E,,$0B,$200000,NEW: Used for displaying an animated mirrored door like DM1 force field.,unsigned,,
+$08,,$0B,$670000,Brightness bonus,unsigned,,
+FOR MESSAGES,,,,,,,
+$03,,$02,$000000,Special Activation?,,,
+$03,,$02,$010000,Special Activation?,,,
+$03,,$02,$810000,Explosion,,,
+$03,,$02,$890000,Teleport,,,
+$03,,$02,$8B0000,Magic Spell (Cast / Explosion?),,,
+FOR POTIONS,,,,,,,
+$13,,$0B,$050000,NEW: Used as Potion behaviour (~similar to AI creature)(i.e. what type of potion it is),unsigned,,
+$13,,$0B,$430000,NEW: Used for water value,unsigned,,
+$13,,$0B,$4D0000,NEW: Used for spell missile (explosion) to be associated to potion (bomb),unsigned,,
+FOR TELEPORTER,,,,,,,
+$18,,$02,$890000,Teleport,,,
