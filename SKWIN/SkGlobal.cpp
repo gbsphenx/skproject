@@ -99,7 +99,7 @@ void CVerifySKSaveIO::StartRead(U32 off) {
 	if (f == NULL)
 		return;
 
-	U32 offThen;
+	U32 offThen = 0;
 	ATLVERIFY(1 == fread(&offThen, 4, 1, f));
 	ATLASSERT(off == offThen);
 #endif
@@ -385,8 +385,14 @@ const Bit8u * const strZT_strData5 = (const Bit8u *)
 
 // SPX: _4976_3d84 renamed strZxxxTable
 const Bit8u * const strZxxxTable[] = {
-	strZT_EndOfString,strZT_F,strZT_G,strZT_strData1,
-	strZT_strData2,strZT_strData3,strZT_strData4,strZT_strData5,
+	strZT_EndOfString,	// 0	\0
+	strZT_F,			// 1	F
+	strZT_G,			// 2	G
+	strZT_strData1,		// 3	".Z008DATA\"
+	strZT_strData2,		// 4	".Z008DATA\"
+	strZT_strData3,		// 5	".Z009DATA\"
+	strZT_strData4,		// 6	".Z009"
+	strZT_strData5,		// 7	".Z009DATA\"
 };
 // SPX: _4976_1a3e renamed strSKSave_dat
 const Bit8u * const strSKSave_dat = (const Bit8u *)
@@ -398,16 +404,10 @@ const Bit8u * const strSKSave_bak = (const Bit8u *)
 const Bit8u * const strDungeon_ftl = (const Bit8u *)
 	"\x2E\x5A\x30\x32\x30\x44\x55\x4E\x47\x45\x4F\x4E\x2E\x5A\x30\x32\x34\x2E\x46\x54\x4C"; // .Z020DUNGEON.Z024.FTL
 
-#if (DM2_FULL_JAPANESE == 1)
 // SPX: _4976_1a1a renamed strGraphics
 const Bit8u * const strGraphics = (const Bit8u *)
 	".Z020GRAPHICS.DAT";
 	//"\x2E\x5A\x30\x32\x30\x47\x52\x41\x50\x48\x49\x43\x53\x2E\x44\x41\x54"; // .Z020GRAPHICS.DAT
-#else
-const Bit8u * const strGraphics = (const Bit8u *)
-	".Z020GRAPHICS_NJ.DAT";	// NJ like No Japanese
-#endif // DM2_FULL_JAPANESE
-
 
 // SPX: _4976_1a2c renamed strGraphics2
 const Bit8u * const strGraphics2 = (const Bit8u *)

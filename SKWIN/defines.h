@@ -230,7 +230,11 @@ enum SkillLevel {
 // There is also some distinction of enchantment above 3 which are AURAs.
 
 // Money
-#define MONEY_ITEM_MAX					0x10
+//#ifdef DM2_EXTENDED_MODE
+//	#define MONEY_ITEM_MAX					0x100	// 256
+//#else
+	#define MONEY_ITEM_MAX					0x10	// 16
+//#endif
 #define MONEY_MAX_VALUE					65535
 
 
@@ -479,7 +483,10 @@ enum SkillLevel {
 #define GDAT_WALL_ORNATE__0A				0x0A	// 1 = Alcove / 3 = Passive device
 
 #define GDAT_WALL_ORNATE__IS_WATER_SPRING	0x0B
-#define GDAT_WALL_ORNATE__IS_REBIRTH_ALTAR	0x0C
+#define GDAT_WALL_ORNATE__IS_REBIRTH_ALTAR	0x0C	// Used for DM2 beta
+
+#define GDAT_WALL_FLOOR_ORNATE__ANIMATION_SEQUENCE_DATA		0x0D
+#define GDAT_WALL_FLOOR_ORNATE__ANIMATION_LENGTH			0x0D
 
 #define GDAT_WALL_ORNATE__IS_ITEM_TRIGGERED	0x0E
 #define GDAT_WALL_ORNATE__OVERLAY			0x0F	// Seen as image, for panel shop overlay
@@ -508,7 +515,9 @@ enum SkillLevel {
 #define GDAT_DOOR_NO_FRAMES					0x40	// When = 0, draw door frames, else, don't!
 #define GDAT_DOOR_DESTROYED_MASK			0x41
 
-#define GDAT_ITEM_DOOR_STRENGTH				0x0F
+#define GDAT_DOOR_DEFENSE					0x0E
+#define GDAT_DOOR_STRENGTH					0x0F
+#define GDAT_DOOR_X10						0x10	// some spell bypass ?
 
 //------------------------------------------------------------------------------
 //	CREATURES / OBJECTS ID
@@ -668,7 +677,7 @@ enum SkillLevel {
 //	POTION STATS (specific)
 //------------------------------------------------------------------------------
 
-#define  GDAT_POTION_STAT_BEHAVIOUR			0x05
+#define  GDAT_POTION_STAT_BEHAVIOUR			0x05	// SPX: Custom
 
 
 //------------------------------------------------------------------------------
@@ -983,6 +992,13 @@ enum SkillLevel {
 #define SYSTEM_ERROR__CANT_APPEND_RECORD			0x48	// 72: Pb in APPEND_RECORD_TO
 
 #define SYSTEM_ERROR__NO_PLAYER_DATA				1001	// 1001: No player data in graphics.dat (kkdf2)
+
+//------------------------------------------------------------------------------
+//	ACTUATOR TYPES
+//------------------------------------------------------------------------------
+
+#define ACTUATOR_TYPE_RESSURECTOR					0x7E
+
 
 //------------------------------------------------------------------------------
 //	SPELLS

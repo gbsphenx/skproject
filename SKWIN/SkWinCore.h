@@ -364,7 +364,7 @@ protected:
 	Bit16u	glbPlayerDir;	// (_4976_4bf6) current player dir (0,1,2,3=N,E,S,W)
 	Bit16u	glbRecalcLightIndicator;	// (_4976_4bf8)
 	i16		glbPlayerPosX;	// (_4976_4bfa) current player x-axis (column)
-	Bit16u	_4976_4bfc;		// Related to champions count ?
+	Bit16u	glbNextChampionNumber;		// (_4976_4bfc) Related to champions count ?
 	Bit16u	_4976_4bfe;
 	Bit16u	_4976_4c00;
 	Bit16u	_4976_4c02;
@@ -472,7 +472,7 @@ protected:
 	U16		glbTargetPosXTest;	// (_4976_4eb8) x?
 	U16		glbTargetPosYTest; // (_4976_4eba) y?
 	Bit16u	_4976_4ebc;
-	CreatureInfoData	*_4976_4ebe;	// creatures in game info
+	CreatureInfoData	*glbTabCreaturesInfo;	// (_4976_4ebe) creatures in game info
 	Bit16u	glbCreaturesCount;		// (_4976_4ec2) creature cnt
 
 #define SIZE_LOCAL_CREATURE_VAR (reinterpret_cast<const U8 *>(&glbCreatureTempTargetX) - reinterpret_cast<const U8 *>(&glbCurrentThinkingCreatureID))
@@ -487,7 +487,7 @@ protected:
 	i8		_4976_4ee4;
 	X8		_4976_4ee5;		// selector of next xact?
 	X8		_4976_4ee6;		// creature move block?
-	U8		_4976_4ee7;		// map?
+	U8		glbSomeMap_4976_4ee7;		// _4976_4ee7 some map?
 	X16		_4976_4ee8;	// sk3672.b3()
 	X16		_4976_4eea;	// sk3672.b4()
 	U16		_4976_4eec;
@@ -957,7 +957,8 @@ protected:
 	U8 GET_TILE_VALUE(i16 xx, i16 yy);
 	AIDefinition *QUERY_CREATURE_AI_SPEC_FROM_TYPE(Bit8u creatureType);
 	Bit16u QUERY_GDAT_CREATURE_WORD_VALUE(Bit8u creatureType, Bit8u cls4);
-	void _2066_1ea3(Bit16u xx, Bit16u yy, Bit16u zz);		// An interesting one about changing bits on tile (void/pit)
+	//void _2066_1ea3(Bit16u xx, Bit16u yy, Bit16u zz);		// An interesting one about changing bits on tile (void/pit)
+	void SET_TILE_ATTRIBUTE_02(Bit16u xx, Bit16u yy, Bit16u map); // _2066_1ea3
 	sk1c9a02c3 *_1c9a_02c3(Creature *xx, AIDefinition *yy);
 	Bit16u _4937_01a9(Bit16u xx, Bit16u *yy, CreatureAnimationFrame **rref);
 	void GRAPHICS_DATA_OPEN();
@@ -1145,7 +1146,7 @@ protected:
 	void DRAW_STATIC_PIC(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit16u rectno, i16 colorkey);
 	void DRAW_CHARSHEET_OPTION_ICON(Bit8u cls4, Bit16u rectno, Bit16u zz);
 	void DRAW_PLAYER_3STAT_PANE(Bit16u player, Bit16u xx);
-	void _2e62_061d(Bit16u player);
+	void DRAW_CHAMPION_PICTURE(Bit16u player); // _2e62_061d
 	void DRAW_PLAYER_3STAT_HEALTH_BAR(U16 player);
 	void DRAW_PLAYER_DAMAGE(Bit16u player);
 	void DRAW_CUR_MAX_HMS(U16 rectno, i16 curVal, i16 maxVal);
@@ -1219,7 +1220,7 @@ protected:
 	void SELECT_CHAMPION_LEADER(Bit16u xx);
 	void ADD_ITEM_TO_PLAYER(U16 player, ObjectID rl);
 	void _2f3f_04ea(Bit16u xx, Bit16u yy, Bit16u dir, Bit16u zz, Bit16u ee);
-	void _24a5_1798(Bit16u xx);
+	void INTERFACE_CHAMPION(Bit16u xx); // _24a5_1798
 	void INIT_BACKBUFF();
 	SpellDefinition *FIND_SPELL_BY_RUNES(U8 *runes);
 	ObjectID ALLOC_NEW_CREATURE(U16 creaturetype, U16 healthMultiplier_1to31_baseIs8, U16 dir, U16 xx, U16 yy);
@@ -1321,7 +1322,7 @@ protected:
 	i16 _0b36_1446(Picture *ref, i16 xx, i16 yy, U16 colorkey);
 	U16 _32cb_00f1(U16 xx, U16 yy, i16 zz);
 	U16 _32cb_0287(U16 xx, U16 yy, U16 zz);
-	void _121e_0003(U16 xx);
+	void CLICK_WALL(U16 xx); // _121e_0003
 	U16 _32cb_35c1(i16 *xx, i16 *yy, i16 zz, i16 ww);
 	i16 ROTATE_5x5_POS(i16 _5x5, U16 dir);
 	i16 QUERY_OBJECT_5x5_POS(ObjectID rl, U16 reldir);
@@ -1395,7 +1396,7 @@ protected:
 	i16 _19f0_05e8(X16 aa, DistMapTile (*bb)[1][32], Ax3 *cc, i16 xx, i16 yy, i16 zz, X16 ww);
 	i16 _1c9a_1b16(X16 xx, X16 yy);
 	i16 _1c9a_1a48(X16 xx, X16 yy);
-	X16 _19f0_0081(i16 xx, i16 yy);
+	X16 IS_TILE_WALL(i16 xx, i16 yy); // _19f0_0081
 	X16 _19f0_1511(ObjectID rl);
 	X16 CALC_CLOUD_DAMAGE(ObjectID rlCloud, ObjectID rlTarget);
 	X16 _19f0_13aa(i16 xx, i16 yy);
@@ -1431,7 +1432,7 @@ protected:
 	X16 _12b4_099e(ObjectID rl);
 	U16 PERFORM_MOVE(X16 xx);
 	Bit16u HANDLE_UI_EVENT(MousePosition *ref);	// Important func
-	void _1031_1e6a();
+	void MAIN_LOOP(); // _1031_1e6a
 	Bit16u _476d_04ed(Bit16u xx);
 	sk0d9e *_1031_06b3(sk1891 *ref, X16 xx);
 	void _1031_0781(Bit16u xx);
@@ -1662,7 +1663,7 @@ protected:
 	Bit16u _0cee_06dc(i16 xx, i16 yy);
 	void ATTACK_CREATURE(ObjectID rl, i16 xx, i16 yy, Bit16u ss, i16 tt, Bit16u quantity);
 	U8 *PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timerType);
-	void _14cd_0802();
+	void CREATURE_THINK_FLUSH_POSITION(); // _14cd_0802
 	X32 CREATURE_SOMETHING_1c9a_0a48();
 	void UNPREPARE_LOCAL_CREATURE_VAR(U8 *ww);
 	void ALLOC_CAII_TO_CREATURE(ObjectID rl, i16 xx, i16 yy);
@@ -1938,7 +1939,7 @@ protected:
 	i16 SELECT_CREATURE_4EFE(const sk4efe *ref);
 	void SELECT_CREATURE_37FC();
 	void __SET_CURRENT_THINKING_CREATURE_WALK_PATH();
-	i16 _1c9a_381c();
+	i16 CREATURE_THINK_381c(); // _1c9a_381c
 	U8 *_3e74_5788(U16 xx, i32 yy);
 	void _14cd_0276(skxxx9 *ref);
 	void _14cd_0f0a(U8 func, U8 xx, U8 yy, sk1bf9 *ss);
@@ -1946,7 +1947,7 @@ protected:
 	void _14cd_18cc(U8 xx, U8 yy, sk1bf9 *ss);
 	ObjectID CREATURE_CAN_HANDLE_ITEM_IN(i16 flags, ObjectID rlFindFrom, i8 dir);
 	U16 _2c1d_09d9();
-	X16 _14cd_1316(U8 xx, X16 yy, U8 zz);
+	X16 CREATURE_THINK_1316(U8 xx, X16 yy, U8 zz); // _14cd_1316
 	void _14cd_18f2(i8 xx, U8 yy, sk1bf9 *ss, X8 ww, Ax3 vv);
 	void _14cd_19a4(U8 xx, U8 yy, sk1bf9 *ss);
 	X16 _14cd_102e(X16 ww, ObjectID rl, i8 dir, X16 alsoPossession, X16 alsoContainer);
@@ -1976,7 +1977,7 @@ protected:
 	void _14cd_1fa7(U8 xx, U8 yy, sk1bf9 *ss);
 	void _14cd_1f8b(U8 xx, U8 yy, sk1bf9 *ss);
 	X16 _1c9a_38a8();
-	X8 _14cd_0389();
+	X8 CREATURE_THINK_0389(); // _14cd_0389
 	void _14cd_0550(skxxxh *ref, i8 xx, i8 yy, X16 ww);
 	void _14cd_0457();
 	i8 SELECT_CREATURE_3672();
@@ -2019,8 +2020,8 @@ protected:
 	X8 PROCEED_XACT_91();
 	X8 PROCEED_XACT_70();
 	i8 PROCEED_XACT(i8 xact);
-	X16 _14cd_08f5(i8 xx);
-	void _14cd_09e2();
+	X16 CREATURE_THINK_08F5(i8 xx);	// _14cd_08f5
+	void CREATURE_THINK_09E2(); // _14cd_09e2
 	void _13e4_01a3();
 	void ADVANCE_TILES_TIME(X16 xx, X16 yy);
 	X16 OPERATE_PIT_TELE_TILE(X16 xx, X16 yy, X16 ww);
@@ -2049,7 +2050,7 @@ protected:
 	X16 CREATURE_EXPLODE_OR_SUMMON();
 	U16 PROCEED_CCM();
 	X16 _4937_028a(U16 xx, U16 *yy, CreatureAnimationFrame **ref);
-	void _13e4_0982();
+	void CREATURE_THINK_0982(); // _13e4_0982
 	void _13e4_071b();
 	void _13e4_0806();
 	void THINK_CREATURE(X8 xx, X8 yy, X16 timerType);

@@ -247,61 +247,68 @@ sk3672 _4976_362e[] = {
 #define _4976_2629 &_4976_2565[28]
 #define _4976_275d &_4976_2565[72]
 sk3672 *_4976_3672[56] = { // by skxxxh.b0 in sk37fc.h
-	_4976_1a6a, //
-	_4976_1a94, //
-	_4976_1aa2, //
-	_4976_1a78, //
-	_4976_1a86, //
-	_4976_1ab0, //
-	_4976_1ab7, //
-	_4976_1abe, //
-	_4976_1ac5, //
-	_4976_2caa, //
-	_4976_1acc, //
-	_4976_1ada, //
-	_4976_1ae8, //
-	_4976_213f, //
-	_4976_1aef, //
-	_4976_1bac, //
-	_4976_1af6, //
-	_4976_1afd, //
-	_4976_1b04, //
-	_4976_2356, //
-	_4976_23a1, //
-	_4976_2401, //
-	_4976_261b, //
-	_4976_2622, //
-	_4976_2629, //
-	_4976_275d, //
-	_4976_1b3c, //
-	_4976_1b43, //
-	_4976_1b58, //
-	_4976_1b4a, //
-	_4976_1b51, //
-	_4976_1d7f, //
-	_4976_1bb3, //
-	_4976_1b5f, //
-	_4976_1b66, //
-	_4976_25b2, //
-	_4976_1b12, //
-	_4976_1b6d, //
-	_4976_1b74, //
-	_4976_258f, //
-	_4976_1b82, //
-	_4976_1afd, //
-	_4976_1b89, //
-	_4976_1b90, //
-	_4976_256c, //
-	_4976_2565, //
-	_4976_2573, //
-	_4976_257a, //
-	_4976_1b97, //
-	_4976_1b97, //
-	_4976_1b27, //
-	_4976_1bc1, //
-	_4976_30d4, //
-	_4976_1b0b, //
-	_4976_362e, //
-	_4976_2581, //
+	_4976_1a6a, //	0 Tree
+	_4976_1a94, //	1 Laboratory Table
+	_4976_1aa2, //	?
+	_4976_1a78, //	3 Bush
+	_4976_1a86, //	4 Pillars / Table / Rod
+	_4976_1ab0, //	5 Stalagmite
+	_4976_1ab7, //	6 Boulder
+	_4976_1abe, //	7 Fountain
+	_4976_1ac5, //	8 Obelisks / Tombstone
+	_4976_2caa, //	9 Wood Table
+	_4976_1acc, //	10 Magick Cauldron
+	_4976_1ada, //	11 Skull Brazier
+	_4976_1ae8, //	12 Trading Table
+	_4976_213f, //	13 Scout Minion
+	_4976_1aef, //	14 Attack Minion
+	_4976_1bac, //	15 Carry Minion
+	_4976_1af6, //	16 Fetch Minion
+	_4976_1afd, //	17 Guard Minion
+	_4976_1b04, //	18 U-Haul Minion
+	_4976_2356, //	19 Thorn Demon
+	_4976_23a1, //	20 Obelisk (Passable) / Directions
+	_4976_2401, //	21 Vortex
+	_4976_261b, //	22 Flame Orb
+	_4976_2622, //	23 Cavern Orb
+	_4976_2629, //	24 Glop
+	_4976_275d, //	25 Rocky
+	_4976_1b3c, //	26 Giggler
+	_4976_1b43, //	27 Thicket Thief
+	_4976_1b58, //	28 Tiger Striped Worm
+	_4976_1b4a, //	29 Treant
+	_4976_1b51, //	30 Dragoth
+	_4976_1d7f, //	31 Dru Tan
+	_4976_1bb3, //	32 Cave In
+	_4976_1b5f, //	33 Merchants
+	_4976_1b66, //	34
+	_4976_25b2, //	35 Tower Bats
+	_4976_1b12, //	36 Archer Guard
+	_4976_1b6d, //	37 Magik Reflector
+	_4976_1b74, //	38 Power Crystal
+	_4976_258f, //	39 Evil Fountain
+	_4976_1b82, //	40 Spiked Wall
+	_4976_1afd, //	41 Spectre
+	_4976_1b89, //	42 Veg Mouth
+	_4976_1b90, //	43 Evil Attack Minions
+	_4976_256c, //	44 Axeman
+	_4976_2565, //	45 Cavern / Stone Table / Wall Home
+	_4976_2573, //	46 Mummy
+	_4976_257a, //	47 Void Door
+	_4976_1b97, //	48 Dark Vexirk
+	_4976_1b97, //	49 Evil Guard Minion
+	_4976_1b27, //	50 Skeleton
+	_4976_1bc1, //	51 Amplifier
+	_4976_30d4, //	52 Wolf
+	_4976_1b0b, //	53 Pit Ghost
+	_4976_362e, //	54 Door Ghost
+	_4976_2581, //	55 Vexirk King
 };
+// SPX: but what for 56+ ?
+// 56 ? Obelisk like ?
+// 57 Axeman Thief
+// 58 Flying Chest
+// 59 Barrel
+// 60 Pedistal
+// 61 Ghost
 //}}SK3672_DEF

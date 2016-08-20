@@ -1244,7 +1244,7 @@ namespace DM2Internal {
 			w8 &= 0x0fff;
 			w8 |= val << 12;
 		}
-		void w8_a_b(U16 val) {
+		void w8_a_b(U16 val) { // could be the direction
 			val &= 0x03;
 			w8 &= 0xf3ff;
 			w8 |= val << 10;
@@ -1500,7 +1500,7 @@ namespace DM2Internal {
 		Bit16u w32;		// @32
 
 		i8 b34;			// @34
-		__int8 b35;		// @35
+		__int8 b35;		// @35	// Cloud size when dying ? 0/default = 0x6E / 1 => 0xBE / 2 => 0xFF
 
 		U16 IsStaticObject() const { return (w0)&1; } // w0_0_0() 1 = sk1c9a02c3 within each Creature record.
 												// this one is set for general static objects (non creature)
@@ -1564,20 +1564,20 @@ namespace DM2Internal {
 		Ax3 w12;		// @12
 		i16 w14;		// @14
 		i16 w16;		// @16
-		i8 b18;			// @18 // _4976_3672[xx][]  , b18 is xx
-		i8 b19;			// @19 // _4976_3672[xx][yy], b19 is yy
+		i8 x;			// @18 // b18 _4976_3672[xx][]  , b18 is xx
+		i8 y;			// @19 // b19 _4976_3672[xx][yy], b19 is yy
 		U16 w20;		// @20 // recent damage for creature
 		i8 b22;			// @22
 		U8 Command2;	// @23 // U8 b23 // pre creature action pattern? ccmXX
 		Ax3 w24;		// @24 // creature's target, a point to the target.
 		i8 Command;		// @26 // i8 b26 // creature action pattern? ccmXX
-		i8 b27;			// @27
+		i8 b27;			// @27 // i8 b27 // direction ?
 		U8 b28;			// @28
-		i8 b29;			// @29
+		i8 b29;			// @29	// next direction ??
 		i8 ItemToThrow;			// @30	// b30	ItemToThrow or CreatureToSummon
 		i8 b31;			// @31
 		i8 b32;			// @32
-		U8 b33;			// @33
+		U8 b33;			// @33	// result of proceed_ccm ?
 
 		U8 b30_6_6() const { return (ItemToThrow>>6)&1; }
 
@@ -2701,8 +2701,8 @@ namespace DM2Internal {
 		ccm03 = 0x03, // turn ?
 		ccm04 = 0x04, // turn right?
 		ccmJump = 0x05, // (ccm05) jump
-		ccm06 = 0x06,	// turn -> stand ?
-		ccm07 = 0x07,	// turn -> stand ?
+		ccm06 = 0x06,	// turn left -> stand ?
+		ccm07 = 0x07,	// turn right -> stand ?
 		ccmMeleeAttack = 0x08, // (ccm08) standard attack
 		ccm09 = 0x09, // walk?
 		ccmSteal = 0x0A, // (ccm0A) steal
@@ -2745,9 +2745,9 @@ namespace DM2Internal {
 		ccm2F = 0x2F,	// switch button ?
 		ccm30 = 0x30,	// switch button (giggler) ?
 		ccm31 = 0x31,	// switch button (giggler) ?
-		ccm32 = 0x32,	// unused
-		ccm33 = 0x33,	// unused
-		ccm34 = 0x34,	// unused
+		ccm32 = 0x32,	// unknown / used at 13E4:0AEC
+		ccm33 = 0x33,	// unknown / used at 13E4:0AEC
+		ccm34 = 0x34,	// unknown / used at 13E4:0AEC
 		ccm35 = 0x35,	// Going up (minion) ?
 		ccm36 = 0x36,	// Coming from top (minion) ?
 		ccm38 = 0x38,	// Going up (minion) ?
