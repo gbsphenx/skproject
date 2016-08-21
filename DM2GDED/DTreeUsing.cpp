@@ -36,7 +36,18 @@ CString CDTreeUsing::FormatClass2Name(CGDEntry pos)
 				}
 				break;
 			}
+		// SPX add more categories just than Creatures
+		case 0x00: // Technical Data
+		case 0x08: // Dungeon Graphics (Wallsets)
+		case 0x09: // Wall Ornates
+		case 0x0A: // Floor Ornates
+		case 0x0B: // Door Ornates
+		case 0x0C: // Door Buttons
+		case 0x0D: // Missiles
+		case 0x0E: // Doors
 		case 0x0F: // Creatures
+		case 0x17: // Skullkeep and Weather (Environments)
+		case 0x18: // Teleporters
 			{
 				pos.c3(0x05);
 				pos.c4(0x00);
@@ -57,7 +68,7 @@ CString CDTreeUsing::FormatClass2Name(CGDEntry pos)
 				pos.c4(0x18);
 				pos.c5(0x00);
 				pos.c6(0x00);
-
+				m_ilspInlang.Transform(pos);	// SPX: Allow Champions to have multilanguage
 				CGDAT &core = m_pEdCtx->GetGDAT();
 				CString strText;
 				if (core.GetDispTextAt(core.GetValueAt(pos), strText)) {

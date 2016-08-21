@@ -14,6 +14,16 @@
 
 #include "resource.h"       // メイン シンボル
 
+// SPX define _MAX and _MIN because not found in original code ? for compilation using MS VS 2008
+#ifndef _MAX
+#define _MAX(_a_,_b_) ( (_a_) > (_b_) ? (_a_) : (_b_) )
+#endif
+
+#ifndef _MIN
+#define _MIN(_a_,_b_) ( (_a_) < (_b_) ? (_a_) : (_b_) )
+#endif
+// SPX
+
 /////////////////////////////////////////////////////////////////////////////
 // CDM2GDEDApp:
 // このクラスの動作の定義に関しては DM2GDED.cpp ファイルを参照してください。

@@ -2305,6 +2305,16 @@ bool CGDAT::makeUnsure()
 			if (pos.c3() == 0x05) {
 				UINT nDivision = 0x10000 * pos.c4() + 0x100 * pos.c5() + pos.c6();
 				switch (pos.c1()) {
+					// SPX: add more categories to read internal names
+				case 0x08:
+				case 0x09:
+				case 0x0A:
+				case 0x0B:
+				case 0x0C:
+				case 0x0D:
+				case 0x0E:
+				case 0x17:
+				case 0x18:
 				case 0x0F:
 					{
 						switch (nDivision) {
@@ -2319,6 +2329,7 @@ bool CGDAT::makeUnsure()
 				case 0x13:
 				case 0x14:
 				case 0x15:
+				case 0x16:	// SPX: Champions
 					{
 						switch (nDivision) {
 						case 0x180000: m_nGDRSLT |= GDRSLT_I_EN_PLAIN; break;
@@ -2326,6 +2337,8 @@ bool CGDAT::makeUnsure()
 						case 0x182000: m_nGDRSLT |= GDRSLT_I_JP; break;
 						case 0x183000: m_nGDRSLT |= GDRSLT_I_DE; break;
 						case 0x184000: m_nGDRSLT |= GDRSLT_I_FR; break;
+						case 0x185000: m_nGDRSLT |= GDRSLT_I_ES; break;
+						case 0x186000: m_nGDRSLT |= GDRSLT_I_IT; break;
 						}
 						break;
 					}

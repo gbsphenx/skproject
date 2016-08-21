@@ -1,0 +1,643 @@
+Main category,Sub-cat,typ,ents,[Desc],[Type],[Options],[Programming]
+SPX:Spell Definition,Rev.4,,,,,,
+$02,,$05,$18xxxx,spell name,,,
+$02,,$0B,$01xxxx,rune1,select,"102*YA.ico=YA|
+103*VI.ico=VI|
+104*OH.ico=OH|
+105*FUL.ico=FUL|
+106*DES.ico=DES|
+107*ZO.ico=ZO",
+$02,,$0B,$02xxxx,rune2,select,"108*VEN.ico=VEN|
+109*EW.ico=EW|
+110*KATH.ico=KATH|
+111*IR.ico=IR|
+112*BRO.ico=BRO|
+113*GOR.ico=GOR",
+$02,,$0B,$03xxxx,rune3,select,"114*KU.ico=KU|
+115*ROS.ico=ROS|
+116*DAIN.ico=DAIN|
+117*NETA.ico=NETA|
+118*RA.ico=RA|
+119*SAR.ico=SAR",
+$02,,$0B,$04xxxx,difficulty,unsigned,,
+$02,,$0B,$05xxxx,requiredSkill,unsigned,,
+$02,,$0B,$06xxxx,type,select,"1*Flask.ico=transform flask to potion|
+2*Shoot.ico=shoot spell|
+4*Summon.ico=summon creature|
+3*Enhance.ico=enchantments",
+$02,,$0B,$07xxxx,creature:,creature,,"forth:
+C1 C2 11 6 0 0 
+GETVALUE
+4 ="
+$02,,$0B,$07xxxx,enchantments:,select,"0*RA.ico=Long Light|
+1*SAR.ico=Darkness|
+5*FUL.ico=Light|
+3=Invisibility|
+2*SpellSh.ico=Spell shield|
+8*FireSh.ico=Fire shield|
+4*PartySh.ico=Party shield|
+6*WizAura.ico=Aura of Wisdom|
+7*DexAura.ico=Aura of Dexterity|
+9*VitAura.ico=Aura of Vitality|
+10*StrAura.ico=Aura of Strength|
+11*ROS.ico=Aura of Speed|
+14*NETA.ico=Spell reflector|
+15=Magical Marker => Item creator!|
+12=NEW, used for restoring current champion health|
+13=NEW, used for restoring current champion health","forth:
+C1 C2 11 6 0 0 
+GETVALUE
+3 ="
+$02,,$0B,$07xxxx,shoot spell:,select,"0*paball.ico=Fireball|
+2*paball.ico=Spell bolt|
+3*paew.ico=Harm unmaterialed|
+4*pazo.ico=Open door|
+6*paven.ico=Poison bolt|
+7*paoh.ico=Poison cloud|
+9*papush.ico=Push|
+10*papull.ico=Pull|
+11=Thunder in beta|
+12=Electric Shock in beta|
+13=? ?|
+14=Reflect spell|
+15=YA EW","forth:
+C1 C2 11 6 0 0 
+GETVALUE
+2 ="
+$02,,$0B,$07xxxx,potion:,select,"0=MON|
+1=UM|
+2*DES.ico=DES|
+3*VEN.ico=VEN BOMB|
+4*SAR.ico=SAR|
+5*ZO.ico=ZO|
+6*ROS.ico=Secret potion: ROS|
+7*KU.ico=Secret potion: KU|
+8*DAIN.ico=Secret potion: DAIN|
+9*NETA.ico=Secret potion: NETA|
+10=Cure Poison|
+11=Secret potion: MON|
+12*YA.ico=Secret potion: YA|
+13=Secret potion: EE|
+14*VI.ico=VI|
+15=Water flask|
+16*KATH.ico=KATH|
+17*EW.ico=PEW|
+18*RA.ico=RA|
+19*FUL.ico=FUL BOMB|
+20=Empty flask","forth:
+C1 C2 11 6 0 0 
+GETVALUE
+1 ="
+SPX:Creature AI,,,,,,,
+GENERIC AND ORNATES,,,,,,,
+$08,,$09,$00xxxx,Scene palette (6 sets),,,
+$08,,$0B,$640000,Scene colorkey,unsigned,,
+$08,,$07,$01xxxx,Fog cvt tbl1,,,
+$08,,$07,$02xxxx,Fog cvt tbl2,,,
+$08,,$07,$03xxxx,Fog cvt tbl3,,,
+$08,,$07,$04xxxx,Fog cvt tbl4,,,
+$08,,$0B,$630000,1=window,unsigned,,
+$08,,$0B,$660000,Rain possibility,unsigned,,
+$08,,$0B,$670000,Ambiant light level (brightness bonus),unsigned,,
+$08,,$0B,$680000,Default highest light level (0 being full light),unsigned,,
+$08,,$0B,$690000,Fog graphicsset ? (I tested without success),unsigned,,
+$08,,$0B,$6A0000,Use random pit destination,unsigned,,
+$08,,$0B,$6B0000,Which ornate floor as floor,unsigned,,
+$08,,$0B,$6C0000,Thunder aim position,unsigned,,
+$08,,$0B,$6D0000,Ambiant darkness,unsigned,,
+$0F,,$0B,$040000,Colorkey,unsigned,,
+$09;$0A,,$0B,$040000,Colorkey1,unsigned,,
+$09;$0A,,$0B,$110000,Colorkey2,unsigned,,
+$09;$0A,,$02,$880000,Noise,,,
+$09;$0A,,$0B,$0E0000,Key for hole,keyitem,,
+$09;$0A,,$0B,$120000,Respawn,unsigned,,
+$09;$0A,,$0B,$120000,Recharge,unsigned,,
+,,,,,,,
+,,,,,,,
+$09,,$0B,$050000,Ornate position,unsigned,,
+$09,,$0B,$0D0000,Anim count,unsigned,,
+$09,,$0B,$0A0000,"1=alcove, 3=sleep device",unsigned,,
+$09,,$0B,$0B0000,1=water spring,unsigned,,
+$09,,$0B,$0C0000,1=altar of rebirth,unsigned,,
+$09;$0A,,$0B,$880000,Noise on frame#,unsigned,,
+$09;$0A,,$02,$880000,Activation sound (can be used for loop sound),,,
+DOOR ORNATES,,,,,,,
+$0B,,$01,$00xx00,Decoration (normal distance),,,
+$0B,,$0B,$08xx00,???,unsigned,,
+$0B,,$0E,$67xx00,???,,,
+UNKNOWN,,,,,,,
+$01,,$04,$000000,Rectangles structure,,,
+$01,,$07,$020800,?,,,
+$01,,$07,$000000,Latin font 6x6 (128x6),,,
+$01,,$09,$xxxxxx,IRGB palset for Sega/FM-Towns,,,
+$01,,$09,$FE0800,system palette?,,,
+FOR CREATURES,,,,,,,
+$0F,,$0B,$050000,AI creature,hex,,
+$0F,,$02,$000000,Walk,,,
+$0F,,$02,$010000,Turn,,,
+$0F,,$02,$020000,Get Hit,,,
+$0F,,$02,$030000,Eat/Drink,,,
+$0F,,$02,$040000,?,,,
+$0F,,$02,$050000,Swing,,,
+$0F,,$02,$060000,War cry?,,,
+$0F,,$02,$070000,Attack,,,
+$0F,,$02,$080000,Pick Steal,,,
+$0F,,$02,$090000,Wince ?,,,
+$0F,,$02,$0A0000,? hit ?,,,
+$0F,,$02,$0B0000,Merchant think,,,
+$0F,,$02,$0C0000,Merchant accept,,,
+$0F,,$02,$0D0000,Merchant refuse,,,
+$0F,,$02,$0E0000,Spawn,,,
+$0F,,$02,$0F0000,Growl (vegmouth),,,
+$0F,,$02,$100000,Merchant,,,
+$0F,,$02,$110000,Death,,,
+$0F,,$02,$120000,Brow? Second Attack?,,,
+$0F,,$02,$840000,Default sound (of what?),,,
+$0F,,$02,$8D0000,Knock (get hit),,,
+$0F,,$0B,$0A0000,Battle prize1,prizeitem,,
+$0F,,$0B,$0B0000,Battle prize2,prizeitem,,
+$0F,,$0B,$0C0000,Battle prize3,prizeitem,,
+$0F,,$0B,$0D0000,Battle prize4,prizeitem,,
+$0F,,$0B,$0E0000,Battle prize5,prizeitem,,
+$0F,,$0B,$0F0000,Battle prize6,prizeitem,,
+$0F,,$0B,$100000,Battle prize7,prizeitem,,
+$0F,,$0B,$110000,Battle prize8,prizeitem,,
+$0F,,$0B,$120000,Battle prize9,prizeitem,,
+$0F,,$0B,$130000,Battle prize10,prizeitem,,
+$0F,,$0B,$140000,Battle prize11,prizeitem,,
+$0F,,$0B,$1E0000,Something about teleporter or floating??? What to throw?,unsigned,,
+$0F,,$05,$100000,My enemies,creatures,,
+$0F,,$05,$110000,Cooperative with,creatures,,
+$0F,,$05,$130000,Items1,items,,
+$0F,,$05,$150000,Fetchable?,items,,
+$0F,,$05,$160000,Items2,items,,
+$0F,,$05,$170000,Merchant0A,items,,
+$0F,,$05,$180000,Items3,items,,
+$0F,,$05,$190000,Creatures1,creatures,,
+$0F,,$05,$1B0000,Items4,items,,
+$0F,,$05,$1C0000,Items5,items,,
+$0F,,$05,$1E0000,Throw weapon?,items,,
+$0F,,$05,$200000,Merchant2A,items,,
+$0F,,$05,$210000,Merchant2B,items,,
+$0F,,$05,$220000,Merchant2C,items,,
+$0F,,$05,$230000,Merchant2D,items,,
+$0F,,$05,$240000,Merchant2E,items,,
+$0F,,$05,$250000,Merchant2F,items,,
+$0F,,$05,$260000,Merchant3A,items,,
+$0F,,$05,$270000,Merchant3B,items,,
+$0F,,$05,$280000,Merchant3C,items,,
+$0F,,$05,$290000,Merchant3D,items,,
+$0F,,$05,$2A0000,Merchant3E,items,,
+$0F,,$05,$2B0000,Merchant3F,items,,
+$0F,,$05,$2C0000,Merchant4A,items,,
+$0F,,$05,$2D0000,Merchant4B,items,,
+$0F,,$05,$2E0000,Merchant4C,items,,
+FOR ITEMS + MISSILES,,,,,,,
+$0D;$10;$11;$12;$13;$14;$15,,$01,$00xx00,Placed image,,,
+$0D;$10;$11;$12;$13;$14;$15,,$01,$01xx00,Placed image (centered/alcove),,,
+$0D;$10;$11;$12;$13;$14;$15,,$01,$04xx00,Placed image (open/activated),,,
+$0D;$10;$11;$12;$13;$14;$15,,$01,$05xx00,Placed image (open/activated) (centered/alcove),,,
+$0D;$10;$11;$12;$13;$14;$15,,$01,$080800,Flying item (coming),,,
+$0D;$10;$11;$12;$13;$14;$15,,$01,$090800,Flying item (coming/going) ,,,
+$0D;$10;$11;$12;$13;$14;$15,,$01,$0A0800,Flying item (going),,,
+$0D;$10;$11;$12;$13;$14;$15,,$01,$0C0800,Flying item (passing),,,
+$10;$11;$12;$13;$14;$15,,$01,$18xx00,Inventory image,,,
+$12;$14,,$01,$190000,In hand image,,,
+$12;$14,,$01,$190800,In hand image,,,
+$10;$11;$12;$13;$14;$15,,$01,$19xx00,Inventory image (open/charged),,,
+$10;$11;$12;$13;$14;$15,,$01,$1Axx00,Inventory image (anim 2),,,
+$10;$11;$12;$13;$14;$15,,$01,$1Bxx00,Inventory image (anim 3),,,
+$10;$11;$12;$13;$14;$15,,$01,$1Cxx00,Inventory image (anim 4),,,
+$10;$11;$12;$13;$14;$15,,$01,$1Dxx00,Inventory image (anim 5),,,
+$10;$11;$12;$13;$14;$15,,$01,$1Exx00,Inventory image (anim 6),,,
+$10;$11;$12;$13;$14;$15,,$01,$1Fxx00,Inventory image (anim 7),,,
+$10;$11;$12;$13;$14;$15,,$01,$20xx00,Inventory image (anim 8),,,
+$10;$11;$12;$13;$14;$15,,$01,$21xx00,Inventory image (anim 9),,,
+$10;$11;$12;$13;$14;$15,,$01,$22xx00,Inventory image (anim 10),,,
+$10;$11;$12;$13;$14;$15,,$01,$23xx00,Inventory image (anim 11),,,
+$10;$11;$12;$13;$14;$15,,$01,$24xx00,Inventory image (anim 12),,,
+$0D;$10;$11;$12;$13;$14;$15,,$01,$41xx00,Item explosion,,,
+$0D;$10;$11;$12;$13;$14;$15,,$01,$42xx00,Item inside explosion (level 1 – low),,,
+$0D;$10;$11;$12;$13;$14;$15,,$01,$43xx00,Item inside explosion (level 2 – medium),,,
+$0D;$10;$11;$12;$13;$14;$15,,$01,$44xx00,Item inside explosion (level 3 – high),,,
+$08;$09;$0A;$0D;$0F;$10;$11;$12;$13;$14;$15;$18,,$01,$F9xx00,Map chip,,,
+$08;$09;$0A;$0D;$0F;$10;$11;$12;$13;$14;$15;$18,,$01,$FExx00,Default image (yukman),,,
+$0D;$10;$11;$12;$13;$14;$15,,$02,$810000,Explosion,,,
+$10;$11;$12;$13;$14;$15,,$02,$850000,Knock (Hit obstacle),,,
+$0D;$10;$11;$12;$13;$14;$15,,$02,$860000,Throwing / Cast,,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$081000,Command1 (English),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$082000,Command1 (Japanese),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$083000,Command1 (German),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$084000,Command1 (French),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$085000,Command1 (Spanish),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$086000,Command1 (Italian),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$091000,Command2 (English),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$092000,Command2 (Japanese),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$093000,Command2 (German),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$094000,Command2 (French),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$095000,Command2 (Spanish),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$096000,Command2 (Italian),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$0A1000,Command3 (English),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$0A2000,Command3 (Japanese),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$0A3000,Command3 (German),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$0A4000,Command3 (French),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$0A5000,Command3 (Spanish),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$0A6000,Command3 (Italian),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$0B1000,Command4 (English),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$0B2000,Command4 (Japanese),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$0B3000,Command4 (German),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$0B4000,Command4 (French),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$0B5000,Command4 (Spanish),command,,
+$10;$11;$12;$13;$14;$15;$16,,$05,$0B6000,Command4 (Italian),command,,
+$08;$09;$0A;$0B;$0C;$0D;$0E;$0F;$10;$11;$12;$13;$14;$15;$16;$17,,$05,$180000,English text (Internal/Default),,,
+$08;$09;$0A;$0B;$0C;$0D;$0E;$0F;$10;$11;$12;$13;$14;$15;$16;$17,,$05,$181000,English text,,,
+$08;$09;$0A;$0B;$0C;$0D;$0E;$0F;$10;$11;$12;$13;$14;$15;$16;$17,,$05,$182000,Japanese text,,,
+$08;$09;$0A;$0B;$0C;$0D;$0E;$0F;$10;$11;$12;$13;$14;$15;$16;$17,,$05,$183000,German text,,,
+$08;$09;$0A;$0B;$0C;$0D;$0E;$0F;$10;$11;$12;$13;$14;$15;$16;$17,,$05,$184000,French text,,,
+$08;$09;$0A;$0B;$0C;$0D;$0E;$0F;$10;$11;$12;$13;$14;$15;$16;$17,,$05,$185000,Spanish text,,,
+$08;$09;$0A;$0B;$0C;$0D;$0E;$0F;$10;$11;$12;$13;$14;$15;$16;$17,,$05,$186000,Italian text,,,
+$14,,$05,$400000,Currency,items,,
+$10;$11;$12;$13;$14;$15,,$0B,$000000,Flags,flags,"Drinkable/
+2/
+4/
+8/
+Light/
+32/
+64/
+128/
+256/
+512/
+1024/
+2048/
+4096/
+8192/
+Currency/
+32768",
+$10;$11;$12;$13;$14;$15,,$0B,$010000,Weight in Kg (x10),unsigned,,
+$10;$11;$12;$13;$14;$15,,$0B,$020000,Money value,unsigned,,
+$10;$11;$12;$13;$14;$15,,$0B,$030000,Food value,unsigned,,
+$10;$11;$12;$13;$14;$15,,$0B,$040000,"Equip, Portability",flags,"Helm/
+Neckless/
+Wear or Plate/
+Pants/
+Boots/
+Left 2 Pouches/
+Right 4 Pouches/
+Right first Pouch/
+Chest or Bag/
+/
+/
+/
+/
+/
+/
+Container",
+$10;$11;$12;$13;$14;$15,,$0B,$050000,Projectile facility,flags,"1/
+2/
+4/
+8/
+16/
+32/
+64/
+128/
+256/
+512/
+1024/
+2048/
+4096/
+8192/
+16384/
+Launcher",
+$10;$11;$12;$13;$14;$15,,$0B,$060000,Icon anim,iconanim,,
+$10;$11;$12;$13;$14;$15,,$0B,$080000,Attack strength,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$090000,Throw strength,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$0A0000,Accuracy,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$0B0000,Sharp Resistance / Armor Value,b5353,Sharp resistance/Armor strength,
+$10;$11;$12;$13;$14;$15,,$0B,$0B0100,Sharp Resistance / Armor Value,b5353,Sharp resistance/Armor strength,
+$10;$11;$12;$13;$14;$15,,$0B,$0C0000,Missile shoot energy ???,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$0D0000,Missile strength,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$130000,Mushroom/Illumulet ? bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$140000,Mana bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$150000,Luck bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$160000,Strength bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$170000,Dexterity bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$180000,Wisdom bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$190000,Vitality bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$1A0000,Anti-magic bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$1B0000,Anti-fire bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$1E0000,Fighter bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$1F0000,Ninja bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$200000,Priest bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$210000,Wizard bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$220000,Fighter Swing bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$230000,Fighter Thrust bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$240000,Fighter Blunt bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$250000,Fighter Parry bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$260000,Ninja Steal bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$270000,Ninja Fight bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$280000,Ninja Throw bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$290000,Ninja Shoot bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$2A0000,Priest Identify bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$2B0000,Priest Heal bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$2C0000,Priest Influence bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$2D0000,Priest Defend bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$2E0000,Wizard Fire bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$2F0000,Wizard Air bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$300000,Wizard Earth bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$310000,Wizard Water bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$320000,Light bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$330000,Walk speed bonus,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$340000,Max charge count,signed,,
+$10;$11;$12;$13;$14;$15,,$0B,$350000,Additional money value per charge?,signed,,
+FOR CHESTS,,,,,,,
+$14,,$05,$020000,,command,,
+$14,,$05,$080000,Btn1,command,,
+$14,,$05,$090000,Btn2,command,,
+$14,,$05,$0A0000,Btn3,command,,
+$14,,$05,$0B0000,Btn4,command,,
+$14,,$01,$10xx00,Container contents,,,
+$14,,$01,$11xx00,Money box counter,,,
+$14,,$01,$12xx00,Container image for interface,,,
+$14,,$01,$40xxxx,Magic map info chips,,,
+$14,,$01,$41xxxx,Btn1(Up),command,,
+$14,,$01,$42xxxx,Btn1(Down),command,,
+$14,,$01,$43xxxx,Btn2(Up),command,,
+$14,,$01,$44xxxx,Btn2(Down),command,,
+$14,,$01,$45xxxx,Btn3(Up),command,,
+$14,,$01,$46xxxx,Btn3(Down),command,,
+$14,,$01,$47xxxx,Btn4(Up),command,,
+$14,,$01,$48xxxx,Btn4(Down),command,,
+$14,,$01,$49xxxx,Btn5(Up),command,,
+$14,,$01,$4Axxxx,Btn5(Down),command,,
+FOR CHAMPS,,,,,,,
+$16,,$01,$00xx00,Champion,,,
+$16,,$01,$01xx00,Champion (sleeping),,,
+$16,,$08,$000000,Initial status,champstat,,
+$16,,$02,$000000,Attack?,,,
+$16,,$02,$010000,Shoot?,,,
+$16,,$02,$820000,Get Hit,,,
+$16,,$02,$830000,Eat/Drink,,,
+$16,,$02,$870000,Death/Falling pit,,,
+$16,,$02,$8A0000,Bumping into wall,,,
+FOR DOORS,,,,,,,
+$0E,,$01,$00xx00,Front image (d=1),,,
+$0E,,$01,$01xx00,Front image (d=2),,,
+$0E,,$01,$02xx00,Front image (d=3),,,
+$0E,,$01,$41xx00,Destroyed mask (d=1),,,
+$0E,,$0B,$040000,Colorkey1 (pass through),unsigned,,
+$0E,,$0B,$120000,Colorkey2 (keep overlay),unsigned,,
+$0E,,$0B,$0A0000,?,unsigned,,
+$0E,,$0B,$0D0000,?,unsigned,,
+$0E,,$0B,$0E0000,Damage resist,unsigned,,
+$0E,,$0B,$0F0000,Door Strength,unsigned,,
+$0E,,$0B,$100000,Missile can pass through door ???,unsigned,,
+$0E,,$0B,$200000,CUSTOM: Used for displaying an animated mirrored door like DM1 force field.,unsigned,,
+FOR MESSAGES,,,,,,,
+$03,,$02,$000000,Special Activation?,,,
+$03,,$02,$010000,Special Activation?,,,
+$03,,$02,$810000,Explosion,,,
+$03,,$02,$880000,Activation,,,
+$03,,$02,$890000,Teleport,,,
+$03,,$02,$8B0000,Magic Spell (Cast / Explosion?),,,
+FOR POTIONS,,,,,,,
+$13,,$0B,$050000,NEW: Used as Potion behaviour (~similar to AI creature)(i.e. what type of potion it is),unsigned,,
+$13,,$0B,$430000,NEW: Used for water value,unsigned,,
+$13,,$0B,$4D0000,NEW: Used for spell missile (explosion) to be associated to potion (bomb),unsigned,,
+FOR TELEPORTER,,,,,,,
+$18,,$02,$890000,Teleport,,,
+FOR ENVIRONMENT,,,,,,,
+$17,,$01,$00xx00,Distant Element 1,,,
+$17,,$01,$01xx00,Distant Element 2,,,
+$17,,$01,$02xx00,Distant Element 3,,,
+$17,,$01,$03xx00,Distant Element 4,,,
+$17,,$01,$04xx00,Distant Element 5,,,
+$17,,$01,$05xx00,Distant Element 6,,,
+$17,,$01,$06xx00,Distant Element 7,,,
+$17,,$01,$07xx00,Distant Element 8,,,
+$17,,$01,$08xx00,Distant Element 9,,,
+$17,,$01,$09xx00,Distant Element 10,,,
+$17,,$01,$0Axx00,Distant Element 11,,,
+$17,,$01,$0Bxx00,Distant Element 12,,,
+$17,,$01,$0Cxx00,Distant Element 13,,,
+$17,,$01,$0Dxx00,Distant Element 14,,,
+$17,,$01,$0Exx00,Distant Element 15,,,
+$17,,$01,$0Fxx00,Distant Element 16,,,
+$17,,$01,$10xx00,Distant Element 17,,,
+$17,,$01,$11xx00,Distant Element 18,,,
+$17,,$01,$12xx00,Distant Element 19,,,
+$17,,$01,$13xx00,Distant Element 20,,,
+$17,,$01,$14xx00,Distant Element 21,,,
+$17,,$01,$15xx00,Distant Element 22,,,
+$17,,$01,$16xx00,Distant Element 23,,,
+$17,,$01,$17xx00,Distant Element 24,,,
+$17,,$01,$18xx00,Distant Element 25,,,
+$17,,$01,$19xx00,Distant Element 26,,,
+$17,,$01,$1Axx00,Distant Element 27,,,
+$17,,$01,$1Bxx00,Distant Element 28,,,
+$17,,$01,$1Cxx00,Distant Element 29,,,
+$17,,$01,$1Dxx00,Distant Element 30,,,
+$17,,$01,$1Exx00,Distant Element 31,,,
+$17,,$01,$1Fxx00,Distant Element 32,,,
+$17,,$01,$20xx00,Distant Element 33,,,
+$17,,$01,$21xx00,Distant Element 34,,,
+$17,,$01,$22xx00,Distant Element 35,,,
+$17,,$01,$23xx00,Distant Element 36,,,
+$17,,$01,$24xx00,Distant Element 37,,,
+$17,,$01,$25xx00,Distant Element 38,,,
+$17,,$01,$26xx00,Distant Element 39,,,
+$17,,$01,$27xx00,Distant Element 40,,,
+$17,,$01,$28xx00,Distant Element 41,,,
+$17,,$01,$29xx00,Distant Element 42,,,
+$17,,$01,$2Axx00,Distant Element 43,,,
+$17,,$01,$2Bxx00,Distant Element 44,,,
+$17,,$01,$2Cxx00,Distant Element 45,,,
+$17,,$01,$2Dxx00,Distant Element 46,,,
+$17,,$01,$2Exx00,Distant Element 47,,,
+$17,,$01,$2Fxx00,Distant Element 48,,,
+$17,,$01,$30xx00,Distant Element 49,,,
+$17,,$01,$31xx00,Distant Element 50,,,
+$17,,$01,$32xx00,Distant Element 51,,,
+$17,,$01,$33xx00,Distant Element 52,,,
+$17,,$01,$34xx00,Distant Element 53,,,
+$17,,$01,$35xx00,Distant Element 54,,,
+$17,,$01,$36xx00,Distant Element 55,,,
+$17,,$01,$37xx00,Distant Element 56,,,
+$17,,$01,$38xx00,Distant Element 57,,,
+$17,,$01,$39xx00,Distant Element 58,,,
+$17,,$01,$3Axx00,Distant Element 59,,,
+$17,,$01,$3Bxx00,Distant Element 60,,,
+$17,,$01,$3Cxx00,Distant Element 61,,,
+$17,,$01,$3Dxx00,Distant Element 62,,,
+$17,,$01,$3Exx00,Distant Element 63,,,
+$17,,$01,$3Fxx00,Distant Element 64,,,
+$17,,$01,$40xx00,Distant Element 65,,,
+$17,,$01,$41xx00,Distant Element 66,,,
+$17,,$01,$42xx00,Distant Element 67,,,
+$17,,$01,$43xx00,Distant Element 68,,,
+$17,,$01,$44xx00,Distant Element 69,,,
+$17,,$01,$45xx00,Distant Element 70,,,
+$17,,$01,$46xx00,Distant Element 71,,,
+$17,,$01,$47xx00,Distant Element 72,,,
+$17,,$01,$48xx00,Distant Element 73,,,
+$17,,$01,$49xx00,Distant Element 74,,,
+$17,,$01,$4Axx00,Distant Element 75,,,
+$17,,$01,$4Bxx00,Distant Element 76,,,
+$17,,$01,$4Cxx00,Distant Element 77,,,
+$17,,$01,$4Dxx00,Distant Element 78,,,
+$17,,$01,$4Exx00,Distant Element 79,,,
+$17,,$01,$4Fxx00,Distant Element 80,,,
+$17,,$01,$50xx00,Distant Element 81,,,
+$17,,$01,$51xx00,Distant Element 82,,,
+$17,,$01,$52xx00,Distant Element 83,,,
+$17,,$01,$53xx00,Distant Element 84,,,
+$17,,$01,$54xx00,Distant Element 85,,,
+$17,,$01,$55xx00,Distant Element 86,,,
+$17,,$01,$56xx00,Distant Element 87,,,
+$17,,$01,$57xx00,Distant Element 88,,,
+$17,,$01,$58xx00,Distant Element 89,,,
+$17,,$01,$59xx00,Distant Element 90,,,
+$17,,$01,$5Axx00,Distant Element 91,,,
+$17,,$01,$5Bxx00,Distant Element 92,,,
+$17,,$01,$5Cxx00,Distant Element 93,,,
+$17,,$01,$5Dxx00,Distant Element 94,,,
+$17,,$01,$5Exx00,Distant Element 95,,,
+$17,,$01,$5Fxx00,Distant Element 96,,,
+$17,,$01,$60xx00,Distant Element 97,,,
+$17,,$01,$61xx00,Distant Element 98,,,
+$17,,$01,$62xx00,Distant Element 99,,,
+$17,,$01,$63xx00,Horizon,,,
+$17,,$01,$64xx00,Thunder 1,,,
+$17,,$01,$65xx00,Thunder 2,,,
+$17,,$01,$66xx00,Thunder 3,,,
+$17,,$01,$67xx00,Cloud sky (level 2),,,
+$17,,$01,$68xx00,Cloud sky (level 3),,,
+$17,,$01,$69xx00,Cloud sky (level 4),,,
+$17,,$01,$6Axx00,Wet ground (level 2),,,
+$17,,$01,$6Bxx00,Wet ground (level 3),,,
+$17,,$01,$6Cxx00,Wet ground (level 4),,,
+$17,,$01,$6Dxx00,Oblique rainfall (level 1),,,
+$17,,$01,$6Exx00,Oblique rainfall (level 2),,,
+$17,,$01,$6Fxx00,Oblique rainfall (level 3),,,
+$17,,$01,$70xx00,Oblique rainfall (level 4),,,
+$17,,$01,$71xx00,Straigth rainfall (level 1),,,
+$17,,$01,$72xx00,Straigth rainfall (level 2),,,
+$17,,$01,$73xx00,Straigth rainfall (level 3),,,
+$17,,$01,$74xx00,Straigth rainfall (level 4),,,
+$17,,$02,$00xx00,Thunder Sound,,,
+$17,,$05,$00xx00,Distant Element Info 1,,,
+$17,,$05,$01xx00,Distant Element Info 2,,,
+$17,,$05,$02xx00,Distant Element Info 3,,,
+$17,,$05,$03xx00,Distant Element Info 4,,,
+$17,,$05,$04xx00,Distant Element Info 5,,,
+$17,,$05,$05xx00,Distant Element Info 6,,,
+$17,,$05,$06xx00,Distant Element Info 7,,,
+$17,,$05,$07xx00,Distant Element Info 8,,,
+$17,,$05,$08xx00,Distant Element Info 9,,,
+$17,,$05,$09xx00,Distant Element Info 10,,,
+$17,,$05,$0Axx00,Distant Element Info 11,,,
+$17,,$05,$0Bxx00,Distant Element Info 12,,,
+$17,,$05,$0Cxx00,Distant Element Info 13,,,
+$17,,$05,$0Dxx00,Distant Element Info 14,,,
+$17,,$05,$0Exx00,Distant Element Info 15,,,
+$17,,$05,$0Fxx00,Distant Element Info 16,,,
+$17,,$05,$10xx00,Distant Element Info 17,,,
+$17,,$05,$11xx00,Distant Element Info 18,,,
+$17,,$05,$12xx00,Distant Element Info 19,,,
+$17,,$05,$13xx00,Distant Element Info 20,,,
+$17,,$05,$14xx00,Distant Element Info 21,,,
+$17,,$05,$15xx00,Distant Element Info 22,,,
+$17,,$05,$16xx00,Distant Element Info 23,,,
+$17,,$05,$17xx00,Distant Element Info 24,,,
+$17,,$05,$18xx00,Distant Element Info 25,,,
+$17,,$05,$19xx00,Distant Element Info 26,,,
+$17,,$05,$1Axx00,Distant Element Info 27,,,
+$17,,$05,$1Bxx00,Distant Element Info 28,,,
+$17,,$05,$1Cxx00,Distant Element Info 29,,,
+$17,,$05,$1Dxx00,Distant Element Info 30,,,
+$17,,$05,$1Exx00,Distant Element Info 31,,,
+$17,,$05,$1Fxx00,Distant Element Info 32,,,
+$17,,$05,$20xx00,Distant Element Info 33,,,
+$17,,$05,$21xx00,Distant Element Info 34,,,
+$17,,$05,$22xx00,Distant Element Info 35,,,
+$17,,$05,$23xx00,Distant Element Info 36,,,
+$17,,$05,$24xx00,Distant Element Info 37,,,
+$17,,$05,$25xx00,Distant Element Info 38,,,
+$17,,$05,$26xx00,Distant Element Info 39,,,
+$17,,$05,$27xx00,Distant Element Info 40,,,
+$17,,$05,$28xx00,Distant Element Info 41,,,
+$17,,$05,$29xx00,Distant Element Info 42,,,
+$17,,$05,$2Axx00,Distant Element Info 43,,,
+$17,,$05,$2Bxx00,Distant Element Info 44,,,
+$17,,$05,$2Cxx00,Distant Element Info 45,,,
+$17,,$05,$2Dxx00,Distant Element Info 46,,,
+$17,,$05,$2Exx00,Distant Element Info 47,,,
+$17,,$05,$2Fxx00,Distant Element Info 48,,,
+$17,,$05,$30xx00,Distant Element Info 49,,,
+$17,,$05,$31xx00,Distant Element Info 50,,,
+$17,,$05,$32xx00,Distant Element Info 51,,,
+$17,,$05,$33xx00,Distant Element Info 52,,,
+$17,,$05,$34xx00,Distant Element Info 53,,,
+$17,,$05,$35xx00,Distant Element Info 54,,,
+$17,,$05,$36xx00,Distant Element Info 55,,,
+$17,,$05,$37xx00,Distant Element Info 56,,,
+$17,,$05,$38xx00,Distant Element Info 57,,,
+$17,,$05,$39xx00,Distant Element Info 58,,,
+$17,,$05,$3Axx00,Distant Element Info 59,,,
+$17,,$05,$3Bxx00,Distant Element Info 60,,,
+$17,,$05,$3Cxx00,Distant Element Info 61,,,
+$17,,$05,$3Dxx00,Distant Element Info 62,,,
+$17,,$05,$3Exx00,Distant Element Info 63,,,
+$17,,$05,$3Fxx00,Distant Element Info 64,,,
+$17,,$05,$40xx00,Distant Element Info 65,,,
+$17,,$05,$41xx00,Distant Element Info 66,,,
+$17,,$05,$42xx00,Distant Element Info 67,,,
+$17,,$05,$43xx00,Distant Element Info 68,,,
+$17,,$05,$44xx00,Distant Element Info 69,,,
+$17,,$05,$45xx00,Distant Element Info 70,,,
+$17,,$05,$46xx00,Distant Element Info 71,,,
+$17,,$05,$47xx00,Distant Element Info 72,,,
+$17,,$05,$48xx00,Distant Element Info 73,,,
+$17,,$05,$49xx00,Distant Element Info 74,,,
+$17,,$05,$4Axx00,Distant Element Info 75,,,
+$17,,$05,$4Bxx00,Distant Element Info 76,,,
+$17,,$05,$4Cxx00,Distant Element Info 77,,,
+$17,,$05,$4Dxx00,Distant Element Info 78,,,
+$17,,$05,$4Exx00,Distant Element Info 79,,,
+$17,,$05,$4Fxx00,Distant Element Info 80,,,
+$17,,$05,$50xx00,Distant Element Info 81,,,
+$17,,$05,$51xx00,Distant Element Info 82,,,
+$17,,$05,$52xx00,Distant Element Info 83,,,
+$17,,$05,$53xx00,Distant Element Info 84,,,
+$17,,$05,$54xx00,Distant Element Info 85,,,
+$17,,$05,$55xx00,Distant Element Info 86,,,
+$17,,$05,$56xx00,Distant Element Info 87,,,
+$17,,$05,$57xx00,Distant Element Info 88,,,
+$17,,$05,$58xx00,Distant Element Info 89,,,
+$17,,$05,$59xx00,Distant Element Info 90,,,
+$17,,$05,$5Axx00,Distant Element Info 91,,,
+$17,,$05,$5Bxx00,Distant Element Info 92,,,
+$17,,$05,$5Cxx00,Distant Element Info 93,,,
+$17,,$05,$5Dxx00,Distant Element Info 94,,,
+$17,,$05,$5Exx00,Distant Element Info 95,,,
+$17,,$05,$5Fxx00,Distant Element Info 96,,,
+$17,,$05,$60xx00,Distant Element Info 97,,,
+$17,,$05,$61xx00,Distant Element Info 98,,,
+$17,,$05,$62xx00,Distant Element Info 99,,,
+$17,,$05,$63xx00,Horizon Info,,,
+$17,,$05,$64xx00,Thunder Info 1,,,
+$17,,$05,$65xx00,Thunder Info 2,,,
+$17,,$05,$66xx00,Thunder Info 3,,,
+$17,,$05,$67xx00,Cloud sky Info (level 2),,,
+$17,,$05,$68xx00,Cloud sky Info (level 3),,,
+$17,,$05,$69xx00,Cloud sky Info (level 4),,,
+$17,,$05,$6Axx00,Wet ground Info (level 2),,,
+$17,,$05,$6Bxx00,Wet ground Info (level 3),,,
+$17,,$05,$6Cxx00,Wet ground Info (level 4),,,
+$17,,$05,$6Dxx00,Oblique rainfall Info (level 1),,,
+$17,,$05,$6Exx00,Oblique rainfall Info (level 2),,,
+$17,,$05,$6Fxx00,Oblique rainfall Info (level 3),,,
+$17,,$05,$70xx00,Oblique rainfall Info (level 4),,,
+$17,,$05,$71xx00,Straigth rainfall Info (level 1),,,
+$17,,$05,$72xx00,Straigth rainfall Info (level 2),,,
+$17,,$05,$73xx00,Straigth rainfall Info (level 3),,,
+$17,,$05,$74xx00,Straigth rainfall Info (level 4),,,

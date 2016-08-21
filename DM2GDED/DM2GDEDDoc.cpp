@@ -37,8 +37,8 @@ BEGIN_MESSAGE_MAP(CDM2GDEDDoc, CDocument)
 	ON_COMMAND(ID_FILE_DISPLAY_OPI, OnFileDisplayOPI)
 	ON_COMMAND(ID_TEST, OnTest)
 	//}}AFX_MSG_MAP
-	ON_COMMAND_RANGE(ID_OPT_UWV_HEX, ID_OPT_LANG_FR, OnOptMisc)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_OPT_UWV_HEX, ID_OPT_LANG_FR, OnUpdateOptMisc)
+	ON_COMMAND_RANGE(ID_OPT_UWV_HEX, ID_OPT_LANG_IT, OnOptMisc)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_OPT_UWV_HEX, ID_OPT_LANG_IT, OnUpdateOptMisc)
 //	ON_COMMAND(ID_FILE_EXPORT, OnFileExport)
 //	ON_COMMAND(ID_FILE_IMPORT, OnFileImport)
 END_MESSAGE_MAP()
@@ -180,6 +180,8 @@ void CDM2GDEDDoc::OnOptMisc(UINT nID)
 	case ID_OPT_LANG_JA:		m_aEdOpt.m_inlang = inlangJa; break;
 	case ID_OPT_LANG_DE:		m_aEdOpt.m_inlang = inlangDe; break;
 	case ID_OPT_LANG_FR:		m_aEdOpt.m_inlang = inlangFr; break;
+	case ID_OPT_LANG_ES:		m_aEdOpt.m_inlang = inlangEs; break;
+	case ID_OPT_LANG_IT:		m_aEdOpt.m_inlang = inlangIt; break;
 	}
 
 	m_pEdCtx->SetOpts(m_aEdOpt);
@@ -203,6 +205,8 @@ void CDM2GDEDDoc::OnUpdateOptMisc(CCmdUI* pCmdUI)
 	case ID_OPT_LANG_JA:		fRadio = (m_aEdOpt.m_inlang == inlangJa); break;
 	case ID_OPT_LANG_DE:		fRadio = (m_aEdOpt.m_inlang == inlangDe); break;
 	case ID_OPT_LANG_FR:		fRadio = (m_aEdOpt.m_inlang == inlangFr); break;
+	case ID_OPT_LANG_ES:		fRadio = (m_aEdOpt.m_inlang == inlangEs); break;
+	case ID_OPT_LANG_IT:		fRadio = (m_aEdOpt.m_inlang == inlangIt); break;
 	}
 	switch (pCmdUI->m_nID) {
 	case ID_OPT_CLANG_NO:		fEnabled = true; break;
@@ -214,6 +218,8 @@ void CDM2GDEDDoc::OnUpdateOptMisc(CCmdUI* pCmdUI)
 	case ID_OPT_LANG_JA:		fEnabled = (m_nGDRSLT & GDRSLT_I_JP) ? true : false; break;
 	case ID_OPT_LANG_DE:		fEnabled = (m_nGDRSLT & GDRSLT_I_DE) ? true : false; break;
 	case ID_OPT_LANG_FR:		fEnabled = (m_nGDRSLT & GDRSLT_I_FR) ? true : false; break;
+	case ID_OPT_LANG_ES:		fEnabled = (m_nGDRSLT & GDRSLT_I_ES) ? true : false; break;
+	case ID_OPT_LANG_IT:		fEnabled = (m_nGDRSLT & GDRSLT_I_IT) ? true : false; break;
 	}
 	pCmdUI->SetRadio(fRadio);
 	pCmdUI->Enable(fEnabled);

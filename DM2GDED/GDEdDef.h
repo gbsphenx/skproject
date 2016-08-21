@@ -14,6 +14,8 @@ enum {
 	inlangJa,
 	inlangDe,
 	inlangFr,
+	inlangEs,
+	inlangIt,
 };
 
 enum {

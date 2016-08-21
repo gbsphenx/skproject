@@ -403,6 +403,8 @@
 #define ID_OPT_LANG_JA                  32815
 #define ID_OPT_LANG_DE                  32816
 #define ID_OPT_LANG_FR                  32817
+#define ID_OPT_LANG_ES                  32818
+#define ID_OPT_LANG_IT                  32819
 #define ID_OPT_RELOAD_RULES             32822
 #define ID_POPUP_IMPORT_RAW             32823
 #define ID_POPUP_EXPORT_RAW             32824
@@ -508,6 +510,8 @@
 #define ID_POPUP_COPY_THIS              32962
 #define ID_POPUP_PASTE_FROM             32964
 #define ID_FILE_EXPORT_CSV              32966
+#define ID_OPTIONS_185000               32969
+#define ID_OPTIONS_186000               32970
 #define ID_FILE_NEW2                    57605
 #define ID_FILE_OPEN2                   57606
 #define ID_FILE_SAVE2                   57607
@@ -535,7 +539,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        236
-#define _APS_NEXT_COMMAND_VALUE         32969
+#define _APS_NEXT_COMMAND_VALUE         32971
 #define _APS_NEXT_CONTROL_VALUE         1243
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

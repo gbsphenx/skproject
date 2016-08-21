@@ -42,6 +42,8 @@
 #define GDRSLT_I_DE			(0x10)
 #define GDRSLT_C_EN			(0x20)
 #define GDRSLT_C_EN_PLAIN	(0x40)
+#define GDRSLT_I_ES			(0x80)
+#define GDRSLT_I_IT			(0x100)
 
 #define GDRSDT_NO       0
 #define GDRSDT_SND5SND6 1

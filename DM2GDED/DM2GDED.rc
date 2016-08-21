@@ -13,7 +13,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// 日本語 resources
+// Japanese resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_JPN)
 #ifdef _WIN32
@@ -50,20 +50,20 @@ BEGIN
     "LANGUAGE 9, 1\r\n"
     "#pragma code_page(1252)\r\n"
     "#endif //_WIN32\r\n"
-    "#include ""res\\DM2GDED.rc2""  // Microsoft Visual C++ 以外のツールで編集されたリソース\r\n"
-    "#include ""afxres.rc""         // 標準のコンポーネント\r\n"
+    "#include ""res\\DM2GDED.rc2""  // Microsoft Visual C++ ?E?O?I?c?[???A?O?W?3?e?????\\?[?X\r\n"
+    "#include ""afxres.rc""         // ?W???I?R??g?|?[?l??g?g\r\n"
     "#endif\r\n"
     "\0"
 END
 
 #endif    // APSTUDIO_INVOKED
 
-#endif    // 日本語 resources
+#endif    // Japanese resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// 英語 (米国) resources
+// English (U.S.) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 #ifdef _WIN32
@@ -171,7 +171,7 @@ BEGIN
         MENUITEM "UNSIGNED",                    ID_OPT_UWV_UNSIGNED
         MENUITEM "HEX",                         ID_OPT_UWV_HEX
         MENUITEM "FLAGS",                       ID_OPT_UWV_FLAGS
-        MENUITEM "----- Creature Name -----",   IDC_STATIC, GRAYED
+        MENUITEM "----- Object Name -----",     IDC_STATIC, GRAYED
         MENUITEM "No",                          ID_OPT_CLANG_NO
         MENUITEM "00 00 00 - English (PC Beta ver)", ID_OPT_CLANG_EN_PLAIN
         MENUITEM "00 F0 00 - English (PC, Macintosh, Amiga ver)", ID_OPT_CLANG_EN
@@ -182,6 +182,8 @@ BEGIN
         MENUITEM "18 20 00 - Japanese (PC-9801, PS/V, Mac JP, FM-Towns ver)", ID_OPT_LANG_JA
         MENUITEM "18 30 00 - German (PC, Amiga ver)", ID_OPT_LANG_DE
         MENUITEM "18 40 00 - French (PC, Amiga ver)", ID_OPT_LANG_FR
+        MENUITEM "18 50 00 - Spanish (Extended)", ID_OPT_LANG_ES
+        MENUITEM "18 60 00 - Italian (Extended)", ID_OPT_LANG_IT
     END
     POPUP "&Window"
     BEGIN
@@ -1200,7 +1202,7 @@ FONT 9, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     CONTROL         "This action takes a while. wait please...",IDC_STATIC,
                     "Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX | WS_GROUP,7,7,197,16
-    CONTROL         "Progress1",IDC_PROGRESS_HINT,"msctls_progress32",WS_BORDER | 0x1,7,26,191,10
+    CONTROL         "Progress1",IDC_PROGRESS_HINT,"msctls_progress32",PBS_SMOOTH | WS_BORDER,7,26,191,10
 END
 
 IDD_EDITV_ICONANIM DIALOGEX 0, 0, 175, 175
@@ -1866,12 +1868,12 @@ BEGIN
             VALUE "FileDescription", "DM2GDED for skwinspx"
             VALUE "FileVersion", "0, 0, 0, 0"
             VALUE "InternalName", "DM2GDED"
-            VALUE "LegalCopyright", "Copyright (C) 2003, 2007, 2010, 2011, 2014"
+            VALUE "LegalCopyright", "Copyright (C) 2003, 2007, 2010, 2011, 2014, 2016"
             VALUE "OriginalFilename", "DM2GDED.EXE"
             VALUE "ProductName", "DM2GDED Application"
             VALUE "ProductVersion", "0, 0, 0, 0"
-            VALUE "ReleaseDate", "2014-03-18"
-            VALUE "Rev", "9"
+            VALUE "ReleaseDate", "2016-08-21"
+            VALUE "Rev", "10"
         END
     END
     BLOCK "VarFileInfo"
@@ -2169,7 +2171,7 @@ BEGIN
     IDS_EXPORT_DONE         "Export done."
 END
 
-#endif    // 英語 (米国) resources
+#endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -2189,8 +2191,8 @@ END
 LANGUAGE 9, 1
 #pragma code_page(1252)
 #endif //_WIN32
-#include "res\DM2GDED.rc2"  // Microsoft Visual C++ 以外のツールで編集されたリソース
-#include "afxres.rc"         // 標準のコンポーネント
+#include "res\DM2GDED.rc2"  // Microsoft Visual C++ ?E?O?I?c?[???A?O?W?3?e?????\?[?X
+#include "afxres.rc"         // ?W???I?R??g?|?[?l??g?g
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
