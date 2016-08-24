@@ -16952,6 +16952,7 @@ U16 SkWinCore::CAST_CHAMPION_MISSILE_SPELL(U16 xx, ObjectID rl, i16 zz, U16 ww)
 
 //^2759:15D0
 // SPX: _2759_15d0 replaced by PROCEED_LIGHT
+// CSBWin: part of TAG01ca0c / CastSpell
 void SkWinCore::PROCEED_LIGHT(U16 cmdNum, U16 yy)
 {
 	//^2759:15D0
@@ -17009,7 +17010,9 @@ void SkWinCore::PROCEED_LIGHT(U16 cmdNum, U16 yy)
 	//^2759:1687		
 	QUEUE_TIMER(&bp0a);
 	//^2759:1693
-	glbGlobalSpellEffects.Light = tLightLevelItem[RCJ(16,si)] * bp0c;
+	//glbGlobalSpellEffects.Light = tLightLevelItem[RCJ(16,si)] * bp0c;
+	// SPX: fix, to add new effect to current, still problem with DES IR SAR effect
+	glbGlobalSpellEffects.Light += (tLightLevelItem[RCJ(16,si)] * bp0c);
 	//^2759:16A3
 	RECALC_LIGHT_LEVEL();
 	//^2759:16A8
@@ -61146,22 +61149,29 @@ void SkWinCore::PROCESS_TIMER_0C(U8 player)
 }
 //^3A15:316C
 // SPX: _3a15_316c renamed PROCESS_TIMER_LIGHT
+// CSBWin: Timer.cpp TAG0114fa ProcessLightLevelTimer
 void SkWinCore::PROCESS_TIMER_LIGHT(Timer *ref)
 {
 	//^3A15:316C
 	ENTER(12);
 	//^3A15:3172
-	i16 si = ref->value;
+	i16 si = ref->value;	// si
 	if (si == 0)
 		return;
 	//^3A15:3182
-	X16 bp02 = (si < 0) ? 1 : 0;
-	if (bp02 != 0)
+	X16 isNegative = (si < 0) ? 1 : 0; // bp02
+	if (isNegative) //if (bp02 != 0)
 		si = -si;
 	//^3A15:319A
-	i16 di;
+	i16 di;	// di
+	
 	si = tLightLevelItem[RCJ(16,si)] - tLightLevelItem[RCJ(16,di = si -1)];
-	if (bp02 != 0) {
+	//di = si - 1;
+	//si = tLightLevelItem[RCJ(16,si)] - tLightLevelItem[RCJ(16,di)];
+	
+
+	if (isNegative) // if (bp02 != 0) 
+	{
 		//^3A15:31B7
 		si = -si;
 		di = -di;
@@ -61175,13 +61185,13 @@ void SkWinCore::PROCESS_TIMER_LIGHT(Timer *ref)
 	if (di == 0)
 		return;
 	//^3A15:31CF
-	Timer bp0c;
-	bp0c.TimerType(ttyLight);
-	bp0c.value = di;
-	bp0c.SetMap(glbPlayerMap);
-	bp0c.SetTick(glbGameTick +8);
-	bp0c.actor = 0;
-	QUEUE_TIMER(&bp0c);
+	Timer newTimer; // bp0c
+	newTimer.TimerType(ttyLight);
+	newTimer.value = di;
+	newTimer.SetMap(glbPlayerMap);
+	newTimer.SetTick(glbGameTick +8);
+	newTimer.actor = 0;
+	QUEUE_TIMER(&newTimer);
 	//^3A15:3208
 	return;
 }
