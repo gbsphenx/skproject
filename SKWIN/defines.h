@@ -369,6 +369,14 @@ enum SkillLevel {
 #define GDAT_IMG_CREDITS_TOMBSTONE					0x01
 
 
+#define GDAT_INFERFACE_CHAR_FOOD_WATER_PANEL		0x01
+#define GDAT_INFERFACE_FOOD_TEXT					0x06
+#define GDAT_INFERFACE_WATER_TEXT					0x07
+#define GDAT_INFERFACE_POISON_TEXT					0x08
+#define GDAT_INFERFACE_BODY_HAND_LEFT				0x34
+#define GDAT_INFERFACE_BODY_HAND_RIGHT				0x38
+
+
 //------------------------------------------------------------------------------
 //	GLOBAL IMAGE ATTRIBUTES
 //------------------------------------------------------------------------------
