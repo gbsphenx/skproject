@@ -41,11 +41,13 @@
 #define ID_LANG_FRENCH                  40054
 #define ID_LANG_GERMAN                  40055
 #define ID_LANG_JAPANESE                40056
-#define ID_DUNGEON_DUNGEON_MASTER		40061
-#define ID_DUNGEON_CHAOS_STRIKES_BACK	40062
-#define ID_DUNGEON_THERON_QUEST			40063
-#define ID_DUNGEON_SKULLKEEP_BETA		40064
-#define ID_DUNGEON_LEGEND_SKULLKEEP		40065
+#define ID_LANG_SPANISH                 40057
+#define ID_LANG_ITALIAN                 40058
+#define ID_DUNGEON_DUNGEON_MASTER       40061
+#define ID_DUNGEON_CHAOS_STRIKES_BACK   40062
+#define ID_DUNGEON_THERON_QUEST         40063
+#define ID_DUNGEON_SKULLKEEP_BETA       40064
+#define ID_DUNGEON_LEGEND_SKULLKEEP     40065
 #define ID_Dummy                        40099
 #define ID_HELP_ABOUT                   40100
 #define ID_SEPA                         40101
@@ -55,7 +57,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        109
-#define _APS_NEXT_COMMAND_VALUE         40102
+#define _APS_NEXT_COMMAND_VALUE         40104
 #define _APS_NEXT_CONTROL_VALUE         1001
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

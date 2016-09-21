@@ -533,6 +533,8 @@ void CSkWinMFC::OnVideo1x(UINT nID) {
 		case ID_LANG_JAPANESE: lang = 0x20; break;
 		case ID_LANG_GERMAN: lang = 0x30; break;
 		case ID_LANG_FRENCH: lang = 0x40; break;
+		case ID_LANG_SPANISH: lang = 0x50; break;	// SPX: Additional value
+		case ID_LANG_ITALIAN: lang = 0x60; break;	// SPX: Additional value
 
 		case ID_DUNGEON_DUNGEON_MASTER:		dung = 1; break;
 		case ID_DUNGEON_CHAOS_STRIKES_BACK: dung = 2; break;
@@ -621,6 +623,8 @@ void CSkWinMFC::OnUpdateVideo1x(CCmdUI *pCmdUI) {
 		case ID_LANG_JAPANESE: pCmdUI->SetRadio(lang == 0x20); break;
 		case ID_LANG_GERMAN: pCmdUI->SetRadio(lang == 0x30); break;
 		case ID_LANG_FRENCH: pCmdUI->SetRadio(lang == 0x40); break;
+		case ID_LANG_SPANISH: pCmdUI->SetRadio(lang == 0x50); break;	// SPX: Add usage of Spanish
+		case ID_LANG_ITALIAN: pCmdUI->SetRadio(lang == 0x60); break;	// SPX: Add usage of Italian
 
 		case ID_DUNGEON_DUNGEON_MASTER: pCmdUI->SetRadio(dung == 1); break;
 		case ID_DUNGEON_CHAOS_STRIKES_BACK: pCmdUI->SetRadio(dung == 2); break;

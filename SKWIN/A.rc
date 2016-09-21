@@ -1,4 +1,4 @@
-// Microsoft Visual C++ generated resource script.
+//Microsoft Developer Studio generated resource script.
 //
 #include "resource.h"
 
@@ -13,7 +13,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// “ú–{Œê resources
+// Japanese resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_JPN)
 #ifdef _WIN32
@@ -27,18 +27,18 @@ LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE 
+1 TEXTINCLUDE MOVEABLE PURE 
 BEGIN
     "resource.h\0"
 END
 
-2 TEXTINCLUDE 
+2 TEXTINCLUDE MOVEABLE PURE 
 BEGIN
     "#include ""afxres.h""\r\n"
     "\0"
 END
 
-3 TEXTINCLUDE 
+3 TEXTINCLUDE MOVEABLE PURE 
 BEGIN
     "\r\n"
     "\0"
@@ -52,68 +52,69 @@ END
 // Cursor
 //
 
-IDC_POINTER             CURSOR                  "pointer.cur"
+IDC_POINTER             CURSOR  DISCARDABLE     "pointer.cur"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Menu
 //
 
-IDR_MENU1 MENUEX 
+IDR_MENU1 MENU DISCARDABLE 
 BEGIN
-    POPUP "&Video",                         65535,MFT_STRING,MFS_ENABLED
+    POPUP "&Video"
     BEGIN
-        MENUITEM "&1x",                         40002,MFT_STRING,MFS_ENABLED
-        MENUITEM "&2x",                         40003,MFT_STRING,MFS_ENABLED
-        MENUITEM "&3x",                         40011,MFT_STRING,MFS_ENABLED
-        MENUITEM "&4x",                         40004,MFT_STRING,MFS_ENABLED
+        MENUITEM "&1x",                         40002
+        MENUITEM "&2x",                         40003
+        MENUITEM "&3x",                         40011
+        MENUITEM "&4x",                         40004
     END
-    POPUP "&Sound",                         65535,MFT_STRING,MFS_ENABLED
+    POPUP "&Sound"
     BEGIN
-        MENUITEM "&No",                         40012,MFT_STRING,MFS_ENABLED
-        MENUITEM "&Windows Multimedia",         40005,MFT_STRING,MFS_ENABLED
-        MENUITEM "&DirectSound/DirectSound3D",  40010,MFT_STRING,MFS_ENABLED
-        MENUITEM "Open&AL",                     40008,MFT_STRING,MFS_ENABLED
-        MENUITEM "--- DirectSound BufferFlag",  ID_SEPA,MFT_STRING | MFT_MENUBARBREAK,MFS_GRAYED
-        MENUITEM "(Default)",                   40028,MFT_STRING,MFS_ENABLED
-        MENUITEM "Hardware Buffer (LOCHARDWARE)", 40029,MFT_STRING,MFS_ENABLED
-        MENUITEM "Software Buffer (LOCSOFTWARE)", 40030,MFT_STRING,MFS_ENABLED
-        MENUITEM "--- DirectSound Software 3DAlgorithm", ID_SEPA,MFT_STRING,MFS_GRAYED
-        MENUITEM "(Default)",                   40032,MFT_STRING,MFS_ENABLED
-        MENUITEM "HRTF_FULL",                   40033,MFT_STRING,MFS_ENABLED
-        MENUITEM "HRTF_LIGHT",                  40035,MFT_STRING,MFS_ENABLED
+        MENUITEM "&No",                         40012
+        MENUITEM "&Windows Multimedia",         40005
+        MENUITEM "&DirectSound/DirectSound3D",  40010
+        MENUITEM "Open&AL",                     40008
+        MENUITEM "--- DirectSound BufferFlag",  40101, GRAYED, MENUBARBREAK
+        MENUITEM "(Default)",                   40028
+        MENUITEM "Hardware Buffer (LOCHARDWARE)", 40029
+        MENUITEM "Software Buffer (LOCSOFTWARE)", 40030
+        MENUITEM "--- DirectSound Software 3DAlgorithm", 40101, GRAYED
+        MENUITEM "(Default)",                   40032
+        MENUITEM "HRTF_FULL",                   40033
+        MENUITEM "HRTF_LIGHT",                  40035
     END
-    POPUP "&Speed",                         65535,MFT_STRING,MFS_ENABLED
+    POPUP "&Speed"
     BEGIN
-        MENUITEM "&1 Ultra Fast",               40040,MFT_STRING,MFS_ENABLED
-        MENUITEM "&2 Fast",                     40041,MFT_STRING,MFS_ENABLED
-        MENUITEM "&3 Normal",                   40042,MFT_STRING,MFS_ENABLED
-        MENUITEM "&4 Slow",                     40043,MFT_STRING,MFS_ENABLED
-        MENUITEM "&5 Very Slow",                40044,MFT_STRING,MFS_ENABLED
-        MENUITEM "&6 Glacial",                  40045,MFT_STRING,MFS_ENABLED
+        MENUITEM "&1 Ultra Fast",               40040
+        MENUITEM "&2 Fast",                     40041
+        MENUITEM "&3 Normal",                   40042
+        MENUITEM "&4 Slow",                     40043
+        MENUITEM "&5 Very Slow",                40044
+        MENUITEM "&6 Glacial",                  40045
     END
-    POPUP "&Lang",                          65535,MFT_STRING,MFS_ENABLED
+    POPUP "&Lang"
     BEGIN
-        MENUITEM "&English (US)",               ID_LANG_ENGLISH,MFT_STRING,MFS_ENABLED
-        MENUITEM "&Japanese",                   ID_LANG_JAPANESE,MFT_STRING,MFS_ENABLED
-        MENUITEM "&German",                     ID_LANG_GERMAN,MFT_STRING,MFS_ENABLED
-        MENUITEM "&French",                     ID_LANG_FRENCH,MFT_STRING,MFS_ENABLED
+        MENUITEM "&English (US)",               40053
+        MENUITEM "&Japanese",                   40056
+        MENUITEM "&German",                     40055
+        MENUITEM "&French",                     40054
+        MENUITEM "&Spanish",                    40057
+        MENUITEM "&Italian",                    40058
     END
-	POPUP "&Dungeon",						65535,MFT_STRING,MFS_ENABLED
-	BEGIN
-		MENUITEM "&Dungeon Master",				ID_DUNGEON_DUNGEON_MASTER,MFT_STRING,MFS_ENABLED
-		MENUITEM "&Chaos Strikes Back",			ID_DUNGEON_CHAOS_STRIKES_BACK,MFT_STRING,MFS_ENABLED
-//		MENUITEM "&Theron's Quests",			ID_DUNGEON_THERON_QUEST,MFT_STRING,MFS_ENABLED
-		MENUITEM "&Skullkeep (beta)",					ID_DUNGEON_SKULLKEEP_BETA,MFT_STRING,MFS_ENABLED
-		MENUITEM "&Skullkeep",					ID_DUNGEON_LEGEND_SKULLKEEP,MFT_STRING,MFS_ENABLED
-	END
-    POPUP "(Extra)",                        65535,MFT_STRING,MFS_ENABLED
+    POPUP "&Dungeon"
     BEGIN
-        MENUITEM "Enable ""double step"" movement", 40052,MFT_STRING,MFS_ENABLED
+        MENUITEM "&Dungeon Master",             40061
+        MENUITEM "&Chaos Strikes Back",         40062
+        MENUITEM "&Skullkeep (beta)",           40064
+        MENUITEM "&Skullkeep",                  40065
     END
-    POPUP "?",                              65535,MFT_STRING | MFT_RIGHTJUSTIFY,MFS_ENABLED
+    POPUP "(Extra)"
     BEGIN
-        MENUITEM "&About...",                   ID_HELP_ABOUT,MFT_STRING,MFS_ENABLED
+        MENUITEM "Enable ""double step"" movement", 40052
+    END
+    POPUP "?", HELP
+    BEGIN
+        MENUITEM "&About...",                   40100
     END
 END
 
@@ -123,21 +124,24 @@ END
 // Dialog
 //
 
-IDD_ABOUT DIALOG  0, 0, 279, 159
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_ABOUT DIALOG DISCARDABLE  0, 0, 279, 159
+STYLE DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About skwin"
 FONT 8, "MS Shell Dlg"
 BEGIN
     LTEXT           "skwin (2016-08-20)",IDC_STATIC,7,96,63,8
-    LTEXT           "An unofficial experimental port. started by kentaro-k.21. modified by sphenx.",IDC_STATIC,7,108,184,22
+    LTEXT           "An unofficial experimental port. started by kentaro-k.21. modified by sphenx.",
+                    IDC_STATIC,7,108,184,22
     DEFPUSHBUTTON   "OK",IDOK,115,138,50,14
     LTEXT           "Skullkeepers",IDC_STATIC,7,19,265,8
     LTEXT           "Wayne Holder ... Producer",IDC_STATIC,7,29,265,8
     LTEXT           "Doug Bell ... Director",IDC_STATIC,7,39,265,8
     LTEXT           "Bill Kelly ... Monster Trainer",IDC_STATIC,7,49,265,8
-    LTEXT           "Kirk Baker ... Master of Machines",IDC_STATIC,7,59,265,8
+    LTEXT           "Kirk Baker ... Master of Machines",IDC_STATIC,7,59,265,
+                    8
     LTEXT           "Bert Huml ... World Creator",IDC_STATIC,7,69,265,8
-    LTEXT           "Andy Jaros ... Graphics Magician with: David Simon, Dan Hewitt, Dennis Walker",IDC_STATIC,7,79,265,8
+    LTEXT           "Andy Jaros ... Graphics Magician with: David Simon, Dan Hewitt, Dennis Walker",
+                    IDC_STATIC,7,79,265,8
     LTEXT           "Credits in Dungeon Master II",IDC_STATIC,91,7,97,8
 END
 
@@ -148,7 +152,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO MOVEABLE PURE 
 BEGIN
     IDD_ABOUT, DIALOG
     BEGIN
@@ -160,7 +164,7 @@ BEGIN
 END
 #endif    // APSTUDIO_INVOKED
 
-#endif    // “ú–{Œê resources
+#endif    // Japanese resources
 /////////////////////////////////////////////////////////////////////////////
 
 
