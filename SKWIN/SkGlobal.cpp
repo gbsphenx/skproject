@@ -42,8 +42,13 @@ bool	bUsePowerDebug = true;		// A new flag ON for solving some savegame load (at
 //=> SPX: put in SkCodeParam
 
 
+//--> special table for localized text
 /*static*/ U8 s_textLangSel[GDAT_CATEGORY_LIMIT][0xFF][0xFF]; // is one of 0x00,0x10,0x20,0x30
 
+#if DM2_EXTENDED_MODE == 1
+// special table for localized image, actually used for interface
+	U8 s_imageLangSel[GDAT_CATEGORY_LIMIT][0xFF][0xFF];
+#endif
 
 
 // Name for the temporary file

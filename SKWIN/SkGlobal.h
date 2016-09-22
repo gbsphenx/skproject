@@ -737,6 +737,10 @@ namespace kkBitBlt
 
 extern U8 s_textLangSel[GDAT_CATEGORY_LIMIT][0xFF][0xFF];
 
+#if DM2_EXTENDED_MODE == 1
+	extern U8 s_imageLangSel[GDAT_CATEGORY_LIMIT][0xFF][0xFF];
+#endif
+
 #define DOSIMPL() ATLASSERT(false)
 
 #define RUp2(X) (((X) +1)&0xFFFE)

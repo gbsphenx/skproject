@@ -11,7 +11,7 @@
 #define DM2_EXTENDED_BUFFER		1	// Allow more memsize for loading objects
 //#define DM2_INDIRECT_DATABASE	0	// Use an indirection table to increase item usage to its max : 65536 - NOT IMPLEMENTED YET
 
-#define DM2_DEBUG_SUPER_MODE	0	// If on, champions at start will have big stats. Debug/test purpose.
+#define DM2_DEBUG_SUPER_MODE	1	// If on, champions at start will have big stats. Debug/test purpose.
 
 //------------------------------------------------------------------------------
 

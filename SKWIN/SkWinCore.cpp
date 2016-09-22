@@ -5498,10 +5498,11 @@ __int16 SkWinCore::QUERY_GDAT_PICT_OFFSET(Bit8u cls1, Bit8u cls2, Bit8u cls4)
 }
 
 //^0B36:0520
-ExtendedPicture *SkWinCore::QUERY_GDAT_SUMMARY_IMAGE(ExtendedPicture *ref, Bit8u cls1, Bit8u cls2, Bit8u cls4)
+//ExtendedPicture *SkWinCore::QUERY_GDAT_SUMMARY_IMAGE(ExtendedPicture *ref, Bit8u cls1, Bit8u cls2, Bit8u cls4)
+ExtendedPicture *SkWinCore::QUERY_GDAT_SUMMARY_IMAGE(ExtendedPicture *ref, Bit8u iCategory, Bit8u iItemNo, Bit8u iEntry)
 {
 	SkD((DLV_DBG_GETPIC, "DBG: QUERY_GDAT_SUMMARY_IMAGE(%p,%02X,%02X,%02X)\n"
-		, ref, (Bitu)cls1, (Bitu)cls2, (Bitu)cls4));
+		, ref, (Bitu)iCategory, (Bitu)iItemNo, (Bitu)iEntry));
 
 	//^0B36:0520
 	ENTER(8);
@@ -5509,10 +5510,10 @@ ExtendedPicture *SkWinCore::QUERY_GDAT_SUMMARY_IMAGE(ExtendedPicture *ref, Bit8u
 	ZERO_MEMORY(ref, 314);
 	//^0B36:0537
 	ref->w12 = -1;
-	ref->b8 = cls1;
-	ref->b9 = cls2;
+	ref->b8 = iCategory;
+	ref->b9 = iItemNo;
 	ref->b10 = dtImage;
-	ref->b11 = cls4;
+	ref->b11 = iEntry;
 	ref->w54 = 64;
 	ref->w52 = 64;
 	ref->rectNo = 0xffff;
@@ -5520,11 +5521,11 @@ ExtendedPicture *SkWinCore::QUERY_GDAT_SUMMARY_IMAGE(ExtendedPicture *ref, Bit8u
 	ref->pb44 = _4976_4964;
 	ref->colorKeyPassThrough = -1;
 	//^0B36:0586
-	if (cls1 != 0xff) {
+	if (iCategory != 0xff) {
 		//^0B36:058F
-		ref->w6 = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, dtImage, cls4);
+		ref->w6 = QUERY_GDAT_ENTRY_DATA_INDEX(iCategory, iItemNo, dtImage, iEntry);
 		//^0B36:05AC
-		__int16 bp02 = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, dtImageOffset, 0xfe);
+		__int16 bp02 = QUERY_GDAT_ENTRY_DATA_INDEX(iCategory, iItemNo, dtImageOffset, iEntry);
 		//^0B36:05C4
 		if (bp02 != 0) {
 			//^0B36:05C8
@@ -5533,7 +5534,7 @@ ExtendedPicture *SkWinCore::QUERY_GDAT_SUMMARY_IMAGE(ExtendedPicture *ref, Bit8u
 			ref->w30 += __int8(bp02);
 		}
 		//^0B36:05DB
-		bp02 = QUERY_GDAT_PICT_OFFSET(cls1, cls2, cls4);
+		bp02 = QUERY_GDAT_PICT_OFFSET(iCategory, iItemNo, iEntry);
 		//^0B36:05F2
 		if (bp02 != 0) {
 			//^0B36:05F6
@@ -5542,7 +5543,7 @@ ExtendedPicture *SkWinCore::QUERY_GDAT_SUMMARY_IMAGE(ExtendedPicture *ref, Bit8u
 			ref->w30 += __int8(bp02);
 		}
 		//^0B36:0609
-		Bit8u *bp06 = QUERY_GDAT_IMAGE_LOCALPAL(cls1, cls2, cls4);
+		Bit8u *bp06 = QUERY_GDAT_IMAGE_LOCALPAL(iCategory, iItemNo, iEntry);
 		//^0B36:0623
 		if (bp06 == NULL) {
 			//^0B36:062B
@@ -12457,7 +12458,8 @@ void SkWinCore::DRAW_PICST(ExtendedPicture *ref)
 }
 
 //^0B36:1688
-void SkWinCore::DRAW_STATIC_PIC(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit16u rectno, i16 colorkey)
+//void SkWinCore::DRAW_STATIC_PIC(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit16u rectno, i16 colorkey)
+void SkWinCore::DRAW_STATIC_PIC(Bit8u iCategory, Bit8u iItemNo, Bit8u iEntry, Bit16u rectno, i16 colorkey)
 {
 	// draw an statical image such as inventory plate.
 
@@ -12465,7 +12467,7 @@ void SkWinCore::DRAW_STATIC_PIC(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit16u rectn
 	ENTER(314);
 	//^0B36:168C
 	ExtendedPicture bp013a;
-	QUERY_GDAT_SUMMARY_IMAGE(&bp013a, cls1, cls2, cls4);
+	QUERY_GDAT_SUMMARY_IMAGE(&bp013a, iCategory, iItemNo, iEntry);
 	//^0B36:16A5
 	bp013a.colorKeyPassThrough = colorkey;
 	bp013a.rectNo = rectno;
@@ -34148,25 +34150,27 @@ void SkWinCore::WAIT_SCREEN_REFRESH()
 }
 
 //^3E74:178C
-RawEntry *SkWinCore::QUERY_GDAT_ENTRYPTR(Bit8u cls1, Bit16u cls2, Bit8u cls3, Bit16u cls4)
+//RawEntry *SkWinCore::QUERY_GDAT_ENTRYPTR(Bit8u cls1, Bit16u cls2, Bit8u cls3, Bit16u cls4)
+RawEntry *SkWinCore::QUERY_GDAT_ENTRYPTR(Bit8u iCategory, Bit16u iItem, Bit8u iType, Bit16u iEntry)
 {
-	// cls1 - main category
-	// cls2 - sub category
-	// cls3 - type
-	// cls4 - name
+	// cls1 - main category	-> iCategory
+	// cls2 - sub category	-> iItem
+	// cls3 - type			-> iType
+	// cls4 - name			-> iEntry
 
 	//^3E74:178C
-	if (cls1 > U8(glbGDatEntries.w12)) {
+	// If requested category is above max category
+	if (iCategory > U8(glbGDatEntries.w12)) {
 		//^3E74:179D
 		return NULL;
 	}
-	Bit16u si = glbGDatEntries.pw0[cls1];
-	if (glbGDatEntries.pw0[cls1 +1] - si < cls3) {
+	Bit16u si = glbGDatEntries.pw0[iCategory];
+	if (glbGDatEntries.pw0[iCategory +1] - si < iType) {
 		//^3E74:17D2
 		return NULL;
 	}
 	//^3E74:17D2
-	si += cls3;
+	si += iType;
 	Bit16u di = glbGDatEntries.pw4[si];
 //		3E74:17E6  8BF8                 mov  di,ax
 //		3E74:17E8  33D2                 xor  dx,dx							DX:AX=0000:1399
@@ -34200,11 +34204,11 @@ RawEntry *SkWinCore::QUERY_GDAT_ENTRYPTR(Bit8u cls1, Bit16u cls2, Bit8u cls3, Bi
 			return NULL;
 		//^3E74:1833
 		RawEntry *bp04 = &bp08[bp0a];
-		__int16 bp0c = bp04->cls2 - cls2;
+		__int16 bp0c = bp04->cls2 - iItem;
 		//^3E74:1866
 		if (!(bp0c != 0)) {
 			//^3E74:186A
-			bp0c = bp04->cls4 - cls4;
+			bp0c = bp04->cls4 - iEntry;
 			if (!(bp0c != 0)) {
 				//^3E74:187E
 				return bp04;
@@ -36028,15 +36032,16 @@ void SkWinCore::COPY_MEMORY(const void *buffSrc, void *buffDst, Bit32u buffSize)
 }
 
 //^3E74:189B
-U16 SkWinCore::QUERY_GDAT_ENTRY_DATA_INDEX(U8 cls1, U16 cls2, U8 cls3, U16 cls4)
+//U16 SkWinCore::QUERY_GDAT_ENTRY_DATA_INDEX(U8 cls1, U16 cls2, U8 cls3, U16 cls4)
+U16 SkWinCore::QUERY_GDAT_ENTRY_DATA_INDEX(U8 iCategory, U16 iItem, U8 iType, U16 iEntry)
 {
 	//^3E74:189B
-	RawEntry *bp04 = QUERY_GDAT_ENTRYPTR(cls1, cls2, cls3, cls4);
+	RawEntry *bp04 = QUERY_GDAT_ENTRYPTR(iCategory, iItem, iType, iEntry);
 	if (bp04 == NULL) {
 		//^3E74:18C4
-		switch (cls3) {
-			case 0x0B:
-			case 0x0C:
+		switch (iType) {
+			case fmtWordVal: //0x0B:
+			case fmtPicOff://0x0C:	// word
 				//^3E74:18D5
 				return 0;
 		}
@@ -36045,9 +36050,9 @@ U16 SkWinCore::QUERY_GDAT_ENTRY_DATA_INDEX(U8 cls1, U16 cls2, U8 cls3, U16 cls4)
 	}
 	else {
 		//^3E74:18D9
-		switch (cls3) {
-			case 0x0B:
-			case 0x0C:
+		switch (iType) {
+			case fmtWordVal://0x0B:
+			case fmtPicOff://0x0C:
                 //^3E74:18F1
 				return bp04->data;
 		}
@@ -52633,7 +52638,7 @@ void SkWinCore::LOAD_GDAT_ENTRIES()
 	ENTER(12);
 	//^3E74:2170
 	X16 di;
-	for (di = 0; di < _4976_5d3c; di++) {
+	for (di = 0; di < glbGDatNumberOfRawEntries; di++) {
 		//^3E74:2175
 		if (QUERY_GDAT_ENTRY_VALUE(di, EPcls6) != 0xff)
 			continue;
@@ -52687,7 +52692,6 @@ X16 SkWinCore::LANG_FILTER(U16 entryIndex)
 	U8 cls4 = U8(QUERY_GDAT_ENTRY_VALUE(entryIndex, EPcls4)); // Entry no
 	U8 cls5 = U8(QUERY_GDAT_ENTRY_VALUE(entryIndex, EPcls5)); // Optional 1
 
-
 	if (cls3 == fmtText) {
 
 		if (cls5 == s_textLangSel[cls1][cls2][cls4]) {
@@ -52713,6 +52717,35 @@ X16 SkWinCore::LANG_FILTER(U16 entryIndex)
 
 		return 0; // never pass for other language.
 	}
+
+	// SPX: manages also localized images only for char interface
+#if DM2_EXTENDED_MODE == 1
+	else if (cls3 == fmtImage && cls1 == 0x07) {
+		U8 iLangSelect = (cls5 & 0xF0);	// Do not take variation 0x08 into account
+
+		if (iLangSelect == s_imageLangSel[cls1][cls2][cls4]) {
+			return 1;
+		}
+
+		if (iLangSelect == 0x00 || iLangSelect == 0xF0) {
+			if (s_imageLangSel[cls1][cls2][cls4] == 0xFF) {
+				s_imageLangSel[cls1][cls2][cls4] = iLangSelect;
+				return 1;
+			}
+		}
+
+		if (iLangSelect == skwin.GetLang()) {
+			// If corresponding language, always prioritary
+		//	if (s_imageLangSel[cls1][cls2][cls4] == 0xFF) {
+				s_imageLangSel[cls1][cls2][cls4] = iLangSelect;
+				return 1;
+		//	}
+		}
+		return 0;
+
+	}
+#endif
+	
 	return 1; // always pass for non text entry.
 }
 
@@ -52730,7 +52763,7 @@ void SkWinCore::BUILD_GDAT_ENTRY_DATA(GDATEntries *ref, X16 (SkWinCore::*pfnIfLo
 	ref->w16 = 0;
 	U16 si;
 	U8 bp0a;
-	for (si = 0; si < _4976_5d3c; si++) {
+	for (si = 0; si < glbGDatNumberOfRawEntries; si++) {
 		//^3E74:1D91
 		if ((this->*pfnIfLoad)(si) == 0)
 			continue;
@@ -52815,7 +52848,7 @@ void SkWinCore::BUILD_GDAT_ENTRY_DATA(GDATEntries *ref, X16 (SkWinCore::*pfnIfLo
 	ZERO_MEMORY(ref->pv8, U32(ref->w16) << 2);
 	//^3E74:2059
 	X16 bp0e;
-	for (si = 0; si < _4976_5d3c; si++) {
+	for (si = 0; si < glbGDatNumberOfRawEntries; si++) {
 		//^3E74:205E
 		if ((this->*pfnIfLoad)(si) == 0)
 			continue;
@@ -52857,11 +52890,11 @@ void SkWinCore::LOAD_ENT1()
 		RAISE_SYSERR(SYSTEM_ERROR__INVALID_ENT1);
 	}
 	//^3E74:2334
-	_4976_5d3c = _4976_5d38[1];
+	glbGDatNumberOfRawEntries = _4976_5d38[1];
 	_4976_5d40 = _4976_5d38[2];
 	if (si != 0x8001) {
 		//^3E74:2350
-		_4976_5d3c = SWAPW(_4976_5d3c);
+		glbGDatNumberOfRawEntries = SWAPW(glbGDatNumberOfRawEntries);
 		_4976_5d40 = SWAPW(_4976_5d40);
 	}
 	//^3E74:2368
@@ -52887,8 +52920,12 @@ void SkWinCore::LOAD_ENT1()
 	//^3E74:23EF
 	_4976_5d38 = reinterpret_cast<U16 *>(bp04[_4976_5d40]);
 	LOAD_GDAT_ENTRIES();
+// SPX: add here a localized image table as for texts to be able to support multilanguage interface
+#if DM2_EXTENDED_MODE == 1
+	memset(s_imageLangSel, 0xFF, sizeof(s_imageLangSel));
+#endif
+	memset(s_textLangSel, 0xFF, sizeof(s_textLangSel));
 	//BUILD_GDAT_ENTRY_DATA(&glbGDatEntries, &SkWinCore::_3e74_2162, _4976_4844);
-	memset(s_textLangSel, 0xFF, sizeof(s_textLangSel)),
 	BUILD_GDAT_ENTRY_DATA(&glbGDatEntries, &SkWinCore::LANG_FILTER, _4976_4844);
 	DEALLOC_LOWER_MEMORY(bp08);
 	_4976_5d38 = NULL;

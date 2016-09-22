@@ -769,7 +769,7 @@ protected:
 	Bit16u	_4976_5d34;
 	__int16	_4976_5d36;		// index to (_4976_5d08|_4976_5c7e). for recycle indexer?
 	U16		*_4976_5d38;	// at first it points [1st rawdata], at second it points [1st CGDEntry]
-	X16		_4976_5d3c;		// w2 of 1st raw (cnt of raw entries)
+	X16		glbGDatNumberOfRawEntries;		// (_4976_5d3c) w2 of 1st raw (cnt of raw entries)
 	X16		_4976_5d3e;		// size of CGDEntry
 	X16		_4976_5d40;		// w4 of 2nd raw
 	i16		_4976_5d42[7];
