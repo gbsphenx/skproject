@@ -11,8 +11,10 @@ bool SkCodeParam::bUsePlayerWalkSound = true;
 
 #if (DM2_EXTENDED_MODE == 0)
 bool SkCodeParam::bUseVaryingPlaybackFrequency = false;
+bool SkCodeParam::bUseMultilanguageExtended = false;
 #else if (DM2_EXTENDED_MODE == 1)
 bool SkCodeParam::bUseVaryingPlaybackFrequency = true;
+bool SkCodeParam::bUseMultilanguageExtended = true;
 #endif // DM2_DEBUG_SUPER_MODE
 
 
