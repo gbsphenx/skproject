@@ -4739,7 +4739,7 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 	{
 		U8 message[32];
 		sprintf((char*)message, "PRECOMP LIGHT %d\n", glbPrecomputedLight);
-		//DISPLAY_HINT_TEXT(11, message);
+		DISPLAY_HINT_TEXT(11, message);
 		//printf((char*)message);
 	}
 	//^24A5:013D
@@ -4797,7 +4797,8 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 		}
 		//^24A5:0265
 		Bit16u bp02 = 6;
-		Bit16u di;
+		//Bit16u di;
+		i16 di = 0;	// SPX (2016-11-02) replacing unsigned by signed to hold negative light (with use of darkness) and hit minimum threshold
 		// SPX: This is strange ... does that mean that each new value to add is decreased by its position on the light bonus table?
 		for (di=0, si=0; si < bonusIndex; si++) {
 			//^24A5:0270
@@ -4817,6 +4818,8 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 			//^24A5:02C9
 			di += tLightLevelTable[RCJ(6,BETWEEN_VALUE(0, glbRainAmbientLightModifier + glbRainSomeLightMod, 5))];
 		}
+		if (SkCodeParam::bUseFixedMode && di < 0)
+			di = 0;
 		//^24A5:02EA
 		// Light threshold is at 100 for the brighter light => lightlevel = 5.
 		for (glbLightLevel=0; glbLightLevel <= 5; glbLightLevel++) {
@@ -4827,7 +4830,7 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 		}
 		//^24A5:030A
 		// SPX: Get the highest default light (from wallset type)
-		i16 bp0a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_LOWEST_LIGHT_LEVEL);
+		i16 bp0a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_HIGHEST_LIGHT_LEVEL);
 		//^24A5:031F
 		if (glbLightLevel < bp0a) {
 			//^24A5:0327
@@ -17013,7 +17016,7 @@ void SkWinCore::PROCEED_LIGHT(U16 cmdNum, U16 yy)
 	QUEUE_TIMER(&bp0a);
 	//^2759:1693
 	//glbGlobalSpellEffects.Light = tLightLevelItem[RCJ(16,si)] * bp0c;
-	// SPX: fix, to add new effect to current, still problem with DES IR SAR effect
+	// SPX: fix, to add new effect to current, still problem with DES IR SAR effect --> fixed using signed value in RECALC_LIGHT_LEVEL instead of unsigned.
 	glbGlobalSpellEffects.Light += (tLightLevelItem[RCJ(16,si)] * bp0c);
 	//^2759:16A3
 	RECALC_LIGHT_LEVEL();
@@ -45203,7 +45206,7 @@ void SkWinCore::DRAW_DOOR(i16 xx, X16 yy, X16 zz, X32 aa)
 						// SPX END
 
 						//^32CB:49DE
-						U8 bp0f = U8(bp08) -1;
+						U8 bp0f = U8(bp08) -1;	// Check image no from distance; note: distance 0 would give image 0xFF.
 						si = 0x40;
 						X16 bp0a = 0;
 						if (bp08 == 0 || QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtImage, bp0f) == 0) {	// 0xe
@@ -45289,11 +45292,27 @@ void SkWinCore::DRAW_DOOR(i16 xx, X16 yy, X16 zz, X32 aa)
 								X16 bp14 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_IMG_DOOR_COLORKEY_2);
 								if (bp14 == 0)
 									bp14 = 9;
-								// SPX: Get the destroyed door mask
+
+								// SPX: (2016-10-30) Get the destroyed door mask and use default one if available
+								if (!SkCodeParam::bUseFixedMode)
 								QUERY_TEMP_PICST(0, bp20, bp22, 0, 0, bp08, 
 									(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, 10) << 2) +bp18 +0x7d0,
 									-1, bp14, bp12, GDAT_CATEGORY_DOORS, iDoorGDATIndex, GDAT_DOOR_DESTROYED_MASK
 									);
+								else if (SkCodeParam::bUseFixedMode)
+								{
+									U16 iDoorDestroyedGDATIndex = iDoorGDATIndex;
+									// Check if there is a destroyed mask for the current door
+									U16 iDoorDestroyedMask = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtImage, GDAT_DOOR_DESTROYED_MASK);
+									if (iDoorDestroyedMask == (U16)-1) // not found, get the default one
+										iDoorDestroyedGDATIndex = GDAT_ITEM_DEFAULT_INDEX;
+									QUERY_TEMP_PICST(0, bp20, bp22, 0, 0, bp08, 
+										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, 10) << 2) +bp18 +0x7d0,
+										-1, bp14, bp12, GDAT_CATEGORY_DOORS, iDoorDestroyedGDATIndex, GDAT_DOOR_DESTROYED_MASK
+										);								
+								}
+								// End SPX: (2016-10-30) 
+								
 								_4976_5940.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp16));
 								DRAW_TEMP_PICST();
 							}
@@ -46452,7 +46471,10 @@ void SkWinCore::DISPLAY_VIEWPORT(Bit16u dir, i16 xx, i16 yy)
 	ENTER(6);
 	//^32CB:5D13
 	IBMIO_USER_INPUT_CHECK();
-	_4976_5a88 = glbLightLevel * 10;
+	// SPX: glbLightLevel is between 0 (light) and 5 (dark). Palette is thereafter controlled by value between 0 (light) and 64 (dark)
+	// Having *10 makes 0 to 50 -> loss of darkest colors. Having *13 makes 0 to 65 -> full range (full darkness)
+	_4976_5a88 = glbLightLevel * 10;	
+	//_4976_5a88 = glbLightLevel * 12;	// SPX: * 13 seems more appropriate to get darkest values
 	_4976_5aa0 = dir;
 	_4976_5a9c = xx;
 	_4976_5a9e = yy;
@@ -52713,38 +52735,41 @@ X16 SkWinCore::LANG_FILTER(U16 entryIndex)
 				s_textLangSel[cls1][cls2][cls4] = cls5;
 				return 1;
 			}
+			if (SkCodeParam::bUseMultilanguageExtended 
+				&& cls1 == GDAT_CATEGORY_CHAMPIONS) {
+				s_textLangSel[cls1][cls2][cls4] = cls5;
+				return 0;	// don't return 1 or it will crash because the standard text is already here with cls5 = 0x00
+			}
 		}
-
 		return 0; // never pass for other language.
 	}
 
 	// SPX: manages also localized images only for char interface
 #if DM2_EXTENDED_MODE == 1
-	else if (cls3 == fmtImage && cls1 == 0x07) {
-		U8 iLangSelect = (cls5 & 0xF0);	// Do not take variation 0x08 into account
+	if (SkCodeParam::bUseMultilanguageExtended) {
+		if (cls3 == fmtImage && (cls1 == GDAT_CATEGORY_INTERFACE_CHARSHEET || cls1 == GDAT_CATEGORY_TITLE)) {
+			U8 iLangSelect = (cls5 & 0xF0);	// Do not take variation 0x08 into account
 
-		if (iLangSelect == s_imageLangSel[cls1][cls2][cls4]) {
-			return 1;
-		}
-
-		if (iLangSelect == 0x00 || iLangSelect == 0xF0) {
-			if (s_imageLangSel[cls1][cls2][cls4] == 0xFF) {
-				s_imageLangSel[cls1][cls2][cls4] = iLangSelect;
+			if (iLangSelect == s_imageLangSel[cls1][cls2][cls4]) {
 				return 1;
 			}
-		}
 
-		if (iLangSelect == skwin.GetLang()) {
-			// If corresponding language, always prioritary
-		//	if (s_imageLangSel[cls1][cls2][cls4] == 0xFF) {
-				s_imageLangSel[cls1][cls2][cls4] = iLangSelect;
-				return 1;
-		//	}
-		}
+			if (iLangSelect == 0x00 || iLangSelect == 0xF0) {
+				if (s_imageLangSel[cls1][cls2][cls4] == 0xFF) {
+					s_imageLangSel[cls1][cls2][cls4] = iLangSelect;
+					return 1;
+				}
+			}
+
+			if (iLangSelect == skwin.GetLang()) {
+				// If corresponding language, always prioritary
+					s_imageLangSel[cls1][cls2][cls4] = iLangSelect;
+					return 1;
+			}
 		return 0;
-
+		}
 	}
-#endif
+#endif // DM2_EXTENDED_MODE
 	
 	return 1; // always pass for non text entry.
 }
@@ -55438,7 +55463,7 @@ void SkWinCore::_14cd_0550(skxxxh *ref, i8 xx, i8 yy, X16 ww)
 	X16 bp08 = 0;
 
 	// SPX: ref may be null when using IMG9; let's skip this ...
-	if (bUseFixedMode && ref == NULL)
+	if (SkCodeParam::bUseFixedMode && ref == NULL)
 		return;
 
 	//^14CD:055B
@@ -60088,11 +60113,11 @@ void SkWinCore::ACTIVATE_ITEM_TELEPORT(Timer *ref, Actuator *pr4, ObjectID rl, X
 								si = bp10;
 								CUT_RECORD_FROM(bp0e, prl, (prl != NULL) ? -1 : bp16, di);
 								// SPX: There I wonder why the DEALLOC comes first ? ... I inverted the order in fixed mode
-								if (!bUseFixedMode) {
+								if (!SkCodeParam::bUseFixedMode) {
 									DEALLOC_RECORD(bp0e);
 									BRING_CHAMPION_TO_LIFE(ADD_ITEM_CHARGE(bp0e, 0));
 								}
-								else if (bUseFixedMode)
+								else if (SkCodeParam::bUseFixedMode)
 								{
 									BRING_CHAMPION_TO_LIFE(ADD_ITEM_CHARGE(bp0e, 0));
 									DEALLOC_RECORD(bp0e);

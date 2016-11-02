@@ -576,7 +576,7 @@ extern bool	bUseDM2ExtendedMode;
 extern float	fDebugRainSpeed;
 extern bool	bUseSuperMode;
 extern bool	bUseIngameDebug;
-extern bool	bUseFixedMode;
+//extern bool	bUseFixedMode;
 extern bool	bUsePowerDebug;
 
 

@@ -37,7 +37,7 @@ float	fDebugRainSpeed = 1;
 // END DM2_EXTENDED_MODE DEF
 bool	bUseSuperMode = false;
 bool	bUseIngameDebug = true;
-bool	bUseFixedMode = true;
+//bool	bUseFixedMode = true;
 bool	bUsePowerDebug = true;		// A new flag ON for solving some savegame load (attempt) and other test purpose
 //=> SPX: put in SkCodeParam
 
