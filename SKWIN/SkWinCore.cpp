@@ -45268,7 +45268,7 @@ void SkWinCore::DRAW_DOOR(i16 xx, X16 yy, X16 zz, X32 aa)
 								
 								if (!SkCodeParam::bUseDM2ExtendedMode)
 									QUERY_TEMP_PICST(mirroredDoor, bp20, bp22, 0, 0, bp08, 
-										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOOR_GFX, iOrnateGDATIndex, dtWordValue, 8) << 2) +bp18 +0x7d0,
+										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOOR_GFX, iOrnateGDATIndex, dtWordValue, GDAT_DOOR_ORNATE__POSITION) << 2) +bp18 +0x7d0,
 										-1, bp14, -1, GDAT_CATEGORY_DOOR_GFX, iOrnateGDATIndex, GDAT_DOOR_DECORATION_MASK
 										);
 								else if (SkCodeParam::bUseDM2ExtendedMode)
@@ -45278,7 +45278,7 @@ void SkWinCore::DRAW_DOOR(i16 xx, X16 yy, X16 zz, X32 aa)
 									if (iColorPassThrough == 0)
 										iColorPassThrough = 10;
 									QUERY_TEMP_PICST(mirroredDoor, bp20, bp22, 0, 0, bp08, 
-										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOOR_GFX, iOrnateGDATIndex, dtWordValue, 8) << 2) +bp18 +0x7d0,
+										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOOR_GFX, iOrnateGDATIndex, dtWordValue, GDAT_DOOR_ORNATE__POSITION) << 2) +bp18 +0x7d0,
 										-1, bp14, iColorPassThrough, GDAT_CATEGORY_DOOR_GFX, iOrnateGDATIndex, GDAT_DOOR_DECORATION_MASK
 										);
 								}
@@ -45296,7 +45296,7 @@ void SkWinCore::DRAW_DOOR(i16 xx, X16 yy, X16 zz, X32 aa)
 								// SPX: (2016-10-30) Get the destroyed door mask and use default one if available
 								if (!SkCodeParam::bUseFixedMode)
 								QUERY_TEMP_PICST(0, bp20, bp22, 0, 0, bp08, 
-									(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, 10) << 2) +bp18 +0x7d0,
+									(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_DOOR_DESTROYED_MASK_POSITION) << 2) +bp18 +0x7d0,
 									-1, bp14, bp12, GDAT_CATEGORY_DOORS, iDoorGDATIndex, GDAT_DOOR_DESTROYED_MASK
 									);
 								else if (SkCodeParam::bUseFixedMode)
@@ -45307,7 +45307,7 @@ void SkWinCore::DRAW_DOOR(i16 xx, X16 yy, X16 zz, X32 aa)
 									if (iDoorDestroyedMask == (U16)-1) // not found, get the default one
 										iDoorDestroyedGDATIndex = GDAT_ITEM_DEFAULT_INDEX;
 									QUERY_TEMP_PICST(0, bp20, bp22, 0, 0, bp08, 
-										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, 10) << 2) +bp18 +0x7d0,
+										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_DOOR_DESTROYED_MASK_POSITION) << 2) +bp18 +0x7d0,
 										-1, bp14, bp12, GDAT_CATEGORY_DOORS, iDoorDestroyedGDATIndex, GDAT_DOOR_DESTROYED_MASK
 										);								
 								}

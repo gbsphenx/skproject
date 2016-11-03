@@ -523,9 +523,12 @@ enum SkillLevel {
 #define GDAT_DOOR_NO_FRAMES					0x40	// When = 0, draw door frames, else, don't!
 #define GDAT_DOOR_DESTROYED_MASK			0x41
 
+#define GDAT_DOOR_DESTROYED_MASK_POSITION	0x0A	// 0 = upper, 1 = centered, 2 = low/right -- should always be centered
 #define GDAT_DOOR_DEFENSE					0x0E
 #define GDAT_DOOR_STRENGTH					0x0F
 #define GDAT_DOOR_X10						0x10	// some spell bypass ?
+
+#define GDAT_DOOR_ORNATE__POSITION			0x08	// 0 = upper, 1 = centered, 2 = low/right
 
 //------------------------------------------------------------------------------
 //	CREATURES / OBJECTS ID
