@@ -404,6 +404,8 @@ enum SkillLevel {
 #define GDAT_GFXSET_STAIRS_RAMP_DOWN_S0_L			0x4D
 #define GDAT_GFXSET_STAIRS_RAMP_DOWN_S0_R			0x4E
 
+//#define GDAT_GFXSET_SEE_THRU						0xF1	// CUSTOM, for SEE THRU WALLS
+
 #define GDAT_GFXSET_DATA_FD							0xFD
 
 // Attributes
@@ -522,6 +524,7 @@ enum SkillLevel {
 #define GDAT_DOOR_MIRRORED					0x20	// CUSTOM, for MIRRORED animation (like Force Field door)
 #define GDAT_DOOR_NO_FRAMES					0x40	// When = 0, draw door frames, else, don't!
 #define GDAT_DOOR_DESTROYED_MASK			0x41
+#define GDAT_DOOR_SEE_THRU					0x42	// CUSTOM, for SEE THRU WALLS
 
 #define GDAT_DOOR_DESTROYED_MASK_POSITION	0x0A	// 0 = upper, 1 = centered, 2 = low/right -- should always be centered
 #define GDAT_DOOR_DEFENSE					0x0E

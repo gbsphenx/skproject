@@ -2303,7 +2303,15 @@ void SkWinCore::PROCEED_GLOBAL_EFFECT_TIMERS()
 					glbGlobalSpellEffects.Invisibility++;
 					break;
 				}
-			case ttyEnchantment:
+#if (DM2_EXTENDED_MODE == 1)
+			case ttySeeThruWalls:		// x49
+				{
+					//^2066:2C5A
+					glbGlobalSpellEffects.SeeThruWalls++;
+					break;
+				}
+#endif
+			case ttyEnchantment:		// x48
 				{
 					//^2066:2BD1
 					for (__int16 bp06 = 0; bp06 < glbChampionsCount; bp06++) {
@@ -17398,7 +17406,7 @@ _25e8:
 					}
 					// SPX: Two unused cases, would be nice to have Window spell back. Can we do this here?
 					// In a more general way, the effects should not be hard coded ...
-				case 12:	// NEW, used for restoring all party health
+				/*case 12:	// NEW, used for restoring all party health
 					if (SkCodeParam::bUseDM2ExtendedMode)
 					{
 						Champion*	ch;
@@ -17419,7 +17427,29 @@ _25e8:
 						champion->heroFlag |= CHAMPION_FLAG_0800;	// 0x0800
 						// This only does not refresh the HP bar.
 					}
+					break;*/
+#if (DM2_EXTENDED_MODE == 1)
+				case 12: // SPX: Reimplementation of OH EW RA See thru walls, use TT_71)
+					bp18.TimerType(ttySeeThruWalls);
+					glbGlobalSpellEffects.SeeThruWalls++;
+					bp08 /= 2;
+					// csbwin tag01cda4
+					bp08 = bp08 * bp08;
+					// csbwin tag01cdaa (not yet correctly done, see below)
+					bp18.SetMap(glbPlayerMap);
+					bp18.SetTick(glbGameTick + bp08);
+					QUEUE_TIMER(&bp18);
 					break;
+					/*
+tag01cdaa:
+          D0L = d.Time;
+          D6L &= 0xffff;
+          D0L += D6L;
+          D1L = d.partyLevel << 24;
+          timer_20.timerTime = D1L | D0L;
+          gameTimers.SetTimer(&timer_20);
+		  */
+#endif
 				}
 
 				break;
@@ -45226,7 +45256,11 @@ void SkWinCore::DRAW_DOOR(i16 xx, X16 yy, X16 zz, X32 aa)
 						//^32CB:4A28
 						X16 di = bp04->OrnateIndex();
 						i16 bp16;
+#if (DM2_EXTENDED_MODE == 1)
+						if (di != 0 || bp06 == 5 || glbGlobalSpellEffects.SeeThruWalls > 0) {	// + window spell effect
+#else
 						if (di != 0 || bp06 == 5) {	// If there is any ornate or door is destroyed
+#endif
 							//^32CB:4A43
 							ExtendedPicture bp015c;
 							// Get door graphics
@@ -45316,6 +45350,29 @@ void SkWinCore::DRAW_DOOR(i16 xx, X16 yy, X16 zz, X32 aa)
 								_4976_5940.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp16));
 								DRAW_TEMP_PICST();
 							}
+#if (DM2_EXTENDED_MODE == 1)
+							if (glbGlobalSpellEffects.SeeThruWalls > 0 && bp08 == 1 && yy == 7) {	// If Window spell is active, and display only if distance = 1 and just in front
+								
+								X16 bp14 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_IMG_DOOR_COLORKEY_2);
+								if (bp14 == 0)
+									bp14 = 9;
+								
+								{
+									U16 iDoorSeeThruGDATIndex = iDoorGDATIndex;
+									
+									U16 iDoorSeeThruMask = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtImage, GDAT_DOOR_SEE_THRU);
+									if (iDoorSeeThruMask == (U16)-1) // not found, get the default one
+										iDoorSeeThruGDATIndex = GDAT_ITEM_DEFAULT_INDEX;
+									QUERY_TEMP_PICST(0, bp20, bp22, 0, 0, bp08, 
+										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_DOOR_DESTROYED_MASK_POSITION) << 2) +bp18 +0x7d0,
+										-1, bp14, bp12, GDAT_CATEGORY_DOORS, iDoorSeeThruGDATIndex, GDAT_DOOR_SEE_THRU
+										);								
+								}
+								
+								_4976_5940.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp16));
+								DRAW_TEMP_PICST();
+							}
+#endif
 							//^32CB:4BBC
 							bp015c.colorKeyPassThrough = bp015c.b58[bp12];
 							bp015c.w56 = 0;
@@ -61619,7 +61676,7 @@ void SkWinCore::PROCEED_TIMERS()
 				PROCESS_TIMER_LIGHT(bp04);
 				RECALC_LIGHT_LEVEL();
 				break;
-			case ttyInvisibility://^3C03		// SPX: decrease invisibility value
+			case ttyInvisibility: //^3C03	(0x47 / 71)		// SPX: decrease invisibility value
 				//^3A15:3C03
 				glbGlobalSpellEffects.Invisibility = glbGlobalSpellEffects.Invisibility -1;
 				if (glbGlobalSpellEffects.Invisibility != 0 || glbChampionInventory == 0)
@@ -61627,7 +61684,7 @@ void SkWinCore::PROCEED_TIMERS()
 				//^3A15:3C1E
 				glbChampionTable[glbChampionInventory].heroFlag |= CHAMPION_FLAG_4000;	// 0x4000
 				break;
-			case ttyEnchantment://^3C31
+			case ttyEnchantment://^3C31		(0x48 / 72)
 				//^3A15:3C31
 				for (bp06 = 0; bp06 < glbChampionsCount; bp06++) {
 					//^3A15:3C38
@@ -61644,7 +61701,13 @@ void SkWinCore::PROCEED_TIMERS()
 				}
 				//^3A15:3C9E
 				break;
-			case ttyPoison://^3CA1
+#if (DM2_EXTENDED_MODE == 1)
+			case ttySeeThruWalls:	// (0x49 / 73)		// SPX: decrease see_thru_walls value
+				//^3A15:3C03
+				glbGlobalSpellEffects.SeeThruWalls = glbGlobalSpellEffects.SeeThruWalls -1;
+				break;
+#endif
+			case ttyPoison://^3CA1	(0x4B / 75)
 				//^3A15:3CA1
 				glbChampionSquad[si = timer.actor].PoisonValue--;
 				PROCESS_POISON(si, timer.value);

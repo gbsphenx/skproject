@@ -1435,6 +1435,9 @@ namespace DM2Internal {
 		X8 FreezeCounter;		// b3 value used by freeze life command
 		X8 AuraOfSpeed;		// b4 used by aura of speed
 		X8 UnusedCounter;				// b5 SPX: In present code this one is never used ?? or is code missing ?
+#if (DM2_EXTENDED_MODE == 1)	// SPX: Extended mode, add SeeThruWalls from DM1
+		X8 SeeThruWalls;
+#endif
 	};
 //	// 
 //	struct sk3a150696 {
@@ -2662,36 +2665,50 @@ namespace DM2Internal {
 	// SPX: Added comments about numbers used in CSBWin
 	// (t)imer (ty)pe
 	enum {
+		// CSBWin			-3 : Monster damaged by cloud or door
+		//					-2 : When a monster is damaged
+		//					-1 : When a monster is attacked. When we bump into a monster
 		tty00 = 0,			// csbwin: empty
 		ttyDoorStep			= 0x01, // tty01 step door
 		ttyDoorDestroy		= 0x02,		// tty02 CSBWin => Bash door
 		tty04 = 0x04, // activation for tile record (such as floor/wall/pitfall/door/trickwall/teleporter)
-		tty0C = 0x0C,
-		ttyResurrect		= 0x0D,	// tty0D CSBWin => VI Altar
+		// csbwin: 0x0B (11) reenable character attack
+		tty0C = 0x0C,		// csbwin 12 ?
+		ttyResurrect		= 0x0D,	// tty0D CSBWin (13) => VI Altar
 		ttyItemBonus		= 0x0E,	// item bonus ?
+		// csbwin 0x14 (20) ? queue sound
 		ttySound			= 0x15,		// tty15
-		// tty18			= 0x18, // csbwin : remove fluxcage
-		ttyCloud			= 0x19,	// tty19
-		tty1D = 0x1D, // step missile 0
-		tty1E = 0x1E, // step missile 1
-		tty21 = 0x21, // think creature 0
-		tty22 = 0x22, // think creature 1
+		// csbwin 0x16 (22) ?
+		// tty18			= 0x18, // csbwin (24): remove fluxcage
+		ttyCloud			= 0x19,	// csbwin tty19 (25) : cloud processing
+		// csbwin 0x01C (28) ??
+		tty1D = 0x1D, // (29) step missile 0
+		tty1E = 0x1E, // (30) step missile 1
+		tty21 = 0x21, // (33) think creature 0
+		tty22 = 0x22, // (34) think creature 1
 		tty3C = 0x3C,
 		tty3D = 0x3D,		// about minion and teleport / opening something ?
-		ttyLight			= 0x46,	// tty46 light
-		ttyInvisibility		= 0x47,	// tty47
-		ttyEnchantment		= 0x48, // tt48 enchantment/aura timer?
-		ttyPoison			= 0x4B, // tty4B poison timer?
-		ttyWeather			= 0x54,	// tty54
-		ttyOrnateAnimator	= 0x55,	// tty55
-		ttyTickGenerator	= 0x56,	// tty56
-		ttyWallButton		= 0x57,	// tty57 restore wall button to released state
-		ttyDoorButton		= 0x58, // tty58 restore door button released
-		tty59 = 0x59,
-		tty5A = 0x5A, // queued noize gen
-		tty5B = 0x5B,
-		ttySimpleActuTurnOn = 0x5C,	// tty5C restore ornate (simple actuator) in ON state (used for RESPAWNING flowers, mushrooms, gems ..)
-		tty5D = 0x5D,
+		ttyLight			= 0x46,	// tty46 (70) light
+		ttyInvisibility		= 0x47,	// tty47 (71) csbwin OH EW SAR
+		ttyEnchantment		= 0x48, // tt48 (72) enchantment/aura timer?
+#if (DM2_EXTENDED_MODE == 1)
+		ttySeeThruWalls		= 0x49, // tty49 (73) csbwin : OH EW RA See thru walls
+#endif
+		//ttyPartyShield		= 0x4A, // tty4A (74) csbwin : YA IR
+		ttyPoison			= 0x4B, // tty4B (75) poison timer
+		// csbwin 77 Spell shield
+		// csbwin 78 Fire shield
+		// csbwin 79 YA BRO ROS : Magic Footprints
+		ttyWeather			= 0x54,	// tty54 (84)
+		ttyOrnateAnimator	= 0x55,	// tty55 (85)
+		ttyTickGenerator	= 0x56,	// tty56 (86)
+		ttyWallButton		= 0x57,	// tty57 (87) restore wall button to released state
+		ttyDoorButton		= 0x58, // tty58 (88) restore door button released
+		tty59 = 0x59, // (89)
+		tty5A = 0x5A, // (90) queued noise gen
+		tty5B = 0x5B, // (91) 
+		ttySimpleActuTurnOn = 0x5C,	// tty5C (92) restore ornate (simple actuator) in ON state (used for RESPAWNING flowers, mushrooms, gems ..)
+		tty5D = 0x5D, // (93) 
 	};
 	// ccm (creature command)
 	enum {
