@@ -22253,7 +22253,7 @@ i16 SkWinCore::_32cb_15b8(i16 cellPos, i16 yy, i16 zz)
 	//^32CB:15F9
 	i16 bp28 = bp14 >> 8;
 	//^32CB:15FF
-	i16 di = _4976_412d[RCJ(23,cellPos)];
+	i16 di = glbTabYAxisDistance[RCJ(23,cellPos)];
 	//^32CB:1609
 	U8 bp1f = U8(bp14) & 0xff;
 	//^32CB:1611
@@ -22558,7 +22558,7 @@ i16 SkWinCore::_32cb_15b8(i16 cellPos, i16 yy, i16 zz)
 		//^32CB:1C4E
 		if (bp24 == 0) {
 			//^32CB:1C54
-			if ((_4976_412d[RCJ(23,cellPos)] & 1) != 0) {
+			if ((glbTabYAxisDistance[RCJ(23,cellPos)] & 1) != 0) {
 				//^32CB:1C5E
 				bp0e = glbGeneralFlipGraphics;
 			}
@@ -22820,7 +22820,7 @@ U16 SkWinCore::_32cb_0287(U16 xx, U16 yy, U16 zz)
 	//^32CB:031E
 	SUMMARIZE_STONE_ROOM(&_4976_5a80[si].x2, _4976_5aa0, bp04, bp06);
 	//^32CB:0344
-	i16 bp02 = _32cb_15b8(si, _4976_4116[RCJ(23,si)], 0);
+	i16 bp02 = _32cb_15b8(si, glbTabXAxisDistance[RCJ(23,si)], 0);
 	//^32CB:0358
 	if (bp02 >= 0) {
 		//^32CB:035C
@@ -23096,7 +23096,7 @@ void SkWinCore::DRAW_ITEM(ObjectID rl, i16 xx, U16 yy, U16 zz, i16 vv, Creature 
 		bp18 = QUERY_OBJECT_5x5_POS(rl, _4976_5aa0);
 	}
 	//^32CB:3755
-	i16 bp12 = _4976_412d[RCJ(23,xx)];
+	i16 bp12 = glbTabYAxisDistance[RCJ(23,xx)];
 	//^32CB:3760
 	U16 bp0a;
 	U16 bp06;
@@ -23144,7 +23144,7 @@ void SkWinCore::DRAW_ITEM(ObjectID rl, i16 xx, U16 yy, U16 zz, i16 vv, Creature 
 	//^32CB:385D
 	U16 bp08 = 0;
 	//^32CB:3862
-	i16 bp14 = _4976_4116[RCJ(23,xx)];
+	i16 bp14 = glbTabXAxisDistance[RCJ(23,xx)];
 	//^32CB:386D
 	if (bp14 == 0) {
 		//^32CB:3871
@@ -23734,7 +23734,7 @@ U16 SkWinCore::_32cb_01b6(U16 xx, U16 yy, U16 ss, U16 tt, U16 *ww)
 		bp08 = &glbTabCreaturesInfo[bp04->b5];
 	}
 	//^32CB:0216
-	QUERY_CREATURE_PICST(3, _4976_412d[3], bp04, bp08, si);
+	QUERY_CREATURE_PICST(3, glbTabYAxisDistance[3], bp04, bp08, si);
 	//^32CB:0232
 	i16 di = _4976_5940.colorKeyPassThrough;
 	//^32CB:0236
@@ -44690,7 +44690,7 @@ void SkWinCore::DRAW_PUT_DOWN_ITEM(ObjectID rl, i16 cellPos, i16 dir, Creature *
 	if (di == OBJECT_END_MARKER)
 		return;
 	//^32CB:39A2
-	i16 bp0a = _4976_412d[RCJ(23,cellPos)];
+	i16 bp0a = glbTabYAxisDistance[RCJ(23,cellPos)];
 	if (bp0a > 3) // ignore D4
 		return;
 	X16 si = 0;
@@ -44840,7 +44840,7 @@ void SkWinCore::SUMMARY_DRAW_CREATURE(ObjectID rl, i16 cellPos, U32 ss)
 	if (glbIsPlayerMoving != 0 && si == 0)
 		return;
 	//^32CB:2C00
-	i16 bp0e = _4976_412d[RCJ(23,si)];
+	i16 bp0e = glbTabYAxisDistance[RCJ(23,si)];
 	//^32CB:2C08
 	for (; di != OBJECT_END_MARKER; di = GET_NEXT_RECORD_LINK(di)) {
 		//^32CB:2C0B
@@ -44914,7 +44914,7 @@ void SkWinCore::_32cb_2d8c(ObjectID rl, X16 yy, X32 aa)
 	if (_4976_4172[RCJ(23,di)] < 0)
 		return;
 	//^32CB:2DAD
-	X16 bp1c = _4976_412d[RCJ(23,di)];
+	X16 bp1c = glbTabYAxisDistance[RCJ(23,di)];
 	i16 si = 0;
 	for (; si < 5; si++) {
 		//^32CB:2DBA
@@ -45015,7 +45015,7 @@ _2eda:
 				i16 bp0a = bp14 -0xa0;
 				if (bp0a > 0) {
 					bp0a = 0xc0 - bp0a;
-					if (bp26 != 0 && _4976_412d[0] == bp1c)
+					if (bp26 != 0 && glbTabYAxisDistance[0] == bp1c)
 						//^32CB:30A9
 						bp0a = 0x1e;
 					//^32CB:30AE
@@ -45072,7 +45072,7 @@ void SkWinCore::DRAW_DEFAULT_DOOR_BUTTON(U8 cls1, U8 cls2, U8 cls4, i16 ww)
 	if (si < 0 || cls2 == 0xff)
 		return;
 	//^32CB:469B
-    X16 bp04 = _4976_412d[RCJ(23,di)];
+    X16 bp04 = glbTabYAxisDistance[RCJ(23,di)];
 	X16 bp02 = tlbDistanceStretch[RCJ(5,bp04)];
 	QUERY_TEMP_PICST(0, bp02, bp02, 0, 0, bp04, 
 		QUERY_GDAT_ENTRY_DATA_INDEX(0xc, cls2, dtWordValue, 8) * 5 +si +1950,
@@ -45206,7 +45206,7 @@ void SkWinCore::DRAW_DOOR(i16 xx, X16 yy, X16 zz, X32 aa)
 	if (bp06 != 0) {
 		//^32CB:4955
 		ObjectID bp0c = _4976_5a80[xx].x2.w6[1];
-		i16 bp08 = _4976_412d[RCJ(23,xx)];
+		i16 bp08 = glbTabYAxisDistance[RCJ(23,xx)];
 		if (bp08 <= 3) {
 			//^32CB:497D
 			i16 bp18 = _4976_4539[RCJ(5,bp08)];
@@ -45606,7 +45606,7 @@ X16 SkWinCore::DRAW_EXTERNAL_TILE(i16 xx)
 	//^32CB:1F55
 	i16 bp06 = _4976_5a80[si].b0;
 	i16 bp08 = _4976_5a80[si].b1;
-	i16 bp18 = _4976_412d[RCJ(23,si)];
+	i16 bp18 = glbTabYAxisDistance[RCJ(23,si)];
 	//^32CB:1F86
 	TELE_inf bp2a; // bp2a-bp26
 	if (bp18 > 3 && GET_TELEPORTER_DETAIL(&bp2a, U8(bp06), U8(bp08)) == 0)
@@ -45620,7 +45620,7 @@ X16 SkWinCore::DRAW_EXTERNAL_TILE(i16 xx)
 		return 0;
 	//^32CB:1FDF
 	X16 bp04 = 0;
-	if (_4976_4116[RCJ(23,si)] == 0) {
+	if (glbTabXAxisDistance[RCJ(23,si)] == 0) {
 		//^32CB:1FEB
 		if (QUERY_GDAT_ENTRY_DATA_INDEX(0xa, bp13, dtWordValue, 7) == 0) {
 			//^32CB:2001
@@ -45632,7 +45632,7 @@ X16 SkWinCore::DRAW_EXTERNAL_TILE(i16 xx)
 		}
 	}
 	//^32CB:2015
-	else if (_4976_4116[RCJ(23,si)] >= 1) {
+	else if (glbTabXAxisDistance[RCJ(23,si)] >= 1) {
 		//^32CB:201C
 		bp04 = 1;
 	}
@@ -45671,7 +45671,7 @@ X16 SkWinCore::DRAW_EXTERNAL_TILE(i16 xx)
 	X16 bp20;
 	ExtendedPicture bp0164;
 	X16 bp1c;
-	if (_4976_4116[RCJ(23,si)] == 0 && bp18 != 0) {
+	if (glbTabXAxisDistance[RCJ(23,si)] == 0 && bp18 != 0) {
 		//^32CB:20CF
 		X16 bp1e = QUERY_GDAT_ENTRY_DATA_INDEX(0xa, bp13, dtWordValue, 0x63);
 		if ((bp1c = GET_TELEPORTER_DETAIL(&bp2a, U8(bp06), U8(bp08))) != 0 || bp1e != 0) {
@@ -45687,7 +45687,7 @@ X16 SkWinCore::DRAW_EXTERNAL_TILE(i16 xx)
 			bp22 = glbCurrentMapIndex;
 			CHANGE_CURRENT_MAP_TO(bp2a.b4);
 			_4976_4212 = 1;
-			bp24 = _4976_412d[RCJ(23,si)];
+			bp24 = glbTabYAxisDistance[RCJ(23,si)];
 			CALC_VECTOR_W_DIR(_4976_5aa0, -bp24, 0, &bp06, &bp08);
 			//^32CB:21C4
 			for (di = 4; di >= bp24; di--) {
@@ -45787,11 +45787,11 @@ void SkWinCore::DRAW_FLYING_ITEM(ObjectID rl, i16 cellPos, X16 _5x5)
 	if (di == -1)
 		return;
 	//^32CB:3165
-	X16 bp1a = _4976_412d[RCJ(23,cellPos)];
+	X16 bp1a = glbTabYAxisDistance[RCJ(23,cellPos)];
 	if (bp1a == 0 && di >= 2)
 		return;
 	//^32CB:317E
-	i16 bp1c = _4976_4116[RCJ(23,cellPos)];
+	i16 bp1c = glbTabXAxisDistance[RCJ(23,cellPos)];
 	if (_4976_415b[RCJ(23,cellPos)] < 0)
 		return;
 	//^32CB:3193
@@ -45951,12 +45951,12 @@ void SkWinCore::DRAW_STATIC_OBJECT(i16 xx, X32 ss, X16 ww)
 	X16 bp0c = _4976_43f5[RCJ(16,si)][0];
 	X16 bp0e = _4976_43f5[RCJ(16,si)][1];
 	const U8 *displayOrder;	// *bp04 
-	if (_4976_4116[RCJ(23,si)] < 0) { // at left
+	if (glbTabXAxisDistance[RCJ(23,si)] < 0) { // at left
 		//^32CB:3BFF
 		displayOrder = tlbDisplayOrderLeft;
 	}
 	//^32CB:3C06
-	else if (_4976_4116[RCJ(23,si)] == 0) { // at center
+	else if (glbTabXAxisDistance[RCJ(23,si)] == 0) { // at center
 		//^32CB:3C0D
 		displayOrder = tlbDisplayOrderCenter;
 	}
@@ -46103,21 +46103,21 @@ void SkWinCore::DRAW_TELEPORTER_TILE(i16 xx, X16 cls1, X16 cls2)
 }
 
 //^32CB:4F3B
-void SkWinCore::DRAW_WALL(i16 xx)
+void SkWinCore::DRAW_WALL(i16 iViewportCell)	// i16 xx
 {
 	//^32CB:4F3B
 	ENTER(12);
 	//^32CB:4F41
-	U8 bp02 = glbMapGraphicsSet;
-	i16 bp06 = glbSceneColorKey;
-	i8 bp07 = _4976_4116[RCJ(23,xx)];
-	i16 bp0c = _4976_412d[RCJ(23,xx)];
+	U8 iMapGfx = glbMapGraphicsSet;	// bp02
+	i16 iColorkey1 = glbSceneColorKey;	// bp06
+	i8 iXDist = glbTabXAxisDistance[RCJ(23,iViewportCell)];	// bp07
+	i16 iYDist = glbTabYAxisDistance[RCJ(23,iViewportCell)];	// bp0c
 	//^32CB:4F5F
-	U8 bp01 = (bp0c > 1) ? 0x6f : 0x6e;
+	U8 bp01 = (iYDist > 1) ? 0x6f : 0x6e;	// SPX TODO: unknown GDAT values! never seen them in any GDAT
 	X16 si = 0;
 	X16 di = 0;
-	U16 bp0a = QUERY_GDAT_ENTRY_DATA_INDEX(0x8, glbMapGraphicsSet, dtWordValue, bp01);
-	if (bp0c > 1) { // dist 2,3,4
+	U16 bp0a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, bp01);
+	if (iYDist > 1) { // dist 2,3,4
 		//^32CB:4F91
 		if (_4976_5a80[4].x2.w0 == 0 && (di = (bp0a >> 8)) == 0) {
 			//^32CB:4FA5
@@ -46134,7 +46134,7 @@ void SkWinCore::DRAW_WALL(i16 xx)
 		}
 	}
 	//^32CB:4FD8
-	else if (bp0c > 0) { // dist 1
+	else if (iYDist > 0) { // dist 1
 		//^32CB:4FDE
 		if (_4976_5a80[0].x2.w0 == 0 && (di = (bp0a >> 8)) == 0) {
 			//^32CB:4FF5
@@ -46152,37 +46152,118 @@ void SkWinCore::DRAW_WALL(i16 xx)
 		TRIM_BLIT_RECT(di, 0, si, 0);
 	}
 	//^32CB:503C
-	X16 bp04 = (bp07 <= 0) ? 0 : 1;
+	X16 bFlip = (iXDist <= 0) ? 0 : 1;	// (bp04) 0 = left / 1 = right
 	//^32CB:504E
-	if (xx >= 0x10) { // wall at D4
+	if (iViewportCell >= 0x10) { // wall at D4
 		//^32CB:5054
-		if (bp07 == -2 || bp07 == 2) {
+		if (iXDist == -2 || iXDist == 2) {
 			//^32CB:5060
-			bp04 = 0;
+			bFlip = 0;	// left
 		}
-		bp04 ^= glbGeneralFlipGraphics;
-		bp01 = 0x32;
+		bFlip ^= glbGeneralFlipGraphics;
+		bp01 = 0x32;	// 0x32 : D4 wall front
 	}
 	//^32CB:5071
 	else if (glbGeneralFlipGraphics != 0) {
 		//^32CB:5078
-		bp01 = tlbDoorSideFramesReorder[RCJ(23,xx)] -80;
-		if (QUERY_GDAT_ENTRY_IF_LOADABLE(0x8, bp02, dtImage, bp01) == 0) {
-			if (bp07 == 0) {
+		bp01 = tlbDoorSideFramesReorder[RCJ(23,iViewportCell)] -80;
+		if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_GRAPHICSSET, iMapGfx, dtImage, bp01) == 0) {
+			if (iXDist == 0) {
 				//^32CB:509F
-				bp04 = 1;
+				bFlip = 1;	// right
 			}
 			//^32CB:50A4
-			bp01 = bp01 +0x72;
+			bp01 = bp01 +0x72;	// 0x72 is pit side D2 ...
 		}
 	}
 	else {
 		//^32CB:50AE
-		bp01 = xx +0x22;
+		bp01 = iViewportCell +0x22;	// 0x23 is wall side D0
 	}
+
+	// SPX: 2016-11-11 : attempt having See Through Wall masks on wall
+#if (DM2_EXTENDED_MODE == 1)	// Check for possible thru wall gfx
+	{
+	
+		if (glbGlobalSpellEffects.SeeThruWalls > 0 && iViewportCell == 3)	// front D1 wall
+		{
+			i16 iColorkey2 = -1;
+			ExtendedPicture xExtPicWall;
+			i16 iPicture = 0;
+			bp01 = 0x025;	// D1 wall
+
+			iColorkey1 = 10;	// would be dark green / pass through (see what's behind wall)
+			iColorkey2 = 9;		// would be cyan / transparent (see wall)
+			
+			iPicture = QUERY_MULTILAYERS_PIC(&xExtPicWall, GDAT_CATEGORY_GRAPHICSSET, iMapGfx, bp01, 0x40, 0x40, 0, bFlip, iColorkey1, -1);
+			//iPicture = QUERY_MULTILAYERS_PIC(&xExtPicWall, GDAT_CATEGORY_GRAPHICSSET, 0xFE, 0xF2, 0x40, 0x40, 0, bFlip, iColorkey1, -1); // test wall
+			DRAW_PICST(&xExtPicWall);
+			FREE_PICT_MEMENT(&xExtPicWall);
+
+			X16 iScale = 0x40;
+			X16 bp20 = 0x40;
+			X16 bp22 = 0x40;;
+			//--- Put the metrics of that image to the TEMP image
+			if (iScale == 0x40)
+			{
+				i16 bp1c;
+				i16 bp1e;
+				
+				QUERY_GDAT_IMAGE_METRICS(GDAT_CATEGORY_GRAPHICSSET, iMapGfx, bp01, &bp1c, &bp1e);	// 0xe
+				bp20 = _32cb_48d5(_4976_5940.width, bp1c);
+				bp22 = _32cb_48d5(_4976_5940.height, bp1e);
+				
+			}
+			else {
+				bp22 = bp20 = iScale;
+			}
+
+			//------ part to get and draw the see thru walls
+			if (1)
+			{
+				U16 iWallSetIndex = iMapGfx;
+			
+				U16 iWallSeeThruMask = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, iMapGfx, dtImage, GDAT_GFXSET_SEE_THRU);
+				if (iWallSeeThruMask == (U16)-1) // not found, get the default one
+					iWallSetIndex = GDAT_ITEM_DEFAULT_INDEX;	// 0xFE
+				
+				i16 iRectNo = _098d_0cd7(iViewportCell, 16, 0);	// TODO, this rectno is not enough good
+
+				QUERY_TEMP_PICST(bFlip, bp20, bp22, 0, 0, 
+					(glbIsPlayerMoving != 0) ? -iYDist : 0, 
+					iRectNo,
+					-1, iColorkey2, iColorkey1,
+					GDAT_CATEGORY_GRAPHICSSET, iWallSetIndex, GDAT_GFXSET_SEE_THRU
+					);
+
+				_4976_5940.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(iPicture));
+				DRAW_TEMP_PICST();
+			}
+			//------
+
+			//--- Get correct pass through color
+			xExtPicWall.colorKeyPassThrough = xExtPicWall.b58[iColorkey1];
+			xExtPicWall.w56 = 0;
+			_0b36_00c3(iPicture, &xExtPicWall);
+			COPY_MEMORY(&xExtPicWall, &_4976_5940, sizeof(ExtendedPicture));
+			_4976_5940.pb44 = _4976_4c16;
+			_4976_5940.rectNo = 3 + 0x2BE;
+			DRAW_TEMP_PICST();
+			if (iPicture >= 0)
+				FREE_TEMP_CACHE_INDEX(iPicture);
+		}
+		else
+		{
+			QUERY_TEMP_PICST(bFlip, 0x40, 0x40, 0, 0, (glbIsPlayerMoving != 0) ? -iYDist : 0, iViewportCell +0x2be, 0xffff, iColorkey1, -1, GDAT_CATEGORY_GRAPHICSSET, iMapGfx, bp01);
+			DRAW_TEMP_PICST(); // draw wall
+		}
+
+	}
+#else
 	//^32CB:50B6
-	QUERY_TEMP_PICST(bp04, 0x40, 0x40, 0, 0, (glbIsPlayerMoving != 0) ? -bp0c : 0, xx +0x2be, 0xffff, bp06, -1, 0x8, bp02, bp01);
+	QUERY_TEMP_PICST(bFlip, 0x40, 0x40, 0, 0, (glbIsPlayerMoving != 0) ? -iYDist : 0, iViewportCell +0x2be, 0xffff, iColorkey1, -1, GDAT_CATEGORY_GRAPHICSSET, iMapGfx, bp01);
 	DRAW_TEMP_PICST(); // draw wall
+#endif
 	_098d_0c45();
 	//^32CB:50FA
 	return;
@@ -46208,7 +46289,7 @@ void SkWinCore::DRAW_WALL_TILE(i16 xx)
 		case 2: //^_5133
 			//^32CB:5133
 _5133:
-            _32cb_15b8(si, _4976_4116[RCJ(23,si)], 1);
+            _32cb_15b8(si, glbTabXAxisDistance[RCJ(23,si)], 1);
 			break;
 	}
 	//^32CB:5143

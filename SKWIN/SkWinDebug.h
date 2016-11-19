@@ -29,7 +29,7 @@
 #define DLV_CCM 0	// Creature command
 #define DLV_FSM 0	// Find special marker (for x teleport and void fall)
 #define DLV_XP	0	// Display info about XP gain
-#define DLV_DBG_GETPIC 1
+#define DLV_DBG_GETPIC 0
 #define DLV_DBG_CELL 0
 #define DLV_DBG_EXTRACT 0
 #define DLV_DBG_TIMER 0
