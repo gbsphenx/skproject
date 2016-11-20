@@ -22237,10 +22237,22 @@ void SkWinCore::_32cb_3f0d(U16 xx)
 }
 
 //^32CB:15B8
-i16 SkWinCore::_32cb_15b8(i16 cellPos, i16 yy, i16 zz)
+// SPX: _32cb_15b8 renamed DRAW_WALL_ORNATE
+i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 {
 	//^32CB:15B8
 	ENTER(854);
+
+#if (DM2_EXTENDED_MODE == 1)
+	{
+		if (glbGlobalSpellEffects.SeeThruWalls > 0 && cellPos == 3)	// front D1 wall
+		{
+			return -1;
+		}
+	}
+#endif
+
+
 	//^32CB:15BE
 	i16 bp14 = (yy <= -1)
 		? 4
@@ -22820,7 +22832,7 @@ U16 SkWinCore::_32cb_0287(U16 xx, U16 yy, U16 zz)
 	//^32CB:031E
 	SUMMARIZE_STONE_ROOM(&_4976_5a80[si].x2, _4976_5aa0, bp04, bp06);
 	//^32CB:0344
-	i16 bp02 = _32cb_15b8(si, glbTabXAxisDistance[RCJ(23,si)], 0);
+	i16 bp02 = DRAW_WALL_ORNATE(si, glbTabXAxisDistance[RCJ(23,si)], 0);
 	//^32CB:0358
 	if (bp02 >= 0) {
 		//^32CB:035C
@@ -46270,26 +46282,26 @@ void SkWinCore::DRAW_WALL(i16 iViewportCell)	// i16 xx
 }
 //^32CB:50FE
 // SPX: _32cb_50fe renamed DRAW_WALL_TILE
-void SkWinCore::DRAW_WALL_TILE(i16 xx)
+void SkWinCore::DRAW_WALL_TILE(i16 iViewportCell)	// i16 xx
 {
 	//^32CB:50FE
 	ENTER(0);
 	//^32CB:5102
-	i16 si = xx;
-	DRAW_WALL(si);
-	switch (_4976_4654[RCJ(23,si)]) {
-		case 1: //^_5121
+	i16 iLocalViewportCell = iViewportCell;	//i16 si = xx;
+	DRAW_WALL(iLocalViewportCell);
+	switch (_4976_4654[RCJ(23,iLocalViewportCell)]) {
+		case 1: //^_5121	// front vision
 			//^32CB:5121
-			_32cb_15b8(si, 0, 1);
+			DRAW_WALL_ORNATE(iLocalViewportCell, 0, 1);
 			break;
-		case 3: //^_5127
+		case 3: //^_5127	// side
 			//^32CB:5127
-			_32cb_15b8(si, 0, 1);
+			DRAW_WALL_ORNATE(iLocalViewportCell, 0, 1);
 			goto _5133;
-		case 2: //^_5133
+		case 2: //^_5133	// side
 			//^32CB:5133
 _5133:
-            _32cb_15b8(si, glbTabXAxisDistance[RCJ(23,si)], 1);
+            DRAW_WALL_ORNATE(iLocalViewportCell, glbTabXAxisDistance[RCJ(23,iLocalViewportCell)], 1);
 			break;
 	}
 	//^32CB:5143

@@ -1266,12 +1266,12 @@ protected:
 	void FIRE_MOUSE_SET_CAPTURE();
 	void _443c_08ab(i16 *xx, i16 *yy, i16 *zz);
 
-	//--- NEW FUNCTION -------------------------------------
+	//--- NEW FUNCTIONS -------------------------------------
 	U16 QUERY_GDAT_POTION_SPELL_TYPE_FROM_RECORD(ObjectID rl);
 	U16 QUERY_GDAT_POTION_BEHAVIOUR_FROM_RECORD(ObjectID rl);
 	U16 QUERY_GDAT_WATER_VALUE_FROM_RECORD(ObjectID rl);
 	U16 QUERY_GDAT_DOOR_IS_MIRRORED(U8 doortype);
-	//--- NEW FUNCTION -------------------------------------
+	//--- NEW FUNCTIONS -------------------------------------
 
 
 	U16 QUERY_GDAT_FOOD_VALUE_FROM_RECORD(ObjectID rl);
@@ -1318,7 +1318,7 @@ protected:
 	U16 _48ae_0767(i16 xx, i16 yy, U8 *zz, i16 *vv, i16 ww);
 	void _32cb_0f82(Actuator *ref, U8 cls4, i16 bb, i16 cellPos, U16 horzStretch, U16 vertStretch, U16 rectno, U16 gg, U16 colorkey1);
 	void _32cb_3f0d(U16 xx);
-	i16 _32cb_15b8(i16 cellPos, i16 yy, i16 zz);
+	i16 DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz);	// _32cb_15b8
 	i16 _0b36_1446(Picture *ref, i16 xx, i16 yy, U16 colorkey);
 	U16 _32cb_00f1(U16 xx, U16 yy, i16 zz);
 	U16 _32cb_0287(U16 xx, U16 yy, U16 zz);
