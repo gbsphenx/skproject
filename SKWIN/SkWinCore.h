@@ -195,7 +195,7 @@ protected:
 	X16		_069a_04a0;		// ___first
 	X16		_069a_04a2;		// ___last
 
-	U8		_44c8_077d[16];	// palette for blit
+	U8		glbBlitPalette16[16];	// (_44c8_077d) palette for blit
 
 	X8		*_4976_0083;	// _heapbase
 	U8		*_4976_0087;	// _brklvl
@@ -645,7 +645,7 @@ protected:
 	X8		_4976_592a;
 	U8		_4976_592b[13];
 	SRECT	_4976_5938;
-	ExtendedPicture	_4976_5940;		// temp picst
+	ExtendedPicture	glbTempPicture;		// (_4976_5940) temp picst
 //	X16		_4976_5944;
 //	X16		_4976_5940.w18;
 //	X16		_4976_5954;

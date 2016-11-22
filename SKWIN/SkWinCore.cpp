@@ -7075,7 +7075,7 @@ void SkWinCore::FIRE_BLIT_TO_MEMORY_ROW_4TO8BPP(Bit16u offSrc, Bit16u offDst, Bi
 	//^44C8:08AE
 	ENTER(0);
 	//^44C8:08B3
-	const Bit8u *bx = _44c8_077d;
+	const Bit8u *bx = glbBlitPalette16;
 	Bit8u *di = _4976_5e6a + offDst;
 	Bit8u dh = Bit8u(colorkey);
 	Bit16u cx = width;
@@ -20991,7 +20991,7 @@ void SkWinCore::QUERY_TEMP_PICST(
 	ENTER(2);
 	//^32CB:08C7
 	i16 di = uu;
-	QUERY_GDAT_SUMMARY_IMAGE(&_4976_5940, cls1, cls2, cls4);
+	QUERY_GDAT_SUMMARY_IMAGE(&glbTempPicture, cls1, cls2, cls4);
 	//^32CB:08E2
 	if (horzStretch != vertStretch) {
 		//^32CB:08EA
@@ -21017,19 +21017,19 @@ _08fe:
 		}
 	}
 	//^32CB:0932
-	_4976_5940.mirrorFlip = mirrorflip;
-	_4976_5940.w52 = horzStretch;
-	_4976_5940.w54 = vertStretch;
-	_4976_5940.w28 += offx;
-	_4976_5940.w30 += offy;
-	_4976_5940.rectNo = rectno;
-	_4976_5940.w26 = pp;
-	_4976_5940.pb44 = _4976_4c16;
-	_4976_5940.colorKeyPassThrough = colorkey1;
+	glbTempPicture.mirrorFlip = mirrorflip;
+	glbTempPicture.w52 = horzStretch;
+	glbTempPicture.w54 = vertStretch;
+	glbTempPicture.w28 += offx;
+	glbTempPicture.w30 += offy;
+	glbTempPicture.rectNo = rectno;
+	glbTempPicture.w26 = pp;
+	glbTempPicture.pb44 = _4976_4c16;
+	glbTempPicture.colorKeyPassThrough = colorkey1;
 	//^32CB:0972
-	_32cb_0804(_4976_5940.b58, di, colorkey1, colorkey2, _4976_5940.w56);
+	_32cb_0804(glbTempPicture.b58, di, colorkey1, colorkey2, glbTempPicture.w56);
 	//^32CB:0988
-	QUERY_PICST_IT(&_4976_5940);
+	QUERY_PICST_IT(&glbTempPicture);
 	//^32CB:0993
 	return;
 }
@@ -21040,7 +21040,7 @@ void SkWinCore::DRAW_TEMP_PICST()
 	//^32CB:0997
 	ENTER(0);
 	//^32CB:099A
-	DRAW_PICST(&_4976_5940);
+	DRAW_PICST(&glbTempPicture);
 	//^32CB:09A5
 	return;
 }
@@ -21186,9 +21186,9 @@ void SkWinCore::_32cb_0804(U8 *localpal, i16 cls4, U16 colorkey1, i16 colorkey2,
 		si = _4976_4226[RCJ(5,cls4)];
 	}
 	//^32CB:0854
-	if (QUERY_GDAT_ENTRY_IF_LOADABLE(0x08, glbMapGraphicsSet, dt07, U8(cls4)) != 0) {
+	if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dt07, U8(cls4)) != 0) {
 		//^32CB:086C
-		TRANSLATE_PALETTE(localpal, 0x08, glbMapGraphicsSet, U8(cls4), di);
+		TRANSLATE_PALETTE(localpal, GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, U8(cls4), di);
 		//^32CB:0885
 		_0b36_037e(localpal, i8(_4976_5a88), colorkey1, colorkey2, di);
 	}
@@ -21209,7 +21209,7 @@ U16 SkWinCore::QUERY_MULTILAYERS_PIC(ExtendedPicture *ref, U8 cls1, U8 cls2, U8 
 	//^32CB:09AB
 	QUERY_TEMP_PICST(mirrorflip, horzRes, vertRes, 0, 0, zz, -1, -1, colorkey1, -1, cls1, cls2, cls4);
 	//^32CB:09D7
-	COPY_MEMORY(&_4976_5940, ref, sizeof(ExtendedPicture));
+	COPY_MEMORY(&glbTempPicture, ref, sizeof(ExtendedPicture));
 	//^32CB:09EE
 	ALLOC_PICT_MEMENT(ref);
 	//^32CB:09FB
@@ -21301,7 +21301,7 @@ void SkWinCore::FIRE_UPDATE_BLIT_PALETTE(const U8 *localpal)
 	//^44C8:0762
 	ENTER(0);
 	//^44C8:0767
-	U8 *di = _44c8_077d;
+	U8 *di = glbBlitPalette16;
 	//^44C8:0771
 	const U8 *si = localpal;
 	//^44C8:0774
@@ -21317,7 +21317,7 @@ void SkWinCore::FIRE_BLIT_TO_MEMORY_ROW_4TO8BPP_NOKEY(U16 offSrc, U16 offDst, U1
 	ENTER(0);
 	//^44C8:0796
 	//^44C8:0798
-	U8 *bx = _44c8_077d;
+	U8 *bx = glbBlitPalette16;
 	//^44C8:079B
 	U8 *di = &_4976_5e6a[offDst];
 	//^44C8:07A4
@@ -21391,7 +21391,7 @@ _080a:
 //		//^44C8:08AE
 //		ENTER(0);
 //		//^44C8:08B3
-//		U8 *bx = _44c8_077d;
+//		U8 *bx = glbBlitPalette16;
 //		//^44C8:08B8
 //		U8 *di = &_4976_5e6a[offDst];
 //		//^44C8:08C1
@@ -22167,14 +22167,14 @@ void SkWinCore::_32cb_0f82(Actuator *ref, U8 cls4, i16 bb, i16 cellPos, U16 horz
 			//^32CB:14F2
 			for (si = 0; si < bp1e; si++) {
 				//^32CB:14F6
-				DRAW_DIALOGUE_PICT(_4976_5940.pb0, bp08, &bp34, bp3a[si] << 3, 0, -1, NULL);
+				DRAW_DIALOGUE_PICT(glbTempPicture.pb0, bp08, &bp34, bp3a[si] << 3, 0, -1, NULL);
 				//^32CB:1522
 				bp34.x += 8;
 				//^32CB:1526
 			}
 			//^32CB:152C
 			DRAW_DIALOGUE_PICT(bp08, _4976_4c16, QUERY_BLIT_RECT(bp08, &bp34, rectno|0x8000, &bp2a, &bp2c, gg), 
-				0, 0, colorkey1, _4976_5940.b58);
+				0, 0, colorkey1, glbTempPicture.b58);
 			//^32CB:1576
 			FREE_TEMP_CACHE_INDEX(bp1c);
 			//^32CB:157F
@@ -22318,7 +22318,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		//^32CB:174C
 		if (zz == 0)
 			//^32CB:1752
-			_4976_5940.colorKeyPassThrough = -2;
+			glbTempPicture.colorKeyPassThrough = -2;
 		//^32CB:1758
 		DRAW_TEMP_PICST();
 		//^32CB:175C
@@ -22329,7 +22329,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		//^32CB:1765
 		if (di == 1) {
 			//^32CB:176A
-			_32cb_0a4c(&_4976_5940.rc36, 6, U8(cellPos));
+			_32cb_0a4c(&glbTempPicture.rc36, 6, U8(cellPos));
 		}
 	}
 	//^32CB:177A
@@ -22369,7 +22369,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		//^32CB:1817
 		if (zz == 0)
 			//^32CB:181D
-			_4976_5940.colorKeyPassThrough = -2;
+			glbTempPicture.colorKeyPassThrough = -2;
 		//^32CB:1823
 		DRAW_TEMP_PICST();
 		//^32CB:1827
@@ -22604,11 +22604,11 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		//^32CB:1CCB
 		QUERY_TEMP_PICST(bp0e, bp16, bp18, 0, 0, di, bp1c, bp1e, -3, -3, 9, bp1f, bp20);
 		//^32CB:1CF4
-		QUERY_TEMP_PICST(bp0e, bp16, bp18, _4976_5940.w28, _4976_5940.w30, di, bp1c, bp1e, si, -1, 9, bp1f, 200);
+		QUERY_TEMP_PICST(bp0e, bp16, bp18, glbTempPicture.w28, glbTempPicture.w30, di, bp1c, bp1e, si, -1, 9, bp1f, 200);
 		//^32CB:1D1F
 		if (zz == 0)
 			//^32CB:1D25
-			_4976_5940.colorKeyPassThrough = -1;
+			glbTempPicture.colorKeyPassThrough = -1;
 		//^32CB:1D2B
 		DRAW_TEMP_PICST(); // draw window contents (outside)
 		//^32CB:1D2F
@@ -22646,11 +22646,11 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		//^32CB:1E2B
 		if (zz == 0)
 			//^32CB:1E31
-			_4976_5940.colorKeyPassThrough = -2;
+			glbTempPicture.colorKeyPassThrough = -2;
 		//^32CB:1E37
 		DRAW_TEMP_PICST();
 		//^32CB:1E3B
-		bp12 = &_4976_5940.rc36;
+		bp12 = &glbTempPicture.rc36;
 		//^32CB:1E43
 		if (zz == 0)
 			//^32CB:1E49
@@ -22668,7 +22668,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		//^32CB:1F38
 		return si;
 	//^32CB:1E88
-	COPY_MEMORY(&_4976_5940, &_4976_5aa8, 314);
+	COPY_MEMORY(&glbTempPicture, &_4976_5aa8, 314);
 	//^32CB:1E9D
 	// SPX: This is an overlay on front of wall decoration. This is only used for the shop panel
 	if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_WALL_GFX, bp1f, dtImage, GDAT_WALL_ORNATE__OVERLAY) != 0) {
@@ -22688,7 +22688,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		//^32CB:1F17
 		if (zz == 0)
 			//^32CB:1F1D
-			_4976_5940.colorKeyPassThrough = -2;
+			glbTempPicture.colorKeyPassThrough = -2;
 		//^32CB:1F23
 		DRAW_TEMP_PICST();
 		//^32CB:1F27
@@ -22764,36 +22764,36 @@ U16 SkWinCore::_32cb_00f1(U16 xx, U16 yy, i16 zz)
 	U16 si = xx;
 	U16 di = yy;
 	//^32CB:00FD
-	if (PT_IN_RECT(&_4976_5940.rc36, si, di) == 0) {
+	if (PT_IN_RECT(&glbTempPicture.rc36, si, di) == 0) {
 		//^32CB:010F
 		return 0;
 	}
 	//^32CB:0114
 	// SPX: This test mirror flip (horizontal)
-	if ((_4976_5940.mirrorFlip & 1) != 0) {
+	if ((glbTempPicture.mirrorFlip & 1) != 0) {
 		//^32CB:011C
-		si = _4976_5940.rc36.x + _4976_5940.rc36.cx -1 -si + _4976_5940.w32;
+		si = glbTempPicture.rc36.x + glbTempPicture.rc36.cx -1 -si + glbTempPicture.w32;
 	}
 	else {
 		//^32CB:0128
-		si = si - _4976_5940.rc36.x + _4976_5940.w32;
+		si = si - glbTempPicture.rc36.x + glbTempPicture.w32;
 	}
 	//^32CB:0134
 	// SPX: Try to display mirror flip on y axis .. . This does nothing!!
-	//di = _4976_5940.rc36.y + _4976_5940.rc36.cy -1 -di + _4976_5940.w34;
-	di = di - _4976_5940.rc36.y + _4976_5940.w34;
+	//di = glbTempPicture.rc36.y + glbTempPicture.rc36.cy -1 -di + glbTempPicture.w34;
+	di = di - glbTempPicture.rc36.y + glbTempPicture.w34;
 	//^32CB:0140
-	U8 *bp0a = QUERY_PICT_BITS(&_4976_5940);
+	U8 *bp0a = QUERY_PICT_BITS(&glbTempPicture);
 	//^32CB:0151
 	U16 bp04 = READ_I16(bp0a,-4) >> 1;
 	//^32CB:015D
-	_4976_5a94 = ((si - _4976_5940.w14 -bp04) * 100) / bp04;
+	_4976_5a94 = ((si - glbTempPicture.w14 -bp04) * 100) / bp04;
 	//^32CB:0172
 	U16 bp06 = READ_I16(bp0a,-2) >> 1;
 	//^32CB:017B
 	_4976_5a96 = ((di -bp06) * 100) / bp06;
 	//^32CB:018C
-	i16 bp02 = _0b36_1446(&_4976_5940, si, di, zz);
+	i16 bp02 = _0b36_1446(&glbTempPicture, si, di, zz);
 	//^32CB:01A0
 	if (bp02 == -1 || bp02 == 1)
 		//^32CB:01AC
@@ -22843,7 +22843,7 @@ U16 SkWinCore::_32cb_0287(U16 xx, U16 yy, U16 zz)
 	//^32CB:0379
 	_4976_5a80 = bp0a;
 	//^32CB:0386
-	return (si == 3 || _4976_5940.width < 32 || _4976_5940.height < 32) ? 1 : di;
+	return (si == 3 || glbTempPicture.width < 32 || glbTempPicture.height < 32) ? 1 : di;
 }
 
 //^121E:0003
@@ -23207,7 +23207,7 @@ void SkWinCore::DRAW_ITEM(ObjectID rl, i16 xx, U16 yy, U16 zz, i16 vv, Creature 
 	//^32CB:397D
 	if (ww == 0)
 		//^32CB:3983
-		_4976_5940.colorKeyPassThrough = -2;
+		glbTempPicture.colorKeyPassThrough = -2;
 	//^32CB:3989
 	DRAW_TEMP_PICST();
 	//^32CB:398D
@@ -23748,9 +23748,9 @@ U16 SkWinCore::_32cb_01b6(U16 xx, U16 yy, U16 ss, U16 tt, U16 *ww)
 	//^32CB:0216
 	QUERY_CREATURE_PICST(3, glbTabYAxisDistance[3], bp04, bp08, si);
 	//^32CB:0232
-	i16 di = _4976_5940.colorKeyPassThrough;
+	i16 di = glbTempPicture.colorKeyPassThrough;
 	//^32CB:0236
-	_4976_5940.colorKeyPassThrough = -2;
+	glbTempPicture.colorKeyPassThrough = -2;
 	//^32CB:023C
 	DRAW_TEMP_PICST();
 	//^32CB:0241
@@ -44374,8 +44374,8 @@ void SkWinCore::ENVIRONMENT_DRAW_DISTANT_ELEMENT(DistantEnvironment *ref, X16 di
 	}
 	//^32CB:57E1
 	QUERY_TEMP_PICST(bp02, bp04, bp06, 0, 0, 0, ref->cmCD & 0x8000, -1, glbSceneColorKey, -1, GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, ref->envImg);
-	_4976_5940.w32 += di;
-	_4976_5940.w34 += si;
+	glbTempPicture.w32 += di;
+	glbTempPicture.w34 += si;
 	DRAW_TEMP_PICST();        
 	//^32CB:5820
 	return;
@@ -44654,7 +44654,7 @@ void SkWinCore::MAKE_PUT_DOWN_ITEM_CLICKABLE_ZONE(X16 xx, ObjectID rl, i16 yy, X
 	sk4d1a *bp04 = &_4976_4d1a[xx];
 	if (_4976_4d1a[xx].w8 == OBJECT_NULL) {
 		//^32CB:34A7
-		COPY_MEMORY(&_4976_5940.rc36, &bp04->rc0, sizeof(SRECT));
+		COPY_MEMORY(&glbTempPicture.rc36, &bp04->rc0, sizeof(SRECT));
 		i16 si = bp04->rc0.cy;
 		if (si < 15) {
 			if (si < 11) {
@@ -44675,12 +44675,12 @@ void SkWinCore::MAKE_PUT_DOWN_ITEM_CLICKABLE_ZONE(X16 xx, ObjectID rl, i16 yy, X
 	else {
 		X16 di;
 		//^32CB:3506
-		di = max_value(bp04->rc0.x + bp04->rc0.cx, _4976_5940.rc36.x + _4976_5940.rc36.cx);
-		bp04->rc0.x = min_value(bp04->rc0.x, _4976_5940.rc36.x);
+		di = max_value(bp04->rc0.x + bp04->rc0.cx, glbTempPicture.rc36.x + glbTempPicture.rc36.cx);
+		bp04->rc0.x = min_value(bp04->rc0.x, glbTempPicture.rc36.x);
 		bp04->rc0.cx = di - bp04->rc0.x;
 		//^32CB:354A
-		di = max_value(bp04->rc0.y + bp04->rc0.cy, _4976_5940.rc36.y + _4976_5940.rc36.cy);
-		bp04->rc0.y = min_value(bp04->rc0.y, _4976_5940.rc36.y);
+		di = max_value(bp04->rc0.y + bp04->rc0.cy, glbTempPicture.rc36.y + glbTempPicture.rc36.cy);
+		bp04->rc0.y = min_value(bp04->rc0.y, glbTempPicture.rc36.y);
 		bp04->rc0.cy = di + bp04->rc0.y;
 	}
 	//^32CB:358A
@@ -44896,18 +44896,18 @@ void SkWinCore::_32cb_2cf3(U8 cls2, U16 scale64, U16 mirrorFlip, U16 rectno)
 	//^32CB:2CF7
 	U16 si = scale64;
 	si = BETWEEN_VALUE(8, si & 0xfffe, 64);
-	QUERY_GDAT_SUMMARY_IMAGE(&_4976_5940, 0xd, cls2, 0x41);
-	_4976_5940.w32 = _4976_5940.w28;
-	_4976_5940.w34 = _4976_5940.w30;
-	_4976_5940.w30 = _4976_5940.w28 = 0;
-	_4976_5940.w26 = 0;
-	_4976_5940.rectNo = rectno;
-	_4976_5940.colorKeyPassThrough = 10;	// hard set color key!
-	_4976_5940.pb44 = _4976_4c16;
-	_4976_5940.mirrorFlip = mirrorFlip;
-	_4976_5940.w54 = _4976_5940.w52 = si;
-	_0b36_037e(_4976_5940.b58, i8(_4976_5a88), 10, -1, _4976_5940.w56);
-	QUERY_PICST_IT(&_4976_5940);
+	QUERY_GDAT_SUMMARY_IMAGE(&glbTempPicture, 0xd, cls2, 0x41);
+	glbTempPicture.w32 = glbTempPicture.w28;
+	glbTempPicture.w34 = glbTempPicture.w30;
+	glbTempPicture.w30 = glbTempPicture.w28 = 0;
+	glbTempPicture.w26 = 0;
+	glbTempPicture.rectNo = rectno;
+	glbTempPicture.colorKeyPassThrough = 10;	// hard set color key!
+	glbTempPicture.pb44 = _4976_4c16;
+	glbTempPicture.mirrorFlip = mirrorFlip;
+	glbTempPicture.w54 = glbTempPicture.w52 = si;
+	_0b36_037e(glbTempPicture.b58, i8(_4976_5a88), 10, -1, glbTempPicture.w56);
+	QUERY_PICST_IT(&glbTempPicture);
 	//^32CB:2D89
 	return;
 }
@@ -44939,9 +44939,9 @@ void SkWinCore::_32cb_2d8c(ObjectID rl, X16 yy, X32 aa)
 				i16 bp18 = rl.Dir();
 				Cloud *bp08 = GET_ADDRESS_OF_RECORDF(rl);
 				X8 bp15 = bp08->CloudType();
-				if (QUERY_GDAT_ENTRY_IF_LOADABLE(0xd, bp15, dtImage, 0x14) != 0) {
+				if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_SPELL_MISSILES, bp15, dtImage, 0x14) != 0) {	// specifically to handle "reflector" haze
 					if (si == 4) {
-						DRAW_TELEPORTER_TILE(di, 0xd, bp15);
+						DRAW_TELEPORTER_TILE(di, GDAT_CATEGORY_SPELL_MISSILES, bp15);
 					}
 					continue;
 				}
@@ -44950,9 +44950,9 @@ void SkWinCore::_32cb_2d8c(ObjectID rl, X16 yy, X32 aa)
 					continue;
 				//^32CB:2E6A
 				X16 bp26 = 0;
-				X16 bp0e = QUERY_GDAT_ENTRY_DATA_INDEX(0xd, bp15, dtWordValue, 0) & RAND02();
+				X16 bp0e = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_SPELL_MISSILES, bp15, dtWordValue, 0) & RAND02();
 				X16 bp14;
-				if (QUERY_GDAT_ENTRY_DATA_INDEX(0xd, bp15, dtWordValue, 0x41) != 0) {
+				if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_SPELL_MISSILES, bp15, dtWordValue, 0x41) != 0) {
 					//^32CB:2EA3
 					bp14 = 0xff;
 				}
@@ -44979,8 +44979,8 @@ _2eda:
 								bp0a++;
 						}
 						//^32CB:2EF8
-						U8 *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(0xd, bp15, U8(bp0a) +0x42);
-						ALLOC_IMAGE_MEMENT(0xd, bp15, bp0a +0x42);
+						U8 *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_SPELL_MISSILES, bp15, U8(bp0a) +0x42);
+						ALLOC_IMAGE_MEMENT(GDAT_CATEGORY_SPELL_MISSILES, bp15, bp0a +0x42);
 						X16 bp24 = READ_UI16(bp04,-2) * READ_UI16(bp04,-4);
 						//^32CB:2F34
 						SRECT bp2e;
@@ -45031,7 +45031,7 @@ _2eda:
 						//^32CB:30A9
 						bp0a = 0x1e;
 					//^32CB:30AE
-					_4976_5940.w34 += (_4976_00f8 << 3) / bp0a;
+					glbTempPicture.w34 += (_4976_00f8 << 3) / bp0a;
 					if (bp08->b2_7_7() == 0) {
 						//^32CB:30CD
 						bp0a = (_4976_00f6 << 3) / bp0a;
@@ -45040,12 +45040,12 @@ _2eda:
 							bp0a = -bp0a;
 						}
 						//^32CB:30EC
-						_4976_5940.w32 += bp0a;
+						glbTempPicture.w32 += bp0a;
 					}
 				}
 				//^32CB:30F3
-				_4976_5940.w32 = CALC_STRETCHED_SIZE(_4976_5940.w32, bp22);
-				_4976_5940.w34 = CALC_STRETCHED_SIZE(_4976_5940.w34, bp22);
+				glbTempPicture.w32 = CALC_STRETCHED_SIZE(glbTempPicture.w32, bp22);
+				glbTempPicture.w34 = CALC_STRETCHED_SIZE(glbTempPicture.w34, bp22);
 				DRAW_TEMP_PICST();
 				if (bp26 != 0) {
 					goto _2eda;
@@ -45087,14 +45087,14 @@ void SkWinCore::DRAW_DEFAULT_DOOR_BUTTON(U8 cls1, U8 cls2, U8 cls4, i16 ww)
     X16 bp04 = glbTabYAxisDistance[RCJ(23,di)];
 	X16 bp02 = tlbDistanceStretch[RCJ(5,bp04)];
 	QUERY_TEMP_PICST(0, bp02, bp02, 0, 0, bp04, 
-		QUERY_GDAT_ENTRY_DATA_INDEX(0xc, cls2, dtWordValue, 8) * 5 +si +1950,
+		QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOOR_BUTTONS, cls2, dtWordValue, 8) * 5 +si +1950,
 		-1, glbSceneColorKey, -1, cls1, cls2, cls4
 		);
 	DRAW_TEMP_PICST();
 	//^32CB:46F9
 	if (si == 3 || si == 4) {
 		//^32CB:4703
-		_32cb_0a4c(&_4976_5940.rc36, 4, U8(di));
+		_32cb_0a4c(&glbTempPicture.rc36, 4, U8(di));
 	}
 	//^32CB:4711
 	return;
@@ -45288,8 +45288,8 @@ void SkWinCore::DRAW_DOOR(i16 xx, X16 yy, X16 zz, X32 aa)
 								i16 bp1e;
 								
 								QUERY_GDAT_IMAGE_METRICS(GDAT_CATEGORY_DOORS, iDoorGDATIndex, 0, &bp1c, &bp1e);	// 0xe
-								bp20 = _32cb_48d5(_4976_5940.width, bp1c);
-								bp22 = _32cb_48d5(_4976_5940.height, bp1e);
+								bp20 = _32cb_48d5(glbTempPicture.width, bp1c);
+								bp22 = _32cb_48d5(glbTempPicture.height, bp1e);
 								
 							}
 							else {
@@ -45329,7 +45329,7 @@ void SkWinCore::DRAW_DOOR(i16 xx, X16 yy, X16 zz, X32 aa)
 										);
 								}
 
-								_4976_5940.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp16));
+								glbTempPicture.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp16));
 								DRAW_TEMP_PICST();
 							}
 							//^32CB:4B45
@@ -45359,7 +45359,7 @@ void SkWinCore::DRAW_DOOR(i16 xx, X16 yy, X16 zz, X32 aa)
 								}
 								// End SPX: (2016-10-30) 
 								
-								_4976_5940.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp16));
+								glbTempPicture.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp16));
 								DRAW_TEMP_PICST();
 							}
 #if (DM2_EXTENDED_MODE == 1)
@@ -45381,7 +45381,7 @@ void SkWinCore::DRAW_DOOR(i16 xx, X16 yy, X16 zz, X32 aa)
 										);								
 								}
 								
-								_4976_5940.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp16));
+								glbTempPicture.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp16));
 								DRAW_TEMP_PICST();
 							}
 #endif
@@ -45390,8 +45390,8 @@ void SkWinCore::DRAW_DOOR(i16 xx, X16 yy, X16 zz, X32 aa)
 							bp015c.w56 = 0;
 							_0b36_00c3(bp16, &bp015c);
 							// SPX: that draws the main door (without ornate)
-							COPY_MEMORY(&bp015c, &_4976_5940, sizeof(ExtendedPicture));
-							_4976_5940.pb44 = _4976_4c16;
+							COPY_MEMORY(&bp015c, &glbTempPicture, sizeof(ExtendedPicture));
+							glbTempPicture.pb44 = _4976_4c16;
 						}
 						else {
 							//^32CB:4C0C
@@ -45406,18 +45406,18 @@ void SkWinCore::DRAW_DOOR(i16 xx, X16 yy, X16 zz, X32 aa)
 							bp1a = bp1a +bp06;
 							if (bp04->OpeningDir() == 0) {
 								//^32CB:4C56
-								_4976_5940.width >>= 1;
-								di = _4976_5940.width;
-								_4976_5940.w4 |= 0x10;
-								_4976_5940.w14 = _4976_5940.w14 +di;
-								_4976_5940.rectNo = bp1a +6;
+								glbTempPicture.width >>= 1;
+								di = glbTempPicture.width;
+								glbTempPicture.w4 |= 0x10;
+								glbTempPicture.w14 = glbTempPicture.w14 +di;
+								glbTempPicture.rectNo = bp1a +6;
 								DRAW_TEMP_PICST();
-								_4976_5940.w14 = _4976_5940.w14 +di;
+								glbTempPicture.w14 = glbTempPicture.w14 +di;
 								bp1a += 3;
 							}
 						}
 						//^32CB:4C86
-						_4976_5940.rectNo = bp1a;
+						glbTempPicture.rectNo = bp1a;
 						DRAW_TEMP_PICST();
 						if (bp16 >= 0) {
 							//^32CB:4C96
@@ -45689,7 +45689,7 @@ X16 SkWinCore::DRAW_EXTERNAL_TILE(i16 xx)
 		if ((bp1c = GET_TELEPORTER_DETAIL(&bp2a, U8(bp06), U8(bp08))) != 0 || bp1e != 0) {
 			//^32CB:2107
 			QUERY_TEMP_PICST(bp04, bp10, bp10, 0, 0, bp18, bp0c, bp12, -3, -3, 0xa, bp13, bp14);
-			QUERY_TEMP_PICST(bp04, bp10, bp10, _4976_5940.w28, _4976_5940.w30, bp18, bp0c, bp12, bp0e, -1, 0xa, bp13, bp14 +0xc8);
+			QUERY_TEMP_PICST(bp04, bp10, bp10, glbTempPicture.w28, glbTempPicture.w30, bp18, bp0c, bp12, bp0e, -1, 0xa, bp13, bp14 +0xc8);
 			DRAW_TEMP_PICST();
 			//^32CB:2168
 			bp06 = bp2a.b2;
@@ -45937,8 +45937,8 @@ void SkWinCore::DRAW_FLYING_ITEM(ObjectID rl, i16 cellPos, X16 _5x5)
 		}
 		//^32CB:3410
 		QUERY_TEMP_PICST(si & bp06, bp10, bp10, 0, 0, bp1a, bp08 | 0x8000, 0, 10, -1, bp12, bp11, bp13);
-		_4976_5940.w32 += CALC_STRETCHED_SIZE(0, bp16);
-		_4976_5940.w34 = CALC_STRETCHED_SIZE(-92, bp16);
+		glbTempPicture.w32 += CALC_STRETCHED_SIZE(0, bp16);
+		glbTempPicture.w34 = CALC_STRETCHED_SIZE(-92, bp16);
 		DRAW_TEMP_PICST();
 		//^32CB:3467
 	} while ((rl = GET_NEXT_RECORD_LINK(rl)) != OBJECT_END_MARKER);
@@ -46222,8 +46222,8 @@ void SkWinCore::DRAW_WALL(i16 iViewportCell)	// i16 xx
 				i16 bp1e;
 				
 				QUERY_GDAT_IMAGE_METRICS(GDAT_CATEGORY_GRAPHICSSET, iMapGfx, bp01, &bp1c, &bp1e);	// 0xe
-				bp20 = _32cb_48d5(_4976_5940.width, bp1c);
-				bp22 = _32cb_48d5(_4976_5940.height, bp1e);
+				bp20 = _32cb_48d5(glbTempPicture.width, bp1c);
+				bp22 = _32cb_48d5(glbTempPicture.height, bp1e);
 				
 			}
 			else {
@@ -46248,7 +46248,7 @@ void SkWinCore::DRAW_WALL(i16 iViewportCell)	// i16 xx
 					GDAT_CATEGORY_GRAPHICSSET, iWallSetIndex, GDAT_GFXSET_SEE_THRU
 					);
 
-				_4976_5940.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(iPicture));
+				glbTempPicture.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(iPicture));
 				DRAW_TEMP_PICST();
 			}
 			//------
@@ -46257,9 +46257,9 @@ void SkWinCore::DRAW_WALL(i16 iViewportCell)	// i16 xx
 			xExtPicWall.colorKeyPassThrough = xExtPicWall.b58[iColorkey1];
 			xExtPicWall.w56 = 0;
 			_0b36_00c3(iPicture, &xExtPicWall);
-			COPY_MEMORY(&xExtPicWall, &_4976_5940, sizeof(ExtendedPicture));
-			_4976_5940.pb44 = _4976_4c16;
-			_4976_5940.rectNo = 3 + 0x2BE;
+			COPY_MEMORY(&xExtPicWall, &glbTempPicture, sizeof(ExtendedPicture));
+			glbTempPicture.pb44 = _4976_4c16;
+			glbTempPicture.rectNo = 3 + 0x2BE;
 			DRAW_TEMP_PICST();
 			if (iPicture >= 0)
 				FREE_TEMP_CACHE_INDEX(iPicture);
@@ -64035,7 +64035,7 @@ SkWinCore::SkWinCore()
 	_04bf_1938 = 0;
 	zeroMem(glbChampionTable, sizeof(glbChampionTable));
 	zeroMem(&glbMousePosition, sizeof(glbMousePosition));
-	zeroMem(&_4976_5940, sizeof(_4976_5940));
+	zeroMem(&glbTempPicture, sizeof(glbTempPicture));
 	zeroMem(&_4976_3ff0, sizeof(_4976_3ff0)); _4976_3ff0.w0 = -1;
 	zeroMem(_04bf_0e80, sizeof(_04bf_0e80));
 	_04bf_17a2 = 0;
