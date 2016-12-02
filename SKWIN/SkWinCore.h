@@ -1295,7 +1295,7 @@ protected:
 	i16 colorkey1, i16 colorkey2, U8 cls1, U8 cls2, U8 cls4);
 
 	void DRAW_TEMP_PICST();
-	void _32cb_0a4c(SRECT *prc, U8 xx, U8 yy);
+	void MAKE_BUTTON_CLICKABLE(SRECT *prc, U8 xx, U8 yy);	// _32cb_0a4c
 	void QUERY_GDAT_IMAGE_METRICS(U8 cls1, U8 cls2, U8 cls4, i16 *pcx, i16 *pcy);
 	U8 SKCHR_TO_SCRIPTCHR(U8 xx);
 	U8 *_0b36_037e(U8 *localpal, i8 xx, i16 colorkey1, i16 colorkey2, i16 palentcnt);

@@ -4756,6 +4756,10 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 	if (dunMapsHeaders[glbPlayerMap].Difficulty() == 0) {
 		//^24A5:015D
 		glbLightLevel = 1;
+#if (DM2_DEBUG_SUPER_MODE == 1)
+		glbLightLevel = 0;
+#endif
+
 	}
 	else {
 		//^24A5:0166
@@ -21046,7 +21050,8 @@ void SkWinCore::DRAW_TEMP_PICST()
 }
 
 //^32CB:0A4C
-void SkWinCore::_32cb_0a4c(SRECT *prc, U8 xx, U8 yy)
+// SPX: _32cb_0a4c renamed MAKE_BUTTON_CLICKABLE
+void SkWinCore::MAKE_BUTTON_CLICKABLE(SRECT *prc, U8 xx, U8 yy)
 {
 	//^32CB:0A4C
 	ENTER(0);
@@ -22329,7 +22334,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		//^32CB:1765
 		if (di == 1) {
 			//^32CB:176A
-			_32cb_0a4c(&glbTempPicture.rc36, 6, U8(cellPos));
+			MAKE_BUTTON_CLICKABLE(&glbTempPicture.rc36, 6, U8(cellPos));
 		}
 	}
 	//^32CB:177A
@@ -22660,7 +22665,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 	//^32CB:1E4C
 	if (bp22 != 3 && (cellPos == 1 || cellPos == 2 || cellPos == 3)) {
 		//^32CB:1E64
-		_32cb_0a4c(bp12, 6, U8(cellPos));
+		MAKE_BUTTON_CLICKABLE(bp12, 6, U8(cellPos));
 	}
 	//^32CB:1E76
 	if (bp22 == 0 || yy != 0)
@@ -45074,27 +45079,27 @@ void SkWinCore::_32cb_3edd(i16 xx)
 }
 
 //^32CB:4681
-void SkWinCore::DRAW_DEFAULT_DOOR_BUTTON(U8 cls1, U8 cls2, U8 cls4, i16 ww)
+void SkWinCore::DRAW_DEFAULT_DOOR_BUTTON(U8 cls1, U8 cls2, U8 cls4, i16 iViewportCell)	// U8 cls1, U8 cls2, U8 cls4, i16 ww
 {
 	//^32CB:4681
 	ENTER(4);
 	//^32CB:4687
-	X16 di = ww;
-	i16 si = _4976_44e5[RCJ(14,di)];
-	if (si < 0 || cls2 == 0xff)
+	X16 iViewportCellLocal = iViewportCell;	// X16 di = ww
+	i16 iButtonRectno = tlbRectnoDoorButton[RCJ(14,iViewportCellLocal)]; // i16 si
+	if (iButtonRectno < 0 || cls2 == 0xff)
 		return;
 	//^32CB:469B
-    X16 bp04 = glbTabYAxisDistance[RCJ(23,di)];
-	X16 bp02 = tlbDistanceStretch[RCJ(5,bp04)];
-	QUERY_TEMP_PICST(0, bp02, bp02, 0, 0, bp04, 
-		QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOOR_BUTTONS, cls2, dtWordValue, 8) * 5 +si +1950,
+    X16 iYDistance = glbTabYAxisDistance[RCJ(23,iViewportCellLocal)]; // X16 bp04
+	X16 iStretchScale = tlbDistanceStretch[RCJ(5,iYDistance)];	// X16 bp02
+	QUERY_TEMP_PICST(0, iStretchScale, iStretchScale, 0, 0, iYDistance, 
+		QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOOR_BUTTONS, cls2, dtWordValue, 8) * 5 + iButtonRectno +1950,
 		-1, glbSceneColorKey, -1, cls1, cls2, cls4
 		);
 	DRAW_TEMP_PICST();
 	//^32CB:46F9
-	if (si == 3 || si == 4) {
+	if (iButtonRectno == 3 || iButtonRectno == 4) {
 		//^32CB:4703
-		_32cb_0a4c(&glbTempPicture.rc36, 4, U8(di));
+		MAKE_BUTTON_CLICKABLE(&glbTempPicture.rc36, 4, U8(iViewportCellLocal));
 	}
 	//^32CB:4711
 	return;
@@ -45102,26 +45107,26 @@ void SkWinCore::DRAW_DEFAULT_DOOR_BUTTON(U8 cls1, U8 cls2, U8 cls4, i16 ww)
 
 //^32CB:4715
 // SPX: _32cb_4715 renamed DRAW_DOOR_FRAMES
-void SkWinCore::DRAW_DOOR_FRAMES(i16 xx, X16 yy)
+void SkWinCore::DRAW_DOOR_FRAMES(i16 iViewportCell, X16 yy)	// i16 xx, X16 yy
 {
 	//^32CB:4715
 	ENTER(16);
 	//^32CB:471B
-	i16 si = xx;
+	//i16 si = iViewportCell; // si
 	X8 gfxset = glbMapGraphicsSet;	// bp0f
 	X16 colorkey = glbSceneColorKey;		// di
-	ObjectID bp0e = _4976_5a80[si].x2.w6[1];
+	ObjectID bp0e = _4976_5a80[iViewportCell].x2.w6[1];
 	Door *door = GET_ADDRESS_OF_RECORD0(bp0e);	//*bp04
-	// SPX: What is this 0x40 entry ? no door has this in GDAT ? ..
+	// SPX: 0x40 = GDAT_DOOR_NO_FRAMES entry. Only used for the ROOTS door type (BETA)
 	if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, glbMapDoorType[door->DoorType()], dtWordValue, GDAT_DOOR_NO_FRAMES) == 0) {
 		//^32CB:4770
 		if ((yy & 1) != 0) {
 			//^32CB:4777
-			X8 bp05 = tlbGraphicsDoorRoofSlits[RCJ(14,si)];	// 0x12 to 0x17 is door roof slit
+			X8 bp05 = tlbGraphicsDoorRoofSlits[RCJ(14,iViewportCell)];	// 0x12 to 0x17 is door roof slit
 			if (bp05 != 0xff) {
 				//^32CB:4782
 				// tlbRectnoDoorRoofSlits
-				DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_GRAPHICSSET, gfxset, bp05, tlbRectnoDoorRoofSlits[RCJ(14,si)], colorkey, DRAW_FLAG_FLIP_NONE);
+				DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_GRAPHICSSET, gfxset, bp05, tlbRectnoDoorRoofSlits[RCJ(14,iViewportCell)], colorkey, DRAW_FLAG_FLIP_NONE);
 			}
 		}
 		//^32CB:479B
@@ -45130,48 +45135,50 @@ void SkWinCore::DRAW_DOOR_FRAMES(i16 xx, X16 yy)
 		X16 bp0a;
 		if (glbGeneralFlipGraphics != 0) {
 			//^32CB:47A2
-			bp0c = tlbDoorSideFramesReorder[RCJ(23,si)];
+			bp0c = tlbDoorSideFramesReorder[RCJ(23,iViewportCell)];
 			bp08 = 1;
 			bp0a = 0;
 		}
 		else {
 			//^32CB:47B6
-			bp0c = si;
+			bp0c = iViewportCell;
 			bp08 = 0;
 			bp0a = 1;
 		}
 		//^32CB:47C3
 		if ((yy & 2) != 0) {
 			//^32CB:47CA
-			X8 bp05 = tlbGraphicsDoorSideFrames[RCJ(14,bp0c)][RCJ(2,bp08)];	// door side frames (28 slots divided into 2 parts (2 * 14))
-			if (bp05 != 0xff) {
+			// X8 bp05 = tlbGraphicsDoorSideFrames[RCJ(14,bp0c)][RCJ(2,bp08)]
+			X8 iDoorFrameGfx = tlbGraphicsDoorSideFrames[RCJ(14,bp0c)][RCJ(2,bp08)];	// door side frames (28 slots divided into 2 parts (2 * 14))
+			if (iDoorFrameGfx != 0xff) {
 				//^32CB:47DD
-				QUERY_TEMP_PICST(0, 64, 64, 0, 0, 0, QUERY_CREATURE_BLIT_RECTI(si, 10, 0), 4, colorkey, -1, 8, gfxset, bp05); // door frame left
+				QUERY_TEMP_PICST(0, 64, 64, 0, 0, 0, QUERY_CREATURE_BLIT_RECTI(iViewportCell, 10, 0), 4, colorkey, -1, 8, gfxset, iDoorFrameGfx); // door frame left
 				DRAW_TEMP_PICST();
 			}
 		}
 		//^32CB:480E
 		if ((yy & 4) != 0) {
 			//^32CB:4818
-			X8 bp05 = tlbGraphicsDoorSideFrames[RCJ(14,bp0c)][RCJ(2,bp0a)];
-			if (bp05 != 0xff) {
+			// X8 bp05 = tlbGraphicsDoorSideFrames[RCJ(14,bp0c)][RCJ(2,bp0a)];
+			X8 iDoorFrameGfx = tlbGraphicsDoorSideFrames[RCJ(14,bp0c)][RCJ(2,bp0a)];
+			if (iDoorFrameGfx != 0xff) {
 				//^32CB:482E
-				QUERY_TEMP_PICST(1, 64, 64, 0, 0, 0, QUERY_CREATURE_BLIT_RECTI(si, 14, 0), 3, colorkey, -1, 8, gfxset, bp05); // door frame right
+				QUERY_TEMP_PICST(1, 64, 64, 0, 0, 0, QUERY_CREATURE_BLIT_RECTI(iViewportCell, 14, 0), 3, colorkey, -1, 8, gfxset, iDoorFrameGfx); // door frame right
 				DRAW_TEMP_PICST();
 				//^32CB:485F
 				if (door->Button() != 0) {
 					//^32CB:4870
 					// SPX: Here, it is always the default 0 ... How could we custom this?
 					// At least, it could be set along the current wallset index? or door type ? ...
-					DRAW_DEFAULT_DOOR_BUTTON(GDAT_CATEGORY_DOOR_BUTTONS, 0, door->ButtonState() * 5, si);
+					DRAW_DEFAULT_DOOR_BUTTON(GDAT_CATEGORY_DOOR_BUTTONS, 0, door->ButtonState() * 5, iViewportCell);
 					// Image for released button is 0
-					// Image for pushed button is 5. (and why 5 ? ...)
+					// Image for pushed button is 5 because there are 5 rectnos for buttons depending on distance.
 				}
 				else {
 					//^32CB:4887
-					if (_4976_5a80[si].x2.w6[2] != 0xff) {
+					if (_4976_5a80[iViewportCell].x2.w6[2] != 0xff) {
 						//^32CB:489C
-						DRAW_DEFAULT_DOOR_BUTTON(GDAT_CATEGORY_WALL_GFX, U8(_4976_5a80[si].x2.w6[2]) & 0xff, U8(_4976_5a80[si].x2.w6[2] >> 8) +1, si);
+						DRAW_DEFAULT_DOOR_BUTTON(GDAT_CATEGORY_WALL_GFX, U8(_4976_5a80[iViewportCell].x2.w6[2]) & 0xff, U8(_4976_5a80[iViewportCell].x2.w6[2] >> 8) +1, iViewportCell);
 					}
 				}
 			}

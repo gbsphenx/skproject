@@ -741,7 +741,7 @@ const Bit8u * const strEndLine = (const Bit8u *)
 // 4976:4116  00 FF 01 00 FF 01 00 FF 01 FE 02 00 FF 01 FE 02  ................
 // 4976:4126  00 FF 01 FE 02 FD 03 00 00 00 01 01 01 02 02 02  ................
 
-/*static*/ const i8 _4976_4116[23] = { // x-axis distance
+/*static*/ const i8 glbTabXAxisDistance[23] = { // (_4976_4116) x-axis distance
 	 0,-1, 1, 0,-1, 1, 0,-1, 1,-2, 2, 0,-1, 1,-2, 2,
 	 0,-1, 1,-2, 2,-3, 3,
 };
@@ -854,7 +854,7 @@ const U16 _4976_3752[42] = { // by wordval 0F-xx-01
 0                               |0x80                   |0x4        , // 41 ^DRAGOTH ATTACK MINION
 };
 
-const i8 _4976_412d[23] = { // summary position tp viewport distance (0 to 4)
+const i8 glbTabYAxisDistance[23] = { // (_4976_412d) summary position tp viewport distance (0 to 4)
 	0,0,0,1,1,1,2,2,2,2,2,3,3,3,3,3,4,4,4,4,4,4,4,
 };
 const U8 tlbDisplayOrderLeft[25] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24}; // (_4976_439a) left side
@@ -1155,7 +1155,7 @@ i8 _4976_447a[4][8][2]; //Rp
 i8 _4976_44ba[3]; //Rr
 i8 _4976_44c1[4]; //Rr
 U8 _4976_44c5[16][2]; //Rr
-i8 _4976_44e5[14]; //Rr
+i8 tlbRectnoDoorButton[14]; //Rr _4976_44e5
 X8 tlbGraphicsDoorSideFrames[14][2]; //Rr
 X8 tlbGraphicsDoorRoofSlits[14]; //Rr
 X16 tlbRectnoDoorRoofSlits[14]; //Rr

@@ -275,7 +275,7 @@ extern const Bit8u RunePowerMultiplicator[30] ;
 extern const char _4976_0362[32][2];
 extern const char _4976_0262[32][8];
 extern const i8 _4976_40e8[23][2];
-extern const i8 _4976_4116[23];
+extern const i8 glbTabXAxisDistance[23];	// (_4976_4116) x-axis distance (viewport)
 extern const char EnvCM_CD[];
 extern const char EnvCM_FW[];
 extern const char EnvCM_CD2[];
@@ -294,7 +294,7 @@ extern const U16 _4976_4718[6];
 extern const Bit8u * const _4976_4760;
 extern const U8 _4976_4a04[4];
 extern const U16 _4976_3752[42];
-extern const i8 _4976_412d[23];
+extern const i8 glbTabYAxisDistance[23];	// (_4976_412d) y-axis distance (viewport)
 extern const U8 tlbDisplayOrderLeft[25];
 extern const U8 tlbDisplayOrderRight[25];
 extern const U8 tlbDisplayOrderCenter[25];
@@ -391,7 +391,7 @@ extern i8 _4976_447a[4][8][2]; //Rp
 extern i8 _4976_44ba[3]; //Rr
 extern i8 _4976_44c1[4]; //Rr
 extern U8 _4976_44c5[16][2]; //Rr
-extern i8 _4976_44e5[14]; //Rr
+extern i8 tlbRectnoDoorButton[14]; //Rr _4976_44e5
 extern X8 tlbGraphicsDoorSideFrames[14][2]; //Rr
 extern X8 tlbGraphicsDoorRoofSlits[14]; //Rr
 extern X16 tlbRectnoDoorRoofSlits[14]; //Rr
