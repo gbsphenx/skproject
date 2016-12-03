@@ -45097,7 +45097,7 @@ void SkWinCore::DRAW_DEFAULT_DOOR_BUTTON(U8 cls1, U8 cls2, U8 cls4, i16 iViewpor
 		);
 	DRAW_TEMP_PICST();
 	//^32CB:46F9
-	if (iButtonRectno == 3 || iButtonRectno == 4) {
+	if (iButtonRectno == 3 || iButtonRectno == 4) {	// 3 is D1, 4 is D0
 		//^32CB:4703
 		MAKE_BUTTON_CLICKABLE(&glbTempPicture.rc36, 4, U8(iViewportCellLocal));
 	}
@@ -46246,7 +46246,7 @@ void SkWinCore::DRAW_WALL(i16 iViewportCell)	// i16 xx
 				if (iWallSeeThruMask == (U16)-1) // not found, get the default one
 					iWallSetIndex = GDAT_ITEM_DEFAULT_INDEX;	// 0xFE
 				
-				i16 iRectNo = _098d_0cd7(iViewportCell, 16, 0);	// TODO, this rectno is not enough good
+				i16 iRectNo = QUERY_CREATURE_BLIT_RECTI(3, 11, 0);	// That gets currently the best result for positionning 'see through wall' mask
 
 				QUERY_TEMP_PICST(bFlip, bp20, bp22, 0, 0, 
 					(glbIsPlayerMoving != 0) ? -iYDist : 0, 
@@ -46414,15 +46414,16 @@ _51d7:
 				//^32CB:523B
 				DRAW_PIT_TILE(si);
 				goto _52b1;
-			case 16://^5243
+			case 16://^5243	// seeing door frame slot in front from door tile
 				//^32CB:5243
 				if (si == 3) {
 					//^32CB:5248
-					if (QUERY_GDAT_ENTRY_DATA_INDEX(0xe, glbMapDoorType[GET_ADDRESS_OF_RECORD0(_4976_5a80[3].x2.w6[2])->DoorType()], dtWordValue, 0x40) == 0) {
+					// Check if this door type has door frames of not. if so, then draw the door frame
+					if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, glbMapDoorType[GET_ADDRESS_OF_RECORD0(_4976_5a80[3].x2.w6[2])->DoorType()], dtWordValue, GDAT_DOOR_NO_FRAMES) == 0) {
 						//^32CB:5279
 						QUERY_TEMP_PICST(
 							glbGeneralFlipGraphics, 0x2b, 0x2b, 0, 0, 2, QUERY_CREATURE_BLIT_RECTI(3, 2, 0), 0xffff, 
-							glbSceneColorKey, -1, 0x8, glbMapGraphicsSet, 6
+							glbSceneColorKey, -1, GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, 6
 							);
 						DRAW_TEMP_PICST();
 					}
@@ -46440,7 +46441,7 @@ _52d1:
 				if (bp06 == 5)	// teleporter
 				{
 					//^32CB:52E8
-					DRAW_TELEPORTER_TILE(si, 0x18, 0);
+					DRAW_TELEPORTER_TILE(si, GDAT_CATEGORY_TELEPORTERS, 0); // DRAW_TELEPORTER_TILE(si, 0x18, 0)
 				}
 				break;
 			case 3://^52F4 // stair case
