@@ -255,12 +255,15 @@ enum SkillLevel {
 #define SOUND_CHAMPION_ATTACK			0x00
 #define SOUND_CHAMPION_SHOOT			0x01
 
+#define SOUND_ITEM_TAKE					0x60	// SPX: CUSTOM
+#define SOUND_ITEM_PUT_DOWN				0x61	// SPX: CUSTOM
+
 #define SOUND_STD_EXPLOSION				0x81
 #define SOUND_CHAMPION_GETHIT			0x82
 #define SOUND_CHAMPION_EAT_DRINK		0x83
 #define SOUND_STD_DEFAULT				0x84	// Punch, Fall, Test wall, Gethit
 #define SOUND_STD_KNOCK					0x85	// Falling item, punch knock
-#define SOUND_STD_THROW					0x86
+#define SOUND_STD_THROW					0x86	// Throw / Shoot item
 #define SOUND_CHAMPION_DEATH			0x87
 #define SOUND_STD_ACTIVATION			0x88
 #define SOUND_STD_TELEPORT				0x89
@@ -270,9 +273,9 @@ enum SkillLevel {
 #define SOUND_OBJECT_GETHIT				0x8D	// Works for creature and doors
 #define SOUND_DOOR_STEP					0x8E
 #define SOUND_DOOR_CLOSE				0x8F	// That one is not used by default in PC9821 DM2
-#define SOUND_DOOR_OPENED				0x90	// This is custom and does not exist in retail DM2
+#define SOUND_DOOR_OPENED				0x90	// SPX: CUSTOM This is custom and does not exist in retail DM2
 
-#define SOUND_CHAMPION_FOOTSTEP			0x92	// This is custom and does not exist in retail DM2
+#define SOUND_CHAMPION_FOOTSTEP			0x92	// SPX: CUSTOM This is custom and does not exist in retail DM2
 
 #define SOUND_NONE						0xFF
 
@@ -406,6 +409,9 @@ enum SkillLevel {
 
 #define GDAT_GFXSET_SEE_THRU						0xF1	// CUSTOM, for SEE THRU WALLS
 
+#define GDAT_GFXSET_SQUAD_4X						0xF5
+#define GDAT_GFXSET_SQUAD_SINGLE					0xF6
+
 #define GDAT_GFXSET_DATA_FD							0xFD
 
 // Attributes
@@ -489,7 +495,7 @@ enum SkillLevel {
 #define ORNATE_POS__VRIGHT_HFARBOTTOM		23
 #define ORNATE_POS__VFARRIGHT_HFARBOTTOM	24
 
-#define GDAT_WALL_ORNATE__07				0x07	// something to do with graphics flip
+#define GDAT_WALL_ORNATE__DO_NOT_FLIP		0x07	// 1 = do not flip that graphics
 #define GDAT_WALL_ORNATE__0A				0x0A	// 1 = Alcove / 3 = Passive device
 
 #define GDAT_WALL_ORNATE__IS_WATER_SPRING	0x0B

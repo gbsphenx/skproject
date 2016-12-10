@@ -280,7 +280,7 @@ protected:
 	U8		_4976_3d7f; // size=?
 	Bit16u	glbLangageLetterIndex;	// (_4976_3d82)	holds index for langage letter?
 	Bit16u	glbRightPanelType;	// (_4976_3ddc) right pane replacement: 3=magic map 4=money-box 5=container
-	Bit8u	_4976_3df6;
+	Bit8u	glbSquadInterfaceMapGfxSet;	// (_4976_3df6) graphics set only used for drawing player squad interface
 	Bit16u	_4976_3df7;
 	Bit16u	_4976_3f68;
 	Bit16u	glbPreviousRightPanelType;	// (_4976_3f6a)
@@ -1054,7 +1054,7 @@ protected:
 	void __CHECK_ROOM_FOR_CONTAINER(ObjectID rl, Container *ref);
 	void DRAW_MONEYBOX(ObjectID rl);
 	void DRAW_CONTAINER_PANEL(ObjectID rl, Bit16u xx);
-	void _29ee_0396();
+	void DRAW_SQUAD_POS_INTERFACE(); // _29ee_0396
 	void DRAW_STRONG_TEXT(Bit8u *buff, Bit16u ww, Bit16u cx, Bit16u xx, Bit16u yy, Bit16u clr1, Bit16u fill, Bit8u *str);
 	void DRAW_NAME_STR(sk3f6c *ref, Bit16u rectno, Bit16u clr1, Bit16u fill, Bit8u *str);
 	void DRAW_PLAYER_NAME_AT_CMDSLOT();

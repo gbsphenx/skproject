@@ -7520,14 +7520,16 @@ void SkWinCore::DRAW_CONTAINER_PANEL(ObjectID rl, Bit16u xx)
 }
 
 //^29EE:0396
-void SkWinCore::_29ee_0396()
+// SPX: _29ee_0396 renamed DRAW_SQUAD_POS_INTERFACE
+void SkWinCore::DRAW_SQUAD_POS_INTERFACE()
 {
 	//^29EE:0396
 	ENTER(350);
+	return;
 	//^29EE:039C
 	_29ee_00a3(0);
 	//^29EE:03A3
-	DRAW_ICON_PICT_ENTRY(0x08, _4976_3df6, 0xf5, &_4976_3f6c, 47, -1);
+	DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_GRAPHICSSET, glbSquadInterfaceMapGfxSet, GDAT_GFXSET_SQUAD_4X, &_4976_3f6c, 47, -1);	// gfx = 0xF5
 	//^29EE:03BC
 	Bit8u *bp04 = ALLOC_PICT_BUFF(_4976_0118, _4976_011a, afDefault, 4);
 	//^29EE:03D6
@@ -10830,7 +10832,7 @@ void SkWinCore::DRAW_PLAYER_ATTACK_DIR()
 	//^29EE:0791
 	_29ee_00a3(0);
 	//^29EE:0798
-	DRAW_ICON_PICT_ENTRY(0x08, _4976_3df6, 0xf6, &_4976_3f6c, 93, -1);
+	DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_GRAPHICSSET, glbSquadInterfaceMapGfxSet, GDAT_GFXSET_SQUAD_SINGLE, &_4976_3f6c, 93, -1);	// gfx = 0xF6
 	//^29EE:07B1
 	Bit8u *bp04 = ALLOC_PICT_BUFF(_4976_0118, _4976_011a, afDefault, 4);
 	//^29EE:07CD
@@ -11101,10 +11103,10 @@ void SkWinCore::UPDATE_RIGHT_PANEL(Bit16u xx)
 				//^2759:0876
 			}
 			//^2759:0885
-			if (_4976_3df6 != glbMapGraphicsSet || glbGlobalSpellEffects.AuraOfSpeed != 0 || (!_4976_532c) != (!glbGlobalSpellEffects.Invisibility)) {
+			if (glbSquadInterfaceMapGfxSet != glbMapGraphicsSet || glbGlobalSpellEffects.AuraOfSpeed != 0 || (!_4976_532c) != (!glbGlobalSpellEffects.Invisibility)) {
 				//^2759:08AC
 				bp0c = 1;
-				_4976_3df6 = glbMapGraphicsSet;
+				glbSquadInterfaceMapGfxSet = glbMapGraphicsSet;
 				_4976_532c = (glbGlobalSpellEffects.Invisibility != 0) ? 1: 0;
 			}
 		}
@@ -11247,7 +11249,7 @@ void SkWinCore::UPDATE_RIGHT_PANEL(Bit16u xx)
 			//^2759:0B94
 			if (bp0a != 0 || bp0c != 0) {
 				//^2759:0BA0
-				_29ee_0396();
+				DRAW_SQUAD_POS_INTERFACE();
 			}
 		}
 		//^2759:0BA5
@@ -12675,7 +12677,7 @@ void SkWinCore::DRAW_CUR_MAX_HMS(U16 rectno, i16 curVal, i16 maxVal)
 		//^2E62:02EA
 		ENTER(8);
 		//^2E62:02EE
-		U8 bp08[8];
+		U8 bp08[8];	// 3 + slash + 3 + eol
 		SK_STRCPY(bp08, FMT_NUM(curVal, 1, 3)); // format cur
 		//^2E62:030B
 		SK_STRCAT(bp08, strSlash); // add slash
@@ -12690,7 +12692,7 @@ void SkWinCore::DRAW_CUR_MAX_HMS(U16 rectno, i16 curVal, i16 maxVal)
 	ATLASSERT(curVal >= 0 && curVal <= 9999);
 	ATLASSERT(maxVal >= 0 && maxVal <= 9999);
 	ENTER(8);
-	U8 bp08[12];
+	U8 bp08[12];	// 4 + slash + 4 + eol
 	SK_STRCPY(bp08, FMT_NUM(curVal, 1, 4)); // format cur
 	SK_STRCAT(bp08, strSlash); // add slash
 	SK_STRCAT(bp08, FMT_NUM(maxVal, 1, 4)); // format max
@@ -15423,6 +15425,9 @@ ObjectID SkWinCore::REMOVE_OBJECT_FROM_HAND()
 		FIRE_SHOW_MOUSE_CURSOR();
 		//^2C1D:0776
 		PROCESS_ITEM_BONUS(glbChampionLeader, si, -1, -1);
+// SPX: that part is for giving item sound when taking him
+		if (SkCodeParam::bUseExtendedSound)
+			QUEUE_NOISE_GEN2(QUERY_CLS1_FROM_RECORD(si), QUERY_CLS2_FROM_RECORD(si), SOUND_ITEM_PUT_DOWN, 0xFE, glbPlayerPosX, glbPlayerPosY, 1, 0, 0);
 	}
 	//^2C1D:079E
 	return si;
@@ -15759,6 +15764,10 @@ void SkWinCore::TAKE_OBJECT(ObjectID rl, U16 xx)
 		PROCESS_ITEM_BONUS(glbChampionLeader, si, -1, 1);
 		//^2C1D:0722
 		_2fcf_2444(glbPlayerPosX, glbPlayerPosY, -1, 1, 1, 0);
+
+// SPX: that part is for giving item sound when taking him
+		if (SkCodeParam::bUseExtendedSound)
+			QUEUE_NOISE_GEN2(QUERY_CLS1_FROM_RECORD(si), QUERY_CLS2_FROM_RECORD(si), SOUND_ITEM_TAKE, 0xFE, glbPlayerPosX, glbPlayerPosY, 1, 0, 0);
 	}
 	//^2C1D:073A
 	return;
@@ -22266,7 +22275,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 			: 5
 		);
 	//^32CB:15DD
-	bp14 = _4976_5a80[cellPos].x2.w6[RCJ(4,bp14 -3)];
+	bp14 = _4976_5a80[cellPos].x2.w6[RCJ(4,bp14 -3)];	// get the ornate gfx id ?
 	//^32CB:15F9
 	i16 bp28 = bp14 >> 8;
 	//^32CB:15FF
@@ -22285,7 +22294,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 	U16 bp24 = 0; // SPX: fixed value init
 	if (bp2a == 0) {
 		//^32CB:1640
-		bp24 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp1f, dtWordValue, GDAT_WALL_ORNATE__07);	// Has some role for general graphics flip
+		bp24 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp1f, dtWordValue, GDAT_WALL_ORNATE__DO_NOT_FLIP);	// Has some role for general graphics flip
 	}
 	//^32CB:1655
 	U16 bp0e = 0;
@@ -22295,8 +22304,8 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		//^32CB:1678
 		si = glbSceneColorKey;
 	//^32CB:167C
-	U16 bp1a;
-	U16 bp1e;
+	U16 bp1a = 0;
+	U16 bp1e = 0;
 	if (bp2a != 0 || (bp1a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp1f, dtWordValue, GDAT_WALL_ORNATE__POSITION)) == 0) {
 		//^32CB:169B
 		bp1a = ORNATE_POS__VCENTERED_HCENTERED;	// SPX: that must be the default ornate position (default = 12)
@@ -22310,8 +22319,8 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 	//^32CB:16BA
 	U16 bp1c = _098d_0cd7(cellPos, bp1a, (yy != 0) ? 1 : 0);
 	//^32CB:16D9
-	U16 bp18;
-	U16 bp16;
+	U16 bp18 = 0;
+	U16 bp16 = 0;
 	bp18 = bp16 = tlbDistanceStretch[RCJ(5,di)];
 	
 	//^32CB:16E5
@@ -22319,7 +22328,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		//^32CB:16F7
 		U16 bp34 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp1f, dtImageOffset, GDAT_GFXSET_DATA_FD);	// 0x09 .. .. 0xFD
 		//^32CB:170D
-		QUERY_TEMP_PICST(bp0e, bp16, bp18, i8(bp34 >> 8), i8(bp34), di, bp1c, bp1e, -1, -1, 0x16, U8(_4976_5a80[cellPos].x2.w14), 1);
+		QUERY_TEMP_PICST(bp0e, bp16, bp18, i8(bp34 >> 8), i8(bp34), di, bp1c, bp1e, -1, -1, GDAT_CATEGORY_CHAMPIONS, U8(_4976_5a80[cellPos].x2.w14), 1);
 		//^32CB:174C
 		if (zz == 0)
 			//^32CB:1752
@@ -22370,7 +22379,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 			}
 		}
 		//^32CB:17EF
-		QUERY_TEMP_PICST(bp0e, bp16, bp18, 0, 0, di, bp1c, bp1e, si, -1, 8, glbMapGraphicsSet, bp20);
+		QUERY_TEMP_PICST(bp0e, bp16, bp18, 0, 0, di, bp1c, bp1e, si, -1, GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, bp20);
 		//^32CB:1817
 		if (zz == 0)
 			//^32CB:181D
@@ -22391,14 +22400,14 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 			return si;
 		//^32CB:184D
 		ExtendedPicture bp01d6;
-		QUERY_GDAT_SUMMARY_IMAGE(&bp01d6, 0x08, glbMapGraphicsSet, bp20);
+		QUERY_GDAT_SUMMARY_IMAGE(&bp01d6, GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, bp20);
 		//^32CB:1865
 		i16 bp2c = bp01d6.w28;
 		i16 bp2e = bp01d6.w30;
 		//^32CB:1873
 		i16 bp48;
 		i16 bp4a;
-		QUERY_GDAT_IMAGE_METRICS(8, glbMapGraphicsSet, bp20, &bp48, &bp4a);
+		QUERY_GDAT_IMAGE_METRICS(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, bp20, &bp48, &bp4a);
 		//^32CB:188F
 		U16 bp26 = ALLOC_TEMP_CACHE_INDEX();
 		//^32CB:1897
@@ -45152,7 +45161,7 @@ void SkWinCore::DRAW_DOOR_FRAMES(i16 iViewportCell, X16 yy)	// i16 xx, X16 yy
 			X8 iDoorFrameGfx = tlbGraphicsDoorSideFrames[RCJ(14,bp0c)][RCJ(2,bp08)];	// door side frames (28 slots divided into 2 parts (2 * 14))
 			if (iDoorFrameGfx != 0xff) {
 				//^32CB:47DD
-				QUERY_TEMP_PICST(0, 64, 64, 0, 0, 0, QUERY_CREATURE_BLIT_RECTI(iViewportCell, 10, 0), 4, colorkey, -1, 8, gfxset, iDoorFrameGfx); // door frame left
+				QUERY_TEMP_PICST(0, 64, 64, 0, 0, 0, QUERY_CREATURE_BLIT_RECTI(iViewportCell, 10, 0), 4, colorkey, -1, GDAT_CATEGORY_GRAPHICSSET, gfxset, iDoorFrameGfx); // door frame left
 				DRAW_TEMP_PICST();
 			}
 		}
@@ -45163,7 +45172,7 @@ void SkWinCore::DRAW_DOOR_FRAMES(i16 iViewportCell, X16 yy)	// i16 xx, X16 yy
 			X8 iDoorFrameGfx = tlbGraphicsDoorSideFrames[RCJ(14,bp0c)][RCJ(2,bp0a)];
 			if (iDoorFrameGfx != 0xff) {
 				//^32CB:482E
-				QUERY_TEMP_PICST(1, 64, 64, 0, 0, 0, QUERY_CREATURE_BLIT_RECTI(iViewportCell, 14, 0), 3, colorkey, -1, 8, gfxset, iDoorFrameGfx); // door frame right
+				QUERY_TEMP_PICST(1, 64, 64, 0, 0, 0, QUERY_CREATURE_BLIT_RECTI(iViewportCell, 14, 0), 3, colorkey, -1, GDAT_CATEGORY_GRAPHICSSET, gfxset, iDoorFrameGfx); // door frame right
 				DRAW_TEMP_PICST();
 				//^32CB:485F
 				if (door->Button() != 0) {
@@ -45176,6 +45185,7 @@ void SkWinCore::DRAW_DOOR_FRAMES(i16 iViewportCell, X16 yy)	// i16 xx, X16 yy
 				}
 				else {
 					//^32CB:4887
+					// In case there is a custom button (from wall ornates gfx)
 					if (_4976_5a80[iViewportCell].x2.w6[2] != 0xff) {
 						//^32CB:489C
 						DRAW_DEFAULT_DOOR_BUTTON(GDAT_CATEGORY_WALL_GFX, U8(_4976_5a80[iViewportCell].x2.w6[2]) & 0xff, U8(_4976_5a80[iViewportCell].x2.w6[2] >> 8) +1, iViewportCell);
@@ -64050,7 +64060,7 @@ SkWinCore::SkWinCore()
 	_4976_5da4 = NULL;
 	zeroMem(_4976_4e02, sizeof(_4976_4e02));
 	zeroMem(_4976_4d1a, sizeof(_4976_4d1a));
-	_4976_3df6 = -1;
+	glbSquadInterfaceMapGfxSet = -1;
 	glbMapGraphicsSet = -1;
 	_4976_532c = 0;
 	zeroMem(&_4976_495c, sizeof(_4976_495c));
