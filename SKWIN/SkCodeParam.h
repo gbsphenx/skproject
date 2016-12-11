@@ -18,6 +18,9 @@ public:
 	static bool bUseVaryingPlaybackFrequency;
 	static bool	bUsePlayerWalkSound;
 
+	static bool	bDisableFogEffect;
+
+
 public:
 	SkCodeParam();
 };

@@ -30,6 +30,7 @@
 #define ID_DS_AF_0                      40032
 #define ID_DS_AF_FULL                   40033
 #define ID_DS_AF_LIGHT                  40035
+#define ID_FOG_SWITCH					40039
 #define ID_SPEED_1ULTRAFAST             40040
 #define ID_SPEED_2FAST                  40041
 #define ID_SPEED_3NORMAL                40042
@@ -52,11 +53,12 @@
 #define ID_HELP_ABOUT                   40100
 #define ID_SEPA                         40101
 
+
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        109
+#define _APS_NEXT_RESOURCE_VALUE        111
 #define _APS_NEXT_COMMAND_VALUE         40104
 #define _APS_NEXT_CONTROL_VALUE         1001
 #define _APS_NEXT_SYMED_VALUE           101

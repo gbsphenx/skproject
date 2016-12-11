@@ -21199,8 +21199,8 @@ void SkWinCore::_32cb_0804(U8 *localpal, i16 cls4, U16 colorkey1, i16 colorkey2,
 		//^32CB:084A
 		si = _4976_4226[RCJ(5,cls4)];
 	}
-	//^32CB:0854
-	if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dt07, U8(cls4)) != 0) {
+	//^32CB:0854	// SPX: That part is for translating palette in case of 'fog'
+	if (!SkCodeParam::bDisableFogEffect && QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dt07, U8(cls4)) != 0) {
 		//^32CB:086C
 		TRANSLATE_PALETTE(localpal, GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, U8(cls4), di);
 		//^32CB:0885
