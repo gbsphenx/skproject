@@ -41242,14 +41242,17 @@ U16 SkWinCore::ATTACK_DOOR(i16 x, i16 y, U16 damage, U16 isSpellAttack, U16 dela
 	ENTER(18);
 	//^075F:2209
 	Door *door = GET_ADDRESS_OF_TILE_RECORD(U8(x), U8(y))->castToDoor();	//*bp04
-	if (isSpellAttack != 0 && door->DestroyablebyFireball() == 0)
-		return 0;
-	//^075F:2233
-	if (isSpellAttack == 0 && door->BashablebyChopping() == 0)
-		return 0;
-	//^075F:224A
-	if (QUERY_DOOR_DAMAGE_RESIST(GET_GRAPHICS_FOR_DOOR(door)) <= damage)
-		return 0;
+	// SPX: Disable door controls if "weak door" mode is activated. Controls within are original code
+	if (!SkCodeParam::bWeakDoors) {
+		if (isSpellAttack != 0 && door->DestroyablebyFireball() == 0)
+			return 0;
+		//^075F:2233
+		if (isSpellAttack == 0 && door->BashablebyChopping() == 0)
+			return 0;
+		//^075F:224A
+		if (QUERY_DOOR_DAMAGE_RESIST(GET_GRAPHICS_FOR_DOOR(door)) <= damage)
+			return 0;
+	} // End of "weak door"	
 	//^075F:2266
 	U8 *bp08 = &glbCurrentTileMap[x][y];
 	if ((*bp08 & 7) != 4)

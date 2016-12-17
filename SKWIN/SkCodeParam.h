@@ -18,8 +18,9 @@ public:
 	static bool bUseVaryingPlaybackFrequency;
 	static bool	bUsePlayerWalkSound;
 
+	//--- Specific parameters, for testing/debugging
 	static bool	bDisableFogEffect;
-
+	static bool bWeakDoors;
 
 public:
 	SkCodeParam();

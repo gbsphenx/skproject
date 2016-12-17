@@ -544,6 +544,7 @@ void CSkWinMFC::OnVideo1x(UINT nID) {
 
 		case ID_EXTRA_DOUBLE_STEP_MOVE: enableDoubleStepMove = !enableDoubleStepMove; break;
 		case ID_FOG_SWITCH: SkCodeParam::bDisableFogEffect = !SkCodeParam::bDisableFogEffect; break;
+		case ID_DEBUG_BREAK_DOOR: SkCodeParam::bWeakDoors = !SkCodeParam::bWeakDoors; break;
 	}
 	if (sxfact != -1) {
 		this->sxfact = sxfact;
@@ -636,6 +637,7 @@ void CSkWinMFC::OnUpdateVideo1x(CCmdUI *pCmdUI) {
 
 		case ID_EXTRA_DOUBLE_STEP_MOVE: pCmdUI->SetCheck(enableDoubleStepMove); break;
 		case ID_FOG_SWITCH: pCmdUI->SetCheck(SkCodeParam::bDisableFogEffect); break;
+		case ID_DEBUG_BREAK_DOOR: pCmdUI->SetCheck(SkCodeParam::bWeakDoors); break;
 	}
 }
 

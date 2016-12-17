@@ -113,6 +113,7 @@ BEGIN
     BEGIN
         MENUITEM "Enable ""double step"" movement", 40052
         MENUITEM "Turn off fog effect",         40039
+        MENUITEM "Make doors breakable",        40070
     END
     POPUP "?", HELP
     BEGIN

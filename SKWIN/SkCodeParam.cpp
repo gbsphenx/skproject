@@ -6,6 +6,7 @@ bool SkCodeParam::bUsePowerDebug = true;
 bool SkCodeParam::bUseFixedMode = true;
 bool SkCodeParam::bUseIngameDebug = false;
 bool SkCodeParam::bDisableFogEffect = false;
+bool SkCodeParam::bWeakDoors = false;
 
 #if (DM2_EXTENDED_MODE == 0)
 bool SkCodeParam::bUseVaryingPlaybackFrequency = false;
