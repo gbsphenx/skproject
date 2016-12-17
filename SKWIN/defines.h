@@ -264,7 +264,7 @@ enum SkillLevel {
 #define SOUND_STD_DEFAULT				0x84	// Punch, Fall, Test wall, Gethit
 #define SOUND_STD_KNOCK					0x85	// Falling item, punch knock
 #define SOUND_STD_THROW					0x86	// Throw / Shoot item
-#define SOUND_CHAMPION_DEATH			0x87
+#define SOUND_CHAMPION_SCREAM			0x87
 #define SOUND_STD_ACTIVATION			0x88
 #define SOUND_STD_TELEPORT				0x89
 #define SOUND_CHAMPION_BUMP				0x8A

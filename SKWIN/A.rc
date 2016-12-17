@@ -114,6 +114,7 @@ BEGIN
         MENUITEM "Enable ""double step"" movement", 40052
         MENUITEM "Turn off fog effect",         40039
         MENUITEM "Make doors breakable",        40070
+        MENUITEM "Can walk over pits",          40071
     END
     POPUP "?", HELP
     BEGIN

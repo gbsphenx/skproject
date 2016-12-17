@@ -29736,7 +29736,7 @@ void SkWinCore::END_GAME(U16 xx)
 		U8 bp01 = (glbChampionsCount > 0) ? glbChampionSquad[0].HeroType() : 0xfe;
 		//^101B:002A
 		// SPX: Sound when dying
-		QUEUE_NOISE_GEN2(GDAT_CATEGORY_CHAMPIONS, bp01, SOUND_CHAMPION_DEATH, 0xfe, glbPlayerPosX, glbPlayerPosY, 0, 255, 255);
+		QUEUE_NOISE_GEN2(GDAT_CATEGORY_CHAMPIONS, bp01, SOUND_CHAMPION_SCREAM, 0xfe, glbPlayerPosX, glbPlayerPosY, 0, 255, 255);
 		//^101B:004E
 		SLEEP_SEVERAL_TIME(240);
 	}
@@ -30422,6 +30422,7 @@ X16 SkWinCore::_12b4_0881(X16 aa, U16 oldTile, U16 newTile, i16 xx, i16 yy, Obje
 	return 6;
 }
 //^12B4:023F
+// SPX: Walk into a wall ?
 U16 SkWinCore::_12b4_023f(i16 xx, i16 yy, i16 *ss, i16 *tt, i16 ww, X16 vv)
 {
 	//^12B4:023F
@@ -49854,7 +49855,8 @@ Bit16u SkWinCore::_2fcf_0434(ObjectID recordLink, __int16 xpos, __int16 ypos, __
 			break;
 		}
 		//^2FCF:0739
-		if (bp18 == ttPit && bp28 == 0 && (bp16 & 8) != 0 && (bp16 & 1) == 0) {
+		// SPX: Add special switchable paramater to not fall into pits
+		if (bp18 == ttPit && bp28 == 0 && (bp16 & 8) != 0 && (bp16 & 1) == 0 && !SkCodeParam::bWalkOverPits) {
 			//^2FCF:075F
 			// SPX: Retrieving 1 (only for VOID set) tells to do special treatment when falling into a pit
 			Bit16u bp2a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, dunMapLocalHeader->MapGraphicsStyle(), dtWordValue, GDAT_GFXSET_VOID_RANDOM_FALL);
@@ -49972,7 +49974,7 @@ Bit16u SkWinCore::_2fcf_0434(ObjectID recordLink, __int16 xpos, __int16 ypos, __
 								QUEUE_NOISE_GEN2(
 									GDAT_CATEGORY_CHAMPIONS,
 									bp08->HeroType(),
-									SOUND_CHAMPION_DEATH,
+									SOUND_CHAMPION_SCREAM,
 									0xfe,
 									glbPlayerPosX,
 									glbPlayerPosY,

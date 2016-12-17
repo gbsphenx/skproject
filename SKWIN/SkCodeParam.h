@@ -21,6 +21,7 @@ public:
 	//--- Specific parameters, for testing/debugging
 	static bool	bDisableFogEffect;
 	static bool bWeakDoors;
+	static bool bWalkOverPits;
 
 public:
 	SkCodeParam();

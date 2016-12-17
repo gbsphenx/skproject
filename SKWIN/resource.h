@@ -50,6 +50,7 @@
 #define ID_DUNGEON_SKULLKEEP_BETA       40064
 #define ID_DUNGEON_LEGEND_SKULLKEEP     40065
 #define ID_DEBUG_BREAK_DOOR             40070
+#define ID_DEBUG_WALK_OVER_PIT          40071
 #define ID_Dummy                        40099
 #define ID_HELP_ABOUT                   40100
 #define ID_SEPA                         40101
