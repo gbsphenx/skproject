@@ -133,7 +133,7 @@ STYLE DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About skwin"
 FONT 8, "MS Shell Dlg"
 BEGIN
-    LTEXT           "skwin (2016-12-11)",IDC_STATIC,7,96,63,8
+    LTEXT           "skwin (2016-12-17)",IDC_STATIC,7,96,63,8
     LTEXT           "An unofficial experimental port. started by kentaro-k.21. modified by sphenx.",
                     IDC_STATIC,7,108,184,22
     DEFPUSHBUTTON   "OK",IDOK,115,138,50,14

@@ -1099,7 +1099,7 @@ U16 _04bf_188e[10];
 i8 _4976_0094[32]; //Rr
 U8 _4976_00b4[8]; //Rr  // flags for 8 missiles. 2=can harm door
 X8 _4976_00e3[5]; //Rr
-U16 _4976_019a[16]; //Rr
+U16 tRectnoOffsetsWallOrnates[16]; //Rr (_4976_019a) // recto offsets tables for wall ornates
 
 i8 _4976_19b2[4]; //Rr
 i8 _4976_19b6[4]; //Rr

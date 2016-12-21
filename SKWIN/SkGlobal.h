@@ -335,7 +335,7 @@ extern U16 _04bf_188e[10];
 extern i8 _4976_0094[32]; //Rr
 extern U8 _4976_00b4[8]; //Rr  // flags for 8 missiles. 2=can harm door
 extern X8 _4976_00e3[5]; //Rr
-extern U16 _4976_019a[16]; //Rr
+extern U16 tRectnoOffsetsWallOrnates[16]; //Rr	(_4976_019a)
 
 extern i8 _4976_19b2[4]; //Rr
 extern i8 _4976_19b6[4]; //Rr

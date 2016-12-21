@@ -496,7 +496,13 @@ enum SkillLevel {
 #define ORNATE_POS__VFARRIGHT_HFARBOTTOM	24
 
 #define GDAT_WALL_ORNATE__DO_NOT_FLIP		0x07	// 1 = do not flip that graphics
-#define GDAT_WALL_ORNATE__0A				0x0A	// 1 = Alcove / 3 = Passive device
+#define GDAT_WALL_ORNATE__0A				0x0A	// 0 (default) = non alcove / 1 = Alcove / 2 = shop glass / 3 = Passive device (cryocell : show champion portrait)
+
+	#define WALL_ORNATE_OBJECT__NONE			0x00
+	#define WALL_ORNATE_OBJECT__ALCOVE			0x01
+	#define WALL_ORNATE_OBJECT__SHOP_GLASS		0x02
+	#define WALL_ORNATE_OBJECT__CRYOCELL		0x03
+
 
 #define GDAT_WALL_ORNATE__IS_WATER_SPRING	0x0B
 #define GDAT_WALL_ORNATE__IS_REBIRTH_ALTAR	0x0C	// Used for DM2 beta
@@ -518,6 +524,10 @@ enum SkillLevel {
 
 #define GDAT_WALL_ORNATE__DATA_F2			0xF2
 #define GDAT_WALL_ORNATE__DATA_FD			0xFD
+
+#define GDAT_WALL_IMAGE__VIEW_SIDE_LEFT			0x00
+#define GDAT_WALL_IMAGE__VIEW_FRONT				0x01
+#define GDAT_WALL_IMAGE__VIEW_SIDE_RIGHT		0x02
 
 //#define GDAT_ORNATE_POSITION_TOP_RIGHT			8
 //#define GDAT_ORNATE_POSITION_CENTER				13

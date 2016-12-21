@@ -7525,7 +7525,6 @@ void SkWinCore::DRAW_SQUAD_POS_INTERFACE()
 {
 	//^29EE:0396
 	ENTER(350);
-	return;
 	//^29EE:039C
 	_29ee_00a3(0);
 	//^29EE:03A3
@@ -20977,18 +20976,19 @@ _22ca:
 }
 
 //^098D:0CD7
-// TODO ??
-U16 SkWinCore::_098d_0cd7(i16 xx, U16 yy, U16 zz)
+// SPX: _098d_0cd7 renamed QUERY RECTNO FOR WALL ORNATE
+// ornateOffsetPos between 0 and 24
+U16 SkWinCore::QUERY_RECTNO_FOR_WALL_ORNATE(i16 cellPos, U16 ornateOffsetPos, U16 zz) // (i16 xx, U16 yy, U16 zz)
 {
 	//^098D:0CD7
 	ENTER(0);
 	//^098D:0CDA
 	if (zz != 0) {
 		//^098D:0CE0
-		return _4976_019a[RCJ(16, xx)] +yy;
+		return tRectnoOffsetsWallOrnates[RCJ(16, cellPos)] + ornateOffsetPos;	// limiting cellpos to 16 means taking only Distance 0 to Distance 3
 	}
 	//^098D:0CEE
-	return xx * 25 +yy +3100;
+	return cellPos * 25 + ornateOffsetPos + 3100;
 }
 
 //^32CB:08C1
@@ -22199,7 +22199,8 @@ void SkWinCore::_32cb_0f82(Actuator *ref, U8 cls4, i16 bb, i16 cellPos, U16 horz
 }
 
 //^32CB:3F0D
-void SkWinCore::_32cb_3f0d(U16 xx)
+// SPX: _32cb_3f0d renamed DRAW_ALCOVE_ITEMS
+void SkWinCore::DRAW_ALCOVE_ITEMS(U16 xx)
 {
 	//^32CB:3F0D
 	ENTER(14);
@@ -22235,12 +22236,12 @@ void SkWinCore::_32cb_3f0d(U16 xx)
 			if (bp05 == 0x64) {
 				//^32CB:3FDC
 				X16 bp0e = _4976_41ed[RCJ(17,_4976_4463[RCJ(23,si)])];
-				QUERY_TEMP_PICST(bp0c, bp0e, bp0e, 0, 0, 0, _098d_0cd7(si, 0, 0xffff), 0xffff, 10, -1, 0x0d, bp05, 0xc);
+				QUERY_TEMP_PICST(bp0c, bp0e, bp0e, 0, 0, 0, QUERY_RECTNO_FOR_WALL_ORNATE(si, 0, 0xffff), 0xffff, 10, -1, 0x0d, bp05, 0xc);
 				DRAW_TEMP_PICST();
 			}
 			//^32CB:4020
 			else if (bp05 == 0x65) {
-				_32cb_2cf3(bp05, _4976_41e6[RCJ(7,_4976_4463[RCJ(23,si)])], bp0c, _098d_0cd7(si, 12, 0));
+				_32cb_2cf3(bp05, _4976_41e6[RCJ(7,_4976_4463[RCJ(23,si)])], bp0c, QUERY_RECTNO_FOR_WALL_ORNATE(si, 12, 0));
 				DRAW_TEMP_PICST();
 			}
 		}
@@ -22289,7 +22290,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 	//^32CB:161D
 	U16 bp2a = (bp1f == 0) ? 1 : 0;
 	//^32CB:162D
-	U16 bp22 = IS_WALL_ORNATE_ALCOVE(bp1f);
+	U16 alcoveType = IS_WALL_ORNATE_ALCOVE(bp1f);	// U16 bp22
 	//^32CB:163A
 	U16 bp24 = 0; // SPX: fixed value init
 	if (bp2a == 0) {
@@ -22297,38 +22298,38 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		bp24 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp1f, dtWordValue, GDAT_WALL_ORNATE__DO_NOT_FLIP);	// Has some role for general graphics flip
 	}
 	//^32CB:1655
-	U16 bp0e = 0;
+	U16 iFlipImage = 0;	// U16 bp0e = 0; use flip or not
 	//^32CB:165A
 	U16 si = 0; // defaulting to 0
 	if (bp2a != 0 || (si = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp1f, dtWordValue, GDAT_IMG_COLORKEY_1)) == 0)
 		//^32CB:1678
 		si = glbSceneColorKey;
 	//^32CB:167C
-	U16 bp1a = 0;
-	U16 bp1e = 0;
-	if (bp2a != 0 || (bp1a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp1f, dtWordValue, GDAT_WALL_ORNATE__POSITION)) == 0) {
+	U16 iOrnatePos = 0;	// U16 bp1a
+	U16 bp1e = 0;	// U16 bp1e
+	if (bp2a != 0 || (iOrnatePos = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp1f, dtWordValue, GDAT_WALL_ORNATE__POSITION)) == 0) {
 		//^32CB:169B
-		bp1a = ORNATE_POS__VCENTERED_HCENTERED;	// SPX: that must be the default ornate position (default = 12)
+		iOrnatePos = ORNATE_POS__VCENTERED_HCENTERED;	// SPX: that must be the default ornate position (default = 12)
 		bp1e = 0;
 	}
 	else {
 		//^32CB:16A7
-		bp1e = bp1a >> 8;
-		bp1a = (bp1a & 255) -1;
+		bp1e = iOrnatePos >> 8;	 // SPX: don't understand this
+		iOrnatePos = (iOrnatePos & 255) -1;
 	}
 	//^32CB:16BA
-	U16 bp1c = _098d_0cd7(cellPos, bp1a, (yy != 0) ? 1 : 0);
+	U16 iRectno = QUERY_RECTNO_FOR_WALL_ORNATE(cellPos, iOrnatePos, (yy != 0) ? 1 : 0);	// U16 bp1c; recto
 	//^32CB:16D9
 	U16 bp18 = 0;
 	U16 bp16 = 0;
 	bp18 = bp16 = tlbDistanceStretch[RCJ(5,di)];
 	
 	//^32CB:16E5
-	if (bp22 == 3 && yy == 0) {
+	if (alcoveType == WALL_ORNATE_OBJECT__CRYOCELL && yy == 0) {	// bp22 == 3
 		//^32CB:16F7
 		U16 bp34 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp1f, dtImageOffset, GDAT_GFXSET_DATA_FD);	// 0x09 .. .. 0xFD
 		//^32CB:170D
-		QUERY_TEMP_PICST(bp0e, bp16, bp18, i8(bp34 >> 8), i8(bp34), di, bp1c, bp1e, -1, -1, GDAT_CATEGORY_CHAMPIONS, U8(_4976_5a80[cellPos].x2.w14), 1);
+		QUERY_TEMP_PICST(iFlipImage, bp16, bp18, i8(bp34 >> 8), i8(bp34), di, iRectno, bp1e, -1, -1, GDAT_CATEGORY_CHAMPIONS, U8(_4976_5a80[cellPos].x2.w14), 1);
 		//^32CB:174C
 		if (zz == 0)
 			//^32CB:1752
@@ -22375,11 +22376,11 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 			else {
 				//^32CB:17E6
 				bp20 = 0xfd;
-				bp0e = 1;
+				iFlipImage = 1;	// do flip
 			}
 		}
 		//^32CB:17EF
-		QUERY_TEMP_PICST(bp0e, bp16, bp18, 0, 0, di, bp1c, bp1e, si, -1, GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, bp20);
+		QUERY_TEMP_PICST(iFlipImage, bp16, bp18, 0, 0, di, iRectno, bp1e, si, -1, GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, bp20);
 		//^32CB:1817
 		if (zz == 0)
 			//^32CB:181D
@@ -22563,7 +22564,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		//^32CB:1BF3
 		bp01d6.pb44 = _4976_4c16;
 		//^32CB:1C02
-		bp01d6.rectNo = bp1c;
+		bp01d6.rectNo = iRectno;
 		bp01d6.w26 = bp1e;
 		bp01d6.w28 = bp2c;
 		bp01d6.w30 = bp2e;
@@ -22577,48 +22578,48 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		return si;
 	}
 	//^32CB:1C44
-	U8 bp20;
-	if (yy == 0) {
+	U8 iImageEntry;	// U8 bp20; which image entry. 1 = front / 0 = side. Add default init to FRONT
+	if (yy == 0) {	// Front image
 		//^32CB:1C4A
-		bp20 = 1;
+		iImageEntry = GDAT_WALL_IMAGE__VIEW_FRONT;	// = 1;	front view
 		//^32CB:1C4E
 		if (bp24 == 0) {
 			//^32CB:1C54
 			if ((glbTabYAxisDistance[RCJ(23,cellPos)] & 1) != 0) {
 				//^32CB:1C5E
-				bp0e = glbGeneralFlipGraphics;
+				iFlipImage = glbGeneralFlipGraphics;
 			}
 			else {
 				//^32CB:1C66
-				bp0e = glbGeneralFlipGraphics ^ 1;
+				iFlipImage = glbGeneralFlipGraphics ^ 1;
 			}
 		}
 	}
-	else {
+	else {	// Side image
 		//^32CB:1C71
-		bp20 = 0;
+		iImageEntry = GDAT_WALL_IMAGE__VIEW_SIDE_LEFT;	// = 0;	 side view on left
 		//^32CB:1C75
 		if (yy >= 1) {
 			//^32CB:1C7B
 			if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_WALL_GFX, bp1f, dtImage, U8(bp28) +2) != 0) {
 				//^32CB:1C95
-				bp20 = 2;
+				iImageEntry = GDAT_WALL_IMAGE__VIEW_SIDE_RIGHT;	// = 2; side view on right
 			}
 			else {
 				//^32CB:1C9B
-				bp0e = 1;
+				iFlipImage = 1;	// flip image
 			}
 		}
 	}
 	//^32CB:1CA0
-	bp20 = bp20 +U8(bp28);
+	iImageEntry = iImageEntry +U8(bp28);
 	//^32CB:1CA9
 	SRECT *bp12;
 	if (yy == 0 && QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp1f, dtWordValue, GDAT_WALL_ORNATE__WINDOW) != 0) {
 		//^32CB:1CCB
-		QUERY_TEMP_PICST(bp0e, bp16, bp18, 0, 0, di, bp1c, bp1e, -3, -3, 9, bp1f, bp20);
+		QUERY_TEMP_PICST(iFlipImage, bp16, bp18, 0, 0, di, iRectno, bp1e, -3, -3, GDAT_CATEGORY_WALL_GFX, bp1f, iImageEntry);
 		//^32CB:1CF4
-		QUERY_TEMP_PICST(bp0e, bp16, bp18, glbTempPicture.w28, glbTempPicture.w30, di, bp1c, bp1e, si, -1, 9, bp1f, 200);
+		QUERY_TEMP_PICST(iFlipImage, bp16, bp18, glbTempPicture.w28, glbTempPicture.w30, di, iRectno, bp1e, si, -1, GDAT_CATEGORY_WALL_GFX, bp1f, 200);
 		//^32CB:1D1F
 		if (zz == 0)
 			//^32CB:1D25
@@ -22628,7 +22629,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		//^32CB:1D2F
 		ExtendedPicture bp0310;
 		U16 bp26 = QUERY_MULTILAYERS_PIC(
-			&bp0310, 9, bp1f, bp20, bp16, bp18, di, bp0e, si,
+			&bp0310, GDAT_CATEGORY_WALL_GFX, bp1f, iImageEntry, bp16, bp18, di, iFlipImage, si,
 			QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp1f, dtWordValue, GDAT_IMG_WALL_COLORKEY_2)	// 0x11 is colorkey2 for seeing outside through window (0xC8 image)
 			);
 		//^32CB:1D67
@@ -22642,7 +22643,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		//^32CB:1DA3
 		bp0310.colorKeyPassThrough = bp0310.b58[si];
 		bp0310.pb44 = _4976_4c16;
-		bp0310.rectNo = bp1c;
+		bp0310.rectNo = iRectno;
 		bp0310.w26 = bp1e;
 		bp0310.w56 = 0;
 		//^32CB:1DD0
@@ -22654,9 +22655,9 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		//^32CB:1DF8
 		FREE_TEMP_CACHE_INDEX(bp26);
 	}
-	else {
+	else {	// No window, standard wall ornate to display
 		//^32CB:1E03
-		QUERY_TEMP_PICST(bp0e, bp16, bp18, 0, 0, di, bp1c, bp1e, si, -1, 9, bp1f, bp20);
+		QUERY_TEMP_PICST(iFlipImage, bp16, bp18, 0, 0, di, iRectno, bp1e, si, -1, GDAT_CATEGORY_WALL_GFX, bp1f, iImageEntry);
 		//^32CB:1E2B
 		if (zz == 0)
 			//^32CB:1E31
@@ -22672,12 +22673,12 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 			return si;
 	}
 	//^32CB:1E4C
-	if (bp22 != 3 && (cellPos == 1 || cellPos == 2 || cellPos == 3)) {
+	if (alcoveType != WALL_ORNATE_OBJECT__CRYOCELL && (cellPos == 1 || cellPos == 2 || cellPos == 3)) {
 		//^32CB:1E64
 		MAKE_BUTTON_CLICKABLE(bp12, 6, U8(cellPos));
 	}
 	//^32CB:1E76
-	if (bp22 == 0 || yy != 0)
+	if (alcoveType == WALL_ORNATE_OBJECT__NONE || yy != 0)	// bp22 == 0
 		//^32CB:1E85
 		//^32CB:1F38
 		return si;
@@ -22687,18 +22688,18 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 	// SPX: This is an overlay on front of wall decoration. This is only used for the shop panel
 	if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_WALL_GFX, bp1f, dtImage, GDAT_WALL_ORNATE__OVERLAY) != 0) {
 		//^32CB:1EB3
-		if (bp22 == 2) {
+		if (alcoveType == WALL_ORNATE_OBJECT__SHOP_GLASS) {	// (bp22 == 2)
 			//^32CB:1EB9
 			_32cb_0f82(
 				GET_ADDRESS_OF_ACTU(_4976_5a80[cellPos].x2.w14), 
-				bp1f, di, cellPos, bp16, bp18, bp1c, bp1e, si
+				bp1f, di, cellPos, bp16, bp18, iRectno, bp1e, si
 				);
 			//^32CB:1EEF
 			//^32CB:1F38
 			return si;
 		}
 		//^32CB:1EF1
-		QUERY_TEMP_PICST(bp0e, bp16, bp18, 0, 0, di, bp1c, bp1e, si, -1, GDAT_CATEGORY_WALL_GFX, bp1f, GDAT_WALL_ORNATE__OVERLAY);
+		QUERY_TEMP_PICST(iFlipImage, bp16, bp18, 0, 0, di, iRectno, bp1e, si, -1, GDAT_CATEGORY_WALL_GFX, bp1f, GDAT_WALL_ORNATE__OVERLAY);
 		//^32CB:1F17
 		if (zz == 0)
 			//^32CB:1F1D
@@ -22710,8 +22711,8 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		return si;
 	}
 	//^32CB:1F29
-	if (bp22 == 1)
-		_32cb_3f0d(cellPos);
+	if (alcoveType == WALL_ORNATE_OBJECT__ALCOVE)	// (bp22 == 1)
+		DRAW_ALCOVE_ITEMS(cellPos);
 	//^32CB:1F38
 	return si;
 }

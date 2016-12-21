@@ -1289,7 +1289,7 @@ protected:
 	X16 SELECT_CHAMPION(U16 xx, U16 yy, U16 dir, U16 zz);
 	ObjectID FIND_DISTINCTIVE_ITEM_ON_TILE(U16 xx, U16 yy, i16 dir, U16 disit);
 	void MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, ObjectID rlWhatYouPlace);	// Big func
-	U16 _098d_0cd7(i16 xx, U16 yy, U16 zz);
+	U16 QUERY_RECTNO_FOR_WALL_ORNATE(i16 xx, U16 yy, U16 zz);	// _098d_0cd7 renamed QUERY_RECTNO_FOR_WALL_ORNATE
 	void QUERY_TEMP_PICST(
 	U16 mirrorflip, U16 horzStretch, U16 vertStretch, i16 offx, i16 offy, i16 uu, U16 rectno, U16 pp, 
 	i16 colorkey1, i16 colorkey2, U8 cls1, U8 cls2, U8 cls4);
@@ -1317,7 +1317,7 @@ protected:
 	U16 _48ae_05ae(i16 disit, U8 yy, U16 zz, U16 ss, U16 tt, i16 ww);
 	U16 _48ae_0767(i16 xx, i16 yy, U8 *zz, i16 *vv, i16 ww);
 	void _32cb_0f82(Actuator *ref, U8 cls4, i16 bb, i16 cellPos, U16 horzStretch, U16 vertStretch, U16 rectno, U16 gg, U16 colorkey1);
-	void _32cb_3f0d(U16 xx);
+	void DRAW_ALCOVE_ITEMS(U16 xx);	// _32cb_3f0d
 	i16 DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz);	// _32cb_15b8
 	i16 _0b36_1446(Picture *ref, i16 xx, i16 yy, U16 colorkey);
 	U16 _32cb_00f1(U16 xx, U16 yy, i16 zz);
