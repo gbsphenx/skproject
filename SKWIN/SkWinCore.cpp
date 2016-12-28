@@ -45219,34 +45219,34 @@ X16 SkWinCore::_32cb_48d5(U16 xx, i16 yy)
 
 //^32CB:4905
 // SPX: _32cb_4905 renamed DRAW_DOOR
-void SkWinCore::DRAW_DOOR(i16 xx, X16 yy, X16 zz, X32 aa)
+void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 yy, X16 zz, X32 aa
 {
 	//^32CB:4905
 	ENTER(348);
 	//^32CB:490B
 	if (yy != 0) {
 		//^32CB:4911
-		DRAW_DOOR_FRAMES(xx, yy);
+		DRAW_DOOR_FRAMES(iCellPos, yy);
 	}
 	//^32CB:491D
 	if (aa != 0) {
 		//^32CB:4925
-		DRAW_STATIC_OBJECT(xx, aa, 0);
+		DRAW_STATIC_OBJECT(iCellPos, aa, 0);
 	}
 	
 	//^32CB:4937
-	U16 bp06 = _4976_5a80[xx].x2.w6[0];
+	U16 bp06 = _4976_5a80[iCellPos].x2.w6[0];
 	X16 si;
 	if (bp06 != 0) {
 		//^32CB:4955
-		ObjectID bp0c = _4976_5a80[xx].x2.w6[1];
-		i16 bp08 = glbTabYAxisDistance[RCJ(23,xx)];
-		if (bp08 <= 3) {
+		ObjectID bp0c = _4976_5a80[iCellPos].x2.w6[1];
+		i16 iYDist = glbTabYAxisDistance[RCJ(23,iCellPos)];	// i16 bp08
+		if (iYDist <= 3) {
 			//^32CB:497D
-			i16 bp18 = _4976_4539[RCJ(5,bp08)];
+			i16 bp18 = tlbInvertedDoorDistance[RCJ(5,iYDist)];	// i16 bp18
 			if (bp18 >= 0) {
 				//^32CB:498F
-				i16 bp1a = _4976_453e[RCJ(16,xx)];
+				i16 bp1a = tlbRectnoDoorPosition[RCJ(16,iCellPos)];
 				if (bp1a >= 0) {
 					//^32CB:49A2
 					Door *bp04 = GET_ADDRESS_OF_RECORD0(bp0c);
@@ -45270,14 +45270,15 @@ void SkWinCore::DRAW_DOOR(i16 xx, X16 yy, X16 zz, X32 aa)
 						// SPX END
 
 						//^32CB:49DE
-						U8 bp0f = U8(bp08) -1;	// Check image no from distance; note: distance 0 would give image 0xFF.
+						U8 bp0f = U8(iYDist) -1;	// Check image no from distance; note: distance 0 would give image 0xFF.
+						// Door at Y=1 uses image 0 ; Y=2 => image 1 ; Y=3 => image 2 ; Y=0 has normally no specific image, it is image 0 streched.
 						si = 0x40;
 						X16 bp0a = 0;
-						if (bp08 == 0 || QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtImage, bp0f) == 0) {	// 0xe
+						if (iYDist == 0 || QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtImage, bp0f) == 0) {	// 0xe
 							//^32CB:4A09
-							if (bp08 != 0) {
+							if (iYDist != 0) {
 								//^32CB:4A0F
-								bp0a = bp08;
+								bp0a = iYDist;
 								si = tlbDistanceStretch[RCJ(5,bp0a)];
 							}
 							else {
@@ -45335,7 +45336,7 @@ void SkWinCore::DRAW_DOOR(i16 xx, X16 yy, X16 zz, X32 aa)
 								//QUERY_TEMP_PICST(0, bp20, bp22, 0, 0, bp08, 
 								
 								if (!SkCodeParam::bUseDM2ExtendedMode)
-									QUERY_TEMP_PICST(mirroredDoor, bp20, bp22, 0, 0, bp08, 
+									QUERY_TEMP_PICST(mirroredDoor, bp20, bp22, 0, 0, iYDist, 
 										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOOR_GFX, iOrnateGDATIndex, dtWordValue, GDAT_DOOR_ORNATE__POSITION) << 2) +bp18 +0x7d0,
 										-1, bp14, -1, GDAT_CATEGORY_DOOR_GFX, iOrnateGDATIndex, GDAT_DOOR_DECORATION_MASK
 										);
@@ -45345,7 +45346,7 @@ void SkWinCore::DRAW_DOOR(i16 xx, X16 yy, X16 zz, X32 aa)
 									iColorPassThrough = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOOR_GFX, iDoorGDATIndex, dtWordValue, 4);
 									if (iColorPassThrough == 0)
 										iColorPassThrough = 10;
-									QUERY_TEMP_PICST(mirroredDoor, bp20, bp22, 0, 0, bp08, 
+									QUERY_TEMP_PICST(mirroredDoor, bp20, bp22, 0, 0, iYDist, 
 										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOOR_GFX, iOrnateGDATIndex, dtWordValue, GDAT_DOOR_ORNATE__POSITION) << 2) +bp18 +0x7d0,
 										-1, bp14, iColorPassThrough, GDAT_CATEGORY_DOOR_GFX, iOrnateGDATIndex, GDAT_DOOR_DECORATION_MASK
 										);
@@ -45363,7 +45364,7 @@ void SkWinCore::DRAW_DOOR(i16 xx, X16 yy, X16 zz, X32 aa)
 
 								// SPX: (2016-10-30) Get the destroyed door mask and use default one if available
 								if (!SkCodeParam::bUseFixedMode)
-								QUERY_TEMP_PICST(0, bp20, bp22, 0, 0, bp08, 
+								QUERY_TEMP_PICST(0, bp20, bp22, 0, 0, iYDist, 
 									(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_DOOR_DESTROYED_MASK_POSITION) << 2) +bp18 +0x7d0,
 									-1, bp14, bp12, GDAT_CATEGORY_DOORS, iDoorGDATIndex, GDAT_DOOR_DESTROYED_MASK
 									);
@@ -45374,7 +45375,7 @@ void SkWinCore::DRAW_DOOR(i16 xx, X16 yy, X16 zz, X32 aa)
 									U16 iDoorDestroyedMask = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtImage, GDAT_DOOR_DESTROYED_MASK);
 									if (iDoorDestroyedMask == (U16)-1) // not found, get the default one
 										iDoorDestroyedGDATIndex = GDAT_ITEM_DEFAULT_INDEX;
-									QUERY_TEMP_PICST(0, bp20, bp22, 0, 0, bp08, 
+									QUERY_TEMP_PICST(0, bp20, bp22, 0, 0, iYDist, 
 										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_DOOR_DESTROYED_MASK_POSITION) << 2) +bp18 +0x7d0,
 										-1, bp14, bp12, GDAT_CATEGORY_DOORS, iDoorDestroyedGDATIndex, GDAT_DOOR_DESTROYED_MASK
 										);								
@@ -45385,7 +45386,7 @@ void SkWinCore::DRAW_DOOR(i16 xx, X16 yy, X16 zz, X32 aa)
 								DRAW_TEMP_PICST();
 							}
 #if (DM2_EXTENDED_MODE == 1)
-							if (glbGlobalSpellEffects.SeeThruWalls > 0 && bp08 == 1 && yy == 7) {	// If Window spell is active, and display only if distance = 1 and just in front
+							if (glbGlobalSpellEffects.SeeThruWalls > 0 && iYDist == 1 && yy == 7) {	// If Window spell is active, and display only if distance = 1 and just in front
 								
 								X16 bp14 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_IMG_DOOR_COLORKEY_2);
 								if (bp14 == 0)
@@ -45397,7 +45398,7 @@ void SkWinCore::DRAW_DOOR(i16 xx, X16 yy, X16 zz, X32 aa)
 									U16 iDoorSeeThruMask = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtImage, GDAT_DOOR_SEE_THRU);
 									if (iDoorSeeThruMask == (U16)-1) // not found, get the default one
 										iDoorSeeThruGDATIndex = GDAT_ITEM_DEFAULT_INDEX;
-									QUERY_TEMP_PICST(0, bp20, bp22, 0, 0, bp08, 
+									QUERY_TEMP_PICST(0, bp20, bp22, 0, 0, iYDist, 
 										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_DOOR_DESTROYED_MASK_POSITION) << 2) +bp18 +0x7d0,
 										-1, bp14, bp12, GDAT_CATEGORY_DOORS, iDoorSeeThruGDATIndex, GDAT_DOOR_SEE_THRU
 										);								
@@ -45453,12 +45454,12 @@ void SkWinCore::DRAW_DOOR(i16 xx, X16 yy, X16 zz, X32 aa)
 	//^32CB:4C9F
 	if (zz != 0) {
 		//^32CB:4CA5
-		DRAW_DOOR_FRAMES(xx, zz);
+		DRAW_DOOR_FRAMES(iCellPos, zz);
 	}
 	//^32CB:4CB1
 	if (aa != 0) {
 		//^32CB:4CB9
-		_32cb_2d8c(_4976_5a80[xx].x2.w4, xx, aa);
+		_32cb_2d8c(_4976_5a80[iCellPos].x2.w4, iCellPos, aa);
 	}
 	//^32CB:4CDB
 	return;
@@ -45466,32 +45467,32 @@ void SkWinCore::DRAW_DOOR(i16 xx, X16 yy, X16 zz, X32 aa)
 
 //^32CB:4CDF
 // SPX: _32cb_4cdf renamed DRAW_DOOR_TILE
-void SkWinCore::DRAW_DOOR_TILE(i16 xx)
+void SkWinCore::DRAW_DOOR_TILE(i16 iCellPos)	// i16 xx
 {
 	//^32CB:4CDF
 	ENTER(6);
 	//^32CB:4CE5
-	i16 si = xx;
-	if (_4976_455e[RCJ(16,si)] == 0)
+	//i16 si = xx; <= iCellPos
+	if (_4976_455e[RCJ(16,iCellPos)] == 0)
 		return;
 	X32 bp04 = 0x1000;
-	if (_4976_5a80[si].x2.w6[0] != 5) {
+	if (_4976_5a80[iCellPos].x2.w6[0] != 5) {
 		//^32CB:4D13
 		bp04 = 0x1000;
 	}
 	// SPX: draw objects on door tile behind the door
-	DRAW_STATIC_OBJECT(si, 0x3ff, (si != 0) ? 1 : 0);
+	DRAW_STATIC_OBJECT(iCellPos, 0x3ff, (iCellPos != 0) ? 1 : 0);
 	X16 bp06 = 0;
 	X16 di = 0;
-	switch (si) {
+	switch (iCellPos) {
 		case 0://^4D4E	// SPX: player is on the tile of the door
 			//^32CB:4D4E
 			if (bp04 != 0) {
 				//^32CB:4D56
-				DRAW_STATIC_OBJECT(si, bp04, 0);
+				DRAW_STATIC_OBJECT(iCellPos, bp04, 0);
 			}
-			DRAW_DOOR(si, 6, 0, 0);
-			_32cb_2d8c(_4976_5a80[si].x2.w4, si, 0x01ffffff);
+			DRAW_DOOR(iCellPos, 6, 0, 0);
+			_32cb_2d8c(_4976_5a80[iCellPos].x2.w4, iCellPos, 0x01ffffff);
 			return;
 		case 7://^4D96
 			//^32CB:4D96
@@ -45534,7 +45535,7 @@ void SkWinCore::DRAW_DOOR_TILE(i16 xx)
 		case 15://^4DC0
 			//^32CB:4DC0
 _4dc0:
-			DRAW_DOOR(si, di, bp06, bp04);
+			DRAW_DOOR(iCellPos, di, bp06, bp04);
 			break;
 		case 1://^4DD2
 		case 2://^4DD2
@@ -45544,8 +45545,8 @@ _4dc0:
 	}
 	//^32CB:4DD2
 	// SPX: draw objects on door tile before the door
-	DRAW_STATIC_OBJECT(si, 0x01fffc00 & (~bp04), 1);
-	_32cb_3edd(si);
+	DRAW_STATIC_OBJECT(iCellPos, 0x01fffc00 & (~bp04), 1);
+	_32cb_3edd(iCellPos);
 	//^32CB:4DF8
 	return;
 }

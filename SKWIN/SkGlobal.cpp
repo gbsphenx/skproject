@@ -1159,8 +1159,8 @@ i8 tlbRectnoDoorButton[14]; //Rr _4976_44e5
 X8 tlbGraphicsDoorSideFrames[14][2]; //Rr
 X8 tlbGraphicsDoorRoofSlits[14]; //Rr
 X16 tlbRectnoDoorRoofSlits[14]; //Rr
-i8 _4976_4539[5]; //Rr
-X16 _4976_453e[16]; //Rr
+i8 tlbInvertedDoorDistance[5]; //Rr
+X16 tlbRectnoDoorPosition[16]; //Rr
 U8 _4976_455e[16]; //Rr
 X8 tlbGraphicsStairsFront1[16][2]; //Rr
 X8 tlbGraphicsStairsFront2[16][2]; //Rr
