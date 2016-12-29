@@ -45235,24 +45235,24 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 	}
 	
 	//^32CB:4937
-	U16 bp06 = _4976_5a80[iCellPos].x2.w6[0];
-	X16 si;
-	if (bp06 != 0) {
+	U16 iDoorState = _4976_5a80[iCellPos].x2.w6[0];	// U16 bp06
+	X16 iStretchDual;	// X16 si
+	if (iDoorState != 0) {	// 0 = open. 1 - 3 = intermediate state. 4 = closed. 5 = destroyed
 		//^32CB:4955
 		ObjectID bp0c = _4976_5a80[iCellPos].x2.w6[1];
 		i16 iYDist = glbTabYAxisDistance[RCJ(23,iCellPos)];	// i16 bp08
 		if (iYDist <= 3) {
 			//^32CB:497D
-			i16 bp18 = tlbInvertedDoorDistance[RCJ(5,iYDist)];	// i16 bp18
-			if (bp18 >= 0) {
+			i16 iInvertedYDist = tlbInvertedDoorDistance[RCJ(5,iYDist)];	// i16 bp18
+			if (iInvertedYDist >= 0) {
 				//^32CB:498F
-				i16 bp1a = tlbRectnoDoorPosition[RCJ(16,iCellPos)];
-				if (bp1a >= 0) {
+				i16 iDoorPosRectno = tlbRectnoDoorPosition[RCJ(16,iCellPos)];	// i16 bp1a
+				if (iDoorPosRectno >= 0) {
 					//^32CB:49A2
-					Door *bp04 = GET_ADDRESS_OF_RECORD0(bp0c);
-					U8 iDoorGDATIndex = glbMapDoorType[bp04->DoorType()];	// U8 bp0e
-					X16 bp12 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_IMG_COLORKEY_1);	// 0xe
-					if (bp12 != 0)
+					Door *xDoor = GET_ADDRESS_OF_RECORD0(bp0c);	// Door *bp04
+					U8 iDoorGDATIndex = glbMapDoorType[xDoor->DoorType()];	// U8 bp0e
+					X16 iDoorColorPassThrough = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_IMG_COLORKEY_1);	// X16 bp12
+					if (iDoorColorPassThrough != 0)
 					{
 						// SPX BEGIN
 						U8 mirroredDoor = 0;	// by default there is no mirror/flip, so value = 0
@@ -45270,103 +45270,103 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 						// SPX END
 
 						//^32CB:49DE
-						U8 bp0f = U8(iYDist) -1;	// Check image no from distance; note: distance 0 would give image 0xFF.
+						U8 iDoorImg = U8(iYDist) -1;	// U8 bp0f / Check image no from distance; note: distance 0 would give image 0xFF.
 						// Door at Y=1 uses image 0 ; Y=2 => image 1 ; Y=3 => image 2 ; Y=0 has normally no specific image, it is image 0 streched.
-						si = 0x40;
-						X16 bp0a = 0;
-						if (iYDist == 0 || QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtImage, bp0f) == 0) {	// 0xe
+						iStretchDual = 0x40;	// si = 0x40 = 64 <=> 100%
+						X16 iLightPalette = 0;	// X16 bp0a	// 0 = light -> 4 = dark
+						if (iYDist == 0 || QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtImage, iDoorImg) == 0) {	// 0xe
 							//^32CB:4A09
 							if (iYDist != 0) {
 								//^32CB:4A0F
-								bp0a = iYDist;
-								si = tlbDistanceStretch[RCJ(5,bp0a)];
+								iLightPalette = iYDist;
+								iStretchDual = tlbDistanceStretch[RCJ(5,iLightPalette)];	// SPX: iLightPalette is used whereas mostly iYDist is used instead. Aren't they just the same?
 							}
 							else {
 								//^32CB:4A21
-								si = 0x71;
+								iStretchDual = 0x71;	// si = 0x71 = 113 <=> 176%
 							}
 							//^32CB:4A24
-							bp0f = 0;
+							iDoorImg = 0;
 						}
 						//^32CB:4A28
-						X16 di = bp04->OrnateIndex();
-						i16 bp16;
+						X16 iOrnateIndex = xDoor->OrnateIndex();	// X16 di
+						i16 iCacheNo;	// i16 bp16
 #if (DM2_EXTENDED_MODE == 1)
-						if (di != 0 || bp06 == 5 || glbGlobalSpellEffects.SeeThruWalls > 0) {	// + window spell effect
+						if (iOrnateIndex != 0 || iDoorState == 5 || glbGlobalSpellEffects.SeeThruWalls > 0) {	// + window spell effect
 #else
-						if (di != 0 || bp06 == 5) {	// If there is any ornate or door is destroyed
+						if (iOrnateIndex != 0 || iDoorState == 5) {	// If there is any ornate or door is destroyed
 #endif
 							//^32CB:4A43
-							ExtendedPicture bp015c;
+							ExtendedPicture xPicture;	// ExtendedPicture bp015c;
 							// Get door graphics
 							//bp16 = QUERY_MULTILAYERS_PIC(&bp015c, GDAT_CATEGORY_DOORS, bp0e, bp0f, si, si, bp0a, 0, bp12, -1);	// 0xe
-							bp16 = QUERY_MULTILAYERS_PIC(&bp015c, GDAT_CATEGORY_DOORS, iDoorGDATIndex, bp0f, si, si, bp0a, mirroredDoor, bp12, -1);	// 0xe
-							DRAW_PICST(&bp015c);
-							FREE_PICT_MEMENT(&bp015c);
-							X16 bp20;
-							X16 bp22;
-							if (si == 0x40) {
+							iCacheNo = QUERY_MULTILAYERS_PIC(&xPicture, GDAT_CATEGORY_DOORS, iDoorGDATIndex, iDoorImg, iStretchDual, iStretchDual, iLightPalette, mirroredDoor, iDoorColorPassThrough, -1);	// 0xe
+							DRAW_PICST(&xPicture);
+							FREE_PICT_MEMENT(&xPicture);
+							X16 iStretchHorizontal;	// X16 bp20
+							X16 iStretchVertical;	// X16 bp22
+							if (iStretchDual == 0x40) {
 								//^32CB:4A88
 								i16 bp1c;
 								i16 bp1e;
 								
 								QUERY_GDAT_IMAGE_METRICS(GDAT_CATEGORY_DOORS, iDoorGDATIndex, 0, &bp1c, &bp1e);	// 0xe
-								bp20 = _32cb_48d5(glbTempPicture.width, bp1c);
-								bp22 = _32cb_48d5(glbTempPicture.height, bp1e);
+								iStretchHorizontal = _32cb_48d5(glbTempPicture.width, bp1c);
+								iStretchVertical = _32cb_48d5(glbTempPicture.height, bp1e);
 								
 							}
 							else {
 								//^32CB:4AC4
-								bp22 = bp20 = si;
+								iStretchVertical = iStretchHorizontal = iStretchDual;
 							}
 							//^32CB:4ACC
 							// If there is an ornate on the door ...
-							if (di != 0) {
+							if (iOrnateIndex != 0) {
 								//^32CB:4AD0
-								di--;
-								U8 iOrnateGDATIndex = glbMapDoorOrnatesList[di];	// (bp0d) Get the real ornate gfx from the current map ornate list.
+								iOrnateIndex--;
+								U8 iOrnateGDATIndex = glbMapDoorOrnatesList[iOrnateIndex];	// (bp0d) Get the real ornate gfx from the current map door ornate list.
 								// SPX: Get ornate
-								X16 bp14 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOOR_GFX, iOrnateGDATIndex, dtWordValue, GDAT_IMG_COLORKEY_1);	// 0xb
-								if (bp14 == 0) {
+								X16 iColorTransparencyOverlay = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOOR_GFX, iOrnateGDATIndex, dtWordValue, GDAT_IMG_COLORKEY_1);	// X16 bp14
+								if (iColorTransparencyOverlay == 0) {
 									//^32CB:4AEE
-									bp14 = 9;	// SPX: This is the "colorkey" index (generally not set in any GDAT2).
+									iColorTransparencyOverlay = 9;	// SPX: This is the "colorkey" index (generally not set in any GDAT2).
 								}
 								//^32CB:4AF3
 								// SPX: draw the ornate over the door // added for 
 								//QUERY_TEMP_PICST(0, bp20, bp22, 0, 0, bp08, 
 								
 								if (!SkCodeParam::bUseDM2ExtendedMode)
-									QUERY_TEMP_PICST(mirroredDoor, bp20, bp22, 0, 0, iYDist, 
-										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOOR_GFX, iOrnateGDATIndex, dtWordValue, GDAT_DOOR_ORNATE__POSITION) << 2) +bp18 +0x7d0,
-										-1, bp14, -1, GDAT_CATEGORY_DOOR_GFX, iOrnateGDATIndex, GDAT_DOOR_DECORATION_MASK
+									QUERY_TEMP_PICST(mirroredDoor, iStretchHorizontal, iStretchVertical, 0, 0, iYDist, 
+										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOOR_GFX, iOrnateGDATIndex, dtWordValue, GDAT_DOOR_ORNATE__POSITION) << 2) + iInvertedYDist +0x7d0,
+										-1, iColorTransparencyOverlay, -1, GDAT_CATEGORY_DOOR_GFX, iOrnateGDATIndex, GDAT_DOOR_DECORATION_MASK
 										);
 								else if (SkCodeParam::bUseDM2ExtendedMode)
 								{	// SPX: use the colorkey 10 (by default) or what's in GDAT instead of -1 for activating 'pass through' bitmaps
-									X16 iColorPassThrough = 10;
-									iColorPassThrough = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOOR_GFX, iDoorGDATIndex, dtWordValue, 4);
+									X16 iColorPassThrough = 10;	// 10 is standard DARK GREEN
+									iColorPassThrough = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOOR_GFX, iDoorGDATIndex, dtWordValue, GDAT_IMG_COLORKEY_1);
 									if (iColorPassThrough == 0)
 										iColorPassThrough = 10;
-									QUERY_TEMP_PICST(mirroredDoor, bp20, bp22, 0, 0, iYDist, 
-										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOOR_GFX, iOrnateGDATIndex, dtWordValue, GDAT_DOOR_ORNATE__POSITION) << 2) +bp18 +0x7d0,
-										-1, bp14, iColorPassThrough, GDAT_CATEGORY_DOOR_GFX, iOrnateGDATIndex, GDAT_DOOR_DECORATION_MASK
+									QUERY_TEMP_PICST(mirroredDoor, iStretchHorizontal, iStretchVertical, 0, 0, iYDist, 
+										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOOR_GFX, iOrnateGDATIndex, dtWordValue, GDAT_DOOR_ORNATE__POSITION) << 2) + iInvertedYDist +0x7d0,
+										-1, iColorTransparencyOverlay, iColorPassThrough, GDAT_CATEGORY_DOOR_GFX, iOrnateGDATIndex, GDAT_DOOR_DECORATION_MASK
 										);
 								}
 
-								glbTempPicture.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp16));
+								glbTempPicture.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(iCacheNo));
 								DRAW_TEMP_PICST();
 							}
 							//^32CB:4B45
-							if (bp06 == 5) {	// If door is destroyed .. then draw destroyed mask instead of any ornate
+							if (iDoorState == 5) {	// If door is destroyed .. then draw destroyed mask instead of any ornate
 								//^32CB:4B4B
-								X16 bp14 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_IMG_DOOR_COLORKEY_2);
-								if (bp14 == 0)
-									bp14 = 9;
+								X16 iColorTransparencyOverlay = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_IMG_DOOR_COLORKEY_2);	// X16 bp14
+								if (iColorTransparencyOverlay == 0)
+									iColorTransparencyOverlay = 9;	// 9 is standard CYAN
 
 								// SPX: (2016-10-30) Get the destroyed door mask and use default one if available
 								if (!SkCodeParam::bUseFixedMode)
-								QUERY_TEMP_PICST(0, bp20, bp22, 0, 0, iYDist, 
-									(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_DOOR_DESTROYED_MASK_POSITION) << 2) +bp18 +0x7d0,
-									-1, bp14, bp12, GDAT_CATEGORY_DOORS, iDoorGDATIndex, GDAT_DOOR_DESTROYED_MASK
+								QUERY_TEMP_PICST(0, iStretchHorizontal, iStretchVertical, 0, 0, iYDist, 
+									(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_DOOR_DESTROYED_MASK_POSITION) << 2) + iInvertedYDist +0x7d0,
+									-1, iColorTransparencyOverlay, iDoorColorPassThrough, GDAT_CATEGORY_DOORS, iDoorGDATIndex, GDAT_DOOR_DESTROYED_MASK
 									);
 								else if (SkCodeParam::bUseFixedMode)
 								{
@@ -45375,22 +45375,22 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 									U16 iDoorDestroyedMask = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtImage, GDAT_DOOR_DESTROYED_MASK);
 									if (iDoorDestroyedMask == (U16)-1) // not found, get the default one
 										iDoorDestroyedGDATIndex = GDAT_ITEM_DEFAULT_INDEX;
-									QUERY_TEMP_PICST(0, bp20, bp22, 0, 0, iYDist, 
-										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_DOOR_DESTROYED_MASK_POSITION) << 2) +bp18 +0x7d0,
-										-1, bp14, bp12, GDAT_CATEGORY_DOORS, iDoorDestroyedGDATIndex, GDAT_DOOR_DESTROYED_MASK
+									QUERY_TEMP_PICST(0, iStretchHorizontal, iStretchVertical, 0, 0, iYDist, 
+										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_DOOR_DESTROYED_MASK_POSITION) << 2) + iInvertedYDist +0x7d0,
+										-1, iColorTransparencyOverlay, iDoorColorPassThrough, GDAT_CATEGORY_DOORS, iDoorDestroyedGDATIndex, GDAT_DOOR_DESTROYED_MASK
 										);								
 								}
 								// End SPX: (2016-10-30) 
 								
-								glbTempPicture.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp16));
+								glbTempPicture.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(iCacheNo));
 								DRAW_TEMP_PICST();
 							}
 #if (DM2_EXTENDED_MODE == 1)
 							if (glbGlobalSpellEffects.SeeThruWalls > 0 && iYDist == 1 && yy == 7) {	// If Window spell is active, and display only if distance = 1 and just in front
 								
-								X16 bp14 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_IMG_DOOR_COLORKEY_2);
-								if (bp14 == 0)
-									bp14 = 9;
+								X16 iColorTransparencyOverlay = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_IMG_DOOR_COLORKEY_2);	// X16 bp14
+								if (iColorTransparencyOverlay == 0)
+									iColorTransparencyOverlay = 9;	// 9 is standard CYAN
 								
 								{
 									U16 iDoorSeeThruGDATIndex = iDoorGDATIndex;
@@ -45398,53 +45398,55 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 									U16 iDoorSeeThruMask = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtImage, GDAT_DOOR_SEE_THRU);
 									if (iDoorSeeThruMask == (U16)-1) // not found, get the default one
 										iDoorSeeThruGDATIndex = GDAT_ITEM_DEFAULT_INDEX;
-									QUERY_TEMP_PICST(0, bp20, bp22, 0, 0, iYDist, 
-										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_DOOR_DESTROYED_MASK_POSITION) << 2) +bp18 +0x7d0,
-										-1, bp14, bp12, GDAT_CATEGORY_DOORS, iDoorSeeThruGDATIndex, GDAT_DOOR_SEE_THRU
+									QUERY_TEMP_PICST(0, iStretchHorizontal, iStretchVertical, 0, 0, iYDist, 
+										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_DOOR_DESTROYED_MASK_POSITION) << 2) + iInvertedYDist +0x7d0,
+										-1, iColorTransparencyOverlay, iDoorColorPassThrough, GDAT_CATEGORY_DOORS, iDoorSeeThruGDATIndex, GDAT_DOOR_SEE_THRU
 										);								
 								}
 								
-								glbTempPicture.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp16));
+								glbTempPicture.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(iCacheNo));
 								DRAW_TEMP_PICST();
 							}
 #endif
 							//^32CB:4BBC
-							bp015c.colorKeyPassThrough = bp015c.b58[bp12];
-							bp015c.w56 = 0;
-							_0b36_00c3(bp16, &bp015c);
+							xPicture.colorKeyPassThrough = xPicture.b58[iDoorColorPassThrough];
+							xPicture.w56 = 0;
+							_0b36_00c3(iCacheNo, &xPicture);
 							// SPX: that draws the main door (without ornate)
-							COPY_MEMORY(&bp015c, &glbTempPicture, sizeof(ExtendedPicture));
+							COPY_MEMORY(&xPicture, &glbTempPicture, sizeof(ExtendedPicture));
 							glbTempPicture.pb44 = _4976_4c16;
 						}
 						else {
 							//^32CB:4C0C
-							bp16 = -1;
+							iCacheNo = -1;
 							//QUERY_TEMP_PICST(0, si, si, 0, 0, bp0a, -1, -1, bp12, -1, 0xe, bp0e, bp0f);
-							QUERY_TEMP_PICST(mirroredDoor, si, si, 0, 0, bp0a, -1, -1, bp12, -1, GDAT_CATEGORY_DOORS, iDoorGDATIndex, bp0f);
+							QUERY_TEMP_PICST(mirroredDoor, iStretchDual, iStretchDual, 0, 0, iLightPalette, -1, -1, iDoorColorPassThrough, -1, GDAT_CATEGORY_DOORS, iDoorGDATIndex, iDoorImg);
 						}
 						//^32CB:4C36
 						// SPX: this part change position of door when in intermediate state
-						if (bp06 < 4) {
+						if (iDoorState < 4) {	// 4 = closed. < 4 => intermediate state
 							//^32CB:4C3C
-							bp1a = bp1a +bp06;
-							if (bp04->OpeningDir() == 0) {
+							iDoorPosRectno = iDoorPosRectno + iDoorState;
+							if (xDoor->OpeningDir() == 0) // 0 = horizontal
+							{
+								X16 iWidth = 0;	// SPX: added this to not reuse "di" variable, already used for ornate index
 								//^32CB:4C56
 								glbTempPicture.width >>= 1;
-								di = glbTempPicture.width;
+								iWidth = glbTempPicture.width;
 								glbTempPicture.w4 |= 0x10;
-								glbTempPicture.w14 = glbTempPicture.w14 +di;
-								glbTempPicture.rectNo = bp1a +6;
+								glbTempPicture.w14 = glbTempPicture.w14 + iWidth;
+								glbTempPicture.rectNo = iDoorPosRectno + 6;
 								DRAW_TEMP_PICST();
-								glbTempPicture.w14 = glbTempPicture.w14 +di;
-								bp1a += 3;
+								glbTempPicture.w14 = glbTempPicture.w14 + iWidth;
+								iDoorPosRectno += 3;
 							}
 						}
 						//^32CB:4C86
-						glbTempPicture.rectNo = bp1a;
+						glbTempPicture.rectNo = iDoorPosRectno;
 						DRAW_TEMP_PICST();
-						if (bp16 >= 0) {
+						if (iCacheNo >= 0) {
 							//^32CB:4C96
-							FREE_TEMP_CACHE_INDEX(bp16);
+							FREE_TEMP_CACHE_INDEX(iCacheNo);
 						}
 					}
 				}
