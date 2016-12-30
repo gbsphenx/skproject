@@ -12361,20 +12361,20 @@ void SkWinCore::DRAW_PICST(ExtendedPicture *ref)
 	//^0B36:0A5C
 	U8 *bp04 = QUERY_PICT_BITS(ref);
 	//^0B36:0A6E
-	U16 bp06 = ref->rectNo;
+	U16 iRectNo = ref->rectNo;	// U16 bp06
 	//^0B36:0A78
 	i16 bp08;
 	i16 bp0a;
-	if (bp06 == 0xffff) {
+	if (iRectNo == 0xFFFF) {
 		//^0B36:0A7D
 		bp08 = ref->w32;
 		bp0a = ref->w34;
 	}
 	else {
 		//^0B36:0A8D
-		if ((bp06 & 0x8000) != 0 || ref->w28 != 0 || ref->w30 != 0) {
+		if ((iRectNo & 0x8000) != 0 || ref->w28 != 0 || ref->w30 != 0) {
 			//^0B36:0AA5
-			bp06 = bp06 | 0x8000;
+			iRectNo = iRectNo | 0x8000;
 			bp08 = ref->w32 + ref->w28;
 			bp0a = ref->w34 + ref->w30;
 		}
@@ -12384,7 +12384,7 @@ void SkWinCore::DRAW_PICST(ExtendedPicture *ref)
 			bp0a = ref->height;
 		}
 		//^0B36:0AD4
-		if (QUERY_BLIT_RECT(bp04, &ref->rc36, bp06, &bp08, &bp0a, ref->w26) == 0) {
+		if (QUERY_BLIT_RECT(bp04, &ref->rc36, iRectNo, &bp08, &bp0a, ref->w26) == 0) {
 			//^0B36:0B07
 			return;
 		}
@@ -12452,18 +12452,18 @@ void SkWinCore::DRAW_PICST(ExtendedPicture *ref)
 	if (ref->colorKeyPassThrough != -2) {
 		//^0B36:0BDF
 		FIRE_BLIT_PICTURE(
-			bp04,
-			ref->pb44,
-			&ref->rc36,
-			bp08,
-			bp0a,
-			READ_I16(bp04,-4),
-			si,
-			ref->colorKeyPassThrough,
-			ref->mirrorFlip,
-			READ_I16(bp04,-6),
-			bp0c,
-			(ref->w56 == 0) ? NULL : ref->b58
+			bp04,								// *src
+			ref->pb44,							// *dst
+			&ref->rc36,							// SRECT *rc
+			bp08,								// srcx
+			bp0a,								// srcy
+			READ_I16(bp04,-4),					// srcPitch
+			si,									// dstPitch
+			ref->colorKeyPassThrough,			// colorkey
+			ref->mirrorFlip,					// mirrorFlip
+			READ_I16(bp04,-6),					// srcBpp
+			bp0c,								// dstBpp
+			(ref->w56 == 0) ? NULL : ref->b58	// local pal
 			);
 	}
 	//^0B36:0C3D
@@ -20983,12 +20983,12 @@ U16 SkWinCore::QUERY_RECTNO_FOR_WALL_ORNATE(i16 cellPos, U16 ornateOffsetPos, U1
 	//^098D:0CD7
 	ENTER(0);
 	//^098D:0CDA
-	if (zz != 0) {
+	if (zz != 0) {	// taking side ornate
 		//^098D:0CE0
 		return tRectnoOffsetsWallOrnates[RCJ(16, cellPos)] + ornateOffsetPos;	// limiting cellpos to 16 means taking only Distance 0 to Distance 3
 	}
 	//^098D:0CEE
-	return cellPos * 25 + ornateOffsetPos + 3100;
+	return cellPos * 25 + ornateOffsetPos + 3100;	// taking front ornate
 }
 
 //^32CB:08C1
@@ -22262,7 +22262,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 	{
 		if (glbGlobalSpellEffects.SeeThruWalls > 0 && cellPos == 3)	// front D1 wall
 		{
-			return -1;
+			return -1;	// in case of see thru, don't show ornate at all
 		}
 	}
 #endif
@@ -22280,7 +22280,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 	//^32CB:15F9
 	i16 bp28 = bp14 >> 8;
 	//^32CB:15FF
-	i16 di = glbTabYAxisDistance[RCJ(23,cellPos)];
+	i16 iYDist = glbTabYAxisDistance[RCJ(23,cellPos)];	// i16 di
 	//^32CB:1609
 	U8 bp1f = U8(bp14) & 0xff;
 	//^32CB:1611
@@ -22306,30 +22306,30 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		si = glbSceneColorKey;
 	//^32CB:167C
 	U16 iOrnatePos = 0;	// U16 bp1a
-	U16 bp1e = 0;	// U16 bp1e
+	U16 iRefPoint = 0;	// U16 bp1e
 	if (bp2a != 0 || (iOrnatePos = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp1f, dtWordValue, GDAT_WALL_ORNATE__POSITION)) == 0) {
 		//^32CB:169B
 		iOrnatePos = ORNATE_POS__VCENTERED_HCENTERED;	// SPX: that must be the default ornate position (default = 12)
-		bp1e = 0;
+		iRefPoint = 0;	// 0 = point is centered
 	}
-	else {
+	else {	// values in GDAT are 1 to 25. shift it back to 0 to 24.
 		//^32CB:16A7
-		bp1e = iOrnatePos >> 8;	 // SPX: don't understand this
+		iRefPoint = iOrnatePos >> 8;	 // SPX: value in GDAT is 2 byte. Upper byte is how to draw image from ornate position
 		iOrnatePos = (iOrnatePos & 255) -1;
 	}
 	//^32CB:16BA
 	U16 iRectno = QUERY_RECTNO_FOR_WALL_ORNATE(cellPos, iOrnatePos, (yy != 0) ? 1 : 0);	// U16 bp1c; recto
 	//^32CB:16D9
-	U16 bp18 = 0;
-	U16 bp16 = 0;
-	bp18 = bp16 = tlbDistanceStretch[RCJ(5,di)];
+	U16 iStretchVertical = 0;	// U16 bp18
+	U16 iStretchHorizontal = 0;	// U16 bp16
+	iStretchVertical = iStretchHorizontal = tlbDistanceStretch[RCJ(5,iYDist)];
 	
 	//^32CB:16E5
 	if (alcoveType == WALL_ORNATE_OBJECT__CRYOCELL && yy == 0) {	// bp22 == 3
 		//^32CB:16F7
 		U16 bp34 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp1f, dtImageOffset, GDAT_GFXSET_DATA_FD);	// 0x09 .. .. 0xFD
 		//^32CB:170D
-		QUERY_TEMP_PICST(iFlipImage, bp16, bp18, i8(bp34 >> 8), i8(bp34), di, iRectno, bp1e, -1, -1, GDAT_CATEGORY_CHAMPIONS, U8(_4976_5a80[cellPos].x2.w14), 1);
+		QUERY_TEMP_PICST(iFlipImage, iStretchHorizontal, iStretchVertical, i8(bp34 >> 8), i8(bp34), iYDist, iRectno, iRefPoint, -1, -1, GDAT_CATEGORY_CHAMPIONS, U8(_4976_5a80[cellPos].x2.w14), 1);
 		//^32CB:174C
 		if (zz == 0)
 			//^32CB:1752
@@ -22342,45 +22342,45 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 			//^32CB:1F38
 			return si;
 		//^32CB:1765
-		if (di == 1) {
+		if (iYDist == 1) {
 			//^32CB:176A
 			MAKE_BUTTON_CLICKABLE(&glbTempPicture.rc36, 6, U8(cellPos));
 		}
 	}
 	//^32CB:177A
-	if (di == 2 && (yy <= -2 || yy >= 2))
+	if (iYDist == 2 && (yy <= -2 || yy >= 2))
 		//^32CB:178B
-		bp16 = 0x72;
+		iStretchHorizontal = 0x72;	// 0x72 = 114	=> 178%
 	//^32CB:1792
-	else if (di == 3 && (yy <= -2 || yy >= 2))
+	else if (iYDist == 3 && (yy <= -2 || yy >= 2))
 		//^32CB:17A3
-		bp16 = 0x4c;
+		iStretchHorizontal = 0x4C;	// 0x4C = 76 => 118%
 	//^32CB:17A8
 	if (bp2a != 0) {
 		//^32CB:17B1
 		U8 bp20;
 		if (yy == 0) {
 			//^32CB:17B7
-			bp20 = 0xfc;
+			bp20 = 0xFC;
 		}
 		else if (yy <= -1) {
 			//^32CB:17C3
-			bp20 = 0xfd;
+			bp20 = 0xFD;
 		}
 		else {
 			//^32CB:17C9
-			if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dtImage, 0xfe) != 0) { // SPX: GDAT2 never has 0xFE image ???
+			if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dtImage, 0xFE) != 0) { // SPX: GDAT2 never has 0xFE image ???
 				//^32CB:17E0
-				bp20 = 0xfe;
+				bp20 = 0xFE;
 			}
 			else {
 				//^32CB:17E6
-				bp20 = 0xfd;
+				bp20 = 0xFD;
 				iFlipImage = 1;	// do flip
 			}
 		}
 		//^32CB:17EF
-		QUERY_TEMP_PICST(iFlipImage, bp16, bp18, 0, 0, di, iRectno, bp1e, si, -1, GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, bp20);
+		QUERY_TEMP_PICST(iFlipImage, iStretchHorizontal, iStretchVertical, 0, 0, iYDist, iRectno, iRefPoint, si, -1, GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, bp20);
 		//^32CB:1817
 		if (zz == 0)
 			//^32CB:181D
@@ -22541,8 +22541,8 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		//^32CB:1B80
 		bp01d6.w12 = bp26;
 		bp01d6.w6 = 0xffff;
-		bp01d6.w52 = bp16;
-		bp01d6.w54 = bp18;
+		bp01d6.w52 = iStretchHorizontal;
+		bp01d6.w54 = iStretchVertical;
 		//^32CB:1B9B
 		if (bp4c != 0) {
 			//^32CB:1BA1
@@ -22560,12 +22560,12 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		//^32CB:1BDA
 		bp01d6.w56 = 16;
 		//^32CB:1BE1
-		_32cb_0804(bp01d6.b58, U8(di), si, -1, bp01d6.w56);
+		_32cb_0804(bp01d6.b58, U8(iYDist), si, -1, bp01d6.w56);
 		//^32CB:1BF3
 		bp01d6.pb44 = _4976_4c16;
 		//^32CB:1C02
 		bp01d6.rectNo = iRectno;
-		bp01d6.w26 = bp1e;
+		bp01d6.w26 = iRefPoint;
 		bp01d6.w28 = bp2c;
 		bp01d6.w30 = bp2e;
 		bp01d6.colorKeyPassThrough = si;
@@ -22617,9 +22617,9 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 	SRECT *bp12;
 	if (yy == 0 && QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp1f, dtWordValue, GDAT_WALL_ORNATE__WINDOW) != 0) {
 		//^32CB:1CCB
-		QUERY_TEMP_PICST(iFlipImage, bp16, bp18, 0, 0, di, iRectno, bp1e, -3, -3, GDAT_CATEGORY_WALL_GFX, bp1f, iImageEntry);
+		QUERY_TEMP_PICST(iFlipImage, iStretchHorizontal, iStretchVertical, 0, 0, iYDist, iRectno, iRefPoint, -3, -3, GDAT_CATEGORY_WALL_GFX, bp1f, iImageEntry);
 		//^32CB:1CF4
-		QUERY_TEMP_PICST(iFlipImage, bp16, bp18, glbTempPicture.w28, glbTempPicture.w30, di, iRectno, bp1e, si, -1, GDAT_CATEGORY_WALL_GFX, bp1f, 200);
+		QUERY_TEMP_PICST(iFlipImage, iStretchHorizontal, iStretchVertical, glbTempPicture.w28, glbTempPicture.w30, iYDist, iRectno, iRefPoint, si, -1, GDAT_CATEGORY_WALL_GFX, bp1f, 200);
 		//^32CB:1D1F
 		if (zz == 0)
 			//^32CB:1D25
@@ -22629,7 +22629,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		//^32CB:1D2F
 		ExtendedPicture bp0310;
 		U16 bp26 = QUERY_MULTILAYERS_PIC(
-			&bp0310, GDAT_CATEGORY_WALL_GFX, bp1f, iImageEntry, bp16, bp18, di, iFlipImage, si,
+			&bp0310, GDAT_CATEGORY_WALL_GFX, bp1f, iImageEntry, iStretchHorizontal, iStretchVertical, iYDist, iFlipImage, si,
 			QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp1f, dtWordValue, GDAT_IMG_WALL_COLORKEY_2)	// 0x11 is colorkey2 for seeing outside through window (0xC8 image)
 			);
 		//^32CB:1D67
@@ -22644,7 +22644,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		bp0310.colorKeyPassThrough = bp0310.b58[si];
 		bp0310.pb44 = _4976_4c16;
 		bp0310.rectNo = iRectno;
-		bp0310.w26 = bp1e;
+		bp0310.w26 = iRefPoint;
 		bp0310.w56 = 0;
 		//^32CB:1DD0
 		_0b36_00c3(bp26, &bp0310);
@@ -22657,7 +22657,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 	}
 	else {	// No window, standard wall ornate to display
 		//^32CB:1E03
-		QUERY_TEMP_PICST(iFlipImage, bp16, bp18, 0, 0, di, iRectno, bp1e, si, -1, GDAT_CATEGORY_WALL_GFX, bp1f, iImageEntry);
+		QUERY_TEMP_PICST(iFlipImage, iStretchHorizontal, iStretchVertical, 0, 0, iYDist, iRectno, iRefPoint, si, -1, GDAT_CATEGORY_WALL_GFX, bp1f, iImageEntry);
 		//^32CB:1E2B
 		if (zz == 0)
 			//^32CB:1E31
@@ -22692,14 +22692,14 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 			//^32CB:1EB9
 			_32cb_0f82(
 				GET_ADDRESS_OF_ACTU(_4976_5a80[cellPos].x2.w14), 
-				bp1f, di, cellPos, bp16, bp18, iRectno, bp1e, si
+				bp1f, iYDist, cellPos, iStretchHorizontal, iStretchVertical, iRectno, iRefPoint, si
 				);
 			//^32CB:1EEF
 			//^32CB:1F38
 			return si;
 		}
 		//^32CB:1EF1
-		QUERY_TEMP_PICST(iFlipImage, bp16, bp18, 0, 0, di, iRectno, bp1e, si, -1, GDAT_CATEGORY_WALL_GFX, bp1f, GDAT_WALL_ORNATE__OVERLAY);
+		QUERY_TEMP_PICST(iFlipImage, iStretchHorizontal, iStretchVertical, 0, 0, iYDist, iRectno, iRefPoint, si, -1, GDAT_CATEGORY_WALL_GFX, bp1f, GDAT_WALL_ORNATE__OVERLAY);
 		//^32CB:1F17
 		if (zz == 0)
 			//^32CB:1F1D
@@ -33186,7 +33186,17 @@ SRECT *SkWinCore::UNION_RECT(SRECT *rc1, const SRECT *rc2, __int16 *offx, __int1
 	return NULL;
 }
 
-//^098D:0599
+//^098D:0599 
+// SPX: ww is the method to know how to start drawing image from ref point (can be ornate position)
+// 0 => centered
+// 1 => point is corner left/upper (0,0)
+// 2 => point is corner right/upper (x,0)
+// 3 => point is corner right/bottom (x,y)
+// 4 => point is corner left/bottom (0,y)
+// 5 => centered from top (image is then moved to lower)
+// 6 => centered from right (image is then moved to left)
+// 7 => centered from bottom (image is then moved to upper)
+// 8 => centered from left (image is then moved to right)
 SRECT *SkWinCore::QUERY_BLIT_RECT(Bit8u *buff, SRECT *rect, Bit16u rectno, __int16 *yourcx, __int16 *yourcy, __int16 ww) //#DS=4976?
 {
 	SkD((DLV_RCT, "RCT: -> QUERY_BLIT_RECT(%p,%p(     x,     x,     x,     x),%4d,%3d,%3d,%3d)\n"
@@ -45144,38 +45154,38 @@ void SkWinCore::DRAW_DOOR_FRAMES(i16 iViewportCell, X16 yy)	// i16 xx, X16 yy
 			}
 		}
 		//^32CB:479B
-		X16 bp0c;
-		X16 bp08;
-		X16 bp0a;
+		X16 iLocalCell;	// X16 bp0c
+		X16 iFrameLeft;	// X16 bp08
+		X16 iFrameRight;	// X16 bp0a
 		if (glbGeneralFlipGraphics != 0) {
 			//^32CB:47A2
-			bp0c = tlbDoorSideFramesReorder[RCJ(23,iViewportCell)];
-			bp08 = 1;
-			bp0a = 0;
+			iLocalCell = tlbDoorSideFramesReorder[RCJ(23,iViewportCell)];
+			iFrameLeft = 1;	// 1 = right
+			iFrameRight = 0;	// 0 = left
 		}
 		else {
 			//^32CB:47B6
-			bp0c = iViewportCell;
-			bp08 = 0;
-			bp0a = 1;
+			iLocalCell = iViewportCell;
+			iFrameLeft = 0;	// 0 = left
+			iFrameRight = 1;	// 1 = right
 		}
 		//^32CB:47C3
-		if ((yy & 2) != 0) {
+		if ((yy & 2) != 0) {	// left door frame
 			//^32CB:47CA
 			// X8 bp05 = tlbGraphicsDoorSideFrames[RCJ(14,bp0c)][RCJ(2,bp08)]
-			X8 iDoorFrameGfx = tlbGraphicsDoorSideFrames[RCJ(14,bp0c)][RCJ(2,bp08)];	// door side frames (28 slots divided into 2 parts (2 * 14))
-			if (iDoorFrameGfx != 0xff) {
+			X8 iDoorFrameGfx = tlbGraphicsDoorSideFrames[RCJ(14,iLocalCell)][RCJ(2,iFrameLeft)];	// door side frames (28 slots divided into 2 parts (2 * 14))
+			if (iDoorFrameGfx != 0xFF) {
 				//^32CB:47DD
 				QUERY_TEMP_PICST(0, 64, 64, 0, 0, 0, QUERY_CREATURE_BLIT_RECTI(iViewportCell, 10, 0), 4, colorkey, -1, GDAT_CATEGORY_GRAPHICSSET, gfxset, iDoorFrameGfx); // door frame left
 				DRAW_TEMP_PICST();
 			}
 		}
 		//^32CB:480E
-		if ((yy & 4) != 0) {
+		if ((yy & 4) != 0) {	// right door frame (holding button)
 			//^32CB:4818
 			// X8 bp05 = tlbGraphicsDoorSideFrames[RCJ(14,bp0c)][RCJ(2,bp0a)];
-			X8 iDoorFrameGfx = tlbGraphicsDoorSideFrames[RCJ(14,bp0c)][RCJ(2,bp0a)];
-			if (iDoorFrameGfx != 0xff) {
+			X8 iDoorFrameGfx = tlbGraphicsDoorSideFrames[RCJ(14,iLocalCell)][RCJ(2,iFrameRight)];
+			if (iDoorFrameGfx != 0xFF) {
 				//^32CB:482E
 				QUERY_TEMP_PICST(1, 64, 64, 0, 0, 0, QUERY_CREATURE_BLIT_RECTI(iViewportCell, 14, 0), 3, colorkey, -1, GDAT_CATEGORY_GRAPHICSSET, gfxset, iDoorFrameGfx); // door frame right
 				DRAW_TEMP_PICST();
@@ -45424,7 +45434,7 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 						}
 						//^32CB:4C36
 						// SPX: this part change position of door when in intermediate state
-						if (iDoorState < 4) {	// 4 = closed. < 4 => intermediate state
+						if (iDoorState < 4) {	// 4 = closed. < 4 => intermediate state. 0 = opened
 							//^32CB:4C3C
 							iDoorPosRectno = iDoorPosRectno + iDoorState;
 							if (xDoor->OpeningDir() == 0) // 0 = horizontal
@@ -45436,14 +45446,19 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 								glbTempPicture.w4 |= 0x10;
 								glbTempPicture.w14 = glbTempPicture.w14 + iWidth;
 								glbTempPicture.rectNo = iDoorPosRectno + 6;
-								DRAW_TEMP_PICST();
+								DRAW_TEMP_PICST();	// will draw RIGHT part of the door
 								glbTempPicture.w14 = glbTempPicture.w14 + iWidth;
 								iDoorPosRectno += 3;
 							}
 						}
+						// Explanation on door rectno offsets:
+						// 0 = closed
+						// 1 - 3 = vertical positions (¼, ½, ¾ closed)
+						// 4 - 6 = horizontal left positions (¼, ½, ¾ closed)	=> hence +3 on rectno for horizontal opening
+						// 7 - 9 = horizontal right positions (¼, ½, ¾ closed)	=> hence +6 on rectno for horizontal opening
 						//^32CB:4C86
 						glbTempPicture.rectNo = iDoorPosRectno;
-						DRAW_TEMP_PICST();
+						DRAW_TEMP_PICST();	// draw the door or LEFT part for horizontal opening
 						if (iCacheNo >= 0) {
 							//^32CB:4C96
 							FREE_TEMP_CACHE_INDEX(iCacheNo);
