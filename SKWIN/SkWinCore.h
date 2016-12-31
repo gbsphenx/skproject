@@ -241,7 +241,7 @@ protected:
 	Bit16u	glbMagicMapHeight;		// (_4976_0146) height of map chip (=7)
 	i16		glbMagicMapInterlineX;		// =1 pixels between two tiles
 	Bit16u	glbMagicMapInterlineY;		// =1
-	RectTable	_4976_0194;
+	RectTable	glbRectNoTable;	// (_4976_0194) starting mem for rectno info
 	Bit16u	_4976_0198;		// current ring buffer index
 	Bit16u	glbGameHasEnded;		// (_4976_01ba)
 	Bit16u	_4976_022c;		// 1 if modal dialog working

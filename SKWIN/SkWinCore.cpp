@@ -5540,7 +5540,7 @@ ExtendedPicture *SkWinCore::QUERY_GDAT_SUMMARY_IMAGE(ExtendedPicture *ref, Bit8u
 		//^0B36:058F
 		ref->w6 = QUERY_GDAT_ENTRY_DATA_INDEX(iCategory, iItemNo, dtImage, iEntry);
 		//^0B36:05AC
-		__int16 bp02 = QUERY_GDAT_ENTRY_DATA_INDEX(iCategory, iItemNo, dtImageOffset, iEntry);
+		__int16 bp02 = QUERY_GDAT_ENTRY_DATA_INDEX(iCategory, iItemNo, dtImageOffset, 0xFE);
 		//^0B36:05C4
 		if (bp02 != 0) {
 			//^0B36:05C8
@@ -22292,10 +22292,10 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 	//^32CB:162D
 	U16 alcoveType = IS_WALL_ORNATE_ALCOVE(bp1f);	// U16 bp22
 	//^32CB:163A
-	U16 bp24 = 0; // SPX: fixed value init
+	U16 iDoNotFlip = 0; // U16 bp24 = 0; SPX: fixed value init
 	if (bp2a == 0) {
 		//^32CB:1640
-		bp24 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp1f, dtWordValue, GDAT_WALL_ORNATE__DO_NOT_FLIP);	// Has some role for general graphics flip
+		iDoNotFlip = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp1f, dtWordValue, GDAT_WALL_ORNATE__DO_NOT_FLIP);	// Has some role for general graphics flip
 	}
 	//^32CB:1655
 	U16 iFlipImage = 0;	// U16 bp0e = 0; use flip or not
@@ -22583,7 +22583,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		//^32CB:1C4A
 		iImageEntry = GDAT_WALL_IMAGE__VIEW_FRONT;	// = 1;	front view
 		//^32CB:1C4E
-		if (bp24 == 0) {
+		if (iDoNotFlip == 0) {
 			//^32CB:1C54
 			if ((glbTabYAxisDistance[RCJ(23,cellPos)] & 1) != 0) {
 				//^32CB:1C5E
@@ -32759,7 +32759,7 @@ void SkWinCore::LOAD_RECTS_AND_COMPRESS(Bit8u cls1, Bit8u cls2, Bit8u cls4) //#D
 	//^098D:11C0
 	LOAD_GDAT_ENTRY_DATA_TO(cls1, cls2, dt04, cls4, bp04);
 	//^098D:11DC
-	COMPRESS_RECTS((__int16 *)bp04, bp08, &_4976_0194, &SkWinCore::ALLOC_UPPER_MEMORY);
+	COMPRESS_RECTS((__int16 *)bp04, bp08, &glbRectNoTable, &SkWinCore::ALLOC_UPPER_MEMORY);
 	//^098D:11F9
 	DEALLOC_LOWER_MEMORY(bp08);
 }
@@ -32891,6 +32891,8 @@ void SkWinCore::COMPRESS_RECTS(__int16 *data, Bit32u size, RectTable *zz, Bit8u 
 		bp04->b8 = (Bit8u)bp17;
 		//^098D:101B
 		bp04->b9 = (Bit8u)bp1a;
+		SkD((DLV_RCT, "RCT: COMPRESS_RECTS (%p,(%d,%d,%d,%d))\n"
+			, (Bitu)bp04->pb0, (Bitu)bp04->w4, (Bitu)bp04->w6, (Bitu)bp04->b8, (Bitu)bp04->b9));
 		//^098D:1022
 		bp04++;
 		//^098D:1026
@@ -32981,17 +32983,17 @@ SRECT *SkWinCore::QUERY_RECT(RectTable *entry, Bit16u rectno) //#DS=4976?
 	// TODO: ’P‘Ì“®ìŠm”FÏ 13:59 2006/05/07
 	//^098D:030F
 	//^098D:0315
-	Bit16u si = rectno;
+	Bit16u iRequestedRectNo = rectno;	// Bit16u si
 	//^098D:0318
-	if (si == 0)
+	if (iRequestedRectNo == 0)
 		return NULL;
 	//^098D:031F
 	for (; entry != NULL; entry = entry->pb0) {
 		//^098D:0322
-		if (entry->w4 > si || entry->w6 < si)
+		if (entry->w4 > iRequestedRectNo || entry->w6 < iRequestedRectNo)
 			continue;
 		//^098D:0337
-		si -= entry->w4;
+		iRequestedRectNo -= entry->w4;
 		//^098D:033B
 		_4976_0198++;
 		//^098D:033F
@@ -33023,7 +33025,7 @@ SRECT *SkWinCore::QUERY_RECT(RectTable *entry, Bit16u rectno) //#DS=4976?
 			PTR_ADVANCE(entry,+2);
 		}
 		//^098D:039D
-		PTR_ADVANCE(entry,+(CALC_SIZE_OF_COMPRESSED_RECT(bp05) * si));
+		PTR_ADVANCE(entry,+(CALC_SIZE_OF_COMPRESSED_RECT(bp05) * iRequestedRectNo));
 		//^098D:03B8
 		if ((bp05 & 4) != 0) {
 			//^098D:03BE
@@ -33228,7 +33230,7 @@ SRECT *SkWinCore::QUERY_BLIT_RECT(Bit8u *buff, SRECT *rect, Bit16u rectno, __int
 		rectno &= 0x7fff;
 	}
 	//^098D:05C6
-	bp04 = QUERY_RECT(_4976_0194.pb0, rectno);
+	bp04 = QUERY_RECT(glbRectNoTable.pb0, rectno);
 	//^098D:05DE
 	if (bp04 == NULL) {
 		//^098D:05AA
@@ -33289,7 +33291,7 @@ SRECT *SkWinCore::QUERY_BLIT_RECT(Bit8u *buff, SRECT *rect, Bit16u rectno, __int
 		//^098D:06B1
 		if (bp04->x >= 10 && bp04->x <= 18) {
 			//^098D:06C6
-			bp08 = QUERY_RECT(_4976_0194.pb0, bp04->y);
+			bp08 = QUERY_RECT(glbRectNoTable.pb0, bp04->y);
 			//^098D:06DF
 			if (bp08 == NULL)
 				break;
@@ -33299,7 +33301,7 @@ SRECT *SkWinCore::QUERY_BLIT_RECT(Bit8u *buff, SRECT *rect, Bit16u rectno, __int
 			bp12 = bp08->x;
 			bp24 = bp08->y;
 			//^098D:06FE
-			bp08 = QUERY_RECT(_4976_0194.pb0, bp08->y);
+			bp08 = QUERY_RECT(glbRectNoTable.pb0, bp08->y);
 			//^098D:0717
 			if (bp08 == NULL)
 				break;
@@ -33472,7 +33474,7 @@ SRECT *SkWinCore::QUERY_BLIT_RECT(Bit8u *buff, SRECT *rect, Bit16u rectno, __int
 		}
 		else {
 			//^098D:086E
-			bp08 = QUERY_RECT(_4976_0194.pb0, bp04->y);
+			bp08 = QUERY_RECT(glbRectNoTable.pb0, bp04->y);
 			//^098D:088A
 			if (bp08 == NULL)
 				break;
@@ -34081,13 +34083,13 @@ SRECT *SkWinCore::SCALE_RECT(Bit16u rectno, SRECT *rc, Bit16u horzResolution, Bi
 	Bit16u di = horzResolution;
 	Bit16u si = vertResolution;
 	//^098D:0D4B
-	SRECT *bp04 = QUERY_RECT(&_4976_0194, rectno);
+	SRECT *bp04 = QUERY_RECT(&glbRectNoTable, rectno);
 	//^098D:0D63
 	if (bp04 != NULL) {
 		//^098D:0D6A
 		if (bp04->y != 0) {
 			//^098D:0D77
-			bp04 = QUERY_RECT(&_4976_0194, bp04->y);
+			bp04 = QUERY_RECT(&glbRectNoTable, bp04->y);
 			//^098D:0D93
 			if (bp04 != NULL) {
 				//^098D:0D9A
@@ -43234,12 +43236,12 @@ X16 SkWinCore::_098d_04c7(X16 rcno1, X16 rcno2, X16 scale, X16 *ss, X16 *tt)
 	ENTER(10);
 	//^098D:04CD
 	i16 si = scale;
-	SRECT *bp04 = QUERY_RECT(&_4976_0194, rcno1);
+	SRECT *bp04 = QUERY_RECT(&glbRectNoTable, rcno1);
 	if (bp04 == NULL) {
 		return -1;
 	}
 	//^098D:04F2
-	SRECT *bp08 = QUERY_RECT(&_4976_0194, rcno2);
+	SRECT *bp08 = QUERY_RECT(&glbRectNoTable, rcno2);
 	if (bp08 == NULL) {
 		return -1;
 	}
@@ -63966,7 +63968,7 @@ SkWinCore::SkWinCore()
 	_4976_5d34 = 0;
 	_4976_5d58 = 0;
 	_4976_5cae = 0;
-	zeroMem(&_4976_0194, sizeof(_4976_0194));
+	zeroMem(&glbRectNoTable, sizeof(glbRectNoTable));
 	_4976_4ba4	 = 0;
 	_4976_4968 = 1; // EMS is always avail.
 	_4976_00f6 = 224;
