@@ -31,6 +31,12 @@ Creature.HP4_5_9	renamed		SetTriggerYPos
 Creature.HP4_A_F	renamed		SetTriggerMap
 
 
+SkGlobal.cpp (GLOBAL VARIABLES / TABLES)
+----------------------------------------
+
+_4976_4116	renamed	glbTabXAxisDistance
+
+
 A.CPP / SkWinCore.cpp (VARIABLES/TABLES)
 ----------------------------------------
 

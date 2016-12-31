@@ -1,23 +1,23 @@
-SKWin.Release_EN_JP.exe
------------------------
-DM2_FULL_JAPANESE = 0
-DM2_EXTENDED_MODE = 0
-bUseSuperMode = false
+BUILDS Names and Features
+-------------------------
 
-SKWin.Release_JP_JP.exe
------------------------
-DM2_FULL_JAPANESE = 1
-DM2_EXTENDED_MODE = 0
-bUseSuperMode = false
+SKWin.Standard.exe
+------------------
+Supposed to act as original code.
 
-SKWin.Mod.Release.exe
------------------------
-DM2_FULL_JAPANESE = 1
-DM2_EXTENDED_MODE = 1
-bUseSuperMode = false
+DM2_EXTENDED_MODE    = 0
+DM2_DEBUG_SUPER_MODE = 0
 
-SKWin.SuperMode.exe
--------------------
-DM2_FULL_JAPANESE = 1
-DM2_EXTENDED_MODE = 1
-bUseSuperMode = true
+
+SKWin.Release.Extended.exe
+--------------------------
+
+DM2_EXTENDED_MODE    = 1
+DM2_DEBUG_SUPER_MODE = 0
+
+
+SKWin.Release.Extended.Super.exe
+--------------------------------
+
+DM2_EXTENDED_MODE    = 1
+DM2_DEBUG_SUPER_MODE = 1

@@ -3,209 +3,82 @@
 <pre>
 <h1>Build Log</h1>
 <h3>
---------------------Configuration: skwinmfc - Win32 Debug--------------------
+--------------------Configuration: skwinmfc - Win32 Release--------------------
 </h3>
 <h3>Command Lines</h3>
-Creating temporary file "C:\DOCUME~1\Sphenx\LOCALS~1\Temp\RSP2234.tmp" with contents
+Creating temporary file "C:\DOCUME~1\Sphenx\LOCALS~1\Temp\RSP28B.tmp" with contents
 [
-/nologo /MTd /W3 /Gm /GX /ZI /Od /I "./al/include" /I "." /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USE_MFC60" /FR"Debug/" /Fp"Debug/skwinmfc.pch" /Yu"StdAfx.h" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
-"G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\DME.cpp"
-"G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp"
+/nologo /MT /W3 /GX /O2 /I "./al/include" /I "." /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USE_MFC60" /FR"Release/" /Fp"Release/skwinmfc.pch" /Yu"StdAfx.h" /Fo"Release/" /Fd"Release/" /FD /c 
+"G:\PROJECT_GITHUB\SKPROJECT\SKWIN\DME.cpp"
+"G:\PROJECT_GITHUB\SKPROJECT\SKWIN\fileset.cpp"
+"G:\PROJECT_GITHUB\SKPROJECT\SKWIN\SBlast.cpp"
+"G:\PROJECT_GITHUB\SKPROJECT\SKWIN\SkCodeParam.cpp"
+"G:\PROJECT_GITHUB\SKPROJECT\SKWIN\SkGlobal.cpp"
+"G:\PROJECT_GITHUB\SKPROJECT\SKWIN\SkWin.cpp"
+"G:\PROJECT_GITHUB\SKPROJECT\SKWIN\SkWinCore.cpp"
+"G:\PROJECT_GITHUB\SKPROJECT\SKWIN\SkWinMFC.cpp"
 ]
-Creating command line "cl.exe @C:\DOCUME~1\Sphenx\LOCALS~1\Temp\RSP2234.tmp" 
-Creating temporary file "C:\DOCUME~1\Sphenx\LOCALS~1\Temp\RSP2235.tmp" with contents
+Creating command line "cl.exe @C:\DOCUME~1\Sphenx\LOCALS~1\Temp\RSP28B.tmp" 
+Creating temporary file "C:\DOCUME~1\Sphenx\LOCALS~1\Temp\RSP28C.tmp" with contents
 [
-/nologo /subsystem:console /incremental:yes /pdb:"Debug/skwinmfc.pdb" /debug /machine:I386 /out:"Debug/skwinmfc.exe" /pdbtype:sept /libpath:"./al/libs/Win32" 
-".\Debug\AboutDlg.obj"
-".\Debug\DME.obj"
-".\Debug\fileset.obj"
-".\Debug\SBlast.obj"
-".\Debug\SkCodeParam.obj"
-".\Debug\SkGlobal.obj"
-".\Debug\SkWin.obj"
-".\Debug\SkWinCore.obj"
-".\Debug\skwindebug.obj"
-".\Debug\SkWinMFC.obj"
-".\Debug\StdAfx.obj"
-".\Debug\A.res"
+/nologo /subsystem:console /incremental:no /pdb:"Release/skwinmfc.pdb" /machine:I386 /out:"Release/skwinmfc.exe" /libpath:"./al/libs/Win32" 
+.\Release\AboutDlg.obj
+.\Release\DME.obj
+.\Release\fileset.obj
+.\Release\SBlast.obj
+.\Release\SkCodeParam.obj
+.\Release\SkGlobal.obj
+.\Release\SkWin.obj
+.\Release\SkWinCore.obj
+.\Release\skwindebug.obj
+.\Release\SkWinMFC.obj
+.\Release\StdAfx.obj
+.\Release\A.res
 ]
-Creating command line "link.exe @C:\DOCUME~1\Sphenx\LOCALS~1\Temp\RSP2235.tmp"
+Creating command line "link.exe @C:\DOCUME~1\Sphenx\LOCALS~1\Temp\RSP28C.tmp"
 <h3>Output Window</h3>
 Compiling...
 DME.cpp
+fileset.cpp
+SBlast.cpp
+SkCodeParam.cpp
+SkGlobal.cpp
+SkWin.cpp
 SkWinCore.cpp
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(16769) : warning C4305: 'argument' : truncation from 'const int' to '__int16'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(16769) : warning C4309: 'argument' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(34394) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(34394) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(34602) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(34602) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(35441) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(35441) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(35473) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(35473) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(35476) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(35476) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(35479) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(35479) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(35702) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(35702) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(35752) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(35752) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(35757) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(35757) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(35835) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(35835) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(35841) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(35841) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(35964) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(35964) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(36040) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(36040) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(36127) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(36127) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(36203) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(36203) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(36350) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(36350) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(36515) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(36515) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(36860) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(36860) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(36909) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(36909) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(37051) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(37051) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(37301) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(37301) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(37457) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(37457) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(37630) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(37630) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(38658) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(38658) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(39016) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(39016) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(39038) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(39038) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(39356) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(39356) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(40190) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(40190) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(40399) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(40399) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(41733) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(41733) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(42123) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(42123) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(42131) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(42131) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(42144) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(42144) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(42149) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(42149) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(42289) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(42289) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(42350) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(42350) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(42355) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(42355) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(44121) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(44121) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(46929) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(46929) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(47056) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(47056) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(47060) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(47060) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(47152) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(47152) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(47529) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(47529) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(47746) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(47746) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(50303) : warning C4305: 'argument' : truncation from 'const int' to '__int16'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(50303) : warning C4309: 'argument' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(50303) : warning C4305: 'argument' : truncation from 'const int' to '__int16'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(50303) : warning C4309: 'argument' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(51475) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(51475) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(52162) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(52162) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(52167) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(52167) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(52172) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(52172) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(52177) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(52177) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(52182) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(52182) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(52187) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(52187) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(52192) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(52192) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(52387) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(52387) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(52556) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(52556) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(53655) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(53655) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(54283) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(54283) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(55087) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(55087) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(55511) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(55511) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(56447) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(56447) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(57363) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(57363) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(59328) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(59328) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(59659) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(59659) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(62173) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(62173) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(62328) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(62328) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(62429) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(62429) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(62810) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(62810) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(62813) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(62813) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(62816) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(62816) : warning C4309: 'initializing' : truncation of constant value
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(63252) : warning C4305: 'initializing' : truncation from 'int' to 'short'
-G:\PROJECT\SKWINSPX\FULL_COPY_LOCAL_SVN_2015-03-22\SKWIN\SkWinCore.cpp(63252) : warning C4309: 'initializing' : truncation of constant value
-g:\project\skwinspx\full_copy_local_svn_2015-03-22\skwin\skval2.h(140) : warning C4305: '=' : truncation from 'const int' to '__int16'
-g:\project\skwinspx\full_copy_local_svn_2015-03-22\skwin\skval2.h(173) : warning C4305: '=' : truncation from 'const int' to '__int16'
-g:\project\skwinspx\full_copy_local_svn_2015-03-22\skwin\skval2.h(193) : warning C4305: '=' : truncation from 'const int' to '__int16'
-g:\project\skwinspx\full_copy_local_svn_2015-03-22\skwin\skval2.h(199) : warning C4305: '=' : truncation from 'const int' to '__int16'
+G:\PROJECT_GITHUB\SKPROJECT\SKWIN\SkWinCore.cpp(50589) : warning C4305: 'argument' : truncation from 'const int' to '__int16'
+G:\PROJECT_GITHUB\SKPROJECT\SKWIN\SkWinCore.cpp(50589) : warning C4309: 'argument' : truncation of constant value
+G:\PROJECT_GITHUB\SKPROJECT\SKWIN\SkWinCore.cpp(50589) : warning C4305: 'argument' : truncation from 'const int' to '__int16'
+G:\PROJECT_GITHUB\SKPROJECT\SKWIN\SkWinCore.cpp(50589) : warning C4309: 'argument' : truncation of constant value
+G:\PROJECT_GITHUB\SKPROJECT\SKWIN\skval2.h(140) : warning C4305: '=' : truncation from 'const int' to '__int16'
+G:\PROJECT_GITHUB\SKPROJECT\SKWIN\skval2.h(173) : warning C4305: '=' : truncation from 'const int' to '__int16'
+G:\PROJECT_GITHUB\SKPROJECT\SKWIN\skval2.h(193) : warning C4305: '=' : truncation from 'const int' to '__int16'
+G:\PROJECT_GITHUB\SKPROJECT\SKWIN\skval2.h(199) : warning C4305: '=' : truncation from 'const int' to '__int16'
+SkWinMFC.cpp
 Generating Code...
 Linking...
-Creating temporary file "C:\DOCUME~1\Sphenx\LOCALS~1\Temp\RSP2236.tmp" with contents
+LINK : warning LNK4089: all references to "OLEAUT32.dll" discarded by /OPT:REF
+Creating temporary file "C:\DOCUME~1\Sphenx\LOCALS~1\Temp\RSP28E.tmp" with contents
 [
-/nologo /o"Debug/skwinmfc.bsc" 
-".\Debug\StdAfx.sbr"
-".\Debug\AboutDlg.sbr"
-".\Debug\DME.sbr"
-".\Debug\fileset.sbr"
-".\Debug\SBlast.sbr"
-".\Debug\SkCodeParam.sbr"
-".\Debug\SkGlobal.sbr"
-".\Debug\SkWin.sbr"
-".\Debug\SkWinCore.sbr"
-".\Debug\skwindebug.sbr"
-".\Debug\SkWinMFC.sbr"]
-Creating command line "bscmake.exe @C:\DOCUME~1\Sphenx\LOCALS~1\Temp\RSP2236.tmp"
+/nologo /o"Release/skwinmfc.bsc" 
+.\Release\StdAfx.sbr
+.\Release\AboutDlg.sbr
+.\Release\DME.sbr
+.\Release\fileset.sbr
+.\Release\SBlast.sbr
+.\Release\SkCodeParam.sbr
+.\Release\SkGlobal.sbr
+.\Release\SkWin.sbr
+.\Release\SkWinCore.sbr
+.\Release\skwindebug.sbr
+.\Release\SkWinMFC.sbr]
+Creating command line "bscmake.exe @C:\DOCUME~1\Sphenx\LOCALS~1\Temp\RSP28E.tmp"
 Creating browse info file...
 <h3>Output Window</h3>
 
 
 
 <h3>Results</h3>
-skwinmfc.exe - 0 error(s), 148 warning(s)
+skwinmfc.exe - 0 error(s), 9 warning(s)
 </pre>
 </body>
 </html>
