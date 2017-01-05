@@ -353,9 +353,11 @@ void CSkWinMFC::SndPlayHi(const U8 *buff, U32 buffSize, i8 vol)
 	// SPX: added this small block to have random frequencies
 	int iBasePlaybackFrequency = SKWIN_PLAYBACK_FREQUENCY;	// 6000
 	int iPlaybackFrequency = iBasePlaybackFrequency;	
-	int iRandomValue = rand()%500 - 250;
 	if (SkCodeParam::bUseVaryingPlaybackFrequency)
+	{
+		int iRandomValue = rand()%500 - 250;
 		iPlaybackFrequency += iRandomValue;
+	}
 	// SPX
 
 #pragma pack(push, 1)

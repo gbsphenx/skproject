@@ -2648,6 +2648,7 @@ void SkWinCore::CHANGE_CURRENT_MAP_TO(Bit16u new_map)
 	glbSomePosY_4c30 = glbPlayerPosY;
 	glbMap_4c28 = glbPlayerMap;
 	_4976_4c2c = glbPlayerDir;
+
 }
 
 //^0CEE:0AB5
@@ -15424,7 +15425,7 @@ ObjectID SkWinCore::REMOVE_OBJECT_FROM_HAND()
 		FIRE_SHOW_MOUSE_CURSOR();
 		//^2C1D:0776
 		PROCESS_ITEM_BONUS(glbChampionLeader, si, -1, -1);
-// SPX: that part is for giving item sound when taking him
+// SPX: that part is for giving item sound when put it back to inventory or on ground
 		if (SkCodeParam::bUseExtendedSound)
 			QUEUE_NOISE_GEN2(QUERY_CLS1_FROM_RECORD(si), QUERY_CLS2_FROM_RECORD(si), SOUND_ITEM_PUT_DOWN, 0xFE, glbPlayerPosX, glbPlayerPosY, 1, 0, 0);
 	}
@@ -15764,7 +15765,7 @@ void SkWinCore::TAKE_OBJECT(ObjectID rl, U16 xx)
 		//^2C1D:0722
 		_2fcf_2444(glbPlayerPosX, glbPlayerPosY, -1, 1, 1, 0);
 
-// SPX: that part is for giving item sound when taking him
+// SPX: that part is for giving item sound when taking it
 		if (SkCodeParam::bUseExtendedSound)
 			QUEUE_NOISE_GEN2(QUERY_CLS1_FROM_RECORD(si), QUERY_CLS2_FROM_RECORD(si), SOUND_ITEM_TAKE, 0xFE, glbPlayerPosX, glbPlayerPosY, 1, 0, 0);
 	}
@@ -43531,6 +43532,23 @@ void SkWinCore::UPDATE_WEATHER(U16 aa)	// aa = 1 when called from timer, aa = 0 
 	}
 	//^3DF7:0754
 	bp04->envImg = 0xff;
+
+#if DM2_EXTENDED_MODE == 1
+	{	// Activate ambient sound, checking global variable then issuing a first Ambient Sound timer that will regenerate itself.
+		if (glbXAmbientSoundActivated != 1)
+		{
+			glbXAmbientSoundActivated = 1;
+			Timer xTimerRef;
+			xTimerRef.SetMap(glbCurrentMapIndex);
+			xTimerRef.SetTick(glbGameTick + 1);
+			xTimerRef.TimerType(ttyAmbientSound);
+			xTimerRef.actor = 0;
+			xTimerRef.value = 0;
+			QUEUE_TIMER(&xTimerRef);
+		}
+	}
+#endif
+
 	//^3DF7:075B
 	return;
 }
@@ -55426,7 +55444,7 @@ U16 SkWinCore::IS_MAP_INSIDE(U16 mapno)
 	//^32CB:00BF
 	ENTER(0);
 	//^32CB:00C2
-	return !(QUERY_GDAT_ENTRY_DATA_INDEX(8, dunMapsHeaders[mapno].MapGraphicsStyle(), dtWordValue, 0x65) & 0x20);
+	return !(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, dunMapsHeaders[mapno].MapGraphicsStyle(), dtWordValue, GDAT_GFXSET_SCENE_FLAGS) & 0x20);
 
 	// MapGraphicsStyle = [0x65]
 	// 00=0018 ;Void
@@ -61678,6 +61696,68 @@ void SkWinCore::CONTINUE_ORNATE_NOISE(Timer *ref)
 	return;
 }
 
+#ifdef DM2_EXTENDED_MODE == 1
+void SkWinCore::PROCESS_TIMER_AMBIENT_SOUND(Timer *ref)
+{
+	ENTER(0);
+	// Play sound for rain ! 
+	SkD((1, "Process Timer Ambient Sound >> \n"));
+	
+
+	U16 rainLevel = 0;
+	U16 iSoundID = 0x80;
+	if (glbRainStrength >= RAIN_THRESHOLD_LEVEL_3) {
+		rainLevel = 4;
+	}
+	else if (glbRainStrength >= RAIN_THRESHOLD_LEVEL_2) {
+		rainLevel = 3;
+	}
+	else if (glbRainStrength >= RAIN_THRESHOLD_LEVEL_1) {
+		rainLevel = 2;
+	}
+	else if (glbRainStrength > RAIN_THRESHOLD_LEVEL_0 && glbRainStrength < RAIN_THRESHOLD_LEVEL_1) {
+		rainLevel = 1;
+	}
+	iSoundID = 0x70 + rainLevel;
+
+	if (rainLevel == 0)
+	{
+		int iRandomValue = rand()%3;
+		iSoundID = 0x80 + iRandomValue;
+	}
+
+	//static int iRainSoundCount = 0;
+	SkD((1, "Tick %d / Playing Rain sound %02x ! (rain level = %d, rain strength = %d) | Map: %d / GfxSet: %d\n",
+		glbGameTick, iSoundID, rainLevel, glbRainStrength, glbPlayerMap, glbMapGraphicsSet));
+	
+	// Generate sound
+	//if (iRainSoundCount == 0)
+		QUEUE_NOISE_GEN1(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, iSoundID, 0x96, 0x80, glbPlayerPosX, glbPlayerPosY, 0);
+	//iRainSoundCount = (iRainSoundCount+1)%20;
+	
+	// Issue a new timer
+	U8 iDeltaTick = 32;
+	switch (skwin.spfact)
+	{
+		case 0: iDeltaTick = 32; break;
+		case 1: iDeltaTick = 16; break;
+		case 2: iDeltaTick = 8; break;
+		case 3: iDeltaTick = 6; break;
+		case 4: iDeltaTick = 4; break;
+		case 5: iDeltaTick = 3; break;
+	}
+	Timer xTimerRef;
+	xTimerRef.SetMap(glbPlayerMap);
+	xTimerRef.SetTick(glbGameTick + iDeltaTick);
+	xTimerRef.TimerType(ttyAmbientSound);
+	xTimerRef.actor = 0;
+	xTimerRef.value = 0;
+	QUEUE_TIMER(&xTimerRef);
+
+	return;
+}
+#endif
+
 //^3A15:3A9E
 void SkWinCore::PROCEED_TIMERS()
 {
@@ -61899,6 +61979,14 @@ void SkWinCore::PROCEED_TIMERS()
 					ROTATE_SQUAD(timer.w6_a_b());
 				}
 				break;
+#ifdef DM2_EXTENDED_MODE == 1
+
+			case ttyAmbientSound:
+				{
+					PROCESS_TIMER_AMBIENT_SOUND(bp04);
+				}
+				break;
+#endif
 		}
 		//^3A15:3D93
 _3d93:

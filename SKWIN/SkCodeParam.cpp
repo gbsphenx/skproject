@@ -16,7 +16,7 @@ bool SkCodeParam::bUseMultilanguageExtended = false;
 bool SkCodeParam::bUseExtendedSound = false;
 bool SkCodeParam::bUsePlayerWalkSound = false;
 #else if (DM2_EXTENDED_MODE == 1)
-bool SkCodeParam::bUseVaryingPlaybackFrequency = true;
+bool SkCodeParam::bUseVaryingPlaybackFrequency = false;
 bool SkCodeParam::bUseMultilanguageExtended = true;
 bool SkCodeParam::bUseExtendedSound = true;
 bool SkCodeParam::bUsePlayerWalkSound = true;

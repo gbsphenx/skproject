@@ -23,7 +23,7 @@
 #define DLV_FIL 0
 #define DLV_DBC 0
 #define DLV_CAI 0
-#define DLV_TWEET 1
+#define DLV_TWEET 0
 #define DLV_MOVE 0	// Player moves
 #define DLV_EUI 0	// Event from UI code
 #define DLV_CCM 0	// Creature command

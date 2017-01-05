@@ -2709,6 +2709,9 @@ namespace DM2Internal {
 		tty5B = 0x5B, // (91) 
 		ttySimpleActuTurnOn = 0x5C,	// tty5C (92) restore ornate (simple actuator) in ON state (used for RESPAWNING flowers, mushrooms, gems ..)
 		tty5D = 0x5D, // (93) 
+#if	DM2_EXTENDED_MODE == 1
+		ttyAmbientSound	= 0xE0,	// CUSTOM timer for ambient sound (i.e. rain)
+#endif
 	};
 	// ccm (creature command)
 	enum {

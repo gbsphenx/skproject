@@ -43,6 +43,10 @@ public:
 #endif // defined(_USE_MFC80) || defined(_USE_MFC60) || defined(_USE_SDL)
 
 protected:
+
+#ifdef DM2_EXTENDED_MODE == 1
+	U8	glbXAmbientSoundActivated;
+#endif
 	// 
 	typedef U16 (SkWinCore::*pfnOversee_t)(ObjectID *ref, void *pv);
 
@@ -1271,6 +1275,9 @@ protected:
 	U16 QUERY_GDAT_POTION_BEHAVIOUR_FROM_RECORD(ObjectID rl);
 	U16 QUERY_GDAT_WATER_VALUE_FROM_RECORD(ObjectID rl);
 	U16 QUERY_GDAT_DOOR_IS_MIRRORED(U8 doortype);
+#ifdef DM2_EXTENDED_MODE
+	void PROCESS_TIMER_AMBIENT_SOUND(Timer *ref);
+#endif
 	//--- NEW FUNCTIONS -------------------------------------
 
 

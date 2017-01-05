@@ -20,12 +20,6 @@
 // AI special attributes
 #define AI_DEF_ARMOR_MAX		0xFF
 
-// Weather/Environment graphics
-#define GFX_ENVIRONMENT_IMG_THUNDER			0x64	// 3
-#define GFX_ENVIRONMENT_IMG_SKY_CLOUDS		0x67	// 3
-#define GFX_ENVIRONMENT_IMG_WET_GROUND		0x6A	// 3
-#define GFX_ENVIRONMENT_IMG_RAIN_SLANTED	0x6D	// 4
-#define GFX_ENVIRONMENT_IMG_RAIN_STRAIGHT	0x71	// 4
 
 // The standard 16 colors palette
 #define COLOR_BLACK				0
@@ -422,7 +416,7 @@ enum SkillLevel {
 	// 0x0004	: Use some random flip from game tick			 (case 0x20)
 	// 0x0008	: Use some random flip from	map coordinates		 (case 0x01)
 	// 0x0010	: Use some random flip from game tick			 (case 0x01)
-	// 0x0020	: Use some random flip from player's direction	 (case 0x20)
+	// 0x0020	: Outside +  flip from player's direction		 (case 0x20)
 	// 0x0040	: Use some random flip from player's direction	 (case 0x01)
 	// 0x0080	:
 #define GDAT_GFXSET_SCENE_RAIN						0x66	// An index a rain status. In table static mode, 1 and 4 will make rain
@@ -445,6 +439,12 @@ enum SkillLevel {
 #define GDAT_ENVWTH_WETGROUND_1					0x6A
 #define GDAT_ENVWTH_RAINFALL_OBLIQUE_1			0x6D
 #define GDAT_ENVWTH_RAINFALL_STRAIGHT_1			0x71
+
+#define GFX_ENVIRONMENT_IMG_THUNDER			0x64	// 3
+#define GFX_ENVIRONMENT_IMG_SKY_CLOUDS		0x67	// 3
+#define GFX_ENVIRONMENT_IMG_WET_GROUND		0x6A	// 3
+#define GFX_ENVIRONMENT_IMG_RAIN_SLANTED	0x6D	// 4
+#define GFX_ENVIRONMENT_IMG_RAIN_STRAIGHT	0x71	// 4
 
 //------------------------------------------------------------------------------
 //	WALL ORNATE ATTRIBUTES or GRAPHICS
