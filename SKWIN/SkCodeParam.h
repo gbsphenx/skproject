@@ -23,6 +23,8 @@ public:
 	static bool bWeakDoors;
 	static bool bWalkOverPits;
 
+	static bool	bForceOrnateSound;
+
 public:
 	SkCodeParam();
 };

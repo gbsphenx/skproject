@@ -271,6 +271,8 @@ enum SkillLevel {
 
 #define SOUND_CHAMPION_FOOTSTEP			0x92	// SPX: CUSTOM This is custom and does not exist in retail DM2
 
+#define SOUND_ACTIVATION_LOOP			0xA0	// SPX: CUSTOM, for animated ornate having a default loop sound
+
 #define SOUND_NONE						0xFF
 
 
@@ -510,10 +512,15 @@ enum SkillLevel {
 #define GDAT_WALL_FLOOR_ORNATE__ANIMATION_SEQUENCE_DATA		0x0D
 #define GDAT_WALL_FLOOR_ORNATE__ANIMATION_LENGTH			0x0D
 
+#define GDAT_WALL_ORNATE__SWITCH_ITEM		0x0E
+
+
 #define GDAT_WALL_ORNATE__IS_ITEM_TRIGGERED	0x0E
 #define GDAT_WALL_ORNATE__OVERLAY			0x0F	// Seen as image, for panel shop overlay
 
 #define GDAT_WALL_ORNATE__IS_LADDER_UP			0x11
+
+#define GDAT_WALL_ORNATE__RESPAWN_COOLDOWN		0x12	// Used for GREEN and BLUE gems veins
 
 #define GDAT_WALL_ORNATE__DATA_13			0x13
 
@@ -1029,6 +1036,13 @@ enum SkillLevel {
 
 #define ACTUATOR_TYPE_RESSURECTOR					0x7E
 
+
+#define ACTUATOR_SIMPLE_USAGE__NONE						0x00	// Still image or alcove	
+#define ACTUATOR_SIMPLE_USAGE__CREATURE_TRANSFORMER		0x01	
+#define ACTUATOR_SIMPLE_USAGE__ANIMATED					0x02	// Like water basin
+#define ACTUATOR_SIMPLE_USAGE__TORCH_HOLDER				0x04
+#define ACTUATOR_SIMPLE_USAGE__RECHARGER				0x08	// Like gem vein
+#define ACTUATOR_SIMPLE_USAGE__TELEPORTER_WITH_FLAG		0x10	// 
 
 //------------------------------------------------------------------------------
 //	SPELLS

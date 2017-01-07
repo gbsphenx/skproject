@@ -15091,7 +15091,7 @@ void SkWinCore::TRY_ORNATE_NOISE(Actuator *ref, ObjectID rl, U16 xx, U16 yy, U16
 	//^3A15:0FA5
 	ENTER(12);
 	//^3A15:0FAB
-	if (ref->SoundEffect() != 1)
+	if (ref->SoundEffect() != 1 && !SkCodeParam::bForceOrnateSound)
 		//^3A15:0FBD
 		return;
 	//^3A15:0FC0
@@ -20805,7 +20805,7 @@ _1d4d:
 				case  4: // Holder (Torch holder)
 				case  8: // Recharge (Blue gem crop)
 					//^2FCF:2161
-					bp1e = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp23, dtWordValue, 0x0e);
+					bp1e = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp23, dtWordValue, GDAT_WALL_ORNATE__SWITCH_ITEM);
 					//^2FCF:2176
 					if (bp0c->TextVisibility() != 0) {
 						//^2FCF:2187
@@ -20846,7 +20846,7 @@ _1d4d:
 						Timer bp40;
 						bp40.SetMap(glbCurrentMapIndex);
 						// SPX: 0x12 is the RESPAWN value, then trigger a timer to setup again the ornate (gem)
-						bp40.SetTick(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp23, dtWordValue, 0x12) + glbGameTick +2);
+						bp40.SetTick(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp23, dtWordValue, GDAT_WALL_ORNATE__RESPAWN_COOLDOWN) + glbGameTick +2);
 						//^2FCF:224A
 						bp40.TimerType(ttySimpleActuTurnOn);
 						bp40.actor = 0;
@@ -20856,7 +20856,7 @@ _1d4d:
 						QUEUE_TIMER(&bp40);
 					}
 					//^2FCF:2266
-					else if (bp16 != 8) {
+					else if (bp16 != 8) {	// Is not Recharge (8), then it is Torch Holder (4)
 						//^2FCF:226C
 						if (si == OBJECT_NULL)
 							//^2FCF:2271
@@ -22279,11 +22279,11 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 	//^32CB:15DD
 	bp14 = _4976_5a80[cellPos].x2.w6[RCJ(4,bp14 -3)];	// get the ornate gfx id ?
 	//^32CB:15F9
-	i16 bp28 = bp14 >> 8;
+	i16 bp28 = bp14 >> 8;	// upper part (flags)
 	//^32CB:15FF
 	i16 iYDist = glbTabYAxisDistance[RCJ(23,cellPos)];	// i16 di
 	//^32CB:1609
-	U8 bp1f = U8(bp14) & 0xff;
+	U8 bp1f = U8(bp14) & 0xff; // lower part : gfx id
 	//^32CB:1611
 	if (bp1f == 0xff)
 		//^32CB:1617
@@ -22614,6 +22614,12 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 	}
 	//^32CB:1CA0
 	iImageEntry = iImageEntry +U8(bp28);
+#ifdef DM2_EXTENDED_MODE == 1
+	if (bp28 == 4 && SkCodeParam::bForceOrnateSound == true)	// 4 = first anim of a loop (if several)
+	{
+		QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp1f, SOUND_ACTIVATION_LOOP, 0xFE, glbPlayerPosX, glbPlayerPosY, 0, 140, 200);
+	}
+#endif
 	//^32CB:1CA9
 	SRECT *bp12;
 	if (yy == 0 && QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp1f, dtWordValue, GDAT_WALL_ORNATE__WINDOW) != 0) {
@@ -49291,6 +49297,7 @@ _29a8:
 			//^2FCF:2A81
 			if (bp1e == 0xffff) {
 				//^2FCF:2A8A
+				// SPX: That part is called when an animated wall (even simple actuator) loops animation
 				if (bp18->SimpleTextExtUsage() != 9) { // 0x09 -> ?
 					//^2FCF:2AA2
 					if (bp18->SimpleTextExtUsage() == 10) { // 0x0a -> Marsh
