@@ -381,6 +381,7 @@ enum SkillLevel {
 //------------------------------------------------------------------------------
 
 #define GDAT_IMG_COLORKEY_1						0x04
+#define GDAT_IMG_FLOOR_COLORKEY_2				0x11
 #define GDAT_IMG_WALL_COLORKEY_2				0x11
 #define GDAT_IMG_DOOR_COLORKEY_2				0x12
 

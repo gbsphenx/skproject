@@ -44414,7 +44414,7 @@ void SkWinCore::ENVIRONMENT_DRAW_DISTANT_ELEMENT(DistantEnvironment *ref, X16 di
 		bp06 = CALC_STRETCHED_SIZE(bp06, 0x34);
 		if (ref->b8 == 0x40) {
 			di += _4976_00fe.x;
-			if (ref->cmCD == 0x1771) {
+			if (ref->cmCD == 0x1771) {	// 0x1771 = 6001
 				//^32CB:57D1
 				si += _4976_4681;
 			}
@@ -44427,8 +44427,20 @@ void SkWinCore::ENVIRONMENT_DRAW_DISTANT_ELEMENT(DistantEnvironment *ref, X16 di
 			si += _4976_467f;
 		}
 	}
+	// SPX: the CD command seems to hold the rectno of the element.
+	// CD = 6000, img = 0 for the distant Skullkeep image
+	// CD = 6001, img = 99 (0x63) for the distant horizon
+	// CD = 6002, img = {100, 101, 102} for distant lightning
+	// CD = 6004, img = {103, 104, 105} for the cloudy skies
+	// CD = 6005, img = {106, 107, 108} for the wet ground
+	U16 iElementRecto = ref->cmCD;	// TODO : original was ref->cmCD & 0x8000 => SPX: I don't get that 0x8000 as it will give rectno 0 then display nothing ...
+	SkD((DLV_DBG_DIST, "Distant Element >> CD=%d FW=%d / Img=%02d, rectno=%d\n"
+		, ref->cmCD, ref->cmFW
+		, ref->envImg
+		, iElementRecto
+		));
 	//^32CB:57E1
-	QUERY_TEMP_PICST(bp02, bp04, bp06, 0, 0, 0, ref->cmCD & 0x8000, -1, glbSceneColorKey, -1, GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, ref->envImg);
+	QUERY_TEMP_PICST(bp02, bp04, bp06, 0, 0, 0, iElementRecto, -1, glbSceneColorKey, -1, GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, ref->envImg);
 	glbTempPicture.w32 += di;
 	glbTempPicture.w34 += si;
 	DRAW_TEMP_PICST();        
@@ -45786,7 +45798,7 @@ X16 SkWinCore::DRAW_EXTERNAL_TILE(i16 xx)
 			DRAW_STATIC_OBJECT(si, 0x000003ff, 1);
 			bp20 = QUERY_MULTILAYERS_PIC(
 				&bp0164, GDAT_CATEGORY_FLOOR_GFX, bp13, bp14, bp10, bp10, bp18, bp04, bp0e,
-				QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_FLOOR_GFX, bp13, dtWordValue, 0x11)	// 0xa
+				QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_FLOOR_GFX, bp13, dtWordValue, GDAT_IMG_FLOOR_COLORKEY_2)	// 0xa
 				);
 			if (bp1e != 0) {
 				//^32CB:226E
@@ -46584,7 +46596,7 @@ void SkWinCore::DRAW_RAIN()
 	U16 bp06;
 	QUERY_RAINFALL_PARAM(&bp07, &bp06);
 	U8 *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(0x17, glbMapGraphicsSet, bp07);
-	ALLOC_IMAGE_MEMENT(0x17, glbMapGraphicsSet, bp07);
+	ALLOC_IMAGE_MEMENT(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, bp07);
 	X16 si;
 	if (bp06 == 1) {
 		//^32CB:0BA5
@@ -46596,14 +46608,14 @@ void SkWinCore::DRAW_RAIN()
 	}
 	//^32CB:0BFD
 	_44c8_20a4(bp04, _4976_4c16, NULL, &bp14, READ_UI16(bp04,-4) * READ_UI16(bp04,-2) -40 -(RAND() & 0x1f), RAND() & 255, _4976_00f6, 0,
-		_32cb_0649(0x17, glbMapGraphicsSet, bp07, 0)
+		_32cb_0649(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, bp07, 0)
 		);
 	if (bp06 == 1) {
 		//^32CB:0C61
 		FREE_TEMP_CACHE_INDEX(si);
 	}
 	//^32CB:0C68
-	FREE_IMAGE_MEMENT(0x17, glbMapGraphicsSet, bp07);
+	FREE_IMAGE_MEMENT(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, bp07);
 	//^32CB:0C7A
 	return;
 }
@@ -46845,7 +46857,7 @@ void SkWinCore::DISPLAY_VIEWPORT(Bit16u dir, i16 xx, i16 yy)
 		bp03 = 0x70;
 	//^32CB:5E78
 	if (bp03 != 0xff) { // trim ceil(bp02) and floor(di) to omit hidden area by drawing wall
-		U16 bp06 = QUERY_GDAT_ENTRY_DATA_INDEX(8, glbMapGraphicsSet, dtWordValue, bp03);
+		U16 bp06 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, bp03);
 		di = bp06 >> 8;
 		bp02 = bp06 & 0xff;
 		if (di == 0) {
@@ -62514,8 +62526,8 @@ _00a4:
 		//^13AE:00B0
 		UPDATE_WEATHER(0);
 		
-		SkD((DLV_DBG_RAIN, "Game Loop      >> lvl=%03d / cnt=%03d (v1:%d v2:%d pw:%d) / tick=%d\n"
-			, glbRainStrength
+		SkD((DLV_DBG_RAIN, "Loop (Rain) >> lvl=%03d / strm=%03d / wet=%03d (r2:%d r3:%d mlt:%d) / tick=%d\n"
+			, glbRainStrength, glbRainStormController
 			, glbRainLevelForGround
 			, glbRainRelated2, glbRainRelated3, glbRainMultiplicator
 			, glbGameTick
