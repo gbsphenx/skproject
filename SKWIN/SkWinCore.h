@@ -44,14 +44,15 @@ public:
 
 protected:
 
-#ifdef DM2_EXTENDED_MODE == 1
-	U8	glbXAmbientSoundActivated;
-#endif
 	// 
 	typedef U16 (SkWinCore::*pfnOversee_t)(ObjectID *ref, void *pv);
 
 // SPX: _4976_53b4 renamed glbChampionSquad
 #define glbChampionSquad (&glbChampionTable[1])
+
+#ifdef DM2_EXTENDED_MODE == 1
+	U8	glbXAmbientSoundActivated;
+#endif
 
 	//{{SKSAVE_INSORTED_VARS
 	File_header fileHeader;
@@ -2101,7 +2102,7 @@ protected:
 	void CONTINUE_ORNATE_NOISE(Timer *ref);
 	void PROCEED_TIMERS();
 	void DROP_PLAYER_ITEMS(U16 player);
-	void PLAYER_DEFEATED(X16 player);
+	void CHAMPION_DEFEATED(X16 player);
 	void _3a15_05f7(X16 xx);
 	void PROCESS_PLAYERS_DAMAGE();
 	void UPDATE_CHAMPIONS_STATS();

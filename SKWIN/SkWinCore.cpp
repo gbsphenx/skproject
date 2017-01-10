@@ -29752,6 +29752,9 @@ void SkWinCore::END_GAME(U16 xx)
 	_2066_03e0(0);
 	//^101B:005F
 	glbGameHasEnded = 1;
+#ifdef DM2_EXTENDED_MODE == 1
+	glbXAmbientSoundActivated = 0;	// reinit that variable to get ambient sound again with a restart
+#endif
 	//^101B:0065
 	if (xx != 0) {
 		//^101B:006B
@@ -62039,7 +62042,8 @@ void SkWinCore::DROP_PLAYER_ITEMS(U16 player)
 }
 
 //^2C1D:15BA
-void SkWinCore::PLAYER_DEFEATED(X16 player)
+// SPX: PLAYER_DEFEATED renamed CHAMPION_DEFEATED
+void SkWinCore::CHAMPION_DEFEATED(X16 player)
 {
 	// CSBwinSimilarity: TAG016c5a,KillCharacter
 
@@ -62048,6 +62052,14 @@ void SkWinCore::PLAYER_DEFEATED(X16 player)
 	//^2C1D:15C0
 	X16 di;
 	Champion *champion = &glbChampionSquad[di = player];
+
+#ifdef DM2_EXTENDED_MODE == 1
+	if (SkCodeParam::bUseExtendedSound == true) {	// SPX: Play the champion own scream sound if dead
+		printf("champion dead: %d\n", champion->HeroType());
+		QUEUE_NOISE_GEN1(GDAT_CATEGORY_CHAMPIONS, champion->HeroType(), SOUND_CHAMPION_SCREAM, 0x61, 0x80, glbPlayerPosX, glbPlayerPosY, 1);
+	}
+#endif
+
 	if (glbChampionIndex -1 == di)
 		//^2C1D:15DB
 		DISPLAY_RIGHT_PANEL_SQUAD_HANDS();
@@ -62168,7 +62180,7 @@ void SkWinCore::PROCESS_PLAYERS_DAMAGE()
 		//^2C1D:17E0
 		si = si -di;
 		if (si <= 0) {
-			PLAYER_DEFEATED(championIndex);
+			CHAMPION_DEFEATED(championIndex);
 			continue;
 		}
 		//^2C1D:17F4
