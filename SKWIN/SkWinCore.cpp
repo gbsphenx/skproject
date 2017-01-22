@@ -22617,7 +22617,20 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 #ifdef DM2_EXTENDED_MODE == 1
 	if (bp28 == 4 && SkCodeParam::bForceOrnateSound == true)	// 4 = first anim of a loop (if several)
 	{
-		QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp1f, SOUND_ACTIVATION_LOOP, 0xFE, glbPlayerPosX, glbPlayerPosY, 0, 140, 200);
+		int iRandNoise = 0;
+		int iMaxLoopSoundsAvailable = 9;
+		while(iMaxLoopSoundsAvailable > 0)
+		{
+			if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_WALL_GFX, bp1f, dtSnd, SOUND_ACTIVATION_LOOP + iMaxLoopSoundsAvailable) != 0)
+				break;
+			iMaxLoopSoundsAvailable--;
+		}
+		if (iMaxLoopSoundsAvailable > 0)
+			iRandNoise = RAND()%iMaxLoopSoundsAvailable;
+
+//		i16 iYDist = glbTabYAxisDistance[RCJ(23,cellPos)];	
+		i16 iXDist = glbTabXAxisDistance[RCJ(23,cellPos)];
+		QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp1f, SOUND_ACTIVATION_LOOP + iRandNoise, 0xFE, glbPlayerPosX+iXDist, glbPlayerPosY+iYDist, 0, 140, 200);
 	}
 #endif
 	//^32CB:1CA9
