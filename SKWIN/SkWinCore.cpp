@@ -22615,7 +22615,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 	//^32CB:1CA0
 	iImageEntry = iImageEntry +U8(bp28);
 #ifdef DM2_EXTENDED_MODE == 1
-	if (bp28 == 4 && SkCodeParam::bForceOrnateSound == true)	// 4 = first anim of a loop (if several)
+	if (SkCodeParam::bUseExtendedSound && bp28 == 4 /*&& SkCodeParam::bForceOrnateSound == true*/)	// 4 = first anim of a loop (if several)
 	{
 		int iRandNoise = 0;
 		int iMaxLoopSoundsAvailable = 9;
@@ -61766,7 +61766,7 @@ void SkWinCore::PROCESS_TIMER_AMBIENT_SOUND(Timer *ref)
 		glbGameTick, iSoundID, rainLevel, glbRainStrength, glbPlayerMap, glbMapGraphicsSet));
 	
 	// Generate sound
-	//if (iRainSoundCount == 0)
+	if (SkCodeParam::bUseExtendedSound)
 		QUEUE_NOISE_GEN1(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, iSoundID, 0x96, 0x80, glbPlayerPosX, glbPlayerPosY, 0);
 	//iRainSoundCount = (iRainSoundCount+1)%20;
 	

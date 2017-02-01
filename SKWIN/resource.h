@@ -51,6 +51,8 @@
 #define ID_DUNGEON_LEGEND_SKULLKEEP     40065
 #define ID_DEBUG_BREAK_DOOR             40070
 #define ID_DEBUG_WALK_OVER_PIT          40071
+#define ID_EXTRA_SOUNDS			        40072
+#define ID_SOUND_FOOTSTEP				40073
 #define ID_Dummy                        40099
 #define ID_HELP_ABOUT                   40100
 #define ID_SEPA                         40101
@@ -60,7 +62,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        111
-#define _APS_NEXT_COMMAND_VALUE         40105
+#define _APS_NEXT_COMMAND_VALUE         40107
 #define _APS_NEXT_CONTROL_VALUE         1001
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

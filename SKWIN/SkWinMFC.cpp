@@ -548,6 +548,8 @@ void CSkWinMFC::OnVideo1x(UINT nID) {
 		case ID_FOG_SWITCH: SkCodeParam::bDisableFogEffect = !SkCodeParam::bDisableFogEffect; break;
 		case ID_DEBUG_BREAK_DOOR: SkCodeParam::bWeakDoors = !SkCodeParam::bWeakDoors; break;
 		case ID_DEBUG_WALK_OVER_PIT: SkCodeParam::bWalkOverPits = !SkCodeParam::bWalkOverPits; break;
+		case ID_EXTRA_SOUNDS: SkCodeParam::bUseExtendedSound = !SkCodeParam::bUseExtendedSound; break;
+		case ID_SOUND_FOOTSTEP: SkCodeParam::bUsePlayerWalkSound = !SkCodeParam::bUsePlayerWalkSound; break;
 	}
 	if (sxfact != -1) {
 		this->sxfact = sxfact;
@@ -642,6 +644,8 @@ void CSkWinMFC::OnUpdateVideo1x(CCmdUI *pCmdUI) {
 		case ID_FOG_SWITCH: pCmdUI->SetCheck(SkCodeParam::bDisableFogEffect); break;
 		case ID_DEBUG_BREAK_DOOR: pCmdUI->SetCheck(SkCodeParam::bWeakDoors); break;
 		case ID_DEBUG_WALK_OVER_PIT: pCmdUI->SetCheck(SkCodeParam::bWalkOverPits); break;
+		case ID_EXTRA_SOUNDS: pCmdUI->SetCheck(SkCodeParam::bUseExtendedSound); break;
+		case ID_SOUND_FOOTSTEP: pCmdUI->SetCheck(SkCodeParam::bUsePlayerWalkSound); break;
 	}
 }
 
