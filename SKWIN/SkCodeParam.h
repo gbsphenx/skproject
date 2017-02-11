@@ -12,6 +12,7 @@ public:
 	static bool bUseIngameDebug;
 	static bool bUseSuperMode;
 
+	static bool bMIDIMusicEnabled;
 	static bool bUseExtendedSound;
 	static bool bUseMultilanguageExtended;
 

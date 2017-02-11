@@ -53,6 +53,7 @@
 #define ID_DEBUG_WALK_OVER_PIT          40071
 #define ID_EXTRA_SOUNDS			        40072
 #define ID_SOUND_FOOTSTEP				40073
+#define ID_MIDI_MUSIC_ENABLED           40074
 #define ID_Dummy                        40099
 #define ID_HELP_ABOUT                   40100
 #define ID_SEPA                         40101

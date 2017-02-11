@@ -162,6 +162,14 @@ SOURCE=.\SkWinMFC.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\SkWinMIDI.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\SkWinMIDI.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\StdAfx.cpp
 # ADD CPP /Yc"StdAfx.h"
 # End Source File

@@ -83,6 +83,10 @@ BEGIN
         MENUITEM "HRTF_FULL",                   40033
         MENUITEM "HRTF_LIGHT",                  40035
     END
+    POPUP "&Music"
+    BEGIN
+        MENUITEM "&Enabled",                    40074
+    END
     POPUP "&Speed"
     BEGIN
         MENUITEM "&1 Ultra Fast",               40040

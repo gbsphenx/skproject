@@ -4,6 +4,7 @@
 #include <SkWinDebug.h>
 #include <SkGlobal.h>
 #include <SkWinCore.h>
+#include <SkWinMIDI.h>
 
 //--- Common part with A.cpp
 #define UseAltic 1
@@ -33,7 +34,155 @@ using namespace kkBitBlt;
 #endif // DM2_EXTENDED_MODE
 
 
+
+// SPX: Functions supposed for MIDI playing from SKWIN_DM2_PCDOS
+/*
+#define MIDIPATHNAME "./DATA/%02x.hmp.mid"
+
+void c_midi::do_music(i16 nr)
+{
+  char songname[30];
+  sprintf(songname, MIDIPATHNAME, nr);
+  thesong = load_midi(songname);
+  if (thesong)
+    play_midi(thesong, true); // true means: looped
+}
+
+void c_midi::stop_music(void)
+{
+  if (thesong)
+  {
+    destroy_midi(thesong);
+    thesong = NULL;
+  }
+}
+
+void c_midi::set_midi_volume(i16 v)
+{
+  set_volume(-1, v);
+}
+
+void c_midi::init_midi(void)
+{
+  allegro_init();
+  if (install_sound(-1, MIDI_AUTODETECT, NULL) != 0)
+    throw(THROW_DMABORT);
+  set_midi_volume(128);
+}
+
+static void R_4FF39(x16 eaxw)
+{
+  if (eaxw < con(0x8))
+  {
+    ddata.v1da374[eaxw].w4 = con(0x0);
+    ddata.v1da374[eaxw].l0 = con(0x0);
+  }
+}
+
+static void DM2DOS_R_B65(void)
+{
+  if (ddata.v1d14c2 && ddata.v1d14d0)
+  {
+    // R_50012(ddata.v1dff2c); // DM's MIDI extracted
+    DM2DOS_R_4FF39(ddata.v1dff2c);
+    ddata.v1d14d0 = false;
+    ddata.v1d14cc = false;
+    ddata.v1d14ca = con(0x0);
+  }
+}
+
+static void DM2DOS_R_A0E(x8 eaxb)
+{
+  x8 vb_00;
+
+  vb_00 = eaxb;
+  if (ddata.v1d14c2 && vb_00 != 0 && ddata.v1dff86 > con(0x0))
+  {
+    DM2DOS_R_B65();
+    if (dm2sound.sndptr6 == NULL)
+      return;
+    x32 longrg1 = SKW_QUERY_GDAT_ENTRY_IF_LOADABLE(con(0x4), CUTLX8(con(0x3)), con(0x0), vb_00) ? 1 : 0;
+#if 1 // TODO
+    dm2sound.stop_music();
+#endif
+    if (longrg1 == con(0x0))
+      return;
+#if 1 // TODO
+    dm2sound.do_music(unsignedword(vb_00));
+    return;
+#else
+  $  x32 longrg6 = unsignedlong(SKW_QUERY_GDAT_ENTRY_DATA_LENGTH(con(0x4), con(0x3), con(0x0), vb_00));
+  $  SKW_COPY_MEMORY(SKW_QUERY_GDAT_ENTRY_DATA_PTR(con(0x4), con(0x3), con(0x0), vb_00), longrg6, dm2sound.sndptr6);
+  $  ddata.v1dfea8 = DSZERO;
+  $  ddata.v1dfea4 = dm2sound.sndptr6;
+  $  ddata.v1dfeb0 = con(0x0);
+  $  ddata.v1dfeac = con(0x0);
+  $  parl01 = DSZERO;
+  $  parp00 = &ddata.v1dff2c;
+  $  RG2P = ddata.v1d1378;
+  $  RG1P = &ddata.v1dfea4;
+  $  RG1L = con(0x0); // was calling R_4F75E, result 0x0 or 0xe
+  $  ddata.v1dff34 = RG1L;
+  $  if (RG1L != con(0x0)) return;
+  $  RG1L = ddata.v1dff2c;
+  $  RG1L = con(0x0); // TODO old call of R_4FF83, result can be con(0xb) to, removed, MIDI!!
+  $  ddata.v1dff34 = RG1L;
+  $  if (RG1L != con(0x0)) return;
+  $  RG1L = ddata.v1dff2c;
+  $  // R_520C3(RG1L, con(0x7f)); // DM's MIDI stuff extracted
+  $  RG1L = ddata.v1dff2c;
+  $  // R_51F94(RG1L); // DM's MIDI stuff extracted
+  $  ddata.v1d14d4 = true;
+  $  ddata.v1d14d0 = true;
+#endif
+  }
+//M_B27:
+#if 0
+$  ddata.v1d14d8 = unsignedword(vb_00);
+#endif
+//M_A05:
+}
+
+void DM2DOS_R_BA7(x16 eaxw)
+{
+  if (!ddata.v1d14c2 || !ddata.v1d14da)
+    return;
+  if (ddata.v1d14cc)
+  {
+    // DM2DOS_R_51D42(ddata.v1dff2c);  DM's MIDI stuff extracted. TODO: check what it wants to do here
+    ddata.v1d14cc = false;
+  }
+  x32 longrg1 = signedlong(ddata.v1d14ca);
+  if (longrg1 <= con(0x1))
+  {
+    if (longrg1 == con(0x1))
+    {
+      ddata.v1d1512 = ddata.v1dff8a;
+      DM2DOS_R_A0E(ddata.v1d1512);
+      ddata.v1d14ca = con(0x0);
+      return;
+    }
+  }
+  else
+  {
+    // DM2DOS_R_520C3(ddata.v1dff2c, unsignedlong(CUTX8(ddata.v1d14ca)); // DM's MIDI stuff extracted TODO: check what it wants to do here
+    ddata.v1d14ca--;
+  }
+  ddata.v1dff8a = table1410ec[eaxw];
+  if (ddata.v1d1512 != ddata.v1dff8a)
+  {
+    if (!ddata.v1d14d0 || ddata.v1d14ca != con(0x0))
+      DM2DOS_R_A0E(ddata.v1dff8a);
+    else
+      ddata.v1d14ca = con(0x7f);
+    ddata.v1d1512 = ddata.v1dff8a;
+  }
+}
+*/
+
 // SPX: New procedures here
+
+
 X16
 SkWinCore::EXTENDED_LOAD_SPELLS_DEFINITION(void)
 {
@@ -4307,7 +4456,7 @@ void SkWinCore::FIRE_HIDE_MOUSE_CURSOR()
 {
 	//^443C:085A
 	//^443C:085D
-	_4976_4860++;
+	glbMouseVisibility++;
 	//^443C:0861
 	_01b0_0adb() CALL_IBMIO;
 }
@@ -11567,7 +11716,7 @@ void SkWinCore::_1031_050c()
 		//^1031:052F
 		FIRE_MOUSE_RELEASE_CAPTURE();
 		//^1031:0534
-		_4976_4860 = 1;
+		glbMouseVisibility = 1;
 		//^1031:053A
 		FIRE_SHOW_MOUSE_CURSOR();
 	}
@@ -19755,7 +19904,7 @@ void SkWinCore::PLAYER_CONSUME_OBJECT(U16 player, ObjectID rlConsume, i16 posses
 		//^24A5:1151
 		FIRE_HIDE_MOUSE_CURSOR();
 		//^24A5:1156
-		_4976_4860 = 1;
+		glbMouseVisibility = 1;
 		//^24A5:115C
 		return;
 	}
@@ -25124,7 +25273,7 @@ void SkWinCore::__OPEN_DIALOG_PANEL(U8 cls2, U16 yy)
 	//^2066:37D8
 	_4976_523a = 0;
 	//^2066:37DE
-	while (_4976_4860 > 0) {
+	while (glbMouseVisibility > 0) {
 		//^2066:37E0
 		FIRE_SHOW_MOUSE_CURSOR();
 		//^2066:37E5
@@ -31822,7 +31971,7 @@ void SkWinCore::SK_PREPARE_EXIT()
 	//^101B:0114
 	_1031_096a();
 	//^101B:0119
-	while (_4976_4860 <= 0)
+	while (glbMouseVisibility <= 0)
 		//^101B:011B
 		FIRE_HIDE_MOUSE_CURSOR();
 	//^101B:0127
@@ -37628,7 +37777,7 @@ X16 SkWinCore::_443c_00f8(X16 xx, X16 yy)
 	//^443C:00F8
 	ENTER(14);
 	//^443C:00FE
-	if (_4976_4860 > 0)
+	if (glbMouseVisibility > 0)
 		return 0xffff;
 	if (_4976_5dae.rc4.cx != 0 || xx < _4976_5da8 || xx > _4976_5dae.rc4.x || yy < _4976_5daa || yy > _4976_5dae.rc4.y) {
 		//^443C:0133
@@ -37978,7 +38127,7 @@ void SkWinCore::_01b0_0aa8() //#DS=04BF
 void SkWinCore::FIRE_SHOW_MOUSE_CURSOR()
 {
 	//^443C:086B
-	_4976_4860--;
+	glbMouseVisibility--;
 	//^443C:0872
 	_01b0_0aa8() CALL_IBMIO;
 }
@@ -38203,7 +38352,7 @@ Bit8u SkWinCore::_0aaf_0067(Bit8u cls2)
 	_1031_0675(4);
 	//^0AAF:0136
 	Bit16u bp06;
-	for (bp06 = 0; _4976_4860 > 0; bp06++) {
+	for (bp06 = 0; glbMouseVisibility > 0; bp06++) {
 		//^0AAF:013D
 		FIRE_SHOW_MOUSE_CURSOR();
 		//^0AAF:0142
@@ -49889,7 +50038,7 @@ Bit16u SkWinCore::_2fcf_0434(ObjectID recordLink, __int16 xpos, __int16 ypos, __
 					// SPX: TODO More in the spirit, it should call the 0x18 (teleporter) category instead of 0x03 (messages),
 					// and use the index of teleporter (is it possible?)
 					//if (!SkCodeParam::bUseDM2ExtendedMode)
-						QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES,0x00,SOUND_STD_TELEPORT,0x61,0x80,glbPlayerPosX,glbPlayerPosY,-1);
+						QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES,0x00,SOUND_STD_TELEPORT_MESSAGE,0x61,0x80,glbPlayerPosX,glbPlayerPosY,-1);
 					//else
 					//	QUEUE_NOISE_GEN1(GDAT_CATEGORY_TELEPORTERS,0x00,SOUND_STD_TELEPORT,0x61,0x80,glbPlayerPosX,glbPlayerPosY,-1);
 				}
@@ -49906,7 +50055,7 @@ Bit16u SkWinCore::_2fcf_0434(ObjectID recordLink, __int16 xpos, __int16 ypos, __
 				//^2FCF:068C
 				if (bp04->Sound() != 0) {
 					//^2FCF:069D
-					QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES,0x00,SOUND_STD_TELEPORT,0x61,0x80,xx,yy,0x01);
+					QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES,0x00,SOUND_STD_TELEPORT_MESSAGE,0x61,0x80,xx,yy,0x01);
 				}
 				//^2FCF:06B9
 				ROTATE_CREATURE(si, bp04->RotationType(), bp04->Rotation());
@@ -60750,7 +60899,7 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 				if (bp04->SoundEffect() == 0)
 					break;
 				//^3A15:25E7
-				QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES, 0, SOUND_STD_TELEPORT, 0x61, 0x80, bp2a, bp2c, 1);
+				QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES, 0, SOUND_STD_TELEPORT_MESSAGE, 0x61, 0x80, bp2a, bp2c, 1);
 				break;
 			case 29://^2606 // 0x1d -> 'Activator, counter'
 				//^3A15:2606
@@ -61412,7 +61561,7 @@ void SkWinCore::PROCESS_TIMER_3D(Timer *ref)
 		//^3A15:3019
 		if (ref->TimerType() == tty3D) {
 			//^3A15:3023
-			QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES, 0, SOUND_STD_TELEPORT, 0x61, 0x80, x, y, 1); // teleport noise
+			QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES, 0, SOUND_STD_TELEPORT_MESSAGE, 0x61, 0x80, x, y, 1); // teleport noise
 		}
 	}
 	//^3A15:303B
@@ -62090,14 +62239,14 @@ void SkWinCore::CHAMPION_DEFEATED(X16 player)
 				//^2C1D:161F
 				DISPLAY_TAKEN_ITEM_NAME(glbLeaderHandPossession.object);
 			//^2C1D:1629
-			_4976_4860 = 1;
+			glbMouseVisibility = 1;
 		}
 		//^2C1D:1634
 		if (_4976_4bfe != 0) {
 			//^2C1D:163B
 			_4976_4bfe = 0;
 			FIRE_MOUSE_RELEASE_CAPTURE();
-			_4976_4860 = 1;
+			glbMouseVisibility = 1;
 			FIRE_SHOW_MOUSE_CURSOR();
 		}
 		//^2C1D:1651
@@ -62108,7 +62257,7 @@ void SkWinCore::CHAMPION_DEFEATED(X16 player)
 		//^2C1D:1666
 		_4976_4c3e = 0;
 		FIRE_MOUSE_RELEASE_CAPTURE();
-		_4976_4860 = 1;
+		glbMouseVisibility = 1;
 		FIRE_SHOW_MOUSE_CURSOR();
 	}
 	//^2C1D:167C
@@ -62674,7 +62823,7 @@ _01f7:
 					//^13AE:0247
 					_4976_4c3e = 0;
 					FIRE_MOUSE_RELEASE_CAPTURE();
-					_4976_4860 = 1;
+					glbMouseVisibility = 1;
 					FIRE_SHOW_MOUSE_CURSOR();
 				}
 			}
@@ -62699,6 +62848,9 @@ _01f7:
 			//^13AE:0295
 			CHANGE_CURRENT_MAP_TO(si);
 		}
+		//DM2DOS_R_BA7(ddata.v1e0266);
+		//if (si != 0xFFFF)
+			skmidi->REQUEST_PLAY_MUSIC(glbPlayerMap);
 		continue;
 	}
 	//^13AE:029F
@@ -62772,6 +62924,7 @@ int SkWinCore::FIRE_BOOTSTRAP() //#DS=089C
 	// 4F75:0FE8  F8 0F 75 4F/04 10 75 4F/08 10 75 4F/00 00 00 00  ÅEuO..uO..uO....
 	// 4F75:0FF8  43 3A 5C 46 49 52 45 2E 45 58 45 00 2B 70 6D 00  C:\FIRE.EXE.+pm.
 	// 4F75:1008  2B 73 62 00 75 49 00 00 5A 00 00 88 4F 00 00 00  +sb.uI..Z..ÅE...
+	skmidi = new SkWinMIDI(skwin.dung);
 	char *argv[] = {"FIRE.exe", "+pm", "+sb"};
 	return (FIRE_MAIN(3, argv, NULL));
 }
@@ -64127,7 +64280,7 @@ SkWinCore::SkWinCore()
 	glbScreenWidth = 320;	// Screen width
 	glbScreenHeight = 200;	// Screen height
 	_4976_4964 = NULL;
-	_4976_4860 = 1;
+	glbMouseVisibility = 1;	// (_4976_4860)
 	_04bf_0e7a = 0;
 	glbMouseXPos = glbMouseYPos = 0;
 	zeroMem(&_04bf_1852, sizeof(_04bf_1852));

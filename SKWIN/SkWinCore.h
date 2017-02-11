@@ -11,6 +11,7 @@
 
 #include <DME.h>
 #include <fileset.h>
+#include <SkWinMIDI.h>
 
 //..............................................................................
 
@@ -49,6 +50,8 @@ protected:
 
 // SPX: _4976_53b4 renamed glbChampionSquad
 #define glbChampionSquad (&glbChampionTable[1])
+
+	SkWinMIDI* skmidi;
 
 #ifdef DM2_EXTENDED_MODE == 1
 	U8	glbXAmbientSoundActivated;
@@ -326,7 +329,7 @@ protected:
 	Bit32u	_4976_483b;		// previously loaded raw data file pos
 	Bit16u	_4976_484b;		// incremental serial for use with memory alloc counter?
 	U16		_4976_484d;
-	__int16	_4976_4860;
+	__int16	glbMouseVisibility;		// (_4976_4860)
 	SRECT	_4976_4942;
 	SRECT	_4976_494a;
 	X16		_4976_4952;

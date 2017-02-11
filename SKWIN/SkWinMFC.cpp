@@ -514,6 +514,7 @@ void CSkWinMFC::OnVideo1x(UINT nID) {
 		case ID_VIDEO_2X: sxfact = 2; break;
 		case ID_VIDEO_3X: sxfact = 3; break;
 		case ID_VIDEO_4X: sxfact = 4; break;
+
 		case ID_SOUND_NO: sblast = 0; break;
 		case ID_SOUND_WINMM: sblast = 1; break;
 		case ID_SOUND_DS: sblast = 2; break;
@@ -524,6 +525,9 @@ void CSkWinMFC::OnVideo1x(UINT nID) {
 		case ID_DS_AF_0: sbdsaf = 0; break;
 		case ID_DS_AF_FULL: sbdsaf = 1; break;
 		case ID_DS_AF_LIGHT: sbdsaf = 2; break;
+
+		case 40074: SkCodeParam::bMIDIMusicEnabled = !SkCodeParam::bMIDIMusicEnabled; break;
+
 		case ID_SPEED_1ULTRAFAST: spfact = 0; break;
 		case ID_SPEED_2FAST: spfact = 1; break;
 		case ID_SPEED_3NORMAL: spfact = 2; break;
@@ -608,6 +612,7 @@ void CSkWinMFC::OnUpdateVideo1x(CCmdUI *pCmdUI) {
 		case ID_VIDEO_2X: pCmdUI->SetRadio(sxfact == 2); break;
 		case ID_VIDEO_3X: pCmdUI->SetRadio(sxfact == 3); break;
 		case ID_VIDEO_4X: pCmdUI->SetRadio(sxfact == 4); break;
+
 		case ID_SOUND_NO: pCmdUI->SetRadio(sblast == 0); break;
 		case ID_SOUND_WINMM: pCmdUI->SetRadio(sblast == 1); break;
 		case ID_SOUND_DS: pCmdUI->SetRadio(sblast == 2); break;
@@ -618,6 +623,8 @@ void CSkWinMFC::OnUpdateVideo1x(CCmdUI *pCmdUI) {
 		case ID_DS_AF_0: pCmdUI->SetRadio(sbdsaf == 0); break;
 		case ID_DS_AF_FULL: pCmdUI->SetRadio(sbdsaf == 1); break;
 		case ID_DS_AF_LIGHT: pCmdUI->SetRadio(sbdsaf == 2); break;
+
+		case 40074: pCmdUI->SetRadio(SkCodeParam::bMIDIMusicEnabled); break;
 
 		case ID_SPEED_1ULTRAFAST: pCmdUI->SetRadio(spfact == 0); break;
 		case ID_SPEED_2FAST: pCmdUI->SetRadio(spfact == 1); break;

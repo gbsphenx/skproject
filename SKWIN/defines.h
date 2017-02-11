@@ -261,6 +261,7 @@ enum SkillLevel {
 #define SOUND_CHAMPION_SCREAM			0x87
 #define SOUND_STD_ACTIVATION			0x88
 #define SOUND_STD_TELEPORT				0x89
+#define SOUND_STD_TELEPORT_MESSAGE		0x02	// Sound teleporter in message category, only for PC9821
 #define SOUND_CHAMPION_BUMP				0x8A
 #define SOUND__0x8B						0x8B
 
