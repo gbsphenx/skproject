@@ -1466,7 +1466,7 @@ namespace DM2Internal {
 	};
 	// SPX: sk03a2 renamed AIDefinition
 	struct AIDefinition { // 36 bytes
-		Bit16u w0;		// @0 // flags
+		Bit16u w0AIFlags;		// @0 // flags
 		Bit8u ArmorClass;	// Bit8u b2;		// @2	// armor/defense
 		i8 b3;			// @3
 		Bit16u BaseHP;	// (Bit16u w4) @4 // initial HP	 
@@ -1505,24 +1505,24 @@ namespace DM2Internal {
 		i8 b34;			// @34
 		__int8 b35;		// @35	// Cloud size when dying ? 0/default = 0x6E / 1 => 0xBE / 2 => 0xFF
 
-		U16 IsStaticObject() const { return (w0)&1; } // w0_0_0() 1 = sk1c9a02c3 within each Creature record.
+		U16 IsStaticObject() const { return (w0AIFlags)&1; } // w0_0_0() 1 = sk1c9a02c3 within each Creature record.
 												// this one is set for general static objects (non creature)
 												// i.e. 0 = living creature
-//		U16 w0_1_1() const { return (w0 >> 1)&1; } // 1 = reflector?
-		U16 w0_2_2() const { return (w0 >> 2)&1; }	// w0_2_2()	?? for static objects
-		U16 w0_3_3() const { return (w0 >> 3)&1; }	// w0_3_3()	spectres and ghosts have it
-		U16 w0_4_4() const { return (w0 >> 4)&1; }	// w0_4_4() spectres ghosts + vexirks have it
-		U16 w0_5_5() const { return (w0 >> 5)&1; } // w0_5_5() 1 = non-material 
-		U16 w0_6_7() const { return (w0 >> 6)&3; }	// w0_6_7() for all creatures & objects - worms and glops have both bits.
+//		U16 w0_1_1() const { return (w0AIFlags >> 1)&1; } // 1 = reflector?
+		U16 w0_2_2() const { return (w0AIFlags >> 2)&1; }	// w0_2_2()	?? for static objects
+		U16 w0_3_3() const { return (w0AIFlags >> 3)&1; }	// w0_3_3()	spectres and ghosts have it
+		U16 w0_4_4() const { return (w0AIFlags >> 4)&1; }	// w0_4_4() spectres ghosts + vexirks have it
+		U16 w0_5_5() const { return (w0AIFlags >> 5)&1; } // w0_5_5() 1 = non-material 
+		U16 w0_6_7() const { return (w0AIFlags >> 6)&3; }	// w0_6_7() for all creatures & objects - worms and glops have both bits.
 
-		U16 PushWhenMoving() const { return (w0 >> 8)&1; }	// w0_8_8() move and push back anything on target (spiked wall)
-		U16 AbsorbsMissile() const { return (w0 >> 9)&1; }	// w0_9_9() most creatures have this
-		U16 w0_a_a() const { return (w0 >> 10)&1; }	// w0_a_a() related to invisibility?? (ghosts + dragoth)
-		U16 w0_b_b() const { return (w0 >> 11)&1; }	// w0_b_b() related to light ??? (worm, glop, treant, rocky .. bats + minions)
-		U16 w0_c_c() const { return (w0 >> 12)&1; }	// w0_c_c() dragoth only !! (for end game ??)
+		U16 PushWhenMoving() const { return (w0AIFlags >> 8)&1; }	// w0_8_8() move and push back anything on target (spiked wall)
+		U16 AbsorbsMissile() const { return (w0AIFlags >> 9)&1; }	// w0_9_9() most creatures have this
+		U16 w0_a_a() const { return (w0AIFlags >> 10)&1; }	// w0_a_a() related to invisibility?? (ghosts + dragoth)
+		U16 w0_b_b() const { return (w0AIFlags >> 11)&1; }	// w0_b_b() related to light ??? (worm, glop, treant, rocky .. bats + minions)
+		U16 w0_c_c() const { return (w0AIFlags >> 12)&1; }	// w0_c_c() dragoth only !! (for end game ??)
 		// 0_d_d for pit ghost + void door
-		U16 w0_e_e() const { return (w0 >> 14)&1; } // w0_e_e() 1 = can stay on all maps => all minions have this, because they travel between maps
-		U16 w0_f_f() const { return (w0 >> 15)&1; } // w0_f_f() 0 = block use of rope?! (all flying and non material ..)
+		U16 w0_e_e() const { return (w0AIFlags >> 14)&1; } // w0_e_e() 1 = can stay on all maps => all minions have this, because they travel between maps
+		U16 w0_f_f() const { return (w0AIFlags >> 15)&1; } // w0_f_f() 0 = block use of rope?! (all flying and non material ..)
 
 
 		U16 w10_2_2() const { return (w10 >> 2)&1; }
@@ -1846,32 +1846,52 @@ namespace DM2Internal {
 		CnWH, // 17
 	};
 	//
+	// SPX: I put the DM1 command list in correspondance. All DM1 "physical" attacks have been replaced by generic command (4 and 8)
 	enum CommandMeaning {
-		CmBlock=1,
-		CmInvisibility=2,
-		CmLaunchMissile=3,
-		CmPhysicalDamage4=4,
-		CmConfuse=5,
-		CmDarkness=6,
-		CmSpellReflection=7,
-		CmPhysicalDamage8=8,
-		CmAuraOfSpeed=9,
-		CmUseRope=10,
-		CmFreezeLife=11,
-		CmAuraOfDex=12,
-		CmAuraOfWiz=13,
-		CmAuraOfVit=14,
-		CmAuraOfStr=15,
-		CmConsume=16,
-		CmPouch=17,
-		CmLaunchProjectile=32,
-		CmSpellshield=33,
-		CmFireshield=34,
-		CmShield=35,
-		CmHealing=36,
-		CmLight=38,
-		CmLongLight=39,
-		CmThrow=42,
+								// 0 = N (none)
+		CmBlock=1,				// 1 = BLOCK
+		CmInvisibility=2,		// 2 = CHOP
+		CmLaunchMissile=3,		// 3 = X (unused)
+		CmPhysicalDamage4=4,	// 4 = BLOW HORN
+		CmConfuse=5,			// 5 = FLIP
+		CmDarkness=6,			// 6 = PUNCH
+		CmSpellReflection=7,	// 7 = KICK
+		CmPhysicalDamage8=8,	// 8 = WAR CRY
+		CmAuraOfSpeed=9,		// 9 = STAB
+		CmUseRope=10,			// 10 = CLIMB DOWN
+		CmFreezeLife=11,		// 11 = FREEZE LIFE
+		CmAuraOfDex=12,			// 12 = HIT
+		CmAuraOfWiz=13,			// 13 = SWING
+		CmAuraOfVit=14,			// 14 = STAB
+		CmAuraOfStr=15,			// 15 = THRUST
+		CmConsume=16,			// 16 = JAB
+		CmPouch=17,				// 17 = PARRY
+								// 18 = HACK
+								// 19 = BERZERK
+								// 20 = FIREBALL
+								// 21 = DISPELL
+								// 22 = CONFUSE
+								// 23 = LIGHTNING
+								// 24 = DISRUPT
+								// 25 = MELEE
+								// 26 = X
+								// 27 = INVOKE
+								// 28 = SLASH
+								// 29 = CLEAVE
+								// 30 = BASH
+								// 31 = BASH
+		CmLaunchProjectile=32,	// 32 = SHOOT
+		CmSpellshield=33,		// 33 = SPELLSHIELD
+		CmFireshield=34,		// 34 = FIRESHIELD
+		CmShield=35,			// 35 = FLUXCAGE
+		CmHealing=36,			// 36 = HEAL
+								// 37 = CALM
+		CmLight=38,				// 38 = LIGHT
+		CmLongLight=39,			// 39 = WINDOW
+								// 40 = SPIT
+								// 41 = BRANDISH
+		CmThrow=42,				// 42 = THROW
+								// 43 = FUSE
 		CmMark=44,
 		CmCallCarry=45,
 		CmCallFetch=46,
