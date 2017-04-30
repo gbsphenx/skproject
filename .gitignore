@@ -10,3 +10,7 @@
 /DMDC2/Debug
 /DMDC2/Release
 /SKWIN/SkWin.ini
+
+bin
+obj
+**/packages/*/*
