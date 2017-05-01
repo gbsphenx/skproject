@@ -6,7 +6,10 @@ using System.Text;
 namespace DM2Internal {
     public class DungeonJson {
         public int randomGraphicsSeed;
-        public DirPos startingPartyPosition;
+        public int startX;
+        public int startY;
+        public int startDir;
+        public int startMap = 0;
         public List<MapDef> maps = new List<MapDef>();
         public List<ObjDef> objs = new List<ObjDef>();
     }
@@ -17,11 +20,9 @@ namespace DM2Internal {
         [NonSerialized]
         public int currentNumberOfColumns;
         [NonSerialized]
-        public int numWallGraphs;
+        public int numWallGraphics;
         [NonSerialized]
-        public int numWallRandom;
-        [NonSerialized]
-        public int numFloorGraphs;
+        public int numFloorGraphics;
         [NonSerialized]
         public int numFloorRandom;
         [NonSerialized]
@@ -33,11 +34,9 @@ namespace DM2Internal {
         [NonSerialized]
         public int doorType1;
         [NonSerialized]
-        public List<int> creaturesTypes = new List<int>();
+        public List<int> wallGraphics = new List<int>();
         [NonSerialized]
-        public List<int> wallGraphs = new List<int>();
-        [NonSerialized]
-        public List<int> floorGraphs = new List<int>();
+        public List<int> floorGraphics = new List<int>();
         [NonSerialized]
         public List<int> doorDecorationGraphics = new List<int>();
 
@@ -50,7 +49,7 @@ namespace DM2Internal {
         /// height*width, top down, then left-to-right.
         /// -1 if no obj.
         /// </summary>
-        public int[] objRefs;
+        public int[] tileObjRefs;
 
         public bool useTeleporter;
         public bool useDoor0;
@@ -66,11 +65,16 @@ namespace DM2Internal {
         public int level;
         public int difficulty;
         public int mapGraphicsStyle;
+        public int wallGraphicsRandomDecorations;
+        public List<int> allowedCreatureTypes = new List<int>();
     }
 
     public class ObjDef {
         public int direction;
         public int nextObjRef = -1;
+    }
+    public class ContainableDef : ObjDef {
+        public int childObjRef = -1;
     }
     public class DoorDef : ObjDef {
         public String type = "door";
@@ -92,7 +96,9 @@ namespace DM2Internal {
     }
     public class TeleporterDef : ObjDef {
         public String type = "teleporter";
-        public MapPos destination;
+        public int destX;
+        public int destY;
+        public int destMap;
         public int rotation;
         public bool absoluteRotation;
         public int scope;
@@ -121,88 +127,62 @@ namespace DM2Internal {
         /// delay or ShopItemPoolNo
         /// </summary>
         public int delay;
-        public int graphicNumber;
+        public int floorOrnate = -1;
+        public int wallOrnate = -1;
         public int newDirection;
         public int xCoord;
         public int yCoord;
     }
-    public class CreatureDef : ObjDef {
+    public class CreatureDef : ContainableDef {
         public String type = "creature";
-        public int childObjRef = -1;
+        public int creatureType;
+        public int position;
+        public int hp1;
+        public int hp2;
+        public int hp3;
+        public int hp4;
     }
     public class WeaponDef : ObjDef {
         public String type = "weapon";
+        public int itemType;
+        public bool important;
+        public int charges;
     }
     public class ClothDef : ObjDef {
         public String type = "cloth";
+        public int itemType;
+        public bool important;
+        public int charges;
     }
     public class ScrollDef : ObjDef {
         public String type = "scroll";
+        public int referredText;
     }
     public class PotionDef : ObjDef {
         public String type = "potion";
+        public int potionPower;
+        public int potionType;
+        public bool visiblePower;
     }
-    public class ContainerDef : ObjDef {
+    public class ContainerDef : ContainableDef {
         public String type = "container";
-        public int childObjRef = -1;
+        public bool isOpened;
+        public int containerType;
+        public int destX;
+        public int destY;
+        public int destMap;
     }
     public class MiscItemDef : ObjDef {
         public String type = "miscItem";
+        public int itemType;
+        public bool important;
+        public int charges;
     }
-    public class MissileDef : ObjDef {
+    public class MissileDef : ContainableDef {
         public String type = "missile";
-        public int childObjRef = -1;
     }
     public class CloudDef : ObjDef {
         public String type = "cloud";
-    }
-
-    public class DirPos {
-        /// <summary>
-        /// 0,1,2,3 = N,E,S,W
-        /// </summary>
-        public int dir;
-
-        /// <summary>
-        /// 0 based, horizontal, left to right
-        /// </summary>
-        public int x;
-
-        /// <summary>
-        /// 0 based, vertical, top to bottom
-        /// </summary>
-        public int y;
-
-        public DirPos(ushort position) {
-            dir = (position >> 10) & 3;
-            x = (position) & 31;
-            y = (position >> 5) & 31;
-        }
-    }
-
-    public class MapPos {
-        /// <summary>
-        /// zero based
-        /// </summary>
-        public int map;
-
-        /// <summary>
-        /// 0 based, horizontal, left to right
-        /// </summary>
-        public int x;
-
-        /// <summary>
-        /// 0 based, vertical, top to bottom
-        /// </summary>
-        public int y;
-
-        public MapPos() { }
-
-        public MapPos(ushort position) {
-            map = (position >> 10) & 63;
-            x = (position) & 31;
-            y = (position >> 5) & 31;
-        }
     }
 
     public enum dbIndex {
@@ -231,4 +211,15 @@ namespace DM2Internal {
         itemsParty = 2,
         everything = 3,
     }
+
+    public enum tileTypeIndex {
+        ttWall = 0,		// 0
+        ttFloor,		// 1
+        ttPit,			// 2
+        ttStairs,		// 3
+        ttDoor,			// 4
+        ttTeleporter,	// 5
+        ttTrickWall,	// 6
+        ttMapExit,		// 7
+    };
 }

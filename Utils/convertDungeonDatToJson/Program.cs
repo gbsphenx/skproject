@@ -64,7 +64,10 @@ namespace convertDungeonDatToJson {
                 NumberOfLevels = DoByte();
                 DoByte();
                 TextDataSize = DoWord();
-                d.startingPartyPosition = new DirPos(StartingPartyPosition = DoWord());
+                StartingPartyPosition = DoWord();
+                d.startX = (StartingPartyPosition >> 0) & 31;
+                d.startY = (StartingPartyPosition >> 5) & 31;
+                d.startDir = (StartingPartyPosition >> 10) & 3;
                 ObjectListSize = DoWord();
                 NumberOfDoors = DoWord();
                 NumberOfTeleporters = DoWord();
@@ -109,10 +112,9 @@ namespace convertDungeonDatToJson {
                     NumberOfColumns += mapdef.width;
 
                     int numGraphs = DoWord();
-                    mapdef.numWallGraphs = (numGraphs) & 15;
-                    mapdef.numWallRandom = (numGraphs >> 4) & 15;
-                    mapdef.numFloorGraphs = (numGraphs >> 8) & 15;
-                    mapdef.numFloorRandom = (numGraphs >> 12) & 15;
+                    mapdef.numWallGraphics = (numGraphs) & 15;
+                    mapdef.wallGraphicsRandomDecorations = (numGraphs >> 4) & 15;
+                    mapdef.numFloorGraphics = (numGraphs >> 8) & 15;
 
                     int w12 = DoWord();
                     mapdef.numDoorDecorationGraphics = (w12) & 15;
@@ -124,9 +126,9 @@ namespace convertDungeonDatToJson {
                     mapdef.doorType0 = (w14 >> 8) & 15;
                     mapdef.doorType1 = (w14 >> 12) & 15;
 
-                    mapdef.objRefs = new int[mapdef.height * mapdef.width];
-                    for (int t = 0; t < mapdef.objRefs.Length; t++) {
-                        mapdef.objRefs[t] = -1;
+                    mapdef.tileObjRefs = new int[mapdef.height * mapdef.width];
+                    for (int t = 0; t < mapdef.tileObjRefs.Length; t++) {
+                        mapdef.tileObjRefs[t] = -1;
                     }
 
                     d.maps.Add(mapdef);
@@ -255,33 +257,32 @@ namespace convertDungeonDatToJson {
                     var mapdef = d.maps[z];
                     si.Position = offMapIn + mapdef.mapOffset + mapdef.width * mapdef.height;
                     for (int t = 0; t < mapdef.numCreaturesTypes; t++) {
-                        mapdef.creaturesTypes.Add(br.ReadByte());
+                        mapdef.allowedCreatureTypes.Add(br.ReadByte());
                     }
-                    for (int t = 0; t < mapdef.numWallGraphs; t++) {
-                        mapdef.wallGraphs.Add(br.ReadByte());
+                    for (int t = 0; t < mapdef.numWallGraphics; t++) {
+                        mapdef.wallGraphics.Add(br.ReadByte());
                     }
-                    for (int t = 0; t < mapdef.numFloorGraphs; t++) {
-                        mapdef.floorGraphs.Add(br.ReadByte());
+                    for (int t = 0; t < mapdef.numFloorGraphics; t++) {
+                        mapdef.floorGraphics.Add(br.ReadByte());
                     }
                     for (int t = 0; t < mapdef.numDoorDecorationGraphics; t++) {
                         mapdef.doorDecorationGraphics.Add(br.ReadByte());
                     }
-                    mapdef.doorDecorationGraphics.Add(0);
+                    mapdef.doorDecorationGraphics.Add(-1);
 
                     si.Position = offMapIn + mapdef.mapOffset;
+                    byte[] tileBytes = br.ReadBytes(mapdef.height * mapdef.width);
                     String tiles = "";
                     int tilePos = 0;
                     for (int x = 0; x < mapdef.width; x++) {
                         int currentObjectListIndex = columns[mapdef.currentNumberOfColumns + x];
                         for (int y = 0; y < mapdef.height; y++, tilePos++) {
-                            byte tile = br.ReadByte();
+                            byte tile = tileBytes[tilePos];
                             tiles += tile.ToString("X2");
-                            bool hasObj = 0 != (tile & 8);
+                            bool hasObj = 0 != (tile & 16);
                             if (hasObj) {
                                 int oid = objectList[currentObjectListIndex];
-                                if (oid != oidFree) {
-                                    mapdef.objRefs[tilePos] = convertObject(mapdef, oid);
-                                }
+                                mapdef.tileObjRefs[tilePos] = convertObject(mapdef, oid, tile);
 
                                 currentObjectListIndex++;
                             }
@@ -301,9 +302,12 @@ namespace convertDungeonDatToJson {
 
         int[] dbSizes = new int[] { 4, 6, 4, 8, 16, 4, 4, 4, 4, 8, 4, 0, 0, 0, 8, 4 };
 
-        private int convertObject(MapDef mapdef, int oid) {
-            Trace.Assert(oid != oidFree);
-            Trace.Assert(oid != oidEnd);
+        SortedSet<int> already = new SortedSet<int>();
+
+        private int convertObject(MapDef mapdef, int oid, byte tile) {
+            Debug.Assert(already.Add(oid));
+            Debug.Assert(oid != oidFree);
+            Debug.Assert(oid != oidEnd);
             int dir = (oid >> 14) & 3;
             int cat = (oid >> 10) & 15;
             int num = (oid) & 1023;
@@ -311,6 +315,7 @@ namespace convertDungeonDatToJson {
             ObjDef newObj = null;
             si.Position = offsetsToDatabase[cat] + dbSizes[cat] * num;
             int nextOid = br.ReadUInt16();
+            bool isWall = ((tileTypeIndex)(tile >> 5)) == tileTypeIndex.ttWall;
             switch ((dbIndex)cat) {
                 case dbIndex.dbDoor: {
                         int attr = br.ReadUInt16();
@@ -338,11 +343,9 @@ namespace convertDungeonDatToJson {
                         int attr = br.ReadUInt16();
                         int attr2 = br.ReadUInt16();
                         d.objs.Add(newObj = new TeleporterDef {
-                            destination = new MapPos {
-                                map = (attr2 >> 8) & 255,
-                                x = (attr >> 0) & 31,
-                                y = (attr >> 5) & 31,
-                            },
+                            destMap = (attr2 >> 8) & 255,
+                            destX = (attr >> 0) & 31,
+                            destY = (attr >> 5) & 31,
                             rotation = (attr >> 10) & 3,
                             absoluteRotation = 0 != ((attr >> 12) & 1),
                             scope = (attr >> 13) & 3,
@@ -372,7 +375,8 @@ namespace convertDungeonDatToJson {
                             inversion = 0 != ((attr2 >> 5) & 1),
                             sound = 0 != ((attr2 >> 6) & 1),
                             delay = (attr2 >> 7) & 15,
-                            graphicNumber = (attr2 >> 12) & 15,
+                            floorOrnate = isWall ? -1 : (attr2 >> 12) & 15,
+                            wallOrnate = isWall ? (attr2 >> 12) & 15 : -1,
 
                             newDirection = (attr3 >> 4) & 3,
                             xCoord = (attr3 >> 6) & 31,
@@ -382,42 +386,85 @@ namespace convertDungeonDatToJson {
                     }
                 case dbIndex.dbCreature: {
                         int childOid = br.ReadUInt16();
+                        int creatureType = br.ReadByte();
+                        int position = br.ReadByte();
+                        int hp1 = br.ReadUInt16();
+                        int hp2 = br.ReadUInt16();
+                        int hp3 = br.ReadUInt16();
+                        int hp4 = br.ReadUInt16();
                         CreatureDef me;
                         d.objs.Add(newObj = me = new CreatureDef {
-                            childObjRef = (childOid != oidEnd) ? convertObject(mapdef, childOid) : -1,
+                            creatureType = creatureType,
+                            position = position,
+                            hp1 = hp1,
+                            hp2 = hp2,
+                            hp3 = hp3,
+                            hp4 = hp4,
                         });
+                        if (childOid != oidEnd) {
+                            me.childObjRef = convertObject(mapdef, childOid, tile);
+                        }
+
                         break;
                     }
                 case dbIndex.dbWeapon: {
+                        int attr = br.ReadUInt16();
                         d.objs.Add(newObj = new WeaponDef {
+                            itemType = (attr >> 0) & 127,
+                            important = 0 != ((attr >> 7) & 1),
+                            charges = (attr >> 10) & 15,
                         });
                         break;
                     }
                 case dbIndex.dbCloth: {
+                        int attr = br.ReadUInt16();
                         d.objs.Add(newObj = new ClothDef {
+                            itemType = (attr >> 0) & 127,
+                            important = 0 != ((attr >> 7) & 1),
+                            charges = (attr >> 10) & 15,
                         });
                         break;
                     }
                 case dbIndex.dbScroll: {
+                        int attr = br.ReadUInt16();
                         d.objs.Add(newObj = new ScrollDef {
+                            referredText = attr & 0x3ff,
                         });
                         break;
                     }
                 case dbIndex.dbPotion: {
+                        int attr = br.ReadUInt16();
                         d.objs.Add(newObj = new PotionDef {
+                            potionPower = (attr >> 0) & 255,
+                            potionType = (attr >> 8) & 127,
+                            visiblePower = 0 != ((attr >> 15) & 1),
                         });
                         break;
                     }
                 case dbIndex.dbContainer: {
                         int childOid = br.ReadUInt16();
+                        int attr = br.ReadByte();
+                        int attr2 = br.ReadByte();
+                        int attr3 = br.ReadUInt16();
                         ContainerDef me;
                         d.objs.Add(newObj = me = new ContainerDef {
-                            childObjRef = (childOid != oidEnd) ? convertObject(mapdef, childOid) : -1,
+                            isOpened = 0 != ((attr >> 0) & 1),
+                            containerType = (attr >> 1) & 3,
+                            destX = (attr3 >> 0) & 31,
+                            destY = (attr3 >> 5) & 31,
+                            destMap = (attr >> 10) & 63,
                         });
+                        if (childOid != oidEnd) {
+                            me.childObjRef = convertObject(mapdef, childOid, tile);
+                        }
                         break;
                     }
                 case dbIndex.dbMiscellaneous_item: {
+                        int attr = br.ReadUInt16();
                         d.objs.Add(newObj = new MiscItemDef {
+                            itemType = (attr >> 0) & 127,
+                            important = 0 != ((attr >> 7) & 1),
+                            charges = (attr >> 8) & 0x3f,
                         });
                         break;
                     }
@@ -425,8 +472,10 @@ namespace convertDungeonDatToJson {
                         int childOid = br.ReadUInt16();
                         MissileDef me;
                         d.objs.Add(newObj = me = new MissileDef {
-                            childObjRef = (childOid != oidEnd) ? convertObject(mapdef, childOid) : -1,
                         });
+                        if (childOid != oidEnd) {
+                            me.childObjRef = convertObject(mapdef, childOid, tile);
+                        }
                         break;
                     }
                 case dbIndex.dbCloud: {
@@ -439,7 +488,7 @@ namespace convertDungeonDatToJson {
             }
             newObj.direction = dir;
             if (nextOid != oidEnd) {
-                newObj.nextObjRef = convertObject(mapdef, nextOid);
+                newObj.nextObjRef = convertObject(mapdef, nextOid, tile);
             }
             return objRef;
         }
