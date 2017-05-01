@@ -33,6 +33,11 @@ using namespace kkBitBlt;
 	#define CREATURE_AI_TAB_SIZE	42
 #endif // DM2_EXTENDED_MODE
 
+#if DM2_EXTENDED_JSON == 1
+#include "SkJson.h"
+using namespace SkJson;
+#endif
+
 
 
 // SPX: Functions supposed for MIDI playing from SKWIN_DM2_PCDOS
@@ -270,7 +275,7 @@ X16 SkWinCore::EXTENDED_LOAD_AI_DEFINITION(void)
 				// Bunch load
 				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 0);
 				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 1);
-				dAITable[index].w0 = byte1 + byte2*256;
+				dAITable[index].w0AIFlags = byte1 + byte2*256;
 
 				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 2);
 				dAITable[index].ArmorClass = byte1;
@@ -39053,6 +39058,292 @@ _2585:
 	return;
 }
 
+#if (DM2_EXTENDED_JSON == 1)
+
+int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
+{
+	JsonSerializer loader;
+	if (!loader.loadFile(fset.realHandles[glbDataFileHandle])) {
+		return 0;
+	}
+
+	if (_4976_3b5d != 0) {
+		//^2066:25FF
+		dunHeader = reinterpret_cast<File_header *>(ALLOC_MEMORY_RAM(sizeof(File_header), 1, 1024));
+	}
+
+	JsonPathService root(loader.node);
+
+	JsonValueLookupService lookup(root.node);
+	dunHeader->w0 = lookup.getInt("randomGraphicsSeed", 0);
+	dunHeader->startX = lookup.getInt("startX", 0);
+	dunHeader->startY = lookup.getInt("startY", 0);
+	dunHeader->startDir = lookup.getInt("startDir", 0);
+
+	JsonPathService atMaps(root.node, "maps");
+	JsonArrayLookupService mapsArray(atMaps);
+	dunHeader->nMaps = mapsArray.getLen();
+
+	Bit16u bp04 = 0;
+	Bit16u si = 0;
+	__int16 di;
+	Bit8u bp01 = 0;
+
+	if (_4976_3b5d != 0) {
+		//^2066:25FF
+		dunHeader = reinterpret_cast<File_header *>(ALLOC_MEMORY_RAM(44, 1, 1024));
+	}
+
+	// - File header (JSON)
+
+	glbPlayerPosX = dunHeader->StartPartyPosX();// si & 0x001F;
+	glbPlayerPosY = dunHeader->StartPartyPosY();// si & 0x001F;
+	glbPlayerDir = dunHeader->StartPartyDir();//(si >> 5) & 0x0003;
+	glbPlayerMap = dunHeader->StartPartyMap();
+	__int16 bp10 = dunHeader->nMaps;
+	//^2066:2664
+	if (_4976_3b5d != 0) {
+		//^2066:266B
+		dunMapsHeaders = reinterpret_cast<Map_definitions *>(ALLOC_MEMORY_RAM(sizeof(Map_definitions) * bp10, afUseUpper, 0x400));
+	}
+
+	// - Map definitions
+
+	int mapi = 0;
+	for (; mapi < bp10; mapi++) {
+		Map_definitions &mapDef = dunMapsHeaders[mapi];
+		JsonValueLookupService mapLookup(mapsArray.at(mapi));
+
+		mapDef.useTeleporter = mapLookup.getInt("useTeleporter", 0) ? true : false;
+		mapDef.useDoor0 = mapLookup.getInt("useDoor0", 0) ? true : false;
+		mapDef.useDoor1 = mapLookup.getInt("useDoor1", 0) ? true : false;
+		mapDef.useUpperPitfall = mapLookup.getInt("useUpperPitfall", 0) ? true : false;
+		mapDef.useLowerPitfall = mapLookup.getInt("useLowerPitfall", 0) ? true : false;
+		mapDef.useUpStaircase = mapLookup.getInt("useUpStaircase", 0) ? true : false;
+		mapDef.useDownStaircase = mapLookup.getInt("useDownStaircase", 0) ? true : false;
+		mapDef.shiftX = mapLookup.getInt("shiftX", 0);
+		mapDef.shiftY = mapLookup.getInt("shiftY", 0);
+		mapDef.height = mapLookup.getInt("height", 0);
+		mapDef.width = mapLookup.getInt("width", 0);
+		mapDef.level = mapLookup.getInt("level", 0);
+		mapDef.difficulty = mapLookup.getInt("difficulty", 0);
+		mapDef.mapGraphicsStyle = mapLookup.getInt("mapGraphicsStyle", 0);
+		mapDef.wallGraphicsRandomDecorations = mapLookup.getInt("wallGraphicsRandomDecorations", 0);
+	}
+
+	//^2066:26A2
+	if (_4976_3b5d != 0) {
+		//^2066:26A9
+		dunMapColumnsSumArray = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(bp10 << 1, afUseUpper, 0x400));
+	}
+	//^2066:26C5
+	Bit16u bp0e = 0;
+	//^2066:26CC
+	for (si = 0; si < bp10; si++) {
+		//^2066:26CE
+		dunMapColumnsSumArray[si] = bp0e;
+		//^2066:26DE
+		bp0e += dunMapsHeaders[si].Column();
+		//^2066:26F7
+	}
+	//^2066:26FD
+	_4976_4cb4 = bp0e;
+	//^2066:2703
+	si = dunHeader->cwListSize;
+	//^2066:270B
+	if (isNewGame != 0) {
+		//^2066:2711
+		dunHeader->cwListSize += 300;
+	}
+	//^2066:2717
+	if (_4976_3b5d != 0) {
+		//^2066:271E
+		dunMapTilesObjectIndexPerColumn = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(bp0e << 1, afUseUpper, 0x400));
+		//^2066:273A
+		dunGroundStacks = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(dunHeader->cwListSize << 1, afUseUpper, 0x400));
+		//^2066:2754
+		dunTextData = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(dunHeader->cwTextData << 1, afUseUpper, 0x400));
+	}
+
+	// - Index of tiles with objects on them (per column)
+
+	//^2066:277C
+	if (SKLOAD_READ(dunMapTilesObjectIndexPerColumn, bp0e << 1) == 0)
+		return 0;
+
+	// - List of object IDs of first objects on tiles
+
+	//^2066:2798
+	if (SKLOAD_READ(dunGroundStacks, si << 1) == 0)
+		return 0;
+	//^2066:27B3
+	if (isNewGame != 0) {
+		//^2066:27B9
+		for (di = 0; di < 300; si++, di++) {
+			//^2066:27BD
+			dunGroundStacks[si] = 0xffff;
+			//^2066:27CC
+		}
+	}
+
+	// - Text Data
+
+	//^2066:27D4
+	if (SKLOAD_READ(dunTextData, dunHeader->cwTextData << 1) == 0)
+		return 0;
+	//^2066:27F5
+	if (_4976_5bf2 == 0) {
+		//^2066:27FC
+		glbTimersMaximumCount = MAX_TIMER_NUMBER;	// = 50
+	}
+
+	// - List of XXX
+
+	//^2066:2802
+	for (si = 0; si < 16; si++) {
+		//^2066:2807
+		Bit16u di = dunHeader->nRecords[si];
+		if (isNewGame != 0) {
+			//^2066:281B
+			dunHeader->nRecords[si] = min_value((si == dbCloud) ? 0x300 : 0x400, _4976_0252[RCJ(16,si)] + di);
+		}
+		//^2066:2849
+		Bit16u bp0e = glbItemSizePerDB[si];
+		if (_4976_3b5d != 0) {
+			//^2066:2859
+			glbDBObjectData[si] = ALLOC_MEMORY_RAM(dunHeader->nRecords[si] * bp0e, afUseUpper, 0x400);
+		}
+		//^2066:2887
+		Bit16u *bp04 = (Bit16u *)glbDBObjectData[si];
+		if (SKLOAD_READ(glbDBObjectData[si], bp0e * di) == 0)
+			return 0;
+		//^2066:28BB
+		if (_4976_5bf2 == 0) {
+			//^2066:28C2
+			if (si == 4 || si >= 14) {
+				//^2066:28CC
+				glbTimersMaximumCount += dunHeader->nRecords[si];
+			}
+		}
+		//^2066:28E0
+		if (isNewGame != 0) {
+			//^2066:28E6
+			bp0e >>= 1;
+			bp04 += di * bp0e;
+			//^2066:28F5
+			for (di = _4976_0252[RCJ(16,si)]; di != 0; di--) {
+				*bp04 = 0xffff;
+				bp04 += bp0e;
+			}
+		}
+		//^2066:2914
+	}
+	//^2066:291D
+	if (_4976_3b5d != 0) {
+		//^2066:2924
+		dunMapData = ALLOC_MEMORY_RAM(dunHeader->cbMapData, afUseUpper, 0x400);
+	}
+
+	// - Map data
+
+	//^2066:2942
+	if (SKLOAD_READ(dunMapData, dunHeader->cbMapData) == 0)
+		return 0;
+	//^2066:2960
+	if (_4976_3b5d != 0) {
+		//^2066:296A
+		// SPX: 0x400 = 32*32 tiles / bp10 = #maps / _4976_4cb4 = #cols for all maps
+		glbMapTileValue = reinterpret_cast<U8 ***>(ALLOC_MEMORY_RAM((_4976_4cb4 + bp10) * sizeof(void *), afUseUpper, 0x400));
+		//^2066:298A
+		Bit8u ***bp08 = &glbMapTileValue[bp10];
+		//^2066:299C
+		for (di = 0; di < bp10; di++) {
+			//^2066:29A1
+			// MARK SPX
+			glbMapTileValue[di] = reinterpret_cast<U8 **>(bp08);
+			//^2066:29B9
+			Bit8u *bp0c = &dunMapData[dunMapsHeaders[di].w0];
+			*bp08 = reinterpret_cast<U8 **>(bp0c);
+			bp08++;
+			//^2066:29E2
+			for (si = 1; dunMapsHeaders[di].Column() -1 >= si; si++) {
+				//^2066:29E7
+				bp0c += dunMapsHeaders[di].Row();
+				*bp08 = reinterpret_cast<U8 **>(bp0c);
+				bp08++;
+				//^2066:2A14
+			}
+			//^2066:2A2E
+		}
+	}
+	//^2066:2A37
+	_4976_5c24 = BETWEEN_VALUE(0, QUERY_GDAT_ENTRY_DATA_INDEX(0x03, 0x00, 0x0B, 0x00), 23) * 0x0555UL;
+	//^2066:2A6A
+	if (_4976_3b5d != 0) {
+		//^2066:2A71
+		_3a15_0002();
+	}
+	//^2066:2A76
+	_3df7_0037(!_4976_3b5d);
+	//^2066:2A85
+	if (_4976_3b5d != 0) {
+		//^2066:2A8C
+		//!ALT
+		_4976_4cb0 = ALLOC_MEMORY_RAM(MAXDEPTH, afUseUpper, 0x400);
+		//^2066:2AA4
+		//!ALT
+		_4976_4c72 = ALLOC_MEMORY_RAM(MAXDEPTH + MAXMAPS, afUseUpper, 0x400);
+	}
+	//^2066:2ABC
+	Bit8u *bp18 = _4976_4c72;
+	Bit8u *bp1c = _4976_4cb0;
+	Bit16u bp14 = 0;
+	*bp1c = 0;
+	bp1c++;
+	//^2066:2AE4
+	for (Bit16u bp12 = 0; bp12 < MAXDEPTH; bp1c++, bp12++) {
+		//^2066:2AEB
+		for (Bit16u bp1e = 0; bp1e < bp10; bp1e++) {
+			//^2066:2AF2
+			if (dunMapsHeaders[bp1e].Level() == bp12) {
+				//^2066:2B0A
+				*bp18 = (Bit8u)bp1e;
+				bp18++;
+				bp14++;
+			}
+			//^2066:2B19
+		}
+		//^2066:2B24
+		*bp18 = 0xff;
+		bp18++;
+		bp14++;
+		*bp1c = (Bit8u)bp14;
+		//^2066:2B3A
+	}
+	ATLASSERT(bp1c - _4976_4cb0 <= MAXDEPTH + 1U);
+	ATLASSERT(bp18 - _4976_4c72 <= MAXDEPTH + MAXMAPS + 1U);
+
+	//^2066:2B46
+	if (isNewGame != 0) {
+		//^2066:2B4C
+		ARRANGE_DUNGEON();
+	}
+	//^2066:2B50
+	if (_4976_3b5d != 0) {
+		//^2066:2B57
+		DECIDE_DEFAULT_DUNGEON_MAP_CHIP_SET();
+	}
+	//^2066:2B5B
+	_4976_3b5d = 0;
+	//^2066:2B64
+
+	//CHECK_TILE_RECORDS();
+
+	return 1;
+}
+
+#else
+
 //^2066:25B8
 int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 {
@@ -39318,6 +39609,8 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 
 	return 1;
 }
+
+#endif
 
 void SkWinCore::CHECK_TILE_RECORDS() {
 	// check sort order: dbDoor < dbTele < dbText < dbActu == db11 == db12 == db13 < dbCreature < ...
@@ -40668,7 +40961,7 @@ Bit8u SkWinCore::GET_ITEMTYPE_OF_ITEMSPEC_ACTUATOR(Bit16u actuatorData)
 //^0CEE:2DE0
 Bit16u SkWinCore::QUERY_CREATURE_AI_SPEC_FLAGS(ObjectID rl)
 {
-	return QUERY_CREATURE_AI_SPEC_FROM_RECORD(rl)->w0;
+	return QUERY_CREATURE_AI_SPEC_FROM_RECORD(rl)->w0AIFlags;
 }
 
 //^0CEE:2D1B

@@ -11,6 +11,7 @@
 #define DM2_EXTENDED_BUFFER		1	// Allow more memsize for loading objects
 #define DM2_EXTENDED_LIGHT		0	// Some custom day/night light for outdoors - EXPERIMENTAL : not working because palette is applied over global viewport
 //#define DM2_INDIRECT_DATABASE	0	// Use an indirection table to increase item usage to its max : 65536 - NOT IMPLEMENTED YET
+#define DM2_EXTENDED_JSON		1	// dungeon.json +DM2_EXTENDED_MAP +DM2_INDIRECT_DATABASE
 
 #define DM2_DEBUG_SUPER_MODE	1	// If on, champions at start will have big stats. Debug/test purpose.
 

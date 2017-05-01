@@ -434,7 +434,9 @@ const Bit8u * const strDungenB = (const Bit8u *)
 	"\x2E\x5A\x30\x32\x30\x44\x55\x4E\x47\x45\x4E\x42\x2E\x5A\x30\x32" // .Z020DUNGENB.Z02
 	"\x34\x2E\x44\x41\x54\x00";                                        // 4.DAT.
 // SPX: _4976_19d8 renamed strDungeon
-#if (DM2_EXTENDED_MAP == 1)
+#if (DM2_EXTENDED_JSON == 1)
+const Bit8u * const strDungeon = (const Bit8u *) ".Z020dungeon.Z024.json";
+#elif (DM2_EXTENDED_MAP == 1)
 const Bit8u * const strDungeon = (const Bit8u *) ".Z020DUNGEON.Z024_XMAP.DAT";
 #else
 const Bit8u * const strDungeon = (const Bit8u *)

@@ -408,6 +408,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SkJson.cpp"
+				>
+			</File>
+			<File
 				RelativePath="SkVersionControl.h"
 				>
 			</File>
@@ -504,6 +508,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\SkWinMIDI.cpp"
+				>
+			</File>
+			<File
 				RelativePath="StdAfx.cpp"
 				>
 				<FileConfiguration
@@ -569,6 +577,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SkJson.h"
+				>
+			</File>
+			<File
 				RelativePath="skval1.h"
 				>
 			</File>
@@ -586,6 +598,10 @@
 			</File>
 			<File
 				RelativePath="SkWinMFC.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SkWinMIDI.h"
 				>
 			</File>
 			<File
