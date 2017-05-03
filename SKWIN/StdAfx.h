@@ -31,6 +31,7 @@ extern CComModule _Module;
 #include <io.h>
 #include <sys/stat.h>
 #include <stack>
+#include <vector>
 
 #include <afxcmn.h>
 

@@ -173,7 +173,7 @@ namespace SkJson {
 
 		JsonPathService(JNode *node, const char *keyName)
 			: node(node) {
-			node = findNode(keyName);
+			this->node = findNode(keyName);
 		}
 
 		JNode *findNode(const char *keyName, int nodeKindAs = -1) {
@@ -255,6 +255,25 @@ namespace SkJson {
 
 			return defaultValue;
 		}
+
+		std::string getStr(const char *keyName, std::string defaultValue) {
+			if (objNode != NULL) {
+				JObject::NodesType::const_iterator iter = objNode->nodes.find(keyName);
+				if (iter != objNode->nodes.end()) {
+					JNode *node = iter->second;
+
+					if (node->nodeKind == 1) {
+						JValue *valueNode = static_cast<JValue *>(node);
+
+						if (valueNode->kind == 1) {
+							return valueNode->strValue;
+						}
+					}
+				}
+			}
+
+			return defaultValue;
+		}
 	};
 
 	class JsonArrayLookupService {
@@ -264,7 +283,7 @@ namespace SkJson {
 		JsonArrayLookupService(JsonPathService &path)
 			: arrayNode(NULL) {
 
-			if (path.node->nodeKind != 2) {
+			if (path.node == NULL || path.node->nodeKind != 2) {
 				return;
 			}
 			arrayNode = static_cast<JArray *>(path.node);
@@ -282,6 +301,19 @@ namespace SkJson {
 				return arrayNode->nodes.at(index);
 			}
 			return NULL;
+		}
+
+		int asInt(int index, int defaultValue) {
+			if (arrayNode != NULL) {
+				JNode *node = arrayNode->nodes.at(index);
+				if (node->nodeKind == 1) {
+					JValue *valueNode = static_cast<JValue *>(node);
+					if (valueNode->kind == 2) {
+						return valueNode->intValue;
+					}
+				}
+			}
+			return defaultValue;
 		}
 	};
 }

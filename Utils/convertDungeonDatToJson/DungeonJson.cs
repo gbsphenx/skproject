@@ -11,62 +11,43 @@ namespace DM2Internal {
         public int startDir;
         public int startMap = 0;
         public List<MapDef> maps = new List<MapDef>();
-        public List<ObjDef> objs = new List<ObjDef>();
+
+        public List<DoorDef> doors = new List<DoorDef>();
+        public List<TeleporterDef> teleporters = new List<TeleporterDef>();
+        public List<TextDef> texts = new List<TextDef>();
+        public List<ActuatorDef> actuators = new List<ActuatorDef>();
+        public List<CreatureDef> creatures = new List<CreatureDef>();
+        public List<WeaponDef> weapons = new List<WeaponDef>();
+        public List<ClothDef> clothings = new List<ClothDef>();
+        public List<ScrollDef> scrolls = new List<ScrollDef>();
+        public List<PotionDef> potions = new List<PotionDef>();
+        public List<ContainerDef> containers = new List<ContainerDef>();
+        public List<MiscItemDef> miscs = new List<MiscItemDef>();
+        public List<MissileDef> missiles = new List<MissileDef>();
+        public List<CloudDef> clouds = new List<CloudDef>();
+
+        public List<int> mapTilesObjectIndexPerColumn;
+        public List<int> groundStacks;
+        public List<int> textData;
+        public List<int> mapData;
+
+        public List<int> dataTypeAndIndexMap = new List<int>();
     }
 
     public class MapDef {
-        [NonSerialized]
         public int mapOffset;
-        [NonSerialized]
-        public int currentNumberOfColumns;
-        [NonSerialized]
-        public int numWallGraphics;
-        [NonSerialized]
-        public int numFloorGraphics;
-        [NonSerialized]
-        public int numFloorRandom;
-        [NonSerialized]
-        public int numDoorDecorationGraphics;
-        [NonSerialized]
-        public int numCreaturesTypes;
-        [NonSerialized]
-        public int doorType0;
-        [NonSerialized]
-        public int doorType1;
-        [NonSerialized]
-        public List<int> wallGraphics = new List<int>();
-        [NonSerialized]
-        public List<int> floorGraphics = new List<int>();
-        [NonSerialized]
-        public List<int> doorDecorationGraphics = new List<int>();
+        public int v2;
+        public int v4;
+        public int shiftX;
+        public int shiftY;
+        public int v8;
+        public int v10;
+        public int v12;
+        public int v14;
 
-        /// <summary>
-        /// in dm style. hexstr: 00 to FF. top to down, and then left to right.
-        /// </summary>
-        public string tiles;
-
-        /// <summary>
-        /// height*width, top down, then left-to-right.
-        /// -1 if no obj.
-        /// </summary>
-        public int[] tileObjRefs;
-
-        public bool useTeleporter;
-        public bool useDoor0;
-        public bool useDoor1;
-        public bool useUpperPitfall;
-        public bool useLowerPitfall;
-        public bool useUpStaircase;
-        public bool useDownStaircase;
-        public byte shiftX;
-        public byte shiftY;
-        public int height;
         public int width;
-        public int level;
-        public int difficulty;
-        public int mapGraphicsStyle;
-        public int wallGraphicsRandomDecorations;
-        public List<int> allowedCreatureTypes = new List<int>();
+        public int height;
+
     }
 
     public class ObjDef {
@@ -78,60 +59,22 @@ namespace DM2Internal {
     }
     public class DoorDef : ObjDef {
         public String type = "door";
-        public bool buttonState;
-        public bool bashablebyChopping;
-        public bool destroyablebyFireball;
-        public bool button;
-        public bool openVertical;
-        /// <summary>
-        /// real door type index in gdat.
-        /// </summary>
-        public int doorType;
-        /// <summary>
-        /// real door ornate index in gdat. -1 has no one.
-        /// </summary>
-        public int doorOrnate = -1;
-
-        public bool openingDir;
+        public int attr1;
     }
     public class TeleporterDef : ObjDef {
         public String type = "teleporter";
-        public int destX;
-        public int destY;
-        public int destMap;
-        public int rotation;
-        public bool absoluteRotation;
-        public int scope;
-        public bool sound;
+        public int attr1;
+        public int attr2;
     }
     public class TextDef : ObjDef {
         public String type = "text";
-        public bool textVisibility;
-        public int textMode;
-        /// <summary>
-        /// either: textIndex, wall ornate or floor ornate.
-        /// </summary>
-        public int textIndex;
+        public int attr1;
     }
     public class ActuatorDef : ObjDef {
         public String type = "actuator";
-
-        public int actuatorType;
-        public int actuatorData;
-        public bool activeStatus;
-        public bool onceOnlyActuator;
-        public int actionType;
-        public bool inversion;
-        public bool sound;
-        /// <summary>
-        /// delay or ShopItemPoolNo
-        /// </summary>
-        public int delay;
-        public int floorOrnate = -1;
-        public int wallOrnate = -1;
-        public int newDirection;
-        public int xCoord;
-        public int yCoord;
+        public int attr1;
+        public int attr2;
+        public int attr3;
     }
     public class CreatureDef : ContainableDef {
         public String type = "creature";
@@ -141,48 +84,41 @@ namespace DM2Internal {
         public int hp2;
         public int hp3;
         public int hp4;
+        public int attr1;
     }
     public class WeaponDef : ObjDef {
         public String type = "weapon";
-        public int itemType;
-        public bool important;
-        public int charges;
+        public int attr1;
     }
     public class ClothDef : ObjDef {
         public String type = "cloth";
-        public int itemType;
-        public bool important;
-        public int charges;
+        public int attr1;
     }
     public class ScrollDef : ObjDef {
         public String type = "scroll";
-        public int referredText;
+        public int attr1;
     }
     public class PotionDef : ObjDef {
         public String type = "potion";
-        public int potionPower;
-        public int potionType;
-        public bool visiblePower;
+        public int attr1;
     }
     public class ContainerDef : ContainableDef {
         public String type = "container";
-        public bool isOpened;
-        public int containerType;
-        public int destX;
-        public int destY;
-        public int destMap;
+        public int attr1;
+        public int attr2;
     }
     public class MiscItemDef : ObjDef {
         public String type = "miscItem";
-        public int itemType;
-        public bool important;
-        public int charges;
+        public int attr1;
     }
     public class MissileDef : ContainableDef {
         public String type = "missile";
+        public int attr1;
+        public int attr2;
     }
     public class CloudDef : ObjDef {
         public String type = "cloud";
+        public int attr1;
     }
 
     public enum dbIndex {

@@ -53,7 +53,7 @@ protected:
 
 	SkWinMIDI* skmidi;
 
-#ifdef DM2_EXTENDED_MODE == 1
+#if DM2_EXTENDED_MODE == 1
 	U8	glbXAmbientSoundActivated;
 #endif
 
@@ -1282,6 +1282,9 @@ protected:
 #ifdef DM2_EXTENDED_MODE
 	void PROCESS_TIMER_AMBIENT_SOUND(Timer *ref);
 #endif
+
+	ObjectID LOOKUP_DATAMAP_FOR(U16 dbType, U16 index);
+	ObjectID FIND_ANY_RECORD_OF(U16 dbType);
 	//--- NEW FUNCTIONS -------------------------------------
 
 

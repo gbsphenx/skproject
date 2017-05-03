@@ -36,6 +36,8 @@ using namespace kkBitBlt;
 #if DM2_EXTENDED_JSON == 1
 #include "SkJson.h"
 using namespace SkJson;
+
+std::vector<U32> glbDataTypeAndIndexMap;
 #endif
 
 
@@ -2171,8 +2173,9 @@ void SkWinCore::PROCESS_TIMER_0E(Timer *v0, Bit16u v1)
 	U8 *bp04;
 	U8 *bp08;
 	ObjectID si;
+	ATLASSERT(false);//TODO: check recordIndex. is it always 0?
 	COPY_MEMORY(
-		bp08 = reinterpret_cast<U8 *>(GET_ADDRESS_OF_RECORD(si = ObjectID(0, v0->value, 0))),
+		bp08 = reinterpret_cast<U8 *>(GET_ADDRESS_OF_RECORD(si = FIND_ANY_RECORD_OF(v0->value))),
 		bp04 = ALLOC_MEMORY_RAM(bp0c, afDefault, 0x400),
 		bp0c
 		);
@@ -21927,7 +21930,7 @@ U8 SkWinCore::QUERY_ITEMDB_FROM_DISTINCTIVE_ITEMTYPE(U16 actuatorData)
 	//^0CEE:26CF
 	ENTER(0);
 	//^0CEE:26D2
-	return QUERY_CLS1_FROM_RECORD(ObjectID(0, GET_ITEMDB_OF_ITEMSPEC_ACTUATOR(actuatorData), 0));
+	return QUERY_CLS1_FROM_RECORD(FIND_ANY_RECORD_OF(GET_ITEMDB_OF_ITEMSPEC_ACTUATOR(actuatorData)));
 }
 
 //^0CEE:1513
@@ -22072,7 +22075,7 @@ U16 SkWinCore::_48ae_05ae(i16 disit, U8 yy, U16 zz, U16 ss, U16 tt, i16 ww)
 	//^48AE:06DE
 	if (ww < 0) {
 		//^48AE:06E4
-		ww = GET_MAX_CHARGE(ObjectID(0, GET_ITEMDB_OF_ITEMSPEC_ACTUATOR(disit), 0));
+		ww = GET_MAX_CHARGE(FIND_ANY_RECORD_OF(GET_ITEMDB_OF_ITEMSPEC_ACTUATOR(disit)));
 	}
 	//^48AE:06FA
 	si += QUERY_GDAT_ENTRY_DATA_INDEX(
@@ -39062,44 +39065,68 @@ _2585:
 
 int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 {
-	JsonSerializer loader;
-	if (!loader.loadFile(fset.realHandles[glbDataFileHandle])) {
-		return 0;
-	}
+	// Visit http://dmweb.free.fr/?q=node/217 for file format
 
-	if (_4976_3b5d != 0) {
-		//^2066:25FF
-		dunHeader = reinterpret_cast<File_header *>(ALLOC_MEMORY_RAM(sizeof(File_header), 1, 1024));
-	}
-
-	JsonPathService root(loader.node);
-
-	JsonValueLookupService lookup(root.node);
-	dunHeader->w0 = lookup.getInt("randomGraphicsSeed", 0);
-	dunHeader->startX = lookup.getInt("startX", 0);
-	dunHeader->startY = lookup.getInt("startY", 0);
-	dunHeader->startDir = lookup.getInt("startDir", 0);
-
-	JsonPathService atMaps(root.node, "maps");
-	JsonArrayLookupService mapsArray(atMaps);
-	dunHeader->nMaps = mapsArray.getLen();
-
+	//^2066:25B8
 	Bit16u bp04 = 0;
 	Bit16u si = 0;
 	__int16 di;
 	Bit8u bp01 = 0;
 
+	//^2066:25F8
 	if (_4976_3b5d != 0) {
 		//^2066:25FF
-		dunHeader = reinterpret_cast<File_header *>(ALLOC_MEMORY_RAM(44, 1, 1024));
+		dunHeader = reinterpret_cast<File_header *>(ALLOC_MEMORY_RAM(sizeof(File_header), 1 |0x8000, 1024)); // zero clear
 	}
 
 	// - File header (JSON)
 
-	glbPlayerPosX = dunHeader->StartPartyPosX();// si & 0x001F;
-	glbPlayerPosY = dunHeader->StartPartyPosY();// si & 0x001F;
-	glbPlayerDir = dunHeader->StartPartyDir();//(si >> 5) & 0x0003;
+	JsonSerializer loader;
+	if (!loader.loadFile(fset.realHandles[glbDataFileHandle])) {
+		return 0;
+	}
+
+	JsonPathService root(loader.node);
+
+	JsonValueLookupService lookup(root.node);
+
+	JsonPathService atMaps(root.node, "maps");
+	JsonArrayLookupService mapsArray(atMaps);
+
+	JsonPathService atMapTilesObjectIndexPerColumn(root.node, "mapTilesObjectIndexPerColumn");
+	JsonArrayLookupService mapTilesObjectIndexPerColumnArray(atMapTilesObjectIndexPerColumn);
+
+	JsonPathService atGroundStacks(root.node, "groundStacks");
+	JsonArrayLookupService groundStacksArray(atGroundStacks);
+
+	JsonPathService atTextData(root.node, "textData");
+	JsonArrayLookupService textDataArray(atTextData);
+
+	JsonPathService atDataTypeAndIndexMap(root.node, "dataTypeAndIndexMap");
+	JsonArrayLookupService dataTypeAndIndexMapArray(atDataTypeAndIndexMap);
+
+	JsonPathService atMapData(root.node, "mapData");
+	JsonArrayLookupService mapDataArray(atMapData);
+
+	dunHeader->w0 = lookup.getInt("randomGraphicsSeed", 0);
+	dunHeader->cbMapData = mapDataArray.getLen();
+	dunHeader->nMaps = mapsArray.getLen();
+	dunHeader->cwTextData = textDataArray.getLen();
+	dunHeader->cwListSize = groundStacksArray.getLen();
+
+	dunHeader->startX = lookup.getInt("startX", 0);
+	dunHeader->startY = lookup.getInt("startY", 0);
+	dunHeader->startDir = lookup.getInt("startDir", 0);
+	dunHeader->startMap = lookup.getInt("startMap", 0);
+
+	//^2066:262F
+	glbPlayerPosX = dunHeader->StartPartyPosX();
+	//^2066:263F
+	glbPlayerPosY = dunHeader->StartPartyPosY();
+	//^2066:264A
+	glbPlayerDir = dunHeader->StartPartyDir();
 	glbPlayerMap = dunHeader->StartPartyMap();
+	//^2066:265B
 	__int16 bp10 = dunHeader->nMaps;
 	//^2066:2664
 	if (_4976_3b5d != 0) {
@@ -39107,28 +39134,25 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 		dunMapsHeaders = reinterpret_cast<Map_definitions *>(ALLOC_MEMORY_RAM(sizeof(Map_definitions) * bp10, afUseUpper, 0x400));
 	}
 
-	// - Map definitions
+	// - Map definitions (JSON)
 
 	int mapi = 0;
 	for (; mapi < bp10; mapi++) {
 		Map_definitions &mapDef = dunMapsHeaders[mapi];
 		JsonValueLookupService mapLookup(mapsArray.at(mapi));
 
-		mapDef.useTeleporter = mapLookup.getInt("useTeleporter", 0) ? true : false;
-		mapDef.useDoor0 = mapLookup.getInt("useDoor0", 0) ? true : false;
-		mapDef.useDoor1 = mapLookup.getInt("useDoor1", 0) ? true : false;
-		mapDef.useUpperPitfall = mapLookup.getInt("useUpperPitfall", 0) ? true : false;
-		mapDef.useLowerPitfall = mapLookup.getInt("useLowerPitfall", 0) ? true : false;
-		mapDef.useUpStaircase = mapLookup.getInt("useUpStaircase", 0) ? true : false;
-		mapDef.useDownStaircase = mapLookup.getInt("useDownStaircase", 0) ? true : false;
-		mapDef.shiftX = mapLookup.getInt("shiftX", 0);
-		mapDef.shiftY = mapLookup.getInt("shiftY", 0);
-		mapDef.height = mapLookup.getInt("height", 0);
+		mapDef.w0 = mapLookup.getInt("mapOffset", 0);
+		mapDef.w2 = mapLookup.getInt("v2", 0);
+		mapDef.w4 = mapLookup.getInt("v4", 0);
+		mapDef.b6 = mapLookup.getInt("shiftX", 0);
+		mapDef.b7 = mapLookup.getInt("shiftY", 0);
+		mapDef.w8 = mapLookup.getInt("v8", 0);
+		mapDef.w10 = mapLookup.getInt("v10", 0);
+		mapDef.w12 = mapLookup.getInt("v12", 0);
+		mapDef.w14 = mapLookup.getInt("v14", 0);
+
 		mapDef.width = mapLookup.getInt("width", 0);
-		mapDef.level = mapLookup.getInt("level", 0);
-		mapDef.difficulty = mapLookup.getInt("difficulty", 0);
-		mapDef.mapGraphicsStyle = mapLookup.getInt("mapGraphicsStyle", 0);
-		mapDef.wallGraphicsRandomDecorations = mapLookup.getInt("wallGraphicsRandomDecorations", 0);
+		mapDef.height = mapLookup.getInt("height", 0);
 	}
 
 	//^2066:26A2
@@ -39149,7 +39173,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	//^2066:26FD
 	_4976_4cb4 = bp0e;
 	//^2066:2703
-	si = dunHeader->cwListSize;
+	Bit16u originalListSize = (si = dunHeader->cwListSize);
 	//^2066:270B
 	if (isNewGame != 0) {
 		//^2066:2711
@@ -39165,17 +39189,19 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 		dunTextData = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(dunHeader->cwTextData << 1, afUseUpper, 0x400));
 	}
 
-	// - Index of tiles with objects on them (per column)
+	// - Index of tiles with objects on them (per column) (JSON)
 
-	//^2066:277C
-	if (SKLOAD_READ(dunMapTilesObjectIndexPerColumn, bp0e << 1) == 0)
-		return 0;
+	int pos;
+	for (pos = 0; pos < bp0e; pos++) {
+		dunMapTilesObjectIndexPerColumn[pos] = mapTilesObjectIndexPerColumnArray.asInt(pos, -1);
+	}
 
-	// - List of object IDs of first objects on tiles
+	// - List of object IDs of first objects on tiles (JSON)
 
-	//^2066:2798
-	if (SKLOAD_READ(dunGroundStacks, si << 1) == 0)
-		return 0;
+	for (pos = 0; pos < originalListSize; pos++) {
+		dunGroundStacks[pos] = groundStacksArray.asInt(pos, -1);
+	}
+
 	//^2066:27B3
 	if (isNewGame != 0) {
 		//^2066:27B9
@@ -39186,15 +39212,24 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 		}
 	}
 
-	// - Text Data
+	// - Text Data (JSON)
 
-	//^2066:27D4
-	if (SKLOAD_READ(dunTextData, dunHeader->cwTextData << 1) == 0)
-		return 0;
+	for (pos = 0; pos < dunHeader->cwTextData; pos++) {
+		dunTextData[pos] = textDataArray.asInt(pos, -1);
+	}
+
 	//^2066:27F5
 	if (_4976_5bf2 == 0) {
 		//^2066:27FC
 		glbTimersMaximumCount = MAX_TIMER_NUMBER;	// = 50
+	}
+
+	// dataTypeAndIndexMap like CSBwin (JSON)
+
+	glbDataTypeAndIndexMap.resize(dataTypeAndIndexMapArray.getLen());
+
+	for (pos = 0; pos < glbDataTypeAndIndexMap.size(); pos++) {
+		glbDataTypeAndIndexMap[pos] = dataTypeAndIndexMapArray.asInt(pos, -1);
 	}
 
 	// - List of XXX
@@ -39205,7 +39240,8 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 		Bit16u di = dunHeader->nRecords[si];
 		if (isNewGame != 0) {
 			//^2066:281B
-			dunHeader->nRecords[si] = min_value((si == dbCloud) ? 0x300 : 0x400, _4976_0252[RCJ(16,si)] + di);
+			//TODO: _4976_0252 = glbRecordIncrementCountOnLoadGame
+			dunHeader->nRecords[si] = min_value((si == dbCloud) ? 0x300 : MAXREC, _4976_0252[RCJ(16,si)] + di);
 		}
 		//^2066:2849
 		Bit16u bp0e = glbItemSizePerDB[si];
@@ -39214,9 +39250,175 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 			glbDBObjectData[si] = ALLOC_MEMORY_RAM(dunHeader->nRecords[si] * bp0e, afUseUpper, 0x400);
 		}
 		//^2066:2887
+
+		static const char *tableNames[] = {
+			"doors", "teleporters", "texts", "actuators",
+			"creatures", "weapons", "clothings", "scrolls",
+			"potions", "containers", "miscs", "",
+			"", "", "missiles", "clouds",
+		};
+
+		JsonPathService atXxx(root.node, tableNames[si]);
+		JsonArrayLookupService xxxArray(atXxx);
+
 		Bit16u *bp04 = (Bit16u *)glbDBObjectData[si];
-		if (SKLOAD_READ(glbDBObjectData[si], bp0e * di) == 0)
-			return 0;
+
+		switch (si) {
+			case dbDoor:
+				{
+					for (pos = 0; pos < di; pos++) {
+						Door *record = reinterpret_cast<Door *>(bp04 +(bp0e * pos));
+						JsonValueLookupService xxxLookup(xxxArray.at(pos));
+
+						record->next = ObjectID::Raw(xxxLookup.getInt("nextObjRef", -1));
+						record->w2 = (xxxLookup.getInt("attr1", -1));
+					}
+					break;
+				}
+			case dbTeleporter:
+				{
+					for (pos = 0; pos < di; pos++) {
+						Teleporter *record = reinterpret_cast<Teleporter *>(bp04 +(bp0e * pos));
+						JsonValueLookupService xxxLookup(xxxArray.at(pos));
+
+						record->w0 = ObjectID::Raw(xxxLookup.getInt("nextObjRef", -1));
+						record->w2 = (xxxLookup.getInt("attr1", -1));
+						record->w4 = (xxxLookup.getInt("attr2", -1));
+					}
+					break;
+				}
+			case dbText:
+				{
+					for (pos = 0; pos < di; pos++) {
+						Text *record = reinterpret_cast<Text *>(bp04 +(bp0e * pos));
+						JsonValueLookupService xxxLookup(xxxArray.at(pos));
+
+						record->w0 = ObjectID::Raw(xxxLookup.getInt("nextObjRef", -1));
+						record->w2 = (xxxLookup.getInt("attr1", -1));
+					}
+					break;
+				}
+			case dbActuator:
+				{
+					for (pos = 0; pos < di; pos++) {
+						Actuator *record = reinterpret_cast<Actuator *>(bp04 +(bp0e * pos));
+						JsonValueLookupService xxxLookup(xxxArray.at(pos));
+
+						record->w0 = ObjectID::Raw(xxxLookup.getInt("nextObjRef", -1));
+						record->w2 = (xxxLookup.getInt("attr1", -1));
+						record->w4 = (xxxLookup.getInt("attr2", -1));
+						record->w6 = (xxxLookup.getInt("attr3", -1));
+					}
+					break;
+				}
+			case dbCreature:
+				{
+					for (pos = 0; pos < di; pos++) {
+						Creature *record = reinterpret_cast<Creature *>(bp04 +(bp0e * pos));
+						JsonValueLookupService xxxLookup(xxxArray.at(pos));
+
+						record->w0 = ObjectID::Raw(xxxLookup.getInt("nextObjRef", -1));
+						record->possession = ObjectID::Raw(xxxLookup.getInt("childObjRef", -1));
+						record->b4 = (xxxLookup.getInt("creatureType", -1));
+						record->b5 = (xxxLookup.getInt("position", -1));
+						record->w6 = (xxxLookup.getInt("hp1", -1));
+						record->w8 = (xxxLookup.getInt("hp2", -1));
+						record->w10 = (xxxLookup.getInt("hp3", -1));
+						record->w12 = (xxxLookup.getInt("hp4", -1));
+						int attr1 = (xxxLookup.getInt("attr1", -1));
+						record->b14 = attr1 & 255;
+						record->b15 = (attr1 >> 8) & 255;
+					}
+					break;
+				}
+			case dbWeapon:
+				{
+					for (pos = 0; pos < di; pos++) {
+						Weapon *record = reinterpret_cast<Weapon *>(bp04 +(bp0e * pos));
+						JsonValueLookupService xxxLookup(xxxArray.at(pos));
+
+						record->w0 = ObjectID::Raw(xxxLookup.getInt("nextObjRef", -1));
+						record->w2 = (xxxLookup.getInt("attr1", -1));
+					}
+					break;
+				}
+			case dbCloth:
+				{
+					for (pos = 0; pos < di; pos++) {
+						Cloth *record = reinterpret_cast<Cloth *>(bp04 +(bp0e * pos));
+						JsonValueLookupService xxxLookup(xxxArray.at(pos));
+
+						record->w0 = ObjectID::Raw(xxxLookup.getInt("nextObjRef", -1));
+						record->w2 = (xxxLookup.getInt("attr1", -1));
+					}
+					break;
+				}
+			case dbScroll:
+				{
+					for (pos = 0; pos < di; pos++) {
+						Scroll *record = reinterpret_cast<Scroll *>(bp04 +(bp0e * pos));
+						JsonValueLookupService xxxLookup(xxxArray.at(pos));
+
+						record->w0 = ObjectID::Raw(xxxLookup.getInt("nextObjRef", -1));
+						record->w2 = (xxxLookup.getInt("attr1", -1));
+					}
+					break;
+				}
+			case dbPotion:
+				{
+					for (pos = 0; pos < di; pos++) {
+						Potion *record = reinterpret_cast<Potion *>(bp04 +(bp0e * pos));
+						JsonValueLookupService xxxLookup(xxxArray.at(pos));
+
+						record->w0 = ObjectID::Raw(xxxLookup.getInt("nextObjRef", -1));
+						record->w2 = (xxxLookup.getInt("attr1", -1));
+					}
+					break;
+				}
+			case dbContainer:
+				{
+					for (pos = 0; pos < di; pos++) {
+						Container *record = reinterpret_cast<Container *>(bp04 +(bp0e * pos));
+						JsonValueLookupService xxxLookup(xxxArray.at(pos));
+
+						record->w0 = ObjectID::Raw(xxxLookup.getInt("nextObjRef", -1));
+						record->w2 = ObjectID::Raw(xxxLookup.getInt("childObjRef", -1));
+						int attr1 = (xxxLookup.getInt("attr1", -1));
+						record->b4 = attr1 & 255;
+						record->b5 = (attr1 >> 8) & 255;
+						record->w6 = (xxxLookup.getInt("attr2", -1));
+					}
+					break;
+				}
+			case dbMiscellaneous_item:
+				{
+					for (pos = 0; pos < di; pos++) {
+						Miscellaneous_item *record = reinterpret_cast<Miscellaneous_item *>(bp04 +(bp0e * pos));
+						JsonValueLookupService xxxLookup(xxxArray.at(pos));
+
+						record->w0 = ObjectID::Raw(xxxLookup.getInt("nextObjRef", -1));
+						record->w2 = (xxxLookup.getInt("attr1", -1));
+					}
+					break;
+				}
+			case dbMissile:
+				{
+					for (pos = 0; pos < di; pos++) {
+						Missile *record = reinterpret_cast<Missile *>(bp04 +(bp0e * pos));
+						JsonValueLookupService xxxLookup(xxxArray.at(pos));
+
+						record->w0 = ObjectID::Raw(xxxLookup.getInt("nextObjRef", -1));
+						record->w2 = ObjectID::Raw(xxxLookup.getInt("childObjRef", -1));
+						int attr1 = (xxxLookup.getInt("attr1", -1));
+						record->b4_ = attr1 & 255;
+						record->b5_ = (attr1 >> 8) & 255;
+						record->w6 = (xxxLookup.getInt("attr2", -1));
+					}
+					break;
+				}
+
+		}
+
 		//^2066:28BB
 		if (_4976_5bf2 == 0) {
 			//^2066:28C2
@@ -39244,11 +39446,12 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 		dunMapData = ALLOC_MEMORY_RAM(dunHeader->cbMapData, afUseUpper, 0x400);
 	}
 
-	// - Map data
+	// - Map data (JSON)
 
-	//^2066:2942
-	if (SKLOAD_READ(dunMapData, dunHeader->cbMapData) == 0)
-		return 0;
+	for (pos = 0; pos < dunHeader->cbMapData; pos++) {
+		dunMapData[pos] = mapDataArray.asInt(pos, -1);
+	}
+
 	//^2066:2960
 	if (_4976_3b5d != 0) {
 		//^2066:296A
@@ -40071,7 +40274,7 @@ Bit16u SkWinCore::RECOVER_MINION_ASSOC()
 						return 1;
 					//^2066:0694
 					Bit16u si = bp0c;
-					bp08->castToContainer()->SetContainedObject(ObjectID(0, dbCreature, si));
+					bp08->castToContainer()->SetContainedObject(LOOKUP_DATAMAP_FOR(dbCreature, si));
 
 					break;
 				}
@@ -40087,7 +40290,7 @@ Bit16u SkWinCore::RECOVER_MINION_ASSOC()
 						return 1;
 					//^2066:06C1
 					Bit16u si = bp0c;
-					bp08->castToMissile()->SetMissileObject(ObjectID(0, dbContainer, si));
+					bp08->castToMissile()->SetMissileObject(LOOKUP_DATAMAP_FOR(dbContainer, si));
 				}
 		}
 		//^2066:06D0
@@ -50852,6 +51055,8 @@ void SkWinCore::DEALLOC_RECORD(ObjectID recordLink)
 	//^0CEE:1588
 	SkD((DLV_DBM,"DBM: DEALLOC_RECORD(%04X)\n", (Bitu)recordLink.w));
 	GET_ADDRESS_OF_RECORD(recordLink)->w0 = OBJECT_NULL;
+
+	glbDataTypeAndIndexMap[recordLink.w] = DATAMAP_NULL;
 }
 
 //^075F:06BD
@@ -51657,7 +51862,7 @@ void SkWinCore::_1c9a_0fcb(Bit16u xx)
 		//^1C9A:0FDA
 		CreatureInfoData *bp04 = &glbTabCreaturesInfo[di];
 		//^1C9A:1004
-		ObjectID si(0, dbCreature, bp04->CreatureIndex());
+		ObjectID si(LOOKUP_DATAMAP_FOR(dbCreature, bp04->CreatureIndex()));
 		//^1C9A:100F
 		Creature *bp08 = GET_ADDRESS_OF_RECORD(si)->castToCreature();
 		//^1C9A:101C
@@ -52787,7 +52992,7 @@ ObjectID SkWinCore::ALLOC_NEW_RECORD(Bit16u db)
 		//^0CEE:145F
 		if (reinterpret_cast<GenericRecord *>(bp04)->w0 == OBJECT_NULL) {
 			//^0CEE:1468
-			di = ObjectID(0, si, bp08 - bp06);
+			di = LOOKUP_DATAMAP_FOR(si, bp08 - bp06);
 		}
 		else {
 			//^0CEE:1479
@@ -62234,6 +62439,48 @@ void SkWinCore::PROCESS_TIMER_AMBIENT_SOUND(Timer *ref)
 	return;
 }
 #endif
+
+ObjectID SkWinCore::LOOKUP_DATAMAP_FOR(U16 dbType, U16 index) {
+#if (DM2_EXTENDED_JSON == 1)
+	size_t x;
+	for (x=0; x<glbDataTypeAndIndexMap.size(); x++) {
+		U32 data = glbDataTypeAndIndexMap[x];
+		if (((data >> 16) & 15) == dbType && (data & 65535) == index) {
+			// found existing one
+			return ObjectID::Raw(U16(x));
+		}
+	}
+	// no existing one
+	for (x=0; x<glbDataTypeAndIndexMap.size(); x++) {
+		if (glbDataTypeAndIndexMap[x] == DATAMAP_NULL) {
+			glbDataTypeAndIndexMap[x] = 0x10000 * dbType +index;
+			return ObjectID::Raw(U16(x));
+		}
+	}
+	// allocate new one
+	{
+		ObjectID newId = ObjectID::Raw(U16(glbDataTypeAndIndexMap.size()));
+		glbDataTypeAndIndexMap.push_back(0x10000 * dbType +index);
+		return newId;
+	}
+#else
+	return ObjectID(0, dbType, index);
+#endif
+}
+
+ObjectID SkWinCore::FIND_ANY_RECORD_OF(U16 dbType) {
+#if (DM2_EXTENDED_JSON == 1)
+	size_t x;
+	for (x=0; x<glbDataTypeAndIndexMap.size(); x++) {
+		if (((glbDataTypeAndIndexMap[x] >> 16) & 15) == dbType) {
+			return ObjectID::Raw(U16(x));
+		}
+	}
+	return OBJECT_NULL;
+#else
+	return ObjectID(0, dbType, 0);
+#endif
+}
 
 //^3A15:3A9E
 void SkWinCore::PROCEED_TIMERS()

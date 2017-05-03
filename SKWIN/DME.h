@@ -43,6 +43,21 @@ typedef X32 X32ptr;
 #define MAX_CEMS (1024U*1024*MEM_EMS_MB)	// EMS memory space: 6MiB or more
 #define MAX_VRAM (1024U*64)		// VRAM memory space: 64 KiB
 
+#if (DM2_EXTENDED_JSON == 1)
+// FEDCBA98 76543210 FEDCBA98 76543210
+// -----------------------------------
+//            DDTTTT iiiiiiii iiiiiiii
+//
+//                                 bitMask:
+//               DD -> direction  (0x300000). 0=North, 1=E, 2=S, 3=W
+//             TTTT -> record type (0xF0000). 0=door, 1=tele, 2=text, 3=actu, ...
+// iiiiiiiiiiiiiiii -> record index (0xFFFF). 0 to 65535.
+// 
+#define DATAMAP_NULL ((U32)-1)
+extern std::vector<U32> glbDataTypeAndIndexMap;
+
+#endif
+
 namespace DM2Internal {
 	// 
 	struct Ax3 { // 2 bytes
@@ -88,647 +103,6 @@ namespace DMEncyclopaedia {
 	// visit DM&csb Encyclopaedia
 	// http://dmweb.free.fr/?q=node/217
 
-#if (DM2_EXTENDED_JSON == 1)
-	// JSON
-	struct File_header {
-		U16 w0; //  Random seed used to display random 
-		U16 cbMapData; // Size of global map data in byt
-		U8 nMaps; // Number of maps (in Dungeon Mast;
-		U8 b5; // # Unused, padding
-		U16 cwTextData; // Text data size in words (17
-		U16 cwListSize; // Object list size in wor
-		U16 nRecords[16]; // Number of objects of each type:
-
-		U16 StartPartyPosX() const { return startX; }
-		U16 StartPartyPosY() const { return startY; }
-		U16 StartPartyDir() const { return startDir; }
-		U16 StartPartyMap() const { return startMap; }
-
-		U16 startX;
-		U16 startY;
-		U16 startDir;
-		U16 startMap;
-	};
-	// JSON
-	struct Map_definitions {
-		U16 w0; // Offset of map data i
-		U16 w2; // nused in Dungeon Master and Chaos Strikes Back. Some values in Dungeon Master II.
-		U16 w4; // Unused
-		U8 b6; // Map offset x
-		U8 b7; // Map offset y
-		U16 w8; // Map size
-		U16 w10; // Number of graphics
-		U16 w12; // 1 U16:
-		U16 w14; // 1 U16: Door graphics.
-
-		bool useTeleporter;
-		bool useDoor0;
-		bool useDoor1;
-		bool useUpperPitfall;
-		bool useLowerPitfall;
-		bool useUpStaircase;
-		bool useDownStaircase;
-		int shiftX;
-		int shiftY;
-		int height;
-		int width;
-		int level;
-		int difficulty;
-		int mapGraphicsStyle;
-		int wallGraphicsRandomDecorations;
-
-		U8 Column() const { return width; }
-		U8 Row() const { return height; }
-		U16 Level() const { return level; }
-		U16 Offset() const { return w0; }
-		U8 Difficulty() const { return difficulty; }
-		U8 RawColumn() const { return Column() -1; }
-		U8 RawRow() const { return Row() -1; }
-		U8 MapGraphicsStyle() const { return mapGraphicsStyle; }
-		U8 CreaturesTypes() const { return (Bit8u)((w12 >> 4)&15); }
-		U8 WallGraphics() const { return (Bit8u)(w10 & 15); }
-		U8 WallGraphicsRandomDecorations() const { return (Bit8u)((w10 >> 4)&15); }
-		U8 FloorGraphics() const { return (Bit8u)((w10 >> 8)&15); }
-		U8 DoorDecorationGraphics() const { return (Bit8u)(w12 & 15); }
-		U8 DoorType0() const { return (U8)((w14 >> 8)&15); }
-		U8 DoorType1() const { return (U8)((w14 >>12)); }
-		U8 MapOffsetX() const { return b6; }
-		U8 MapOffsetY() const { return b7; }
-		U16 UseTeleporter() const { return (w2 >> 5)&1; }
-		U16 UseDoor0() const { return (w2 >> 7)&1; }
-		U16 UseDoor1() const { return (w2 >> 8)&1; }
-		U8 b2_7_7() const { return (U8)((w2 >> 7)&1); }
-		U8 b3_0_0() const { return (U8)((w2 >> 8)&1); }
-		U16 UseUpperPitfall() const { return useUpperPitfall; }
-		U16 UseLowerPitfall() const { return useLowerPitfall; }
-		U16 w2_2_2() const { return (w2 >> 2)&1; }
-		U16 UseUpStaircase() const { return useUpStaircase; }
-		U16 UseDownStaircase() const { return useDownStaircase; }
-		U16 w2_6_6() const { return (w2 >> 6)&1; }
-	};
-	// 
-	struct ObjectID {
-		// FEDCBA98 76543210
-		// -----------------
-		// DDTTTTii iiiiiiii
-		//
-		//         DD -> direction. 0=North, 1=E, 2=S, 3=W
-		//       TTTT -> record type. 0=door, 1=tele, 2=text, 3=actu, ...
-		// iiiiiiiiii -> record index. 0 to 1023.
-		U16 w;
-
-		ObjectID() { }
-		ObjectID(const ObjectID &src): w(src.w) { }
-		explicit ObjectID(const ObjectID &src, Bit16u withNewDir) {
-			w = (withNewDir << 14) | (src.w & 0x3fff);
-		}
-		ObjectID(U16 recordLink): w(recordLink) { }
-		ObjectID(U16 dir, U16 dbType, U16 index) {
-			w = (dir << 14) | ((dbType & 15) << 10) | (index & 1023);
-		}
-
-		operator U16() const { return w; }
-
-		void ClearDir() {
-			w &= 0x3fff;
-		}
-
-		U8 Dir() const { return (U8)(w >> 14); }
-		void Dir(U16 val) {
-			val &= 3;
-			w &= 0x3fff;
-			w |= val << 14;
-		}
-
-		U16 DBIndex() const { return w & 0x03ff; }
-		void DBIndex(U16 val) {
-			val &= 1023;
-			w &= 0xfc00;
-			w |= val;
-		}
-
-		// DBType == FakeDBType ... fake DB type for expected sorting: dbDoor < dbTele < dbText < dbActu == db11 == db12 == db13 < dbCreature < ...
-		U8 DBType() const;
-
-		U8 RealDBType() const { return (U8)((w & 0x3c00) >> 10); }
-		void RealDBType(U16 val) {
-			val &= 15;
-			w &= 0xc3ff;
-			w |= val << 10;
-		}
-
-		ObjectID GetAsNorth() const { return w & 0x3fff; }
-
-		static ObjectID MissileRecord(U16 index) { return ObjectID(0xff80 | index); }
-		U16 MissileType() { return (w -0xff80)&0x7f; }
-		bool IsMissile() const { return w >= 0xff80; }
-
-		static ObjectID Raw(U16 w) { ObjectID rl; rl.w = w; return rl; };
-	};
-
-	// 
-	struct Door {
-		ObjectID next; // w0 Next object ID.
-		U16 w2; // Door attributes.
-
-		void Bit13(Bit16u nibble) {
-			nibble &= 1;
-			w2 &= 0xDFFF;
-			w2 |= nibble << 5 << 8;
-		}
-		U8 Button() const { return (U8)((w2 >> 6)&1); }
-		U8 DoorType() const { return (U8)(w2 & 1); }
-		void w2_b_b(U16 val) {
-			val &= 1;
-			w2 &= 0xf7ff;
-			w2 |= val << 11;
-		}
-		U16 ButtonState() const { return (w2 >> 11)&1; }	// w2_b_b()
-		U8 Bit13C() const { return (U8)((w2 >>13)&1); }		// w2_d_d()
-		U16 OpeningDir() const { return (w2 >> 5)&1; }
-		U8 Bit09() const { return (U8)((w2 >> 9)&1); }		// b3_1_1() Bit09
-		void Bit09(U8 val) {
-			val &= 1;
-			w2 &= 0xfdff;
-			w2 |= val << 9;
-		}
-		U8 Bit10() const { return (U8)((w2 >>10)&1); }		// b3_2_2()
-		void Bit10(U8 val) {
-			val &= 1;
-			w2 &= 0xfbff;
-			w2 |= val << 10;
-		}
-		void SetButtonState(U8 val) {	// b3_3_3 : 0 = release / 1 = pushed in
-			val &= 1;
-			w2 &= 0xf7ff;
-			w2 |= val << 11;
-		}
-		U8 DestroyablebyFireball() const { return (w2 >> 7)&1; }
-		U8 Bit12() const { return (U8)((w2 >> 12)&1); }	// b3_4_4()
-		U8 Bit13() const { return (U8)((w2 >> 13)&1); }	// b3_5_5()
-		void Bit13B(U8 val) {
-			val &= 1;
-			w2 &= 0xdfff;
-			w2 |= val << 13;
-		}
-		U8 BashablebyChopping() const { return (w2 >> 8)&1; }
-		void Bit12(U8 val) {	// b3_4_4
-			w2 &= 0xefff;
-			val &= 1;
-			w2 |= U16(val) << 12;
-		}
-		U16 OrnateIndex() const { return (w2>>1)&15; }
-		U8 b2_5_5() const { return (U8)((w2 >> 5)&1); }	// Why this and OpeningDir func ?
-	};
-	// 
-	struct Teleporter {
-		ObjectID w0; // Next object ID.
-		U16 w2; // Teleporter attributes
-		U16 w4; // Destination map
-
-		U8 DestinationX() const { return (w2 >> 0)&31; } // M!2,0,1F
-		U8 DestinationY() const { return (w2 >> 5)&31; } // M!2,5,1F
-		U8 DestinationMap() const { return (w4 >> 8)&255; } // M!4,8,00FF
-		U8 Scope() const { return (U8)((w2 >> 13)&3); } // M!3,5,03
-		U8 Sound() const { return (U8)((w2 >> 15)&1); } // M!3,7,01
-		U8 Rotation() const { return (U8)((w2 >> 10)&3); } // M!3,2,03
-		U8 RotationType() const { return (U8)(w2 >> 12)&1; } // M!3,4,01
-		U16 w4_0_0() const { return w4 & 1; } // M!4,0,01
-		U8 b4_1_2() const { return U8((w4 >> 1)&3); } // M!4,1,03
-		U8 b5_0_7() const { return U8(w4 >> 8); } // M!5,0,FF
-	};
-	// 
-	enum { // teleporter scope
-		scopeItems = 0,
-		scopeCreatures = 1,
-		scopeItemsParty = 2,
-		scopeEverything = 3,
-	};
-	// 
-	struct Text {
-		ObjectID w0; // Next object ID.
-		U16 w2; // Referred text in text data.
-
-		U8 TextMode() const { return (w2 >> 1)&3; } // M!2,1,03
-		U16 TextIndex() const { return (w2 >> 3)&0x1fff; } // M!2,3,1FFF
-		U8 SimpleTextExtUsage() const { return (TextIndex() >> 8)&0x1f; } // M!3,3,1F
-		U8 TextVisibility() const { return (U8)(w2 & 0x0001); } // M!2,1,01
-		void TextVisibility(U16 val) {
-			val &= 0x0001;
-			w2 &= 0xfffe;
-			w2 |= val;
-		}
-		U16 OrnateIndex() const { return (w2 >> 3)&0x1fff&0xff; }
-		U16 w2_c_f() const { return (TextIndex() >> 9)&0xf; } // compare with sk1bf9.w2() ?
-		U16 w2_8_b() const { return (TextIndex() >> 5)&0xf; }
-		U16 w2_3_7() const { return (TextIndex())&0x001f; }
-	};
-	// 
-	struct Actuator {
-		ObjectID w0; // Next object ID.
-		U16 w2;
-		U16 w4;
-		U16 w6; // This U16 has different meaning depending on the action target type (Remote or Local).
-
-		U8 ActuatorType() const { return ((Bit8u)w2) & 0x7F; }
-		U16 ActuatorData() const { return (w2 >> 7)&0x01ff; }
-		void ActuatorData(U16 val) {
-			val &= 0x01ff;
-			w2 &= 0x007f;
-			val <<= 7;
-			w2 |= val;
-		}
-		U8 OnceOnlyActuator() const { return (w4 >> 2)&1; } // M!4,2,01
-		void OnceOnlyActuator(U16 val) {
-			val &= 1;
-			w4 &= 0xfffb;
-			w4 |= (val << 2);
-		}
-		U8 RevertEffect() const { return (w4 >> 5)&1; } // M!4,5,01
-		U8 ActionType() const { return (w4 >> 3)&3; } // M!4,3,03
-		U8 SoundEffect() const { return (w4 >> 6)&1; } // M!4,6,01
-		U8 Ycoord() const { return (w6 >>11)&0x1f; } // M!7,3,1F
-		U8 Xcoord() const { return (w6 >> 6)&0x1f; } // M!6,6,1F
-		U16 GraphicNumber() const { return (w4 >> 12)&0x000f; } // M!4,12,0F
-		U16 Delay() const { return (w4 >> 7)&15; } // M!4,7,0F
-		U16 Direction() const { return (w6 >> 4)&3; } // M!6,4,03
-		U16 ActiveStatus() const { return (w4)&1; } // M!4,0,0001	// w4_0_0()
-		void ActiveStatus(U16 val) {
-			val &= 1;
-			w4 &= 0xfffe;
-			w4 |= val;
-		}
-		U8 b4_0_0() const { return (U8)((w4)&1); } // M!4,0,01
-		void b4_0_0(U8 val) {
-			val &= 1;
-			w4 &= 0xfffe;
-			w4 |= val;
-		}
-		U16 ShopItemPoolNo() const { return Delay(); }
-		U16 w6_4_f() const { return (w6 >> 4)&0xfff; }
-	};
-	// 
-	struct Creature {
-		ObjectID w0; // Next object ID.
-		ObjectID possession; // w2 Next possession object ID. Although not recommended, it is possible to
-		U8 b4; // Creature type. Her
-		U8 b5; // Position of each c // where &sk4ebe[b5]
-		U16 w6; // Hit points of creature 1
-		U16 w8; // Hit points of creature 2 // sk1c9a02c3::w0
-		U16 w10; // Hit points of creature 3 // sk1c9a02c3::w2
-		U16 w12; // Hit points of creature 4
-		U8 b14; // 
-		U8 b15;
-
-		ObjectID GetPossessionObject() { return possession; }
-		void SetPossessionObject(ObjectID val) { possession = val; }
-
-		U8 CreatureType() const { return b4; }
-		void CreatureType(Bit8u val) { b4 = val; }
-
-		void HP1(Bit16u val) { w6 = val; }
-		U16 HP1() const{ return w6; }
-
-		void HP3(Bit16u val) { w10 = val; }
-
-		Bit16u TriggerX() const { // M!C,0,1F
-			return w12 & 0x001f;
-		}
-		Bit16u TriggerY() const { // M!C,5,1F
-			return (w12 >> 5) & 0x001f;
-		}
-		Bit16u TriggerMap() const { // M!D,2,3F
-			return (w12 >> 10) & 0x003f;
-		}
-
-		//SPX: HP4_0_4 renamed SetTriggerXPos
-		void SetTriggerXPos(Bit16u val) { // ondie trigger x-pos
-			val &= 0x001f;
-			w12 &= 0xffe0;
-			w12 |= val;
-		}
-		//SPX: HP4_5_9 renamed SetTriggerYPos
-		void SetTriggerYPos(Bit16u val) { // ondie trigger y-pos
-			val &= 0x001f;
-			w12 &= 0xfc1f; // 1111 1100 0001 1111
-			w12 |= val << 5;
-		}
-		//SPX: HP4_A_F renamed SetTriggerMap
-		void SetTriggerMap(Bit16u val) { // ondie trigger map#
-			val &= 0x003f;
-			w12 &= 0x03ff;
-			w12 |= val << 10;
-		}
-		Bit8u b14_7_7() const { return (b14 >> 7)&1; }
-		Bit8u b15_2_2() const { return (b15 >> 2)&1; }
-		void b15_2_2(U8 val) {
-			val &= 1;
-			b15 &= 0xfb;
-			b15 |= val << 2;
-		};
-		Bit8u b5_0_7() const { return b5; } // xx of _4976_4ebe[xx]. -1 if not yet alloced.
-		void b5_0_7(Bit8u val) { b5 = val; }
-		Bit8u b15_0_1() const { return (b15 & 3); } // creature dir?
-		void b15_0_1(Bit16u val) {
-			val &= 3;
-			b15 &= 0xfc;
-			b15 |= (Bit8u)val;
-		}
-		U8 b7_3_7() const { return U8(w6 >> 11)&31; }
-		U16 w6_6_a() const { return (w6 >> 6)&31; }
-		U16 w10_6_6() const { return (w10 >> 6)&1; }
-		void w10_f_f(U16 val) {
-			val &= 1;
-			w10 &= 0x7fff;
-			w10 |= val << 15;
-		}
-		void w10_d_d(U16 val) {
-			val &= 1;
-			w10 &= 0xdfff;
-			w10 |= val << 13;
-		}
-		U16 w10_c_c() const { return (w10>>12)&1; }
-		U16 w10_3_3() const { return (w10>>3)&1; }
-		U16 w10_d_d() const { return (w10>>13)&1; }
-		U16 w10_7_7() const { return (w10>>7)&1; }
-		void w10_7_7(U16 val) {
-			val &= 1;
-			w10 &= 0xff7f;
-			w10 |= val << 7;
-		}
-	};
-	// 
-#ifndef DM2_EXTENDED_MODE
-	struct Weapon {
-		ObjectID w0; // Next object ID.
-		U16 w2; // Item description
-
-		U8 Charges() const { return (U8)((w2 >> 10) & 0x0F); }
-		void Charges(Bit16u newval) { w2 = (w2 & 0xc3ff) | ((newval & 0x0F) << 10); }
-		U8 ItemType() const { return (U8)(w2 & 0x007F); }
-		void ItemType(Bit16u val) {
-			w2 = (Bit8u)((w2 & 0xff80) | (val & 0x007f));
-		}
-		U8 Important() const { return (U8)((w2 >> 7) & 0x01); }
-	};
-#else
-	struct Weapon {
-		ObjectID w0; // Next object ID.
-		U16 w2; // Item description
-		// SPX (info taken from CSBWin)
-		//	bits 0-6 : type	=> 128
-		//	bit 7 : undiscardable
-		//	bit 8 : cursed
-		//	bit 9 : poisoned
-		//	bits 10-13 : charges
-		//	bit 14 : broken
-		//	bit 15 : torch type
-
-		U8 Charges() const { return (U8)((w2 >> 10) & 0x0F); }
-		void Charges(Bit16u newval) { w2 = (w2 & 0xc3ff) | ((newval & 0x0F) << 10); }
-		U8 ItemType() const { return (U8)(w2 & 0x007F); }
-		void ItemType(Bit16u val) {
-			w2 = (Bit8u)((w2 & 0xff80) | (val & 0x007f));
-		}
-		U8 Important() const { return (U8)((w2 >> 7) & 0x01); }
-
-		U8 Cursed() const { return (U8)((w2 >> 8) & 0x01); }
-		void Cursed(Bit16u val) {
-			w2 = (Bit8u)((w2 & 0x0100) | (val & 0x01)<<8); }
-		U8 Poisoned() const { return (U8)((w2 >> 9) & 0x01); }
-		void Poisoned(Bit16u val) {
-			w2 = (Bit8u)((w2 & 0x0100) | (val & 0x01)<<9); }
-		U8 Broken() const { return (U8)((w2 >> 14) & 0x01); }
-		void Broken(Bit16u val) {
-			w2 = (Bit8u)((w2 & 0x0100) | (val & 0x01)<<14); }
-	};
-#endif // DM2_EXTENDED_MODE
-	// 
-	struct Cloth {
-		ObjectID w0; // Next object ID.
-		U16 w2; // Item attributes
-
-		U8 Charges() const { return (U8)((w2 >> 9) & 0x0F); }
-		void Charges(Bit16u newval) { w2 = (w2 & 0xe1ff) | ((newval & 0x0F) << 9); }
-		U8 ItemType() const { return (U8)(w2 & 0x007F); }
-		void ItemType(Bit16u val) {
-			w2 = (Bit8u)((w2 & 0xff80) | (val & 0x007f));
-		}
-		U8 Important() const { return (U8)((w2 >> 7) & 0x01); }
-	};
-	// 
-	struct Scroll {
-		ObjectID w0; // Next object ID.
-		U16 w2; // Scroll attributes
-
-		U16 w2_a_f() const { return (w2 >> 10)&0x3f; }
-		U16 ReferredText() const { return w2 & 0x3ff; }
-	};
-	// 
-	struct Potion {
-		ObjectID w0; // Next object ID.
-		U16 w2; // Item attributes.
-
-		U8 PotionType() const { return (U8)((w2 >> 8) & 0x007F); }
-		void PotionType(Bit16u val) {
-			val &= 0x007f;
-			w2 &= 0x80ff;
-			w2 |= (val) << 8;
-		}
-		U8 PotionPower() const { return (U8)(w2 & 0x00ff); }
-		void PotionPower(Bit16u val) {
-			val &= 0x00ff;
-			w2 &= 0xff00;
-			w2 |= val;
-		}
-		U8 VisiblePower() const { return (U8)((w2 >> 15) & 0x0001); }
-		void VisiblePower(U8 val) {
-			val &= 1;
-			w2 &= 0x7fff;
-			w2 |= val << 15;
-		}
-	};
-	// 
-	struct Container {
-		ObjectID w0; // Next object ID.
-		ObjectID w2; // Next contained object ID
-		U8 b4;
-		U8 b5;
-		U16 w6; // Unused
-
-		ObjectID GetContainedObject() { return w2; }
-		void SetContainedObject(ObjectID val) { w2 = val; }
-
-		U16 IsOpened() const { return (b4 & 1); }
-		void IsOpened(U16 val) {
-			val &= 1;
-			b4 &= 0xfe;
-			b4 |= U8(val);
-		}
-		U8 ContainerType() const { return (b4 >> 1)&3; }
-		void ContainerType(U8 val) {
-			val &= 3;
-			b4 &= 0xf9;
-			b4 |= val << 1;
-		}
-		void ContainerFullType(U16 val) {
-			b4 = (Bit8u)((b4 & 0xf9) | (((val >> 3) & 0x0003) << 1));
-			b5 = (Bit8u)((b5 & 0x1f) |  ((val       & 0x0007) << 5));
-		}
-		U8 b5_5_7() const { return (b5 >> 5)&7; }
-		void w6_0_f(U16 val) { w6 = val; }
-
-		//U8 b7_2_7() const { return U8((w6 >> 10)&0x3f); } // =GetDestMap
-
-		U16 GetDestX() const { return ((w6     )&0x1f); }
-		U16 GetDestY() const { return ((w6 >> 5)&0x1f); }
-		U16 GetDestMap() const { return ((w6 >>10)&0x3f); }
-
-		DM2Internal::Ax3 GetDest() const {
-			return DM2Internal::Ax3::Frm(w6);
-		}
-
-		void SetDestX(U16 val) {
-			val &= 0x001f;
-			w6 &= 0xffe0;
-			w6 |= val;
-		}
-		void SetDestY(U16 val) {
-			val &= 0x001f;
-			w6 &= 0xfc1f;
-			w6 |= val << 5;
-		}
-		void SetDestMap(U16 val) {
-			val &= 0x003f;
-			w6 &= 0x03ff;
-			w6 |= val << 10;
-		}
-		void b7_2_2(U16 val) {
-			val &= 0x0001;
-			w6 &= 0xfbff;
-			w6 |= val << 10;
-		}
-
-		U16 b7_2_2() const { return (w6 >> 10)&1; }
-	};
-	// 
-	struct Miscellaneous_item {
-		ObjectID w0; // ext object ID.
-		U16 w2; // Item attributes
-
-		U8 Who() const { return (U8)((w2 >> 14) & 0x03); }
-		U8 Compass() const { return (U8)((w2 >> 14) & 0x03); }
-		void Compass(Bit16u newval) { w2 = (w2 & 0x3fff) | ((newval & 0x03) << 14); }
-		void Bone(U16 val) {
-			val &= 3;
-			w2 &= 0x3fff;
-			w2 |= val << 14;
-		}
-		U8 ItemType() const { return (U8)(w2 & 0x007F); } // M!2,0,7F
-		void ItemType(U8 val) { // M!2,0,7F
-			val &= 0x7f;
-			w2 &= 0xff80;
-			w2 |= val;
-		}
-		U8 Charge() const { return (U8)((w2 >> 8)&0x3f); } // M!3,0,3F
-		void Charge(U8 val) { // M!3,0,3F
-			val &= 0x3f;
-			w2 &= 0xc0ff;
-			w2 |= val << 8;
-		}
-		U8 Important() const { return (U8)((w2 >> 7) & 0x01); }
-		void Important(U8 val) {
-			val &= 1;
-			w2 &= 0xff7f;
-			w2 |= val << 7;
-		}
-	};
-	// 
-	struct Missile {
-		ObjectID w0; // : Next object ID.
-		ObjectID w2; // Missile object (dagger, firebal, ...)
-		U8 b4_; //  Energy remaining
-		U8 b5_; // Energy remaining 2
-		U16 w6; //  Timer index
-
-		ObjectID GetMissileObject() const { return w2; }
-		void SetMissileObject(ObjectID val) { w2 = val; }
-
-		U8 EnergyRemaining() const { return b4_; }
-		U8 b5_4_7() const { return b5_ >> 4; }
-		U8 EnergyRemaining2() const { return b5_; }
-
-		void EnergyRemaining(U8 val) { b4_ = val; }
-		void EnergyRemaining2(U8 val) { b5_ = val; }
-
-		U16 TimerIndex() const { return w6; }
-		void TimerIndex(U16 val) { w6 = val; }
-
-		Bit16u GetX() const { return (w4())&0x1f; }
-		Bit16u GetY() const { return (w4()>>5)&0x1f; }
-		Bit16u GetMap() const { return (w4()>>10)&0x3f; }
-
-		U16 w4() const { return b4_ | (b5_ << 8); }
-		void w4(U16 val) {
-			b4_ = U8(val);
-			b5_ = U8(val >> 8);
-		}
-
-		void SetX(U16 val) {
-			val &= 0x001f;
-			U16 w = w4();
-			w &= 0xffe0;
-			w |= val;
-			w4(w);
-		}
-		void SetY(U16 val) {
-			val &= 0x001f;
-			U16 w = w4();
-			w &= 0xfc1f;
-			w |= val << 5;
-			w4(w);
-		}
-		void SetMap(U16 val) {
-			val &= 0x003f;
-			U16 w = w4();
-			w &= 0x03ff;
-			w |= val << 10;
-			w4(w);
-		}
-		void b6_0_0(U16 val) {
-			val &= 0x0001;
-			w6 &= 0xfffe;
-			w6 |= val;
-		}
-	};
-	// 
-	struct Cloud {
-		ObjectID w0; // Next object ID.
-		U16 w2;
-
-		U8 CloudType() const { return (U8)(w2 & 0x007F); }
-		void CloudType(U8 val) {
-			val &= 0x7f;
-			w2 &= 0xff80;
-			w2 |= val;
-		}
-		U8 b2_7_7() const { return (U8)((w2 >> 7)&1); }
-		void b2_7_7(U8 val) {
-			val &= 1;
-			w2 &= 0xff7f;
-			w2 |= val << 7;
-		}
-		U8 b3_0_f() const { return (U8)((w2 >> 8)&0xff); }
-		void b3_0_f(U8 val) {
-			val &= 0xff;
-			w2 &= 0x00ff;
-			w2 |= val << 8;
-		}
-		U8 b3_5_f() const { return (U8)((w2 >> 5)&0xff); }
-	};
-
-#else
-
 	// 
 	struct File_header {
 		U16 w0; //  Random seed used to display random 
@@ -740,10 +114,22 @@ namespace DMEncyclopaedia {
 		U16 cwListSize; // Object list size in wor
 		U16 nRecords[16]; // Number of objects of each type:
 
+#if (DM2_EXTENDED_JSON == 1)
+		U16 StartPartyPosX() const { return startX; }
+		U16 StartPartyPosY() const { return startY; }
+		U16 StartPartyDir() const { return startDir; }
+		U16 StartPartyMap() const { return startMap; }
+
+		U16 startX;
+		U16 startY;
+		U16 startDir;
+		U16 startMap;
+#else
 		U16 StartPartyPosX() const { return (w8)&0x1f; }
 		U16 StartPartyPosY() const { return (w8 >> 5)&0x1f; }
 		U16 StartPartyDir() const { return (w8 >> 10)&0x03; }
 		U16 StartPartyMap() const { return 0; }
+#endif
 
 		// w0 = w0
 		// w2 = cbMapData
@@ -781,13 +167,24 @@ namespace DMEncyclopaedia {
 		U16 w12; // 1 U16:
 		U16 w14; // 1 U16: Door graphics.
 
+#if (DM2_EXTENDED_JSON == 1)
+		U8 Column() const { return width; }
+		U8 Row() const { return height; }
+		U8 RawColumn() const { return width -1; }
+		U8 RawRow() const { return height -1; }
+
+		U8 width;
+		U8 height;
+#else
 		U8 Column() const { return ((w8 >> 6)&31)+1; }
 		U8 Row() const { return ((w8 >> 11)&31)+1; }
+		U8 RawColumn() const { return ((w8 >> 6)&31); }
+		U8 RawRow() const { return ((w8 >> 11)&31); }
+#endif
+
 		U16 Level() const { return w8&63; }
 		U16 Offset() const { return w0; }
 		U8 Difficulty() const { return (U8)((w12 >> 12)&0x0F); }
-		U8 RawColumn() const { return ((w8 >> 6)&31); }
-		U8 RawRow() const { return ((w8 >> 11)&31); }
 		U8 MapGraphicsStyle() const { return (w14 >> 4)&15; }
 		U8 CreaturesTypes() const { return (Bit8u)((w12 >> 4)&15); }
 		U8 WallGraphics() const { return (Bit8u)(w10 & 15); }
@@ -811,7 +208,82 @@ namespace DMEncyclopaedia {
 		U16 w2_6_6() const { return (w2 >> 6)&1; }
 	};
 	// 
-#if (DM2_EXTENDED_OBJECT_DEF == 0) || !defined DM2_EXTENDED_OBJECT_DEF
+#if (DM2_EXTENDED_JSON == 1)
+	struct ObjectID {
+		// FEDCBA98 76543210
+		// -----------------
+		// rrrrrrrr rrrrrrrr
+		//
+		// rrrrrrrrrrrrrrrr -> indirection reference index. 0 to 65535 (or 65407 without predefined missiles).
+		U16 w;
+
+		ObjectID() { }
+
+		ObjectID(const ObjectID &src): w(src.w) { }
+
+		explicit ObjectID(const ObjectID &src, Bit16u withNewDir) {
+			*this = src;
+			Dir(withNewDir); // change dir of this indirection reference
+		}
+
+		ObjectID(U16 recordLink): w(recordLink) { }
+
+		operator U16() const { return w; }
+
+		void ClearDir() {
+			Dir(0);
+		}
+
+		U8 Dir() const { 
+			checkIndirectIndex();
+			return (glbDataTypeAndIndexMap[w] >> 20) & 3;
+		}
+		void Dir(U16 val) {
+			checkIndirectIndex();
+			glbDataTypeAndIndexMap[w] = (glbDataTypeAndIndexMap[w] & 0x0FFFFF) | ((val & 3) << 20);
+		}
+
+		U16 DBIndex() const {
+			checkIndirectIndex();
+			return glbDataTypeAndIndexMap[w] & 0x00FFFF;
+		}
+
+		void DBIndex(U16 val) {
+			checkIndirectIndex();
+			glbDataTypeAndIndexMap[w] = (glbDataTypeAndIndexMap[w] & 0x3F0000) | ((val & 65535));
+		}
+
+		U8 DBType() const;
+
+		U8 RealDBType() const {
+			checkIndirectIndex();
+			return (glbDataTypeAndIndexMap[w] >> 16) & 3;
+		}
+
+		void RealDBType(U16 val) {
+			checkIndirectIndex();
+			glbDataTypeAndIndexMap[w] = (glbDataTypeAndIndexMap[w] & 0x30FFFF) | ((val & 15) << 16);
+		}
+
+		ObjectID GetAsNorth() const { return *this; } // same
+
+		static ObjectID MissileRecord(U16 index) { return ObjectID(0xff80 | index); }
+		U16 MissileType() { return (w -0xff80)&0x7f; }
+		bool IsMissile() const { return w >= 0xff80; }
+
+		static ObjectID Raw(U16 w) { ObjectID rl; rl.w = w; return rl; };
+
+		void checkIndirectIndex() const {
+			ATLASSERT(w < glbDataTypeAndIndexMap.size());
+		}
+
+	protected:
+		ObjectID(U16 dir, U16 dbType, U16 index) {
+			w = (dir << 14) | ((dbType & 15) << 10) | (index & 1023);
+		}
+	};
+
+#elif (DM2_EXTENDED_OBJECT_DEF == 0) || !defined DM2_EXTENDED_OBJECT_DEF
 	struct ObjectID {
 		// FEDCBA98 76543210
 		// -----------------
@@ -1448,7 +920,7 @@ namespace DMEncyclopaedia {
 		}
 		U8 b3_5_f() const { return (U8)((w2 >> 5)&0xff); }
 	};
-#endif
+
 	// 
 	struct GenericRecord {
 		ObjectID w0; // Next object ID.
