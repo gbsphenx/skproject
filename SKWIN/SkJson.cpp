@@ -52,14 +52,21 @@ JNode *JsonSerializer::readToken() {
 				delete firstValue;
 				break;
 			}
+			std::string keyName = firstValue->strValue;
+			delete firstValue;
 			skipSpaces();
 			if (curByte != ':') {
 				// invalid
+				delete firstValue;
 				break;
 			}
 			nextByte();
 			JNode *second = readToken();
-			node->nodes[firstValue->strValue] = second;
+			JObject::NodesType::iterator iter = node->nodes.find(keyName);
+			if (iter != node->nodes.end()) {
+				delete iter->second;
+			}
+			node->nodes[keyName] = second;
 			skipSpaces();
 			if (curByte == ',') {
 				nextByte();

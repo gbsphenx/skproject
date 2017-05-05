@@ -73,7 +73,7 @@ namespace SkJson {
 		}
 
 		virtual ~JArray() {
-			NodesType::const_iterator iter = nodes.begin();
+			NodesType::iterator iter = nodes.begin();
 			for (; iter != nodes.end(); iter++) {
 				delete *iter;
 			}
@@ -108,7 +108,7 @@ namespace SkJson {
 		}
 
 		virtual ~JObject() {
-			NodesType::const_iterator iter = nodes.begin();
+			NodesType::iterator iter = nodes.begin();
 			for (; iter != nodes.end(); iter++) {
 				delete iter->second;
 			}

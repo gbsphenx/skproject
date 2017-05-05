@@ -255,10 +255,7 @@ namespace DMEncyclopaedia {
 
 		U8 DBType() const;
 
-		U8 RealDBType() const {
-			checkIndirectIndex();
-			return (glbDataTypeAndIndexMap[w] >> 16) & 3;
-		}
+		U8 RealDBType() const;
 
 		void RealDBType(U16 val) {
 			checkIndirectIndex();
@@ -272,6 +269,15 @@ namespace DMEncyclopaedia {
 		bool IsMissile() const { return w >= 0xff80; }
 
 		static ObjectID Raw(U16 w) { ObjectID rl; rl.w = w; return rl; };
+
+		static ObjectID FromJson(U16 w) { 
+			ObjectID rl; 
+			if (w == 0xFFFF) {
+				w = 0xFFFE; // not null, use eof.
+			}
+			rl.w = w; 
+			return rl;
+		};
 
 		void checkIndirectIndex() const {
 			ATLASSERT(w < glbDataTypeAndIndexMap.size());

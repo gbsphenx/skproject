@@ -486,7 +486,14 @@ const Bit8u * const ptrDungeonFilename = strDungeon;					// SPX: _4976_19bc rena
 //{{SKCONST
 
 // SPX: _4976_0242 renamed glbItemSizePerDB
-#if (DM2_EXTENDED_DATABASE == 0)
+#if (DM2_EXTENDED_JSON == 1)
+const Bit8u glbItemSizePerDB[16] = { // dbSize
+		sizeof(Door),		sizeof(Teleporter),	sizeof(Text),		sizeof(Actuator),
+		sizeof(Creature),	sizeof(Weapon),		sizeof(Cloth),		sizeof(Scroll),
+		sizeof(Potion),		sizeof(Container),	sizeof(Miscellaneous_item),	DB_SIZE_UNUSED,
+		DB_SIZE_UNUSED,		DB_SIZE_UNUSED,		sizeof(Missile),	sizeof(Cloud),
+};
+#elif (DM2_EXTENDED_DATABASE == 0)
 const Bit8u glbItemSizePerDB[16] = { // dbSize
 		DB_SIZE_DOOR,		DB_SIZE_TELEPORTER,	DB_SIZE_TEXT,		DB_SIZE_ACTUATOR,
 		DB_SIZE_CREATURE,	DB_SIZE_WEAPON,		DB_SIZE_CLOTHING,	DB_SIZE_SCROLL,

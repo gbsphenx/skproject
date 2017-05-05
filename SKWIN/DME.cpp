@@ -47,3 +47,14 @@ U8 ObjectID::DBType() const { // DBType == FakeDBType
 			return dbActuator; // it is an actuator!
 	}
 }
+
+#if (DM2_EXTENDED_JSON == 1)
+U8 ObjectID::RealDBType() const {
+	if (IsMissile()) {
+		// missile is >= 0xFF80, and it is always calculated as dbCloud.
+		return dbCloud;
+	}
+	checkIndirectIndex();
+	return (glbDataTypeAndIndexMap[w] >> 16) & 15;
+}
+#endif

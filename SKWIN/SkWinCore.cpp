@@ -2811,6 +2811,8 @@ void SkWinCore::CHANGE_CURRENT_MAP_TO(Bit16u new_map)
 //^0CEE:0AB5
 ObjectID SkWinCore::GET_TILE_RECORD_LINK(i16 xx, i16 yy)
 {
+	// return OBJECT_END_MARKER if no object exists.
+
 	//^0CEE:0AB5
 	i16 index = GET_OBJECT_INDEX_FROM_TILE(xx, yy);
 	if (index == -1)
@@ -11112,7 +11114,8 @@ void SkWinCore::_0b36_0cbe(sk3f6c *ref, Bit16u yy)
 Bit16u SkWinCore::IS_CONTAINER_MAP(ObjectID recordLink)
 {
 	//^0CEE:2EFB
-	if (recordLink.DBType() == dbContainer) {
+	// DM2_EXTENDED_JSON needs check: (recordLink != OBJECT_NULL)
+	if (recordLink != OBJECT_NULL && recordLink.DBType() == dbContainer) {
 		if (GET_ADDRESS_OF_RECORD9(recordLink)->ContainerType() == 1) {
 			return 1;
 		}
@@ -15336,7 +15339,8 @@ void SkWinCore::_3a15_38b6(U16 xx)
 			//^3A15:397A
 			ObjectID si = *(bp0c++);
 			//^3A15:3984
-			while (si.DBType() <= dbActuator) {
+			// DM2_EXTENDED_JSON needs check: (si != OBJECT_END_MARKER)
+			while (si != OBJECT_END_MARKER && si.DBType() <= dbActuator) {
 				//^3A15:3987
 				if (si.DBType() == dbActuator) {
 					//^3A15:3997
@@ -16991,15 +16995,20 @@ _0d3a:
 // SPX: TODO I wonder if aa is rather direction
 void SkWinCore::SHOOT_ITEM(ObjectID rlItemThrown, U16 xx, U16 yy, U16 dir, U16 aa, U16 energyVal, U16 ene2Val, U16 dd)
 {
-	ATLASSERT(rlItemThrown.DBType() != dbDoor); // you cannot throw this kind of objects.
-	ATLASSERT(rlItemThrown.DBType() != dbTeleporter); // you cannot throw this kind of objects.
-	ATLASSERT(rlItemThrown.DBType() != dbText); // you cannot throw this kind of objects.
-	ATLASSERT(rlItemThrown.DBType() != dbActuator); // you cannot throw this kind of objects.
-	ATLASSERT(rlItemThrown.DBType() != dbCreature); // you cannot throw this kind of objects.
-	ATLASSERT(rlItemThrown.DBType() != db11); // you cannot throw this kind of objects.
-	ATLASSERT(rlItemThrown.DBType() != db12); // you cannot throw this kind of objects.
-	ATLASSERT(rlItemThrown.DBType() != db13); // you cannot throw this kind of objects.
-	ATLASSERT(rlItemThrown.IsMissile() || (!rlItemThrown.IsMissile() && rlItemThrown.DBType() != dbCloud)); // you cannot throw this kind of objects.
+	if (!rlItemThrown.IsMissile()) {
+		ATLASSERT(rlItemThrown.DBType() != dbDoor); // you cannot throw this kind of objects.
+		ATLASSERT(rlItemThrown.DBType() != dbTeleporter); // you cannot throw this kind of objects.
+		ATLASSERT(rlItemThrown.DBType() != dbText); // you cannot throw this kind of objects.
+		ATLASSERT(rlItemThrown.DBType() != dbActuator); // you cannot throw this kind of objects.
+		ATLASSERT(rlItemThrown.DBType() != dbCreature); // you cannot throw this kind of objects.
+		ATLASSERT(rlItemThrown.DBType() != db11); // you cannot throw this kind of objects.
+		ATLASSERT(rlItemThrown.DBType() != db12); // you cannot throw this kind of objects.
+		ATLASSERT(rlItemThrown.DBType() != db13); // you cannot throw this kind of objects.
+	}
+	else {
+		// missile is >= 0xFF80, and no check required for DM2_EXTENDED_JSON.
+		//ATLASSERT(rlItemThrown.DBType() != dbCloud); // you cannot throw this kind of objects.
+	}
 
 	//^075F:000B
 	ENTER(14);
@@ -20320,7 +20329,8 @@ ObjectID SkWinCore::GET_WALL_TILE_ANYITEM_RECORD(U16 xx, U16 yy)
 	//^0CEE:0AE5
 	ObjectID si = GET_TILE_RECORD_LINK(xx, yy);
 	//^0CEE:0AF1
-	while (si.DBType() <= dbActuator) {
+	// DM2_EXTENDED_JSON needs check: (si != OBJECT_END_MARKER)
+	while (si != OBJECT_END_MARKER && si.DBType() <= dbActuator) {
 		//^0CEE:0AF3
 		si = GET_NEXT_RECORD_LINK(si);
 		//^0CEE:0AF9
@@ -35246,7 +35256,8 @@ void SkWinCore::PROCESS_ACTUATOR_TICK_GENERATOR() //#DS=4976?
 					ObjectID bp0e = *bp0c;
 					bp0c++;
 					//^3A15:35BD
-					while (bp0e.DBType() <= dbActuator) {
+					// DM2_EXTENDED_JSON needs check: (bp0e != OBJECT_END_MARKER)
+					while (bp0e != OBJECT_END_MARKER && bp0e.DBType() <= dbActuator) {
 						//^3A15:35C0
 						if (bp0e.DBType() == dbActuator) {
 							//^3A15:35D1
@@ -35562,18 +35573,18 @@ void SkWinCore::ARRANGE_DUNGEON()
 									if (bp14->b14_7_7() != 0)
 										break;
 									//^2066:2263
-									Bit16u bp28 = bp14->possession;
+									ObjectID bp28 = bp14->possession;
 									//^2066:226A
-									if (bp28 == 0xfffe)
+									if (bp28 == OBJECT_END_MARKER)
 										break;
 									//^2066:2272
-									bp14->possession = (bp28 & 0x3fff) | (RAND02() << 14);
+									bp14->possession.Dir(RAND02());
 									//^2066:228A
-									while (bp28 != 0xfffe) {
+									while (bp28 != OBJECT_END_MARKER) {
 										//^2066:228C
 										GenericRecord *bp24 = GET_ADDRESS_OF_RECORD(bp28);
 										//^2066:229B
-										if (bp24->w0 != 0xfffe) {
+										if (bp24->w0 != OBJECT_END_MARKER) {
 											//^2066:22A4
 											bp24->w0.Dir(RAND02());
 										}
@@ -39236,6 +39247,18 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 
 	//^2066:2802
 	for (si = 0; si < 16; si++) {
+		static const char *tableNames[] = {
+			"doors", "teleporters", "texts", "actuators",
+			"creatures", "weapons", "clothings", "scrolls",
+			"potions", "containers", "miscs", "",
+			"", "", "missiles", "clouds",
+		};
+
+		JsonPathService atXxx(root.node, tableNames[si]);
+		JsonArrayLookupService xxxArray(atXxx);
+
+		dunHeader->nRecords[si] = xxxArray.getLen();
+
 		//^2066:2807
 		Bit16u di = dunHeader->nRecords[si];
 		if (isNewGame != 0) {
@@ -39251,37 +39274,27 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 		}
 		//^2066:2887
 
-		static const char *tableNames[] = {
-			"doors", "teleporters", "texts", "actuators",
-			"creatures", "weapons", "clothings", "scrolls",
-			"potions", "containers", "miscs", "",
-			"", "", "missiles", "clouds",
-		};
-
-		JsonPathService atXxx(root.node, tableNames[si]);
-		JsonArrayLookupService xxxArray(atXxx);
-
 		Bit16u *bp04 = (Bit16u *)glbDBObjectData[si];
 
 		switch (si) {
 			case dbDoor:
 				{
-					for (pos = 0; pos < di; pos++) {
-						Door *record = reinterpret_cast<Door *>(bp04 +(bp0e * pos));
+					Door *record = reinterpret_cast<Door *>(bp04);
+					for (pos = 0; pos < di; pos++, record++) {
 						JsonValueLookupService xxxLookup(xxxArray.at(pos));
 
-						record->next = ObjectID::Raw(xxxLookup.getInt("nextObjRef", -1));
+						record->next = ObjectID::FromJson(xxxLookup.getInt("nextObjRef", -1));
 						record->w2 = (xxxLookup.getInt("attr1", -1));
 					}
 					break;
 				}
 			case dbTeleporter:
 				{
-					for (pos = 0; pos < di; pos++) {
-						Teleporter *record = reinterpret_cast<Teleporter *>(bp04 +(bp0e * pos));
+					Teleporter *record = reinterpret_cast<Teleporter *>(bp04);
+					for (pos = 0; pos < di; pos++, record++) {
 						JsonValueLookupService xxxLookup(xxxArray.at(pos));
 
-						record->w0 = ObjectID::Raw(xxxLookup.getInt("nextObjRef", -1));
+						record->w0 = ObjectID::FromJson(xxxLookup.getInt("nextObjRef", -1));
 						record->w2 = (xxxLookup.getInt("attr1", -1));
 						record->w4 = (xxxLookup.getInt("attr2", -1));
 					}
@@ -39289,22 +39302,22 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 				}
 			case dbText:
 				{
-					for (pos = 0; pos < di; pos++) {
-						Text *record = reinterpret_cast<Text *>(bp04 +(bp0e * pos));
+					Text *record = reinterpret_cast<Text *>(bp04);
+					for (pos = 0; pos < di; pos++, record++) {
 						JsonValueLookupService xxxLookup(xxxArray.at(pos));
 
-						record->w0 = ObjectID::Raw(xxxLookup.getInt("nextObjRef", -1));
+						record->w0 = ObjectID::FromJson(xxxLookup.getInt("nextObjRef", -1));
 						record->w2 = (xxxLookup.getInt("attr1", -1));
 					}
 					break;
 				}
 			case dbActuator:
 				{
-					for (pos = 0; pos < di; pos++) {
-						Actuator *record = reinterpret_cast<Actuator *>(bp04 +(bp0e * pos));
+					Actuator *record = reinterpret_cast<Actuator *>(bp04);
+					for (pos = 0; pos < di; pos++, record++) {
 						JsonValueLookupService xxxLookup(xxxArray.at(pos));
 
-						record->w0 = ObjectID::Raw(xxxLookup.getInt("nextObjRef", -1));
+						record->w0 = ObjectID::FromJson(xxxLookup.getInt("nextObjRef", -1));
 						record->w2 = (xxxLookup.getInt("attr1", -1));
 						record->w4 = (xxxLookup.getInt("attr2", -1));
 						record->w6 = (xxxLookup.getInt("attr3", -1));
@@ -39313,12 +39326,12 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 				}
 			case dbCreature:
 				{
-					for (pos = 0; pos < di; pos++) {
-						Creature *record = reinterpret_cast<Creature *>(bp04 +(bp0e * pos));
+					Creature *record = reinterpret_cast<Creature *>(bp04);
+					for (pos = 0; pos < di; pos++, record++) {
 						JsonValueLookupService xxxLookup(xxxArray.at(pos));
 
-						record->w0 = ObjectID::Raw(xxxLookup.getInt("nextObjRef", -1));
-						record->possession = ObjectID::Raw(xxxLookup.getInt("childObjRef", -1));
+						record->w0 = ObjectID::FromJson(xxxLookup.getInt("nextObjRef", -1));
+						record->possession = ObjectID::FromJson(xxxLookup.getInt("childObjRef", -1));
 						record->b4 = (xxxLookup.getInt("creatureType", -1));
 						record->b5 = (xxxLookup.getInt("position", -1));
 						record->w6 = (xxxLookup.getInt("hp1", -1));
@@ -39333,56 +39346,56 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 				}
 			case dbWeapon:
 				{
-					for (pos = 0; pos < di; pos++) {
-						Weapon *record = reinterpret_cast<Weapon *>(bp04 +(bp0e * pos));
+					Weapon *record = reinterpret_cast<Weapon *>(bp04);
+					for (pos = 0; pos < di; pos++, record++) {
 						JsonValueLookupService xxxLookup(xxxArray.at(pos));
 
-						record->w0 = ObjectID::Raw(xxxLookup.getInt("nextObjRef", -1));
+						record->w0 = ObjectID::FromJson(xxxLookup.getInt("nextObjRef", -1));
 						record->w2 = (xxxLookup.getInt("attr1", -1));
 					}
 					break;
 				}
 			case dbCloth:
 				{
-					for (pos = 0; pos < di; pos++) {
-						Cloth *record = reinterpret_cast<Cloth *>(bp04 +(bp0e * pos));
+					Cloth *record = reinterpret_cast<Cloth *>(bp04);
+					for (pos = 0; pos < di; pos++, record++) {
 						JsonValueLookupService xxxLookup(xxxArray.at(pos));
 
-						record->w0 = ObjectID::Raw(xxxLookup.getInt("nextObjRef", -1));
+						record->w0 = ObjectID::FromJson(xxxLookup.getInt("nextObjRef", -1));
 						record->w2 = (xxxLookup.getInt("attr1", -1));
 					}
 					break;
 				}
 			case dbScroll:
 				{
-					for (pos = 0; pos < di; pos++) {
-						Scroll *record = reinterpret_cast<Scroll *>(bp04 +(bp0e * pos));
+					Scroll *record = reinterpret_cast<Scroll *>(bp04);
+					for (pos = 0; pos < di; pos++, record++) {
 						JsonValueLookupService xxxLookup(xxxArray.at(pos));
 
-						record->w0 = ObjectID::Raw(xxxLookup.getInt("nextObjRef", -1));
+						record->w0 = ObjectID::FromJson(xxxLookup.getInt("nextObjRef", -1));
 						record->w2 = (xxxLookup.getInt("attr1", -1));
 					}
 					break;
 				}
 			case dbPotion:
 				{
-					for (pos = 0; pos < di; pos++) {
-						Potion *record = reinterpret_cast<Potion *>(bp04 +(bp0e * pos));
+					Potion *record = reinterpret_cast<Potion *>(bp04);
+					for (pos = 0; pos < di; pos++, record++) {
 						JsonValueLookupService xxxLookup(xxxArray.at(pos));
 
-						record->w0 = ObjectID::Raw(xxxLookup.getInt("nextObjRef", -1));
+						record->w0 = ObjectID::FromJson(xxxLookup.getInt("nextObjRef", -1));
 						record->w2 = (xxxLookup.getInt("attr1", -1));
 					}
 					break;
 				}
 			case dbContainer:
 				{
-					for (pos = 0; pos < di; pos++) {
-						Container *record = reinterpret_cast<Container *>(bp04 +(bp0e * pos));
+					Container *record = reinterpret_cast<Container *>(bp04);
+					for (pos = 0; pos < di; pos++, record++) {
 						JsonValueLookupService xxxLookup(xxxArray.at(pos));
 
-						record->w0 = ObjectID::Raw(xxxLookup.getInt("nextObjRef", -1));
-						record->w2 = ObjectID::Raw(xxxLookup.getInt("childObjRef", -1));
+						record->w0 = ObjectID::FromJson(xxxLookup.getInt("nextObjRef", -1));
+						record->w2 = ObjectID::FromJson(xxxLookup.getInt("childObjRef", -1));
 						int attr1 = (xxxLookup.getInt("attr1", -1));
 						record->b4 = attr1 & 255;
 						record->b5 = (attr1 >> 8) & 255;
@@ -39392,23 +39405,23 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 				}
 			case dbMiscellaneous_item:
 				{
-					for (pos = 0; pos < di; pos++) {
-						Miscellaneous_item *record = reinterpret_cast<Miscellaneous_item *>(bp04 +(bp0e * pos));
+					Miscellaneous_item *record = reinterpret_cast<Miscellaneous_item *>(bp04);
+					for (pos = 0; pos < di; pos++, record++) {
 						JsonValueLookupService xxxLookup(xxxArray.at(pos));
 
-						record->w0 = ObjectID::Raw(xxxLookup.getInt("nextObjRef", -1));
+						record->w0 = ObjectID::FromJson(xxxLookup.getInt("nextObjRef", -1));
 						record->w2 = (xxxLookup.getInt("attr1", -1));
 					}
 					break;
 				}
 			case dbMissile:
 				{
-					for (pos = 0; pos < di; pos++) {
-						Missile *record = reinterpret_cast<Missile *>(bp04 +(bp0e * pos));
+					Missile *record = reinterpret_cast<Missile *>(bp04);
+					for (pos = 0; pos < di; pos++, record++) {
 						JsonValueLookupService xxxLookup(xxxArray.at(pos));
 
-						record->w0 = ObjectID::Raw(xxxLookup.getInt("nextObjRef", -1));
-						record->w2 = ObjectID::Raw(xxxLookup.getInt("childObjRef", -1));
+						record->w0 = ObjectID::FromJson(xxxLookup.getInt("nextObjRef", -1));
+						record->w2 = ObjectID::FromJson(xxxLookup.getInt("childObjRef", -1));
 						int attr1 = (xxxLookup.getInt("attr1", -1));
 						record->b4_ = attr1 & 255;
 						record->b5_ = (attr1 >> 8) & 255;
@@ -40920,7 +40933,9 @@ void SkWinCore::CUT_RECORD_FROM(ObjectID recordLink, ObjectID *recordLinkLookFor
 	if (si == OBJECT_END_MARKER || si == OBJECT_NULL)
 		return;
 	//^0CEE:0CCB
+#if (DM2_EXTENDED_JSON == 0)
 	si.ClearDir();
+#endif
 	GenericRecord *bp08 = (GenericRecord *)GET_ADDRESS_OF_RECORD(si);
 	//^0CEE:0CDB
 	ObjectID *bp0c;
@@ -50771,7 +50786,8 @@ Bit16u SkWinCore::_2fcf_0434(ObjectID recordLink, __int16 xpos, __int16 ypos, __
 	_4976_5828 = yy;
 	_4976_581c = di;
 	//^2FCF:0B2F
-	_4976_5820 = si.Dir();
+	// DM2_EXTENDED_JSON needs check: (si != OBJECT_NULL)
+	_4976_5820 = (si != OBJECT_NULL) ? si.Dir() : 0;
 	//^2FCF:0B37
 	if (bp12 != 0 && zz != 0 && si != OBJECT_NULL) {
 		//^2FCF:0B48
@@ -52004,10 +52020,12 @@ Bit16u SkWinCore::MOVE_RECORD_TO(ObjectID rlWhatYouMove, __int16 xposFrom, __int
 	// return 0 if move success
 	// return non 0 if move failed
 
-	ATLASSERT(rlWhatYouMove.DBType() != dbDoor); // you would not move this kind of object
-	ATLASSERT(rlWhatYouMove.DBType() != dbTeleporter); // you would not move this kind of object
-	ATLASSERT(rlWhatYouMove.DBType() != dbText); // you would not move this kind of object
-	ATLASSERT(rlWhatYouMove.DBType() != dbActuator); // you would not move this kind of object
+	if (rlWhatYouMove != OBJECT_NULL) {
+		ATLASSERT(rlWhatYouMove.DBType() != dbDoor); // you would not move this kind of object
+		ATLASSERT(rlWhatYouMove.DBType() != dbTeleporter); // you would not move this kind of object
+		ATLASSERT(rlWhatYouMove.DBType() != dbText); // you would not move this kind of object
+		ATLASSERT(rlWhatYouMove.DBType() != dbActuator); // you would not move this kind of object
+	}
 
 	//^2FCF:0DD5
 	//^2FCF:0DDB
