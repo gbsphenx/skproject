@@ -270,7 +270,7 @@ X16 SkWinCore::EXTENDED_LOAD_AI_DEFINITION(void)
 				// Bunch load
 				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 0);
 				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 1);
-				dAITable[index].w0 = byte1 + byte2*256;
+				dAITable[index].w0AIFlags = byte1 + byte2*256;
 
 				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 2);
 				dAITable[index].ArmorClass = byte1;
@@ -15240,6 +15240,7 @@ void SkWinCore::TRY_ORNATE_NOISE(Actuator *ref, ObjectID rl, U16 xx, U16 yy, U16
 	//^3A15:0FA5
 	ENTER(12);
 	//^3A15:0FAB
+	// if (ref->SoundEffect() != 1) // original line
 	if (ref->SoundEffect() != 1 && !SkCodeParam::bForceOrnateSound)
 		//^3A15:0FBD
 		return;
@@ -40668,7 +40669,7 @@ Bit8u SkWinCore::GET_ITEMTYPE_OF_ITEMSPEC_ACTUATOR(Bit16u actuatorData)
 //^0CEE:2DE0
 Bit16u SkWinCore::QUERY_CREATURE_AI_SPEC_FLAGS(ObjectID rl)
 {
-	return QUERY_CREATURE_AI_SPEC_FROM_RECORD(rl)->w0;
+	return QUERY_CREATURE_AI_SPEC_FROM_RECORD(rl)->w0AIFlags;
 }
 
 //^0CEE:2D1B
