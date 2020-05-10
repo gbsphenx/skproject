@@ -17,14 +17,16 @@ public:
 	static bool bUseMultilanguageExtended;
 
 	static bool bUseVaryingPlaybackFrequency;
-	static bool	bUsePlayerWalkSound;
+	static bool bUsePlayerWalkSound;
+
+	static bool bFullLight;
 
 	//--- Specific parameters, for testing/debugging
-	static bool	bDisableFogEffect;
+	static bool bDisableFogEffect;
 	static bool bWeakDoors;
 	static bool bWalkOverPits;
 
-	static bool	bForceOrnateSound;
+	static bool bForceOrnateSound;
 
 public:
 	SkCodeParam();

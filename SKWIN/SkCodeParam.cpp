@@ -14,6 +14,8 @@ bool SkCodeParam::bMIDIMusicEnabled = true;
 
 bool SkCodeParam::bForceOrnateSound = true;
 
+bool SkCodeParam::bFullLight = true;
+
 #if (DM2_EXTENDED_MODE == 0)
 bool SkCodeParam::bUseVaryingPlaybackFrequency = false;
 bool SkCodeParam::bUseMultilanguageExtended = false;

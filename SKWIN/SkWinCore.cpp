@@ -3421,7 +3421,9 @@ _48a3:
 
 void SkWinCore::TEST_MEMENT(mement *bp04)
 {
-	ATLASSERT(bp04 != NULL);
+	//ATLASSERT(bp04 != NULL);
+	// SPX: use CheckSafePointer to trap more unexpected mem values so that it fails at ASSERT intead of crashing after.
+	ATLASSERT(CheckSafePointer(bp04));
 	i32 len = READ_I32(bp04,(abs(-bp04->dw0())) -4);
 	if (SkCodeParam::bUseFixedMode)
 	{
@@ -5011,6 +5013,8 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 	glbLightLevel -= (glbLightModifier > 12) ? 1 : 0;
 	//^24A5:0353
 	glbLightLevel = BETWEEN_VALUE(0, glbLightLevel, 5);
+	if (SkCodeParam::bFullLight)	// SPX: debug feature added to always get full light
+		glbLightLevel = 0;
 	//^24A5:0366
 }
 
@@ -20381,7 +20385,7 @@ void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 	//^2F3F:01BC
 	champion->lastName[bp0e] = 0;
 	skhero *bp08 = reinterpret_cast<skhero *>(QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_CHAMPIONS, U8(heroType), dt08, 0x00));
-#if DM2_EXTENDED_MODE == 1
+#if DM2_EXTENDED_MODE == 1	// TODOTo be replaced with fixedmode + checkmem
 	if (bp08 == NULL)
 		RAISE_SYSERR(SYSTEM_ERROR__NO_PLAYER_DATA);
 #endif
@@ -35585,16 +35589,18 @@ void SkWinCore::ARRANGE_DUNGEON()
 _23de:
 				if ((bp35 >> 5) == ttPit) {
 					//^2066:23EA
-					// SPX: The item 0x6A is 1 only for VOID. It does not exist for other maps.
+					// SPX: The item 0x6A is 1 only for VOID. It does not exist for other tilesets.
+					// Beware! if this is not set to a map expecting it, it will crash the map loading!
 					if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, dunMapsHeaders[si].MapGraphicsStyle(), dtWordValue, GDAT_GFXSET_VOID_RANDOM_FALL) == 0) {	// 0x6A
 						//^2066:2412
 						i16 xx = bp2a; //__int16 bp38 = bp2a;
 						i16 yy = bp2c; //__int16 bp3a = bp2c;
 						Bit16u map = LOCATE_OTHER_LEVEL(si, 1, &xx, &yy, NULL); // bp34 = ...
 						//SPX: locate_other_level can return -1 (65535) and it will crash the next function
-						//^2066:243A
-						//SET_TILE_ATTRIBUTE_02(bp38, bp3a, bp34);
-						SET_TILE_ATTRIBUTE_02(xx, yy, map);
+						if (SkCodeParam::bUseFixedMode && map != 65535) // Use fixed mode to prevent crash
+							//^2066:243A
+							//SET_TILE_ATTRIBUTE_02(bp38, bp3a, bp34);
+							SET_TILE_ATTRIBUTE_02(xx, yy, map);
 					}
 				}
 				//^2066:244A
@@ -37670,7 +37676,9 @@ Bit8u *SkWinCore::QUERY_GDAT_IMAGE_ENTRY_BUFF(Bit8u cls1, Bit8u cls2, Bit8u cls4
 	SkD((DLV_BUGHERE,"BUG? Image (%02X,%02X,%02X) not found. We just supply a \":P\" icon\n"
 		, (Bitu)cls1, (Bitu)cls2, (Bitu)cls4));
 	//^3E74:5042
-	si = QUERY_GDAT_ENTRY_DATA_INDEX(0x15, 0xfe, 0x01, 0xfe); // the :P icon
+	// SPX: the default image (yukman) is located as default image from MISC ITEM category
+	// If that default image is not here, it is very likely to crash thereafter (anytime the default is required)
+	si = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_MISCELLANEOUS, GDAT_ITEM_DEFAULT_INDEX, 0x01, 0xfe); // (0x15, 0xfe, 0x01, 0xfe) // the Yukman :P icon
 	//^3E74:5055
 	Bit8u *bp04 = EXTRACT_GDAT_IMAGE(si, 0);
 	//^3E74:5064
@@ -49942,7 +49950,7 @@ void SkWinCore::ROTATE_SQUAD(Bit16u dir)
 }
 
 //^2FCF:0434
-// TODO related to teleporter
+// TODO related to teleporter and falling into pits
 Bit16u SkWinCore::_2fcf_0434(ObjectID recordLink, __int16 xpos, __int16 ypos, __int16 xx, __int16 yy, Bit16u zz)
 {
 	//^2FCF:0434
