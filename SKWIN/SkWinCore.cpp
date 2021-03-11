@@ -38800,7 +38800,7 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 					{
 						//^DC 01
 						//^2636:0244
-						const Bit8u *bp0c = strZxxxTable[3];
+						const Bit8u *bp0c = strZxxxTable[3];	// ".Z008DATA\"
 						
 						
 						// SPX: the game folder (which is DATA by default) is changed from dungeon menu (need a restart)
@@ -48761,6 +48761,9 @@ void SkWinCore::QUEUE_NOISE_GEN2(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u cls2a
 		tickDelta
 		);
 	//^482B:00FF
+	//SkD((DLV_BUGHERE,"Player sound (%02X,%02X,%02X) alt (%02X) to (%02d,%02d) / Delta = %02d / ss/tt = %02X,%02X\n"
+	//	, (Bitu)cls1, (Bitu)cls2, (Bitu)cls4, (Bitu)cls2alt, xpos, ypos, tickDelta, ss, tt) );
+
 	return;		
 }
 
