@@ -17595,7 +17595,7 @@ _25e8:
 						// This only does not refresh the HP bar.
 					}
 					break;*/
-#if (DM2_EXTENDED_MODE == 1)
+#if DM2_EXTENDED_MODE == 1
 				case 12: // SPX: Reimplementation of OH EW RA See thru walls, use TT_71)
 					bp18.TimerType(ttySeeThruWalls);
 					glbGlobalSpellEffects.SeeThruWalls++;
@@ -22413,7 +22413,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 	//^32CB:15B8
 	ENTER(854);
 
-#if (DM2_EXTENDED_MODE == 1)
+#if DM2_EXTENDED_MODE == 1
 	{
 		if (glbGlobalSpellEffects.SeeThruWalls > 0 && cellPos == 3)	// front D1 wall
 		{
@@ -22768,7 +22768,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 	}
 	//^32CB:1CA0
 	iImageEntry = iImageEntry +U8(bp28);
-#ifdef DM2_EXTENDED_MODE == 1
+#if DM2_EXTENDED_MODE == 1
 	if (SkCodeParam::bUseExtendedSound && bp28 == 4 /*&& SkCodeParam::bForceOrnateSound == true*/)	// 4 = first anim of a loop (if several)
 	{
 		int iRandNoise = 0;
@@ -29919,7 +29919,7 @@ void SkWinCore::END_GAME(U16 xx)
 	_2066_03e0(0);
 	//^101B:005F
 	glbGameHasEnded = 1;
-#ifdef DM2_EXTENDED_MODE == 1
+#if DM2_EXTENDED_MODE == 1
 	glbXAmbientSoundActivated = 0;	// reinit that variable to get ambient sound again with a restart
 #endif
 	//^101B:0065
@@ -38905,7 +38905,7 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 						if (_4976_5c9c != 0) {
 							//^2636:01E5
 							//^2636:0244
-							const Bit8u *bp0c = strZxxxTable[7];
+							const Bit8u *bp0c = strZxxxTable[7];	// ".Z009DATA\"
 							//^2636:024A
 							FORMAT_SKSTR(bp0c, bp0116);
 							//^2636:025D
@@ -38917,7 +38917,7 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 						else {
 							//^2636:01DC
 							//^2636:0244
-							const Bit8u *bp0c = strZxxxTable[3];
+							const Bit8u *bp0c = strZxxxTable[3];	// ".Z008DATA\"
 							//^2636:024A
 							FORMAT_SKSTR(bp0c, bp0116);
 							//^2636:025D
@@ -38931,7 +38931,7 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 					{
 						//^2636:01E5
 						//^2636:0244
-						const Bit8u *bp0c = strZxxxTable[7];
+						const Bit8u *bp0c = strZxxxTable[7];	// ".Z009DATA\"
 						//^2636:024A
 						FORMAT_SKSTR(bp0c, bp0116);
 						//^2636:025D
@@ -43713,7 +43713,7 @@ void SkWinCore::UPDATE_WEATHER(U16 aa)	// aa = 1 when called from timer, aa = 0 
 	//^3DF7:0754
 	bp04->envImg = 0xff;
 
-#if DM2_EXTENDED_MODE == 1
+#if (DM2_EXTENDED_MODE == 1)
 	{	// Activate ambient sound, checking global variable then issuing a first Ambient Sound timer that will regenerate itself.
 		if (glbXAmbientSoundActivated != 1)
 		{
@@ -61892,7 +61892,7 @@ void SkWinCore::CONTINUE_ORNATE_NOISE(Timer *ref)
 	return;
 }
 
-#ifdef DM2_EXTENDED_MODE == 1
+#if DM2_EXTENDED_MODE == 1
 void SkWinCore::PROCESS_TIMER_AMBIENT_SOUND(Timer *ref)
 {
 	ENTER(0);
@@ -62175,7 +62175,7 @@ void SkWinCore::PROCEED_TIMERS()
 					ROTATE_SQUAD(timer.w6_a_b());
 				}
 				break;
-#ifdef DM2_EXTENDED_MODE == 1
+#if (DM2_EXTENDED_MODE == 1)
 
 			case ttyAmbientSound:
 				{
@@ -62227,7 +62227,7 @@ void SkWinCore::CHAMPION_DEFEATED(X16 player)
 	X16 di;
 	Champion *champion = &glbChampionSquad[di = player];
 
-#ifdef DM2_EXTENDED_MODE == 1
+#if (DM2_EXTENDED_MODE == 1)
 	if (SkCodeParam::bUseExtendedSound == true) {	// SPX: Play the champion own scream sound if dead
 		printf("champion dead: %d\n", champion->HeroType());
 		QUEUE_NOISE_GEN1(GDAT_CATEGORY_CHAMPIONS, champion->HeroType(), SOUND_CHAMPION_SCREAM, 0x61, 0x80, glbPlayerPosX, glbPlayerPosY, 1);
