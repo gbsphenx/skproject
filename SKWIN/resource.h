@@ -54,6 +54,13 @@
 #define ID_EXTRA_SOUNDS			        40072
 #define ID_SOUND_FOOTSTEP				40073
 #define ID_MIDI_MUSIC_ENABLED           40074
+#define ID_VERSION_NO_SPECIFIC          40080
+#define ID_VERSION_V1                   40081
+#define ID_VERSION_V2                   40082
+#define ID_VERSION_V3                   40083
+#define ID_VERSION_V4                   40084
+#define ID_VERSION_V5_CLASSIC           40085
+#define ID_VERSION_V5_CARTOON           40086
 #define ID_Dummy                        40099
 #define ID_HELP_ABOUT                   40100
 #define ID_SEPA                         40101

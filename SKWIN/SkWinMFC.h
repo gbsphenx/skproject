@@ -27,6 +27,7 @@ public:
 	int spfact;	// speed factor
 	int lang;
 	int dung;	// dungeon selection
+	int	gdat_vers;	// version selection
 	CPoint ptfrm;
 	sblast_sys::DS sbds;
 	sblast_sys::Openal sboa;
@@ -54,6 +55,20 @@ public:
 	bool AskMe(const char *psz);
 	BYTE GetLang() {
 		return (BYTE)lang;
+	}
+
+	BYTE GetGDATSpecificPlatform() {
+		BYTE iSpecificPlatform = 0;
+		if (gdat_vers > 0)
+			iSpecificPlatform = 1;	// Is PC9821 as no other is handled by SkWin
+		return iSpecificPlatform;
+	}
+	BYTE GetGDATSpecificVersion() {
+		BYTE iSpecificVersion = 0;
+		iSpecificVersion = (BYTE) gdat_vers;	// Works from 0 to 4
+		if (gdat_vers == 5 || gdat_vers == 6)
+			iSpecificVersion = 5;
+		return iSpecificVersion;
 	}
 
 protected:

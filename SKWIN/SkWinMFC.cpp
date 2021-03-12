@@ -137,6 +137,7 @@ CSkWinMFC::CSkWinMFC()
 	spfact = GetPrivateProfileInt(_skwin, "spfact", 2, GetSkwinini());
 	lang = GetPrivateProfileInt(_skwin, "lang", 0x10, GetSkwinini());
 	dung = GetPrivateProfileInt(_skwin, "dung", 5, GetSkwinini());
+	gdat_vers = GetPrivateProfileInt(_skwin, "gdat_vers", 0, GetSkwinini());
 }
 
 CSkWinMFC::~CSkWinMFC()
@@ -548,6 +549,15 @@ void CSkWinMFC::OnVideo1x(UINT nID) {
 		case ID_DUNGEON_SKULLKEEP_BETA:		dung = 4; break;
 		case ID_DUNGEON_LEGEND_SKULLKEEP:	dung = 5; break;
 
+		case ID_VERSION_NO_SPECIFIC: gdat_vers = 0; break;
+		case ID_VERSION_V1: gdat_vers = 1; break;
+		case ID_VERSION_V2: gdat_vers = 2; break;
+		case ID_VERSION_V3: gdat_vers = 3; break;
+		case ID_VERSION_V4: gdat_vers = 4; break;
+		case ID_VERSION_V5_CLASSIC: gdat_vers = 5; break;
+		case ID_VERSION_V5_CARTOON: gdat_vers = 6; break;
+
+
 		case ID_EXTRA_DOUBLE_STEP_MOVE: enableDoubleStepMove = !enableDoubleStepMove; break;
 		case ID_FOG_SWITCH: SkCodeParam::bDisableFogEffect = !SkCodeParam::bDisableFogEffect; break;
 		case ID_DEBUG_BREAK_DOOR: SkCodeParam::bWeakDoors = !SkCodeParam::bWeakDoors; break;
@@ -604,6 +614,14 @@ void CSkWinMFC::OnVideo1x(UINT nID) {
 
 		AfxMessageBox(_T("You need restart skwin to take effect!"), MB_ICONEXCLAMATION);
 	}
+	if (gdat_vers != -1) {
+		this->gdat_vers = gdat_vers;
+		CString str;
+		str.Format("%d", gdat_vers); WritePrivateProfileString(_skwin, "gdat_vers", str, GetSkwinini());
+
+		AfxMessageBox(_T("You need restart skwin to take effect!"), MB_ICONEXCLAMATION);
+	}
+
 }
 
 void CSkWinMFC::OnUpdateVideo1x(CCmdUI *pCmdUI) {
@@ -645,6 +663,14 @@ void CSkWinMFC::OnUpdateVideo1x(CCmdUI *pCmdUI) {
 		case ID_DUNGEON_THERON_QUEST: pCmdUI->SetRadio(dung == 3); break;
 		case ID_DUNGEON_SKULLKEEP_BETA: pCmdUI->SetRadio(dung == 4); break;
 		case ID_DUNGEON_LEGEND_SKULLKEEP: pCmdUI->SetRadio(dung == 5); break;
+
+		case ID_VERSION_NO_SPECIFIC: pCmdUI->SetRadio(gdat_vers == 0); break;
+		case ID_VERSION_V1: pCmdUI->SetRadio(gdat_vers == 1); break;
+		case ID_VERSION_V2: pCmdUI->SetRadio(gdat_vers == 2); break;
+		case ID_VERSION_V3: pCmdUI->SetRadio(gdat_vers == 3); break;
+		case ID_VERSION_V4: pCmdUI->SetRadio(gdat_vers == 4); break;
+		case ID_VERSION_V5_CLASSIC: pCmdUI->SetRadio(gdat_vers == 5); break;
+		case ID_VERSION_V5_CARTOON: pCmdUI->SetRadio(gdat_vers == 6); break;
 
 
 		case ID_EXTRA_DOUBLE_STEP_MOVE: pCmdUI->SetCheck(enableDoubleStepMove); break;

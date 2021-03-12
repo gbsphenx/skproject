@@ -113,6 +113,16 @@ BEGIN
         MENUITEM "&Skullkeep (beta)",           40064
         MENUITEM "&Skullkeep",                  40065
     END
+    POPUP "Version"
+    BEGIN
+        MENUITEM "&No specific / Original",     40080
+//        MENUITEM "&V1 Classic",                 40081
+//        MENUITEM "&V2 Classic",                 40082
+//        MENUITEM "&V3 Classic",                 40083
+        MENUITEM "&V4 Classic",                 40084
+//        MENUITEM "&V5 Classic",                 40085
+//        MENUITEM "&V5 Cartoony",                40086
+    END
     POPUP "(Extra)"
     BEGIN
         MENUITEM "Enable ""double step"" movement", 40052
@@ -139,7 +149,7 @@ STYLE DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About skwin"
 FONT 8, "MS Shell Dlg"
 BEGIN
-    LTEXT           "skwin (2017-01-31)",IDC_STATIC,7,96,63,8
+    LTEXT           "skwin (2021-03-11)",IDC_STATIC,7,96,63,8
     LTEXT           "An unofficial experimental port. started by kentaro-k.21. modified by sphenx.",
                     IDC_STATIC,7,108,184,22
     DEFPUSHBUTTON   "OK",IDOK,115,138,50,14

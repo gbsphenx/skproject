@@ -38899,7 +38899,7 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 						Bit32u bp10 = _4976_4746;
 						SK_LTOA10(bp10, bp0c);
 					}
-				case 0x001c:	// .Z028
+				case 0x001C:	// .Z028
 					{
 						//^2636:01D5
 						if (_4976_5c9c != 0) {
@@ -38927,7 +38927,7 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 							continue;
 						}
 					}
-				case 0x001a:	// .Z026 : Dir used for graphics2
+				case 0x001A:	// .Z026 : Dir used for graphics2
 					{
 						//^2636:01E5
 						//^2636:0244
@@ -38940,7 +38940,7 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 						bp04 = bp08 +SK_STRLEN(bp08);
 						continue;
 					}
-				case 0x001b:	// .Z027
+				case 0x001B:	// .Z027
 					{
 						//^2636:01EE
 						Bit8u bp13 = 0xFE;
@@ -38948,6 +38948,31 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 						//^2636:0161
 						QUERY_GDAT_TEXT(bp12, bp13, bp14, bp0c);
 						break;
+					}
+				// SPX : Addition to handle PC9821
+				case 0x0050:	// .Z080 : GDAT Platform version
+					{
+						const Bit8u *bp0c = (const Bit8u *) "_PC9821";
+						FORMAT_SKSTR(bp0c, bp0116);
+						SK_STRCAT(bp08, bp0116);
+						bp04 = bp08 +SK_STRLEN(bp08);
+						continue;
+					}
+				case 0x0051:	// .Z081 : GDAT Version number
+					{
+						const Bit8u *bp0c = (const Bit8u *) "_V4";
+						FORMAT_SKSTR(bp0c, bp0116);
+						SK_STRCAT(bp08, bp0116);
+						bp04 = bp08 +SK_STRLEN(bp08);
+						continue;
+					}
+				case 0x0052:	// .Z082 : GDAT Style
+					{
+						const Bit8u *bp0c = (const Bit8u *) "_CLASSIC";
+						FORMAT_SKSTR(bp0c, bp0116);
+						SK_STRCAT(bp08, bp0116);
+						bp04 = bp08 +SK_STRLEN(bp08);
+						continue;
 					}
 			}
 			//^2636:024A
