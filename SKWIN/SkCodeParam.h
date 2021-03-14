@@ -25,6 +25,7 @@ public:
 	static bool bDisableFogEffect;
 	static bool bWeakDoors;
 	static bool bWalkOverPits;
+	static bool bUseCustomSpells;	// reads spells from GDAT
 
 	static bool bForceOrnateSound;
 

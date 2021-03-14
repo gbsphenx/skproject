@@ -9,6 +9,7 @@ bool SkCodeParam::bUseIngameDebug = false;
 bool SkCodeParam::bDisableFogEffect = false;
 bool SkCodeParam::bWeakDoors = false;
 bool SkCodeParam::bWalkOverPits = false;
+bool SkCodeParam::bUseCustomSpells = false;
 
 bool SkCodeParam::bMIDIMusicEnabled = true;
 

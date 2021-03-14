@@ -53,7 +53,7 @@ protected:
 
 	SkWinMIDI* skmidi;
 
-#ifdef DM2_EXTENDED_MODE == 1
+#if (DM2_EXTENDED_MODE == 1)
 	U8	glbXAmbientSoundActivated;
 #endif
 

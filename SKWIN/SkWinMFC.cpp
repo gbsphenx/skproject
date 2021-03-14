@@ -510,6 +510,7 @@ void CSkWinMFC::OnVideo1x(UINT nID) {
 	int spfact = -1;
 	int lang = -1;
 	int dung = -1;
+	int gdat_vers = -1;
 	switch (nID) {
 		case ID_VIDEO_1X: sxfact = 1; break;
 		case ID_VIDEO_2X: sxfact = 2; break;
@@ -527,7 +528,7 @@ void CSkWinMFC::OnVideo1x(UINT nID) {
 		case ID_DS_AF_FULL: sbdsaf = 1; break;
 		case ID_DS_AF_LIGHT: sbdsaf = 2; break;
 
-		case 40074: SkCodeParam::bMIDIMusicEnabled = !SkCodeParam::bMIDIMusicEnabled; break;
+		case ID_MIDI_MUSIC_ENABLED: SkCodeParam::bMIDIMusicEnabled = !SkCodeParam::bMIDIMusicEnabled; break;
 
 		case ID_SPEED_1ULTRAFAST: spfact = 0; break;
 		case ID_SPEED_2FAST: spfact = 1; break;
@@ -562,6 +563,7 @@ void CSkWinMFC::OnVideo1x(UINT nID) {
 		case ID_FOG_SWITCH: SkCodeParam::bDisableFogEffect = !SkCodeParam::bDisableFogEffect; break;
 		case ID_DEBUG_BREAK_DOOR: SkCodeParam::bWeakDoors = !SkCodeParam::bWeakDoors; break;
 		case ID_DEBUG_WALK_OVER_PIT: SkCodeParam::bWalkOverPits = !SkCodeParam::bWalkOverPits; break;
+		case ID_USE_CUSTOM_SPELLS: SkCodeParam::bUseCustomSpells = !SkCodeParam::bUseCustomSpells; break;
 		case ID_EXTRA_SOUNDS: SkCodeParam::bUseExtendedSound = !SkCodeParam::bUseExtendedSound; break;
 		case ID_SOUND_FOOTSTEP: SkCodeParam::bUsePlayerWalkSound = !SkCodeParam::bUsePlayerWalkSound; break;
 	}
@@ -642,7 +644,7 @@ void CSkWinMFC::OnUpdateVideo1x(CCmdUI *pCmdUI) {
 		case ID_DS_AF_FULL: pCmdUI->SetRadio(sbdsaf == 1); break;
 		case ID_DS_AF_LIGHT: pCmdUI->SetRadio(sbdsaf == 2); break;
 
-		case 40074: pCmdUI->SetRadio(SkCodeParam::bMIDIMusicEnabled); break;
+		case ID_MIDI_MUSIC_ENABLED: pCmdUI->SetRadio(SkCodeParam::bMIDIMusicEnabled); break;
 
 		case ID_SPEED_1ULTRAFAST: pCmdUI->SetRadio(spfact == 0); break;
 		case ID_SPEED_2FAST: pCmdUI->SetRadio(spfact == 1); break;
@@ -677,6 +679,7 @@ void CSkWinMFC::OnUpdateVideo1x(CCmdUI *pCmdUI) {
 		case ID_FOG_SWITCH: pCmdUI->SetCheck(SkCodeParam::bDisableFogEffect); break;
 		case ID_DEBUG_BREAK_DOOR: pCmdUI->SetCheck(SkCodeParam::bWeakDoors); break;
 		case ID_DEBUG_WALK_OVER_PIT: pCmdUI->SetCheck(SkCodeParam::bWalkOverPits); break;
+		case ID_USE_CUSTOM_SPELLS: pCmdUI->SetCheck(SkCodeParam::bUseCustomSpells); break;
 		case ID_EXTRA_SOUNDS: pCmdUI->SetCheck(SkCodeParam::bUseExtendedSound); break;
 		case ID_SOUND_FOOTSTEP: pCmdUI->SetCheck(SkCodeParam::bUsePlayerWalkSound); break;
 	}

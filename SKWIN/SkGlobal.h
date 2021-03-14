@@ -38,10 +38,12 @@ extern CSkWinSDL skwin;
 //------------------------------------------------------------------------------
 
 // SPX: no surprise, this is static, but can be increased with no difficulty
+#define MAXSPELL_ORIGINAL	34
+#define MAXSPELL_CUSTOM		255
 #if DM2_EXTENDED_MODE == 0
-	#define MAXSPELL 34
+	#define MAXSPELL MAXSPELL_ORIGINAL
 #else 
-	#define MAXSPELL 255
+	#define MAXSPELL MAXSPELL_CUSTOM
 #endif
 // SPX: This MAXSPELL is used only in FIND_SPELL_BY_RUNES, so it is just for the table below.
 
@@ -50,7 +52,8 @@ extern CSkWinSDL skwin;
 #define SPELL_TYPE_GENERAL	3
 #define SPELL_TYPE_SUMMON	4
 
-extern SpellDefinition dSpellsTable[];
+extern SpellDefinition dSpellsTable[];			// Original table
+extern SpellDefinition dSpellsTableCustom[];	// Custom table loaded from GDAT
 
 #define MkssymVal(S2,S3,S4) ((S4) | ((S3) << 8) | ((S2) << 16))
 // SPX: That bring to this table:

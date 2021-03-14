@@ -129,6 +129,7 @@ BEGIN
         MENUITEM "Turn off fog effect",         40039
         MENUITEM "Make doors breakable",        40070
         MENUITEM "Can walk over pits",          40071
+        MENUITEM "Use custom spells",           40075
         MENUITEM "Extra sounds",                40072
         MENUITEM "Player footstep sound",       40073
     END

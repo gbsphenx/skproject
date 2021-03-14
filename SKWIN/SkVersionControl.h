@@ -24,7 +24,7 @@
 #define RELEASE_EXT_MOD		2	// Release Extended mode
 #define RELEASE_EXT_SUPER	3	// Release Extended mode + Super champions for debug/test
 
-#define CURRENT_RELEASE		RELEASE_FREE
+#define CURRENT_RELEASE		RELEASE_EXT_MOD
 
 #if (CURRENT_RELEASE == RELEASE_STD)
 	#undef DM2_EXTENDED_MODE

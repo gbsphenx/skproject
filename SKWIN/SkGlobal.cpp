@@ -409,9 +409,11 @@ const Bit8u * const strSKSave_bak = (const Bit8u *)
 const Bit8u * const strDungeon_ftl = (const Bit8u *)
 	"\x2E\x5A\x30\x32\x30\x44\x55\x4E\x47\x45\x4F\x4E\x2E\x5A\x30\x32\x34\x2E\x46\x54\x4C"; // .Z020DUNGEON.Z024.FTL
 
-// SPX: _4976_1a1a renamed strGraphics
+// SPX: _4976_1a1a renamed strGraphics, Z020 is data dir like E:DATA
+// SPX: Added new Z080 Z081 Z082 to handle different GDAT for switching contents between versions
 const Bit8u * const strGraphics = (const Bit8u *)
-	".Z020GRAPHICS.DAT";
+	".Z020GRAPHICS.Z080.Z081.Z082.DAT";
+	//".Z020GRAPHICS.DAT";
 	//"\x2E\x5A\x30\x32\x30\x47\x52\x41\x50\x48\x49\x43\x53\x2E\x44\x41\x54"; // .Z020GRAPHICS.DAT
 
 // SPX: _4976_1a2c renamed strGraphics2
@@ -955,7 +957,7 @@ const U8 _4976_3d7d[] = {12, 0}; // reset drawtext position
 // Byte 06-07: Spell type, result and some bits
 // SPX: _4976_3e22 replaced by dSpellsTable
 //const sk3e22 _4976_3e22[] = {
-#if DM2_EXTENDED_MODE == 0
+//#if DM2_EXTENDED_MODE == 0
 /*const*/ SpellDefinition dSpellsTable[] =
 {
 	{MkssymVal(s2OH  ,s3IR  ,s4RA  ),0x04,0x11,0x2C03 },	// Long Light
@@ -999,9 +1001,11 @@ const U8 _4976_3d7d[] = {12, 0}; // reset drawtext position
 	{MkssymVal(s2OH  ,s3KATH,s4KU  ),0x02,0x03,0x5892 },	// Push (0D/09)
 	{MkssymVal(s2OH  ,s3KATH,s4ROS ),0x02,0x03,0x58A2 },	// Pull (0D/0A)
 };
-#elif DM2_EXTENDED_MODE == 1
-SpellDefinition dSpellsTable[MAXSPELL];
-#endif // DM2_EXTENDED_MODE
+
+//#if DM2_EXTENDED_MODE == 1
+SpellDefinition dSpellsTableCustom[MAXSPELL_CUSTOM];
+//#endif // DM2_EXTENDED_MODE
+
 // SPX: the last 2 bits tells the type of spell (maybe there are on 4 bits?)
 // 01: potion, requires a flask
 // 02: missile spell

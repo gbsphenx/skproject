@@ -186,12 +186,13 @@ void DM2DOS_R_BA7(x16 eaxw)
 X16
 SkWinCore::EXTENDED_LOAD_SPELLS_DEFINITION(void)
 {
+//#if DM2_EXTENDED_MODE == 1
 	if (SkCodeParam::bUseDM2ExtendedMode)
 	{
 		U8 di = 0;
 		U8 index = 0;
 		U8 category = GDAT_CATEGORY_SPELL_DEF;
-		for (index = 0; index < 254; index++)
+		for (index = 0; index < MAXSPELL_CUSTOM-1; index++)	// MAXSPELL_CUSTOM = 255, but the value 255 is kept for the default.
 		{
 			U8 spellname[0x80];
 			di = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 0x01); // Test if RUNE01 is used
@@ -200,23 +201,29 @@ SkWinCore::EXTENDED_LOAD_SPELLS_DEFINITION(void)
 				U8 *rc = QUERY_GDAT_TEXT(category, index, 0x18, spellname);
 				U8 rune2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 0x02);
 				U8 rune3 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 0x03);
-				dSpellsTable[index].dw0 = (MkssymVal(di, rune2, rune3));
-				dSpellsTable[index].difficulty = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 0x04);
-				dSpellsTable[index].requiredSkill = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 0x05);
+				dSpellsTableCustom[index].dw0 = (MkssymVal(di, rune2, rune3));
+				dSpellsTableCustom[index].difficulty = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 0x04);
+				dSpellsTableCustom[index].requiredSkill = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 0x05);
 				U8 type = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 0x06);
 				U8 result = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 0x07);
-				dSpellsTable[index].w6 = 0x0000 + (type & 0x0F) + ((result & 0x3F)<<4);
-#if DM2_EXTENDED_MODE == 1
-				dSpellsTable[index].spellValue = result;
-#endif
+				dSpellsTableCustom[index].w6 = 0x0000 + (type & 0x0F) + ((result & 0x3F)<<4);
+
+				dSpellsTableCustom[index].spellValue = result;
+
 				SkD((DLV_TWEET, "Tweet: Loading spell %d (%02X) with %s (t:%s, d:%d, s:%s, v:%d)\n", index, index, spellname,
-					getSpellTypeName(type), dSpellsTable[index].difficulty, getSkillName(dSpellsTable[index].requiredSkill),
-					dSpellsTable[index].SpellCastIndex()));
+					getSpellTypeName(type), dSpellsTableCustom[index].difficulty, getSkillName(dSpellsTableCustom[index].requiredSkill),
+					dSpellsTableCustom[index].SpellCastIndex()));
 				
 			}
 		}
+		//--- Note: Due to extended structure of SpellDefinition in extended mode, the original spell tables must be adapted to this value
+		for (index = 0; index < MAXSPELL_ORIGINAL-1; index++)
+		{
+			dSpellsTable[index].spellValue = U8((dSpellsTable[index].w6 >> 4)&0x3f);
+		}
 		return 1;
 	}
+//#endif
 	return 0;
 }
 
@@ -16580,8 +16587,17 @@ SpellDefinition *SkWinCore::FIND_SPELL_BY_RUNES(U8 *runes)
 	} while (runes[0] != 0 && (bp06 -= 8) >= 0);
 	//^2759:2187
 	SpellDefinition *bp04 = const_cast<SpellDefinition *>(dSpellsTable);
+	U32 iLocalMaxSpell = MAXSPELL_ORIGINAL;	// SPX added this to prevent overflow when switching tables
+
+	// SPX : Use extended spells table read from GDAT if we are in custom mode
+	if (SkCodeParam::bUseCustomSpells)
+	{
+		bp04 = const_cast<SpellDefinition *>(dSpellsTableCustom);
+		iLocalMaxSpell = MAXSPELL_CUSTOM;
+	} // end SPX
+
 	//^2759:218F
-	for (bp06 = MAXSPELL; bp06-- != 0; bp04++) {
+	for (bp06 = iLocalMaxSpell; bp06-- != 0; bp04++) {	// (bp06 = MAXSPELL; bp06-- != 0; bp04++)
 		//^2759:2196
 		if ((bp04->dw0 & 0xff000000) != 0) {
 			//^2759:21AB
@@ -29823,7 +29839,7 @@ void SkWinCore::CHECK_RECOMPUTE_LIGHT(i16 xx, i16 yy)
 }
 
 //^38C8:03AD
-// SPX: __INIT_GAME_38c8_03ad renamed __INIT_GAME_38c8_03ad
+// SPX: _38C8_03AD renamed __INIT_GAME_38c8_03ad
 void SkWinCore::__INIT_GAME_38c8_03ad()
 {
 	//^38C8:03AD
@@ -38949,31 +38965,42 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 						QUERY_GDAT_TEXT(bp12, bp13, bp14, bp0c);
 						break;
 					}
+#if DM2_EXTENDED_MODE == 1
 				// SPX : Addition to handle PC9821
 				case 0x0050:	// .Z080 : GDAT Platform version
 					{
 						const Bit8u *bp0c = (const Bit8u *) "_PC9821";
-						FORMAT_SKSTR(bp0c, bp0116);
-						SK_STRCAT(bp08, bp0116);
-						bp04 = bp08 +SK_STRLEN(bp08);
+						if (skwin.gdat_vers != 0)
+						{
+							FORMAT_SKSTR(bp0c, bp0116);
+							SK_STRCAT(bp08, bp0116);
+							bp04 = bp08 +SK_STRLEN(bp08);
+						}
 						continue;
 					}
 				case 0x0051:	// .Z081 : GDAT Version number
 					{
 						const Bit8u *bp0c = (const Bit8u *) "_V4";
-						FORMAT_SKSTR(bp0c, bp0116);
-						SK_STRCAT(bp08, bp0116);
-						bp04 = bp08 +SK_STRLEN(bp08);
+						if (skwin.gdat_vers == 4)
+						{
+							FORMAT_SKSTR(bp0c, bp0116);
+							SK_STRCAT(bp08, bp0116);
+							bp04 = bp08 +SK_STRLEN(bp08);
+						}
 						continue;
 					}
 				case 0x0052:	// .Z082 : GDAT Style
 					{
-						const Bit8u *bp0c = (const Bit8u *) "_CLASSIC";
-						FORMAT_SKSTR(bp0c, bp0116);
-						SK_STRCAT(bp08, bp0116);
-						bp04 = bp08 +SK_STRLEN(bp08);
+						if (skwin.gdat_vers != 0 && skwin.gdat_vers < 5)
+						{
+							const Bit8u *bp0c = (const Bit8u *) "_CLASSIC";
+							FORMAT_SKSTR(bp0c, bp0116);
+							SK_STRCAT(bp08, bp0116);
+							bp04 = bp08 +SK_STRLEN(bp08);
+						}
 						continue;
 					}
+#endif // DM2_EXTENDED_MODE
 			}
 			//^2636:024A
 			FORMAT_SKSTR(bp0c, bp0116);
@@ -57041,7 +57068,7 @@ X8 SkWinCore::PROCEED_XACT_78()
 	return _4976_4ee5;
 }
 //^14CD:221A
-// SPX: 14cd_221a renamed PROCEED_XACT_79
+// SPX: _14cd_221a renamed PROCEED_XACT_79
 void SkWinCore::PROCEED_XACT_79()
 {
 	//^14CD:221A
@@ -57334,7 +57361,7 @@ i8 SkWinCore::PROCEED_XACT_83()
 
 //^14CD:3919
 // SPX: somewhat used to discard consumed or unimportant item?
-// SPX: 14cd_3919 renamed PROCEED_XACT_84
+// SPX: _14cd_3919 renamed PROCEED_XACT_84
 X8 SkWinCore::PROCEED_XACT_84()
 {
 	//^14CD:3919
