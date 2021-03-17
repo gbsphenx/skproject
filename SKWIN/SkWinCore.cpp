@@ -61968,9 +61968,9 @@ void SkWinCore::PROCESS_TIMER_AMBIENT_SOUND(Timer *ref)
 	}
 	iSoundID = 0x70 + rainLevel;
 
-	if (rainLevel == 0)
+	if (rainLevel == 0)	// If there is no rain, we get another ambient sound, like random wind
 	{
-		int iRandomValue = rand()%3;
+		int iRandomValue = rand()%5;
 		iSoundID = 0x80 + iRandomValue;
 	}
 
