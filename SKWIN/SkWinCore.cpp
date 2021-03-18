@@ -5563,7 +5563,7 @@ Bit8u *SkWinCore::QUERY_GDAT_ENTRY_DATA_PTR(Bit8u cls1, Bit8u cls2, Bit8u cls3, 
 	//^3E74:5089
 	if (cls3 == dtImage && IS_CLS1_CRITICAL_FOR_LOAD(cls1) == 0) {
 		//^3E74:509C
-		if (si == 0xffff || _4976_5c98[si].Absent()) {
+		if (si == 0xffff || glbShelfMemoryTable[si].Absent()) {
 			//^3E74:50BE
 			si = QUERY_GDAT_ENTRY_DATA_INDEX(0x15, 0xfe, dtImage, 0xfe);
 		}
@@ -5576,13 +5576,13 @@ Bit8u *SkWinCore::QUERY_GDAT_ENTRY_DATA_PTR(Bit8u cls1, Bit8u cls2, Bit8u cls3, 
 	//^3E74:50D1
 	Bit8u *bp04;
 	Bit16u bp06;
-	if (_4976_5c98[si].Absent() && IS_CLS1_CRITICAL_FOR_LOAD(cls1) != 0) {
+	if (glbShelfMemoryTable[si].Absent() && IS_CLS1_CRITICAL_FOR_LOAD(cls1) != 0) {
 		//^3E74:50FB
 		bp04 = QUERY_GDAT_DYN_BUFF(si, &bp06, 0);
 	}
 	else {
 		//^3E74:510C
-		bp04 = REALIZE_GRAPHICS_DATA_MEMORY(_4976_5c98[si]);
+		bp04 = REALIZE_GRAPHICS_DATA_MEMORY(glbShelfMemoryTable[si]);
 	}
 	//^3E74:5124
 	return bp04;
@@ -5628,7 +5628,7 @@ __int16 SkWinCore::QUERY_GDAT_PICT_OFFSET(Bit8u cls1, Bit8u cls2, Bit8u cls4)
 		Bit16u si = bp04->data;
 		//^3E74:5331
 		SkImage *bp04;
-		if (_4976_5c98[si].Absent()) {
+		if (glbShelfMemoryTable[si].Absent()) {
 			//^3E74:534E
 			di = 1;
 			//^3E74:5351
@@ -5636,7 +5636,7 @@ __int16 SkWinCore::QUERY_GDAT_PICT_OFFSET(Bit8u cls1, Bit8u cls2, Bit8u cls4)
 		}
 		else {
 			//^3E74:5368
-			bp04 = reinterpret_cast<SkImage *>(REALIZE_GRAPHICS_DATA_MEMORY(_4976_5c98[si]));
+			bp04 = reinterpret_cast<SkImage *>(REALIZE_GRAPHICS_DATA_MEMORY(glbShelfMemoryTable[si]));
 		}
 		//^3E74:5386
 		__int16 bp06 = bp04->Xoffset();
@@ -6014,7 +6014,7 @@ void SkWinCore::ALLOC_IMAGE_MEMENT(Bit8u cls1, Bit8u cls2, Bit8u cls4)
 	//^3E74:58C5
 	Bit16u si = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, dtImage, cls4);
 	//^3E74:58DC
-	if (si != 0xffff && _4976_5c98[si].Absent()) {
+	if (si != 0xffff && glbShelfMemoryTable[si].Absent()) {
 		//^3E74:58FC
 		si = QUERY_GDAT_ENTRY_DATA_INDEX(0x15,0xfe,dtImage,0xfe);			
 	}
@@ -6024,12 +6024,12 @@ void SkWinCore::ALLOC_IMAGE_MEMENT(Bit8u cls1, Bit8u cls2, Bit8u cls4)
 		Bit16u di = QUERY_MEMENTI_FROM(si);
 		//^3E74:591C
 		if (di == 0xffff) {
-			if (_4976_5c98[si].Absent()) {
+			if (glbShelfMemoryTable[si].Absent()) {
 				//^3E74:593C
 				return;
 			}
 			//^3E74:593E
-			SkImage *bp04 = reinterpret_cast<SkImage *>(REALIZE_GRAPHICS_DATA_MEMORY(_4976_5c98[si]));
+			SkImage *bp04 = reinterpret_cast<SkImage *>(REALIZE_GRAPHICS_DATA_MEMORY(glbShelfMemoryTable[si]));
 			//^3E74:595C
 			if (bp04->Yoffset() != -32) {
 				//^3E74:5969
@@ -6089,7 +6089,7 @@ void SkWinCore::FREE_IMAGE_MEMENT(Bit8u cls1, Bit8u cls2, Bit8u cls4)
 	//^3E74:5997
 	Bit16u si = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, dtImage, cls4);
 	//^3E74:59AE
-	if (si == 0xffff || _4976_5c98[si].Absent()) {
+	if (si == 0xffff || glbShelfMemoryTable[si].Absent()) {
 		//^3E74:59CE
 		si = QUERY_GDAT_ENTRY_DATA_INDEX(0x15,0xfe,dtImage,0xfe);
 	}
@@ -21255,7 +21255,7 @@ void SkWinCore::QUERY_GDAT_IMAGE_METRICS(U8 cls1, U8 cls2, U8 cls4, i16 *pcx, i1
 	//^3E74:5ADE
 	U16 si = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, dtImage, cls4);
 	//^3E74:5AF5
-	if (_4976_5c98[si].Absent()) {
+	if (glbShelfMemoryTable[si].Absent()) {
 		//^3E74:5B10
 		U8 *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(cls1, cls2, cls4);
 		//^3E74:5B29
@@ -21920,7 +21920,7 @@ Bit8u *SkWinCore::QUERY_GDAT_ENTRY_DATA_BUFF(Bit8u cls1, Bit8u cls2, Bit8u cls3,
 		return NULL;
 	}
 	//^3E74:518C
-	if (_4976_5c98[si].Absent()) {
+	if (glbShelfMemoryTable[si].Absent()) {
 		//^3E74:51A9
 		if (IS_CLS1_CRITICAL_FOR_LOAD(cls1) == 0) {
 			//^3E74:51C7
@@ -21933,7 +21933,7 @@ Bit8u *SkWinCore::QUERY_GDAT_ENTRY_DATA_BUFF(Bit8u cls1, Bit8u cls2, Bit8u cls3,
 	}
 	else {
 		//^3E74:51C9
-		return REALIZE_GRAPHICS_DATA_MEMORY(_4976_5c98[si]);
+		return REALIZE_GRAPHICS_DATA_MEMORY(glbShelfMemoryTable[si]);
 	}
 }
 
@@ -34505,7 +34505,7 @@ Bit16u SkWinCore::QUERY_GDAT_ENTRY_IF_LOADABLE(Bit8u iCategory, Bit8u iItemIndex
 		if (false
 			|| (iDataType == dtWordValue)
 			|| (iEntryNumber == dtImageOffset)
-			|| (_4976_5c98[bp04->data & 0x7fff].Present())
+			|| (glbShelfMemoryTable[bp04->data & 0x7fff].Present())
 			|| (IS_CLS1_CRITICAL_FOR_LOAD(iCategory) != 0)
 		) {
 			//^3E74:1D56
@@ -36358,7 +36358,7 @@ Bit16u SkWinCore::QUERY_GDAT_RAW_DATA_LENGTH(Bit16u index)
 	//^3E74:0422
 	ENTER(4);
 	//^3E74:0426
-    //shelf_memory bp04 = _4976_5c98[index];
+    //shelf_memory bp04 = glbShelfMemoryTable[index];
 	// SPX : rewritten block; I encountered the case where index is > to glbGDatNumberOfData
 	// which is not correct ... => added assert.
 	shelf_memory bp04;
@@ -36368,7 +36368,7 @@ Bit16u SkWinCore::QUERY_GDAT_RAW_DATA_LENGTH(Bit16u index)
 		return 0;
 	}
 	
-	bp04 = _4976_5c98[index];
+	bp04 = glbShelfMemoryTable[index];
 	// SPX END
 
 	if (bp04.Present()) {
@@ -36735,7 +36735,7 @@ Bit8u *SkWinCore::QUERY_GDAT_IMAGE_LOCALPAL(Bit8u cls1, Bit8u cls2, Bit8u cls4)
 	if (si != 0xffff) {
 		//^3E74:523B
 		IMG3 *bp04;
-		if (_4976_5c98[si].Absent() != 0) {
+		if (glbShelfMemoryTable[si].Absent() != 0) {
 			//^3E74:5258
 			if (IS_CLS1_CRITICAL_FOR_LOAD(cls1) == 0)
 				goto _5276;
@@ -36745,7 +36745,7 @@ Bit8u *SkWinCore::QUERY_GDAT_IMAGE_LOCALPAL(Bit8u cls1, Bit8u cls2, Bit8u cls4)
 		}
 		else {
 			//^3E74:5287
-			bp04 = reinterpret_cast<IMG3 *>(REALIZE_GRAPHICS_DATA_MEMORY(_4976_5c98[si]));
+			bp04 = reinterpret_cast<IMG3 *>(REALIZE_GRAPHICS_DATA_MEMORY(glbShelfMemoryTable[si]));
 		}
 		//^3E74:529F
 		//^3E74:52A5
@@ -36780,7 +36780,7 @@ U8 *SkWinCore::_3e74_0245(X16 xx, X16 yy)
 	ENTER(20);
 	//^3E74:024B
 	X16 si = xx;
-	shelf_memory bp0c = _4976_5c98[si];
+	shelf_memory bp0c = glbShelfMemoryTable[si];
 	U8 *bp04 = REALIZE_GRAPHICS_DATA_MEMORY(bp0c);
 	i32 bp10 = CONVERT_PHYS_TO_SHELF_FORM(bp04).val - _4976_5d20.val;
 	bp04 += 4;
@@ -37435,7 +37435,7 @@ Bit8u *SkWinCore::EXTRACT_GDAT_IMAGE(Bit16u index, i16 allocUpper)
 		}
 	}
 	//^3E74:4C4F
-	shelf_memory bp10 = _4976_5c98[di];
+	shelf_memory bp10 = glbShelfMemoryTable[di];
 	IMG3 *bp08;
 	//^3E74:4C67
 	if (bp10.Absent()) {
@@ -37682,7 +37682,7 @@ Bit8u *SkWinCore::QUERY_GDAT_IMAGE_ENTRY_BUFF(Bit8u cls1, Bit8u cls2, Bit8u cls4
 	}
 	//^3E74:501C
 	if (si != 0xffff) {
-		if (_4976_5c98[si].Present() || (di != 0)) {
+		if (glbShelfMemoryTable[si].Present() || (di != 0)) {
 			//^3E74:5055
 			Bit8u *bp04 = EXTRACT_GDAT_IMAGE(si, 0);
 			//^3E74:5064
@@ -42646,7 +42646,7 @@ void SkWinCore::_3e74_2f41(sk5d12 *ref)
 					bp14 += 0x4000;
 				} while (true);
 				//^3E74:3068
-				_4976_5c98[si] = bp08 + (+2);
+				glbShelfMemoryTable[si] = bp08 + (+2);
 			}
 		}
 		//^3E74:3086
@@ -42685,7 +42685,7 @@ void SkWinCore::_3e74_30bd(sk5d12 *ref)
 			if (bp04 +2 != bp08) {
 				//^3E74:3180
 				COPY_MEMORY(bp04 +2, bp08, bp0c);
-				_4976_5c98[si] = CONVERT_PHYS_TO_SHELF_FORM(bp08 +2);
+				glbShelfMemoryTable[si] = CONVERT_PHYS_TO_SHELF_FORM(bp08 +2);
 			}
 		}
 		//^3E74:31D0
@@ -42751,7 +42751,7 @@ shelf_memory SkWinCore::_3e74_5133(U8 cls1, U8 cls2, U8 cls3, U8 cls4)
 	ENTER(0);
 	//^3E74:5137
 	U16 si = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, cls3, cls4);
-	return _4976_5c98[si];
+	return glbShelfMemoryTable[si];
 }
 //^47EB:00A4
 void SkWinCore::_47eb_00a4(sk5f0a *ref)
@@ -42995,7 +42995,7 @@ _37e9:
 	//^3E74:37FB
 	for (si = 0; si < glbGDatNumberOfData; si++) {
 		//^3E74:3800
-		shelf_memory bp08 = _4976_5c98[si];
+		shelf_memory bp08 = glbShelfMemoryTable[si];
 		if (bp08.Absent())
 			continue;
 		//^3E74:3823
@@ -43024,7 +43024,7 @@ _38db:
 	for (si = 0; si < glbGDatNumberOfData; si++) {
 		//^3E74:391A
 		bp12 = bp04[si] = bp04[si] & 0xe1;
-		shelf_memory bp08 = _4976_5c98[si];
+		shelf_memory bp08 = glbShelfMemoryTable[si];
 		if (bp08.Present()) {
 			//^3E74:3975
 			bp10 = ((READ_UI16(REALIZE_GRAPHICS_DATA_MEMORY(bp08),-2) +1) & 0xfffe) +4;
@@ -43214,7 +43214,7 @@ _3abe:
 						}
 					}
 					//^3E74:4084
-					bp08 = _3e74_32fb(&_4976_5d12, REALIZE_GRAPHICS_DATA_MEMORY(_4976_5c98[si]), bp10);
+					bp08 = _3e74_32fb(&_4976_5d12, REALIZE_GRAPHICS_DATA_MEMORY(glbShelfMemoryTable[si]), bp10);
 					_3e74_3200(si);
 					goto _4173;
 				}
@@ -43234,16 +43234,16 @@ _3abe:
 						}
 					}
 					//^3E74:411A
-					bp08 = _3e74_32fb(&_4976_5d7e, REALIZE_GRAPHICS_DATA_MEMORY(_4976_5c98[si]), bp10);
+					bp08 = _3e74_32fb(&_4976_5d7e, REALIZE_GRAPHICS_DATA_MEMORY(glbShelfMemoryTable[si]), bp10);
 					_3e74_3200(si);
 					if ((_4976_5d7e.w12 & 0x8000) != 0) {
 						//^3E74:4159
-						_4976_5c98[si] = t2s(bp08);
+						glbShelfMemoryTable[si] = t2s(bp08);
 					}
 					else {
 						//^3E74:4173
 _4173:
-						_4976_5c98[si] = CONVERT_PHYS_TO_SHELF_FORM(t2ptr(bp08));
+						glbShelfMemoryTable[si] = CONVERT_PHYS_TO_SHELF_FORM(t2ptr(bp08));
 					}
 					//^3E74:419B
 					bp04[si] ^= 6;
@@ -43283,11 +43283,11 @@ _4173:
 			if (bp0c->Is4EMS() != 0) {
 				//^3E74:42D1
 				WRITE_UI16(REALIZE_GRAPHICS_DATA_MEMORY(t2s(bp08) + (bp10) - (2)),+0,si);
-				bp08 = ptr2t(REALIZE_GRAPHICS_DATA_MEMORY(_4976_5c98[si] = t2s(bp08 + (2))));
+				bp08 = ptr2t(REALIZE_GRAPHICS_DATA_MEMORY(glbShelfMemoryTable[si] = t2s(bp08 + (2))));
 			}
 			else {
 				//^3E74:432A
-				_4976_5c98[si] = CONVERT_PHYS_TO_SHELF_FORM(t2ptr(bp08 +2));
+				glbShelfMemoryTable[si] = CONVERT_PHYS_TO_SHELF_FORM(t2ptr(bp08 +2));
 				WRITE_UI16(t2ptr(bp08),+bp10 -4,si);
 			}
 			//^3E74:4380
@@ -43307,8 +43307,8 @@ _4173:
 				ATLASSERT(pos == 380964 && len == 168);
 			}
 #endif
-			LOAD_GDAT_RAW_DATA(si, _4976_5c98[si]);
-			SkD((DLV_GLD, "GLD: Dyn4-load Raw#%4d at S(%08lX)\n", (Bitu)si, (Bitu)_4976_5c98[si].val));
+			LOAD_GDAT_RAW_DATA(si, glbShelfMemoryTable[si]);
+			SkD((DLV_GLD, "GLD: Dyn4-load Raw#%4d at S(%08lX)\n", (Bitu)si, (Bitu)glbShelfMemoryTable[si].val));
 			//^3E74:43CC
 		}
 		//^3E74:43D6
@@ -53129,7 +53129,7 @@ void SkWinCore::LOAD_GDAT_ENTRIES()
 			continue;
 		//^3E74:21A3
 		X16 si = QUERY_GDAT_ENTRY_VALUE(di, EPdata);
-		if (_4976_5c98[si].Present())
+		if (glbShelfMemoryTable[si].Present())
 			continue;
 		//^3E74:21CC
 		U16 bp08;
@@ -53139,7 +53139,7 @@ void SkWinCore::LOAD_GDAT_ENTRIES()
 			U8 *bp04 = REALIZE_GRAPHICS_DATA_MEMORY(bp0c);
 			//^3E74:2214
 			WRITE_UI16(bp04,-2,bp08);
-			LOAD_GDAT_RAW_DATA(si, _4976_5c98[si] = bp0c);
+			LOAD_GDAT_RAW_DATA(si, glbShelfMemoryTable[si] = bp0c);
 			EMS_MAP_BANK_TO_MEMORY();
 
 			SkD((DLV_GLD, "GLD: Load Raw#%4d at EMS(%08X)\n", (Bitu)si, (Bitu)bp0c.val));
@@ -53148,7 +53148,7 @@ void SkWinCore::LOAD_GDAT_ENTRIES()
 			//^3E74:225B
 			U8 *bp04 = ALLOC_MEMORY_RAM((bp08 = QUERY_GDAT_RAW_DATA_LENGTH(si)) +2, afUseUpper, 0x400);
 			WRITE_UI16(bp04,+0,bp08);
-			LOAD_GDAT_RAW_DATA(si, _4976_5c98[si] = CONVERT_PHYS_TO_SHELF_FORM(bp04 +2));
+			LOAD_GDAT_RAW_DATA(si, glbShelfMemoryTable[si] = CONVERT_PHYS_TO_SHELF_FORM(bp04 +2));
 
 			SkD((DLV_GLD, "GLD: Load Raw#%4d at RAM(%08X)\n", (Bitu)si, bp04));
 		}
@@ -53503,7 +53503,7 @@ void SkWinCore::READ_GRAPHICS_STRUCTURE()
 	if (_4976_480b != 4 && _4976_480b != 5 && _4976_480b != 2)
 		goto _28d2;
 	//^3E74:269E
-	_4976_5c98 = reinterpret_cast<shelf_memory *>(ALLOC_MEMORY_RAM(sizeof(shelf_memory) * U32(glbGDatNumberOfData), afUseUpper, 0x400));
+	glbShelfMemoryTable = reinterpret_cast<shelf_memory *>(ALLOC_MEMORY_RAM(sizeof(shelf_memory) * U32(glbGDatNumberOfData), afUseUpper, 0x400));
 	_4976_5c82 = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(U32(glbGDatNumberOfData) << 1, afUseUpper, 0x400));
 	FILL_U16(reinterpret_cast<i16 *>(_4976_5c82), glbGDatNumberOfData, -1, 2);
 	bp08 = U32(glbGDatNumberOfData) << 1;
@@ -53532,8 +53532,8 @@ void SkWinCore::READ_GRAPHICS_STRUCTURE()
 	for (si = 0; si < glbGDatNumberOfData; bp04++, si++) {
 		//^3E74:27E9
 		_4976_5caa += *bp04;
-		_4976_5c98[si] = shelf_memory::FromSizeOnUnloaded(*bp04);
-		//printf("Shelf memory %05d: size = %06d\n", si, _4976_5c98[si].val & 0x7fff);
+		glbShelfMemoryTable[si] = shelf_memory::FromSizeOnUnloaded(*bp04);
+		//printf("Shelf memory %05d: size = %06d\n", si, glbShelfMemoryTable[si].val & 0x7fff);
 		//^3E74:2813
 	}
 	//^3E74:281E

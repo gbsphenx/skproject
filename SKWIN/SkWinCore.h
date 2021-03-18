@@ -743,7 +743,7 @@ protected:
 	Bit16u	_4976_5c92;		// cnt used entries of _4976_5c7e?
 	__int16	_4976_5c94;		// filehandle of GRAPH1.DAT or GRAPHICS.DAT
 	__int16	_4976_5c96;		// filehandle of GRAPH2.DAT if exists.
-	shelf_memory *_4976_5c98;
+	shelf_memory *glbShelfMemoryTable;	// (_4976_5c98)
 	Bit16u	_4976_5c9c;		// 1 if run on floppy, 0 if run on harddisk. (to know which is used GRAPH1.DAT or GRAPHICS.DAT)
 	Bit16u	_4976_5c9e;
 	X32		_4976_5ca0; // 98 B7 00 00 -> 0000B798
