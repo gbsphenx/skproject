@@ -401,6 +401,10 @@ _4976_5c6e    renamed   glbRainSpecialNextTick
 _4976_5c72    renamed   glbRainThunderRandom
 _4976_5c74    renamed   glbRainHasWetGround
 _4976_5c76		renamed		glbRainSceneType
+
+_4976_5c94    renamed   glbFileHandleGraphics1
+_4976_5c96    renamed   glbFileHandleGraphics2
+
 _4976_5c98    renamed   glbShelfMemoryTable (shelf_memory *_4976_5c98;)
 _4976_5ca4		renamed		tlbMementsPointers
 _4976_5cb6		renamed		glbGDatEntries

@@ -741,8 +741,8 @@ protected:
 	mement	*_4976_5c8c;	// mement#3
 	Bit16u	_4976_5c90;
 	Bit16u	_4976_5c92;		// cnt used entries of _4976_5c7e?
-	__int16	_4976_5c94;		// filehandle of GRAPH1.DAT or GRAPHICS.DAT
-	__int16	_4976_5c96;		// filehandle of GRAPH2.DAT if exists.
+	__int16	glbFileHandleGraphics1;		// (_4976_5c94)	filehandle of GRAPH1.DAT or GRAPHICS.DAT
+	__int16	glbFileHandleGraphics2;		// (_4976_5c96) filehandle of GRAPH2.DAT if exists.
 	shelf_memory *glbShelfMemoryTable;	// (_4976_5c98)
 	Bit16u	_4976_5c9c;		// 1 if run on floppy, 0 if run on harddisk. (to know which is used GRAPH1.DAT or GRAPHICS.DAT)
 	Bit16u	_4976_5c9e;

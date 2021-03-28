@@ -3117,18 +3117,18 @@ void SkWinCore::GRAPHICS_DATA_OPEN()
 	//^3E74:259B
 	if ((_4976_5d10++) == 0) {
 		//^3E74:25A6
-		_4976_5c94 = FILE_OPEN(FORMAT_SKSTR(ptrGraphics, NULL));
+		glbFileHandleGraphics1 = FILE_OPEN(FORMAT_SKSTR(ptrGraphics, NULL));
 		//^3E74:25C6
-		if (_4976_5c94 < 0) {
+		if (glbFileHandleGraphics1 < 0) {
 			//^3E74:25CD
 			RAISE_SYSERR(SYSTEM_ERROR__MISSING_GRAPHICS);
 		}
 		//^3E74:25D5
 		if (_4976_5c9c != 0 && _4976_5ca8 == 0) {
 			//^3E74:25E3
-			_4976_5c96 = FILE_OPEN(FORMAT_SKSTR(ptrGraphics2, NULL));
+			glbFileHandleGraphics2 = FILE_OPEN(FORMAT_SKSTR(ptrGraphics2, NULL));
 			//^3E74:2603
-			if (_4976_5c96 < 0) {
+			if (glbFileHandleGraphics2 < 0) {
 				//^3E74:260A
 				RAISE_SYSERR(SYSTEM_ERROR__MISSING_GRAPHICS_2);
 			}
@@ -35225,11 +35225,11 @@ void SkWinCore::GRAPHICS_DATA_CLOSE()
 	//^3E74:2614
 	if ((_4976_5d10--) == 0) {
 		//^3E74:261D
-		FILE_CLOSE(_4976_5c94);
+		FILE_CLOSE(glbFileHandleGraphics1);
 		//^3E74:2627
 		if (_4976_5c9c != 0 && _4976_5ca8 == 0) {
 			//^3E74:2635
-			FILE_CLOSE(_4976_5c96);
+			FILE_CLOSE(glbFileHandleGraphics2);
 		}
 	}
 	//^3E74:263F
@@ -36525,13 +36525,13 @@ void __declspec(noreturn) SkWinCore::RAISE_SYSERR(Bit16u syserr)
 void SkWinCore::GRAPHICS_DATA_READ(Bit32u location, Bit32u size, Bit8u *buff)
 {
 	//^3E74:0EA2
-	Bit16u bp14[2] = {_4976_5c94};
+	Bit16u bp14[2] = {glbFileHandleGraphics1};
 	Bit32u bp08[2] = {location, 0};
 	__int32 bp10[2] = {size, 0};
 	//^3E74:0ECF
 	if (_4976_5c9c != 0) {
 		//^3E74:0ED6
-		bp14[1] = _4976_5c96;
+		bp14[1] = glbFileHandleGraphics2;
 		bp08[1] = location - _4976_5cea;
 		//^3E74:0EF0
 		if (bp08[1] >= 0) {
@@ -36558,7 +36558,7 @@ void SkWinCore::GRAPHICS_DATA_READ(Bit32u location, Bit32u size, Bit8u *buff)
 	// spx: si = part file of graphics.dat.
 	for (Bit16u si=0; si < 2; si++) {
 		//^3E74:0F4B
-		if (bp10[si] != 0) {
+		if (bp10[si] != 0) {	// check size
 			do {
 				//^3E74:0F61
 				if (FILE_SEEK(bp14[si], bp08[si]) != 0) {
@@ -53497,7 +53497,7 @@ void SkWinCore::READ_GRAPHICS_STRUCTURE()
 	_4976_5d10 = 0;
 	GRAPHICS_DATA_OPEN();
 	skfh4 bp0c;
-	if (READ_FILE(_4976_5c94, 4, &bp0c) == 0)
+	if (READ_FILE(glbFileHandleGraphics1, 4, &bp0c) == 0)
 		goto _28d2;
 	if ((bp0c.w0 & 0x8000) == 0)
 		goto _28d2;
@@ -53516,7 +53516,7 @@ void SkWinCore::READ_GRAPHICS_STRUCTURE()
 	bp04 = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(bp08, afDefault, 0x400));
 	_4976_5d6a = bp08 +4;
 	if (glbGDATVersion < 3) {
-		if (READ_FILE(_4976_5c94, bp08, bp04) == 0)
+		if (READ_FILE(glbFileHandleGraphics1, bp08, bp04) == 0)
 			goto _28d2;
 		//^3E74:2755
 		_4976_5d7a = *bp04;
@@ -53524,11 +53524,11 @@ void SkWinCore::READ_GRAPHICS_STRUCTURE()
 	}
 	else {
 		//^3E74:2775
-		if (READ_FILE(_4976_5c94, 4, &_4976_5d7a) == 0)
+		if (READ_FILE(glbFileHandleGraphics1, 4, &_4976_5d7a) == 0)
 			goto _28d2;
 		//^3E74:2790
 		_4976_5d6a += _4976_5d7a +2;
-		if (READ_FILE(_4976_5c94, bp08 -2, &bp04[1]) == 0)
+		if (READ_FILE(glbFileHandleGraphics1, bp08 -2, &bp04[1]) == 0)
 			goto _28d2;
 	}
 	//^3E74:27CF
@@ -53543,7 +53543,7 @@ void SkWinCore::READ_GRAPHICS_STRUCTURE()
 		//^3E74:2813
 	}
 	//^3E74:281E
-	_4976_5cea = GET_FILE_SIZE(_4976_5c94);
+	_4976_5cea = GET_FILE_SIZE(glbFileHandleGraphics1);
 	if (_4976_5cea < _4976_5caa) {
 		//^3E74:283D
 		_4976_5ca8 = 1;
