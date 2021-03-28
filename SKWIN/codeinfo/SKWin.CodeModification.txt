@@ -221,6 +221,8 @@ _4976_47fe    renamed   glbThunderJustCast
 _4976_4800[] = {"cd"};	renamed		EnvCM_CD
 _4976_4803[] = {"fw"};	renamed		EnvCM_FW
 
+_4976_480b		renamed		glbGDATVersion
+
 _4976_4988[]		renamed		strDirLetter
 _4976_498b[]		renamed		strDirLetter2
 _4976_4996		renamed		ptrDirLetter

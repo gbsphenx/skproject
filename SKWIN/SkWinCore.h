@@ -321,7 +321,7 @@ protected:
 	X8		_4976_4806;
 	Bit16u	_4976_4807;
 	Bit16u	_4976_4809;
-	i16		_4976_480b;		// graphics.dat signature
+	i16		glbGDATVersion;		// _4976_480b graphics.dat signature
 	Bit16u	_4976_480d;		// position at buffer unit
 	X32		_4976_480f; // 90 D0 03 00 -> 00030D90
 	X8		_4976_4838;

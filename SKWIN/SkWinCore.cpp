@@ -53502,11 +53502,11 @@ void SkWinCore::READ_GRAPHICS_STRUCTURE()
 	if ((bp0c.w0 & 0x8000) == 0)
 		goto _28d2;
 	//^3E74:2677
-	_4976_480b = bp0c.w0 & 0x7fff;
+	glbGDATVersion = bp0c.w0 & 0x7fff;
 	glbGDatNumberOfData = bp0c.w2;
 	U16 *bp04;
 	X32 bp08;
-	if (_4976_480b != 4 && _4976_480b != 5 && _4976_480b != 2)
+	if (glbGDATVersion != 4 && glbGDATVersion != 5 && glbGDATVersion != 2)
 		goto _28d2;
 	//^3E74:269E
 	glbShelfMemoryTable = reinterpret_cast<shelf_memory *>(ALLOC_MEMORY_RAM(sizeof(shelf_memory) * U32(glbGDatNumberOfData), afUseUpper, 0x400));
@@ -53515,7 +53515,7 @@ void SkWinCore::READ_GRAPHICS_STRUCTURE()
 	bp08 = U32(glbGDatNumberOfData) << 1;
 	bp04 = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(bp08, afDefault, 0x400));
 	_4976_5d6a = bp08 +4;
-	if (_4976_480b < 3) {
+	if (glbGDATVersion < 3) {
 		if (READ_FILE(_4976_5c94, bp08, bp04) == 0)
 			goto _28d2;
 		//^3E74:2755
@@ -53552,7 +53552,7 @@ void SkWinCore::READ_GRAPHICS_STRUCTURE()
 	//^3E74:2846
 	DEALLOC_UPPER_MEMORY(bp08);
 	LOAD_ENT1();
-	if (_4976_480b >= 2 && _4976_480b != 4 && QUERY_GDAT_ENTRY_DATA_INDEX(0x0, 0x0, dt08, 0x0) != 0xffff) {
+	if (glbGDATVersion >= 2 && glbGDATVersion != 4 && QUERY_GDAT_ENTRY_DATA_INDEX(0x0, 0x0, dt08, 0x0) != 0xffff) {
 		//^3E74:2878
         _4976_5d0c = reinterpret_cast<sk5d0c *>(ALLOC_MEMORY_RAM(
 			_4976_5d78 = QUERY_GDAT_ENTRY_DATA_LENGTH(0x0, 0x0, dt08, 0x0),
