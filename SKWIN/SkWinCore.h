@@ -1941,7 +1941,7 @@ protected:
 	void _3e74_1330(X8 *xx);
 	X16 _00eb_05c7(U8 (*pal)[4], X16 yy);
 	void _44c8_1baf(U8 *pal);
-	void _38c8_04aa();
+	void INIT();	// _38c8_04aa renamed INIT
 	X16 IS_TIMER_TO_PROCEED();
 	void GET_AND_DELETE_NEXT_TIMER(Timer *ref);
 	X16 _1c9a_17c7(U8 xx, U8 yy, U8 zz);

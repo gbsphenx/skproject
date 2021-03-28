@@ -36331,20 +36331,26 @@ U16 SkWinCore::QUERY_GDAT_ENTRY_DATA_INDEX(U8 iCategory, U16 iItem, U8 iType, U1
 
 //^3E74:01A5
 Bit8u *SkWinCore::REALIZE_GRAPHICS_DATA_MEMORY(shelf_memory info) {
+	//U32 iMemVal = info.val & 0x00FFFFFF;	// SPX: replaced info.val by this iMemVal with mask. ==> NOTE This does not work. Need to understand more this
+	U32 iMemVal = info.val;
+	// Original code would just take full value, which can be 0x80****** and break the limit.
+	// the 0x80 part must be some flag info then not to be taken for memory check.
+	// Note: it happens when loading original BETA GDAT.
+
 #if UseAltic
-	if (info.val >= 0x200000 +sizeof(cems)) {
+	if (iMemVal >= 0x200000 +sizeof(cems)) {
 		ATLASSERT(false);
 		return NULL;
 	}
-	if (info.val >= 0x00200000) {
-		return &cems[info.val -0x00200000];
+	if (iMemVal >= 0x00200000) {
+		return &cems[iMemVal -0x00200000];
 	}
-	else if (info.val >= sizeof(cram)) {
+	else if (iMemVal >= sizeof(cram)) {
 		ATLASSERT(false);
 		return NULL;
 	}
 	else {
-		return &cram[info.val];
+		return &cram[iMemVal];
 	}
 #else
 	ATLASSERT(false);
@@ -36369,7 +36375,7 @@ Bit16u SkWinCore::QUERY_GDAT_RAW_DATA_LENGTH(Bit16u index)
 	}
 	
 	bp04 = glbShelfMemoryTable[index];
-	// SPX END
+	//--- SPX END
 
 	if (bp04.Present()) {
 		//^3E74:044A
@@ -54449,7 +54455,8 @@ void SkWinCore::_44c8_1baf(U8 *pal)
 }
 
 //^38C8:04AA
-void SkWinCore::_38c8_04aa()
+// SPX: _38c8_04aa renamed INIT
+void SkWinCore::INIT()
 {
 	//^38C8:04AA
 	ENTER(4);
@@ -62966,8 +62973,8 @@ i16 SkWinCore::FIRE_MAIN(i16 argc, char **argv, char **env) //#DS=4976
 #endif
 
 	//^13AE:0338
-    _4726_03b2();
-	_38c8_04aa();
+    _4726_03b2();	// _4726_03b2
+	INIT();	// _38c8_04aa
 
 	// SPX: Add some more init here, just before starting the GAME_LOOP
 	EXTENDED_LOAD_SPELLS_DEFINITION();
