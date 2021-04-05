@@ -2163,6 +2163,8 @@ public:
 	int IBMIO_BOOTSTRAP();
 	void _sys_intr();
 
+	void DEBUG_DISPLAY_GDAT_MAIN_INFO();
+
 };
 
 #endif // _SKWINCORE_H_

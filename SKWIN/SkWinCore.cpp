@@ -38987,9 +38987,16 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 				case 0x0051:	// .Z081 : GDAT Version number
 					{
 						const Bit8u *bp0c = (const Bit8u *) "_V4";
-						if (skwin.gdat_vers == 4)
+						if (skwin.gdat_vers == 4)	// ID_VERSION_V4 CLASSIC
 						{
 							FORMAT_SKSTR(bp0c, bp0116);
+							SK_STRCAT(bp08, bp0116);
+							bp04 = bp08 +SK_STRLEN(bp08);
+						}
+						if (skwin.gdat_vers == 6)	// ID_VERSION_V5_CARTOON
+						{
+							const Bit8u *bpxx = (const Bit8u *) "_V5";
+							FORMAT_SKSTR(bpxx, bp0116);
 							SK_STRCAT(bp08, bp0116);
 							bp04 = bp08 +SK_STRLEN(bp08);
 						}
@@ -39000,6 +39007,13 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 						if (skwin.gdat_vers != 0 && skwin.gdat_vers < 5)
 						{
 							const Bit8u *bp0c = (const Bit8u *) "_CLASSIC";
+							FORMAT_SKSTR(bp0c, bp0116);
+							SK_STRCAT(bp08, bp0116);
+							bp04 = bp08 +SK_STRLEN(bp08);
+						}
+						if (skwin.gdat_vers == 6)		// ID_VERSION_V5_CARTOON
+						{
+							const Bit8u *bp0c = (const Bit8u *) "_CARTOON";
 							FORMAT_SKSTR(bp0c, bp0116);
 							SK_STRCAT(bp08, bp0116);
 							bp04 = bp08 +SK_STRLEN(bp08);
@@ -53488,6 +53502,20 @@ _256a:
 	return;
 }
 
+// SPX: Add function to detail important GDAT values, in order to compare to other SkWin versions
+void SkWinCore::DEBUG_DISPLAY_GDAT_MAIN_INFO()
+{
+	unsigned int iItemIndex = 0;
+	LOGX(("DEBUG_DISPLAY_GDAT_MAIN_INFO"));
+	LOGX(("#Items: %04d", glbGDatNumberOfData));
+	for (iItemIndex = 0; iItemIndex < glbGDatNumberOfData; iItemIndex++) 
+	{
+		LOGX(("ShelfMemTab: %04d => Val = %08X [%d] (%05d)", iItemIndex, glbShelfMemoryTable[iItemIndex].val, glbShelfMemoryTable[iItemIndex].Absent(), (glbShelfMemoryTable[iItemIndex].val & 0x7FFFFFF) ));
+	}
+	LOGX(("============================"));
+
+}
+
 //^3E74:2641
 void SkWinCore::READ_GRAPHICS_STRUCTURE()
 {
@@ -53497,7 +53525,7 @@ void SkWinCore::READ_GRAPHICS_STRUCTURE()
 	_4976_5d10 = 0;
 	GRAPHICS_DATA_OPEN();
 	skfh4 bp0c;
-	if (READ_FILE(glbFileHandleGraphics1, 4, &bp0c) == 0)
+	if (READ_FILE(glbFileHandleGraphics1, 4, &bp0c) == 0)	// Read the first 4 bytes of GDAT, which hold GDAT signature + nb of data items
 		goto _28d2;
 	if ((bp0c.w0 & 0x8000) == 0)
 		goto _28d2;
@@ -53512,9 +53540,9 @@ void SkWinCore::READ_GRAPHICS_STRUCTURE()
 	glbShelfMemoryTable = reinterpret_cast<shelf_memory *>(ALLOC_MEMORY_RAM(sizeof(shelf_memory) * U32(glbGDatNumberOfData), afUseUpper, 0x400));
 	_4976_5c82 = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(U32(glbGDatNumberOfData) << 1, afUseUpper, 0x400));
 	FILL_U16(reinterpret_cast<i16 *>(_4976_5c82), glbGDatNumberOfData, -1, 2);
-	bp08 = U32(glbGDatNumberOfData) << 1;
+	bp08 = U32(glbGDatNumberOfData) << 1;	// nb items * 2 = nb of bytes for all item sizes
 	bp04 = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(bp08, afDefault, 0x400));
-	_4976_5d6a = bp08 +4;
+	_4976_5d6a = bp08 +4;	// nb items sizes + (magic number + nb items) = offset of first raw data which must be the ENT1
 	if (glbGDATVersion < 3) {
 		if (READ_FILE(glbFileHandleGraphics1, bp08, bp04) == 0)
 			goto _28d2;
@@ -53524,11 +53552,11 @@ void SkWinCore::READ_GRAPHICS_STRUCTURE()
 	}
 	else {
 		//^3E74:2775
-		if (READ_FILE(glbFileHandleGraphics1, 4, &_4976_5d7a) == 0)
+		if (READ_FILE(glbFileHandleGraphics1, 4, &_4976_5d7a) == 0)	// Read the next 4 bytes of GDAT which hold the size for the first item entry which must be the ENT1 item
 			goto _28d2;
 		//^3E74:2790
-		_4976_5d6a += _4976_5d7a +2;
-		if (READ_FILE(glbFileHandleGraphics1, bp08 -2, &bp04[1]) == 0)
+		_4976_5d6a += _4976_5d7a +2;	// there _4976_5d6a gets the offset of the second item after ENT1 item
+		if (READ_FILE(glbFileHandleGraphics1, bp08 -2, &bp04[1]) == 0)	// here read the size table before the ENT1 item (except the first item already read, which is exceptionnally on 4 bytes; all others are on 2 bytes max)
 			goto _28d2;
 	}
 	//^3E74:27CF
@@ -53560,6 +53588,9 @@ void SkWinCore::READ_GRAPHICS_STRUCTURE()
 		LOAD_GDAT_ENTRY_DATA_TO(0x0, 0x0, dt08, 0x0, reinterpret_cast<U8 *>(_4976_5d0c));
 		_4976_5d78 = _4976_5d78 / 4;
 	}
+
+DEBUG_DISPLAY_GDAT_MAIN_INFO();
+
 	//^3E74:28C6
 	_4976_5cb0 = 1;
 	_3e74_24b8();
