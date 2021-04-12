@@ -832,9 +832,11 @@ void SKW_2481_0002(void)
   if (!ddata.v1d66f8)
 //           srcbmp
     R_C470(ddata.v1e0954, con(0xffffffff), UPCAST(t_palette, ddata.v1d66f4), con(0x2));
-  else
+//  else
 //                          srcbmp                                                                     srcofs  destbmp                                                                               srcbits    destbits
 //    SKW_FIRE_BLIT_PICTURE(ddata.v1e0954, SKW_ALLOC_TEMP_ORIGIN_RECT(ddata.mouse_unk0c, ddata.mouse_unk0d), 0, ddata.screenptr, con(0x0), ddata.mouse_unk0c, ddata.mouse_unk0c, con(0xffff), con(0x0), E_BITRES8, E_BITRES8);
+
+  // SPX: forcing this display method gives the 256 colored image
     SKW_FIRE_BLIT_PICTURE(ddata.v1e0954, SKW_ALLOC_TEMP_ORIGIN_RECT(320, 200), 0, ddata.screenptr, con(0x0),
 	320, 200, con(0xffff), con(0x0), E_BITRES8, E_BITRES8);
  //		FIRE_BLIT_PICTURE(

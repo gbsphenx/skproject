@@ -91,6 +91,8 @@ const char* __sDataTypes[16] = {
 
 const char* SPX_STR_DATATYPE(unsigned int iType)
 {
+	if (iType >= 16)
+		return "<<>>";
 	return (const char*) __sDataTypes[iType];
 }
 

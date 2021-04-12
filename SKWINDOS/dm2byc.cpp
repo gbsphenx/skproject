@@ -16,6 +16,8 @@
 #include "src/c_savegame.h"
 #include "calls.h"
 
+#include "defines.h"
+
 t_gfxdata* R_D2C(x16 eaxw, x16 ebxw, x16 edxw)
 {
   x16 wordrg1;
@@ -216,13 +218,15 @@ bool SKW_GET_CREATURE_ANIMATION_FRAME(x8 eaxb, x16* ebxpw, x16* ecxpw, x16 edxw,
   s_bbw* sbbwptrrg12; // based on unkptrrg2, also steps ahead by 4
 
   wptrrg7 = ebxpw;
-  sptrrg11 = UPCAST(s_2w, SKW_QUERY_GDAT_ENTRY_DATA_PTR(con(0xf), con(0x8), con(0xfb), eaxb));
+  //sptrrg11 = UPCAST(s_2w, SKW_QUERY_GDAT_ENTRY_DATA_PTR(con(0xf), con(0x8), con(0xfb), eaxb));
+  sptrrg11 = UPCAST(s_2w, SKW_QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_CREATURES, con(dtRaw8), con(GDAT_CREATURE_ANIM_ATTRIBUTION), eaxb));
   for (; (sptrrg11->w0[con(0x0)] != con(0xffffffff)) && (edxw != sptrrg11->w0[con(0x0)]); sptrrg11++)
   {
   }
   *wptrrg7 = vw_00 = sptrrg11->w0[con(0x1)];
   byterg5 = eaxb;
-  sbbwptrrg2 = UPCAST(s_bbw, SKW_QUERY_GDAT_ENTRY_DATA_PTR(con(0xf), con(0x7), con(0xfc), eaxb));
+  //sbbwptrrg2 = UPCAST(s_bbw, SKW_QUERY_GDAT_ENTRY_DATA_PTR(con(0xf), con(0x7), con(0xfc), eaxb));
+  sbbwptrrg2 = UPCAST(s_bbw, SKW_QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_CREATURES, con(dtRaw7), con(GDAT_CREATURE_ANIM_INFO_SEQUENCE), eaxb));
   if ((SKW_QUERY_CREATURE_AI_SPEC_FROM_RECORD(byterg5)->u0.b.b0 & con(0x1)) == con(0x0))
   {
     *ecxpw = con(0xffffffff);

@@ -863,9 +863,11 @@ void SKW_FREE_PICT_ENTRY(t_gfxdata* eaxpg)
   xxx** ptrrg1 = UPCAST(xxx*, &dm2_dballochandler.ptr1e0a5c);
   xxx** ptrrg2 = UPCAST(xxx*, p);
   xxx** ptrrg3;
-  while (ptrrg2 != (ptrrg3 = UPCAST(xxx*, *ptrrg1)))
-    ptrrg1 = UPCAST(xxx*, *ptrrg1);
-  *UPCAST(xxx*, ptrrg1) = UPCAST(xxx, *ptrrg3);
+
+  //--- SPX : commented these 3 lines because of crash
+  //while (ptrrg2 != (ptrrg3 = UPCAST(xxx*, *ptrrg1)))
+  //  ptrrg1 = UPCAST(xxx*, *ptrrg1);
+  //*UPCAST(xxx*, ptrrg1) = UPCAST(xxx, *ptrrg3);
 
   x32 longrg1 = (SKW_CALC_IMAGE_BYTE_LENGTH(eaxpg) & con(0xffff)) + con(0xe);
   if (p->b8 == con(0x4))
