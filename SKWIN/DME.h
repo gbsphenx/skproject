@@ -863,6 +863,8 @@ namespace DMEncyclopaedia {
 		ttMapExit,		// 7
 	};
 	// 
+	// SPX: moved to defines.h in order to keep a single code along skwindos which shares defines.h
+	/*
 	enum dtIndex {
 		dtImage = 1,
 		dtSnd = 2,
@@ -875,7 +877,7 @@ namespace DMEncyclopaedia {
 		dtWordValue = 11,
 		dtImageOffset = 12,
 		dt0d = 13,
-	};
+	};*/
 	// 
 	enum picfmt {
 		pfC4 =      0x01, // IMG3

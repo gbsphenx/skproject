@@ -4,6 +4,28 @@
 // SPX BEGIN : new defines replacing hard coded value
 // These could also be declared as enums or constants
 
+// DataTypes used in GDAT
+enum dtIndex 
+{
+	dtImage		= 1,
+	dtSnd		= 2,
+	dtHMP		= 3,
+	dtRectangle	= 4,
+		dt04	= 4,
+	dtText		= 5,
+	dt06		= 6,
+		dt07		= 7,
+	dtRaw7		= 7,
+	dtRaw8		= 8, // image chain table
+		dt08		= 8, // image chain table
+	dtPalIRGB	= 9,
+		dt09	= 9,
+	dtWordValue = 11,
+	dtImageOffset = 12,
+	dtPalette	= 13,
+		dt0d	= 13,
+};
+
 // Playback 0x157C = 5500 Hz
 #define PLAYBACK_FREQUENCY		5500
 #define SKWIN_PLAYBACK_FREQUENCY	6000
