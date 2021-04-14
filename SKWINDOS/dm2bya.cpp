@@ -16,6 +16,8 @@
 #include "src/c_savegame.h"
 #include "calls.h"
 
+#include "../skwin/defines.h"
+
 #include "dm2debug.h"
 
 // BUGS: resume-button after party died
@@ -21731,7 +21733,8 @@ void SKW_REVIVE_PLAYER(x8 eaxb, x8 ebxb)
   heroptrrg6->t22[0x6] = CUTX8(ddata.v1e0258);
   for (x16 vw_80_5 = con(0x0); vw_80_5 < con(0x1e); vw_80_5++)
     heroptrrg6->warrc3[vw_80_5] = con(0xffffffff);
-  tptrrg1 = SKW_QUERY_GDAT_TEXT(con(0x16), con(0x18), t_00, vb_84);
+//  tptrrg1 = SKW_QUERY_GDAT_TEXT(con(0x16), con(0x18), t_00, vb_84);
+  tptrrg1 = SKW_QUERY_GDAT_TEXT(con(GDAT_CATEGORY_CHAMPIONS), con(0x18), t_00, vb_84);
   x16 vw_80_4 = con(0x0);
   x8 byterg3;
   for(;;)
@@ -21760,7 +21763,8 @@ void SKW_REVIVE_PLAYER(x8 eaxb, x8 ebxb)
       heroptrrg6->t00[con(0x8) + wordrg11] = byterg31;
     } while (wordrg2 != con(0x13));
   }
-  wptrrg5 = UPCAST(x16, SKW_QUERY_GDAT_ENTRY_DATA_PTR(con(0x16), con(0x8), con(0x0), vb_84));
+  //wptrrg5 = UPCAST(x16, SKW_QUERY_GDAT_ENTRY_DATA_PTR(con(0x16), con(0x8), con(0x0), vb_84));
+  wptrrg5 = UPCAST(x16, SKW_QUERY_GDAT_ENTRY_DATA_PTR(con(GDAT_CATEGORY_CHAMPIONS), con(dtRaw8), con(0x0), vb_84));
   heroptrrg6->w38 = wptrrg5[con(0x0)];
   heroptrrg6->w36 = wptrrg5[con(0x0)];
   heroptrrg6->u3c.w = wptrrg5[con(0x1)];
