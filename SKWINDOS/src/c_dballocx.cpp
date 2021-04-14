@@ -650,7 +650,8 @@ M_true:
 }
 
 // eaxb = category / ebxb = #item / ecxb = datatype / edxb = #sub-item
-x32 SKW_QUERY_GDAT_ENTRY_DATA_LENGTH(x8 eaxb, x8 ebxb, x8 ecxb, x8 edxb)
+//x32 SKW_QUERY_GDAT_ENTRY_DATA_LENGTH(x8 eaxb, x8 ebxb, x8 ecxb, x8 edxb)
+x32 SKW_QUERY_GDAT_ENTRY_DATA_LENGTH(x8 eaxb, ui16 ebxb, ui16 ecxb, ui16 edxb)	// SPX fix to avoid negative values
 {
 LOGX(("QUERY_GDAT_ENTRY_DATA_LENGTH of C%02d=I%02X=S%02X=T%03d [%04s] = %08X\n", eaxb, ebxb, edxb, ecxb, SPX_STR_DATATYPE(ecxb), dm2_ulp.SKW_QUERY_GDAT_RAW_DATA_LENGTH(DM2_QUERY_GDAT_ENTRY_DATA_INDEX(eaxb, ebxb, ecxb, edxb) & con(0xffff)) ));
 fprintf(logfile, "QUERY_GDAT_ENTRY_DATA_LENGTH: %03d=%03d=%03d=%03d\n", eaxb, ebxb, ecxb, edxb); // SPX: add log
@@ -1344,7 +1345,8 @@ static void SKW_3e74_24b8(void)
   }
 }
 
-x16 SKW_QUERY_GDAT_PICT_OFFSET(x8 eaxb, x8 ebxb, x8 edxb)
+//x16 SKW_QUERY_GDAT_PICT_OFFSET(x8 eaxb, x8 ebxb, x8 edxb)
+x16 SKW_QUERY_GDAT_PICT_OFFSET(x8 eaxb, ui16 ebxb, ui16 edxb)			//  SPX fix to avoid negative values
 {
   u_bbwlong* ptrrg1 = DM2_QUERY_GDAT_ENTRYPTR(eaxb, con(0x1), ebxb, edxb);
   if (ptrrg1 == NULL)
@@ -1384,7 +1386,8 @@ x16 SKW_QUERY_GDAT_PICT_OFFSET(x8 eaxb, x8 ebxb, x8 edxb)
   return wordrg4;
 }
 
-t_palette* SKW_QUERY_GDAT_IMAGE_LOCALPAL(x8 eaxb, x8 ebxb, x8 edxb)
+//t_palette* SKW_QUERY_GDAT_IMAGE_LOCALPAL(x8 eaxb, x8 ebxb, x8 edxb)
+t_palette* SKW_QUERY_GDAT_IMAGE_LOCALPAL(x8 eaxb, ui16 ebxb, ui16 edxb)	//  SPX fix to avoid negative values
 {
   x16 vw_00;
 

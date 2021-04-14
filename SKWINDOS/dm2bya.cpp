@@ -21734,6 +21734,7 @@ void SKW_REVIVE_PLAYER(x8 eaxb, x8 ebxb)
   for (x16 vw_80_5 = con(0x0); vw_80_5 < con(0x1e); vw_80_5++)
     heroptrrg6->warrc3[vw_80_5] = con(0xffffffff);
 //  tptrrg1 = SKW_QUERY_GDAT_TEXT(con(0x16), con(0x18), t_00, vb_84);
+DEBUG_DUMP_ULP();
   tptrrg1 = SKW_QUERY_GDAT_TEXT(con(GDAT_CATEGORY_CHAMPIONS), con(0x18), t_00, vb_84);
   x16 vw_80_4 = con(0x0);
   x8 byterg3;
@@ -21765,6 +21766,9 @@ void SKW_REVIVE_PLAYER(x8 eaxb, x8 ebxb)
   }
   //wptrrg5 = UPCAST(x16, SKW_QUERY_GDAT_ENTRY_DATA_PTR(con(0x16), con(0x8), con(0x0), vb_84));
   wptrrg5 = UPCAST(x16, SKW_QUERY_GDAT_ENTRY_DATA_PTR(con(GDAT_CATEGORY_CHAMPIONS), con(dtRaw8), con(0x0), vb_84));
+  // SPX
+  if ((ui32)wptrrg5 >= 0x80000000)
+	  return;
   heroptrrg6->w38 = wptrrg5[con(0x0)];
   heroptrrg6->w36 = wptrrg5[con(0x0)];
   heroptrrg6->u3c.w = wptrrg5[con(0x1)];
@@ -25522,6 +25526,7 @@ x16 SKW_CREATE_CLOUD(ui16 eaxuw, x16 ebxw, x16 ecxw, x16 edxw, x16 argw0)
   return SKW_075f_0182(eaxuw, vw_20, urshift(recoptrrg5->u2.w, con(0x8)), vw_2c);
 }
 
+// SPX: _13e4_0982 renamed CREATURE_THINK_0982
 void SKW_13e4_0982(void)
 {
   x16* wptrrg6;
@@ -25543,7 +25548,7 @@ void SKW_13e4_0982(void)
     x16 wordrg41;
     wptrrg6 = ddata.s350.v1e055e;
     bool boolrg7;
-    if (ddata.s350.v1e0562.b_04 != con(0x22))
+    if (ddata.s350.v1e0562.b_04 != con(0x22))	// glbCreatureTimer.TimerType() == tty22
     {
       boolrg7 = false;
       wordrg41 = R_4FCC(ddata.s350.v1e054e->u4.b.b0, &wptrrg6[con(0x1)], &ddata.s350.v1e055a, *wptrrg6) ? 1 : 0;
@@ -25598,7 +25603,7 @@ void SKW_13e4_0982(void)
         }
       }
       x16 wordrg190 = signedword(ddata.s350.v1e0556->u.v.b1a);
-      if ((signedword(ddata.s350.v1e0556->u.v.b1a) < con(0x32)) || wordrg190 > con(0x34))
+      if ((signedword(ddata.s350.v1e0556->u.v.b1a) < con(0x32)) || wordrg190 > con(0x34))	// !(si = xCreatureInfo->Command) >= ccm32 && si <= ccm34)
         wordrg41 = SKW_GET_CREATURE_ANIMATION_FRAME(ddata.s350.v1e054e->u4.b.b0, wptrrg6, &wptrrg6[con(0x1)], wordrg190, &ddata.s350.v1e055a, con(0x0)) ? 1 : 0;
       else
       {
@@ -25627,7 +25632,8 @@ void SKW_13e4_0982(void)
         }
         if (boolrg1)
         {
-          if (ubrshift(ddata.s350.v1e055a[con(0x2)] & con(0xffffff80), con(0x7)) != con(0x0))
+          //if (ubrshift(ddata.s350.v1e055a[con(0x2)] & con(0xffffff80), con(0x7)) != con(0x0))
+		  if (ddata.s350.v1e055a != NULL && (ubrshift(ddata.s350.v1e055a[con(0x2)] & con(0xffffff80), con(0x7)) != con(0x0)))
           {
             SKW_13e4_01a3();
             ddata.s350.v1e0556->u.v.b21 |= SKW_PROCEED_CCM() ? 1 : 0;

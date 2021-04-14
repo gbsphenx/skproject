@@ -30,7 +30,8 @@
 #define glbGDatNumberOfData			ddata.gdatentries
 
 
-
+#define MAX(a,b) ( (a > b) ? a : b )
+#define MIN(a,b) ( (a < b) ? a : b )
 
 //------------------------------------------------------------------------------
 
@@ -61,7 +62,7 @@ void DEBUG_DISPLAY_GDAT_MAIN_INFO()
 
 void DEBUG_DUMP_BIN_DATA(unsigned char* ptr, unsigned int iDumpSize, unsigned int iBytesPerRow)
 {
-	for (int iCursor = 0; iCursor < iDumpSize; iCursor++)
+	for (unsigned int iCursor = 0; iCursor < iDumpSize; iCursor++)
 	{
 		LOGX(("%02X ", ptr[iCursor]));
 		if (iCursor%iBytesPerRow == (iBytesPerRow-1) )
@@ -77,10 +78,37 @@ LOGX(("============================\n"));
 LOGX(("ULP >> \n"));
 	for (iItemNumber = 0; iItemNumber < glbGDatNumberOfData; iItemNumber++)
 	{
+		char sInfoPointer[8];
+		char sData[128];
+		memset(sInfoPointer, 0, 8);
+		memset(sData, 0, 128);
 		u_lp* p = dm2_ulp.getadr(iItemNumber);
 		if (p != NULL && (void*) p < (void*) 0x70000000)	// assume else it is not valid
 		{
-			LOGX(("p %04d: %08x x32 = %05d ptr %08X\n", iItemNumber, p, p->l_00, p->p_00)); 
+			unsigned int iLength = 0;
+			iLength = dm2_ulp.SKW_QUERY_GDAT_RAW_DATA_LENGTH(iItemNumber);
+			iLength= iLength & 0x7FFFFFFF;
+			
+			if (p->l_00 & 0x80000000) // not a direct pointer
+			{
+				sprintf(sInfoPointer, "(np)");
+			}
+			else // this is a pointer, then we try to display the first data
+			{
+				unsigned int iMaxBytesToDisplay = MIN(16, iLength);
+				unsigned char* pData;
+				char* sWriteData = (char*) sData;
+				pData = (unsigned char*) p->p_00;
+				for (unsigned int iByte = 0; iByte < iMaxBytesToDisplay; iByte++)
+				{
+					sprintf(sWriteData, "%02X ", pData[iByte]);
+					pData++;
+					sWriteData+=3;
+				}
+
+			}
+			
+			LOGX(("u_lp #%04d: %08x || x32 = %08x %4s -> len = %05d (%04X) || i8* = %08X  || Data = %s\n", iItemNumber, p, p->l_00, sInfoPointer, iLength, iLength, p->p_00, sData)); 
 				
 		}
 		else

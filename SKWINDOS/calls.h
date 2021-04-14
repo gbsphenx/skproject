@@ -519,8 +519,10 @@
  x8* SKW_QUERY_GDAT_ENTRY_DATA_BUFF(x8 eaxb, ui16 ebxb, ui16 ecxb, ui16 edxb);// SPX fix to avoid negative values
  //void SKW_LOAD_GDAT_ENTRY_DATA_TO(x8 eaxb, x8 ebxb, x8 ecxb, x8 edxb, x8* argpb0);
  void SKW_LOAD_GDAT_ENTRY_DATA_TO(x8 eaxb, ui16 ebxb, ui16 ecxb, ui16 edxb, x8* argpb0);	// SPX fix to avoid negative values
- t_palette* SKW_QUERY_GDAT_IMAGE_LOCALPAL(x8 eaxb, x8 ebxb, x8 edxb);
- x16 SKW_QUERY_GDAT_PICT_OFFSET(x8 eaxb, x8 ebxb, x8 edxb);
+ //t_palette* SKW_QUERY_GDAT_IMAGE_LOCALPAL(x8 eaxb, x8 ebxb, x8 edxb);
+ t_palette* SKW_QUERY_GDAT_IMAGE_LOCALPAL(x8 eaxb, ui16 ebxb, ui16 edxb);	//  SPX fix to avoid negative values
+ //x16 SKW_QUERY_GDAT_PICT_OFFSET(x8 eaxb, x8 ebxb, x8 edxb);
+ x16 SKW_QUERY_GDAT_PICT_OFFSET(x8 eaxb, ui16 ebxb, ui16 edxb);		//  SPX fix to avoid negative values
  bool SKW_3e74_55f9(ui32 eaxul, x16* edxpw);
  t_gfxdata* SKW_ALLOC_NEW_PICT(x16 eaxw, x16 ebxw, x8 ecxb, x16 edxw);
  t_gfxdata* SKW_3e74_5817(x16 eaxw);
@@ -530,7 +532,8 @@
  void SKW_3e74_58bf(x8 eaxb, x8 ebxb, x8 edxb);
  void SKW_3e74_5992(x8 eaxb, x8 ebxb, x8 edxb);
  void R_2F5DE(t_gfxdata* eaxp, t_gfxdata* edxp); // unreferenced
- x32 SKW_QUERY_GDAT_ENTRY_DATA_LENGTH(x8 eaxb, x8 ebxb, x8 ecxb, x8 edxb);
+ //x32 SKW_QUERY_GDAT_ENTRY_DATA_LENGTH(x8 eaxb, x8 ebxb, x8 ecxb, x8 edxb);
+ x32 SKW_QUERY_GDAT_ENTRY_DATA_LENGTH(x8 eaxb, ui16 ebxb, ui16 ecxb, ui16 edxb);	// SPX fix to avoid negative values
  void SKW_QUERY_GDAT_IMAGE_METRICS(x8 eaxb, x8 ebxb, x16* ecxpw, x8 edxb, x16* argpw0);
  void SKW_3e74_5b7c(x16 eaxw);
  t_text* SKW_QUERY_CMDSTR_NAME(x8 eaxb, x8 ebxb, x8 edxb);

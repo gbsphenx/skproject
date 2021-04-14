@@ -24,11 +24,11 @@ void c_ulp::init(void)
 // TODO: neg. offset!
 x32 c_ulp::SKW_QUERY_GDAT_RAW_DATA_LENGTH(x16 n)
 {
-fprintf(logfile, "QUERY_GDAT_RAW_DATA_LENGTH: Querying length of raw item %05d => returns ", n); // SPX: add log
+//fprintf(logfile, "QUERY_GDAT_RAW_DATA_LENGTH: Querying length of raw item %05d => returns ", n); // SPX: add log
   u_lp* p = getadr(unsignedlong(n));
   if (p->l_00 & con(0x80000000))
   {
-	 fprintf(logfile, "%6d (%08x) (MSB)\n", p->l_00 & con(0x7FFFFFFF), p->l_00); // SPX: add log
+	 //fprintf(logfile, "%6d (%08x) (MSB)\n", p->l_00 & con(0x7FFFFFFF), p->l_00); // SPX: add log
     return p->l_00; // MSB still set
   }
   else
@@ -41,7 +41,7 @@ fprintf(logfile, "QUERY_GDAT_RAW_DATA_LENGTH: Querying length of raw item %05d =
 	 fprintf(logfile, "%6d (%08x) (fail or out of bound)\n", (x32)(0xFFFFFFFF), (x32)(0xFFFFFFFF)); // SPX: add log
 		return (x32)(0xFFFFFFFF);
 	}
-	 fprintf(logfile, "%6d (%08x)\n", unsignedlong(*(pw - 1)),  unsignedlong(*(pw - 1)) ); // SPX: add log
+	 //fprintf(logfile, "%6d (%08x)\n", unsignedlong(*(pw - 1)),  unsignedlong(*(pw - 1)) ); // SPX: add log
 	// then original code
     return unsignedlong(*(pw - 1)); // high word zero then TODO: neg. offset
   }
