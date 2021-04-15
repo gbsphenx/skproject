@@ -456,6 +456,8 @@ enum SkillLevel {
 #define GDAT_GFXSET_THUNDER_POSITION				0x6C	// Map position (XXYY) for Thunder (will be the same for all maps with that graphicsset)
 #define GDAT_GFXSET_AMBIANT_DARKNESS				0x6D
 
+#define GDAT_GFXSET_x72								0x72	// Unknown ?
+
 //------------------------------------------------------------------------------
 //	ENVIRONMENT / WEATHER ATTRIBUTES or GRAPHICS
 //------------------------------------------------------------------------------
@@ -596,6 +598,12 @@ enum SkillLevel {
 #define CREATURE_STAT_6					0x06	// Seeing this used by SARDES Minion; would it be that creature does not attack ???
 #define CREATURE_STAT_DROP_FIRST		0x0A
 #define CREATURE_STAT_DROP_LAST			0x14
+
+
+#define GDAT_CREATURE_ANIM_ATTRIBUTION		0xFB	// ATTR : Animation Attribution
+#define GDAT_CREATURE_ANIM_INFO_SEQUENCE	0xFC	// INFO : Info Sequence
+#define GDAT_CREATURE_ANIM_FRAME_SEQUENCE	0xFD	// FRAM : Frame Sequence
+#define GDAT_CREATURE_ANIM_SCALE_GROUPS		0xFE	// SCAL : Scale Groups
 
 
 #define	CREATURE_AI_FLAG_0001			0x0001	// 0x0001
