@@ -180,7 +180,8 @@
  x16 R_F958(x16 eaxw);
  c_aispec* SKW_QUERY_CREATURE_AI_SPEC_FROM_TYPE(x16 eaxw);
  c_aispec* SKW_QUERY_CREATURE_AI_SPEC_FROM_RECORD(x8 eaxb);
- x16 SKW_QUERY_GDAT_CREATURE_WORD_VALUE(x8 eaxb, x8 edxb);
+ //x16 SKW_QUERY_GDAT_CREATURE_WORD_VALUE(x8 eaxb, x8 edxb);
+ x16 SKW_QUERY_GDAT_CREATURE_WORD_VALUE(ui16 eaxb, x8 edxb);	// SPX fix to avoid negative values
  x16 SKW_QUERY_CREATURE_AI_SPEC_FLAGS(x16 eaxw);
  x16 SKW_0cee_2df4(x16 eaxw);
  x16 SKW_0cee_2e09(x16 eaxw);

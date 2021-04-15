@@ -140,6 +140,8 @@ x16 DM2_QUERY_GDAT_ENTRY_DATA_INDEX(x8 eaxb, ui16 ebxb, ui16 ecxb, ui16 edxb)	//
 {
 LOGX(("%40s: C%02d=I%02X=S%02X=T%03d [%04s]\n", "QUERY_GDAT_ENTRY_DATA_LENGTH of ", eaxb, edxb, ecxb, ebxb, SPX_STR_DATATYPE(ebxb) ));
 	fprintf(logfile, "%40s: C%02d=I%02X=E%02X=T%03d\n", "DM2_QUERY_GDAT_ENTRY_DATA_INDEX", eaxb, edxb, ecxb, ebxb); // SPX: add log
+if (edxb > 0xFF)
+	(("BREAK"));
   u_bbwlong* ptrrg4 = DM2_QUERY_GDAT_ENTRYPTR(eaxb, ebxb, ecxb, edxb);
   if (ptrrg4 == NULL)
   {
@@ -655,6 +657,8 @@ x32 SKW_QUERY_GDAT_ENTRY_DATA_LENGTH(x8 eaxb, ui16 ebxb, ui16 ecxb, ui16 edxb)	/
 {
 LOGX(("QUERY_GDAT_ENTRY_DATA_LENGTH of C%02d=I%02X=S%02X=T%03d [%04s] = %08X\n", eaxb, ebxb, edxb, ecxb, SPX_STR_DATATYPE(ecxb), dm2_ulp.SKW_QUERY_GDAT_RAW_DATA_LENGTH(DM2_QUERY_GDAT_ENTRY_DATA_INDEX(eaxb, ebxb, ecxb, edxb) & con(0xffff)) ));
 fprintf(logfile, "QUERY_GDAT_ENTRY_DATA_LENGTH: %03d=%03d=%03d=%03d\n", eaxb, ebxb, ecxb, edxb); // SPX: add log
+if (ebxb > 0xFF)
+	LOGX(("break"));
   return dm2_ulp.SKW_QUERY_GDAT_RAW_DATA_LENGTH(DM2_QUERY_GDAT_ENTRY_DATA_INDEX(eaxb, ebxb, ecxb, edxb) & con(0xffff));
 }
 
@@ -1251,7 +1255,7 @@ iForIndex++;
 //x8* SKW_QUERY_GDAT_ENTRY_DATA_BUFF(x8 eaxb, x8 ebxb, x8 ecxb, x8 edxb)
 x8* SKW_QUERY_GDAT_ENTRY_DATA_BUFF(x8 eaxb, ui16 ebxb, ui16 ecxb, ui16 edxb)	// SPX fix to get positive numbers for item select such as 0xFE = 254 instead of -2 (which can lead to crash)
 {
-LOGX(("%40s: C%02d=I%02X=S%02X=T%03d [%04s]\n", "SKW_QUERY_GDAT_ENTRY_DATA_BUFF", eaxb, ebxb, edxb, ecxb, SPX_STR_DATATYPE(ecxb) ));
+LOGX(("%40s: C%02d=I%02X=S%02X=T%03d [%04s]\n", "SKW_QUERY_GDAT_ENTRY_DATA_BUFF", eaxb, edxb, ecxb, ebxb, SPX_STR_DATATYPE(ebxb) ));
   x16 vw_00;
 
   x16 wordrg1 = DM2_QUERY_GDAT_ENTRY_DATA_INDEX(eaxb, ebxb, ecxb, edxb);
@@ -1269,7 +1273,7 @@ LOGX(("%40s: C%02d=I%02X=S%02X=T%03d [%04s]\n", "SKW_QUERY_GDAT_ENTRY_DATA_BUFF"
 //bool SKW_QUERY_GDAT_ENTRY_IF_LOADABLE(x8 eaxb, x8 ebxb, x8 ecxb, x8 edxb)
 bool SKW_QUERY_GDAT_ENTRY_IF_LOADABLE(x8 eaxb, ui16 ebxb, ui16 ecxb, ui16 edxb)	// SPX fix to get positive numbers for item select such as 0xFE = 254 instead of -2 (which can lead to crash)
 {
-LOGX(("%40s: C%02d=I%02X=S%02X=T%03d [%04s]\n", "SKW_QUERY_GDAT_ENTRY_IF_LOADABLE", eaxb, ebxb, edxb, ecxb, SPX_STR_DATATYPE(ecxb) ));
+LOGX(("%40s: C%02d=I%02X=S%02X=T%03d [%04s]\n", "SKW_QUERY_GDAT_ENTRY_IF_LOADABLE", eaxb, edxb, ecxb, ebxb, SPX_STR_DATATYPE(ebxb) ));
   u_bbwlong* ptrrg4 = DM2_QUERY_GDAT_ENTRYPTR(eaxb, ebxb, ecxb, edxb);
   if (ptrrg4 == NULL)
     return false;

@@ -10590,10 +10590,11 @@ x16 SKW_PUT_OBJECT_INTO_CONTAINER(x16 eaxw)
   return wordrg5;
 }
 
-x16 SKW_QUERY_GDAT_CREATURE_WORD_VALUE(x8 eaxb, x8 edxb)
+//x16 SKW_QUERY_GDAT_CREATURE_WORD_VALUE(x8 eaxb, x8 edxb)
+x16 SKW_QUERY_GDAT_CREATURE_WORD_VALUE(ui16 eaxb, x8 edxb)	// SPX fix to avoid negative values; eaxb is the Creature index
 {
   x8 byterg4h;
-  x8 byterg6;
+  ui16 byterg6;	//x8 byterg6;
   x8* bptrrg5;
   x16 vw_00; // BUGFIX 41/2014
   bool doit = false; // added
@@ -10626,12 +10627,14 @@ x16 SKW_QUERY_GDAT_CREATURE_WORD_VALUE(x8 eaxb, x8 edxb)
     vw_00 = unsignedword(*bptrrg5);
     if (vw_00 == con(0xff))
     {
-      vw_00 = DM2_QUERY_GDAT_ENTRY_DATA_INDEX(con(0xf), con(0xb), edxb, byterg6);
+      //vw_00 = DM2_QUERY_GDAT_ENTRY_DATA_INDEX(con(0xf), con(0xb), edxb, byterg6);
+	  vw_00 = DM2_QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_CREATURES, dtWordValue, edxb, byterg6);
       *bptrrg5 = CUTX8(vw_00);
     }
     return vw_00;
   }
-  return DM2_QUERY_GDAT_ENTRY_DATA_INDEX(con(0xf), con(0xb), edxb, eaxb);
+  //return DM2_QUERY_GDAT_ENTRY_DATA_INDEX(con(0xf), con(0xb), edxb, eaxb);
+  return DM2_QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_CREATURES, dtWordValue, edxb, eaxb);
 }
 
 x16 SKW_1031_03f2(s_bbw* eaxpbbw, x16 edxw)
@@ -31011,7 +31014,8 @@ void SKW_LOAD_LOCALLEVEL_DYN(void)
   x16 vw_20;
   x16 vw_24;
   x16 vw_30;
-  x8 vb_34;
+  //x8 vb_34;
+  ui16 vb_34;	// SPX: this holds the Creature index, and must be unsigned
   bool flag;
 
   ui16 vuw_1c;
@@ -31022,57 +31026,58 @@ void SKW_LOAD_LOCALLEVEL_DYN(void)
   gptrrg5 = UPCAST(t_gfxdata, DM2_ALLOC_LOBIGPOOL_MEMORY(con(0xfa), true));
   pb_0c = DM2_ALLOC_LOBIGPOOL_MEMORY(con(0xfa), true);
   pb_10 = DM2_ALLOC_LOBIGPOOL_MEMORY(con(0xfa), true);
-  SKW_MARK_DYN_LOAD(con(0x1ff02ff));
-  SKW_MARK_DYN_LOAD(con(0x18ff02ff));
-  SKW_MARK_DYN_LOAD(con(0x7ff02ff));
+  SKW_MARK_DYN_LOAD(con(0x01ff02ff)); // Mark: Interface - main screen, snd, all
+  SKW_MARK_DYN_LOAD(con(0x18ff02ff)); // Mark: Teleporter, all, snd, all
+  SKW_MARK_DYN_LOAD(con(0x07ff02ff)); // Mark: Interface - character sheet, all, snd, all
   if (dm2_dballochandler.v1e13fe[0] == con(0x0))
   {
-    SKW_MARK_DYN_LOAD(con(0xd0002ff));
+    SKW_MARK_DYN_LOAD(con(0x0d0002ff)); // Mark: Missiles, fireball, snd, all
     ddata.v1e09a0[3 * (ddata.v1e09a4 - con(0x1))] = con(0x1);
-    SKW_MARK_DYN_LOAD(con(0xd2f02ff));
-    SKW_MARK_DYN_LOAD(con(0xd7e02ff));
+    SKW_MARK_DYN_LOAD(con(0x0d2f02ff)); // Mark: Missiles, 0x2F(?), snd, all
+    SKW_MARK_DYN_LOAD(con(0x0d7e02ff)); // Mark: Missiles, 0x7E(?), snd, all
     ddata.v1e09a0[3 * (ddata.v1e09a4 - con(0x1))] = con(0x1);
-    SKW_MARK_DYN_LOAD(con(0xd9f02ff));
+    SKW_MARK_DYN_LOAD(con(0x0d9f02ff)); // Mark: Missiles, 0x9F(?), snd, all
   }
   else
-    SKW_MARK_DYN_LOAD(con(0xdff02ff));
-  SKW_MARK_DYN_LOAD(con(0x10ff02ff));
+    SKW_MARK_DYN_LOAD(con(0xdff02ff)); // Mark: Missiles, all, snd, all
+  SKW_MARK_DYN_LOAD(con(0x10ff02ff)); // Mark: Weapons, all, snd, all
   ddata.v1e09a0[3 * (ddata.v1e09a4 - con(0x1))] = con(0x1);
-  SKW_MARK_DYN_LOAD(con(0x15ff02ff));
-  SKW_MARK_DYN_LOAD(con(0x30002ff));
-  SKW_MARK_DYN_LOAD(con(0x8fe02ff));
-  SKW_MARK_DYN_LOAD(con(0x16fe02ff));
-  SKW_MARK_DYN_LOAD(con(0x9fe02ff));
-  SKW_MARK_DYN_LOAD(con(0xafe02ff));
-  SKW_MARK_DYN_LOAD(con(0xfff08fb));
-  SKW_MARK_DYN_LOAD(con(0xfff07fc));
-  SKW_MARK_DYN_LOAD(con(0x1ffffff));
-  SKW_MARK_DYN_LOAD(con(0x1000400));
+  SKW_MARK_DYN_LOAD(con(0x15ff02ff)); // Mark: Misc, all, snd, all
+  SKW_MARK_DYN_LOAD(con(0x030002ff)); // Mark: Messages, all, snd, all
+  SKW_MARK_DYN_LOAD(con(0x08fe02ff)); // Mark: Dungeon graphics, 0xFE, snd, all
+  SKW_MARK_DYN_LOAD(con(0x16fe02ff)); // Mark: Champions, 0xFE, snd, all
+  SKW_MARK_DYN_LOAD(con(0x09fe02ff)); // Mark: Wall ornates, 0xFE, snd, all
+  SKW_MARK_DYN_LOAD(con(0x0afe02ff)); // Mark: Floor ornates, 0xFE, snd, all
+  SKW_MARK_DYN_LOAD(con(0x0fff08fb)); // Mark PC-DOS: Creatures, all, raw08, anim attribution
+  SKW_MARK_DYN_LOAD(con(0x0fff07fc)); // Mark PC-DOS: Creatures, all, raw07, anim info sequence
+  SKW_MARK_DYN_LOAD(con(0x01ffffff)); // Mark: Interface - main screen, all, all, all
+  SKW_MARK_DYN_LOAD(con(0x01000400)); // Mark: Interface - main screen, 0x00, rect, 0x00
   ddata.v1e09a0[3 * (ddata.v1e09a4 - con(0x1))] |= con(0x8000);
-  SKW_MARK_DYN_LOAD(con(0x1000600));
+  SKW_MARK_DYN_LOAD(con(0x01000600)); // Mark: Interface - main screen, 0x00, raw06, 0x00
   ddata.v1e09a0[3 * (ddata.v1e09a4 - con(0x1))] |= con(0x8000);
-  SKW_MARK_DYN_LOAD(con(0x100070a));
+  SKW_MARK_DYN_LOAD(con(0x0100070a)); // Mark: Interface - main screen, 0x00, raw07, 0x0A
   ddata.v1e09a0[3 * (ddata.v1e09a4 - con(0x1))] |= con(0x8000);
-  SKW_MARK_DYN_LOAD(con(0x1a80ffff));
-  SKW_MARK_DYN_LOAD(con(0x1a81ffff));
-  SKW_MARK_DYN_LOAD(con(0x300ffff));
-  SKW_MARK_DYN_LOAD(con(0x700ffff));
+  //SKW_MARK_DYN_LOAD(0x1cffffff); // Mark: Japanese fonts, all, all, all	// Used in PC-9821 version, not PC-DOS
+  SKW_MARK_DYN_LOAD(con(0x1a80ffff)); // Mark: Dialog boxes, Load/cancel, all, all
+  SKW_MARK_DYN_LOAD(con(0x1a81ffff)); // Mark: Dialog boxes, Save/cancel, all, all
+  SKW_MARK_DYN_LOAD(con(0x0300ffff)); // Mark: Messages, 0x00, all, all
+  SKW_MARK_DYN_LOAD(con(0x0700ffff)); // Mark: Interface - character sheet, 0x00, all, all
   if (dm2_dballochandler.v1e13fe[0] == con(0x0))
   {
-    SKW_MARK_DYN_LOAD(con(0xd00ffff));
+    SKW_MARK_DYN_LOAD(con(0x0d00ffff)); // Mark: Missiles, fireball, all, all
     ddata.v1e09a0[3 * (ddata.v1e09a4 - con(0x1))] = con(0x1);
-    SKW_MARK_DYN_LOAD(con(0xd2fffff));
-    SKW_MARK_DYN_LOAD(con(0xd7effff));
+    SKW_MARK_DYN_LOAD(con(0x0d2fffff)); // Mark: Missiles, 0x2F(?), all, all
+    SKW_MARK_DYN_LOAD(con(0x0d7effff)); // Mark: Missiles, 0x7E(?), all, all
     ddata.v1e09a0[3 * (ddata.v1e09a4 - con(0x1))] = con(0x1);
-    SKW_MARK_DYN_LOAD(con(0xd9fffff));
+    SKW_MARK_DYN_LOAD(con(0x0d9fffff)); // Mark: Missiles, 0x9F(?), all, all
   }
   else
-    SKW_MARK_DYN_LOAD(con(0xdffffff));
-  SKW_MARK_DYN_LOAD(con(0x10ffffff));
+    SKW_MARK_DYN_LOAD(con(0x0dffffff)); // Mark: Missiles, all, all, all
+  SKW_MARK_DYN_LOAD(con(0x10ffffff)); // Mark: Weapons, all, all, all
   ddata.v1e09a0[3 * (ddata.v1e09a4 - con(0x1))] = con(0x1);
-  SKW_MARK_DYN_LOAD(con(0x15ffffff));
-  SKW_MARK_DYN_LOAD(con(0xffff01f9));
-  SKW_2676_008f(con(0xfff0510), con(0x39));
+  SKW_MARK_DYN_LOAD(con(0x15ffffff)); // Mark: Misc, all, all, all
+  SKW_MARK_DYN_LOAD(con(0xffff01f9)); // Mark: All, all, image, 0xF9(Map chip)
+  SKW_2676_008f(con(0xfff0510), con(0x39)); // Mark: Creature, all, text, 0x10(My enemies) to 0x39(?)
   ddata.v1e09a0[3 * (ddata.v1e09a4 - con(0x2))] &= con(0x7fff);
   SKW_MARK_DYN_LOAD(((signedlong(ddata.v1d3248) + 1) << con(0x10)) + con(0x30002ff));
   pb_04 = *ddata.savegamepp1;
@@ -31099,9 +31104,9 @@ void SKW_LOAD_LOCALLEVEL_DYN(void)
         }
       }
       if ((dm2_dballochandler.v1e13fe[0] != con(0x0)) || (dm2_dballochandler.v1e0a84 && ddata.savegamew2 != con(0x4)))
-        SKW_MARK_DYN_LOAD(con(0x16ffffff));
+        SKW_MARK_DYN_LOAD(con(0x16ffffff));	// Mark: Champions, all, all, all
       if ((dm2_dballochandler.v1e13fe[0] != con(0x0)) || ((ddata.v1e03c0->u0.u.b.b2 & con(0x20)) != con(0x0)))
-        SKW_MARK_DYN_LOAD(con(0x18ffffff));
+        SKW_MARK_DYN_LOAD(con(0x18ffffff)); // Mark: Teleporter, all, all, all
       if ((ddata.v1e03c0->u0.u.b.b2 & con(0xffffff80)) == con(0x0))
         ddata.v1e040e[0] = con(0xffffffff);
       else
@@ -31131,12 +31136,12 @@ void SKW_LOAD_LOCALLEVEL_DYN(void)
         if (!boolrg7)
           skip = true;
         else
-          longrg111 = con(0xefe02ff);
+          longrg111 = con(0x0efe02ff); // Mark: Doors, 0xFE, snd, all
       }
       else
       {
         boolrg6 = true;
-        longrg111 = con(0xeffffff);
+        longrg111 = con(0x0effffff); // Mark: Doors, all, all, all
       }
       if (!skip)
         SKW_MARK_DYN_LOAD(longrg111);
@@ -31180,7 +31185,8 @@ void SKW_LOAD_LOCALLEVEL_DYN(void)
             SKW_2676_008f(longrg44 + con(0x80001fc), con(0xfe));
           }
       }
-      ddata.v1e1472 = DM2_QUERY_GDAT_ENTRY_DATA_INDEX(con(0x8), con(0xb), con(0x66), ddata.v1d6c02);
+      //ddata.v1e1472 = DM2_QUERY_GDAT_ENTRY_DATA_INDEX(con(0x8), con(0xb), con(0x66), ddata.v1d6c02);
+	  ddata.v1e1472 = DM2_QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, dtWordValue, GDAT_GFXSET_SCENE_RAIN, ddata.v1d6c02);
       if (dm2_dballochandler.v1e13fe[0] == con(0x0))
         if (table1d6b76[4 * ddata.v1e1472 + 0x70] != con(0x0))
           SKW_MARK_DYN_LOAD(con(0xd30ffff));
@@ -31202,7 +31208,7 @@ void SKW_LOAD_LOCALLEVEL_DYN(void)
         }
       }
       else
-        SKW_MARK_DYN_LOAD(con(0x9ffffff));
+        SKW_MARK_DYN_LOAD(con(0x09ffffff)); // Mark: Wall ornates, all, all, all
       for ( vuw_1c = con(0x0); UI16CAST(ulrshift(ddata.v1e03c0->wa, con(0x4), con(0xc))) > vuw_1c; vuw_1c++)
         pb_10[ddata.v1e02dc[vuw_1c]] = con(0x1);
       if (dm2_dballochandler.v1e13fe[0] == con(0x0))
@@ -31216,20 +31222,20 @@ void SKW_LOAD_LOCALLEVEL_DYN(void)
         }
       }
       else
-        SKW_MARK_DYN_LOAD(con(0xaffffff));
+        SKW_MARK_DYN_LOAD(con(0x0affffff)); // Mark: Floor ornates, all, all, all
       if (dm2_dballochandler.v1e13fe[0] == con(0x0))
       {
         for ( vuw_1c = con(0x0); UI16CAST(ddata.v1e03c0->wc & con(0xf)) > vuw_1c; vuw_1c++)
           SKW_MARK_DYN_LOAD((unsignedlong(ddata.v1e0414[vuw_1c]) << con(0x10)) + con(0xb00ffff));
       }
       else
-        SKW_MARK_DYN_LOAD(con(0xbffffff));
+        SKW_MARK_DYN_LOAD(con(0x0bffffff)); // Mark: Door ornates, all, all, all
       if ((dm2_dballochandler.v1e13fe[0] != con(0x0)) || boolrg6)
-        SKW_MARK_DYN_LOAD(con(0xcffffff));
+        SKW_MARK_DYN_LOAD(con(0x0cffffff));
       for ( vuw_1c = con(0x0); ulrshift(ddata.v1e03c0->wc, con(0x8), con(0xc)) > vuw_1c; vuw_1c++)
         gptrrg5[ddata.v1e03c4[vuw_1c]] = con(0x1);
       if (dm2_dballochandler.v1e13fe[0] != con(0x0))
-        SKW_MARK_DYN_LOAD(con(0xfffffff));
+        SKW_MARK_DYN_LOAD(con(0x0fffffff)); // Mark: Creatures, all, all, all
       vb_34 = con(0x0);
       while (UI8CAST(vb_34) < UI8CAST(con(0xfffffffa)))
       {
@@ -31262,14 +31268,22 @@ void SKW_LOAD_LOCALLEVEL_DYN(void)
       if (!dm2_dballochandler.v1e0a84)
         SKW_LOAD_MISCITEM();
       // TODO: some bools here
-      ddata.v1e1481 = SKW_QUERY_GDAT_ENTRY_IF_LOADABLE(con(0x17), con(0x1), con(0x64), ddata.v1d6c02) ? 1 : 0;
-      ddata.v1e1479 = SKW_QUERY_GDAT_ENTRY_IF_LOADABLE(con(0x17), con(0x1), con(0x6a), ddata.v1d6c02) ? 1 : 0;
-      ddata.v1e147a = SKW_QUERY_GDAT_ENTRY_IF_LOADABLE(con(0x17), con(0x1), con(0x67), ddata.v1d6c02) ? 1 : 0;
-      ddata.v1e147c = SKW_QUERY_GDAT_ENTRY_IF_LOADABLE(con(0x17), con(0x1), con(0x71), ddata.v1d6c02) ? 1 : 0;
-      ddata.v1d6c00 = DM2_QUERY_GDAT_ENTRY_DATA_INDEX(con(0x8), con(0xb), con(0x64), ddata.v1d6c02);
-      ddata.v1e12d6 = DM2_QUERY_GDAT_ENTRY_DATA_INDEX(con(0x8), con(0xb), con(0x65), ddata.v1d6c02);
-      ddata.v1e03f8 = DM2_QUERY_GDAT_ENTRY_DATA_INDEX(con(0x8), con(0xb), con(0x6d), ddata.v1d6c02);
-      ddata.v1e0400 = DM2_QUERY_GDAT_ENTRY_DATA_INDEX(con(0x8), con(0xb), con(0x72), ddata.v1d6c02);
+//      ddata.v1e1481 = SKW_QUERY_GDAT_ENTRY_IF_LOADABLE(con(0x17), con(0x1), con(0x64), ddata.v1d6c02) ? 1 : 0;
+//      ddata.v1e1479 = SKW_QUERY_GDAT_ENTRY_IF_LOADABLE(con(0x17), con(0x1), con(0x6a), ddata.v1d6c02) ? 1 : 0;
+//      ddata.v1e147a = SKW_QUERY_GDAT_ENTRY_IF_LOADABLE(con(0x17), con(0x1), con(0x67), ddata.v1d6c02) ? 1 : 0;
+//      ddata.v1e147c = SKW_QUERY_GDAT_ENTRY_IF_LOADABLE(con(0x17), con(0x1), con(0x71), ddata.v1d6c02) ? 1 : 0;
+      ddata.v1e1481 = SKW_QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_ENVIRONMENT, dtImage, GDAT_ENVWTH_THUNDER_1, ddata.v1d6c02) ? 1 : 0;	// 0x64
+      ddata.v1e1479 = SKW_QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_ENVIRONMENT, dtImage, GDAT_ENVWTH_WETGROUND_1, ddata.v1d6c02) ? 1 : 0;	// 0x6A
+      ddata.v1e147a = SKW_QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_ENVIRONMENT, dtImage, GDAT_ENVWTH_CLOUDSKY_1, ddata.v1d6c02) ? 1 : 0;	// 0x67
+      ddata.v1e147c = SKW_QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_ENVIRONMENT, dtImage, GDAT_ENVWTH_RAINFALL_STRAIGHT_1, ddata.v1d6c02) ? 1 : 0;	// 0x71
+//      ddata.v1d6c00 = DM2_QUERY_GDAT_ENTRY_DATA_INDEX(con(0x8), con(0xb), con(0x64), ddata.v1d6c02);
+//      ddata.v1e12d6 = DM2_QUERY_GDAT_ENTRY_DATA_INDEX(con(0x8), con(0xb), con(0x65), ddata.v1d6c02);
+//      ddata.v1e03f8 = DM2_QUERY_GDAT_ENTRY_DATA_INDEX(con(0x8), con(0xb), con(0x6d), ddata.v1d6c02);
+//      ddata.v1e0400 = DM2_QUERY_GDAT_ENTRY_DATA_INDEX(con(0x8), con(0xb), con(0x72), ddata.v1d6c02);
+      ddata.v1d6c00 = DM2_QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, dtWordValue, GDAT_GFXSET_SCENE_COLORKEY, ddata.v1d6c02);	// 0x64
+      ddata.v1e12d6 = DM2_QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, dtWordValue, GDAT_GFXSET_SCENE_FLAGS, ddata.v1d6c02);	// 0x65
+      ddata.v1e03f8 = DM2_QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, dtWordValue, GDAT_GFXSET_AMBIANT_DARKNESS, ddata.v1d6c02);	// 0x6D
+      ddata.v1e0400 = DM2_QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, dtWordValue, GDAT_GFXSET_x72, ddata.v1d6c02);	// 0x72
       if (ddata.v1e0400 == con(0x0))
         ddata.v1e0400 = con(0x1);
       DM2_DEALLOC_LOBIGPOOL(con(0xfa));
