@@ -387,54 +387,57 @@ X16 SkWinCore::EXTENDED_LOAD_AI_DEFINITION(void)
 	}
 
 	//--- Write info about AI values
-	Write2LOGX("CREATURE/OBJECT AI INFO:\nNumber of AI : %d", MAXAI);
-	for (index = 0; index < MAXAI; index++)
+	if (0) // write log or not
 	{
-		Write2LOGX("#%03d) <%24s>\n\tHit Points: %4d",
-			index,
-			getAIName(index),
-			dAITable[index].BaseHP);
-		if (dAITable[index].ArmorClass == 255)
-			Write2LOGX("\tArmor: Indestructible");	
-		else
-			Write2LOGX("\tArmor: %d", dAITable[index].ArmorClass);	
-		if (dAITable[index].Defense != 0)
-			Write2LOGX("\tDefense: %d", dAITable[index].Defense);	
-		if (dAITable[index].AttackStrength != 0)
-			Write2LOGX("\tAttack Strength: %d", dAITable[index].AttackStrength);	
-		if (dAITable[index].PoisonDamage != 0)
-			Write2LOGX("\tPoison Damage: %d", dAITable[index].PoisonDamage);	
-
-		if (dAITable[index].AttacksSpells != 0)
+		Write2LOGX("CREATURE/OBJECT AI INFO:\nNumber of AI : %d", MAXAI);
+		for (index = 0; index < MAXAI; index++)
 		{
-			if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__PUSH_BACK)
-				Write2LOGX("\tCan knock back.");	
-			if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__MELEE)
-				Write2LOGX("\tCan do melee attack.");	
-			if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__STEAL)
-				Write2LOGX("\tCan steal.");	
-			if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__FIREBALL)
-				Write2LOGX("\tCan cast Fireball.");	
-			if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__DISPELL)
-				Write2LOGX("\tCan cast Dispell.");	
-			if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__LIGHTNING)
-				Write2LOGX("\tCan cast Lightning.");	
-			if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__POISON_CLOUD)
-				Write2LOGX("\tCan cast Poison Cloud.");	
-			if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__POISON_BOLT)
-				Write2LOGX("\tCan cast Poison Bolt.");	
-			if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__PUSH_SPELL)
-				Write2LOGX("\tCan cast Push.");	
-			if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__PULL_SPELL)
-				Write2LOGX("\tCan cast Pull.");	
-			if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__POISON_BLOB)
-				Write2LOGX("\tCan can Poison Blob.");	
-			if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__SHOOT)
-				Write2LOGX("\tCan shoot items.");	
+			Write2LOGX("#%03d) <%24s>\n\tHit Points: %4d",
+				index,
+				getAIName(index),
+				dAITable[index].BaseHP);
+			if (dAITable[index].ArmorClass == 255)
+				Write2LOGX("\tArmor: Indestructible (255)");	
+			else
+				Write2LOGX("\tArmor: %d", dAITable[index].ArmorClass);	
+			if (dAITable[index].Defense != 0)
+				Write2LOGX("\tDefense: %d", dAITable[index].Defense);	
+			if (dAITable[index].AttackStrength != 0)
+				Write2LOGX("\tAttack Strength: %d", dAITable[index].AttackStrength);	
+			if (dAITable[index].PoisonDamage != 0)
+				Write2LOGX("\tPoison Damage: %d", dAITable[index].PoisonDamage);	
+
+			if (dAITable[index].AttacksSpells != 0)
+			{
+				if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__PUSH_BACK)
+					Write2LOGX("\tCan knock back.");	
+				if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__MELEE)
+					Write2LOGX("\tCan do melee attack.");	
+				if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__STEAL)
+					Write2LOGX("\tCan steal.");	
+				if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__FIREBALL)
+					Write2LOGX("\tCan cast Fireball.");	
+				if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__DISPELL)
+					Write2LOGX("\tCan cast Dispell.");	
+				if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__LIGHTNING)
+					Write2LOGX("\tCan cast Lightning.");	
+				if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__POISON_CLOUD)
+					Write2LOGX("\tCan cast Poison Cloud.");	
+				if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__POISON_BOLT)
+					Write2LOGX("\tCan cast Poison Bolt.");	
+				if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__PUSH_SPELL)
+					Write2LOGX("\tCan cast Push.");	
+				if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__PULL_SPELL)
+					Write2LOGX("\tCan cast Pull.");	
+				if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__POISON_BLOB)
+					Write2LOGX("\tCan can Poison Blob.");	
+				if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__SHOOT)
+					Write2LOGX("\tCan shoot items.");	
+			}
+
+
+			Write2LOGX("\n");
 		}
-
-
-		Write2LOGX("\n");
 	}
 
 	return rc;
@@ -5556,6 +5559,7 @@ _1156:
 //^3E74:506B
 Bit8u *SkWinCore::QUERY_GDAT_ENTRY_DATA_PTR(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4)
 {
+LOGX(("%40s: C%02d=I%02X=E%02X=T%03d", "QUERY_GDAT_ENTRY_DATA_PTR for ", cls1, cls2, cls4, cls3 ));
 	//^3E74:506B
 	ENTER(6);
 	//^3E74:5070
@@ -20400,6 +20404,7 @@ void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 	}
 	//^2F3F:01BC
 	champion->lastName[bp0e] = 0;
+DEBUG_DUMP_ULP();
 	skhero *bp08 = reinterpret_cast<skhero *>(QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_CHAMPIONS, U8(heroType), dt08, 0x00));
 #if DM2_EXTENDED_MODE == 1	// TODOTo be replaced with fixedmode + checkmem
 	if (bp08 == NULL)
@@ -21912,6 +21917,7 @@ void SkWinCore::_32cb_0c7d(ExtendedPicture *ref, U16 xx, U16 yy)
 //^3E74:5163
 Bit8u *SkWinCore::QUERY_GDAT_ENTRY_DATA_BUFF(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4)
 {
+LOGX(("%40s: C%02d=I%02X=E%02X=T%03d to %08X", "QUERY_GDAT_ENTRY_DATA_BUFF from ", cls1, cls2, cls4, cls3 ));
 	//^3E74:5163
 	i16 si = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, cls3, cls4);
 	//^3E74:5181
@@ -32934,6 +32940,8 @@ void SkWinCore::DEALLOC_LOWER_MEMORY(Bit32u size) //#DS=4976?
 //^3E74:5AB7
 Bit16u SkWinCore::QUERY_GDAT_ENTRY_DATA_LENGTH(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4)
 {
+LOGX(("%40s: C%02d=I%02X=E%02X=T%03d = %08X (%06d)", "QUERY_GDAT_ENTRY_DATA_LENGTH of ", cls1, cls2, cls4, cls3, QUERY_GDAT_RAW_DATA_LENGTH(QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, cls3, cls4)), QUERY_GDAT_RAW_DATA_LENGTH(QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, cls3, cls4)) ));
+
 	//^3E74:5AB7
 	return QUERY_GDAT_RAW_DATA_LENGTH(
 		QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, cls3, cls4)
@@ -32960,6 +32968,7 @@ void SkWinCore::LOAD_RECTS_AND_COMPRESS(Bit8u cls1, Bit8u cls2, Bit8u cls4) //#D
 //^3E74:51E4
 void SkWinCore::LOAD_GDAT_ENTRY_DATA_TO(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4, Bit8u *where) //#DS=4976?
 {
+LOGX(("%40s: C%02d=I%02X=E%02X=T%03d to %08X", "LOAD_GDAT_ENTRY_DATA_TO of ", cls1, cls2, cls4, cls3, where ));
 	// TODO: –{ƒYƒŒ”Ÿ”
 	//^3E74:51E4
 	Bit16u si = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, cls3, cls4);
@@ -34496,6 +34505,7 @@ RawEntry *SkWinCore::QUERY_GDAT_ENTRYPTR(Bit8u iCategory, Bit16u iItem, Bit8u iT
 //Bit16u SkWinCore::QUERY_GDAT_ENTRY_IF_LOADABLE(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4)
 Bit16u SkWinCore::QUERY_GDAT_ENTRY_IF_LOADABLE(Bit8u iCategory, Bit8u iItemIndex, Bit8u iDataType, Bit8u iEntryNumber)
 {
+LOGX(("%40s: C%02d=I%02X=E%02X=T%03d to %08X", "QUERY_GDAT_ENTRY_IF_LOADABLE", iCategory, iItemIndex, iEntryNumber, iDataType ));
 	//^3E74:1CF3
 	//^3E74:1CF7
 	RawEntry *bp04 = QUERY_GDAT_ENTRYPTR(iCategory, iItemIndex, iDataType, iEntryNumber);
@@ -36303,6 +36313,7 @@ void SkWinCore::COPY_MEMORY(const void *buffSrc, void *buffDst, Bit32u buffSize)
 //U16 SkWinCore::QUERY_GDAT_ENTRY_DATA_INDEX(U8 cls1, U16 cls2, U8 cls3, U16 cls4)
 U16 SkWinCore::QUERY_GDAT_ENTRY_DATA_INDEX(U8 iCategory, U16 iItem, U8 iType, U16 iEntry)
 {
+LOGX(("%40s: C%02d=I%02X=E%02X=T%03d to %08X", "QUERY_GDAT_ENTRY_DATA_INDEX from ", iCategory, iItem, iEntry, iType ));
 	//^3E74:189B
 	RawEntry *bp04 = QUERY_GDAT_ENTRYPTR(iCategory, iItem, iType, iEntry);
 	if (bp04 == NULL) {
@@ -44174,7 +44185,7 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 		LOAD_MISCITEM();
 	//^2676:0CBB
 	glbRainHasThunderImage = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_THUNDER_1)); // 0x64 thunder
-	glbRainHasWetGround = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_WETGROUND_1)); // 0x6a water floor
+	glbRainHasWetGround = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_WETGROUND_1)); // 0x6a wet floor
 	glbRainHasCloudSky = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_CLOUDSKY_1)); // 0x67 ceil cloud
 	glbRainHasRainFall = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_RAINFALL_STRAIGHT_1)); // 0x71 vertical direct rain fall
 	glbSceneColorKey = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_SCENE_COLORKEY); // colorkey
@@ -53512,9 +53523,80 @@ void SkWinCore::DEBUG_DISPLAY_GDAT_MAIN_INFO()
 	{
 		LOGX(("ShelfMemTab: %04d => Val = %08X [%d] (%05d)", iItemIndex, glbShelfMemoryTable[iItemIndex].val, glbShelfMemoryTable[iItemIndex].Absent(), (glbShelfMemoryTable[iItemIndex].val & 0x7FFFFFF) ));
 	}
+	// Max of each category
+	unsigned int iCategoryIndex = 0;
+	for (iCategoryIndex = 0; iCategoryIndex < 26; iCategoryIndex++) 
+	{
+		unsigned int iMaxItemsForCategory = 0;
+		iMaxItemsForCategory = _3e74_2439(iCategoryIndex, 0x0B);
+		LOGX(("Category: %02d => # %03d", iCategoryIndex, iMaxItemsForCategory ));
+	}
 	LOGX(("============================"));
 
 }
+
+#define MIN(a,b) ( (a < b) ? a : b )
+
+void SkWinCore::DEBUG_DUMP_ULP()
+{
+	unsigned int iItemNumber = 0;
+LOGX(("============================\n"));
+LOGX(("ULP >> "));
+	for (iItemNumber = 0; iItemNumber < glbGDatNumberOfData; iItemNumber++)
+	{
+		char sInfoPointer[8];
+		char sData[128];
+		U32 val = 0;
+		memset(sInfoPointer, 0, 8);
+		memset(sData, 0, 128);
+		//shelf_memory *glbShelfMemoryTable
+		//u_lp* p = dm2_ulp.getadr(iItemNumber);
+		shelf_memory* p = &glbShelfMemoryTable[iItemNumber];
+		val = glbShelfMemoryTable[iItemNumber].val;
+		//shelf_memory();
+		if (p != NULL && (void*) p < (void*) 0x70000000)	// assume else it is not valid
+		{
+			Bit8u* xDataPointer = NULL;
+			unsigned int iLength = 0;
+			iLength = QUERY_GDAT_RAW_DATA_LENGTH(iItemNumber);
+			iLength= iLength & 0x7FFFFFFF;
+
+			
+			if (val & 0x80000000) // not a direct pointer
+			{
+				unsigned int iMemOffset = val & 0x7FFFFFFF;
+				sprintf(sInfoPointer, "(np)");
+			}
+			else
+			{
+				xDataPointer = REALIZE_GRAPHICS_DATA_MEMORY(glbShelfMemoryTable[iItemNumber]);
+			}
+			if (xDataPointer != NULL) // we have a valid data pointer
+			{
+				unsigned int iMaxBytesToDisplay = MIN(16, iLength);
+				unsigned char* pData;
+				char* sWriteData = (char*) sData;
+
+				pData = (unsigned char*) xDataPointer;
+				for (unsigned int iByte = 0; iByte < iMaxBytesToDisplay; iByte++)
+				{
+					sprintf(sWriteData, "%02X ", pData[iByte]);
+					pData++;
+					sWriteData+=3;
+				}
+
+			}
+			
+			
+			LOGX(("u_lp #%04d: %08x || x32 = %08x %4s -> len = %05d (%04X) || i8* = %08X  || Data = %s", iItemNumber, p, val, sInfoPointer, iLength, iLength, xDataPointer, sData)); 
+				
+		}
+		else
+			LOGX(("p %04d: %08x ", iItemNumber, p));
+	}
+LOGX(("============================\n"));
+}
+
 
 //^3E74:2641
 void SkWinCore::READ_GRAPHICS_STRUCTURE()
@@ -54387,7 +54469,8 @@ X16 SkWinCore::_38c8_0224(X16 xx, i32 yy)
 }
 
 //^3E74:1330
-void SkWinCore::_3e74_1330(X8 *xx)
+// SPX _3e74_1330 renamed ALLOC_CPX_SETUP
+void SkWinCore::ALLOC_CPX_SETUP(X8 *xx)
 {
 	//^3E74:1330
 	ENTER(26);
@@ -54501,7 +54584,8 @@ void SkWinCore::INIT()
 	_482b_0004();
 	LOAD_GDAT_INTERFACE_00_0A();
 	U8 *bp04 = ALLOC_MEMORY_RAM(0x400, afUseLower, 1024);
-	LOAD_GDAT_ENTRY_DATA_TO(0x1, 0x0, dt09, 0xfe, bp04);
+DEBUG_DUMP_ULP();
+	LOAD_GDAT_ENTRY_DATA_TO(0x1, 0x0, dt09, 0xfe, bp04);	// C01=I00=EFE=T009 palette IRGB
 	_44c8_1baf(bp04);
 	DEALLOC_LOWER_MEMORY(0x400);
 	LOAD_GDAT_INTERFACE_00_02();
@@ -54532,7 +54616,7 @@ void SkWinCore::INIT()
 	//^38C8:05D7
 	GRAPHICS_DATA_OPEN();
 	__LOAD_CREATURE_FROM_DUNGEON();
-	_3e74_1330(_4976_4736);
+	ALLOC_CPX_SETUP(_4976_4736);
 	__INIT_GAME_38c8_03ad();
 	GRAPHICS_DATA_CLOSE();
 	if (glbSpecialScreen != 0) {

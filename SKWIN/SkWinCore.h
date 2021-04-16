@@ -1938,7 +1938,7 @@ protected:
 	void _38c8_0104();
 	void INIT_CPXHEAP(sk5d12 *ref, tiamat poolBuff, U32 poolSize, U16 poolflag);
 	X16 _38c8_0224(X16 xx, i32 yy);
-	void _3e74_1330(X8 *xx);
+	void ALLOC_CPX_SETUP(X8 *xx);	// _3e74_1330 renamed ALLOC_CPX_SETUP
 	X16 _00eb_05c7(U8 (*pal)[4], X16 yy);
 	void _44c8_1baf(U8 *pal);
 	void INIT();	// _38c8_04aa renamed INIT
@@ -2163,7 +2163,9 @@ public:
 	int IBMIO_BOOTSTRAP();
 	void _sys_intr();
 
+	/// SPX: Debug & display for easier comparison with SkWinDOS
 	void DEBUG_DISPLAY_GDAT_MAIN_INFO();
+	void DEBUG_DUMP_ULP();
 
 };
 
