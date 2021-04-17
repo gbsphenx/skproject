@@ -262,6 +262,7 @@ static bool SKW_38c8_0109(const x8** eaxpp, x16* ebxpw, x32* edxpl)
 // old name: SKW_3e74_1330
 void SKW_ALLOC_CPX_SETUP(const x8* eaxp)
 {
+SPX_DEBUG_PUSH_FUNCTION_INFO("SKW_ALLOC_CPX_SETUP");
   void* p_seof = dm2_allochandler.secondpool_endoffree;
   x32 sp_ava = dm2_allochandler.secondpool_available;
   void* p_eof = dm2_allochandler.bigpool_endoffree;
@@ -303,6 +304,7 @@ void SKW_ALLOC_CPX_SETUP(const x8* eaxp)
     rg1 = SKW_38c8_0224(!bo, vl_04);
   } while (!rg1);
   dm2_dballochandler.gfxalloc_done = true;
+SPX_DEBUG_POP;
 }
 
 static void SKW_3e74_5561(x16 eaxw)

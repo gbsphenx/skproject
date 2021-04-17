@@ -148,6 +148,7 @@ bool SKW_12b4_0953(c_record* eaxprec, x16 edxw)
 
 void SKW_LOAD_NEWMAP(x16 eaxw, x16 ebxw, bool ecxbool, x16 edxw)
 {
+SPX_DEBUG_PUSH_FUNCTION_INFO("SKW_LOAD_NEWMAP");
   if (!dm2_dballochandler.v1e0a84)
   {
     SKW_FIRE_HIDE_MOUSE_CURSOR();
@@ -166,6 +167,7 @@ void SKW_LOAD_NEWMAP(x16 eaxw, x16 ebxw, bool ecxbool, x16 edxw)
       SKW_1031_098e();
     SKW_FIRE_SHOW_MOUSE_CURSOR();
   }
+SPX_DEBUG_POP;
 }
 
 c_350* SKW_13e4_0004(x16 eaxw, x8 ebxb, x16 ecxw, x8 edxb)
@@ -1506,6 +1508,7 @@ void SKW_FILL_ORPHAN_CAII(void)
 
 void SKW_1c9a_3c30(void)
 {
+SPX_DEBUG_PUSH_FUNCTION_INFO("SKW_1c9a_3c30");
   ddata.v1e08a0 = con(0x0);
   c_record* recoptrrg4 = ddata.savegameparr5[4];
   x16 wordrg2 = ddata.savegamep4->w0[con(0xa)];
@@ -1518,6 +1521,7 @@ void SKW_1c9a_3c30(void)
       ddata.v1e089c = UPCAST(s_d556, DM2_ALLOC_FREEPOOL_MEMORY(34 * unsignedlong(wordrg1)));
       ddata.v1e08cc = UPCAST(s_32bytes, DM2_ALLOC_FREEPOOL_MEMORY(con(0x400)));
       ddata.v1e08c8 = UPCAST(s_32bytes, DM2_ALLOC_FREEPOOL_MEMORY(con(0x400)));
+SPX_DEBUG_POP;
       return;
     }
     if (recoptrrg4->w0 != con(0xffffffff))
@@ -1525,6 +1529,7 @@ void SKW_1c9a_3c30(void)
         ddata.v1e08a0++;
     recoptrrg4++;
   }
+SPX_DEBUG_POP;
 }
 
 bool SKW_2066_1f37(x16 eaxw, x16* ebxpw, x16 edxw)
@@ -6460,6 +6465,7 @@ void SKW_3a15_0002(void)
 // was SKW_38c8_03ad
 void SKW__INIT_GAME_38c8_03ad(void)
 {
+SPX_DEBUG_PUSH_FUNCTION_INFO("SKW__INIT_GAME_38c8_03ad");
   ddata.v1e0228 = false;
   ddata.v1e0220 = false;
   ddata.v1e0224 = false;
@@ -6503,11 +6509,13 @@ void SKW__INIT_GAME_38c8_03ad(void)
   ddata.v1e13f4 = true;
   ddata.v1e0248 = true;
   SKW_CHECK_RECOMPUTE_LIGHT();
+SPX_DEBUG_POP;
 }
 
 // was SKW_32cb_5d0d
 void SKW_DISPLAY_VIEWPORT(x16 eaxw, x16 ebxw, x16 edxw)
 {
+SPX_DEBUG_PUSH_FUNCTION_INFO("SKW_DISPLAY_VIEWPORT");
   x16 vw_04 = ebxw;
   ddata.v1e040a = edxw;
   ddata.v1e040c = ebxw;
@@ -6571,6 +6579,7 @@ void SKW_DISPLAY_VIEWPORT(x16 eaxw, x16 ebxw, x16 edxw)
   SKW_DRAW_PLAYER_TILE();
   SKW_IBMIO_USER_INPUT_CHECK();
   DM2_DEALLOC_LOBIGPOOL(con(0x522));
+SPX_DEBUG_POP;
 }
 
 // was SKW_32cb_59ca
@@ -14875,6 +14884,7 @@ void SKW_32cb_5c67(void)
 
 bool SKW_38c8_0224(bool eaxbool, x32 edxl)
 {
+SPX_DEBUG_PUSH_FUNCTION_INFO("SKW_38c8_0224");
   x16 wordrg5;
 
   x16 vw_10 = lextended(ddata.v1e0266);
@@ -14884,7 +14894,7 @@ bool SKW_38c8_0224(bool eaxbool, x32 edxl)
   i32 longrg6 = con(0x7fffffff); // confirmed long
   wordrg5 = con(0x0);
   x16 vw_0c; // TODO: uninitialized possible?
-  while (wordrg5 < unsignedword(CUTX8(ddata.savegamep4->w0[con(0x2)]))) // TODO: check the cut!!!
+  while (wordrg5 < unsignedword(CUTX8(ddata.savegamep4->w0[con(0x2)]))) // TODO: check the cut!!!	// dunHeader->nMaps
   {
     if ((wordrg5 & con(0x3)) == con(0x0))
     {
@@ -14892,6 +14902,7 @@ bool SKW_38c8_0224(bool eaxbool, x32 edxl)
       x32 longrg1 = (signedlong(dm2_dballochandler.v1e13fa) - 1) * longrg2; // BUGFIX soundproblem
       longrg2 *= signedlong(dm2_dballochandler.v1e13f8);
       longrg1 = 500 * (signedlong(wordrg5) + con(0x1) + longrg1) / longrg2;
+	  // skwin ((i32(dunHeader->nMaps * (_4976_5be8 -1) +si +1) * 500) / i32(dunHeader->nMaps * _4976_5bf4));
       SKW_DRAW_DIALOGUE_PROGRESS(longrg1);
     }
     SKW_LOAD_NEWMAP(con(0x0), wordrg5, false, con(0x0));
@@ -14900,7 +14911,7 @@ bool SKW_38c8_0224(bool eaxbool, x32 edxl)
       longrg6 = dm2_dballochandler.v1e0a74;
       vw_0c = wordrg5;
     }
-    x16 longrg1 = dm2_dballochandler.v1e0a8c - edxl;
+    i32 longrg1 = dm2_dballochandler.v1e0a8c - edxl;	// x16 longrg1
     if (longrg1 < longrg6)
     {
       longrg6 = longrg1;
@@ -14924,7 +14935,7 @@ bool SKW_38c8_0224(bool eaxbool, x32 edxl)
       SKW_SK_PREPARE_EXIT();
     }
   dm2_dballochandler.v1e0a84 = false;
-  ddata.v1e0266 = vw_10;
+  ddata.v1e0266 = vw_10;	// SPX: glbPlayerMap ????
   ddata.v1e0270 = vw_08;
   ddata.v1e0272 = vw_04;
   if (longrg6 >= con(0x0))
@@ -14933,6 +14944,7 @@ bool SKW_38c8_0224(bool eaxbool, x32 edxl)
       SKW_0aaf_02f8(con(0xe), con(0x20));
     SKW_DRAW_DIALOGUE_PROGRESS(con(0x1f4));
   }
+SPX_DEBUG_POP;
   return longrg6 >= con(0x0);
 }
 
@@ -30993,6 +31005,7 @@ M_exit: // M_1690B:
 
 void SKW_LOAD_LOCALLEVEL_DYN(void)
 {
+SPX_DEBUG_PUSH_FUNCTION_INFO("SKW_LOAD_LOCALLEVEL_DYN");
   x16 wordrg5;
   c_record* recoptrrg1;
   c_record* recoptrrg2;
@@ -31310,6 +31323,7 @@ void SKW_LOAD_LOCALLEVEL_DYN(void)
         ddata.v1e0390.l0 = con(0x1);
         SKW_CHECK_RECOMPUTE_LIGHT();
       }
+SPX_DEBUG_POP;
       return;
     }
     // M_2B19F: co-label M_2B19B
@@ -31430,6 +31444,7 @@ void SKW_LOAD_LOCALLEVEL_DYN(void)
     }
     vw_28++;
   }
+SPX_DEBUG_POP;
 }
 
 bool SKW_19f0_0891(x8 eaxb, x16 ebxw, x16 ecxw, x16 edxw, x16 argw0, x16 argw1)

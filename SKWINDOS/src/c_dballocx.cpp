@@ -138,8 +138,8 @@ LOGX(("%40s: C%02d=I%02X=E%02X=T%03d [%04s]\n", "DM2_QUERY_GDAT_ENTRYPTR of ", e
 //x16 DM2_QUERY_GDAT_ENTRY_DATA_INDEX(x8 eaxb, x8 ebxb, x8 ecxb, x8 edxb)
 x16 DM2_QUERY_GDAT_ENTRY_DATA_INDEX(x8 eaxb, ui16 ebxb, ui16 ecxb, ui16 edxb)	// SPX fix to get positive numbers for item select such as 0xFE = 254 instead of -2 (which leads to crash)
 {
-LOGX(("%40s: C%02d=I%02X=S%02X=T%03d [%04s]\n", "QUERY_GDAT_ENTRY_DATA_LENGTH of ", eaxb, edxb, ecxb, ebxb, SPX_STR_DATATYPE(ebxb) ));
-	fprintf(logfile, "%40s: C%02d=I%02X=E%02X=T%03d\n", "DM2_QUERY_GDAT_ENTRY_DATA_INDEX", eaxb, edxb, ecxb, ebxb); // SPX: add log
+LOGX(("%40s: C%02d=I%02X=S%02X=T%03d [%04s]\n", "QUERY_GDAT_ENTRY_DATA_LENGTH of ", eaxb, ebxb, ecxb, edxb, SPX_STR_DATATYPE(edxb) ));
+	fprintf(logfile, "%40s: C%02d=I%02X=E%02X=T%03d\n", "DM2_QUERY_GDAT_ENTRY_DATA_INDEX", eaxb, ebxb, ecxb, edxb); // SPX: add log
 if (edxb > 0xFF)
 	(("BREAK"));
   u_bbwlong* ptrrg4 = DM2_QUERY_GDAT_ENTRYPTR(eaxb, ebxb, ecxb, edxb);
