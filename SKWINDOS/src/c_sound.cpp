@@ -57,7 +57,7 @@ void c_sound::dtor(void)
 
 // TODO needed externals:
 //extern bool SKW_QUERY_GDAT_ENTRY_IF_LOADABLE(x8 eaxb, x8 ebxb, x8 ecxb, x8 edxb);
-extern bool SKW_QUERY_GDAT_ENTRY_IF_LOADABLE(x8 eaxb, ui16 ebxb, ui16 ecxb, ui16 edxb);
+extern bool SKW_QUERY_GDAT_ENTRY_IF_LOADABLE(x8 eaxb, XCLS16 ebxb, XCLS16 ecxb, XCLS16 edxb);
 
 // MIDI -------------------------------
 

@@ -823,7 +823,7 @@ void SKW_DRAW_ITEM_IN_HAND(c_wpc* eaxpwpc)
   s_gfxdatatail* ptrbeforerg5 = getprevious(srcbmp);
   SKW_COPY_MEMORY(DOWNCAST(t_gfxdata, SKW_QUERY_GDAT_IMAGE_LOCALPAL(vb_0c, byterg7, vb_08)), PAL16, DOWNCAST(t_gfxdata, eaxpwpc->barr6));
 //                      srcbmp                                                          srcofs destbmp                                                                      srcbits    destbits
-  SKW_FIRE_BLIT_PICTURE(srcbmp, SKW_ALLOC_TEMP_ORIGIN_RECT(ddata.v1d271a, ddata.v1d271c), 0, eaxpwpc->p2, con(0x0), ptrbeforerg5->w2, ddata.v1d271a, con(0xffff), con(0x0), E_BITRES4, E_BITRES4);
+  SKW_FIRE_BLIT_PICTURE(srcbmp, SKW_ALLOC_TEMP_ORIGIN_RECT(ddata.v1d271a, ddata.v1d271c), 0, eaxpwpc->p2, con(0x0), ptrbeforerg5->width, ddata.v1d271a, con(0xffff), con(0x0), E_BITRES4, E_BITRES4);
 }
 
 void SKW_2481_0002(void)
@@ -893,13 +893,13 @@ void SKW_DRAW_ITEM_STATS_BAR(x16 eaxw, x16 ebxw, x8 ecxb, x16 edxw, x16 argw0)
   t_08[0x0] = t_08[0x4];
   rc_00.h -= con(0x2);
   s_gfxdatatail* ptrbeforerg11 = getprevious(ddata.bitmapptr);
-  SKW_DRAW_STRONG_TEXT(ddata.bitmapptr, rc_00.x - con(0x9), rc_00.y + rc_00.h - con(0x1), ptrbeforerg11->w2, unsignedword(ddata.paletteptr1[argw0]), unsignedword(ddata.paletteptr1[con(0x0)]) | con(0x4000), t_08);
+  SKW_DRAW_STRONG_TEXT(ddata.bitmapptr, rc_00.x - con(0x9), rc_00.y + rc_00.h - con(0x1), ptrbeforerg11->width, unsignedword(ddata.paletteptr1[argw0]), unsignedword(ddata.paletteptr1[con(0x0)]) | con(0x4000), t_08);
   t_08[0x0] = con(0x60);
   s_gfxdatatail* ptrbeforerg12 = getprevious(ddata.bitmapptr);
-  SKW_DRAW_STRONG_TEXT(ddata.bitmapptr, rc_00.x + con(0x3), rc_00.y + rc_00.h - con(0x1), ptrbeforerg12->w2, unsignedword(ddata.paletteptr1[con(0xf)]), unsignedword(ddata.paletteptr1[con(0x0)]) | con(0x4000), t_08);
+  SKW_DRAW_STRONG_TEXT(ddata.bitmapptr, rc_00.x + con(0x3), rc_00.y + rc_00.h - con(0x1), ptrbeforerg12->width, unsignedword(ddata.paletteptr1[con(0xf)]), unsignedword(ddata.paletteptr1[con(0x0)]) | con(0x4000), t_08);
   t_08[0x0] = con(0x65);
   s_gfxdatatail* ptrbefore = getprevious(ddata.bitmapptr);
-  SKW_DRAW_STRONG_TEXT(ddata.bitmapptr, rc_00.x + rc_00.w - C_strmetrics.height - con(0x2), rc_00.y + rc_00.h - con(0x1), ptrbefore->w2, unsignedword(ddata.paletteptr1[con(0xf)]), unsignedword(ddata.paletteptr1[con(0x0)]) | con(0x4000), t_08);
+  SKW_DRAW_STRONG_TEXT(ddata.bitmapptr, rc_00.x + rc_00.w - C_strmetrics.height - con(0x2), rc_00.y + rc_00.h - con(0x1), ptrbefore->width, unsignedword(ddata.paletteptr1[con(0xf)]), unsignedword(ddata.paletteptr1[con(0x0)]) | con(0x4000), t_08);
 }
 
 // was SKW_24a5_0fb8
@@ -964,20 +964,23 @@ void SKW_CLICK_INVENTORY_EYE(void)
 }
 
 
-void SKW_2676_006a(x32 eaxl)
+// SPX: SKW_2676_006a renamed SKW_MARK_DYN_LOAD_2676_006a  
+void SKW_MARK_DYN_LOAD_2676_006a(x32 eaxl)
 {
   SKW_MARK_DYN_LOAD(eaxl);
   ddata.v1e09a0[3 * (ddata.v1e09a4 - con(0x1))] |= con(0x8000);
 }
 
-void SKW_2676_008f(x32 eaxl, x8 edxb)
+// SPX: SKW_2676_008f renamed SKW_MARK_DYN_LOAD_2676_008f
+void SKW_MARK_DYN_LOAD_2676_008f(x32 eaxl, x8 edxb)
 {
   SKW_MARK_DYN_LOAD(eaxl);
   ddata.v1e09a0[3 * (ddata.v1e09a4 - con(0x1))] = con(0xffff8001);
   SKW_MARK_DYN_LOAD(unsignedlong(edxb) | (eaxl & con(0xffffff00)));
 }
 
-void SKW_2676_00d0(x8 eaxb, x8 ebxb, x8 edxb)
+// SPX: SKW_2676_00d0 renamed SKW_MARK_DYN_LOAD_2676_00d0
+void SKW_MARK_DYN_LOAD_2676_00d0(x8 eaxb, x8 ebxb, x8 edxb)
 {
   ui16 wordrg2 = DM2_QUERY_GDAT_ENTRY_DATA_INDEX(eaxb, con(0xb), ebxb, edxb);
   if (wordrg2 == con(0x0))
@@ -1083,7 +1086,7 @@ x16 SKW_QUERY_4BPP_PICT_BUFF_AND_PAL(x8 eaxb, t_gfxdata** ebxppg, t_gfxdata* ecx
   *ebxppg = SKW_QUERY_GDAT_IMAGE_ENTRY_BUFF(eaxb, con(0xf9), edxb);
   SKW_COPY_MEMORY(DOWNCAST(t_gfxdata, SKW_QUERY_GDAT_IMAGE_LOCALPAL(eaxb, con(0xf9), edxb)), PAL16, DOWNCAST(t_gfxdata, ecxpg));
   s_gfxdatatail* ptrbefore = getprevious(*ebxppg);
-  return ptrbefore->w2 / ddata.v1d274a;
+  return ptrbefore->width / ddata.v1d274a;
 }
 
 void SKW_29ee_18eb(x16 eaxw, x16 ebxw, x16 edxw)

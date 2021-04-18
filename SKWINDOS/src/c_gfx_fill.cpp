@@ -120,9 +120,9 @@ void SKW_FILL_ENTIRE_PICT(t_gfxdata* eaxpg, x8 pixel256)
   x16 wordrg41 = unsignedword(getprevious(ptrrg5)->b0);
   rc_00.y = con(0x0);
   rc_00.x = con(0x0);
-  x32 longrg6 = signedlong(getprevious(ptrrg5)->w2) + (wordrg41 == con(0x4) ? 1 : 0);
+  x32 longrg6 = signedlong(getprevious(ptrrg5)->width) + (wordrg41 == con(0x4) ? 1 : 0);
   rc_00.w = CUTX16((~(wordrg41 == con(0x4) ? 1 : 0)) & longrg6);
-  rc_00.h = getprevious(ptrrg5)->w4;
+  rc_00.h = getprevious(ptrrg5)->height;
   SKW_FIRE_FILL_RECT_ANY(eaxpg, pixel256, rc_00.w, &rc_00, wordrg41);
 }
 

@@ -12,8 +12,8 @@ void SKW_INIT_BACKBUFF(void)
   if (ddata.backbuff1 != con(0x0))
     SKW_FIRE_FILL_BACKBUFF_RECT(&ddata.backbuffrect, ddata.paletteptr1[0]);
   s_gfxdatatail* ptrbefore = getprevious(ddata.bitmapptr);
-  ptrbefore->w2 = ddata.vx1d270a;
-  ptrbefore->w4 = ddata.vx1d270c;
+  ptrbefore->width = ddata.vx1d270a;
+  ptrbefore->height = ddata.vx1d270c;
   ptrbefore->b0 = con(0x8);
   ddata.backbuff2 = con(0x0);
 }
@@ -29,8 +29,8 @@ static void SKW_COPY_SKIMAGE_HEADER(t_gfxdata* eaxpg, t_gfxdata* edxpg)
 // destbmp = edx
 static void SKW_APPLY_MIRROR_FLIP_TO(t_gfxdata* srcbmp, x16 ebxw, t_gfxdata* destbmp)
 {
-  x16 wordrg3 = getprevious(srcbmp)->w2;
-  x16 wordrg1 = getprevious(srcbmp)->w4;
+  x16 wordrg3 = getprevious(srcbmp)->width;
+  x16 wordrg1 = getprevious(srcbmp)->height;
   e_bitres res = e_bitres(getprevious(srcbmp)->b0);
   SKW_COPY_SKIMAGE_HEADER(srcbmp, destbmp);
   c_rect* r1 = SKW_ALLOC_TEMP_ORIGIN_RECT(wordrg3, wordrg1);
@@ -59,7 +59,7 @@ void SKW_DRAW_GAMELOAD_DIALOGUE_TO_SCREEN(void)
     vw_0c = con(0x0);
     if (SKW_QUERY_BLIT_RECT(ddata.bitmapptr, con(0x5), &vw_08, &rc_00, &vw_0c, con(0xffffffff)))
 //                            srcbmp                 srcofs  destbmp                                                                                                               srcbits                  destbits
-      SKW_FIRE_BLIT_PICTURE(ddata.bitmapptr, &rc_00, vw_08, ddata.screenptr, vw_0c, getprevious(ddata.bitmapptr)->w2, ddata.mouse_unk0c, con(0xffff), con(0x0), e_bitres(getprevious(ddata.bitmapptr)->b0), E_BITRES8);
+      SKW_FIRE_BLIT_PICTURE(ddata.bitmapptr, &rc_00, vw_08, ddata.screenptr, vw_0c, getprevious(ddata.bitmapptr)->width, ddata.mouse_unk0c, con(0xffff), con(0x0), e_bitres(getprevious(ddata.bitmapptr)->b0), E_BITRES8);
     SKW_FIRE_SHOW_MOUSE_CURSOR();
   }
 }
@@ -145,7 +145,7 @@ void SKW_DRAW_DIALOGUE_PARTS_PICT(t_gfxdata* srcbmp, x16 ebxw, t_palette* palett
 	if (srcbmp == NULL || palette == NULL || edxr == NULL) // SPX: avoid null pointers
 		return;
 //                      srcbmp     srcofs destbmp                                                                                                               srcbits          destbits  palette
-  SKW_FIRE_BLIT_PICTURE(srcbmp, edxr, 0, ddata.bitmapptr, con(0x0), getprevious(srcbmp)->w2, getprevious(ddata.bitmapptr)->w2, ebxw, con(0x0), e_bitres(getprevious(srcbmp)->b0), E_BITRES8, palette);
+  SKW_FIRE_BLIT_PICTURE(srcbmp, edxr, 0, ddata.bitmapptr, con(0x0), getprevious(srcbmp)->width, getprevious(ddata.bitmapptr)->width, ebxw, con(0x0), e_bitres(getprevious(srcbmp)->b0), E_BITRES8, palette);
 }
 
 // srcbmp = eax
@@ -155,5 +155,5 @@ void SKW_DRAW_DIALOGUE_PARTS_PICT(t_gfxdata* srcbmp, x16 ebxw, t_palette* palett
 void SKW_DRAW_DIALOGUE_PICT(t_gfxdata* srcbmp, c_rect* ebxr, x16 srcofs, t_gfxdata* destbmp, x16 argw0, x16 argw1, t_palette* palette)
 {
 //                      srcbmp        srcofs  destbmp                                                                                  srcbits                           destbits                    palette
-  SKW_FIRE_BLIT_PICTURE(srcbmp, ebxr, srcofs, destbmp, argw0, getprevious(srcbmp)->w2, getprevious(destbmp)->w2, argw1, con(0x0), e_bitres(getprevious(srcbmp)->b0), e_bitres(getprevious(destbmp)->b0), palette);
+  SKW_FIRE_BLIT_PICTURE(srcbmp, ebxr, srcofs, destbmp, argw0, getprevious(srcbmp)->width, getprevious(destbmp)->width, argw1, con(0x0), e_bitres(getprevious(srcbmp)->b0), e_bitres(getprevious(destbmp)->b0), palette);
 }

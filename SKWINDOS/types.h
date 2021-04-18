@@ -587,8 +587,8 @@
   {
     x8 b0;
     x8 b1;
-    x16 w2;
-    x16 w4;
+    x16 width;	// width	(w2)
+    x16 height;	// height	(w4)
   };
 
   s_gfxdatatail* getprevious(t_gfxdata*);

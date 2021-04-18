@@ -211,7 +211,7 @@ void SKW_DRAW_NAME_STR(c_c5rects* eaxps, x16 ebxw, x16 ecxw, x16 edxw, t_text* a
 void SKW_DRAW_VP_STR(x16 eaxw, x16 ebxw, const t_text* ecxt, x16 edxw)
 {
 //                   destbmp
-  SKW_DRAW_STRING(ddata.bitmapptr, eaxw, edxw, getprevious(ddata.bitmapptr)->w2, ebxw, unsignedword(ddata.paletteptr1[con(0xc)]) | con(0x4000), ecxt);
+  SKW_DRAW_STRING(ddata.bitmapptr, eaxw, edxw, getprevious(ddata.bitmapptr)->width, ebxw, unsignedword(ddata.paletteptr1[con(0xc)]) | con(0x4000), ecxt);
 }
 
 void SKW_DRAW_GUIDED_STR(const t_text* eaxt)
@@ -285,5 +285,5 @@ void SKW_DRAW_LOCAL_TEXT(x16 eaxw, x16 ebxw, t_text* ecxt, x16 edxw)
 
   if (C_strmetrics.SKW_QUERY_STR_METRICS(ecxt, OO vw_14, OO vw_10))
     if (SKW_QUERY_BLIT_RECT(NULL, eaxw, &vw_10, &rc_08, &vw_14, con(0xffffffff)) != NULL)
-      SKW_DRAW_STRONG_TEXT(ddata.bitmapptr, rc_08.x, rc_08.y + rc_08.h - 1, getprevious(ddata.bitmapptr)->w2, edxw, ebxw, ecxt);
+      SKW_DRAW_STRONG_TEXT(ddata.bitmapptr, rc_08.x, rc_08.y + rc_08.h - 1, getprevious(ddata.bitmapptr)->width, edxw, ebxw, ecxt);
 }

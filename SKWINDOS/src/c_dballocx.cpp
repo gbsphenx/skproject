@@ -9,6 +9,8 @@
 #include "c_sound.h"
 #include "c_gfx_decode.h"
 
+#include "../skwin/defines.h"
+
 #include "dm2debug.h"	// SPX
 
 // needed externs:
@@ -52,7 +54,7 @@ void DM2_GRAPHICS_DATA_CLOSE(void)
 
 void DM2_GRAPHICS_DATA_OPEN(void)
 {
-SPX_DEBUG_PUSH_FUNCTION_INFO("DM2_GRAPHICS_DATA_OPEN");
+//SPX_DEBUG_PUSH_FUNCTION_INFO("DM2_GRAPHICS_DATA_OPEN");
   if (++ddata.gdatfileopencounter == con(0x1))
   {
     ddata.gdatfilehandle = DM2_FILE_OPEN(SKW_FORMAT_SKSTR(ddata.gdatfilename1, NULL));
@@ -65,12 +67,12 @@ SPX_DEBUG_PUSH_FUNCTION_INFO("DM2_GRAPHICS_DATA_OPEN");
         SKW_RAISE_SYSERR(con(0x1f));	// con(0x1f) : SYSTEM_ERROR__MISSING_GRAPHICS_2
     }
   }
-SPX_DEBUG_POP;
+//SPX_DEBUG_POP;
 }
 
 void DM2_GRAPHICS_DATA_CLOSE(void)
 {
-SPX_DEBUG_PUSH_FUNCTION_INFO("DM2_GRAPHICS_DATA_CLOSE");
+//SPX_DEBUG_PUSH_FUNCTION_INFO("DM2_GRAPHICS_DATA_CLOSE");
   x16 wordrg4 = ddata.gdatfileopencounter;
   bool flag = --wordrg4 != con(0x0);
   ddata.gdatfileopencounter = wordrg4;
@@ -80,7 +82,7 @@ SPX_DEBUG_PUSH_FUNCTION_INFO("DM2_GRAPHICS_DATA_CLOSE");
     if (!ddata.gdatfiletype1 && ddata.gdatfiletype2)
       DM2_FILE_CLOSE(ddata.gdatxfilehandle);
   }
-SPX_DEBUG_POP;
+//SPX_DEBUG_POP;
 }
 
 void DM2_2636_03d4(void)
@@ -136,12 +138,13 @@ LOGX(("%40s: C%02d=I%02X=E%02X=T%03d [%04s]\n", "DM2_QUERY_GDAT_ENTRYPTR of ", e
 }
 
 //x16 DM2_QUERY_GDAT_ENTRY_DATA_INDEX(x8 eaxb, x8 ebxb, x8 ecxb, x8 edxb)
-x16 DM2_QUERY_GDAT_ENTRY_DATA_INDEX(x8 eaxb, ui16 ebxb, ui16 ecxb, ui16 edxb)	// SPX fix to get positive numbers for item select such as 0xFE = 254 instead of -2 (which leads to crash)
+x16 DM2_QUERY_GDAT_ENTRY_DATA_INDEX(x8 eaxb, XCLS16 ebxb, XCLS16 ecxb, XCLS16 edxb)	// SPX fix to get positive numbers for item select such as 0xFE = 254 instead of -2 (which leads to crash)
 {
-LOGX(("%40s: C%02d=I%02X=S%02X=T%03d [%04s]\n", "QUERY_GDAT_ENTRY_DATA_LENGTH of ", eaxb, ebxb, ecxb, edxb, SPX_STR_DATATYPE(edxb) ));
-	fprintf(logfile, "%40s: C%02d=I%02X=E%02X=T%03d\n", "DM2_QUERY_GDAT_ENTRY_DATA_INDEX", eaxb, ebxb, ecxb, edxb); // SPX: add log
-if (edxb > 0xFF)
-	(("BREAK"));
+LOGX(("%40s: C%02d=I%02X=S%02X=T%03d [%04s]\n", "QUERY_GDAT_ENTRY_DATA_INDEX for ", eaxb, edxb, ecxb, ebxb, SPX_STR_DATATYPE(ebxb) ));
+	fprintf(logfile, "%40s: C%02d=I%02X=E%02X=T%03d\n", "DM2_QUERY_GDAT_ENTRY_DATA_INDEX", eaxb, edxb, ecxb, ebxb); // SPX: add log
+
+if (eaxb == 8 && edxb == 2 && ecxb == 0 && ebxb == 1)	// SPX: test cave floor image
+	LOGX(("BREAK"));
   u_bbwlong* ptrrg4 = DM2_QUERY_GDAT_ENTRYPTR(eaxb, ebxb, ecxb, edxb);
   if (ptrrg4 == NULL)
   {
@@ -246,9 +249,9 @@ static x32 SKW_QUERY_GDAT_RAW_DATA_FILE_POS(x16 eaxw)
 
 static void SKW_LOAD_GDAT_RAW_DATA(x16 eaxw, x8* edxpb)
 {
-SPX_DEBUG_PUSH_FUNCTION_INFO("SKW_LOAD_GDAT_RAW_DATA");
-LOGX(("SKW_LOAD_GDAT_RAW_DATA loads GDAT item %04d to ptr %08x\n", eaxw, edxpb ));
-	fprintf(logfile, "LOAD_GDAT_RAW_DATA: %04d => %08x\n", eaxw, edxpb); // SPX: add log
+//SPX_DEBUG_PUSH_FUNCTION_INFO("SKW_LOAD_GDAT_RAW_DATA");
+LOGX((" + SKW_LOAD_GDAT_RAW_DATA loads GDAT item %04d to ptr %08x\n", eaxw, edxpb ));
+//	fprintf(logfile, "LOAD_GDAT_RAW_DATA: %04d => %08x\n", eaxw, edxpb); // SPX: add log
   x32 longrg5;
   x32 longrg6;
   x32 vl_00;
@@ -292,7 +295,7 @@ longrg5 = ((ui32)vw_04) * 0x400;
 //    SKW_COPY_MEMORY(dm2_dballochandler.filebuffer + longrg4, longrg3, edxpb);
 //    SKW_COPY_MEMORY(dm2_dballochandler.filebuffer, longrg4 + longrg3, edxpb);	// SPX: above seems wrong ?
 	// SPX: copy mem copies XXX bytes from the end of the buffer (1024) to target + YYY (where YYY is 1024 - XXX)
-    SKW_COPY_MEMORY(dm2_dballochandler.filebuffer + longrg4, longrg3, edxpb);	// SPX: above seems wrong ?
+    SKW_COPY_MEMORY(dm2_dballochandler.filebuffer + longrg4, longrg3, edxpb);
     longrg6 -= longrg3;
     vl_00 += longrg3;
     edxpb += longrg3;
@@ -300,7 +303,7 @@ longrg5 = ((ui32)vw_04) * 0x400;
     longrg5 += con(0x400);
   }
   DM2_GRAPHICS_DATA_CLOSE();
-SPX_DEBUG_POP;
+//SPX_DEBUG_POP;
 }
 
 bool SKW_3e74_55f9(ui32 eaxul, x16* edxpw)
@@ -348,6 +351,7 @@ SPX_DEBUG_MESSAGE_INFO("SKW_QUERY_GDAT_DYN_BUFF: %04d, %d, %08x\n", eaxw, ebx, e
       ptrrg2 = UPCAST(s_malloctail, DM2_ALLOC_HIBIGPOOL_MEMORY(longrg6) + con(0x6));
     else
       ptrrg2 = UPCAST(s_malloctail, DM2_ALLOC_LOBIGPOOL_MEMORY(longrg6) + con(0x6));
+LOGX(("LOAD_GDAT_RAW_DATA call from QUERY_GDAT_DYN_BUFF (1)\n"));
     SKW_LOAD_GDAT_RAW_DATA(CUTX16(longrg3), DOWNCAST(s_malloctail, ptrrg2));
     if (!ebx)
       (ptrrg2 - 1)->w4 = con(0x2); // TODO: neg. offset
@@ -364,6 +368,7 @@ SPX_DEBUG_MESSAGE_INFO("SKW_QUERY_GDAT_DYN_BUFF: %04d, %d, %08x\n", eaxw, ebx, e
   else
   {
     ptrrg2 = UPCAST(s_malloctail, SKW_ALLOC_CPXHEAP_MEM(*edxpw, unsignedlong(CUTX16(dm2_ulp.SKW_QUERY_GDAT_RAW_DATA_LENGTH(eaxw))))); // TODO: upcast from s_xmalloc
+LOGX(("LOAD_GDAT_RAW_DATA call from QUERY_GDAT_DYN_BUFF (2)\n"));
     SKW_LOAD_GDAT_RAW_DATA(eaxw, DOWNCAST(s_malloctail, ptrrg2));
     if (!ebx)
       SKW_3e74_585a(*edxpw, false);
@@ -373,7 +378,7 @@ SPX_DEBUG_POP
 }
 
 //x8* SKW_QUERY_GDAT_ENTRY_DATA_PTR(x8 eaxb, x8 ebxb, x8 ecxb, x8 edxb)
-x8* SKW_QUERY_GDAT_ENTRY_DATA_PTR(x8 eaxb, ui16 ebxb, ui16 ecxb, ui16 edxb) // SPX fix to avoid negative values
+x8* SKW_QUERY_GDAT_ENTRY_DATA_PTR(x8 eaxb, XCLS16 ebxb, XCLS16 ecxb, XCLS16 edxb) // SPX fix to avoid negative values
 {
 SPX_DEBUG_PUSH_FUNCTION_INFO("SKW_QUERY_GDAT_ENTRY_DATA_PTR");
 //SPX_DEBUG_MESSAGE_INFO("SKW_QUERY_GDAT_ENTRY_DATA_PTR: %04d=%04d=%04d=%04d\n", eaxb, ebxb, ecxb, edxb);
@@ -419,8 +424,8 @@ LOGX(("SKW_QUERY_NEXT_GDAT_ENTRY from SGDAT ptr %08X // intern p_10 : %08X\n", e
   x8 vb_14;
   x8 vb_18;
 
-  x8 vb_10 = eaxp->s_04.u.s_00.b_03;
-  x8 byterg3lo = eaxp->s_04.b_05;
+  x8 vb_10 = eaxp->s_04.u.s_00.b_03;	// SPX: would be cls2
+  x8 byterg3lo = eaxp->s_04.b_05;		// SPX: would be cls4
   x32 longrg4 = ((unsignedlong(eaxp->s_04.u.s_00.w_00) & con(0xffff7fff)) == con(0x1)) ? 1 : 0;
   bool flag = longrg4 == con(0x0);
   x32 longrg5 = longrg4;
@@ -653,7 +658,7 @@ M_true:
 
 // eaxb = category / ebxb = #item / ecxb = datatype / edxb = #sub-item
 //x32 SKW_QUERY_GDAT_ENTRY_DATA_LENGTH(x8 eaxb, x8 ebxb, x8 ecxb, x8 edxb)
-x32 SKW_QUERY_GDAT_ENTRY_DATA_LENGTH(x8 eaxb, ui16 ebxb, ui16 ecxb, ui16 edxb)	// SPX fix to avoid negative values
+x32 SKW_QUERY_GDAT_ENTRY_DATA_LENGTH(x8 eaxb, XCLS16 ebxb, XCLS16 ecxb, XCLS16 edxb)	// SPX fix to avoid negative values
 {
 LOGX(("QUERY_GDAT_ENTRY_DATA_LENGTH of C%02d=I%02X=S%02X=T%03d [%04s] = %08X\n", eaxb, ebxb, edxb, ecxb, SPX_STR_DATATYPE(ecxb), dm2_ulp.SKW_QUERY_GDAT_RAW_DATA_LENGTH(DM2_QUERY_GDAT_ENTRY_DATA_INDEX(eaxb, ebxb, ecxb, edxb) & con(0xffff)) ));
 fprintf(logfile, "QUERY_GDAT_ENTRY_DATA_LENGTH: %03d=%03d=%03d=%03d\n", eaxb, ebxb, ecxb, edxb); // SPX: add log
@@ -1029,11 +1034,12 @@ if (longrg52 >= 8)
 
 // stacksize was 0x4
 //void SKW_LOAD_GDAT_ENTRY_DATA_TO(x8 eaxb, x8 ebxb, x8 ecxb, x8 edxb, x8* argpb0)
-void SKW_LOAD_GDAT_ENTRY_DATA_TO(x8 eaxb, ui16 ebxb, ui16 ecxb, ui16 edxb, x8* argpb0)	// SPX fix to avoid negative values
+void SKW_LOAD_GDAT_ENTRY_DATA_TO(x8 eaxb, XCLS16 ebxb, XCLS16 ecxb, XCLS16 edxb, x8* argpb0)	// SPX fix to avoid negative values
 {
 // SPX: add log
 LOGX(("%40s: C%02d=I%02X=S%02X=T%03d [%04s] => %08x\n", "SKW_LOAD_GDAT_ENTRY_DATA_TO ", eaxb, edxb, ecxb, ebxb, SPX_STR_DATATYPE(ebxb), argpb0));
 	fprintf(logfile, "LOAD_GDAT_ENTRY_DATA_TO: %03d=%03d=%03d=%03d => %08x\n", eaxb, edxb, ecxb, ebxb, argpb0);
+LOGX(("LOAD_GDAT_RAW_DATA call from LOAD_GDAT_ENTRY_DATA_TO\n"));
   SKW_LOAD_GDAT_RAW_DATA(DM2_QUERY_GDAT_ENTRY_DATA_INDEX(eaxb, ebxb, ecxb, edxb) & con(0xffff), argpb0);
 }
 
@@ -1056,6 +1062,7 @@ static void SKW_LOAD_GDAT_ENTRIES(void)
           x16* wptrrg1 = UPCAST(x16, DM2_ALLOC_FREEPOOL_MEMORY(unsignedlong(wordrg6) + con(0x2)));
           *wptrrg1++ = wordrg6;
           dm2_ulp.setp(longrg3, DOWNCAST(x16, wptrrg1));
+LOGX(("LOAD_GDAT_RAW_DATA call from LOAD_GDAT_ENTRIES\n"));
           SKW_LOAD_GDAT_RAW_DATA(CUTX16(longrg3), DOWNCAST(x16, wptrrg1));
         }
       }
@@ -1112,6 +1119,7 @@ static void SKW_LOAD_ENT1(void)
   x32 longrg7 = ddata.longv1e0a44;
   x8* bptrrg1 = UPCAST(x8, DM2_ALLOC_HIBIGPOOL_MEMORY(longrg7));
   dm2_dballochandler.ptr1e09a8 = bptrrg1;
+LOGX(("LOAD_GDAT_RAW_DATA call from LOAD_ENT1\n"));
   SKW_LOAD_GDAT_RAW_DATA(con(0x0), bptrrg1);
   x16 wordrg5 = *UPCAST(x16, dm2_dballochandler.ptr1e09a8);
   if (wordrg5 != con(0xffff8001))
@@ -1253,7 +1261,7 @@ iForIndex++;
 
 // function may return pointers of different types
 //x8* SKW_QUERY_GDAT_ENTRY_DATA_BUFF(x8 eaxb, x8 ebxb, x8 ecxb, x8 edxb)
-x8* SKW_QUERY_GDAT_ENTRY_DATA_BUFF(x8 eaxb, ui16 ebxb, ui16 ecxb, ui16 edxb)	// SPX fix to get positive numbers for item select such as 0xFE = 254 instead of -2 (which can lead to crash)
+x8* SKW_QUERY_GDAT_ENTRY_DATA_BUFF(x8 eaxb, XCLS16 ebxb, XCLS16 ecxb, XCLS16 edxb)	// SPX fix to get positive numbers for item select such as 0xFE = 254 instead of -2 (which can lead to crash)
 {
 LOGX(("%40s: C%02d=I%02X=S%02X=T%03d [%04s]\n", "SKW_QUERY_GDAT_ENTRY_DATA_BUFF", eaxb, edxb, ecxb, ebxb, SPX_STR_DATATYPE(ebxb) ));
   x16 vw_00;
@@ -1271,7 +1279,7 @@ LOGX(("%40s: C%02d=I%02X=S%02X=T%03d [%04s]\n", "SKW_QUERY_GDAT_ENTRY_DATA_BUFF"
 }
 
 //bool SKW_QUERY_GDAT_ENTRY_IF_LOADABLE(x8 eaxb, x8 ebxb, x8 ecxb, x8 edxb)
-bool SKW_QUERY_GDAT_ENTRY_IF_LOADABLE(x8 eaxb, ui16 ebxb, ui16 ecxb, ui16 edxb)	// SPX fix to get positive numbers for item select such as 0xFE = 254 instead of -2 (which can lead to crash)
+bool SKW_QUERY_GDAT_ENTRY_IF_LOADABLE(x8 eaxb, XCLS16 ebxb, XCLS16 ecxb, XCLS16 edxb)	// SPX fix to get positive numbers for item select such as 0xFE = 254 instead of -2 (which can lead to crash)
 {
 LOGX(("%40s: C%02d=I%02X=S%02X=T%03d [%04s]\n", "SKW_QUERY_GDAT_ENTRY_IF_LOADABLE", eaxb, edxb, ecxb, ebxb, SPX_STR_DATATYPE(ebxb) ));
   u_bbwlong* ptrrg4 = DM2_QUERY_GDAT_ENTRYPTR(eaxb, ebxb, ecxb, edxb);
@@ -1350,7 +1358,7 @@ static void SKW_3e74_24b8(void)
 }
 
 //x16 SKW_QUERY_GDAT_PICT_OFFSET(x8 eaxb, x8 ebxb, x8 edxb)
-x16 SKW_QUERY_GDAT_PICT_OFFSET(x8 eaxb, ui16 ebxb, ui16 edxb)			//  SPX fix to avoid negative values
+x16 SKW_QUERY_GDAT_PICT_OFFSET(x8 eaxb, XCLS16 ebxb, XCLS16 edxb)			//  SPX fix to avoid negative values
 {
   u_bbwlong* ptrrg1 = DM2_QUERY_GDAT_ENTRYPTR(eaxb, con(0x1), ebxb, edxb);
   if (ptrrg1 == NULL)
@@ -1391,7 +1399,7 @@ x16 SKW_QUERY_GDAT_PICT_OFFSET(x8 eaxb, ui16 ebxb, ui16 edxb)			//  SPX fix to a
 }
 
 //t_palette* SKW_QUERY_GDAT_IMAGE_LOCALPAL(x8 eaxb, x8 ebxb, x8 edxb)
-t_palette* SKW_QUERY_GDAT_IMAGE_LOCALPAL(x8 eaxb, ui16 ebxb, ui16 edxb)	//  SPX fix to avoid negative values
+t_palette* SKW_QUERY_GDAT_IMAGE_LOCALPAL(x8 eaxb, XCLS16 ebxb, XCLS16 edxb)	//  SPX fix to avoid negative values
 {
   x16 vw_00;
 
@@ -1732,7 +1740,7 @@ static xxx* SKW_EXTRACT_GDAT_IMAGE(x16 eaxw, x32 edxl)
 }
 
 //t_gfxdata* SKW_QUERY_GDAT_IMAGE_ENTRY_BUFF(x8 eaxb, x8 ebxb, x8 edxb)
-t_gfxdata* SKW_QUERY_GDAT_IMAGE_ENTRY_BUFF(x8 eaxb, ui16 ebxb, ui16 edxb)	 // SPX fix to avoid negative values
+t_gfxdata* SKW_QUERY_GDAT_IMAGE_ENTRY_BUFF(x8 eaxb, XCLS16 ebxb, XCLS16 edxb)	 // SPX fix to avoid negative values
 {
   if (ddata.longmallocx != dm2_dballochandler.malloci)
     R_2E581();
@@ -1742,16 +1750,37 @@ t_gfxdata* SKW_QUERY_GDAT_IMAGE_ENTRY_BUFF(x8 eaxb, ui16 ebxb, ui16 edxb)	 // SP
   if (ptrrg4 != NULL)
   {
     boolrg6 = DM2_IS_CLS1_CRITICAL_FOR_LOAD(eaxb);
-    wordrg1 = ptrrg4->u.w_02 & con(0x7fff);
+    wordrg1 = ptrrg4->u.w_02 & con(0x7fff);	// value of data item
   }
   else
     wordrg1 = con(0xffff);
 
+/*
+  // SPX: There, in case that the data item reference is marked as length (meaning the data pointer may not be here) we get the default Yukman face instead
   if (wordrg1 == con(0xffffffff) || (dm2_ulp.islen(wordrg1) && !boolrg6))
     //wordrg1 = DM2_QUERY_GDAT_ENTRY_DATA_INDEX(con(0x15), con(0x1), con(0xfe), con(0xfe));	 // (0x15, 0xfe, 0x01, 0xfe) // the Yukman :P icon
 	wordrg1 = DM2_QUERY_GDAT_ENTRY_DATA_INDEX(con(0x15), con(0x1), ucon16(0xfe), ucon16(0xfe));	 // SPX: fix xFE must be positive and not -2 !
   if (wordrg1 == -1) return NULL;	// SPX add this to prevent crashing in EXTRACT
   return UPCAST(t_gfxdata, SKW_EXTRACT_GDAT_IMAGE(wordrg1, con(0x0)));
+*/
+
+	// SPX: Block rewrite
+	// For some reasons, the data is here but the ulp struct tells it is only length, then leading to get Yukman instead.
+	// So there we try to know if the data looks good and if it is the case, update ulp so that it get passed correctly next time
+    t_gfxdata* xGfxData = NULL;
+	x16 iDataItem = wordrg1;
+	if (iDataItem == -1 || (dm2_ulp.islen(iDataItem) && !boolrg6))
+	{
+		// first check if the structure can be retrieved
+		xGfxData = UPCAST(t_gfxdata, SKW_EXTRACT_GDAT_IMAGE(iDataItem, 0));
+		if (xGfxData == NULL)
+			iDataItem = DM2_QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_MISCELLANEOUS, dtImage, ucon16(GDAT_ITEM_DEFAULT_INDEX), ucon16(GDAT_ITEM_DEFAULT_INDEX));
+	}
+	if (iDataItem == -1)
+		return NULL;
+	xGfxData = UPCAST(t_gfxdata, SKW_EXTRACT_GDAT_IMAGE(iDataItem, 0));
+	return xGfxData;
+
 }
 
 // TODO: errexit-label left
@@ -1786,9 +1815,9 @@ void SKW_LOAD_DYN4(s_hex6* eaxps, x16 edxw)
     vs_08.l_00 = con(0x1);
     x8* ptrtmprg6 = DOWNCAST(s_hex6, &vs_08.s_04);
     x8* ptrtmprg5 = DOWNCAST(s_hex6, vs_50.ps_00);
-    SKW_COPY_MEMORY(ptrtmprg5, 6, ptrtmprg6);
-    ptrtmprg5 += 6;
-    ptrtmprg6 += 6;
+    SKW_COPY_MEMORY(ptrtmprg5, 6, ptrtmprg6);	// contains the dynamic masks, 6 bytes in following form 00 00 0F FF 08 FB (here creatures (0F) , Raw8 elements FB)
+    //ptrtmprg5 += 6;	// SPX: I don't think this happens here
+    //ptrtmprg6 += 6;	// SPX: I don't think this happens here
     vl_5c = vs_08.s_04.u.l_00;
     if ((vs_08.s_04.u.s_00.w_00 & con(0x7fff)) == con(0x1))
     {
@@ -1833,7 +1862,8 @@ void SKW_LOAD_DYN4(s_hex6* eaxps, x16 edxw)
         *ptrrg19 = byterg4hi - 1;
     }
 
-    vs_50.ps_00++; // struct advance
+    //vs_50.ps_00++; // struct advance // SPX: seems to move 2 byte too far
+	vs_50.ps_00 = (s_hex6*) (((x8*)vs_50.ps_00) + 6);	// lets move exactly 6 bytes as expected
     if (signedlong(vw_60) == (signedlong(vw_00) - con(0x1)) && !vbool_44)
     {
       vbool_44 = true;
@@ -2369,6 +2399,7 @@ void SKW_LOAD_DYN4(s_hex6* eaxps, x16 edxw)
           DM2_GRAPHICS_DATA_OPEN();
           boolrg6 = true;
         }
+LOGX(("LOAD_GDAT_RAW_DATA call from LOAD_DYN4\n"));
         SKW_LOAD_GDAT_RAW_DATA(wordrg5, dm2_ulp.getp(unsignedlong(wordrg5)));
       }
     }

@@ -16,6 +16,8 @@
 #include "src/c_savegame.h"
 #include "calls.h"
 
+#include "dm2debug.h"
+
 #include "../skwin/defines.h"
 
 t_gfxdata* R_D2C(x16 eaxw, x16 ebxw, x16 edxw)
@@ -29,8 +31,8 @@ t_gfxdata* R_D2C(x16 eaxw, x16 ebxw, x16 edxw)
   t_gfxdata* gptrrg1 = R_4A986(wordrg1 * edxw + con(0x6)) + con(0x6);
   s_gfxdatatail* ptrbeforerg1 = getprevious(gptrrg1);
   ptrbeforerg1->b0 = con(0x8);
-  ptrbeforerg1->w2 = eaxw;
-  ptrbeforerg1->w4 = edxw;
+  ptrbeforerg1->width = eaxw;
+  ptrbeforerg1->height = edxw;
   return gptrrg1;
 }
 
@@ -163,7 +165,8 @@ x16 R_4E26(x16* eaxpw)
   return *eaxpw & con(0x3f);
 }
 
-x16 R_4EA8(x8 eaxb, x16 edxw)
+//R_4EA8 renamed GET_ANIM_INFO_SEQUENCE
+x16 GET_ANIM_INFO_SEQUENCE(x8 eaxb, x16 edxw)
 {
   x8* bptrrg1 = SKW_QUERY_GDAT_ENTRY_DATA_PTR(con(0xf), con(0x7), con(0xfc), eaxb);
   bptrrg1 += (edxw << con(0x2));
@@ -537,8 +540,8 @@ t_gfxdata* SKW_QUERY_PICST_IMAGE(c_hex18* eaxph18)
   s_gfxdatatail* ptrbeforerg1 = getprevious(gptrrg1);
   eaxph18->w_0e = con(0x0);
   eaxph18->w_10 = con(0x0);
-  eaxph18->w_12 = ptrbeforerg1->w2;
-  eaxph18->w_14 = ptrbeforerg1->w4;
+  eaxph18->w_12 = ptrbeforerg1->width;
+  eaxph18->w_14 = ptrbeforerg1->height;
   eaxph18->w_16 = unsignedword(ptrbeforerg1->b0);
   eaxph18->w_04 = con(0x4);
   return gptrrg1;
@@ -553,8 +556,8 @@ t_gfxdata* SKW_0b36_00c3(x16 eaxw, c_hex18* edxph18)
     edxph18->pg_00 = gptrrg3;
     edxph18->w_0e = con(0x0);
     edxph18->w_10 = con(0x0);
-    edxph18->w_12 = ptrbeforerg3->w2;
-    edxph18->w_14 = ptrbeforerg3->w4;
+    edxph18->w_12 = ptrbeforerg3->width;
+    edxph18->w_14 = ptrbeforerg3->height;
     edxph18->w_16 = unsignedword(ptrbeforerg3->b0);
     edxph18->w_0c = eaxw;
     edxph18->w_04 = con(0x8);
@@ -722,7 +725,7 @@ void SKW_DRAW_ICON_PICT_BUFF(t_gfxdata* srcbmp, c_rect* ebxr, x16 ecxw, c_c5rect
   if (ebxr != NULL)
   {
 //                        srcbmp                                      srcofs   destbmp                                                                                           srcbits               destbits   palette
-    SKW_FIRE_BLIT_PICTURE(srcbmp, SKW_OFFSET_RECT(edxps, &rc_00, ebxr), ecxw, SKW_3e74_5817(edxps->s_00.w_00), argw0, ptrbeforerg6->w2, edxps->s_00.rc_02.w, argw1, argw2, e_bitres(ptrbeforerg6->b0), E_BITRES8, palette);
+    SKW_FIRE_BLIT_PICTURE(srcbmp, SKW_OFFSET_RECT(edxps, &rc_00, ebxr), ecxw, SKW_3e74_5817(edxps->s_00.w_00), argw0, ptrbeforerg6->width, edxps->s_00.rc_02.w, argw1, argw2, e_bitres(ptrbeforerg6->b0), E_BITRES8, palette);
     SKW_0b36_0d67(edxps, ebxr);
   }
 }
@@ -817,6 +820,7 @@ void SKW_CHANGE_CURRENT_MAP_TO(x16 eaxw)
   }
 }
 
+// ebxw = mapnumber
 void SKW_LOAD_LOCALLEVEL_GRAPHICS_TABLE(x16 eaxw, x16 ebxw, x16 edxw)
 {
   ddata.v1e0270 = eaxw;
@@ -1657,4 +1661,5 @@ void SKW_MARK_DYN_LOAD(ui32 eaxul)
   ubwptrrg1[con(0x1)].b.b1 = CUTLX8(eaxul >> con(0x10));
   ubwptrrg1[con(0x2)].b.b0 = CUTLX8(eaxul >> con(0x8));
   ubwptrrg1[con(0x2)].b.b1 = CUTLX8(eaxul);
+LOGX(("SKW_MARK_DYN_LOAD : %02X-%02X-%02X-%02X\n", (ui16) ubwptrrg1[con(0x1)].b.b0, (ui16) ubwptrrg1[con(0x1)].b.b1, (ui16) ubwptrrg1[con(0x2)].b.b0, (ui16) ubwptrrg1[con(0x2)].b.b1));
 }

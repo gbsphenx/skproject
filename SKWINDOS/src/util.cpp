@@ -155,10 +155,10 @@ x32 SKW_CALC_IMAGE_BYTE_LENGTH(t_gfxdata* eaxpg)
   if (eaxpg == NULL) // SPX: avoid null pointer
 	  return 0;
   if (getprevious(eaxpg)->b0 != con(0x4))
-    wordrg4 = getprevious(eaxpg)->w2;
+    wordrg4 = getprevious(eaxpg)->width;
   else
-    wordrg4 = ((unsignedlong(getprevious(eaxpg)->w2) + 1) & con(0xfffffffe)) >> con(0x1);
-  return unsignedlong(getprevious(eaxpg)->w4) * unsignedlong(wordrg4);
+    wordrg4 = ((unsignedlong(getprevious(eaxpg)->width) + 1) & con(0xfffffffe)) >> con(0x1);
+  return unsignedlong(getprevious(eaxpg)->height) * unsignedlong(wordrg4);
 }
 
 // TODO: limited to word (like it is obviously handled!)

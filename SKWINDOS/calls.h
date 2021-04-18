@@ -29,6 +29,8 @@
    #include "src/c_sound.h"
  #endif
 
+#include "dm2global.h"
+
  t_gfxdata* R_D2C(x16 eaxw, x16 ebxw, x16 edxw);
  x16 SKW_476d_030a(x16 eaxl);
  x16 R_1456(void); // unreferenced - calls user interrupt
@@ -60,7 +62,7 @@
  void R_4DA3(x8 eaxb, x16* ebxpw, s_8bytearray* ecxps, x16 edxw);
  void R_4DEA(x8 eaxb, x16* ebxpw, x32* ecxpl, x16 edxw);
  x16 R_4E26(x16* eaxpw);
- x16 R_4EA8(x8 eaxb, x16 edxw);
+ x16 GET_ANIM_INFO_SEQUENCE(x8 eaxb, x16 edxw);	// R_4EA8
  bool SKW_GET_CREATURE_ANIMATION_FRAME(x8 eaxb, x16* ebxpw, x16* ecxpw, x16 edxw, t_gfxdata** argppg0, x16 argw1);
  bool R_4FCC(x8 eaxb, x16* ebxpw, t_gfxdata** ecxppg, x16 edxw);
  x16 R_50CB(x8 eaxb, x16* ebxpw, t_gfxdata** ecxppg, x16 edxw);
@@ -181,7 +183,7 @@
  c_aispec* SKW_QUERY_CREATURE_AI_SPEC_FROM_TYPE(x16 eaxw);
  c_aispec* SKW_QUERY_CREATURE_AI_SPEC_FROM_RECORD(x8 eaxb);
  //x16 SKW_QUERY_GDAT_CREATURE_WORD_VALUE(x8 eaxb, x8 edxb);
- x16 SKW_QUERY_GDAT_CREATURE_WORD_VALUE(ui16 eaxb, x8 edxb);	// SPX fix to avoid negative values
+ x16 SKW_QUERY_GDAT_CREATURE_WORD_VALUE(XCLS16 eaxb, x8 edxb);	// SPX fix to avoid negative values
  x16 SKW_QUERY_CREATURE_AI_SPEC_FLAGS(x16 eaxw);
  x16 SKW_0cee_2df4(x16 eaxw);
  x16 SKW_0cee_2e09(x16 eaxw);
@@ -495,17 +497,20 @@
  t_text* SKW_QUERY_GDAT_TEXT(x8 eaxb, x8 ebxb, t_text* ecxt, x8 edxb);
  void DM2_2636_03d4(void);
  void SKW_MARK_DYN_LOAD(ui32 eaxul);
- void SKW_2676_006a(x32 eaxl);
- void SKW_2676_008f(x32 eaxl, x8 edxb);
- void SKW_2676_00d0(x8 eaxb, x8 ebxb, x8 edxb);
+ void SKW_MARK_DYN_LOAD_2676_006a(x32 eaxl);					// SKW_2676_006a renamed SKW_MARK_DYN_LOAD_2676_006a
+ void SKW_MARK_DYN_LOAD_2676_008f(x32 eaxl, x8 edxb);			// SKW_2676_008f renamed SKW_MARK_DYN_LOAD_2676_008f
+ void SKW_MARK_DYN_LOAD_2676_00d0(x8 eaxb, x8 ebxb, x8 edxb);	// SKW_2676_00d0 renamed SKW_MARK_DYN_LOAD_2676_00d0
  void SKW_LOAD_LOCALLEVEL_DYN(void);
  void SKW_FREE_PICT_ENTRY(t_gfxdata* eaxpg);
  t_gfxdata* SKW_ALLOC_PICT_BUFF(x16 eaxw, x16 ebxw, x8 ecxb, x16 edxw);
  void SKW_FREE_PICT_BUFF(t_gfxdata* eaxpg);
- //x16 DM2_QUERY_GDAT_ENTRY_DATA_INDEX(x8 eaxb, x8 ebxb, x8 ecxb, x8 edxbl);
- x16 DM2_QUERY_GDAT_ENTRY_DATA_INDEX(x8 eaxb, ui16 ebxb, ui16 ecxb, ui16 edxb);// SPX fix to avoid negative values
+
+// x16 DM2_QUERY_GDAT_ENTRY_DATA_INDEX(x8 eaxb, x8 ebxb, x8 ecxb, x8 edxb);
+x16 DM2_QUERY_GDAT_ENTRY_DATA_INDEX(x8 eaxb, XCLS16 ebxb, XCLS16 ecxb, XCLS16 edxb);// SPX fix to avoid negative values
+
+
  //bool SKW_QUERY_GDAT_ENTRY_IF_LOADABLE(x8 eaxb, x8 ebxb, x8 ecxb, x8 edxb);
- bool SKW_QUERY_GDAT_ENTRY_IF_LOADABLE(x8 eaxb, ui16 ebxb, ui16 ecxb, ui16 edxb);// SPX fix to avoid negative values
+ bool SKW_QUERY_GDAT_ENTRY_IF_LOADABLE(x8 eaxb, XCLS16 ebxb, XCLS16 ecxb, XCLS16 edxb);// SPX fix to avoid negative values
  //x8 SKW_3e74_2439(x8 eaxb, x8 edxb);
  ui16 SKW_3e74_2439(x8 eaxb, x8 edxb); // SPX fix to avoid negative values 
  void DM2_GRAPHICS_DATA_OPEN(void);
@@ -513,17 +518,17 @@
  void SKW_READ_GRAPHICS_STRUCTURE(void);
  void SKW_LOAD_DYN4(s_hex6* eaxps, x16 edxw);
  //t_gfxdata* SKW_QUERY_GDAT_IMAGE_ENTRY_BUFF(x8 eaxb, x8 ebxb, x8 edxb);
- t_gfxdata* SKW_QUERY_GDAT_IMAGE_ENTRY_BUFF(x8 eaxb, ui16 ebxb, ui16 edxb); // SPX fix to avoid negative values
+ t_gfxdata* SKW_QUERY_GDAT_IMAGE_ENTRY_BUFF(x8 eaxb, XCLS16 ebxb, XCLS16 edxb); // SPX fix to avoid negative values
  //x8* SKW_QUERY_GDAT_ENTRY_DATA_PTR(x8 eaxb, x8 ebxb, x8 ecxb, x8 edxb);
- x8* SKW_QUERY_GDAT_ENTRY_DATA_PTR(x8 eaxb, ui16 ebxb, ui16 ecxb, ui16 edxb); // SPX fix to avoid negative values
+ x8* SKW_QUERY_GDAT_ENTRY_DATA_PTR(x8 eaxb, XCLS16 ebxb, XCLS16 ecxb, XCLS16 edxb); // SPX fix to avoid negative values
  //x8* SKW_QUERY_GDAT_ENTRY_DATA_BUFF(x8 eaxb, x8 ebxb, x8 ecxb, x8 edxb);
- x8* SKW_QUERY_GDAT_ENTRY_DATA_BUFF(x8 eaxb, ui16 ebxb, ui16 ecxb, ui16 edxb);// SPX fix to avoid negative values
+ x8* SKW_QUERY_GDAT_ENTRY_DATA_BUFF(x8 eaxb, XCLS16 ebxb, XCLS16 ecxb, XCLS16 edxb);// SPX fix to avoid negative values
  //void SKW_LOAD_GDAT_ENTRY_DATA_TO(x8 eaxb, x8 ebxb, x8 ecxb, x8 edxb, x8* argpb0);
- void SKW_LOAD_GDAT_ENTRY_DATA_TO(x8 eaxb, ui16 ebxb, ui16 ecxb, ui16 edxb, x8* argpb0);	// SPX fix to avoid negative values
+ void SKW_LOAD_GDAT_ENTRY_DATA_TO(x8 eaxb, XCLS16 ebxb, XCLS16 ecxb, XCLS16 edxb, x8* argpb0);	// SPX fix to avoid negative values
  //t_palette* SKW_QUERY_GDAT_IMAGE_LOCALPAL(x8 eaxb, x8 ebxb, x8 edxb);
- t_palette* SKW_QUERY_GDAT_IMAGE_LOCALPAL(x8 eaxb, ui16 ebxb, ui16 edxb);	//  SPX fix to avoid negative values
+ t_palette* SKW_QUERY_GDAT_IMAGE_LOCALPAL(x8 eaxb, XCLS16 ebxb, XCLS16 edxb);	//  SPX fix to avoid negative values
  //x16 SKW_QUERY_GDAT_PICT_OFFSET(x8 eaxb, x8 ebxb, x8 edxb);
- x16 SKW_QUERY_GDAT_PICT_OFFSET(x8 eaxb, ui16 ebxb, ui16 edxb);		//  SPX fix to avoid negative values
+ x16 SKW_QUERY_GDAT_PICT_OFFSET(x8 eaxb, XCLS16 ebxb, XCLS16 edxb);		//  SPX fix to avoid negative values
  bool SKW_3e74_55f9(ui32 eaxul, x16* edxpw);
  t_gfxdata* SKW_ALLOC_NEW_PICT(x16 eaxw, x16 ebxw, x8 ecxb, x16 edxw);
  t_gfxdata* SKW_3e74_5817(x16 eaxw);
@@ -534,7 +539,7 @@
  void SKW_3e74_5992(x8 eaxb, x8 ebxb, x8 edxb);
  void R_2F5DE(t_gfxdata* eaxp, t_gfxdata* edxp); // unreferenced
  //x32 SKW_QUERY_GDAT_ENTRY_DATA_LENGTH(x8 eaxb, x8 ebxb, x8 ecxb, x8 edxb);
- x32 SKW_QUERY_GDAT_ENTRY_DATA_LENGTH(x8 eaxb, ui16 ebxb, ui16 ecxb, ui16 edxb);	// SPX fix to avoid negative values
+ x32 SKW_QUERY_GDAT_ENTRY_DATA_LENGTH(x8 eaxb, XCLS16 ebxb, XCLS16 ecxb, XCLS16 edxb);	// SPX fix to avoid negative values
  void SKW_QUERY_GDAT_IMAGE_METRICS(x8 eaxb, x8 ebxb, x16* ecxpw, x8 edxb, x16* argpw0);
  void SKW_3e74_5b7c(x16 eaxw);
  t_text* SKW_QUERY_CMDSTR_NAME(x8 eaxb, x8 ebxb, x8 edxb);
@@ -817,5 +822,10 @@
  void SKW_GAME_LOOP(void);
  void SKW_MAIN(void);
  void SKW_INIT(void);
+
+
+
+
+
 
 #endif
