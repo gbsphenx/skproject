@@ -123,4 +123,50 @@ LOGX(("============================\n"));
     xxx* p_00;
   };
 */
+
+char xStaticDebugLoadEnt[32];
+
+const char* DEBUG_SKLOADENT(ui8* xSkLoadEnt)
+{
+	unsigned int iCls1Category = 0;
+	unsigned int iCls2 = 0;
+	unsigned int iCls3 = 0;
+	unsigned int iCls4 = 0;
+	memset(xStaticDebugLoadEnt, 0, 32);
+
+	iCls1Category = xSkLoadEnt[2];
+	iCls2 = xSkLoadEnt[3];
+	iCls3 = xSkLoadEnt[4];
+	iCls4 = xSkLoadEnt[5];
+
+
+	sprintf(xStaticDebugLoadEnt, "%02X-%02X-%02X-%02X", iCls1Category, iCls2, iCls3, iCls4);
+	return xStaticDebugLoadEnt;
+}
+
+char xStaticDebugGDATEnt[128];
+
+const char* DEBUG_SKGDATENT(s_gdat* xSkGDATEnt)
+{
+	char sLoadEntFrom[32];
+	char sLoadEntTo[32];
+	unsigned int iValue32 = 0;
+	unsigned char* xRawPointer = NULL;
+
+	memset(sLoadEntFrom, 0, 32);
+	memset(sLoadEntTo, 0, 32);
+	memset(xStaticDebugGDATEnt, 0, 128);
+
+
+	iValue32 = xSkGDATEnt->l_00;
+	xRawPointer = (unsigned char*) xSkGDATEnt->p_10;
+	sprintf(sLoadEntFrom, "%s", DEBUG_SKLOADENT((ui8*)&xSkGDATEnt->s_04));
+	sprintf(sLoadEntTo, "%s", DEBUG_SKLOADENT((ui8*)&xSkGDATEnt->s_0a));
+
+
+	sprintf(xStaticDebugGDATEnt, "%s to %s -=- x32 = %08x / pRaw = %08x", sLoadEntFrom, sLoadEntTo, iValue32, xRawPointer);
+	return xStaticDebugGDATEnt;
+
+}
+
 // End of SPX

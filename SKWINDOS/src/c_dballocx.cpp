@@ -415,7 +415,7 @@ static x32 SKW_QUERY_GDAT_ENTRY_VALUE(x16 eaxw, x16 edxw)
 
 static bool SKW_QUERY_NEXT_GDAT_ENTRY(s_gdat* eaxp)
 {
-LOGX(("SKW_QUERY_NEXT_GDAT_ENTRY from SGDAT ptr %08X // intern p_10 : %08X\n", eaxp, eaxp->p_10));
+LOGX(("QUERY_NEXT_GDAT_ENTRY from SGDAT ptr %08X : GDAT %s\n", eaxp, DEBUG_SKGDATENT(eaxp)));
   x8 byterg3hi;
   x16 wordrg6;
   u_bbwlong* p_04;
@@ -1821,7 +1821,8 @@ void SKW_LOAD_DYN4(s_hex6* eaxps, x16 edxw)
     vl_5c = vs_08.s_04.u.l_00;
     if ((vs_08.s_04.u.s_00.w_00 & con(0x7fff)) == con(0x1))
     {
-      vs_50.ps_00++; // struct advance!
+      //vs_50.ps_00++; // struct advance!  // SPX: seems to move 2 byte too far
+	  vs_50.ps_00 = (s_hex6*) (((x8*)vs_50.ps_00) + 6);	// lets move exactly 6 bytes as expected
       x8* ptrtmprg6 = DOWNCAST(s_hex6, &vs_08.s_0a);
       x8* ptrtmprg5 = DOWNCAST(s_hex6, vs_50.ps_00);
       SKW_COPY_MEMORY(ptrtmprg5, 6, ptrtmprg6);
@@ -1829,6 +1830,8 @@ void SKW_LOAD_DYN4(s_hex6* eaxps, x16 edxw)
       ptrtmprg6 += 6;
       vw_60++;
     }
+LOGX(("LOAD_DYN4: %02d / %02d\n", vw_60, vw_00));
+LOGX(("LOAD_DYN4: MASK: %s\n", DEBUG_SKLOADENT((ui8*)ptrtmprg6) ));
 
     while ((SKW_QUERY_NEXT_GDAT_ENTRY(&vs_08) ? 1 : 0) != con(0x0))
     {

@@ -170,6 +170,12 @@ x16 GET_ANIM_INFO_SEQUENCE(x8 eaxb, x16 edxw)
 {
   x8* bptrrg1 = SKW_QUERY_GDAT_ENTRY_DATA_PTR(con(0xf), con(0x7), con(0xfc), eaxb);
   bptrrg1 += (edxw << con(0x2));
+
+  // SPX: add some protection when the pointer is not loaded (length info)
+  if (((ui32) bptrrg1) & 0x80000000)
+	  return 1;	// defaut is 1 here because it is used in modulo thereafter
+
+
   x16 wordrg4;
   for (wordrg4 = con(0x1); (*(bptrrg1 + con(0x1)) & con(0xf0)) == con(0x0); wordrg4++, bptrrg1 += con(0x4))
   {

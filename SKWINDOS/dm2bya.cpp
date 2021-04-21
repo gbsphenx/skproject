@@ -16,6 +16,8 @@
 #include "src/c_savegame.h"
 #include "calls.h"
 
+
+
 #include "../skwin/defines.h"
 
 #include "dm2debug.h"
@@ -157,6 +159,8 @@ SPX_DEBUG_PUSH_FUNCTION_INFO("SKW_LOAD_NEWMAP");
   }
   SKW_LOAD_LOCALLEVEL_GRAPHICS_TABLE(eaxw, ebxw, edxw);
   SKW_LOAD_LOCALLEVEL_DYN();
+DEBUG_DUMP_ULP();
+
   if (!dm2_dballochandler.v1e0a84)
   {
     SKW_3a15_38b6(true);
