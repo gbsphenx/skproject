@@ -22,6 +22,39 @@
 
 #include "dm2debug.h"
 
+
+// SPX: Name of skill
+const char* getSkillName(ui8 skill)
+{
+	static char text[128] = {0};
+	if (skill == SKILL_FIGHTER_GLOBAL) return "FIGHTER";
+	if (skill == SKILL_NINJA_GLOBAL) return "NINJA";
+	if (skill == SKILL_PRIEST_GLOBAL) return "PRIEST";
+	if (skill == SKILL_WIZARD_GLOBAL) return "WIZARD";
+	if (skill == SKILL_FIGHTER_SWING) return "(F1)SWING";
+	if (skill == SKILL_FIGHTER_THRUST) return "(F2)THRUST";
+	if (skill == SKILL_FIGHTER_BLUNT) return "(F3)BLUNT";
+	if (skill == SKILL_FIGHTER_PARRY) return "(F4)PARRY";
+	if (skill == SKILL_NINJA_STEAL) return "(N1)STEAL";
+	if (skill == SKILL_NINJA_FIGHT) return "(N2)FIGHT";
+	if (skill == SKILL_NINJA_THROW) return "(N3)THROW";
+	if (skill == SKILL_NINJA_SHOOT) return "(N4)SHOOT";
+	if (skill == SKILL_PRIEST_IDENTIFY) return "(P1)IDENTIFY";
+	if (skill == SKILL_PRIEST_HEAL) return "(P2)HEAL";
+	if (skill == SKILL_PRIEST_INFLUENCE) return "(P3)INFLUENCE";
+	if (skill == SKILL_PRIEST_DEFEND) return "(P4)DEFEND";
+	if (skill == SKILL_WIZARD_FIRE) return "(W1)FIRE";
+	if (skill == SKILL_WIZARD_AIR) return "(W2)AIR";
+	if (skill == SKILL_WIZARD_EARTH) return "(W3)EARTH";
+	if (skill == SKILL_WIZARD_WATER) return "(W4)WATER";
+	if (text[0] != 0)
+		return text;
+	return "UNKNOWN";
+}
+
+
+
+
 // BUGS: resume-button after party died
 // Spell-damage, moving backwards to new level!
 // set enable_video = false during certain palette-operations?
@@ -14252,6 +14285,20 @@ void SKW_ADJUST_SKILLS(x16 eaxw, x16 ebxw, x16 edxw)
   heroptrrg5->l5f[vw_04] += vl_00;
   if (vw_04 >= con(0x4))
     heroptrrg5->l5f[wordrg6] += vl_00;
+
+  // SPX DEBUG
+	//if (SkCodeParam::bUsePowerDebug)
+	{
+		char message[64];
+		sprintf((char*)message, "%s: +%d XP %s (XP=%d)!\n"
+			, "CHAMPION", vl_00
+			, getSkillName(vw_04), heroptrrg5->l5f[vw_04]);
+		//SKW_DISPLAY_HINT_TEXT(glbChampionColor[player], message);
+		SKW_DISPLAY_HINT_TEXT(table1d69d0[vw_08], message);
+		
+	}
+  // SPX DEBUG
+
   x16 vw_8c = SKW_QUERY_PLAYER_SKILL_LV(vw_08, false, wordrg6);
   for(;;)
   {
