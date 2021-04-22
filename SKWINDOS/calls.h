@@ -31,6 +31,9 @@
 
 #include "dm2global.h"
 
+
+const char* getSkillName(ui8 skill);
+
  t_gfxdata* R_D2C(x16 eaxw, x16 ebxw, x16 edxw);
  x16 SKW_476d_030a(x16 eaxl);
  x16 R_1456(void); // unreferenced - calls user interrupt
