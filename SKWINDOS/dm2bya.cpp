@@ -2497,10 +2497,10 @@ void SKW_29ee_0396(void)
           {
             SKW_QUERY_PICST_IT(SKW_QUERY_GDAT_SUMMARY_IMAGE(&vs_00, con(0x7), ddata.hero[vw_15c].b102, con(0x1)));
             vs_00.s_00.w_04 |= con(0x10);
-            vs_00.s_00.w_12 >>= con(0x2);
-            vs_00.s_00.w_0e = vs_00.s_00.w_12 * ((unsignedword(ddata.hero[vw_15c].b1c) + con(0x4) - ddata.v1e0258) & con(0x3));
-            vs_00.s_00.w_14 >>= con(0x2);
-            vs_00.s_00.w_10 = CUTX16(ddata.longmallocx) & con(0x3) * vs_00.s_00.w_14;
+            vs_00.s_00.width >>= con(0x2);
+            vs_00.s_00.w_0e = vs_00.s_00.width * ((unsignedword(ddata.hero[vw_15c].b1c) + con(0x4) - ddata.v1e0258) & con(0x3));
+            vs_00.s_00.height >>= con(0x2);
+            vs_00.s_00.w_10 = CUTX16(ddata.longmallocx) & con(0x3) * vs_00.s_00.height;
             SKW_0b36_11c0(&vs_00, wordrg2, con(0xc), &ddata.v1d694c);
           }
         }
@@ -2556,10 +2556,10 @@ void SKW_DRAW_PLAYER_ATTACK_DIR(void)
     {
       SKW_QUERY_PICST_IT(SKW_QUERY_GDAT_SUMMARY_IMAGE(&vs_00, con(0x7), ddata.hero[wordrg5].b102, con(0x1)));
       vs_00.s_00.w_04 |= con(0x10);
-      vs_00.s_00.w_12 >>= con(0x2);
-      vs_00.s_00.w_0e = ((unsignedword(ddata.hero[wordrg5 / 263].b1c) + con(0x4) - ddata.v1e0258) & con(0x3)) * vs_00.s_00.w_12;
-      vs_00.s_00.w_14 >>= con(0x2);
-      vs_00.s_00.w_10 = (CUTX16(ddata.longmallocx) & con(0x3)) * vs_00.s_00.w_14;
+      vs_00.s_00.width >>= con(0x2);
+      vs_00.s_00.w_0e = ((unsignedword(ddata.hero[wordrg5 / 263].b1c) + con(0x4) - ddata.v1e0258) & con(0x3)) * vs_00.s_00.width;
+      vs_00.s_00.height >>= con(0x2);
+      vs_00.s_00.w_10 = (CUTX16(ddata.longmallocx) & con(0x3)) * vs_00.s_00.height;
       SKW_0b36_11c0(&vs_00, con(0x5e), con(0xc), &ddata.v1d694c);
     }
   }
@@ -3574,16 +3574,16 @@ void SKW_32cb_0c7d(c_image* eaxpimg, x16 ebxw, x16 edxw)
     t_gfxdata* gptrrg62 = SKW_3e74_5817(vw_18);
     s_gfxdatatail* ptrbeforerg62 = getprevious(gptrrg62);
     t_gfxdata* parpg13 = SKW_32cb_0649(con(0x17), vb_1c, con(0x0), ddata.v1d6c02);
-    parpg13[0x0] = (eaxpimg->w_38 > con(0x0)) ? eaxpimg->carr_3a[ebxw] : CUTX8(ebxw);
+    parpg13[0x0] = (eaxpimg->w_38 > con(0x0)) ? eaxpimg->xLocalPalette[ebxw] : CUTX8(ebxw);
     x16 wordrg3 = ptrbeforerg62->width * ptrbeforerg62->height;
-    SKW_44c8_20a4(gptrrg62, NULL, &eaxpimg->rc_24, UPCAST(t_gfxdata, SKW_3e74_5817(edxw)), wordrg3 - CUTX16(SKW_RAND() & con(0x1f)) - con(0x10), SKW_RAND16(wordrg3 - con(0x3c)), eaxpimg->s_00.w_12, con(0xffff), parpg13);
+    SKW_44c8_20a4(gptrrg62, NULL, &eaxpimg->rc_24, UPCAST(t_gfxdata, SKW_3e74_5817(edxw)), wordrg3 - CUTX16(SKW_RAND() & con(0x1f)) - con(0x10), SKW_RAND16(wordrg3 - con(0x3c)), eaxpimg->s_00.width, con(0xffff), parpg13);
     SKW_3e74_58a3(vw_18);
   }
   else
   {
     x8 byterg1;
     if (eaxpimg->w_38 > con(0x0))
-      byterg1 = unsignedlong(eaxpimg->carr_3a[ebxw]);
+      byterg1 = unsignedlong(eaxpimg->xLocalPalette[ebxw]);
     else
       byterg1 = CUTX8(ebxw);
     SKW_FILL_ENTIRE_PICT(SKW_3e74_5817(edxw), byterg1);
@@ -4756,7 +4756,7 @@ void SKW_DRAW_PICST(c_image* eaxpimg)
   x16 srcofs; // was vw_00
   x16 vw_04;
 
-  if ((eaxpimg->s_00.w_12 <= con(0x0)) || (eaxpimg->s_00.w_14 <= con(0x0)))
+  if ((eaxpimg->s_00.width <= con(0x0)) || (eaxpimg->s_00.height <= con(0x0)))
     return;
   srcbmp = SKW_QUERY_PICT_BITMAP(&eaxpimg->s_00);
   s_gfxdatatail* ptrbeforerg6 = getprevious(srcbmp);
@@ -4765,8 +4765,8 @@ void SKW_DRAW_PICST(c_image* eaxpimg)
   {
     if ((((wordrg4 & con(0x8000)) == con(0x0)) && (eaxpimg->w_1c == con(0x0))) && (eaxpimg->w_1e == con(0x0)))
     {
-      srcofs = eaxpimg->s_00.w_12;
-      vw_04 = eaxpimg->s_00.w_14;
+      srcofs = eaxpimg->s_00.width;
+      vw_04 = eaxpimg->s_00.height;
     }
     else
     {
@@ -4818,7 +4818,7 @@ void SKW_DRAW_PICST(c_image* eaxpimg)
   }
   if (eaxpimg->w_30 != con(0xfffffffe))
 //                        srcbmp                   srcofs  destbmp                                                                                       srcbits      destbits    palette
-    SKW_FIRE_BLIT_PICTURE(srcbmp, &eaxpimg->rc_24, srcofs, eaxpimg->pg_2c, vw_04, ptrbeforerg6->width, wordrg11, eaxpimg->w_30, eaxpimg->w_32, e_bitres(ptrbeforerg6->b0), wordrg2, (eaxpimg->w_38 > con(0x0)) ? eaxpimg->carr_3a : NULL);
+    SKW_FIRE_BLIT_PICTURE(srcbmp, &eaxpimg->rc_24, srcofs, eaxpimg->pg_2c, vw_04, ptrbeforerg6->width, wordrg11, eaxpimg->w_30, eaxpimg->w_32, e_bitres(ptrbeforerg6->b0), wordrg2, (eaxpimg->w_38 > con(0x0)) ? eaxpimg->xLocalPalette : NULL);
   eaxpimg->w_20 = srcofs;
   eaxpimg->w_22 = vw_04;
 }
@@ -4834,15 +4834,15 @@ void SKW_0b36_11c0(c_image* eaxpimg, x16 ebxw, x16 ecxw, c_c5rects* edxps)
   eaxpimg->pg_2c = SKW_3e74_5817(edips->s_00.w_00);
   if (ebxw != con(0xffffffff))
   {
-    vw_08 = eaxpimg->s_00.w_12;
-    vw_10 = eaxpimg->s_00.w_14;
+    vw_08 = eaxpimg->s_00.width;
+    vw_10 = eaxpimg->s_00.height;
     if (SKW_QUERY_BLIT_RECT(SKW_QUERY_PICT_BITMAP(&eaxpimg->s_00), ebxw, &vw_08, &rc_00, &vw_10, con(0xffffffff)) == NULL)
       return;
   }
   else
     SKW_COPY_RECT(&eaxpimg->rc_24, &rc_00);
-  eaxpimg->s_00.w_12 += vw_08;
-  eaxpimg->s_00.w_14 += vw_10;
+  eaxpimg->s_00.width += vw_08;
+  eaxpimg->s_00.height += vw_10;
   SKW_OFFSET_RECT(edips, &eaxpimg->rc_24, &rc_00);
   eaxpimg->w_18 = con(0xffffffff);
   eaxpimg->w_30 = ecxw;
@@ -6570,14 +6570,19 @@ SPX_DEBUG_PUSH_FUNCTION_INFO("SKW_DISPLAY_VIEWPORT");
     wordrg2 = unsignedword(CUTX8(wordrg11));
   }
   SKW_TRIM_BLIT_RECT(con(0x0), con(0x0), con(0x0), wordrg2);
-  SKW_DRAW_DUNGEON_GRAPHIC(con(0x8), con(0x1), con(0x2bc), ddata.v1d6c02, con(0xffff), (SKW_SET_GRAPHICS_FLIP_FROM_POSITION(con(0x20), edxw, vw_04, eaxw) == con(0x0)) ? con(0x0) : con(0x1));
+  //SKW_DRAW_DUNGEON_GRAPHIC(con(0x8), con(0x1), con(0x2bc), ddata.v1d6c02, con(0xffff), (SKW_SET_GRAPHICS_FLIP_FROM_POSITION(con(0x20), edxw, vw_04, eaxw) == con(0x0)) ? con(0x0) : con(0x1));	// draw roof/ceil
+  SKW_DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_GRAPHICSSET, GDAT_GFXSET_CEIL, con(0x2bc), ddata.v1d6c02, con(0xffff), 
+	  (SKW_SET_GRAPHICS_FLIP_FROM_POSITION(con(0x20), edxw, vw_04, eaxw) == con(0x0)) ? con(0x0) : con(0x1));
   ddata.v1e01d0 = con(0x0);
   SKW_TRIM_BLIT_RECT(con(0x0), wordrg52, con(0x0), con(0x0));
-  SKW_DRAW_DUNGEON_GRAPHIC(con(0x8), con(0x0), con(0x2bd), ddata.v1d6c02, con(0xffff), (SKW_SET_GRAPHICS_FLIP_FROM_POSITION(con(0x1), edxw, vw_04, eaxw) == con(0x0)) ? con(0x0) : con(0x1));
+  //SKW_DRAW_DUNGEON_GRAPHIC(con(0x8), con(0x0), con(0x2bd), ddata.v1d6c02, con(0xffff), (SKW_SET_GRAPHICS_FLIP_FROM_POSITION(con(0x1), edxw, vw_04, eaxw) == con(0x0)) ? con(0x0) : con(0x1));	// draw floor
+  SKW_DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_GRAPHICSSET, GDAT_GFXSET_FLOOR, con(0x2bd), ddata.v1d6c02, con(0xffff),
+	  (SKW_SET_GRAPHICS_FLIP_FROM_POSITION(con(0x1), edxw, vw_04, eaxw) == con(0x0)) ? con(0x0) : con(0x1));
+
   ddata.v1e01d0 = con(0x0);
   ddata.v1e12d0 = SKW_SET_GRAPHICS_FLIP_FROM_POSITION(con(0x0), edxw, vw_04, eaxw);
   SKW_IBMIO_USER_INPUT_CHECK();
-  SKW_ENVIRONMENT_DISPLAY_ELEMENTS(eaxw, vw_04, edxw);
+  SKW_ENVIRONMENT_DISPLAY_ELEMENTS(eaxw, vw_04, edxw);	/// direction, y, x
   SKW_32cb_5c67();
   SKW_32cb_5a8f();
   SKW_DRAW_DUNGEON_TILES();

@@ -121,7 +121,7 @@ void c_image::init(void)
   w_34 = 0;
   w_36 = 0;
   w_38 = 0;
-  for (int i=0; i<PAL256; i++) carr_3a[i] = 0;
+  for (int i=0; i<PAL256; i++) xLocalPalette[i] = 0;
 };
 
 void c_c5rects::init(void)
@@ -142,8 +142,8 @@ void c_hex18::init(void)
   w_0c = 0;
   w_0e = 0;
   w_10 = 0;
-  w_12 = 0;
-  w_14 = 0;
+  width = 0;	// w_12
+  height = 0;	// w_14
   w_16 = 0;
 }
 

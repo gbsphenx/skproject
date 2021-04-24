@@ -353,8 +353,8 @@
       x16 w_0c; // used
       x16 w_0e; // used
       x16 w_10; // used
-      x16 w_12; // used
-      x16 w_14; // used
+      x16 width; // w_12 used	width
+      x16 height; // w_14 used	height
       x16 w_16; // used
 
     public:
@@ -489,7 +489,7 @@
       x16 w_34;
       x16 w_36;
       x16 w_38;
-      t_gfxdata carr_3a[PAL256];
+      t_gfxdata xLocalPalette[PAL256];	// carr_3a
 
     public:
       void init(void);

@@ -2081,9 +2081,9 @@ bool SKW_32cb_0287(x16 eaxw, x16 ebxw, x16 edxw)
   ddata.v1e1044 = ps_04;
   if (eaxw == con(0x3))
     return true;
-  if (ddata.v1e118e.s_00.w_12 >= con(0x20))
+  if (ddata.v1e118e.s_00.width >= con(0x20))
   {
-    if (ddata.v1e118e.s_00.w_14 >= con(0x20))
+    if (ddata.v1e118e.s_00.height >= con(0x20))
       return vbool_00;
   }
   return true;
@@ -2094,7 +2094,7 @@ void SKW_DRAW_DUNGEON_GRAPHIC(x8 eaxb, x8 ebxb, x16 ecxw, x8 edxb, x16 argw0, x1
   c_image vs_00;
 
   SKW_QUERY_GDAT_SUMMARY_IMAGE(&vs_00, edxb, ebxb, eaxb);
-  R_B073(vs_00.carr_3a, argw0, con(0xffffffff), CUTX8(ddata.v1e12d2), &vs_00.w_38);
+  R_B073(vs_00.xLocalPalette, argw0, con(0xffffffff), CUTX8(ddata.v1e12d2), &vs_00.w_38);
   vs_00.w_30 = argw0;
   vs_00.w_18 = ecxw;
   vs_00.pg_2c = ddata.bitmapptr;
@@ -2148,7 +2148,7 @@ void SKW_QUERY_TEMP_PICST(x16 eaxw, x16 ebxw, x16 ecxw, x16 edxw, x16 argw0, x16
   ddata.v1e118e.w_1a = argw3;
   ddata.v1e118e.pg_2c = ddata.bitmapptr;
   ddata.v1e118e.w_30 = argw4;
-  SKW_32cb_0804(ddata.v1e118e.carr_3a, argw4, argw5, argw1, &ddata.v1e118e.w_38);
+  SKW_32cb_0804(ddata.v1e118e.xLocalPalette, argw4, argw5, argw1, &ddata.v1e118e.w_38);
   SKW_QUERY_PICST_IT(&ddata.v1e118e);
 }
 
@@ -4855,7 +4855,7 @@ void SKW_UPDATE_WEATHER(bool eaxbool)
 }
 
 // was SKW_32cb_5824
-void SKW_ENVIRONMENT_DISPLAY_ELEMENTS(x16 eaxw, x16 ebxw, x16 edxw)
+void SKW_ENVIRONMENT_DISPLAY_ELEMENTS(x16 eaxw, x16 ebxw, x16 edxw) // dir, y, x
 {
   x8 byterg5;
   s_xabytes* sxaptrrg5;

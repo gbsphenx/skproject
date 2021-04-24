@@ -19,11 +19,15 @@
 #include "src/c_savegame.h"
 #include "calls.h"
 
+#include "dm2debug.h"
 
-#define LOGX(X) SPX_DEBUG_LOGFILE_INFO X
-#ifdef NDEBUG
-	#define LOGX(X) ;;
+#define NO_TRACE
+#ifdef NO_TRACE
+	#define NO_LOG_RETURN	return;
+#else
+	#define NO_LOG_RETURN	;
 #endif
+
 
 //------------------------------------------------------------------------------
 
@@ -40,6 +44,7 @@
 void DEBUG_DISPLAY_GDAT_MAIN_INFO()
 {
 	unsigned int iItemIndex = 0;
+NO_LOG_RETURN;
 	LOGX(("DEBUG_DISPLAY_GDAT_MAIN_INFO\n"));
 	LOGX(("#Items: %04d\n", glbGDatNumberOfData));
 	for (iItemIndex = 0; iItemIndex < glbGDatNumberOfData; iItemIndex++) 
@@ -62,6 +67,7 @@ void DEBUG_DISPLAY_GDAT_MAIN_INFO()
 
 void DEBUG_DUMP_BIN_DATA(unsigned char* ptr, unsigned int iDumpSize, unsigned int iBytesPerRow)
 {
+NO_LOG_RETURN;
 	for (unsigned int iCursor = 0; iCursor < iDumpSize; iCursor++)
 	{
 		LOGX(("%02X ", ptr[iCursor]));
@@ -74,6 +80,7 @@ void DEBUG_DUMP_BIN_DATA(unsigned char* ptr, unsigned int iDumpSize, unsigned in
 void DEBUG_DUMP_ULP()
 {
 	unsigned int iItemNumber = 0;
+NO_LOG_RETURN;
 LOGX(("============================\n"));
 LOGX(("ULP >> \n"));
 	for (iItemNumber = 0; iItemNumber < glbGDatNumberOfData; iItemNumber++)

@@ -1411,8 +1411,9 @@ t_palette* SKW_QUERY_GDAT_IMAGE_LOCALPAL(x8 eaxb, XCLS16 ebxb, XCLS16 edxb)	//  
     sptrrg4 = UPCAST(s_grrr, dm2_ulp.getp(unsignedlong(wordval6)));
   else
   {
-    if (!DM2_IS_CLS1_CRITICAL_FOR_LOAD(eaxb))
-      goto M_fin;
+	  // SPX: bypass that to get correct palette
+//    if (!DM2_IS_CLS1_CRITICAL_FOR_LOAD(eaxb))
+//      goto M_fin;
     sptrrg4 = UPCAST(s_grrr, SKW_QUERY_GDAT_DYN_BUFF(wordval6, false, &vw_00));
   }
   if ((sptrrg4->u.l0 >> con(0x1a)) == con(0xffffffe0))

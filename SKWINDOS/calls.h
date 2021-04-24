@@ -32,7 +32,12 @@
 #include "dm2global.h"
 
 
+const char* getSpellTypeName(ui8 spelltype);
 const char* getSkillName(ui8 skill);
+const char* getStatBonusName(ui8 bonus);
+const char* getUIEventName(ui8 event);
+const char* getAIName(ui8 ai);
+//const char* getRecordNameOf(ObjectID recordLink);
 
  t_gfxdata* R_D2C(x16 eaxw, x16 ebxw, x16 edxw);
  x16 SKW_476d_030a(x16 eaxl);

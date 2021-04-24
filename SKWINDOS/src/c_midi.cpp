@@ -9,13 +9,26 @@
 
 #define MIDIPATHNAME "./DATA/%02x.hmp.mid"
 
+// SPX: added to handle music as wav
+#include "c_music_wav.h"
+
 void c_midi::do_music(i16 nr)
 {
+  bool bUseMIDI = false;
   char songname[30];
-  sprintf(songname, MIDIPATHNAME, nr);
-  thesong = load_midi(songname);
-  if (thesong)
-    play_midi(thesong, true); // true means: looped
+// MIDI music
+  if (bUseMIDI)
+  {
+	sprintf(songname, MIDIPATHNAME, nr);
+	thesong = load_midi(songname);
+	if (thesong)
+	    play_midi(thesong, true); // true means: looped
+  }
+  else
+  {
+	do_music_wav(nr);
+  }
+
 }
 
 void c_midi::stop_music(void)

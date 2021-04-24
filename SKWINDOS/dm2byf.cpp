@@ -692,7 +692,7 @@ bool SKW_DRAW_EXTERNAL_TILE(ui16 eaxuw)
   }
   x16 wordrg3 = SKW_QUERY_MULTILAYERS_PIC(&vs_04, vb_190, vb_18c, con(0xa), vw_188, vw_188, vw_17c, vw_178, vw_174, DM2_QUERY_GDAT_ENTRY_DATA_INDEX(con(0xa), con(0xb), con(0x11), vb_190));
   if (vs_04.w_38 > con(0x0))
-    byterg5 = vs_04.carr_3a[vw_174];
+    byterg5 = vs_04.xLocalPalette[vw_174];
   else
     byterg5 = vw_174;
   if (vw_158 == con(0x0))
@@ -3667,6 +3667,7 @@ void SKW_CHANCE_TABLE_OPERATION(void)
   ddata.v1d324a = wordrg5;
 }
 
+// DRAW_WALL_ORNATE i16 cellPos, i16 yy, i16 zz)
 x16 SKW_32cb_15b8(x16 eaxw, bool ebxbool, x16 edxw)
 {
   x16 wordrg5;
@@ -3818,7 +3819,7 @@ x16 SKW_32cb_15b8(x16 eaxw, bool ebxbool, x16 edxw)
       SKW_DRAW_PICST(&vs_140);
       SKW_0b36_01cd(&vs_140.s_00);
       if (vs_140.w_38 > con(0x0))
-        vs_140.w_30 = unsignedword(vs_140.carr_3a[vw_324]);
+        vs_140.w_30 = unsignedword(vs_140.xLocalPalette[vw_324]);
       else
         vs_140.w_30 = vw_324;
       vs_140.pg_2c = ddata.bitmapptr;
@@ -3945,9 +3946,9 @@ x16 SKW_32cb_15b8(x16 eaxw, bool ebxbool, x16 edxw)
       vs_04.s_00.w_06 = con(0xffffffff);
       vs_04.w_34 = vw_31c;
       vs_04.w_36 = vw_318;
-      SKW_COPY_MEMORY(DOWNCAST(t_gfxdata, SKW_QUERY_GDAT_IMAGE_LOCALPAL(con(0x8), con(0x3), ddata.v1d6c02)), PAL16, DOWNCAST(t_gfxdata, vs_04.carr_3a));
+      SKW_COPY_MEMORY(DOWNCAST(t_gfxdata, SKW_QUERY_GDAT_IMAGE_LOCALPAL(con(0x8), con(0x3), ddata.v1d6c02)), PAL16, DOWNCAST(t_gfxdata, vs_04.xLocalPalette));
       vs_04.w_38 = con(0x10);
-      SKW_32cb_0804(vs_04.carr_3a, vw_324, con(0xffffffff), vw_310, &vs_04.w_38);
+      SKW_32cb_0804(vs_04.xLocalPalette, vw_324, con(0xffffffff), vw_310, &vs_04.w_38);
       vs_04.pg_2c = ddata.bitmapptr;
       vs_04.w_18 = vw_334;
       vs_04.w_1a = vw_338;
@@ -4138,7 +4139,7 @@ void SKW_32cb_0f82(c_record* eaxprec, x16 ebxw, x16 ecxw, x8 edxb, x16 argw0, x1
         vw_40++;
       }
 //                           srcbmp                                                                                   srcofs  destbmp                               palette
-      SKW_DRAW_DIALOGUE_PICT(gptrrg5, SKW_QUERY_BLIT_RECT(gptrrg5, argw2 | con(0x8000), &vw_20, &rc_00, &vw_24, argw3), 0, ddata.bitmapptr, con(0x0), argw4, ddata.v1e118e.carr_3a);
+      SKW_DRAW_DIALOGUE_PICT(gptrrg5, SKW_QUERY_BLIT_RECT(gptrrg5, argw2 | con(0x8000), &vw_20, &rc_00, &vw_24, argw3), 0, ddata.bitmapptr, con(0x0), argw4, ddata.v1e118e.xLocalPalette);
       SKW_3e74_58a3(vw_30);
     }
   }

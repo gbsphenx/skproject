@@ -1270,9 +1270,9 @@ x16 SKW_QUERY_MULTILAYERS_PIC(c_image* eaxpimg, x8 ebxb, x8 ecxb, x8 edxb, x16 a
   SKW_COPY_IMAGE(&ddata.v1e118e, eaxpimg);
   SKW_0b36_018f(&eaxpimg->s_00);
   eaxpimg->w_30 = argw5;
-  SKW_SET_ORIGIN_RECT(&eaxpimg->rc_24, eaxpimg->s_00.w_12, eaxpimg->s_00.w_14);
+  SKW_SET_ORIGIN_RECT(&eaxpimg->rc_24, eaxpimg->s_00.width, eaxpimg->s_00.height);
   wordrg6 = SKW_3e74_5888();
-  eaxpimg->pg_2c = SKW_ALLOC_NEW_PICT(wordrg6, eaxpimg->s_00.w_14, con(0x8), eaxpimg->s_00.w_12);
+  eaxpimg->pg_2c = SKW_ALLOC_NEW_PICT(wordrg6, eaxpimg->s_00.height, con(0x8), eaxpimg->s_00.width);
   return wordrg6;
 }
 
@@ -1309,7 +1309,7 @@ void SKW_32cb_2cf3(x8 eaxb, x16 ebxw, x16 ecxw, x16 edxw)
   ddata.v1e118e.w_32 = ebxw;
   ddata.v1e118e.w_36 = wordrg5;
   ddata.v1e118e.w_34 = wordrg5;
-  R_B073(ddata.v1e118e.carr_3a, con(0xa), con(0xffffffff), CUTX8(ddata.v1e12d2), &ddata.v1e118e.w_38);
+  R_B073(ddata.v1e118e.xLocalPalette, con(0xa), con(0xffffffff), CUTX8(ddata.v1e12d2), &ddata.v1e118e.w_38);
   SKW_QUERY_PICST_IT(&ddata.v1e118e);
 }
 

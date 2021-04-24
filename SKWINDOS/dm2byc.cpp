@@ -546,8 +546,8 @@ t_gfxdata* SKW_QUERY_PICST_IMAGE(c_hex18* eaxph18)
   s_gfxdatatail* ptrbeforerg1 = getprevious(gptrrg1);
   eaxph18->w_0e = con(0x0);
   eaxph18->w_10 = con(0x0);
-  eaxph18->w_12 = ptrbeforerg1->width;
-  eaxph18->w_14 = ptrbeforerg1->height;
+  eaxph18->width = ptrbeforerg1->width;
+  eaxph18->height = ptrbeforerg1->height;
   eaxph18->w_16 = unsignedword(ptrbeforerg1->b0);
   eaxph18->w_04 = con(0x4);
   return gptrrg1;
@@ -562,8 +562,8 @@ t_gfxdata* SKW_0b36_00c3(x16 eaxw, c_hex18* edxph18)
     edxph18->pg_00 = gptrrg3;
     edxph18->w_0e = con(0x0);
     edxph18->w_10 = con(0x0);
-    edxph18->w_12 = ptrbeforerg3->width;
-    edxph18->w_14 = ptrbeforerg3->height;
+    edxph18->width = ptrbeforerg3->width;
+    edxph18->height = ptrbeforerg3->height;
     edxph18->w_16 = unsignedword(ptrbeforerg3->b0);
     edxph18->w_0c = eaxw;
     edxph18->w_04 = con(0x8);
@@ -661,7 +661,7 @@ c_image* SKW_QUERY_GDAT_SUMMARY_IMAGE(c_image* eaxpimg, x8 ebxb, x8 ecxb, x8 edx
     if (gptrrg1 != NULL)
     {
       eaxpimg->w_38 = con(0x10);
-      SKW_COPY_MEMORY(DOWNCAST(t_gfxdata, gptrrg1), PAL16, DOWNCAST(t_gfxdata, eaxpimg->carr_3a));
+      SKW_COPY_MEMORY(DOWNCAST(t_gfxdata, gptrrg1), PAL16, DOWNCAST(t_gfxdata, eaxpimg->xLocalPalette));
     }
     else
       eaxpimg->w_38 = con(0xffffffff);
