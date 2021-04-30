@@ -19,10 +19,11 @@ t_text notify[320/8+1]; // TODO temporary
 
 void c_stringdata::init(void)
 {
-  for (i16 i = 0; i < 5; i++)
+  i16 i = 0;
+  for (i = 0; i < 5; i++)
     fnum[i] = '\0'; // in c_str.cpp
 
-  for (i16 i = 0; i < 24; i++)
+  for (i = 0; i < 24; i++)
     font[i] = c_pixel(E_COL00);
 
   strx = 0;
