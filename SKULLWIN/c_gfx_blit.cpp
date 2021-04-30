@@ -285,6 +285,8 @@ void c_blitter::blitline_44_mima(ui16 srcofs, ui16 destofs, ui16 pixels, ui8 alp
 // was SKW_FIRE_BLIT_TO_MEMORY_4TO4BPP
 void c_blitter::blitline_44(c_pixel16* srcgfx, c_pixel16* destgfx, c_rect* blitrect, i16 srcx, i16 srcy, ui16 srcw, ui16 destw, t_alphamask alphamask, e_blitmode blitmode)
 {
+  i16 i = 0;
+
   if (blitrect->w == 0 || blitrect->h == 0)
     return;
 
@@ -303,7 +305,7 @@ void c_blitter::blitline_44(c_pixel16* srcgfx, c_pixel16* destgfx, c_rect* blitr
   {
     case BLITMODE1:
       srcofs += srcy * srcw;
-      for (i16 i = 0; i < blitrect->h; i++, srcofs += srcw, destofs += destw)
+      for (i = 0; i < blitrect->h; i++, srcofs += srcw, destofs += destw)
         if (alphamask >= 0)
           blitline_44_mima(srcofs, destofs, pixels, alpha);
         else
@@ -312,7 +314,7 @@ void c_blitter::blitline_44(c_pixel16* srcgfx, c_pixel16* destgfx, c_rect* blitr
 
     case BLITMODE2:
       srcofs += (srcy + blitrect->h - 1) * srcw;
-      for (i16 i = 0; i < blitrect->h; i++, srcofs -= srcw, destofs += destw)
+      for (i = 0; i < blitrect->h; i++, srcofs -= srcw, destofs += destw)
         if (alphamask >= 0)
           blitline_44_ma(srcofs, destofs, pixels, alpha);
         else
@@ -321,7 +323,7 @@ void c_blitter::blitline_44(c_pixel16* srcgfx, c_pixel16* destgfx, c_rect* blitr
 
     case BLITMODE3:
       srcofs += (srcy + blitrect->h - 1) * srcw;
-      for (i16 i = 0; i < blitrect->h; i++, srcofs -= srcw, destofs += destw)
+      for (i = 0; i < blitrect->h; i++, srcofs -= srcw, destofs += destw)
         if (alphamask >= 0)
           blitline_44_mima(srcofs, destofs, pixels, alpha);
         else
@@ -330,7 +332,7 @@ void c_blitter::blitline_44(c_pixel16* srcgfx, c_pixel16* destgfx, c_rect* blitr
 
     default:
       srcofs += srcy * srcw;
-      for (i16 i = 0; i < blitrect->h; i++, srcofs += srcw, destofs += destw)
+      for (i = 0; i < blitrect->h; i++, srcofs += srcw, destofs += destw)
         if (alphamask >= 0)
           blitline_44_ma(srcofs, destofs, pixels, alpha);
         else
@@ -492,6 +494,8 @@ void c_blitter::blitline_48_mima(ui16 srcofs, ui16 destofs, ui16 pixels, ui8 alp
 // was SKW_FIRE_BLIT_TO_MEMORY_4TO8BPP
 void c_blitter::blitline_48(c_pixel16* srcgfx, c_pixel256* destgfx, c_rect* blitrect, i16 srcofs, i16 srcy, ui16 srcw, ui16 destw, t_alphamask alphamask, e_blitmode blitmode, t_palette* palette)
 {
+  i16 i = 0;
+
   if (blitrect->w == 0 || blitrect->h == 0)
     return;
 
@@ -509,7 +513,7 @@ void c_blitter::blitline_48(c_pixel16* srcgfx, c_pixel256* destgfx, c_rect* blit
   {
     case BLITMODE1:
       srcofs += srcy * srcw;
-      for (i16 i = 0; i < blitrect->h; i++, srcofs += srcw, destofs += destw)
+      for (i = 0; i < blitrect->h; i++, srcofs += srcw, destofs += destw)
         if (alphamask >= 0)
           blitline_48_mima(srcofs, destofs, pixels, alpha);
         else
@@ -518,7 +522,7 @@ void c_blitter::blitline_48(c_pixel16* srcgfx, c_pixel256* destgfx, c_rect* blit
 
     case BLITMODE2:
       srcofs += (srcy + blitrect->h - 1) * srcw;
-      for (i16 i = 0; i < blitrect->h; i++, srcofs -= srcw, destofs += destw)
+      for (i = 0; i < blitrect->h; i++, srcofs -= srcw, destofs += destw)
         if (alphamask >= 0)
           blitline_48_ma(srcofs, destofs, pixels, alpha);
         else
@@ -527,7 +531,7 @@ void c_blitter::blitline_48(c_pixel16* srcgfx, c_pixel256* destgfx, c_rect* blit
 
     case BLITMODE3:
       srcofs += (srcy + blitrect->h - 1) * srcw;
-      for (i16 i = 0; i < blitrect->h; i++, srcofs -= srcw, destofs += destw)
+      for (i = 0; i < blitrect->h; i++, srcofs -= srcw, destofs += destw)
         if (alphamask >= 0)
           blitline_48_mima(srcofs, destofs, pixels, alpha);
         else
@@ -536,7 +540,7 @@ void c_blitter::blitline_48(c_pixel16* srcgfx, c_pixel256* destgfx, c_rect* blit
 
     default:
       srcofs += srcy * srcw;
-      for (i16 i = 0; i < blitrect->h; i++, srcofs += srcw, destofs += destw)
+      for (i = 0; i < blitrect->h; i++, srcofs += srcw, destofs += destw)
         if (alphamask >= 0)
           blitline_48_ma(srcofs, destofs, pixels, alpha);
         else
@@ -599,6 +603,8 @@ void c_blitter::blitline_88_mima(ui16 srcofs, ui16 destofs, ui16 pixels, ui8 alp
 // was SKW_FIRE_BLIT_TO_MEMORY_8TO8BPP
 void c_blitter::blitline_88(c_pixel256* srcgfx, c_pixel256* destgfx, c_rect* blitrect, i16 srcx, i16 srcy, ui16 srcw, ui16 destw, t_alphamask alphamask, e_blitmode blitmode)
 {
+  i16 i = 0;
+
   if (blitrect->w <= 0 || blitrect->h <= 0)
     return;
 
@@ -614,7 +620,7 @@ void c_blitter::blitline_88(c_pixel256* srcgfx, c_pixel256* destgfx, c_rect* bli
   {
     case BLITMODE1:
       srcofs += srcy * srcw;
-      for (i16 i = 0; i < blitrect->h; i++, srcofs += srcw, destofs += destw)
+      for (i = 0; i < blitrect->h; i++, srcofs += srcw, destofs += destw)
         if (alphamask >= 0)
           blitline_88_mima(srcofs, destofs, pixels, alpha);
         else
@@ -623,7 +629,7 @@ void c_blitter::blitline_88(c_pixel256* srcgfx, c_pixel256* destgfx, c_rect* bli
 
     case BLITMODE2:
       srcofs += (srcy + blitrect->h - 1) * srcw;
-      for (i16 i = 0; i < blitrect->h; i++, srcofs -= srcw, destofs += destw)
+      for (i = 0; i < blitrect->h; i++, srcofs -= srcw, destofs += destw)
         if (alphamask >= 0)
           blitline_88_ma(srcofs, destofs, pixels, alpha);
         else
@@ -632,7 +638,7 @@ void c_blitter::blitline_88(c_pixel256* srcgfx, c_pixel256* destgfx, c_rect* bli
 
     case BLITMODE3:
       srcofs += (srcy + blitrect->h - 1) * srcw;
-      for (i16 i = 0; i < blitrect->h; i++, srcofs -= srcw, destofs += destw)
+      for (i = 0; i < blitrect->h; i++, srcofs -= srcw, destofs += destw)
         if (alphamask >= 0)
           blitline_88_mima(srcofs, destofs, pixels, alpha);
         else
@@ -641,7 +647,7 @@ void c_blitter::blitline_88(c_pixel256* srcgfx, c_pixel256* destgfx, c_rect* bli
 
     default:
       srcofs += srcy * srcw;
-      for (i16 i = 0; i < blitrect->h; i++, srcofs += srcw, destofs += destw)
+      for (i = 0; i < blitrect->h; i++, srcofs += srcw, destofs += destw)
         if (alphamask >= 0)
           blitline_88_ma(srcofs, destofs, pixels, alpha);
         else
@@ -705,6 +711,8 @@ void c_blitter::blitline_88xlat_mima(ui16 srcofs, ui16 destofs, ui16 pixels, ui8
 // DM2_BLIT_TO_MEMORY_8TO8BPP_TRANSLATED
 void c_blitter::blitline_88xlat(c_pixel256* srcgfx, c_pixel256* destgfx, c_rect* blitrect, i16 srcx, i16 srcy, ui16 srcw, ui16 destw, t_alphamask alphamask, e_blitmode blitmode, t_palette* palette)
 {
+  i16 i = 0;
+
   if (blitrect->w == 0 || blitrect->h == 0)
     return;
 
@@ -720,7 +728,7 @@ void c_blitter::blitline_88xlat(c_pixel256* srcgfx, c_pixel256* destgfx, c_rect*
   {
     case BLITMODE1:
       srcofs += srcy * srcw;
-      for (i16 i = 0; i < blitrect->h; i++, srcofs += srcw, destofs += destw)
+      for (i = 0; i < blitrect->h; i++, srcofs += srcw, destofs += destw)
         if (alphamask >= 0)
           blitline_88xlat_mima(srcofs, destofs, pixels, alpha, palette);
         else
@@ -729,7 +737,7 @@ void c_blitter::blitline_88xlat(c_pixel256* srcgfx, c_pixel256* destgfx, c_rect*
 
     case BLITMODE2:
       srcofs += (srcy + blitrect->h - 1) * srcw;
-      for (i16 i = 0; i < blitrect->h; i++, srcofs -= srcw, destofs += destw)
+      for (i = 0; i < blitrect->h; i++, srcofs -= srcw, destofs += destw)
         if (alphamask >= 0)
           blitline_88xlat_ma(srcofs, destofs, pixels, alpha, palette);
         else
@@ -738,7 +746,7 @@ void c_blitter::blitline_88xlat(c_pixel256* srcgfx, c_pixel256* destgfx, c_rect*
 
     case BLITMODE3:
       srcofs += (srcy + blitrect->h - 1) * srcw;
-      for (i16 i = 0; i < blitrect->h; i++, srcofs -= srcw, destofs += destw)
+      for (i = 0; i < blitrect->h; i++, srcofs -= srcw, destofs += destw)
         if (alphamask >= 0)
           blitline_88xlat_mima(srcofs, destofs, pixels, alpha, palette);
         else
@@ -747,7 +755,7 @@ void c_blitter::blitline_88xlat(c_pixel256* srcgfx, c_pixel256* destgfx, c_rect*
 
     default:
       srcofs += srcy * srcw;
-      for (i16 i = 0; i < blitrect->h; i++, srcofs += srcw, destofs += destw)
+      for (i = 0; i < blitrect->h; i++, srcofs += srcw, destofs += destw)
         if (alphamask >= 0)
           blitline_88xlat_ma(srcofs, destofs, pixels, alpha, palette);
         else
@@ -1246,6 +1254,8 @@ void c_blitter::stretch_4to8(c_pixel256* destgfx, c_rect* rect, ui8 mask, i16 wi
   c_pixel16 vca_00[160];
   c_pixel16 vca_a0[160];
 
+  i16 i = 0;
+
   if (rect == NULL)
     return;
 
@@ -1265,7 +1275,7 @@ void c_blitter::stretch_4to8(c_pixel256* destgfx, c_rect* rect, ui8 mask, i16 wi
     return;
 
   //m_3899:
-  for (i16 i = 0; i < (pixels + 1) / 2; i++)
+  for (i = 0; i < (pixels + 1) / 2; i++)
   {
     //m_3884:
     vca_00[i].set(xmask);
@@ -1275,7 +1285,7 @@ void c_blitter::stretch_4to8(c_pixel256* destgfx, c_rect* rect, ui8 mask, i16 wi
   i16 destofs = rect->x + rect->y * width;
   bool flag = (((destofs / width) ^ destofs) & 0x1) != 0;
   //m_3925:
-  for (i16 i = 0; i < rect->h; i++, destofs += width)
+  for (i = 0; i < rect->h; i++, destofs += width)
   {
     //m_38D8:
     if (flag)
