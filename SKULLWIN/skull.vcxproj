@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{27885377-F28D-467D-9BB6-460D767B1ACC}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>16.0.29911.84</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>Debug\</OutDir>
+    <IntDir>Debug\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>Release\</OutDir>
+    <IntDir>Release\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>allegro5/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <StructMemberAlignment>1Byte</StructMemberAlignment>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalOptions>allegro-5.0.10-mt.lib allegro_audio-5.0.10-mt.lib allegro_acodec-5.0.10-mt.lib alleg.lib %(AdditionalOptions)</AdditionalOptions>
+      <OutputFile>$(OutDir)$(ProjectName)d.exe</OutputFile>
+      <AdditionalLibraryDirectories>allegro5/lib; allegro/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <AdditionalIncludeDirectories>allegro5/include;allegro/include;allegro5/include/allegro5;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <StructMemberAlignment>1Byte</StructMemberAlignment>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalOptions>allegro-5.0.10-mt.lib allegro_audio-5.0.10-mt.lib allegro_acodec-5.0.10-mt.lib alleg.lib %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalLibraryDirectories>allegro5/lib; allegro/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="c_0aaf.h" />
+    <ClInclude Include="c_1031.h" />
+    <ClInclude Include="c_1c9a.h" />
+    <ClInclude Include="c_350.h" />
+    <ClInclude Include="c_addon.h" />
+    <ClInclude Include="c_ai.h" />
+    <ClInclude Include="c_allegro.h" />
+    <ClInclude Include="c_alloc.h" />
+    <ClInclude Include="c_buttons.h" />
+    <ClInclude Include="c_clickrect.h" />
+    <ClInclude Include="c_cloud.h" />
+    <ClInclude Include="c_creature.h" />
+    <ClInclude Include="c_dballoc.h" />
+    <ClInclude Include="c_dialog.h" />
+    <ClInclude Include="c_engage.h" />
+    <ClInclude Include="c_eventqueue.h" />
+    <ClInclude Include="c_events.h" />
+    <ClInclude Include="c_gdatfile.h" />
+    <ClInclude Include="c_gfx_blit.h" />
+    <ClInclude Include="c_gfx_bmp.h" />
+    <ClInclude Include="c_gfx_decode.h" />
+    <ClInclude Include="c_gfx_main.h" />
+    <ClInclude Include="c_gfx_pal.h" />
+    <ClInclude Include="c_gfx_pixel.h" />
+    <ClInclude Include="c_gfx_str.h" />
+    <ClInclude Include="c_gui_draw.h" />
+    <ClInclude Include="c_gui_vp.h" />
+    <ClInclude Include="c_hero.h" />
+    <ClInclude Include="c_image.h" />
+    <ClInclude Include="c_input.h" />
+    <ClInclude Include="c_item.h" />
+    <ClInclude Include="c_keybd.h" />
+    <ClInclude Include="c_light.h" />
+    <ClInclude Include="c_loadlevel.h" />
+    <ClInclude Include="c_map.h" />
+    <ClInclude Include="c_mcursor.h" />
+    <ClInclude Include="c_midi.h" />
+    <ClInclude Include="c_move.h" />
+    <ClInclude Include="c_moverec.h" />
+    <ClInclude Include="c_querydb.h" />
+    <ClInclude Include="c_random.h" />
+    <ClInclude Include="c_record.h" />
+    <ClInclude Include="c_rect.h" />
+    <ClInclude Include="c_savegame.h" />
+    <ClInclude Include="c_sfx.h" />
+    <ClInclude Include="c_sound.h" />
+    <ClInclude Include="c_str.h" />
+    <ClInclude Include="c_timer.h" />
+    <ClInclude Include="c_tim_proc.h" />
+    <ClInclude Include="c_tmouse.h" />
+    <ClInclude Include="c_weather.h" />
+    <ClInclude Include="c_xrect.h" />
+    <ClInclude Include="dm2data.h" />
+    <ClInclude Include="dm2global.h" />
+    <ClInclude Include="emu.h" />
+    <ClInclude Include="fileio.h" />
+    <ClInclude Include="ints.h" />
+    <ClInclude Include="mdata.h" />
+    <ClInclude Include="regs.h" />
+    <ClInclude Include="startend.h" />
+    <ClInclude Include="types.h" />
+    <ClInclude Include="util.h" />
+    <ClInclude Include="xtypes.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="c_0aaf.cpp" />
+    <ClCompile Include="c_1031.cpp" />
+    <ClCompile Include="c_1c9a.cpp" />
+    <ClCompile Include="c_350.cpp" />
+    <ClCompile Include="c_addon.cpp" />
+    <ClCompile Include="c_ai.cpp" />
+    <ClCompile Include="c_allegro.cpp" />
+    <ClCompile Include="c_alloc.cpp" />
+    <ClCompile Include="c_buttons.cpp" />
+    <ClCompile Include="c_clickrect.cpp" />
+    <ClCompile Include="c_cloud.cpp" />
+    <ClCompile Include="c_creature.cpp" />
+    <ClCompile Include="c_dballoc.cpp" />
+    <ClCompile Include="c_dialog.cpp" />
+    <ClCompile Include="c_engage.cpp" />
+    <ClCompile Include="c_eventqueue.cpp" />
+    <ClCompile Include="c_events.cpp" />
+    <ClCompile Include="c_gdatfile.cpp" />
+    <ClCompile Include="c_gfx_blit.cpp" />
+    <ClCompile Include="c_gfx_bmp.cpp" />
+    <ClCompile Include="c_gfx_decode.cpp" />
+    <ClCompile Include="c_gfx_main.cpp" />
+    <ClCompile Include="c_gfx_pal.cpp" />
+    <ClCompile Include="c_gfx_pixel.cpp" />
+    <ClCompile Include="c_gfx_str.cpp" />
+    <ClCompile Include="c_gui_draw.cpp" />
+    <ClCompile Include="c_gui_vp.cpp" />
+    <ClCompile Include="c_hero.cpp" />
+    <ClCompile Include="c_image.cpp" />
+    <ClCompile Include="c_input.cpp" />
+    <ClCompile Include="c_item.cpp" />
+    <ClCompile Include="c_keybd.cpp" />
+    <ClCompile Include="c_light.cpp" />
+    <ClCompile Include="c_loadlevel.cpp" />
+    <ClCompile Include="c_map.cpp" />
+    <ClCompile Include="c_mcursor.cpp" />
+    <ClCompile Include="c_midi.cpp" />
+    <ClCompile Include="c_move.cpp" />
+    <ClCompile Include="c_moverec.cpp" />
+    <ClCompile Include="c_querydb.cpp" />
+    <ClCompile Include="c_random.cpp" />
+    <ClCompile Include="c_record.cpp" />
+    <ClCompile Include="c_rect.cpp" />
+    <ClCompile Include="c_savegame.cpp" />
+    <ClCompile Include="c_sfx.cpp" />
+    <ClCompile Include="c_sound.cpp" />
+    <ClCompile Include="c_str.cpp" />
+    <ClCompile Include="c_timer.cpp" />
+    <ClCompile Include="c_tim_proc.cpp" />
+    <ClCompile Include="c_tmouse.cpp" />
+    <ClCompile Include="c_weather.cpp" />
+    <ClCompile Include="c_xrect.cpp" />
+    <ClCompile Include="dm2data.cpp" />
+    <ClCompile Include="dm2global.cpp" />
+    <ClCompile Include="emu.cpp" />
+    <ClCompile Include="fileio.cpp" />
+    <ClCompile Include="ints.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="mdata.c" />
+    <ClCompile Include="startend.cpp" />
+    <ClCompile Include="types.cpp" />
+    <ClCompile Include="unref.cpp" />
+    <ClCompile Include="util.cpp" />
+    <ClCompile Include="xtypes.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
