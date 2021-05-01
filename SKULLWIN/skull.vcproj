@@ -704,6 +704,18 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="Debug"
+			>
+			<File
+				RelativePath=".\dm2debug.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\dm2debug.h"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

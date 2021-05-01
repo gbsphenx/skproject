@@ -645,9 +645,12 @@ void DM2_FREE_PICT_ENTRY(c_pixel* gfx)
   unk** xpptrrg1 = &dm2_dballochandler.ptr1e0a5c;
   unk** xpptrrg2 = CHGCAST(unk*, s101p);
   unk** xpptrrg3;
+
+#ifndef _MSVC6 // SPX : These 3 lines make crash under MSVC6
   while (xpptrrg2 != (xpptrrg3 = UPCAST(unk*, *xpptrrg1)))
     xpptrrg1 = UPCAST(unk*, *xpptrrg1);
   *xpptrrg1 = *xpptrrg3;
+#endif // _MSVC6
 
   i32 longrg1 = mkl(DM2_CALC_IMAGE_BYTE_LENGTH(BMPCAST(gfx)) + 14);
   if (s101p->bmp.res == BPP_4)

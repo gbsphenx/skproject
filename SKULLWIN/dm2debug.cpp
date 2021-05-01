@@ -21,7 +21,7 @@
 
 #include "dm2debug.h"
 
-//#define NO_TRACE
+
 #ifdef NO_TRACE
 	#define NO_LOG_RETURN	return;
 #else
@@ -54,7 +54,7 @@ void SPX_DEBUG_DECREASE_DEPTH() { iDebugCallDepth--;}
 
 
 #define FFLUSH(X) fflush(X);
-#ifdef NDEBUG
+#ifdef NO_TRACE
 	#define FFLUSH(X) ;;
 #endif
 

@@ -5,8 +5,10 @@
 #include "types.h"
 #include "c_gdatfile.h"
 
+//#define NO_TRACE
+
 #define LOGX(X) SPX_DEBUG_LOGFILE_INFO X
-#ifdef NDEBUG
+#ifdef NO_TRACE
 	#define LOGX(X) ;;
 #endif
 

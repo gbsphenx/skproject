@@ -210,7 +210,9 @@ static void DM2_2481_0002(void)
   if (ddat.v1d66f8 == 0)
     //m_2877D:
     R_C470(ddat.v1e0954, 2, -1, paldat.glbl_pal1);
+#ifndef _MSVC6	// SPX: For MSVC6 force below method to display the main menu image, else the screen remains black ..
   else
+#endif // _MSVC6
   {
     blit_toscreen(
       ddat.v1e0954,
@@ -507,6 +509,7 @@ static void DM2_INIT(void)
   RG51p = UPCAST(ui8, RG1P);
 DEBUG_DUMP_ULP();
   DM2_LOAD_GDAT_ENTRY_DATA_TO(1, 0, lcon(0x9), lcon(0xfe), RG1P);
+//DEBUG_DUMP_BIN_DATA((unsigned char*) RG1P, 1024, 16);	// SPX: dump the IRGB palette
   DM2_CONVERT_DRIVERPALETTE(RG51p);
   dm2_dballochandler.DM2_DEALLOC_HIBIGPOOL(lcon(0x400));
   DM2_LOAD_GDAT_INTERFACE_00_02();
