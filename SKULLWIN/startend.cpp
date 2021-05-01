@@ -44,6 +44,8 @@
 #include "emu.h"
 #include "regs.h"
 
+#include "dm2debug.h"
+
 ui8 table_1dfac4[0x14] =
 {
   0x00, 0x09, 0x01, 0x01, 0x0b, 0x06, 0x04, 0x05,
@@ -503,6 +505,7 @@ static void DM2_INIT(void)
   DM2_SOUND6();
   RG1P = dm2_dballochandler.DM2_ALLOC_HIBIGPOOL_MEMORY(lcon(0x400));
   RG51p = UPCAST(ui8, RG1P);
+DEBUG_DUMP_ULP();
   DM2_LOAD_GDAT_ENTRY_DATA_TO(1, 0, lcon(0x9), lcon(0xfe), RG1P);
   DM2_CONVERT_DRIVERPALETTE(RG51p);
   dm2_dballochandler.DM2_DEALLOC_HIBIGPOOL(lcon(0x400));
