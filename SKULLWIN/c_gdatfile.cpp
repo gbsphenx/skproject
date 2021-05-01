@@ -24,21 +24,7 @@ const te_text gdatfn5[] = ".Z022SKSAVE.Z023.DAT";
 const te_text gdatfn6[] = ".Z022SKSAVE.Z023.BAK";
 const te_text gdatfn7[] = ".Z020DUNGEON.FTL";
 
-struct s_gdat // size: 0x20
-{
-  i32 l_00; // used
-  s_hex6 s19_04;
-  s_hex6 s19_0a;
-  s_bbw* u31p_10;
-  i8 b_14; // used
-  i8 b_15;
-  i8 b_16; // used
-  i8 b_17; // used
-  i16 w_18; // used
-  i16 w_1a; // used
-  i16 w_1c; // used
-  i16 w_1e;
-};
+
 
 static bool DM2_QUERY_NEXT_GDAT_ENTRY(s_gdat* eaxp_s36)
 {
