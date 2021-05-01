@@ -20,6 +20,8 @@
 #include "regs.h"
 #include "emu.h"
 
+#include "dm2debug.h"
+
 static void DM2_MARK_DYN_LOAD(i32 eaxl)
 {
   c_nreg _RG1; RG1L = eaxl;
@@ -1352,6 +1354,8 @@ void DM2_LOAD_NEWMAP(i32 eaxl, i32 edxl, i32 ebxl, i32 ecxl)
   RG1L = signedlong(RG5w);
   DM2_LOAD_LOCALLEVEL_GRAPHICS_TABLE(RG1L, RG4L, RG2L);
   DM2_LOAD_LOCALLEVEL_DYN();
+DEBUG_DUMP_ULP();
+
   if (dm2_dballochandler.v1e0a84)
     return;
   DM2_3a15_38b6(1);
