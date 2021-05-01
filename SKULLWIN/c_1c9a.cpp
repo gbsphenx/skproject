@@ -985,6 +985,12 @@ i32 DM2_19f0_0891(i32 eaxl, i32 edxl, i32 ebxl, i32 ecxl, i16 argw0, i16 argw1)
   bool flag;
   bool skip00411 = false;
 
+  bool skip00426 = false;
+  bool skip00425 = false;
+  bool skip00429 = false;
+  bool skip00428 = false;
+
+
   vb_18 = RG1Blo;
   RG6L = RG4L;
   vw_00 = RG2W;
@@ -1359,8 +1365,8 @@ i32 DM2_19f0_0891(i32 eaxl, i32 edxl, i32 ebxl, i32 ecxl, i16 argw0, i16 argw1)
     //m_1C9B0:
     argw1 = RG1W;
   }
-  bool skip00426 = false;
-  bool skip00425 = false;
+  skip00426 = false;
+  skip00425 = false;
   //m_1C9B5:
   RG1L = DM2_19f0_0559(argw1);
   if (RG1L != 0)
@@ -1468,8 +1474,8 @@ i32 DM2_19f0_0891(i32 eaxl, i32 edxl, i32 ebxl, i32 ecxl, i16 argw0, i16 argw1)
     //m_1CAD6:
     RG2W &= 0x3;
 
-  bool skip00429 = false;
-  bool skip00428 = false;
+  skip00429 = false;
+  skip00428 = false;
   //m_1CADB:
   RG56l = unsignedlong(vo_10.peek16());
   RG1W = DM2_RAND16(CUTX16(DM2_1c9a_0598(RG56l))) + 1;
@@ -2553,6 +2559,9 @@ i32 DM2_CREATURE_GO_THERE(i32 eaxl, i32 edxl, i32 ebxl, i32 ecxl, i16 argw0, i16
   bool flag;
   bool skip00478 = false;
   bool skip00491 = false;
+
+  i32 parl03 = RG1L;
+
 
   vb_54 = RG1Blo;
   vw_28 = RG4W;
@@ -3670,7 +3679,7 @@ i32 DM2_CREATURE_GO_THERE(i32 eaxl, i32 edxl, i32 ebxl, i32 ecxl, i16 argw0, i16
   //m_1E4AB:
   RG1L = signedlong(argw0);
   vl_04 = RG1L;
-  i32 parl03 = RG1L;
+  parl03 = RG1L;
   RG63l = signedlong(RG5W);
   RG2L = signedlong(vw_24);
   RG4L = signedlong(vw_28);

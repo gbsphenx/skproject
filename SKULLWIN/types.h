@@ -91,7 +91,8 @@
   #define pointer_to_long(x) (i32(x))
   //#define is_odd_pointer(x) ((pointer_to_long(x) & 0x00000001) != 0)
   #define is_odd_pointer(x) ((i32(x) & 0x00000001) != 0)				// SPX: some better compatibility for MSVC6
-  #define is_neg_pointer(x) ((pointer_to_long(x) & 0x80000000) != 0)
+  //#define is_neg_pointer(x) ((pointer_to_long(x) & 0x80000000) != 0)
+  #define is_neg_pointer(x) ((i32(x) & 0x80000000) != 0)	// SPX: some better compatibility for MSVC6
 
   //###################
   // function-pointer

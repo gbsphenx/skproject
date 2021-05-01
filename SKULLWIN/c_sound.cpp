@@ -53,27 +53,28 @@ c_sound::c_sound(void)
 
 bool c_sound::init(void)
 {
+  i16 i = 0;
   v1d2698 = 0;
   v1d269a = 0;
   v1e0ace = 0;
   v1d269c = 0;
   v1dd1d1 = 90;
-  for (i16 i = 0; i < 8; i++) v1da334[i] = 0;
-  for (i16 i = 0; i < 8; i++) v1da374[i].init();
+  for (i = 0; i < 8; i++) v1da334[i] = 0;
+  for (i = 0; i < 8; i++) v1da374[i].init();
   v1d14c2 = DOWNCAST(special, 0x1);
   v1d14da = true;
   v1d14cc = false;
   v1d14d4 = false;
   v1d14d0 = false;
   v1dff86 = 5;
-  for (i16 i = 0; i < 8; i++) v1dd1d2[i] = 0x7f;
+  for (i = 0; i < 8; i++) v1dd1d2[i] = 0x7f;
   v1dff2c = 0;
   v1d14ca = 0;
   v1d14d8 = -1;
   v1d14be = true;
   v1dff88 = 7;
   v1dff8a = 0;
-  for (i16 i = 0; i < 64; i++) v1dfda4[i] = -1;
+  for (i = 0; i < 64; i++) v1dfda4[i] = -1;
   v1d1410 = 0x1000;
   v1d2694 = 0;
   v1d2696 = 0;

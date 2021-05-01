@@ -1420,6 +1420,8 @@ i16 DM2_GAME_LOAD(void)
   bool dontload = false;
   bool boolrg6;
 
+  i16 wordrg11 = 0;
+
   s29_3c.l_2c = 0;
   bool boolrg5 = false;
   i8 byterg2;
@@ -1448,7 +1450,7 @@ i16 DM2_GAME_LOAD(void)
       {
         if (ddat.savegamel2)
           goto M_27330;
-        i16 wordrg11 = DM2_FILE_OPEN(DM2_FORMAT_SKSTR(gdat.filename7, NULL));
+        wordrg11 = DM2_FILE_OPEN(DM2_FORMAT_SKSTR(gdat.filename7, NULL));
         ddat.savegamefilehandle1 = wordrg11;
         if (wordrg11 < 0)
         {
@@ -2054,7 +2056,8 @@ static void DM2_1c9a_3bab(void)
 
 #define SUBSAVE(x) FSUBSAVE(x, s29_3c.tp_2c, boolrg7)
 
-void FSUBSAVE(bool flag, t_text* tpv, i32 val)
+//void FSUBSAVE(bool flag, t_text* tpv, i32 val)
+int FSUBSAVE(bool flag, t_text* tpv, i32 val)	// SPX: changed void to int for MSVC6 compilation convenience
 {
 //m_25747:
   if (flag)
@@ -2075,9 +2078,11 @@ void FSUBSAVE(bool flag, t_text* tpv, i32 val)
     DM2_END_GAME(0);
   DM2_events_38c8_0060();
   DM2_SHOW_MOUSE();
+  return 0;	// SPX: added
 }
 
-void DM2_GAME_SAVE_MENU(void)
+//void DM2_GAME_SAVE_MENU(void)
+int DM2_GAME_SAVE_MENU(void)		// SPX: changed void to int for MSVC6 compilation convenience
 {
   s_savegamebuffer s33_00;
   s_hex30 s29_3c; s29_3c.tp_2c = NULL;

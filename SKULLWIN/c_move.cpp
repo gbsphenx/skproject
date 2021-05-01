@@ -223,6 +223,8 @@ i32 DM2_PERFORM_MOVE(i16 eaxw)
   i32 parl11;
   i32 parl12;
 
+  c_hero* hero1 = NULL;
+
   vql_00.poke32(RG1L);
   RG4L = signedlong(ddat.v1e027e);
   RG1L = dm2_GET_TILE_VALUE(signedlong(ddat.v1e0280), RG4L);
@@ -366,7 +368,7 @@ i32 DM2_PERFORM_MOVE(i16 eaxw)
   RG1W = unsignedword(RG1Blo);
   vw_24 = RG1W;
   ddat.v1e0488 = true;
-  c_hero* hero1 = &party.hero[0];
+  hero1 = &party.hero[0];
   RG2L = 0;
   //m_139E3:
   for (;;)

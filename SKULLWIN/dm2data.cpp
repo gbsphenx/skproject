@@ -1014,6 +1014,8 @@ i8 _table1d70b4[17] =
 
 void c_dm2data::init(void)
 {
+  i16 i = 0;
+  i16 j = 0;
 //--- some tables first
   DM2_READ_BINARY("v1d39bc.dat", v1d39bc, 0x1e4);
   DM2_READ_BINARY("v1d338c.dat", v1d338c, sizeof(v1d338c));
@@ -1045,7 +1047,7 @@ void c_dm2data::init(void)
   // obsolete: drvinterfaceptr = DOWNCAST(i16, DRVW_drvinterface);
   datafoldername = CHGCAST(t_text, dfn);
   v1e0988 = 0;
-  for (i16 i = 0; i < 2; i++) vp_1e097c[i] = NULL;
+  for (i = 0; i < 2; i++) vp_1e097c[i] = NULL;
   markerror = 0;
   errhandling = 0;
   errversion = 5;
@@ -1085,7 +1087,7 @@ void c_dm2data::init(void)
   savegamep3 = NULL;
   v1d3248 = 0xffffffff;
   savegamep4 = NULL;
-  for (i16 i = 0; i < 0x100; i++) savegameb2[i] = 0;
+  for (i = 0; i < 0x100; i++) savegameb2[i] = 0;
   v1e092f = 0;
   v1e092e = 0;
   v1e08e0 = 0;
@@ -1116,10 +1118,10 @@ void c_dm2data::init(void)
   v1e147b = 0;
   v1e1478 = 0;
   v1e1434 = 0;
-  for (i16 i = 0; i < 8; i++) v1e0104[i] = 0;
-  for (i16 i = 0; i < 0x40; i++) globalb[i] = 0;
-  for (i16 i = 0; i < 0x40; i++) globalw[i] = 0;
-  for (i16 i = 0; i < 4; i++) v1d6316[i] = 0xff;
+  for (i = 0; i < 8; i++) v1e0104[i] = 0;
+  for (i = 0; i < 0x40; i++) globalb[i] = 0;
+  for (i = 0; i < 0x40; i++) globalw[i] = 0;
+  for (i = 0; i < 4; i++) v1d6316[i] = 0xff;
   v1e0250 = 0;
   v1e0390.l_00 = 0;
   v1d651b = 0x1;
@@ -1196,13 +1198,13 @@ void c_dm2data::init(void)
   v1e1420 = 0;
   v1e141c = 0;
   v1e141e = 0;
-  for (i16 i = 0; i < 3; i++) v1e1408[i] = 0;
+  for (i = 0; i < 3; i++) v1e1408[i] = 0;
   v1e13f0 = 0;
   v1e1040 = 0;
   v1e09a4 = 0;
   v1e1438 = 0;
-  for (i16 i=0; i<5; i++)
-    for (i16 j=0; j<10; j++)
+  for (i=0; i<5; i++)
+    for (j=0; j<10; j++)
       v1e143c[i].barr_00[j] = 0;
   v1e146e = 0;
   v1e12d6 = 0;
@@ -1223,7 +1225,7 @@ void c_dm2data::init(void)
   v1e099a = 0;
   v1e0ff6 = 0;
   v1e0ff8 = 0;
-  for (i16 i = 0; i < 0x12; i++) v1e0ffa[i] = 0;
+  for (i = 0; i < 0x12; i++) v1e0ffa[i] = 0;
   v1e1020 = 0;
   v1e1024 = 0;
   v1e1026 = 0;
@@ -1237,8 +1239,8 @@ void c_dm2data::init(void)
   v1e1014 = 0;
   v1e100c = 0;
   v1e13e9 = 0;
-  for (i16 i = 0; i < 13; i++) v1e13dc[i] = 0;
-  for (i16 i = 0; i < 64; i++) v1e0adc[i] = 0;
+  for (i = 0; i < 13; i++) v1e13dc[i] = 0;
+  for (i = 0; i < 64; i++) v1e0adc[i] = 0;
   v1e0984 = 0;
   v1e0976 = 0;
   v1e0974 = 0;
@@ -1248,11 +1250,11 @@ void c_dm2data::init(void)
   v1e0510 = 0;
   v1e0484 = 0;
   v1e0488 = false;
-  for (i16 i = 0; i < 4; i++) v1e0bb0[i] = 0;
-  for (i16 i = 0; i < 4; i++) v1e0ba8[i] = 0;
+  for (i = 0; i < 4; i++) v1e0bb0[i] = 0;
+  for (i = 0; i < 4; i++) v1e0ba8[i] = 0;
   v1e0ba4 = 0;
   v1e0b99 = 0;
-  for (i16 i = 0; i < 20; i++) v1e0b85[i] = '\0';
+  for (i = 0; i < 20; i++) v1e0b85[i] = '\0';
   v1e0b84 = 0;
   v1e0b83 = 0;
   v1e0b82 = 0;
@@ -1283,20 +1285,20 @@ void c_dm2data::init(void)
   v1e0b50 = 0;
   v1e0b4e = 0;
   v1e0b4c = 0;
-  for (i16 i = 0; i < 3; i++) v1e0b40[i].init();
-  for (i16 i = 0; i < 4; i++) for (int j = 0; j < 3; j++) v1e0b34[i][j] = 0;
+  for (i = 0; i < 3; i++) v1e0b40[i].init();
+  for (i = 0; i < 4; i++) for (int j = 0; j < 3; j++) v1e0b34[i][j] = 0;
   v1e0b30 = 0;
   v1e0b2c = 0;
-  for (i16 i = 0; i < 4; i++) v1e0b1c[i] = 0;
-  for (i16 i = 0; i < 4; i++) v1e096c[i] = 0;
-  for (i16 i = 0; i < 32; i++) v1e0930[i] = '\0';
+  for (i = 0; i < 4; i++) v1e0b1c[i] = 0;
+  for (i = 0; i < 4; i++) v1e096c[i] = 0;
+  for (i = 0; i < 32; i++) v1e0930[i] = '\0';
   v1e092a = 0;
   v1e08da = 0;
   v1e08d8 = 0;
   v1e08d6 = 0;
   v1e08d4 = 0;
   v1e08c4 = 0;
-  for (i16 i = 0; i < 4; i++) v1e08c0[i] = 0;
+  for (i = 0; i < 4; i++) v1e08c0[i] = 0;
   v1e08bf = 0;
   v1e08be = 0;
   v1e08b8.init();
@@ -1312,7 +1314,7 @@ void c_dm2data::init(void)
   v1e08a6 = 0;
   v1e08a4 = 0;
   v1e08a0 = 0;
-  for (i16 i = 0; i < 2; i++) v1e040e[i] = 0;
+  for (i = 0; i < 2; i++) v1e040e[i] = 0;
   v1e040c = 0;
   v1e040a = 0;
   v1e0288 = 0;
@@ -1336,8 +1338,8 @@ void c_dm2data::init(void)
   v1e0548 = 0;
   v1e01d4 = 0;
   v1e0438 = 0;
-  for (i16 i = 0; i < 18; i++) v1e0426[i] = 0;
-  for (i16 i = 0; i < 18; i++) v1e0414[i] = 0;
+  for (i = 0; i < 18; i++) v1e0426[i] = 0;
+  for (i = 0; i < 18; i++) v1e0414[i] = 0;
   v1e03f8 = 0;
   v1e03fa = 0;
   v1e03fc = 0;
@@ -1346,11 +1348,11 @@ void c_dm2data::init(void)
   v1e0402 = 0;
   v1e0404 = 0;
   v1e0406 = 0;
-  for (i16 i = 0; i < 10; i++) v1e03ac[i] = 0;
-  for (i16 i = 0; i < 10; i++) v1e0394[i] = 0;
-  for (i16 i = 0; i < 13; i++) v1e02f0[i].init();
-  for (i16 i = 0; i < 16; i++) v1e02dc[i] = 0;
-  for (i16 i = 0; i < 16; i++) v1e02cc[i] = 0;
+  for (i = 0; i < 10; i++) v1e03ac[i] = 0;
+  for (i = 0; i < 10; i++) v1e0394[i] = 0;
+  for (i = 0; i < 13; i++) v1e02f0[i].init();
+  for (i = 0; i < 16; i++) v1e02dc[i] = 0;
+  for (i = 0; i < 16; i++) v1e02cc[i] = 0;
   v1e0204 = 0;
   v1e01a4 = 0;
   v1e01a6 = 0;
@@ -1360,7 +1362,7 @@ void c_dm2data::init(void)
   v1e00b4 = 0;
   v1e00b6 = 0;
   v1e00b8 = 0;
-  for (i16 i = 0; i < 56; i++) v1e000c[i] = 0;
+  for (i = 0; i < 56; i++) v1e000c[i] = 0;
   v1d718c = 0;
   v1d7188 = 1;
 
@@ -1433,7 +1435,7 @@ void c_dm2data::init(void)
   v1e0208 = 0;
   v1e052e = 0;
   v1e0530 = 0;
-  for (int i = 0; i < 2; i++) v1e052c[i] = '\0';
+  for (i = 0; i < 2; i++) v1e052c[i] = '\0';
   v1e0534 = 0;
   v1e0538 = 0;
   v1e053a = 0;

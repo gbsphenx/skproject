@@ -559,6 +559,9 @@ static i32 WATCOM_WRITEFILE(i16 handle, i32 amount, i8* bbuffer)
   bool flag;
   i32 retval;
 
+  i32 offset = 0;
+  ui32 lsize = 0x200;
+ 
   vl_0c = DM2_WATCOM_CHECKDEVICE(handle);
   if (vl_0c == 0)
   {
@@ -605,10 +608,10 @@ static i32 WATCOM_WRITEFILE(i16 handle, i32 amount, i8* bbuffer)
     RG6L = lcon(0x200);
   RG1L = (RG6L + lcon(0x3)) & lcon(0xfffffffc);
 #endif
-  ui32 lsize = 0x200;
+  lsize = 0x200;
   espP = new unk[lsize]; // instead of using the local stack, fixed size now
 
-  i32 offset = 0;
+  offset = 0;
   vul_20 = 0;
   vl_10 = 0;
   pb_18 = bbuffer;

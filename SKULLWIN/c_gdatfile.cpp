@@ -1030,6 +1030,15 @@ void DM2_READ_GRAPHICS_STRUCTURE(void)
   i32 vl_00;
   unk* xparp00;
 
+  i32 longrg1 = 0;
+  ui16 uwordrg1 = 0;
+  i32 longrg6 = 0;
+  i16* wptrrg3 = 0;
+  i32 longrg12 = 0;
+  i16 wordrg12 = 0;
+  i16 wordrg41 = 0;
+
+
   gdat.fileopencounter = 0;
   DM2_GRAPHICS_DATA_OPEN();
 
@@ -1051,8 +1060,8 @@ void DM2_READ_GRAPHICS_STRUCTURE(void)
   DM2_FILL_I16TABLE(CHGCAST(i16, dm2_dballochandler.w_table2), lcon(0xffffffff), unsignedlong(gdat.entries));
 
   // create a temporary word-table (ptrrg3)
-  i32 longrg6 = sizeof(i16) * unsignedlong(gdat.entries);
-  i16* wptrrg3 = XUPCAST(i16, dm2_dballochandler.DM2_ALLOC_LOBIGPOOL_MEMORY(longrg6));
+  longrg6 = sizeof(i16) * unsignedlong(gdat.entries);
+  wptrrg3 = XUPCAST(i16, dm2_dballochandler.DM2_ALLOC_LOBIGPOOL_MEMORY(longrg6));
   ddat.vlong1e0a3c = longrg6 + 2 * sizeof(i16);
   if (gdat.versionlo >= wcon(0x3))
   {
@@ -1071,13 +1080,13 @@ void DM2_READ_GRAPHICS_STRUCTURE(void)
   }
   *wptrrg3 = 0;
   ddat.vlong1e0a40 = ddat.vlong1e0a3c;
-  ui16 uwordrg1 = 0;
+  uwordrg1 = 0;
   while (uwordrg1 < gdat.entries)
   {
     ddat.vlong1e0a40 += unsignedlong(*wptrrg3);
     dm2_ulp.setl(uwordrg1++, unsignedlong(*wptrrg3++));
   }
-  i32 longrg1 = DM2_GET_FILE_SIZE(signedlong(gdat.filehandle));
+  longrg1 = DM2_GET_FILE_SIZE(signedlong(gdat.filehandle));
   gdat.filesize = longrg1;
   if (longrg1 < ddat.vlong1e0a40)
     gdat.filetype1 = gdat.filetype2 = true;
@@ -1097,11 +1106,11 @@ void DM2_READ_GRAPHICS_STRUCTURE(void)
     }
   }
   ddat.v1e0a88 = true;
-  i16 wordrg12 = DM2_QUERY_GDAT_ENTRY_DATA_INDEX(0, 0, lcon(0xb), 0);
-  i16 wordrg41 = wordrg12;
+  wordrg12 = DM2_QUERY_GDAT_ENTRY_DATA_INDEX(0, 0, lcon(0xb), 0);
+  wordrg41 = wordrg12;
   ddat.v1e0ad0 = wordrg12;
   wordrg12 &= lcon(0x20);
-  i32 longrg12 = unsignedlong(wordrg12);
+  longrg12 = unsignedlong(wordrg12);
   dm2sound.v1d269c = longrg12;
   wordrg41 &= lcon(0x40);
   ddat.v1e0ad2 = wordrg41;

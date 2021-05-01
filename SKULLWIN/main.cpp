@@ -151,23 +151,24 @@ void* thread_func2(ALLEGRO_THREAD* thr, void* vparg)
 
 void* thread_func(ALLEGRO_THREAD* thr, void* vparg)
 {
+  i16 i = 0;
   do
   {
     try
     {
       alg.restart();
 
-      for (i16 i=0; i<62; i++)
+      for (i=0; i<62; i++)
         table1d3d23[i] = _table1d3d23[i];
-      for (i16 i=0; i<4; i++)
+      for (i=0; i<4; i++)
         v1d67be[i] = _v1d67be[i];
-      for (i16 i=0; i<17; i++)
+      for (i=0; i<17; i++)
         table1d70b4[i] = _table1d70b4[i];
-      for (i16 i=0; i<10; i++)
+      for (i=0; i<10; i++)
         table1d3ed5[i] = _table1d3ed5[i];
-      for (i16 i=0; i<5; i++)
+      for (i=0; i<5; i++)
         table1d674e[i] = _table1d674e[i];
-      for (i16 i=0; i<76; i++)
+      for (i=0; i<76; i++)
         table1d3ba0[i] = _table1d3ba0[i];
       // dialogbox still missing!
 

@@ -39,14 +39,16 @@
 
 void c_hero::init(void)
 {
-  for (i16 i = 0; i < HERO_SIZE_1STNAME; i++) name1[i] = 0;
-  for (i16 i = 0; i < HERO_SIZE_2NDNAME; i++) name2[i] = 0;
+  i16 i = 0;
+  i16 j = 0;
+  for (i = 0; i < HERO_SIZE_1STNAME; i++) name1[i] = 0;
+  for (i = 0; i < HERO_SIZE_2NDNAME; i++) name2[i] = 0;
   absdir = 0;
   partypos = 0;
   nrunes = 0;
   poisoned = 0;
-  for (i16 i = 0; i < 10; i++) handcmd[i] = 0;
-  for (i16 i = 0; i < 4; i++) handcooldown[i] = 0;
+  for (i = 0; i < 10; i++) handcmd[i] = 0;
+  for (i = 0; i < 4; i++) handcooldown[i] = 0;
   timeridx = 0;
   damagesuffered = 0;
   heroflag = 0;
@@ -57,16 +59,16 @@ void c_hero::init(void)
   maxStamina = 0;
   curMP = 0;
   maxMP = 0;
-  for (i16 i = 0; i < 2; i++) handdefenseclass[i] = 0;
+  for (i = 0; i < 2; i++) handdefenseclass[i] = 0;
   food = 0;
   water = 0;
   poison = 0;
-  for (i16 i = 0; i < NUM_ABILITIES; i++)
+  for (i = 0; i < NUM_ABILITIES; i++)
     ability[(e_ability)i][E_CUR] = ability[(e_ability)i][E_MAX] = eability[(e_ability)i] = 0;
-  for (i16 i = 0; i < 5; i++)
-    for (i16 j = 0; i < 4; i++)
+  for (i = 0; i < 5; i++)
+    for (j = 0; i < 4; i++)
       skill[i][j] = sbonus[i][j] = 0;
-  for (i16 i = 0; i < NUM_ITEMS; i++) item[i] = 0;
+  for (i = 0; i < NUM_ITEMS; i++) item[i] = 0;
   weight = 0;
   herotype = 0;
   ench_aura = 0;
@@ -150,15 +152,16 @@ c_party party;
 
 void c_party::init(void)
 {
-  for (i16 i = 0; i < MAX_HEROS; i++)
+  i16 i = 0;
+  for (i = 0; i < MAX_HEROS; i++)
     hero[i].init();
   heros_in_party = 0;
   absdir = 0;
   curactevhero = E_NOHERO;
-  for (i16 i = 0; i < CONTAINERSIZE; i++) hand_container[i] = 0;
+  for (i = 0; i < CONTAINERSIZE; i++) hand_container[i] = 0;
   curactmode = 0;
   curacthero = 0;
-  for (int i = 0; i < 20; i++) handitems.barr_00[i] = -1;
+  for (i = 0; i < 20; i++) handitems.barr_00[i] = -1;
 }
 
 // was DM2_ROTATE_SQUAD
@@ -953,6 +956,9 @@ void DM2_BRING_CHAMPION_TO_LIFE(i16 eaxw)
 // belongs to DM2_SELECT_CHAMPION()
 static void DM2_REVIVE_PLAYER(i8 htype, i8 direction)
 {
+  i16 i = 0;
+  i16 j = 0;
+
   t_text tbuffer[128];
 
   c_hero* hero = &party.hero[party.heros_in_party];
@@ -972,7 +978,7 @@ static void DM2_REVIVE_PLAYER(i8 htype, i8 direction)
   hero->b_28 = CUTX8(ddat.v1e0258);
 
   //m_393BA:
-  for (i16 i=0; i<30; i++)
+  for (i=0; i<30; i++)
     //m_393A5:
     hero->item[i] = -1;
 
@@ -1012,12 +1018,12 @@ static void DM2_REVIVE_PLAYER(i8 htype, i8 direction)
   hero->curMP = hero->maxMP = dp[2];
 
   //m_394CC:
-  for (i16 i=0; i<7; i++)
+  for (i=0; i<7; i++)
     //m_394A8:
     hero->ability[i][E_CUR] = hero->ability[i][E_MAX] = CUTX8(DM2_MAX(30, dp[i + 3]));
 
   //m_3951D:
-  for (i16 i=4; i<=19; i++)
+  for (i=4; i<=19; i++)
   {
     //m_394E7:
     i32 v = 0;
@@ -1028,12 +1034,12 @@ static void DM2_REVIVE_PLAYER(i8 htype, i8 direction)
   }
 
   //m_39573:
-  for (i16 j=0; j<4; j++)
+  for (j=0; j<4; j++)
   {
     //m_39538:
     i32 sum = 0;
     //m_39550:
-    for (i16 i=0; i<4; i++)
+    for (i=0; i<4; i++)
       //m_39544:
       sum += hero->skill[(j + 1)][i];
     hero->skill[0][j] = sum;

@@ -175,6 +175,7 @@ const t_text c_dballochandler::tidspfg[8] = { 'T', 'I', 'D', 'S', 'P', 'F', 'G',
 
 void c_dballochandler::init(void)
 {
+  int i = 0;
   c_cpx_linklist::init();
 
   gfxalloc_done = false;
@@ -202,7 +203,7 @@ void c_dballochandler::init(void)
   v1d70d7 = true; // !
   v1e13f8 = 0;
   v1e13fa = 0;
-  for (int i = 0; i < sizeof(v1e13fe); i++) v1e13fe[i] = 0;
+  for (i = 0; i < sizeof(v1e13fe); i++) v1e13fe[i] = 0;
   dbidx = 0;
   v1d6783 = 0;
   v1d6773 = 0xffff; // !
@@ -210,11 +211,11 @@ void c_dballochandler::init(void)
   ptr1e09a8 = NULL;
   v1e09ae = 0;
   v1e09b0 = 0;
-  for (int i = 0; i < sizeof(v1e09b2) / sizeof(i16); i++) v1e09b2[i] = 0;
-  for (int i = 0; i < sizeof(v1e09c0); i++) v1e09c0[i] = 0;
+  for (i = 0; i < sizeof(v1e09b2) / sizeof(i16); i++) v1e09b2[i] = 0;
+  for (i = 0; i < sizeof(v1e09c0); i++) v1e09c0[i] = 0;
   v1d6793 = 0;
   ptr1e0a5c = NULL;
-  for (int i = 0; i < sizeof(v1d6787); i++) v1d6787[i] = 0;
+  for (i = 0; i < sizeof(v1d6787); i++) v1d6787[i] = 0;
   v1e09ac = 0;
   v1d6770 = 0x10; // !
   v1dff38 = NULL;
@@ -247,8 +248,8 @@ void c_dballochandler::init(void)
   gdattable.w_10 = 0;
   gdattable.w_12 = 0;
   gdattable.w_14 = 0;
-  for (int i = 0; i < sizeof(gdattable.warr_16) / sizeof(i16); i++) gdattable.warr_16[i] = 0;
-  for (int i = 0; i < sizeof(gdattable.barr_24) / sizeof(i8); i++) gdattable.barr_24[i] = 0;
+  for (i = 0; i < sizeof(gdattable.warr_16) / sizeof(i16); i++) gdattable.warr_16[i] = 0;
+  for (i = 0; i < sizeof(gdattable.barr_24) / sizeof(i8); i++) gdattable.barr_24[i] = 0;
 }
 
 void c_dballochandler::DM2_SETUP_DB_ALLOCATION(void)

@@ -14,6 +14,7 @@ void c_4b3wp::init(void)
 
 void c_350::init(void)
 {
+  i16 i = 0;
   v1e054c = 0;
   v1e054e = NULL;
   v1e0552 = NULL;
@@ -39,21 +40,21 @@ void c_350::init(void)
   v1e0588 = NULL;
   v1e058c = 0;
   v1e058d = 0;
-  for (i16 i = 0; i < 0x80; i++) v1e058e[i] = 0;
-  for (i16 i = 0; i < 8; i++) v1e060e[i].init();
-  for (i16 i = 0; i < 5; i++) v1e066e[i] = 0;
+  for (i = 0; i < 0x80; i++) v1e058e[i] = 0;
+  for (i = 0; i < 8; i++) v1e060e[i].init();
+  for (i = 0; i < 5; i++) v1e066e[i] = 0;
   v1e0673 = 0;
   v1e0674 = 0;
   v1e0675 = 0;
-  for (i16 i = 0; i < 2; i++) v1e0676[i] = 0;
-  for (i16 i = 0; i < 0x10; i++) v1e0678[i].init();
+  for (i = 0; i < 2; i++) v1e0676[i] = 0;
+  for (i = 0; i < 0x10; i++) v1e0678[i].init();
   v1e07d8.init();
   v1e07e6 = NULL;
   v1e07ea = 0;
   v1e07eb = 0;
   v1e07ec = 0;
   v1e07ed = 0;
-  for (i16 i = 0; i < 0x2a; i++) v1e07ee[i] = NULL;
+  for (i = 0; i < 0x2a; i++) v1e07ee[i] = NULL;
   v1e0896 = 0;
   v1e0898 = NULL;
 }
