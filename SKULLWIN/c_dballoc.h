@@ -75,7 +75,8 @@
     protected:
       u_lp* ulptable;
 
-    private:
+    //private:
+	public:
       u_lp* getadr(ui32 uln) const;
 
     public:
