@@ -1736,17 +1736,17 @@ namespace DM2Internal {
 
 	};
 	// 
-	struct sk5cfc { // 14 bytes
-		sk5cfc *pv0;	// @0
+	struct sk5cfc_image { // 14 bytes
+		sk5cfc_image *pv0;	// @0
 		X16 w4;			// @4
 		X16 w6;			// @6
-		X16 w8;			// @8
-		X16 w10;		// @10
-		X16 w12;		// @12
+		X16 w8;			// @8		// bmp structure : resolution + bits
+		X16 width;		// @10		// w10 width
+		X16 height;		// @12		// w12 height
 	};
 	// 
 	struct sk5cfc_root {	// 4 bytes
-		sk5cfc	*pv0;			// @0
+		sk5cfc_image	*pv0;			// @0
 	};
 	// 
 	struct sk5d00 { // ? bytes

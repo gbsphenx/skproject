@@ -32108,9 +32108,9 @@ void SkWinCore::FREE_PICT_ENTRY(Bit8u *buff)
 	//^3E74:0AE7
 	if (_4976_5d76 == 0) {
 		//^3E74:0AF1
-		sk5cfc *bp04 = reinterpret_cast<sk5cfc *>(&_4976_5cfc);
+		sk5cfc_image *bp04 = reinterpret_cast<sk5cfc_image *>(&_4976_5cfc);
 		//^3E74:0AF9
-		for (; (void *)PTR_PADD(buff,-int(sizeof(sk5cfc))) != (void *)bp04->pv0; ) {
+		for (; (void *)PTR_PADD(buff,-int(sizeof(sk5cfc_image))) != (void *)bp04->pv0; ) {
 			//^3E74:0AFB
 			bp04 = bp04->pv0;
 		}
@@ -32119,7 +32119,7 @@ void SkWinCore::FREE_PICT_ENTRY(Bit8u *buff)
 		//^3E74:0B48
 		Bit32u bp08 = CALC_IMAGE_BYTE_LENGTH(buff) +0x1e;
 		//^3E74:0B60
-		if (reinterpret_cast<SkImage *>(PTR_PADD(buff,-int(sizeof(sk5cfc))))->AllocLower() == 0) {
+		if (reinterpret_cast<SkImage *>(PTR_PADD(buff,-int(sizeof(sk5cfc_image))))->AllocLower() == 0) {
 			//^3E74:0B7C
 			DEALLOC_UPPER_MEMORY(bp08);
 		}
@@ -32973,6 +32973,7 @@ LOGX(("%40s: C%02d=I%02X=E%02X=T%03d to %08X", "LOAD_GDAT_ENTRY_DATA_TO of ", cl
 	//^3E74:51E4
 	Bit16u si = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, cls3, cls4);
 	//^3E74:5201
+LOGX(("LOAD_GDAT_RAW_DATA call from LOAD_GDAT_ENTRY_DATA_TO"));
 	LOAD_GDAT_RAW_DATA(si, CONVERT_PHYS_TO_SHELF_FORM(where));
 
 	SkD((DLV_GLD, "GLD: Dyn1-load Raw#%4d at RAM(%p)\n", (Bitu)si, where));
@@ -36594,6 +36595,7 @@ void SkWinCore::GRAPHICS_DATA_READ(Bit32u location, Bit32u size, Bit8u *buff)
 //^3E74:0FF8
 void SkWinCore::LOAD_GDAT_RAW_DATA(Bit16u index, shelf_memory ps)
 {
+LOGX((" + LOAD_GDAT_RAW_DATA loads GDAT item %04d to ptr %08x", index, &ps ));
 	//^3E74:0FF8
 	Bit16u di = index;
 	GRAPHICS_DATA_OPEN();
@@ -36695,6 +36697,7 @@ Bit8u *SkWinCore::QUERY_GDAT_DYN_BUFF(Bit16u index, Bit16u *yy, Bit16u allocUppe
 			1024
 			) + 6;
 		//^3E74:15F8
+LOGX(("LOAD_GDAT_RAW_DATA call from QUERY_GDAT_DYN_BUFF (1)"));
 		LOAD_GDAT_RAW_DATA(
 			si,
 			CONVERT_PHYS_TO_SHELF_FORM(bp04)
@@ -36727,6 +36730,7 @@ Bit8u *SkWinCore::QUERY_GDAT_DYN_BUFF(Bit16u index, Bit16u *yy, Bit16u allocUppe
 				QUERY_GDAT_RAW_DATA_LENGTH(si)
 				);
 			//^3E74:16BA
+LOGX(("LOAD_GDAT_RAW_DATA call from QUERY_GDAT_DYN_BUFF (2)"));
 			LOAD_GDAT_RAW_DATA(
 				si,
 				CONVERT_PHYS_TO_SHELF_FORM(bp04)
@@ -37423,7 +37427,7 @@ Bit8u *SkWinCore::EXTRACT_GDAT_IMAGE(Bit16u index, i16 allocUpper)
 	}
 	else {
 		//^3E74:4BB4
-		sk5cfc *bp04 = _4976_5cfc.pv0;
+		sk5cfc_image *bp04 = _4976_5cfc.pv0;
 		while (bp04 != NULL) {
 			//^3E74:4BBD
 			if (bp04->w4 == di) {
@@ -37540,7 +37544,7 @@ Bit8u *SkWinCore::EXTRACT_GDAT_IMAGE(Bit16u index, i16 allocUpper)
 	}
 	else {
 		//^3E74:4DC7
-		sk5cfc *bp04 = reinterpret_cast<sk5cfc *>(ALLOC_MEMORY_RAM(bp0c +sizeof(sk5cfc), (allocUpper != 0) ? afDefault : afUseLower, 8));
+		sk5cfc_image *bp04 = reinterpret_cast<sk5cfc_image *>(ALLOC_MEMORY_RAM(bp0c +sizeof(sk5cfc_image), (allocUpper != 0) ? afDefault : afUseLower, 8));
 		//^3E74:4DF2
 		bp04->pv0 = _4976_5cfc.pv0;
 		//^3E74:4E03
@@ -37558,8 +37562,8 @@ Bit8u *SkWinCore::EXTRACT_GDAT_IMAGE(Bit16u index, i16 allocUpper)
 		bp04[-1].w8 = 4;
 #endif
 		//^3E74:4E83
-		bp04[-1].w10 = bp12;
-		bp04[-1].w12 = bp14;
+		bp04[-1].width = bp12;
+		bp04[-1].height = bp14;
 		//^3E74:4E94
 		COPY_MEMORY(
 			PTR_PADD(bp08,+QUERY_GDAT_RAW_DATA_LENGTH(di) -16),
@@ -42253,6 +42257,7 @@ void SkWinCore::_482b_060e()
 //^3E74:1953
 X16 SkWinCore::QUERY_NEXT_GDAT_ENTRY(SkEntIter *ref)
 {
+LOGX(("QUERY_NEXT_GDAT_ENTRY from SGDAT ptr %08X : GDAT %s", ref, DEBUG_SKGDATENT(ref)));
 	// 0 if not found
 	// 1 if found
 
@@ -42885,6 +42890,10 @@ void SkWinCore::LOAD_DYN4(SkLoadEnt *ref, i16 aa)
 			//^3E74:3419
 			bp5c.x8 = bp08[1]; bp08++; bp12++;
 		}
+
+LOGX(("LOAD_DYN4: %02d / %02d", bp12, aa));
+LOGX(("LOAD_DYN4: MASK: %s", DEBUG_SKLOADENT((U8*)bp08) ));
+
 		SkD((DLV_DYN, "Dyn: Test(%04X,%02X,%02X,%02X,%02X)\n"
 			, 0U +bp08->w0(), 0U +bp08->x2.cls1(), 0U +bp08->x2.cls2(), 0U +bp08->x2.cls3(), 0U +bp08->x2.cls4()));
 		// ATLASSERT(!(bp08->b2 == 7 && bp08->b3 == 0 && bp08->b4 == 255 && bp08->b5 == 255));
@@ -43328,7 +43337,7 @@ _4173:
 				GRAPHICS_DATA_OPEN();
 				bp34 = 1;
 			}
-#if DEBUG_SPEC
+#if DEBUG_SPEC	// SPX: would remove this as debug test ?
 			if (si == 1332) {
 				U32 pos1 = QUERY_GDAT_RAW_DATA_FILE_POS(1);
 				U32 len1 = QUERY_GDAT_RAW_DATA_LENGTH(1);
@@ -43338,6 +43347,7 @@ _4173:
 				ATLASSERT(pos == 380964 && len == 168);
 			}
 #endif
+LOGX(("LOAD_GDAT_RAW_DATA call from LOAD_DYN4"));
 			LOAD_GDAT_RAW_DATA(si, glbShelfMemoryTable[si]);
 			SkD((DLV_GLD, "GLD: Dyn4-load Raw#%4d at S(%08lX)\n", (Bitu)si, (Bitu)glbShelfMemoryTable[si].val));
 			//^3E74:43CC
@@ -53170,6 +53180,7 @@ void SkWinCore::LOAD_GDAT_ENTRIES()
 			U8 *bp04 = REALIZE_GRAPHICS_DATA_MEMORY(bp0c);
 			//^3E74:2214
 			WRITE_UI16(bp04,-2,bp08);
+LOGX(("LOAD_GDAT_RAW_DATA call from LOAD_GDAT_ENTRIES (1)"));
 			LOAD_GDAT_RAW_DATA(si, glbShelfMemoryTable[si] = bp0c);
 			EMS_MAP_BANK_TO_MEMORY();
 
@@ -53179,6 +53190,7 @@ void SkWinCore::LOAD_GDAT_ENTRIES()
 			//^3E74:225B
 			U8 *bp04 = ALLOC_MEMORY_RAM((bp08 = QUERY_GDAT_RAW_DATA_LENGTH(si)) +2, afUseUpper, 0x400);
 			WRITE_UI16(bp04,+0,bp08);
+LOGX(("LOAD_GDAT_RAW_DATA call from LOAD_GDAT_ENTRIES (2)"));
 			LOAD_GDAT_RAW_DATA(si, glbShelfMemoryTable[si] = CONVERT_PHYS_TO_SHELF_FORM(bp04 +2));
 
 			SkD((DLV_GLD, "GLD: Load Raw#%4d at RAM(%08X)\n", (Bitu)si, bp04));
@@ -53400,6 +53412,7 @@ void SkWinCore::LOAD_ENT1()
 	//^3E74:22D5
 	U32 bp08 = _4976_5d7a;
 	_4976_5d38 = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(bp08, afUseLower, 0x400));
+LOGX(("LOAD_GDAT_RAW_DATA call from LOAD_ENT1"));
 	LOAD_GDAT_RAW_DATA(0, CONVERT_PHYS_TO_SHELF_FORM(reinterpret_cast<U8 *>(_4976_5d38)));
 	U16 si = *_4976_5d38;
 	if (si != 0x8001 && SWAPW(si) != 0x8001) {
@@ -53597,6 +53610,50 @@ LOGX(("ULP >> "));
 LOGX(("============================\n"));
 }
 
+
+
+const char* SkWinCore::DEBUG_SKLOADENT(U8* xSkLoadEnt)
+{
+	static char xStaticDebugLoadEnt[32];
+	unsigned int iCls1Category = 0;
+	unsigned int iCls2 = 0;
+	unsigned int iCls3 = 0;
+	unsigned int iCls4 = 0;
+	memset(xStaticDebugLoadEnt, 0, 32);
+
+	iCls1Category = xSkLoadEnt[2];
+	iCls2 = xSkLoadEnt[3];
+	iCls3 = xSkLoadEnt[4];
+	iCls4 = xSkLoadEnt[5];
+
+
+	sprintf(xStaticDebugLoadEnt, "%02X-%02X-%02X-%02X", iCls1Category, iCls2, iCls3, iCls4);
+	return xStaticDebugLoadEnt;
+}
+
+
+
+const char* SkWinCore::DEBUG_SKGDATENT(SkEntIter* xSkGDATEnt)
+{
+	static char xStaticDebugGDATEnt[128];
+	char sLoadEntFrom[32];
+	char sLoadEntTo[32];
+	unsigned int iValue32 = 0;
+	unsigned char* xRawPointer = NULL;
+
+	memset(sLoadEntFrom, 0, 32);
+	memset(sLoadEntTo, 0, 32);
+	memset(xStaticDebugGDATEnt, 0, 128);
+
+	iValue32 = xSkGDATEnt->w0;
+	xRawPointer = (unsigned char*) xSkGDATEnt->pv14;
+	sprintf(sLoadEntFrom, "%s", DEBUG_SKLOADENT((U8*)&xSkGDATEnt->x2));
+	sprintf(sLoadEntTo, "%s", DEBUG_SKLOADENT((U8*)&xSkGDATEnt->x8));
+
+	sprintf(xStaticDebugGDATEnt, "%s to %s -=- x32 = %08x / pRaw = %08x", sLoadEntFrom, sLoadEntTo, iValue32, xRawPointer);
+	return xStaticDebugGDATEnt;
+
+}
 
 //^3E74:2641
 void SkWinCore::READ_GRAPHICS_STRUCTURE()

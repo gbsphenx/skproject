@@ -2166,6 +2166,8 @@ public:
 	/// SPX: Debug & display for easier comparison with SkWinDOS
 	void DEBUG_DISPLAY_GDAT_MAIN_INFO();
 	void DEBUG_DUMP_ULP();
+	const char* DEBUG_SKLOADENT(U8* xSkLoadEnt);
+	const char* DEBUG_SKGDATENT(SkEntIter* xSkGDATEnt);
 
 };
 
