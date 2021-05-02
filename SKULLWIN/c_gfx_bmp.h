@@ -26,6 +26,7 @@
   #define BMPCAST(a) CHGCAST(t_bmp, a) // from t_bmp to c_pixel
 
   // use s_dm2bmpheader* getbmpheader(t_bmp*) to access.
+#pragma pack(1)
   struct s_dm2bmpheader
   {
     t_resolution res;
@@ -33,6 +34,15 @@
     i16 width;
     i16 height;
   };
+
+  struct s_dm2bmpheader_reversed	// SPX: this is an ugly trick because MSVC6 at some point has the field in another order ?!
+  {
+    i16 width;
+    i16 height;
+    t_resolution res;
+    i8 unused;
+  };
+#pragma pack()
 
   s_dm2bmpheader* getbmpheader(t_bmp* bmp);
 

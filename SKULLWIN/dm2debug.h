@@ -7,6 +7,13 @@
 
 //#define NO_TRACE
 
+void SPX_DEBUG_POP_ALL();
+void SPX_DEBUG_FUNCTION_INFO(const char* sFunctionName);
+void SPX_DEBUG_PUSH_FUNCTION_INFO(const char* sFunctionName);
+void SPX_DEBUG_LOGFILE_INFO(const char *sMessage, ...);
+void SPX_DEBUG_MESSAGE_INFO(const char *sMessage, ...);
+
+
 #define LOGX(X) SPX_DEBUG_LOGFILE_INFO X
 #ifdef NO_TRACE
 	#define LOGX(X) ;;

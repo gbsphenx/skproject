@@ -16,6 +16,8 @@
 #include "c_map.h"
 #include "c_gdatfile.h"
 
+#include "dm2debug.h"
+
 const te_text gdatfn1[] = ".Z020GRAPHICS.DAT";
 const te_text gdatfn2[] = ".Z026GRAPHIC2.DAT";
 const te_text gdatfn3[] = ".Z020DUNGENB.DAT";
@@ -537,6 +539,7 @@ t_bmp* DM2_ALLOC_PICT_BUFF(i16 eaxw, i16 edxw, i16 ebxw, i8 ecxb)
   t_bmp* bmp = XUPCAST(t_bmp, dm2_dballochandler.DM2_ALLOC_MEMORY_RAM((vl_04 & lcon(0xffff)) + 6, MASK_8, ebxw) + lcon(0x6));
   s_dm2bmpheader* s82p = getbmpheader(bmp);
   s82p->res = ecxb;
+  s82p->unused = 0;	// SPX: better for proper init
   s82p->width = eaxw;
   s82p->height = edxw;
   return bmp;
@@ -617,13 +620,21 @@ void DM2_FREE_PICT_ENTRY(c_pixel* gfx)
   if (dm2_dballochandler.gfxalloc_done || gfx == NULL)
     return;
 
+#pragma pack(1)	// MSVC6 needs to specify packed structure so that s_tmp is exactly 14 bytes-long as used below
   struct s_tmp // size 0xe
   {
     i32 l_00; // unused
     i16 w_04;
     i16 w_06;
+#ifdef _MSVC6
+	s_dm2bmpheader_reversed bmp;
+#else
     s_dm2bmpheader bmp; // @08
+#endif
   };
+
+	LOGX(("s_tmp:          %d\n",sizeof(s_tmp)));				// SPX: to check struct size
+	LOGX(("s_dm2bmpheader: %d\n",sizeof(s_dm2bmpheader)));		// SPX: to check struct size
 
   s_tmp* s101p = XUPCAST(s_tmp, gfx - 14);
   // pointer in the beginning,
@@ -646,11 +657,11 @@ void DM2_FREE_PICT_ENTRY(c_pixel* gfx)
   unk** xpptrrg2 = CHGCAST(unk*, s101p);
   unk** xpptrrg3;
 
-#ifndef _MSVC6 // SPX : These 3 lines make crash under MSVC6
+//#ifndef _MSVC6 // SPX : These 3 lines make crash under MSVC6 when structure is not packed (14 bytes) and is larger (16 bytes)
   while (xpptrrg2 != (xpptrrg3 = UPCAST(unk*, *xpptrrg1)))
     xpptrrg1 = UPCAST(unk*, *xpptrrg1);
   *xpptrrg1 = *xpptrrg3;
-#endif // _MSVC6
+//#endif // _MSVC6
 
   i32 longrg1 = mkl(DM2_CALC_IMAGE_BYTE_LENGTH(BMPCAST(gfx)) + 14);
   if (s101p->bmp.res == BPP_4)

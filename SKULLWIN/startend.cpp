@@ -359,6 +359,7 @@ static t_bmp* R_D2C(i16 w, i16 h)
   t_bmp* bmp = DRV_screen256.pixel; // did call R_4A986 here
   s_dm2bmpheader* sbmp = getbmpheader(bmp);
   sbmp->res = BPP_8;
+  sbmp->unused = 0; // SPX: better for proper init
   sbmp->width = w;
   sbmp->height = h;
   return bmp;
