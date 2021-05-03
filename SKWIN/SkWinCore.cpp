@@ -64674,6 +64674,7 @@ int main(int argc, char **argv)
 				skwin.ShowWindow(SW_SHOWDEFAULT);
 
 				SkWinCore a;
+				skwin.ProcessArgs(argc, argv);
 				r = a.IBMIO_BOOTSTRAP();
 
 				skwin.DestroyWindow();

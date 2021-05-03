@@ -42,6 +42,8 @@ public:
 
 	bool ML();
 
+	void ProcessArgs(int argc, char** argv);	// SPX: added to handle options from command line
+
 	static inline U32 GetTickCount() {
 		return ::GetTickCount();
 	}

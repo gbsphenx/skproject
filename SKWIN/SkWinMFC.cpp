@@ -208,6 +208,60 @@ bool CSkWinMFC::ML() {
 	return true;
 }
 
+// SPX: added to handle options from command line
+void CSkWinMFC::ProcessArgs(int argc, char** argv)
+{
+	unsigned int iArgIndex = 0;
+	while (iArgIndex < argc)
+	{
+		if (argv[iArgIndex] == NULL)
+			break;
+
+		if (!strcmp(argv[iArgIndex], "-en"))
+			lang = 0x10;	// english
+		else if (!strcmp(argv[iArgIndex], "-en"))
+			lang = 0x10;	// english
+		else if (!strcmp(argv[iArgIndex], "-jp"))
+			lang = 0x20;	// japanese
+		else if (!strcmp(argv[iArgIndex], "-de"))
+			lang = 0x30;	// german
+		else if (!strcmp(argv[iArgIndex], "-fr"))
+			lang = 0x40;	// french
+		else if (!strcmp(argv[iArgIndex], "-es"))
+			lang = 0x50;	// spanish
+		else if (!strcmp(argv[iArgIndex], "-it"))
+			lang = 0x60;	// italian
+
+		else if (!strcmp(argv[iArgIndex], "-vx"))
+			gdat_vers = 0;
+		else if (!strcmp(argv[iArgIndex], "-v1"))
+			gdat_vers = 1;
+		else if (!strcmp(argv[iArgIndex], "-v2"))
+			gdat_vers = 2;
+		else if (!strcmp(argv[iArgIndex], "-v3"))
+			gdat_vers = 3;
+		else if (!strcmp(argv[iArgIndex], "-v4"))
+			gdat_vers = 4;
+		else if (!strcmp(argv[iArgIndex], "-v5"))
+			gdat_vers = 5;
+		else if (!strcmp(argv[iArgIndex], "-cartoon"))
+			gdat_vers = 6;	// v5 + cartoon
+
+		else if (!strcmp(argv[iArgIndex], "-dm1"))
+			dung = 1;
+		else if (!strcmp(argv[iArgIndex], "-csb"))
+			dung = 2;
+//		else if (!strcmp(argv[iArgIndex], "-tq"))
+//			dung = 3;
+		else if (!strcmp(argv[iArgIndex], "-beta"))
+			dung = 4;
+		else if (!strcmp(argv[iArgIndex], "-dm2"))
+			dung = 5;
+
+		iArgIndex++;
+	}
+}
+
 int CSkWinMFC::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CFrameWnd::OnCreate(lpCreateStruct) == -1)
