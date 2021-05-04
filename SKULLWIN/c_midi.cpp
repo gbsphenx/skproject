@@ -12,11 +12,19 @@
 
 // SPX: added to handle music as wav
 #include "c_music_wav.h"
-bool bUseMIDI = false;
+bool bUseMIDI = true;
+
+extern int __dm2skull_music;	// from main.cpp
 
 void c_midi::do_music(i32 songnr)
 {
   char songname[30];
+
+  if (__dm2skull_music == 0)
+	bUseMIDI = true;
+  else
+	bUseMIDI = false;
+
 
   if (bUseMIDI == true)
   {

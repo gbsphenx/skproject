@@ -233,10 +233,86 @@ void* thread_func(ALLEGRO_THREAD* thr, void* vparg)
   return NULL;
 }
 
+int __dm2skull_music = 0;
+
+
+// SPX: added to handle options from command line
+void ProcessArgs(int argc, char** argv)
+{
+	unsigned int iArgIndex = 0;
+
+	unsigned int lang = 0;
+	unsigned int gdat_vers = 0;
+	unsigned int dung = 0;
+	unsigned int music = 0;
+
+	while (iArgIndex < argc)
+	{
+		if (argv[iArgIndex] == NULL)
+			break;
+
+		if (!strcmp(argv[iArgIndex], "-en"))
+			lang = 0x10;	// english
+		else if (!strcmp(argv[iArgIndex], "-en"))
+			lang = 0x10;	// english
+		else if (!strcmp(argv[iArgIndex], "-jp"))
+			lang = 0x20;	// japanese
+		else if (!strcmp(argv[iArgIndex], "-de"))
+			lang = 0x30;	// german
+		else if (!strcmp(argv[iArgIndex], "-fr"))
+			lang = 0x40;	// french
+		else if (!strcmp(argv[iArgIndex], "-es"))
+			lang = 0x50;	// spanish
+		else if (!strcmp(argv[iArgIndex], "-it"))
+			lang = 0x60;	// italian
+
+		else if (!strcmp(argv[iArgIndex], "-vx"))
+			gdat_vers = 0;
+		else if (!strcmp(argv[iArgIndex], "-v1"))
+			gdat_vers = 1;
+		else if (!strcmp(argv[iArgIndex], "-v2"))
+			gdat_vers = 2;
+		else if (!strcmp(argv[iArgIndex], "-v3"))
+			gdat_vers = 3;
+		else if (!strcmp(argv[iArgIndex], "-v4"))
+			gdat_vers = 4;
+		else if (!strcmp(argv[iArgIndex], "-v5"))
+			gdat_vers = 5;
+		else if (!strcmp(argv[iArgIndex], "-cartoon"))
+			gdat_vers = 6;	// v5 + cartoon
+
+		else if (!strcmp(argv[iArgIndex], "-dm1"))
+			dung = 1;
+		else if (!strcmp(argv[iArgIndex], "-csb"))
+			dung = 2;
+//		else if (!strcmp(argv[iArgIndex], "-tq"))
+//			dung = 3;
+		else if (!strcmp(argv[iArgIndex], "-beta"))
+			dung = 4;
+		else if (!strcmp(argv[iArgIndex], "-dm2"))
+			dung = 5;
+
+
+		else if (!strcmp(argv[iArgIndex], "-hmp"))
+			music = 0;	// use converted hmp to midi music
+		else if (!strcmp(argv[iArgIndex], "-mod"))
+			music = 1;	// use converted mod to ogg music
+		else if (!strcmp(argv[iArgIndex], "-segacd"))
+			music = 2;	// use converted audio track to ogg music
+
+		
+		iArgIndex++;
+	}
+
+	__dm2skull_music = music;
+}
+
+
 int main(int argc, char* argv[])
 {
   logfile = fopen("logfile1.txt", FILEMODE_WT);
 
+  ProcessArgs(argc, argv);
   alg.start();
 
   do
