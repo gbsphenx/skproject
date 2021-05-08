@@ -623,15 +623,12 @@ void DM2_FREE_PICT_ENTRY(c_pixel* gfx)
 #pragma pack(1)	// MSVC6 needs to specify packed structure so that s_tmp is exactly 14 bytes-long as used below
   struct s_tmp // size 0xe
   {
-    i32 l_00; // unused
+    i32 l_00; // unused	, following Skwin this would be a pointer to the same structure
     i16 w_04;
     i16 w_06;
-#ifdef _MSVC6
-	s_dm2bmpheader_reversed bmp;
-#else
     s_dm2bmpheader bmp; // @08
-#endif
   };
+#pragma pack()
 
 	LOGX(("s_tmp:          %d\n",sizeof(s_tmp)));				// SPX: to check struct size
 	LOGX(("s_dm2bmpheader: %d\n",sizeof(s_dm2bmpheader)));		// SPX: to check struct size
@@ -657,11 +654,11 @@ void DM2_FREE_PICT_ENTRY(c_pixel* gfx)
   unk** xpptrrg2 = CHGCAST(unk*, s101p);
   unk** xpptrrg3;
 
-//#ifndef _MSVC6 // SPX : These 3 lines make crash under MSVC6 when structure is not packed (14 bytes) and is larger (16 bytes)
+#ifndef _MSVC6 // SPX : These 3 lines make crash under MSVC6 when structure is not packed (14 bytes) and is larger (16 bytes)
   while (xpptrrg2 != (xpptrrg3 = UPCAST(unk*, *xpptrrg1)))
     xpptrrg1 = UPCAST(unk*, *xpptrrg1);
   *xpptrrg1 = *xpptrrg3;
-//#endif // _MSVC6
+#endif // _MSVC6
 
   i32 longrg1 = mkl(DM2_CALC_IMAGE_BYTE_LENGTH(BMPCAST(gfx)) + 14);
   if (s101p->bmp.res == BPP_4)

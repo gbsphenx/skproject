@@ -5,7 +5,8 @@
     #include "types.h"
   #endif
 
-  struct s_xlink // size 0xe
+#pragma pack(1)
+  struct s_xlink // size 0xe, seems to be related to (sk5cfc_image) s_tmp + s_bmpheader
   {
     s_xlink* s87p_00;
     t_dbidx dbidx; // @04
@@ -15,6 +16,7 @@
     i16 w_0a;
     i16 w_0c;
   };
+#pragma pack()
 
   class c_gdatfile
   {

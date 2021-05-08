@@ -1,6 +1,8 @@
 #ifndef TYPES_H
   #define TYPES_H
 
+#include "../skwin/defines.h"
+
   // #################
   // compiler specific
 

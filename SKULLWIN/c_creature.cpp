@@ -3232,13 +3232,16 @@ i32 DM2_GET_CREATURE_ANIMATION_FRAME(i32 eaxl, i32 edxl, i16* ebxpw, i16* ecxpw,
   RG7p = RG2P;
   RG6p = RG3P;
   RG4L = unsignedlong(RG1Blo);
-  RG3L = lcon(0xfb);
-  RG2L = lcon(0x8);
-  RG1P = DM2_QUERY_GDAT_ENTRY_DATA_PTR(lcon(0xf), RG4Blo, lcon(0x8), lcon(0xfb));
+  //RG3L = lcon(0xfb);
+  //RG2L = lcon(0x8);
+  //RG1P = DM2_QUERY_GDAT_ENTRY_DATA_PTR(lcon(0xf), RG4Blo, lcon(0x8), lcon(0xfb));
+  RG1P = DM2_QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_CREATURES, RG4Blo, dtRaw8, lcon(GDAT_CREATURE_ANIM_ATTRIBUTION));
+  if ((i32)RG1P == 0xFFFFFFFF)	// SPX, in case -1, don't go further
+	  return 0;
   //m_4F1B:
   for (;;)
   {
-    RG2L = signedlong(word_at(RG1P));
+    RG2L = signedlong(word_at(RG1P));	// That fails if RG1P (np8) = -1
     if (RG2L == lcon(0xffffffff) || RG51w == word_at(RG1P))
       break;
     RG1P += 4;
@@ -3248,10 +3251,11 @@ i32 DM2_GET_CREATURE_ANIMATION_FRAME(i32 eaxl, i32 edxl, i16* ebxpw, i16* ecxpw,
   vw_00 = RG1W; // truncated
   mov16(location(RG7p + 0), RG1W);
   RG52l = unsignedlong(vb_04);
-  RG3L = lcon(0xfc);
-  RG2L = lcon(0x7);
+  //RG3L = lcon(0xfc);
+  //RG2L = lcon(0x7);
   RG4L = RG52l;
-  RG1P = DM2_QUERY_GDAT_ENTRY_DATA_PTR(lcon(0xf), RG4Blo, lcon(0x7), lcon(0xfc));
+  //RG1P = DM2_QUERY_GDAT_ENTRY_DATA_PTR(lcon(0xf), RG4Blo, lcon(0x7), lcon(0xfc));
+  RG1P = DM2_QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_CREATURES, RG4Blo, dtRaw7, lcon(GDAT_CREATURE_ANIM_INFO_SEQUENCE));
   RG2P = RG1P;
   RG1P = DOWNCAST(c_aidef, DM2_QUERY_CREATURE_AI_SPEC_FROM_RECORD(RG52l));
   if (jnz_test8(location(RG1P), lcon(0x1)))
