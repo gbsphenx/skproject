@@ -258,6 +258,12 @@ void CSkWinMFC::ProcessArgs(int argc, char** argv)
 		else if (!strcmp(argv[iArgIndex], "-dm2"))
 			dung = 5;
 
+		else if (!strcmp(argv[iArgIndex], "-fhz6"))
+			freq = 6;
+		else if (!strcmp(argv[iArgIndex], "-fhz11"))
+			freq = 11;
+
+
 		iArgIndex++;
 	}
 }
@@ -598,11 +604,11 @@ void CSkWinMFC::OnVideo1x(UINT nID) {
 		case ID_LANG_SPANISH: lang = 0x50; break;	// SPX: Additional value
 		case ID_LANG_ITALIAN: lang = 0x60; break;	// SPX: Additional value
 
-		case ID_DUNGEON_DUNGEON_MASTER:		dung = 1; break;
-		case ID_DUNGEON_CHAOS_STRIKES_BACK: dung = 2; break;
-		case ID_DUNGEON_THERON_QUEST:		dung = 3; break;
-		case ID_DUNGEON_SKULLKEEP_BETA:		dung = 4; break;
-		case ID_DUNGEON_LEGEND_SKULLKEEP:	dung = 5; break;
+		case ID_DUNGEON_DUNGEON_MASTER:		dung = _OPTION_DUNGEON_DM1_; break;
+		case ID_DUNGEON_CHAOS_STRIKES_BACK: dung = _OPTION_DUNGEON_CSB_; break;
+		case ID_DUNGEON_THERON_QUEST:		dung = _OPTION_DUNGEON_THERON_QUEST_; break;
+		case ID_DUNGEON_SKULLKEEP_BETA:		dung = _OPTION_DUNGEON_DM2_BETA_; break;
+		case ID_DUNGEON_LEGEND_SKULLKEEP:	dung = _OPTION_DUNGEON_DM2_; break;
 
 		case ID_VERSION_NO_SPECIFIC: gdat_vers = 0; break;
 		case ID_VERSION_V1: gdat_vers = 1; break;
