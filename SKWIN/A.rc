@@ -108,8 +108,8 @@ BEGIN
     POPUP "&Dungeon"
     BEGIN
         MENUITEM "&Dungeon Master",             40061
-        MENUITEM "&Chaos Strikes Back",         40062
-        MENUITEM "&Theron's Quests",            40063
+//        MENUITEM "&Chaos Strikes Back",         40062
+//        MENUITEM "&Theron's Quests",            40063
         MENUITEM "&Skullkeep (beta)",           40064
         MENUITEM "&Skullkeep",                  40065
     END
@@ -121,7 +121,7 @@ BEGIN
 //        MENUITEM "&V3 Classic",                 40083
         MENUITEM "&V4 Classic",                 40084
 //        MENUITEM "&V5 Classic",                 40085
-//        MENUITEM "&V5 Cartoony",                40086
+        MENUITEM "&V5 Cartoony",                40086
     END
     POPUP "(Extra)"
     BEGIN
@@ -132,6 +132,7 @@ BEGIN
         MENUITEM "Use custom spells",           40075
         MENUITEM "Extra sounds",                40072
         MENUITEM "Player footstep sound",       40073
+        MENUITEM "*Super mode*",	            40076
     END
     POPUP "?", HELP
     BEGIN

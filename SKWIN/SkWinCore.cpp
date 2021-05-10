@@ -38843,15 +38843,15 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 						// SPX: the game folder (which is DATA by default) is changed from dungeon menu (need a restart)
 						switch(skwin.dung)
 						{
-							case 1:
+							case _OPTION_DUNGEON_DM1_:
 								bp0c = (const unsigned __int8*) ".Z008DATA_DM1\\"; break;
-							case 2:
+							case _OPTION_DUNGEON_CSB_:
 								bp0c = (const unsigned __int8*) ".Z008DATA_CSB\\"; break;
-							case 3:
+							case _OPTION_DUNGEON_THERON_QUEST_:
 								bp0c = (const unsigned __int8*) ".Z008DATA_TQ\\"; break;
-							case 4:
+							case _OPTION_DUNGEON_DM2_BETA_:
 								bp0c = (const unsigned __int8*) ".Z008DATA_BETA\\"; break;
-							case 5:
+							case _OPTION_DUNGEON_DM2_:
 								bp0c = (const unsigned __int8*) ".Z008DATA\\"; break;
 						} // END of specific block
 						
