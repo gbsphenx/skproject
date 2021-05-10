@@ -4,6 +4,16 @@
 // SPX BEGIN : new defines replacing hard coded value
 // These could also be declared as enums or constants
 
+
+#define _OPTION_DUNGEON_DM1_				1
+#define _OPTION_DUNGEON_CSB_				2
+#define _OPTION_DUNGEON_THERON_QUEST_		3
+#define _OPTION_DUNGEON_DM2_BETA_			4
+#define _OPTION_DUNGEON_DM2_				5
+
+
+
+
 // DataTypes used in GDAT
 enum dtIndex 
 {
@@ -25,6 +35,18 @@ enum dtIndex
 	dtPalette	= 13,
 		dt0d	= 13,
 };
+
+#if !defined(SPELL_TYPE_POTION)
+#define SPELL_TYPE_POTION	1
+#define SPELL_TYPE_MISSILE	2
+#define SPELL_TYPE_GENERAL	3
+#define SPELL_TYPE_SUMMON	4
+#endif
+
+
+
+
+
 
 // Playback 0x157C = 5500 Hz
 #define PLAYBACK_FREQUENCY		5500
