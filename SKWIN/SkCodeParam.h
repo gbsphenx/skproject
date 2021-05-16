@@ -29,6 +29,9 @@ public:
 
 	static bool bForceOrnateSound;
 
+	//--- Very specific for debugging
+	static bool bDebugNoImageDecodingAssert;
+
 public:
 	SkCodeParam();
 };

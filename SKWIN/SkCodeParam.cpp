@@ -36,3 +36,6 @@ bool SkCodeParam::bUseSuperMode = false;
 #else if (DM2_DEBUG_SUPER_MODE == 1)
 bool SkCodeParam::bUseSuperMode = true;
 #endif // DM2_DEBUG_SUPER_MODE
+
+
+bool SkCodeParam::bDebugNoImageDecodingAssert = true;

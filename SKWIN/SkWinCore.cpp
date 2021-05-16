@@ -4489,6 +4489,27 @@ void SkWinCore::_01b0_0adb() //#DS=04BF
 	return;
 }
 
+Bit8u _xDefaultFMTownsPalette[16*4] = 
+{
+	0, 0x00, 0x00, 0x00,
+	1, 0x66, 0x66, 0x66,
+	2, 0x88, 0x88, 0x88,
+	3, 0x66, 0x22, 0x00,
+	4, 0x00, 0xCC, 0xCC,
+	5, 0x88, 0x44, 0x00,
+	6, 0x00, 0x88, 0x00,
+	7, 0x00, 0xCC, 0x00,
+	8, 0xFF, 0x00, 0x00,
+	9, 0xFF, 0xAA, 0x00,
+	10, 0xCC, 0x88, 0x66,
+	11, 0xFF, 0xFF, 0x00,
+	12, 0x44, 0x44, 0x44,
+	13, 0xAA, 0xAA, 0xAA,
+	14, 0x00, 0x00, 0xFF,
+	15, 0xFF, 0xFF, 0xFF,
+
+};
+
 //^01B0:0B01
 void SkWinCore::IBMIO_SET_CURSOR_PATTERN(
 	__int16 index, 
@@ -4500,7 +4521,12 @@ void SkWinCore::IBMIO_SET_CURSOR_PATTERN(
 	Bit16u srcBits, 
 	Bit8u *localPal, 
 	Bit16u colorkey
-) { //#DS=04BF
+) { 
+	// SPX: If localPal is not specified (can happen from a V3 GDAT (FM-Towns, SegaCD/MegaCD), it will then crash
+	if (localPal == NULL)
+		localPal = _xDefaultFMTownsPalette;
+	
+	//#DS=04BF
 	//^01B0:0B01
 	//^01B0:0B07
 	LOADDS(0x3083);
@@ -20404,7 +20430,7 @@ void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 	}
 	//^2F3F:01BC
 	champion->lastName[bp0e] = 0;
-DEBUG_DUMP_ULP();
+//DEBUG_DUMP_ULP();
 	skhero *bp08 = reinterpret_cast<skhero *>(QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_CHAMPIONS, U8(heroType), dt08, 0x00));
 #if DM2_EXTENDED_MODE == 1	// TODOTo be replaced with fixedmode + checkmem
 	if (bp08 == NULL)
@@ -32968,12 +32994,12 @@ void SkWinCore::LOAD_RECTS_AND_COMPRESS(Bit8u cls1, Bit8u cls2, Bit8u cls4) //#D
 //^3E74:51E4
 void SkWinCore::LOAD_GDAT_ENTRY_DATA_TO(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4, Bit8u *where) //#DS=4976?
 {
-LOGX(("%40s: C%02d=I%02X=E%02X=T%03d to %08X", "LOAD_GDAT_ENTRY_DATA_TO of ", cls1, cls2, cls4, cls3, where ));
+//LOGX(("%40s: C%02d=I%02X=E%02X=T%03d to %08X", "LOAD_GDAT_ENTRY_DATA_TO of ", cls1, cls2, cls4, cls3, where ));
 	// TODO: ñ{ÉYÉåîüêî
 	//^3E74:51E4
 	Bit16u si = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, cls3, cls4);
 	//^3E74:5201
-LOGX(("LOAD_GDAT_RAW_DATA call from LOAD_GDAT_ENTRY_DATA_TO"));
+//LOGX(("LOAD_GDAT_RAW_DATA call from LOAD_GDAT_ENTRY_DATA_TO"));
 	LOAD_GDAT_RAW_DATA(si, CONVERT_PHYS_TO_SHELF_FORM(where));
 
 	SkD((DLV_GLD, "GLD: Dyn1-load Raw#%4d at RAM(%p)\n", (Bitu)si, where));
@@ -36595,7 +36621,7 @@ void SkWinCore::GRAPHICS_DATA_READ(Bit32u location, Bit32u size, Bit8u *buff)
 //^3E74:0FF8
 void SkWinCore::LOAD_GDAT_RAW_DATA(Bit16u index, shelf_memory ps)
 {
-LOGX((" + LOAD_GDAT_RAW_DATA loads GDAT item %04d to ptr %08x", index, &ps ));
+//LOGX((" + LOAD_GDAT_RAW_DATA loads GDAT item %04d to ptr %08x", index, &ps ));
 	//^3E74:0FF8
 	Bit16u di = index;
 	GRAPHICS_DATA_OPEN();
@@ -36697,7 +36723,7 @@ Bit8u *SkWinCore::QUERY_GDAT_DYN_BUFF(Bit16u index, Bit16u *yy, Bit16u allocUppe
 			1024
 			) + 6;
 		//^3E74:15F8
-LOGX(("LOAD_GDAT_RAW_DATA call from QUERY_GDAT_DYN_BUFF (1)"));
+//LOGX(("LOAD_GDAT_RAW_DATA call from QUERY_GDAT_DYN_BUFF (1)"));
 		LOAD_GDAT_RAW_DATA(
 			si,
 			CONVERT_PHYS_TO_SHELF_FORM(bp04)
@@ -36730,7 +36756,7 @@ LOGX(("LOAD_GDAT_RAW_DATA call from QUERY_GDAT_DYN_BUFF (1)"));
 				QUERY_GDAT_RAW_DATA_LENGTH(si)
 				);
 			//^3E74:16BA
-LOGX(("LOAD_GDAT_RAW_DATA call from QUERY_GDAT_DYN_BUFF (2)"));
+//LOGX(("LOAD_GDAT_RAW_DATA call from QUERY_GDAT_DYN_BUFF (2)"));
 			LOAD_GDAT_RAW_DATA(
 				si,
 				CONVERT_PHYS_TO_SHELF_FORM(bp04)
@@ -37377,7 +37403,8 @@ void SkWinCore::DECODE_IMG3_UNDERLAY(IMG3 *xx, U8 *yy)
 			}
 			//^44C8:163D
 		} while (si < bp08);
-		ATLASSERT(si <= bp08); // if error, memory broken!
+		if (SkCodeParam::bDebugNoImageDecodingAssert == false)
+			ATLASSERT(si <= bp08); // if error, memory broken!
 	}
 
 	//^44C8:1645
@@ -39001,10 +39028,18 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 					}
 				case 0x0051:	// .Z081 : GDAT Version number
 					{
-						const Bit8u *bp0c = (const Bit8u *) "_V4";
+						
+						if (skwin.gdat_vers == 3)	// ID_VERSION_V3 CLASSIC
+						{
+							const Bit8u *bpxx = (const Bit8u *) "_V3";
+							FORMAT_SKSTR(bpxx, bp0116);
+							SK_STRCAT(bp08, bp0116);
+							bp04 = bp08 +SK_STRLEN(bp08);
+						}
 						if (skwin.gdat_vers == 4)	// ID_VERSION_V4 CLASSIC
 						{
-							FORMAT_SKSTR(bp0c, bp0116);
+							const Bit8u *bpxx = (const Bit8u *) "_V4";
+							FORMAT_SKSTR(bpxx, bp0116);
 							SK_STRCAT(bp08, bp0116);
 							bp04 = bp08 +SK_STRLEN(bp08);
 						}
@@ -43347,7 +43382,7 @@ _4173:
 				ATLASSERT(pos == 380964 && len == 168);
 			}
 #endif
-LOGX(("LOAD_GDAT_RAW_DATA call from LOAD_DYN4"));
+//LOGX(("LOAD_GDAT_RAW_DATA call from LOAD_DYN4"));
 			LOAD_GDAT_RAW_DATA(si, glbShelfMemoryTable[si]);
 			SkD((DLV_GLD, "GLD: Dyn4-load Raw#%4d at S(%08lX)\n", (Bitu)si, (Bitu)glbShelfMemoryTable[si].val));
 			//^3E74:43CC
@@ -53180,7 +53215,7 @@ void SkWinCore::LOAD_GDAT_ENTRIES()
 			U8 *bp04 = REALIZE_GRAPHICS_DATA_MEMORY(bp0c);
 			//^3E74:2214
 			WRITE_UI16(bp04,-2,bp08);
-LOGX(("LOAD_GDAT_RAW_DATA call from LOAD_GDAT_ENTRIES (1)"));
+//LOGX(("LOAD_GDAT_RAW_DATA call from LOAD_GDAT_ENTRIES (1)"));
 			LOAD_GDAT_RAW_DATA(si, glbShelfMemoryTable[si] = bp0c);
 			EMS_MAP_BANK_TO_MEMORY();
 
@@ -53190,7 +53225,7 @@ LOGX(("LOAD_GDAT_RAW_DATA call from LOAD_GDAT_ENTRIES (1)"));
 			//^3E74:225B
 			U8 *bp04 = ALLOC_MEMORY_RAM((bp08 = QUERY_GDAT_RAW_DATA_LENGTH(si)) +2, afUseUpper, 0x400);
 			WRITE_UI16(bp04,+0,bp08);
-LOGX(("LOAD_GDAT_RAW_DATA call from LOAD_GDAT_ENTRIES (2)"));
+//LOGX(("LOAD_GDAT_RAW_DATA call from LOAD_GDAT_ENTRIES (2)"));
 			LOAD_GDAT_RAW_DATA(si, glbShelfMemoryTable[si] = CONVERT_PHYS_TO_SHELF_FORM(bp04 +2));
 
 			SkD((DLV_GLD, "GLD: Load Raw#%4d at RAM(%08X)\n", (Bitu)si, bp04));
@@ -53412,7 +53447,7 @@ void SkWinCore::LOAD_ENT1()
 	//^3E74:22D5
 	U32 bp08 = _4976_5d7a;
 	_4976_5d38 = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(bp08, afUseLower, 0x400));
-LOGX(("LOAD_GDAT_RAW_DATA call from LOAD_ENT1"));
+//LOGX(("LOAD_GDAT_RAW_DATA call from LOAD_ENT1"));
 	LOAD_GDAT_RAW_DATA(0, CONVERT_PHYS_TO_SHELF_FORM(reinterpret_cast<U8 *>(_4976_5d38)));
 	U16 si = *_4976_5d38;
 	if (si != 0x8001 && SWAPW(si) != 0x8001) {
@@ -54641,7 +54676,7 @@ void SkWinCore::INIT()
 	_482b_0004();
 	LOAD_GDAT_INTERFACE_00_0A();
 	U8 *bp04 = ALLOC_MEMORY_RAM(0x400, afUseLower, 1024);
-DEBUG_DUMP_ULP();
+//DEBUG_DUMP_ULP();
 	LOAD_GDAT_ENTRY_DATA_TO(0x1, 0x0, dt09, 0xfe, bp04);	// C01=I00=EFE=T009 palette IRGB
 	_44c8_1baf(bp04);
 	DEALLOC_LOWER_MEMORY(0x400);
