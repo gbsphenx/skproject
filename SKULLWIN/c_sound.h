@@ -80,7 +80,7 @@
       i16 v1d14d8;
       bool v1d14be;
       i16 v1dff88;
-      i8 v1dff8a;
+      i8 v1dff8a;	// music hmp number, i8 means no more than 127 musics index
       i32 v1dfda4[64];
       i32 v1d1410;
       i16 v1d2694;

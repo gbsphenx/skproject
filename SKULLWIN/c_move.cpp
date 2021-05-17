@@ -26,6 +26,8 @@
 #include "emu.h"
 #include "regs.h"
 
+#include "dm2debug.h"
+
 // belongs to DM2_12b4_0881
 static i32 DM2_12b4_0953(unk* xeaxp, i32 edxl)
 {
@@ -2108,6 +2110,9 @@ i32 DM2_ATTACK_DOOR(i32 eaxl, i32 edxl, i32 ebxl, i32 ecxl, i16 argw0)
   RG4L = signedlong(vql_00.peek16());
   RG1RP = DM2_GET_ADDRESS_OF_TILE_RECORD(vql_04.peek16(), RG4W);
   RG4P = RG1P;
+
+// SPX: If "Weak door" mode is activated, then bypass these tests. It will lead to the destroy door part
+#ifndef _DEBUG_OPTION_BREAK_DOOR_
   if (RG3L == 0)
     //m_8E73:
     flag = jz_test8(location(RG1P + lcon(0x3)), lcon(0x1));
@@ -2121,6 +2126,8 @@ i32 DM2_ATTACK_DOOR(i32 eaxl, i32 edxl, i32 ebxl, i32 ecxl, i16 argw0)
   RG1L = DM2_GET_DOOR_STAT_0X10(DM2_IS_REBIRTH_ALTAR(RG4P) & lcon(0xff));
   if (RG2W < RG1W)
     return 0;
+#endif // _DEBUG_OPTION_BREAK_DOOR_
+
   t_tile* RG11tilep = &mapdat.map[vql_04.peek16()][vql_00.peek16()];
   RG4Blo = tile_to_ubyte(*RG11tilep & 0x7);
   RG4L = unsignedlong(RG4Blo);

@@ -74,7 +74,8 @@
 
   class c_allochandler
   {
-    protected:
+  public:	// SPX for debug
+//    protected:
       bool is_allocated;
 
       c_freepool* freepoollist_end;
@@ -120,5 +121,6 @@
       void DM2_SETUP_MEMORYALLOCATION(void);
       void DM2_DTOR_MEMORYALLOCATION(void);
   };
+
 
 #endif

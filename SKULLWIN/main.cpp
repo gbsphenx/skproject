@@ -233,7 +233,7 @@ void* thread_func(ALLEGRO_THREAD* thr, void* vparg)
   return NULL;
 }
 
-int __dm2skull_music = 0;
+int __GlobalOption_DM2Skull_MusicMode = 0;
 
 
 // SPX: added to handle options from command line
@@ -297,6 +297,8 @@ void ProcessArgs(int argc, char** argv)
 			music = 0;	// use converted hmp to midi music
 		else if (!strcmp(argv[iArgIndex], "-mod"))
 			music = 1;	// use converted mod to ogg music
+		else if (!strcmp(argv[iArgIndex], "-ogg"))
+			music = 1;	// use ogg
 		else if (!strcmp(argv[iArgIndex], "-segacd"))
 			music = 2;	// use converted audio track to ogg music
 
@@ -304,7 +306,7 @@ void ProcessArgs(int argc, char** argv)
 		iArgIndex++;
 	}
 
-	__dm2skull_music = music;
+	__GlobalOption_DM2Skull_MusicMode = music;
 }
 
 

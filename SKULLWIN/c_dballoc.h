@@ -250,4 +250,7 @@
 
   extern c_dballochandler dm2_dballochandler;
 
+void _DEBUG_SHOW_BIGPOOL(const char* str = NULL);
+
+
 #endif

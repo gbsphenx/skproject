@@ -5,6 +5,8 @@
 #include "startend.h" // THROW..., DM2_RAISE_SYSERR
 #include "c_alloc.h"
 
+#include "dm2debug.h"
+
 /*
    MEMORY ALLOCATION
 
@@ -116,6 +118,8 @@ unk* c_allochandler::DM2_ALLOC_MEMORY_RAM(i32 amount, i16 wmask, i16 wtype)
   if (IS_ODD(amount))
     amount++;
 
+LOGX(("ALLOC MEM RAM: BPEOF = %08x / amount %d, wmask: %04x, wtype = %d\n", bigpool_endoffree, amount, wmask, wtype));
+
   if (wtype == FREEPOOL && (pool = DM2_FIND_FREE_POOL(amount, wmask)) != NULL)
     alloced = DM2_GET_FROM_FREEPOOL(pool, amount);
   else if (wtype == FREEPOOL && wmask == (secondpool_mode & wmask) && amount <= secondpool_available)
@@ -134,6 +138,7 @@ unk* c_allochandler::DM2_ALLOC_MEMORY_RAM(i32 amount, i16 wmask, i16 wtype)
     {
       alloced = DOWNCAST(void, bigpool_endoffree) - amount;
       bigpool_endoffree = VCAST(alloced);
+LOGX(("ALLOC MEM RAM: BPEOF = %08x just changed.\n", bigpool_endoffree));
     }
     bigpool -= amount;
   }
@@ -149,6 +154,7 @@ void c_allochandler::DM2_DEALLOC_LOBIGPOOL(i32 amount)
     amount++;
   bigpool += amount;
   bigpool_endoffree = VCAST(DOWNCAST(void, bigpool_endoffree) + amount);
+LOGX(("DM2_DEALLOC_LOBIGPOOL: BPEOF = %08x changed / amount %d\n", bigpool_endoffree, amount));
 }
 
 void c_allochandler::DM2_DEALLOC_HIBIGPOOL(i32 amount)
@@ -276,6 +282,7 @@ void c_allochandler::DM2_COMPLETE_ALLOCATION(void)
   vptr = fpd->endoffree; // virtual end of memory of the largest free pool
   //malloca = vptr; // malloca only here - obsolete
   bigpool_endoffree = vptr;
+LOGX(("DM2_COMPLETE_ALLOCATION: BPEOF = %08x changed by vptr\n", bigpool_endoffree));
   bigpool = fpd->amount;
   bigpool_mode = fpd->mode;
 

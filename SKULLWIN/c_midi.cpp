@@ -14,13 +14,13 @@
 #include "c_music_wav.h"
 bool bUseMIDI = true;
 
-extern int __dm2skull_music;	// from main.cpp
+extern int __GlobalOption_DM2Skull_MusicMode;	// from main.cpp
 
 void c_midi::do_music(i32 songnr)
 {
   char songname[30];
 
-  if (__dm2skull_music == 0)
+  if (__GlobalOption_DM2Skull_MusicMode == 0)	// HMP
 	bUseMIDI = true;
   else
 	bUseMIDI = false;

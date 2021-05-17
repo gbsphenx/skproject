@@ -18,6 +18,8 @@
 #include "emu.h"
 #include "regs.h"
 
+#include "dm2debug.h"
+
 c_rect* DM2_1031_01d5(i16 eaxw, c_rect* edxrp)
 {
   c_rect* r;
@@ -290,9 +292,9 @@ i32 DM2_1031_0541(i16 eaxw)
   c_nreg _RG2;
   c_nreg _RG3;
   c_nreg _RG4;
-  i32 RG51l;
-  i32 RG52l;
-  ui32 RG6ul;
+  i32 RG51l = 0;
+  i32 RG52l = 0;
+  ui32 RG6ul = 0;
 
   RG4W = RG1W;
   if (RG1W != ddat.v1d3ff1)
@@ -300,11 +302,13 @@ i32 DM2_1031_0541(i16 eaxw)
   ddat.v1d3ff1 = RG4W;
   DM2_1031_027e(&table1d3ed5[RG4W]);
   RG1P = DOWNCAST(s_wwwb, table1d3d23);
-  RG2L = 0;
+  RG2L = 0;	// SPX: seems to serve as loop counter
   //m_1070A:
   for (;;)
   {
-    RG4L = signedlong(RG2W);
+LOGX(("DM2_1031_0541:[%03d]\n", RG2L));
+_DEBUG_SHOW_BIGPOOL();
+	RG4L = signedlong(RG2W);
     if (RG4L >= lcon(0x3e))
     {
       break;
@@ -355,6 +359,8 @@ i32 DM2_1031_0541(i16 eaxw)
     }
     //m_10702:
     and8(location(RG1P + lcon(0x6)), lcon(0xffffffbf));
+
+
     RG1P += lcon(0x7);
     RG2L++;
   }

@@ -201,7 +201,9 @@ ui32 table1d83ec[32] = // segment-offsetpointer, segment always 0x1d8
 // - and those are all 0!
 #endif
 
-i8 table1410ec[64] = // real size? number of levels!
+// table of music mapping = SONGLIST.DAT
+// table1410ec renamed tblMusicsMap
+i8 tblMusicsMap[64] = // real size? number of levels!
 {
  0x02, 0x11, 0x0e, 0x1b, 0x04, 0x0c, 0x0c, 0x12, 0x0f, 0x0d, 0x0c, 0x0c, 0x10, 0x06, 0x15, 0x0e,
  0x11, 0x11, 0x11, 0x11, 0x03, 0x08, 0x11, 0x0e, 0x02, 0x17, 0x16, 0x14, 0x11, 0x00, 0x02, 0x02,
@@ -1153,7 +1155,7 @@ void c_dm2data::init(void)
   v1e0238 = 0;
   v1e03c0 = NULL;
   v1dff24 = 0;
-  // v1dff7c = &memory[0x1410ec]; -> see table1410ec
+  // v1dff7c = &memory[0x1410ec]; -> see tblMusicsMap (table1410ec)
   v1d13fc = 0;
   v1d153a = v1d152c;
   v1d153e = v1d1530;

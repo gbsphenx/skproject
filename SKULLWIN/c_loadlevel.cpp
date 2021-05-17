@@ -338,9 +338,9 @@ void DM2_LOAD_LOCALLEVEL_DYN(void)
     if (RG1W >= mapdat.map_width)
     {
       RG4L = signedlong(ddat.v1d3248);
-      RG1Blo = table1410ec[RG4L];
+      RG1Blo = tblMusicsMap[RG4L];
       RG1L = unsignedlong(RG1Blo) << bcon(0x10);
-      RG1L += lcon(0x4000300);
+      RG1L += lcon(0x04000300);	// mask for category 04 (Music) 00 type 03 (HMP) 00
       DM2_MARK_DYN_LOAD(RG1L);
       if (dm2_dballochandler.v1e13fe[0] == 0)
       {

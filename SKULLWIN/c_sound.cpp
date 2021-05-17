@@ -152,7 +152,10 @@ static void R_B65(void)
   }
 }
 
-static void R_A0E(i8 eaxb)
+
+extern int __GlobalOption_DM2Skull_MusicMode;	// from main.cpp
+//R_A0E renamed DM2_PLAY_MUSIC
+static void DM2_PLAY_MUSIC(i8 eaxb)
 {
   unk* xparp00;
 
@@ -162,7 +165,10 @@ static void R_A0E(i8 eaxb)
     R_B65();
     if (dm2sound.sndptr6 == NULL)
       return;
-    i32 longrg1 = DM2_QUERY_GDAT_ENTRY_IF_LOADABLE(lcon(0x4), vb_00, CUTLX8(lcon(0x3)), 0) ? 1 : 0;
+	//i32 longrg1 = DM2_QUERY_GDAT_ENTRY_IF_LOADABLE(lcon(0x4), vb_00, CUTLX8(lcon(0x3)), 0) ? 1 : 0;
+    i32 longrg1 = 1;	// default to 1 to make it pass the 0 test
+if (__GlobalOption_DM2Skull_MusicMode == 0)	// check if HMP exists only when music mode is for HMP
+	longrg1 = DM2_QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_MUSICS, vb_00, dtHMP, 0) ? 1 : 0;
 #if 1 // TODO
     dm2sound.stop_music();
 #endif
@@ -227,7 +233,7 @@ void DM2_SOUND3(i16 eaxw, i16 edxw)
           if (dm2sound.v1dff86 == 0 && dm2sound.v1d14d8 >= 0)
           {
             dm2sound.v1dff86 = wordrg2;
-            R_A0E(CUTX8(dm2sound.v1d14d8));
+            DM2_PLAY_MUSIC(CUTX8(dm2sound.v1d14d8));
           }
         }
         else
@@ -436,6 +442,23 @@ void DM2_SOUND1(void)
   }
 }
 
+// SPX: Added DM2_GET_MUSIC_INDEX_FROM_MODLIST to read MODLIST instead of SONGLIST
+i8 DM2_GET_MUSIC_INDEX_FROM_MODLIST(i16 n)
+{
+	FILE* fModList = NULL;
+	char iMusicIndex = 0;
+	fModList = fopen("DATA/MODLIST.DAT", "rb");
+	if (fModList != NULL)
+	{
+		fseek(fModList, n, SEEK_SET);
+		fread(&iMusicIndex, 1, 1, fModList);
+		fclose(fModList);
+	}
+	return iMusicIndex;
+}
+
+extern int __GlobalOption_DM2Skull_MusicMode;	// from main.cpp
+
 // was R_BA7
 void DM2_SOUND2(i16 n)
 {
@@ -452,7 +475,7 @@ void DM2_SOUND2(i16 n)
     if (rg1 == 1)
     {
       dm2sound.v1d1512 = dm2sound.v1dff8a;
-      R_A0E(dm2sound.v1d1512);
+      DM2_PLAY_MUSIC(dm2sound.v1d1512);
       dm2sound.v1d14ca = 0;
       return;
     }
@@ -462,11 +485,14 @@ void DM2_SOUND2(i16 n)
     // R_520C3(dm2sound.v1dff2c, unsignedlong(CUTX8(dm2sound.v1d14ca)); // DM's MIDI stuff extracted TODO: check what it wants to do here
     dm2sound.v1d14ca--;
   }
-  dm2sound.v1dff8a = table1410ec[n];
+  dm2sound.v1dff8a = tblMusicsMap[n];
+  if (__GlobalOption_DM2Skull_MusicMode == 1) // SPX: added this for using MOD MAP table list instead of SONGLIST for HMP
+	dm2sound.v1dff8a = DM2_GET_MUSIC_INDEX_FROM_MODLIST(n);
+
   if (dm2sound.v1d1512 != mkw(dm2sound.v1dff8a))
   {
     if (!dm2sound.v1d14d0 || dm2sound.v1d14ca != 0)
-      R_A0E(dm2sound.v1dff8a);
+      DM2_PLAY_MUSIC(dm2sound.v1dff8a);
     else
       dm2sound.v1d14ca = 127;
     dm2sound.v1d1512 = dm2sound.v1dff8a;

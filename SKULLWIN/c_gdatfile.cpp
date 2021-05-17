@@ -617,6 +617,7 @@ static void R_2D802(s_pppw* eaxp_s46)
 
 void DM2_FREE_PICT_ENTRY(c_pixel* gfx)
 {
+	_DEBUG_SHOW_BIGPOOL();	
   if (dm2_dballochandler.gfxalloc_done || gfx == NULL)
     return;
 

@@ -2,8 +2,12 @@
 #define DM2DEBUG_H
 
 #include <stdlib.h>	// SPX: just for exit, else not needed.
-#include "types.h"
-#include "c_gdatfile.h"
+
+#ifndef C_GDATFILE_H
+	#include "types.h"
+	#include "c_dballoc.h"
+	#include "c_gdatfile.h"	// requires includes above
+#endif
 
 //#define NO_TRACE
 
@@ -25,5 +29,7 @@ void DEBUG_DUMP_ULP();
 const char* DEBUG_SKLOADENT(ui8* xSkLoadEnt);
 const char* DEBUG_SKGDATENT(s_gdat* xSkGDATEnt);	// requires c_gdatfile.h
 
+
+#define _DEBUG_OPTION_BREAK_DOOR_	1
 
 #endif

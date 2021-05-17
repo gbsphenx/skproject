@@ -642,7 +642,7 @@
   extern i16 table1d27fc[4];
   extern i16 table1d2804[4];
   // extern ui32 table1d83ec[32];
-  extern i8 table1410ec[64];
+  extern i8 tblMusicsMap[64];
   extern te_text v1d10f2[];
   extern te_text v1d10f0[];
   extern te_text v1d10eb[];

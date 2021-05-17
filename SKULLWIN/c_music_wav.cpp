@@ -19,6 +19,7 @@ void do_music_wav(i16 nr)
   {
 	ALLEGRO_SAMPLE* thesongwav = NULL;
     sprintf(songname, "./DATA/sk%02d.ogg", nr);
+	printf("request songname : <%s>\n", songname);
 	thesongwav = al_load_sample(songname);
 	if (thesongwav)
 		al_play_sample(thesongwav, 1.0, 0, 1, ALLEGRO_PLAYMODE_LOOP,NULL);

@@ -18,6 +18,8 @@
 #include "emu.h"
 #include "regs.h"
 
+#include "dm2debug.h"
+
 // #########################################################################
 
 // was SKW_3e74_0d32
@@ -466,6 +468,7 @@ void c_dballochandler::DM2_ALLOC_CPX_SETUP(unk* xeaxp)
     secondpool_endoffree = p_seof;
     secondpool_available = sp_ava;
     bigpool_endoffree = p_eof;
+LOGX(("DM2_ALLOC_CPX_SETUP: BPEOF = %08x changed by p_eof\n", bigpool_endoffree));
     bigpool = ava;
     bigpool_start_b = bp_startb;
     DM2_RESTORE_FREEPOOL();
@@ -1239,4 +1242,13 @@ i16 c_dballochandler::DM2_ALLOC_NEW_CREATURE(i16 eaxw, i16 edxw, i16 ebxw, i16 e
   if (neg)
     DM2_DEALLOC_RECORD(unsignedlong(vw_10));
   return -1;
+}
+
+// SPX: Debug only
+void _DEBUG_SHOW_BIGPOOL(const char* str)
+{
+	if (str == NULL)
+		LOGX(("_DEBUG_SHOW_BIGPOOL: BPEOF = %08x\n", dm2_dballochandler.bigpool_endoffree));
+	else
+		LOGX(("_DEBUG_SHOW_BIGPOOL (%s): BPEOF = %08x\n", str, dm2_dballochandler.bigpool_endoffree));
 }

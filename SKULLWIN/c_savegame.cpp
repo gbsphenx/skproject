@@ -1425,6 +1425,7 @@ i16 DM2_GAME_LOAD(void)
   s29_3c.l_2c = 0;
   bool boolrg5 = false;
   i8 byterg2;
+_DEBUG_SHOW_BIGPOOL();
   if ((byterg2 = CUTX8(ddat.savegamew8)) == 0)
   {
     ddat.v1e0992 = 2;
@@ -1531,6 +1532,7 @@ i16 DM2_GAME_LOAD(void)
     }
   }
 
+_DEBUG_SHOW_BIGPOOL();
 //m_2719F:
   if (!bypass)
   {
@@ -1538,7 +1540,7 @@ i16 DM2_GAME_LOAD(void)
     s29_3c.l_2c = 0; // SKW_2066_03e0 returns always 1 now
     if (DM2_LOAD_NEW_DUNGEON() == 0) goto M_exit;
   }
-
+_DEBUG_SHOW_BIGPOOL();
 // M_27641:
   DM2_FILE_CLOSE(ddat.savegamefilehandle1);
   DM2_PROCESS_ACTUATOR_TICK_GENERATOR();

@@ -241,6 +241,7 @@ static void DM2_SHOW_MENU_SCREEN(void)
   c_nreg _RG2;
   c_nreg _RG3;
   c_nreg _RG4;
+_DEBUG_SHOW_BIGPOOL("DM2_SHOW_MENU_SCREEN");
 
   ddat.v1e0950 = DM2_QUERY_GDAT_IMAGE_ENTRY_BUFF(5, 0, 1);
   if (DM2_QUERY_GDAT_ENTRY_DATA_INDEX(5, 0, 7, 4) == -1)
@@ -264,6 +265,7 @@ static void DM2_SHOW_MENU_SCREEN(void)
     ddat.v1d66f8 = 1;
     ddat.v1e0954 = QUERY_pixel(DM2_QUERY_GDAT_ENTRY_DATA_PTR(5, 0, 7, 4));
   }
+_DEBUG_SHOW_BIGPOOL("BEFORE PART 2");
   //m_28860:
   t_resolution res = getbmpheader(BMPCAST(ddat.v1e0950))->res;
   if (res != BPP_8)
@@ -279,12 +281,16 @@ static void DM2_SHOW_MENU_SCREEN(void)
   }
   else
     paldat.glbl_pal2 = NULL;
+_DEBUG_SHOW_BIGPOOL("BEFORE DATA CLOSE");
   //m_288B7:
   DM2_GRAPHICS_DATA_CLOSE();
+ _DEBUG_SHOW_BIGPOOL("AFTER DATA CLOSE");
   DM2_1031_0541(0);
+_DEBUG_SHOW_BIGPOOL("BEFORE LOOP");
   //m_288C8:
   for (;;)
   {
+_DEBUG_SHOW_BIGPOOL("BEFORE SHOW_MOUSE");
     DM2_2481_0002();
     DM2_SHOW_MOUSE();
     eventqueue.event_1031_098e();
@@ -295,9 +301,11 @@ static void DM2_SHOW_MENU_SCREEN(void)
       DM2_EVENT_LOOP();
       if (ddat.savegamew8 != lcon(0x63))
       {
+_DEBUG_SHOW_BIGPOOL();
         if (ddat.savegamew8 != lcon(0xda))
         {
           DM2_HIDE_MOUSE();
+_DEBUG_SHOW_BIGPOOL();
           if (ddat.v1d66f8 == 0)
             //m_28910:
             DM2_FREE_PICT_ENTRY(ddat.v1e0954);
@@ -533,9 +541,11 @@ DEBUG_DUMP_ULP();
   ddat.v1e02ec = RG1P;
   DM2_FILL_STR(RG1T, 0xff, 1, CUTX16(RG52l));
   //m_454CA:
+_DEBUG_SHOW_BIGPOOL();
   for (;;)
   {
     DM2_SHOW_MENU_SCREEN();
+_DEBUG_SHOW_BIGPOOL();
     if (DM2_GAME_LOAD() == 1)
       break;
     DM2_GRAPHICS_DATA_OPEN();
