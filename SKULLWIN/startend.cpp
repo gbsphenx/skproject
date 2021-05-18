@@ -542,6 +542,7 @@ DEBUG_DUMP_ULP();
   DM2_FILL_STR(RG1T, 0xff, 1, CUTX16(RG52l));
   //m_454CA:
 _DEBUG_SHOW_BIGPOOL();
+DM2_PLAY_MUSIC(0, true);	// SPX: to get some music in the menu screen
   for (;;)
   {
     DM2_SHOW_MENU_SCREEN();

@@ -102,6 +102,8 @@
 
   extern c_sound dm2sound;
 
+  void DM2_PLAY_MUSIC(i8 eaxb, bool bForceMusic = false);
+
   void DM2_PLAY_SOUND(i16 eaxw, s_sfx* edxp_s60);
   void DM2_PROCESS_SOUND(i16 eaxw);
 

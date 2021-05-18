@@ -155,19 +155,20 @@ static void R_B65(void)
 
 extern int __GlobalOption_DM2Skull_MusicMode;	// from main.cpp
 //R_A0E renamed DM2_PLAY_MUSIC
-static void DM2_PLAY_MUSIC(i8 eaxb)
+/*static*/ void DM2_PLAY_MUSIC(i8 eaxb, bool bForceMusic)
 {
   unk* xparp00;
 
   i8 vb_00 = eaxb;
-  if (dm2sound.v1d14c2 != NULL && vb_00 != 0 && dm2sound.v1dff86 > 0)
+  //if (dm2sound.v1d14c2 != NULL && vb_00 != 0 && dm2sound.v1dff86 > 0)
+  if (dm2sound.v1d14c2 != NULL && (vb_00 != 0 || bForceMusic == true) && dm2sound.v1dff86 > 0)	// if bForceMusic, then don't test vb_00
   {
     R_B65();
     if (dm2sound.sndptr6 == NULL)
       return;
 	//i32 longrg1 = DM2_QUERY_GDAT_ENTRY_IF_LOADABLE(lcon(0x4), vb_00, CUTLX8(lcon(0x3)), 0) ? 1 : 0;
     i32 longrg1 = 1;	// default to 1 to make it pass the 0 test
-if (__GlobalOption_DM2Skull_MusicMode == 0)	// check if HMP exists only when music mode is for HMP
+if (__GlobalOption_DM2Skull_MusicMode == 0 && bForceMusic == false)	// check if HMP exists only when music mode is for HMP
 	longrg1 = DM2_QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_MUSICS, vb_00, dtHMP, 0) ? 1 : 0;
 #if 1 // TODO
     dm2sound.stop_music();

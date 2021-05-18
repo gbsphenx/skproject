@@ -39,10 +39,17 @@ void c_midi::do_music(i32 songnr)
 
 void c_midi::stop_music(void)
 {
-  if (thesong)
+  if (__GlobalOption_DM2Skull_MusicMode == 0)	// HMP
   {
-    destroy_midi(thesong);
-    thesong = NULL;
+	if (thesong)
+	{
+	  destroy_midi(thesong);
+	  thesong = NULL;
+	}
+  }
+  else if (__GlobalOption_DM2Skull_MusicMode == 1)	// MOD(ogg)
+  {
+	  do_music_stop();
   }
 }
 

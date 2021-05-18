@@ -26,3 +26,8 @@ void do_music_wav(i16 nr)
   }
 
 }
+
+void do_music_stop()
+{
+	al_stop_samples();
+}
