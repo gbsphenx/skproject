@@ -118,7 +118,7 @@ BEGIN
         MENUITEM "&No specific / Original",     40080
 //        MENUITEM "&V1 Classic",                 40081
 //        MENUITEM "&V2 Classic",                 40082
-//        MENUITEM "&V3 Classic",                 40083
+        MENUITEM "&V3 Classic",                 40083
         MENUITEM "&V4 Classic",                 40084
 //        MENUITEM "&V5 Classic",                 40085
         MENUITEM "&V5 Cartoony",                40086
@@ -146,25 +146,26 @@ END
 // Dialog
 //
 
-IDD_ABOUT DIALOG DISCARDABLE  0, 0, 279, 159
+IDD_ABOUT DIALOG DISCARDABLE  0, 0, 279, 169
 STYLE DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About skwin"
 FONT 8, "MS Shell Dlg"
 BEGIN
-    LTEXT           "skwin (2021-03-11)",IDC_STATIC,7,96,63,8
-    LTEXT           "An unofficial experimental port. started by kentaro-k.21. modified by sphenx.",
-                    IDC_STATIC,7,108,184,22
-    DEFPUSHBUTTON   "OK",IDOK,115,138,50,14
-    LTEXT           "Skullkeepers",IDC_STATIC,7,19,265,8
-    LTEXT           "Wayne Holder ... Producer",IDC_STATIC,7,29,265,8
-    LTEXT           "Doug Bell ... Director",IDC_STATIC,7,39,265,8
-    LTEXT           "Bill Kelly ... Monster Trainer",IDC_STATIC,7,49,265,8
-    LTEXT           "Kirk Baker ... Master of Machines",IDC_STATIC,7,59,265,
-                    8
-    LTEXT           "Bert Huml ... World Creator",IDC_STATIC,7,69,265,8
-    LTEXT           "Andy Jaros ... Graphics Magician with: David Simon, Dan Hewitt, Dennis Walker",
-                    IDC_STATIC,7,79,265,8
     LTEXT           "Credits in Dungeon Master II",IDC_STATIC,91,7,97,8
+    LTEXT           "Skullkeepers",IDC_STATIC,7,19,265,8
+    LTEXT           "Wayne Holder ...................................... Producer",IDC_STATIC,7,29,265,8
+    LTEXT           "Doug Bell ............................................... Director",IDC_STATIC,7,39,265,8
+    LTEXT           "Bill Kelly ..................................... Monster Trainer",IDC_STATIC,7,49,265,8
+    LTEXT           "Kirk Baker ........................... Master of Machines",IDC_STATIC,7,59,265,8
+    LTEXT           "Bert Huml ...................................... World Creator",IDC_STATIC,7,69,265,8
+    LTEXT           "Andy Jaros ............................ Graphics Magician",IDC_STATIC,7,79,265,8
+    LTEXT           "with: David Simon, Dan Hewitt, Dennis Walker",IDC_STATIC,7,89,265,8
+
+    LTEXT           "skwin (2021-05-16)",IDC_STATIC,7,106,63,8
+    LTEXT           "An unofficial experimental port. started by kentaro-k.21. modified by sphenx.",
+                    IDC_STATIC,7,118,184,22
+    DEFPUSHBUTTON   "OK",IDOK,115,148,50,14
+	
 END
 
 

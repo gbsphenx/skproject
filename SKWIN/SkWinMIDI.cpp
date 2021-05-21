@@ -392,7 +392,7 @@ SkWinMIDI_MIDI_LOOP(void* parameters)
 		if(midiStreamOut(out, &mhdr, sizeof(MIDIHDR)) != MMSYSERR_NOERROR)
 			goto error7;
 
-	midiOutSetVolume((HMIDIOUT)out, 0x0000);
+		midiOutSetVolume((HMIDIOUT)out, 0x0000);
 
 		WaitForSingleObject(event, INFINITE);
 

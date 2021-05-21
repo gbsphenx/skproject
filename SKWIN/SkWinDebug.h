@@ -8,7 +8,11 @@
 //------------------------------------------------------------------------------
 
 #define SkD(X) SkwinDEBUG X
-#define LOGX(X) Write2LOGX X
+#ifdef _DEBUG
+	#define LOGX(X) Write2LOGX X
+#else
+	#define LOGX(X) ;;
+#endif
 
 #define DLV_BUGHERE 1
 #define DLV_CPX 0

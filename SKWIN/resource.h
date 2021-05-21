@@ -51,8 +51,9 @@
 #define ID_DUNGEON_LEGEND_SKULLKEEP     40065
 #define ID_DEBUG_BREAK_DOOR             40070
 #define ID_DEBUG_WALK_OVER_PIT          40071
-#define ID_EXTRA_SOUNDS			        40072
-#define ID_SOUND_FOOTSTEP				40073
+#define ID_EXTRA_SOUNDS                 40072
+#define ID_SOUND_FOOTSTEP               40073
+#define ID_SUPER_MODE                   40076
 #define ID_MIDI_MUSIC_ENABLED           40074
 #define ID_USE_CUSTOM_SPELLS            40075
 #define ID_VERSION_NO_SPECIFIC          40080

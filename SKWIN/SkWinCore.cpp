@@ -3432,7 +3432,7 @@ _48a3:
 void SkWinCore::TEST_MEMENT(mement *bp04)
 {
 	//ATLASSERT(bp04 != NULL);
-	// SPX: use CheckSafePointer to trap more unexpected mem values so that it fails at ASSERT intead of crashing after.
+	// SPX: use CheckSafePointer to trap more unexpected mem values so that it fails at ASSERT instead of crashing after.
 	ATLASSERT(CheckSafePointer(bp04));
 	i32 len = READ_I32(bp04,(abs(-bp04->dw0())) -4);
 	if (SkCodeParam::bUseFixedMode)
@@ -4489,6 +4489,7 @@ void SkWinCore::_01b0_0adb() //#DS=04BF
 	return;
 }
 
+// Standard DM1 palette
 Bit8u _xDefaultFMTownsPalette[16*4] = 
 {
 	0, 0x00, 0x00, 0x00,
@@ -36340,7 +36341,7 @@ void SkWinCore::COPY_MEMORY(const void *buffSrc, void *buffDst, Bit32u buffSize)
 //U16 SkWinCore::QUERY_GDAT_ENTRY_DATA_INDEX(U8 cls1, U16 cls2, U8 cls3, U16 cls4)
 U16 SkWinCore::QUERY_GDAT_ENTRY_DATA_INDEX(U8 iCategory, U16 iItem, U8 iType, U16 iEntry)
 {
-LOGX(("%40s: C%02d=I%02X=E%02X=T%03d to %08X", "QUERY_GDAT_ENTRY_DATA_INDEX from ", iCategory, iItem, iEntry, iType ));
+//LOGX(("%40s: C%02d=I%02X=E%02X=T%03d to %08X", "QUERY_GDAT_ENTRY_DATA_INDEX from ", iCategory, iItem, iEntry, iType ));
 	//^3E74:189B
 	RawEntry *bp04 = QUERY_GDAT_ENTRYPTR(iCategory, iItem, iType, iEntry);
 	if (bp04 == NULL) {
@@ -37362,7 +37363,8 @@ void SkWinCore::DECODE_IMG3_UNDERLAY(IMG3 *xx, U8 *yy)
 			}
 			//^44C8:1555
 		} while (si < bp08);
-		ATLASSERT(si <= bp08); // if error, memory broken!
+		if (SkCodeParam::bDebugNoImageDecodingAssert == false)
+			ATLASSERT(si <= bp08); // if error, memory broken!
 		//^44C8:155D
 	}
 	else {
@@ -42292,7 +42294,7 @@ void SkWinCore::_482b_060e()
 //^3E74:1953
 X16 SkWinCore::QUERY_NEXT_GDAT_ENTRY(SkEntIter *ref)
 {
-LOGX(("QUERY_NEXT_GDAT_ENTRY from SGDAT ptr %08X : GDAT %s", ref, DEBUG_SKGDATENT(ref)));
+//LOGX(("QUERY_NEXT_GDAT_ENTRY from SGDAT ptr %08X : GDAT %s", ref, DEBUG_SKGDATENT(ref)));
 	// 0 if not found
 	// 1 if found
 
@@ -53763,7 +53765,7 @@ void SkWinCore::READ_GRAPHICS_STRUCTURE()
 		_4976_5d78 = _4976_5d78 / 4;
 	}
 
-DEBUG_DISPLAY_GDAT_MAIN_INFO();
+//DEBUG_DISPLAY_GDAT_MAIN_INFO();
 
 	//^3E74:28C6
 	_4976_5cb0 = 1;
@@ -59669,7 +59671,7 @@ void SkWinCore::CREATURE_THINK_0982()
         //^13E4:09DC
 		bp0a = 1;
 		//^13E4:09E1
-		LOGX(("13E4:09E1 ccm%02X", (U8)xCreatureInfo->Command2));
+		//LOGX(("13E4:09E1 ccm%02X", (U8)xCreatureInfo->Command2));
 		xCreatureInfo->Command = xCreatureInfo->Command2;
 		if (xCreatureInfo->Command != i8(ccmInv)) {
 			//^13E4:09F0
