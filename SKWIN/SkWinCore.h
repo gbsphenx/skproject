@@ -1459,6 +1459,7 @@ protected:
 	Bit16u _476d_050e();
 	void _1031_06a5();
 	Bit16u LOAD_NEW_DUNGEON();
+	Bit16u ORIGINAL__LOAD_NEW_DUNGEON();
 	i16 SELECT_LOAD_GAME();
 	void _2fcf_0b8b(Bit16u xx, Bit16u yy, Bit16u zz);
 	void _443c_06af(sk0cea *ref);	// NOTHING

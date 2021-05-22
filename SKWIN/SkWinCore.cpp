@@ -31720,6 +31720,47 @@ Bit16u SkWinCore::LOAD_NEW_DUNGEON()
 	//^2066:2CAD
 	X8 bp05 = 0;
 	U8 *bp04 = ALLOC_MEMORY_RAM(0x400, afDefault, 0x80);
+
+	Bit8u* sDungeonFilename = NULL;
+
+	if (false) {
+		//^2066:2CCB
+
+		//^2066:2D0C
+	}
+	DEALLOC_UPPER_MEMORY(0x400);
+	if (_4976_5bea == 0 || (glbDataFileHandle = OPEN_FILE(FORMAT_SKSTR(ptrDungenB, NULL))) < 0)
+	{
+		// Default is the DUNGEON.DAT filename
+		sDungeonFilename = (Bit8u*) ptrDungeonFilename;
+
+		if (skwin.sCustomDungeonDatFilename != NULL)
+			sDungeonFilename = (Bit8u*) skwin.sCustomDungeonDatFilename;
+		
+		glbDataFileHandle = OPEN_FILE(FORMAT_SKSTR(sDungeonFilename, NULL));
+	}
+	if (glbDataFileHandle < 0) 
+	{
+		//^2066:2D6C
+		RAISE_SYSERR(SYSTEM_ERROR__MISSING_DUNGEON);
+	}
+	//^2066:2D74
+	_4976_5bf6 = 0;
+	glbChampionsCount = 0;
+	glbLeaderHandPossession.object = OBJECT_NULL;
+	_4976_524a = 0;
+	return READ_DUNGEON_STRUCTURE(1);
+}
+
+//^2066:2CA8
+// SPX: original LOAD_NEW_DUNGEON
+Bit16u SkWinCore::ORIGINAL__LOAD_NEW_DUNGEON() 
+{
+	//^2066:2CA8
+	ENTER(6);
+	//^2066:2CAD
+	X8 bp05 = 0;
+	U8 *bp04 = ALLOC_MEMORY_RAM(0x400, afDefault, 0x80);
 	if (false) {
 		//^2066:2CCB
 
