@@ -3114,7 +3114,49 @@ _0253:
 }
 
 //^3E74:2598
+// SPX: This is a modified version to allow custom graphics.dat input as exe parameter.
+// Original method is still here labelled as ORIGINAL__GRAPHICS_DATA_OPEN
 void SkWinCore::GRAPHICS_DATA_OPEN()
+{
+	Bit8u * sLocalGraphicsDatFileString = NULL;
+	Bit8u * sLocalGraphicsDatFileString2 = NULL;
+
+	sLocalGraphicsDatFileString = (Bit8u*) ptrGraphics;
+	sLocalGraphicsDatFileString2 = (Bit8u*) ptrGraphics2;
+
+	if (skwin.sCustomGraphicsDatFilename != NULL)
+	{
+		sLocalGraphicsDatFileString = (Bit8u*) skwin.sCustomGraphicsDatFilename;
+	}
+
+	//^3E74:2598
+	//^3E74:259B
+	if ((_4976_5d10++) == 0) {
+		//^3E74:25A6
+		glbFileHandleGraphics1 = FILE_OPEN(FORMAT_SKSTR(sLocalGraphicsDatFileString, NULL));
+		//^3E74:25C6
+		if (glbFileHandleGraphics1 < 0) {
+			//^3E74:25CD
+			RAISE_SYSERR(SYSTEM_ERROR__MISSING_GRAPHICS);
+		}
+		//^3E74:25D5
+		if (_4976_5c9c != 0 && _4976_5ca8 == 0) {
+			//^3E74:25E3
+			glbFileHandleGraphics2 = FILE_OPEN(FORMAT_SKSTR(sLocalGraphicsDatFileString2, NULL));
+			//^3E74:2603
+			if (glbFileHandleGraphics2 < 0) {
+				//^3E74:260A
+				RAISE_SYSERR(SYSTEM_ERROR__MISSING_GRAPHICS_2);
+			}
+		}
+	}
+	//^3E74:2612
+	return;
+}
+
+//^3E74:2598
+// SPX: This is the original GRAPHICS_DATA_OPEN
+void SkWinCore::ORIGINAL__GRAPHICS_DATA_OPEN()
 {
 	//^3E74:2598
 	//^3E74:259B

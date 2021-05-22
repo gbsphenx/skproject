@@ -29,6 +29,8 @@ public:
 	int dung;	// dungeon selection
 	int	gdat_vers;	// version selection
 	int freq;		// standard playback frequency (V4/PC-9821 and V5/PC-DOS are not the same)
+	char*	sCustomGraphicsDatFilename;
+	char*	sCustomDungeonDatFilename;
 	CPoint ptfrm;
 	sblast_sys::DS sbds;
 	sblast_sys::Openal sboa;

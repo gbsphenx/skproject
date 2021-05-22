@@ -970,6 +970,7 @@ protected:
 	sk1c9a02c3 *_1c9a_02c3(Creature *xx, AIDefinition *yy);
 	Bit16u _4937_01a9(Bit16u xx, Bit16u *yy, CreatureAnimationFrame **rref);
 	void GRAPHICS_DATA_OPEN();
+		void ORIGINAL__GRAPHICS_DATA_OPEN();
 	i16 LOCATE_OTHER_LEVEL(Bit16u curmap, i16 zDelta, i16 *xx, i16 *yy, Bit8u **ss);
 	SRECT *ALLOC_TEMP_RECT(__int16 x, __int16 y, __int16 cx, __int16 cy);
 	SRECT *ALLOC_TEMP_ORIGIN_RECT(Bit16u width, Bit16u height);

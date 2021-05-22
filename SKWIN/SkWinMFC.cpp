@@ -212,6 +212,10 @@ bool CSkWinMFC::ML() {
 void CSkWinMFC::ProcessArgs(int argc, char** argv)
 {
 	unsigned int iArgIndex = 0;
+
+	sCustomGraphicsDatFilename = NULL;
+	sCustomDungeonDatFilename = NULL;
+
 	while (iArgIndex < argc)
 	{
 		if (argv[iArgIndex] == NULL)
@@ -263,6 +267,38 @@ void CSkWinMFC::ProcessArgs(int argc, char** argv)
 		else if (!strcmp(argv[iArgIndex], "-fhz11"))
 			freq = 11;
 
+		// specify any graphics.dat filename
+		else if (!strcmp(argv[iArgIndex], "-gdat"))
+		{
+			iArgIndex++;
+			if (argv[iArgIndex] != NULL)
+			{
+				unsigned int iArgLength = 0;
+				iArgLength = strlen(argv[iArgIndex]);
+				if (iArgLength > 0)
+				{
+					sCustomGraphicsDatFilename = (char*) calloc(iArgLength+1, sizeof(char));
+					if (sCustomGraphicsDatFilename != NULL)
+						strcpy(sCustomGraphicsDatFilename, argv[iArgIndex]);
+				}
+			}
+		}
+		// specifiy any dungeon.dat filename
+		else if (!strcmp(argv[iArgIndex], "-dungeon"))
+		{
+			iArgIndex++;
+			if (argv[iArgIndex] != NULL)
+			{
+				unsigned int iArgLength = 0;
+				iArgLength = strlen(argv[iArgIndex]);
+				if (iArgLength > 0)
+				{
+					sCustomDungeonDatFilename = (char*) calloc(iArgLength+1, sizeof(char));
+					if (sCustomDungeonDatFilename != NULL)
+						strcpy(sCustomDungeonDatFilename, argv[iArgIndex]);
+				}
+			}
+		}
 
 		iArgIndex++;
 	}
