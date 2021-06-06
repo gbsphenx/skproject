@@ -13163,6 +13163,12 @@ void SkWinCore::DRAW_FOOD_WATER_POISON_PANEL()
 		//if (bUseSuperMode)
 		//	DRAW_POWER_STAT_BAR(pChampion->PoisonValue, 497, COLOR_RED, -1024, 0);
 	}
+#if (DM2_EXTENDED_MODE == 1)
+	if (pChampion->PlaguedValue != 0) 
+	{
+		DRAW_STATIC_PIC(GDAT_CATEGORY_INTERFACE_CHARSHEET, 0x00, GDAT_INFERFACE_PLAGUED_TEXT, 502, 12); // plagued
+	}
+#endif
 	//^24A5:1059
 	return;
 }
@@ -20528,6 +20534,7 @@ void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 			statHP		= 2500;
 			statStamina = 28000;
 			statMP		= 1700;
+			champion->PlaguedValue = 10;
 		}
 
 		champion->maxHP(statHP);

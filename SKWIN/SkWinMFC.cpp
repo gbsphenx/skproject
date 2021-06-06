@@ -302,7 +302,9 @@ void CSkWinMFC::ProcessArgs(int argc, char** argv)
 
 		iArgIndex++;
 	}
+
 }
+
 
 int CSkWinMFC::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {

@@ -1427,8 +1427,11 @@ namespace DM2Internal {
 		i16 enchantmentPower;			// @257	// w257
 
 		i8 walkSpeed;			// @259	// b259	SPX: 0 by default, the higher the better
-
+#if (DM2_EXTENDED_MODE == 0)
 		X8 b260_;			// @260	// b260_ SPX: looks unused ? ... missing code ?
+#elif (DM2_EXTENDED_MODE == 1)
+		X8 PlaguedValue;	// SPX: custom value
+#endif
 	};
 	// 
 	struct GlobalEffects {		// sk57e4 6 bytes
