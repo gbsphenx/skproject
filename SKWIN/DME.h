@@ -1430,7 +1430,7 @@ namespace DM2Internal {
 #if (DM2_EXTENDED_MODE == 0)
 		X8 b260_;			// @260	// b260_ SPX: looks unused ? ... missing code ?
 #elif (DM2_EXTENDED_MODE == 1)
-		X8 PlaguedValue;	// SPX: custom value
+		X8 PlagueValue;	// SPX: custom value
 #endif
 	};
 	// 
@@ -2736,6 +2736,7 @@ namespace DM2Internal {
 		tty5D = 0x5D, // (93) 
 #if	DM2_EXTENDED_MODE == 1
 		ttyAmbientSound	= 0xE0,	// CUSTOM timer for ambient sound (i.e. rain)
+		ttyPlague = 0xE1,	// CUSTOM timer for PLAGUE
 #endif
 	};
 	// ccm (creature command)

@@ -1673,6 +1673,7 @@ protected:
 	void _2fcf_01c5(ObjectID recordLink, i16 xx, i16 yy, Bit16u curmap, Bit16u ss);
 	X16 ATTACK_PARTY(Bit16u quantity, Bit16u yy, Bit16u zz);
 	void PROCESS_POISON(i16 player, Bit16u yy);
+	void PROCESS_PLAGUE(i16 player, Bit16u counters);	// SPX: custom added
 	Bit16u _0cee_06dc(i16 xx, i16 yy);
 	void ATTACK_CREATURE(ObjectID rl, i16 xx, i16 yy, Bit16u ss, i16 tt, Bit16u quantity);
 	U8 *PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timerType);

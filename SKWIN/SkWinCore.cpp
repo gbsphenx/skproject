@@ -13164,7 +13164,7 @@ void SkWinCore::DRAW_FOOD_WATER_POISON_PANEL()
 		//	DRAW_POWER_STAT_BAR(pChampion->PoisonValue, 497, COLOR_RED, -1024, 0);
 	}
 #if (DM2_EXTENDED_MODE == 1)
-	if (pChampion->PlaguedValue != 0) 
+	if (pChampion->PlagueValue != 0) 
 	{
 		DRAW_STATIC_PIC(GDAT_CATEGORY_INTERFACE_CHARSHEET, 0x00, GDAT_INFERFACE_PLAGUED_TEXT, 502, 12); // plagued
 	}
@@ -20521,6 +20521,7 @@ void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 	champion->curFood((RAND() & 255) + START_BASE_FOOD);
 	champion->curWater((RAND() & 255) + START_BASE_WATER);
 	//^2F3F:033F
+	PROCESS_PLAGUE(player, 10);
 
 	// SPX: Like a debugging character, make it strong from the beginning!
 	if (SkCodeParam::bUseSuperMode)
@@ -20534,7 +20535,9 @@ void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 			statHP		= 2500;
 			statStamina = 28000;
 			statMP		= 1700;
-			champion->PlaguedValue = 10;
+			//champion->PlaguedValue = 10;
+			//PROCESS_POISON(player, 10);
+			PROCESS_PLAGUE(player, 10);
 		}
 
 		champion->maxHP(statHP);
@@ -41097,6 +41100,45 @@ void SkWinCore::PROCESS_POISON(i16 player, Bit16u yy) {
 	//^2C1D:1BB2
 	return;
 }
+
+// SPX: Custom, code added, similar to POISON
+void SkWinCore::PROCESS_PLAGUE(i16 player, Bit16u counters)
+{
+	
+	if (SkCodeParam::bUseIngameDebug)
+	{
+		U8 message[64];
+		sprintf((char*)message, "PLAYER %d HAS %d PLAGUE COUNTERS.\n", player, counters);
+		DISPLAY_HINT_TEXT(glbChampionColor[player], message);
+	}
+	X16 si = counters;
+	if (player == -1)
+		return;
+	if (player +1 == glbNextChampionNumber)
+		return;
+	Champion *champion = &glbChampionSquad[player];
+	WOUND_PLAYER(player, 1, 0, 0);
+	ADJUST_STAMINA(player, max_value(1, si << 4));
+	champion->curWater(champion->curWater() -100);
+
+	champion->heroFlag |= CHAMPION_FLAG_0800;	// 0x800
+	champion->heroFlag |= CHAMPION_FLAG_2000;	// 0x2000
+	si--;
+	if (si == 0)
+		return;
+	champion->PlagueValue++;
+
+	// Create a new timer
+	Timer newtimer;
+	newtimer.TimerType(ttyPlague);
+	newtimer.actor = (U8)player;
+	newtimer.SetMap(glbPlayerMap);
+	newtimer.SetTick(glbGameTick +0x24);
+	newtimer.value = si;
+	QUEUE_TIMER(&newtimer);
+	return;
+}
+
 
 //^0CEE:06DC
 // SPX TODO related to direction depending on tile (like changing stairs ?)
@@ -62483,6 +62525,12 @@ void SkWinCore::PROCEED_TIMERS()
 				glbChampionSquad[si = timer.actor].PoisonValue--;
 				PROCESS_POISON(si, timer.value);
 				break;
+#if (DM2_EXTENDED_MODE == 1)
+			case ttyPlague:
+				glbChampionSquad[si = timer.actor].PlagueValue--;
+				PROCESS_PLAGUE(si, timer.value);
+				break;
+#endif
 			case ttyResurrect://^3CBE
 				//^3A15:3CBE
 				PROCESS_TIMER_RESURRECTION(bp04);
