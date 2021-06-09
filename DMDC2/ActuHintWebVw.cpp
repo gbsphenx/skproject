@@ -47,7 +47,7 @@ END_MESSAGE_MAP()
 
 void CActuHintWebVw::PostNcDestroy() 
 {
-	m_pBrowserApp.Release();
+	m_pBrowserApp->Release();
 }
 
 BOOL CActuHintWebVw::PreCreateWindow(CREATESTRUCT& cs) 

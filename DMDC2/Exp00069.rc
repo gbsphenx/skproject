@@ -1465,6 +1465,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Assets: DM2",                 ID_OPT_ASSETS_DM2
         MENUITEM "Assets: DM2Beta",             ID_OPT_ASSETS_DM2BETA
+        MENUITEM "Assets: DM2 TELOS",           ID_OPT_ASSETS_DM2TELOS
     END
     POPUP "&Debug"
     BEGIN
@@ -1840,8 +1841,8 @@ BEGIN
             VALUE "OriginalFilename", "DMDC2.exe"
             VALUE "ProductName", "DMDC2"
             VALUE "ProductVersion", "0, 1, 0, 0"
-            VALUE "ReleaseDate", "2014-02-02"
-            VALUE "Rev", "10"
+            VALUE "ReleaseDate", "2021-06-09"
+            VALUE "Rev", "10.1"
         END
     END
     BLOCK "VarFileInfo"

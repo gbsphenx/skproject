@@ -553,6 +553,7 @@
 #define ID_OPT_DM2_EXTENDED_MAP         32967
 #define ID_OPT_ASSETS_DM2               32970
 #define ID_OPT_ASSETS_DM2BETA           32971
+#define ID_OPT_ASSETS_DM2TELOS          32972
 #define IDW_DIALOGBAR                   59397
 #define IDW_EDITLVBAR                   59398
 #define IDW_DMOBBAR                     59399
@@ -568,7 +569,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        336
-#define _APS_NEXT_COMMAND_VALUE         32972
+#define _APS_NEXT_COMMAND_VALUE         32973
 #define _APS_NEXT_CONTROL_VALUE         1319
 #define _APS_NEXT_SYMED_VALUE           105
 #endif

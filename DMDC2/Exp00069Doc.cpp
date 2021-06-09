@@ -54,7 +54,7 @@ CExp00069Doc::CExp00069Doc()
 	m_fLE = ProfStr::GetProfileIntFrom("DMDC2", "Save as Little Endian", TRUE, GetApp()->GetCnf());
 	m_fCheckSum = ProfStr::GetProfileIntFrom("DMDC2", "Attach Check Sum", TRUE, GetApp()->GetCnf());
 	m_fCheckDesc = ProfStr::GetProfileIntFrom("DMDC2", "Auto tweak LevelDesc on save", TRUE, GetApp()->GetCnf());
-	m_fDM2_EXTENDED_MAP = ProfStr::GetProfileIntFrom("DMDC2", "DM2_EXTENDED_MAP", FALSE, GetApp()->GetCnf());
+	m_fDM2_EXTENDED_MAP = (ProfStr::GetProfileIntFrom("DMDC2", "DM2_EXTENDED_MAP", FALSE, GetApp()->GetCnf()) == 1 ? true : false);
 }
 
 #pragma warning(default: 4355)
@@ -117,7 +117,11 @@ CArchive &operator <<(CArchive &ar, CExp00069Doc &r)
 {
 	ar.Flush();
 	CDDATx::CEnclosedWisoFileIo fInto(*ar.GetFile(), r.m_fLE ? true : false);
+#if _MSC_VER <= 1200
+	if (!r.GetDDAT().SaveTo(fInto, r.m_fLE, r.m_fCheckSum, r.m_fDM2_EXTENDED_MAP)) AfxThrowArchiveException(CArchiveException::generic);
+#else
 	if (!r.GetDDAT().SaveTo(fInto, r.m_fLE, r.m_fCheckSum, r.m_fDM2_EXTENDED_MAP)) AfxThrowArchiveException(CArchiveException::genericException);
+#endif
 	r.GetDDAT().SetModified(FALSE);
 
 	return ar;

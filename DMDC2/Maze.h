@@ -4,7 +4,8 @@
 class Maze {
 public:
 	bool shape[33][33];
-	int cx, cy;
+	int cx;
+	int cy;
 
 	Maze(int cx, int cy): cx(cx), cy(cy) {
 	}
@@ -21,14 +22,17 @@ public:
 		Set(1+2*x+dx, 1+2*y+dy, kabe);
 	}
 	void KabeTaoshi() {
+		int y = 0;
+		int x = 0;
+
 		memset(shape, 0, sizeof(shape));
-		for (int y=0; y<cy; y++) {
-			for (int x=0; x<cx; x++) {
+		for ( y=0; y<cy; y++) {
+			for ( x=0; x<cx; x++) {
 				Set(1+2*x, 1+2*y, true);
 			}
 		}
-		for (int y = 0; y < cy; y++) {
-			for (int x = 0; x < cx; x++) {
+		for ( y = 0; y < cy; y++) {
+			for ( x = 0; x < cx; x++) {
 				if (y == 0) {
 					while (true) {
 						int r = rand.Next(4);
