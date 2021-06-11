@@ -7,9 +7,10 @@ bool SkCodeParam::bUseFixedMode = true;
 bool SkCodeParam::bUseIngameDebug = false;
 
 bool SkCodeParam::bDisableFogEffect = false;
-bool SkCodeParam::bWeakDoors = false;
+bool SkCodeParam::bWeakDoors = true;
 bool SkCodeParam::bWalkOverPits = false;
 bool SkCodeParam::bUseCustomSpells = false;
+bool SkCodeParam::bUnlimitedCharges = true;
 
 bool SkCodeParam::bMIDIMusicEnabled = true;
 

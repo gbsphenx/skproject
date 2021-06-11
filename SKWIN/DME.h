@@ -602,6 +602,8 @@ namespace DMEncyclopaedia {
 
 		U16 w2_a_f() const { return (w2 >> 10)&0x3f; }
 		U16 ReferredText() const { return w2 & 0x3ff; }
+
+		U8 ItemType() const { return (U8)(w2 & 0x007F); }	// SPX: added ItemType like for other item categories
 	};
 	// 
 	struct Potion {

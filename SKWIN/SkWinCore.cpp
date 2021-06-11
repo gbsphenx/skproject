@@ -8415,7 +8415,9 @@ Bit16u SkWinCore::IS_ITEM_HAND_ACTIVABLE(Bit16u player, ObjectID recordLink, __i
 				//^2759:03B3
 				continue;
 			//^2759:03B6
-			__int16 bp0c = QUERY_CMDSTR_ENTRY(iCategory, iItemIndex, iEntryNumber, CnNC);	// NC = Number of charges consummed by action
+			__int16 bp0c = QUERY_CMDSTR_ENTRY(iCategory, iItemIndex, iEntryNumber, CnNC);	// NC = Number of charges consumed by action
+			if (SkCodeParam::bUnlimitedCharges == true)
+				bp0c = 0;
 			//^2759:03CE
 			if (bp0c == 18) {	// ?
 				//^2759:03D4
@@ -20521,7 +20523,6 @@ void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 	champion->curFood((RAND() & 255) + START_BASE_FOOD);
 	champion->curWater((RAND() & 255) + START_BASE_WATER);
 	//^2F3F:033F
-	PROCESS_PLAGUE(player, 10);
 
 	// SPX: Like a debugging character, make it strong from the beginning!
 	if (SkCodeParam::bUseSuperMode)
@@ -20535,9 +20536,8 @@ void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 			statHP		= 2500;
 			statStamina = 28000;
 			statMP		= 1700;
-			//champion->PlaguedValue = 10;
 			//PROCESS_POISON(player, 10);
-			PROCESS_PLAGUE(player, 10);
+			//PROCESS_PLAGUE(player, 10);
 		}
 
 		champion->maxHP(statHP);
@@ -40775,8 +40775,9 @@ Bit8u SkWinCore::QUERY_CLS2_FROM_RECORD(ObjectID recordLink)
 				return bp04->castToCloth()->ItemType();
 			case dbScroll:		// 7
 				//^0CEE:2484
-				return 0;
-			case dbPotion:		// 8
+				//return 0;
+				return bp04->castToScroll()->ItemType();	// SPX: removed "return 0" to get item type instead, allowing any item within scrolls category
+			case dbPotion:		// 8	
 				//^0CEE:2488
 				return bp04->castToPotion()->PotionType();
 			case dbContainer:	// 9
