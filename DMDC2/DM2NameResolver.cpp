@@ -197,6 +197,9 @@ bool DM2NameResolver_t::GetStr(BYTE iDB, bool isWall, const DMDBU &rec, DM2Nameo
 			} else {
 				strName = GetIntScrollStr(sr.index);
 			}
+			// SPX: change way to display scroll name if type ID is > 0 ("special scrolls")
+			int t = (rec.r5.w2 & 0x7F);
+			strName = dict.GetName(iDB, t);
 
 			strHint.Format("Use: %s", (LPCTSTR)sr.text1);
 			break;
