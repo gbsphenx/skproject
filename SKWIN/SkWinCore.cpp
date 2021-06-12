@@ -20800,7 +20800,7 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 					//^2FCF:1C48
 					continue;
 
-				case 0x3F: // 0x3f -> 'Shop panel'
+				case ACTUATOR_TYPE_SHOP_PANEL: // 0x3F -> 'Shop panel'
 					//^2FCF:1C4F
 					if (si == OBJECT_NULL)
 						//^2FCF:1C57
@@ -20827,7 +20827,7 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 					//^2FCF:1E67
 					break;
 
-				case 0x15: // 0x15 -> 'Activator, charged item watcher'
+				case ACTUATOR_TYPE_CHARGED_ITEM_WATCHER: // 0x15 -> 'Activator, charged item watcher'
 					//^2FCF:1CA5
 					if (ADD_ITEM_CHARGE(si, 0) == 0)
 						//^2FCF:1CB3
@@ -20835,7 +20835,7 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 
 					goto _1cb6;
 
-				case 0x03: // 0x03 -> 'Activator, item watcher
+				case ACTUATOR_TYPE_ITEM_WATCHER: // 0x03 -> 'Activator, item watcher
 					//^2FCF:1CB6
 _1cb6:
 					bp2c = (GET_DISTINCTIVE_ITEMTYPE(si) == bp18) ? 1 : 0;
@@ -20850,7 +20850,7 @@ _1cb6:
 					//^2FCF:1D10
 					break;
 
-				case 0x46: // 0x46 -> 'Activator, seal-able push button wall switch'
+				case ACTUATOR_TYPE_PUSH_BUTTON_WALL_SWITCH: // 0x46 -> 'Activator, seal-able push button wall switch'
 					//^2FCF:1D13
 					bp14 = GET_ADDRESS_OF_TILE_RECORD(bp04->Xcoord(), bp04->Ycoord())->castToDoor();
 					//^2FCF:1D39
@@ -20860,7 +20860,7 @@ _1cb6:
 
 					goto _1d4d;
 
-				case 0x18: // 0x18 -> 'Activator, push button wall switch'
+				case ACTUATOR_TYPE_WALL_SWITCH: // 0x18 -> 'Activator, push button wall switch'
 					//^2FCF:1D4D
 _1d4d:
 					if (si != OBJECT_NULL || bp04->ActiveStatus() != 0)
@@ -20899,7 +20899,7 @@ _1d4d:
 					//^2FCF:1E1F
 					continue;
 
-				case 0x17: // 0x17 -> 'Activator, 2 state wall switch'
+				case ACTUATOR_TYPE_2_STATE_WALL_SWITCH: // 0x17 -> 'Activator, 2 state wall switch'
 					//^2FCF:1E22
 					if (si != OBJECT_NULL)
 						//^2FCF:1E27
@@ -20912,7 +20912,7 @@ _1d4d:
 					//^2FCF:1E67
 					break;
 
-				case 0x7E: // 0x7e -> 'Activator, resuscitation'
+				case ACTUATOR_TYPE_RESSURECTOR: // 0x7E -> 'Activator, resuscitation'
 					//^2FCF:1E6A
 					if (bp04->OnceOnlyActuator() == 0 || ((glbPlayerDir +2) & 3) != dir)
 						//^2FCF:1E8B
@@ -20926,7 +20926,7 @@ _1d4d:
 					//^2FCF:1EAD
 					break;
 
-				case 0x1A: // 0x1a -> 'Activator, key hole'
+				case ACTUATOR_TYPE_KEY_HOLE: // 0x1A -> 'Activator, key hole'
 					//^2FCF:1EB0
 					bp1e = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp23, dtWordValue, GDAT_WALL_ORNATE__IS_ITEM_TRIGGERED);
 					//^2FCF:1EC5
@@ -20997,11 +20997,17 @@ _1d4d:
 					//^2FCF:1FF5
 					break;
 
-				case 0x1C: // 0x1c -> ?
+				case ACTUATOR_TYPE_SIMPLE_LADDER: // 0x1c -> ? (comes from BETA)
+					if (SkCodeParam::bUseFixedMode == false)	// SPX: this actuator type seems to be used only in BETA dungeon, as a ladder. Though with the original code here, it does not trigger.
+					{
 					//^2FCF:1FF8
 					if (si != OBJECT_NULL || bp04->OnceOnlyActuator() != 0)
 						//^2FCF:2011
 						continue;
+					}
+					else	// SPX: I am not sure here, I keep the condition in another way so that the ladder triggers when player click on it.
+						if (si == OBJECT_NULL && bp04->OnceOnlyActuator() == 0)
+							continue;
 					//^2FCF:2014
 					bp36 = (bp04->RevertEffect() != 0) ? bp04->ActionType() : ((bp04->ActionType() + glbPlayerDir) & 3);
 					//^2FCF:204E
