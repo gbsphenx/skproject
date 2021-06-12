@@ -14,6 +14,8 @@ bool SkCodeParam::bUnlimitedCharges = true;
 
 bool SkCodeParam::bMIDIMusicEnabled = true;
 
+bool SkCodeParam::bUseScrollIDType = false;
+
 bool SkCodeParam::bForceOrnateSound = true;
 
 bool SkCodeParam::bFullLight = true;

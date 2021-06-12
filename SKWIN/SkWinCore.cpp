@@ -40780,9 +40780,14 @@ Bit8u SkWinCore::QUERY_CLS2_FROM_RECORD(ObjectID recordLink)
 				//^0CEE:2478
 				return bp04->castToCloth()->ItemType();
 			case dbScroll:		// 7
+				{
 				//^0CEE:2484
 				//return 0;
-				return bp04->castToScroll()->ItemType();	// SPX: removed "return 0" to get item type instead, allowing any item within scrolls category
+				if (SkCodeParam::bUseScrollIDType)
+					return bp04->castToScroll()->ItemType();	// SPX: removed "return 0" to get item type instead, allowing any item within scrolls category
+				else
+					return 0;	// Standard scroll icon; ID is used for text number
+				}
 			case dbPotion:		// 8	
 				//^0CEE:2488
 				return bp04->castToPotion()->PotionType();

@@ -27,6 +27,7 @@ public:
 	static bool bWalkOverPits;
 	static bool bUseCustomSpells;	// reads spells from GDAT
 	static bool bUnlimitedCharges;
+	static bool bUseScrollIDType;
 
 	static bool bForceOrnateSound;
 
