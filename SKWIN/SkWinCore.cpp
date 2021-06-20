@@ -14623,7 +14623,11 @@ void SkWinCore::REFRESH_PLAYER_STAT_DISP(i16 player)
 				//^2E62:08A3
 				// SPX: bp0d holds the color number (rectangle?) around the mouth or eye.
 				Bit8u colorRectangle; //bp0d;
+#if (DM2_EXTENDED_MODE == 0)
 				if (champion->curFood() < 0 || champion->curWater() < 0 || champion->PoisonValue != 0) {
+#elif (DM2_EXTENDED_MODE == 1)
+				if (champion->curFood() < 0 || champion->curWater() < 0 || champion->PoisonValue != 0 || champion->PlagueValue != 0) {
+#endif
 					//^2E62:08BB
 					colorRectangle = 5; // i am hunger! or poisoned!
 				}
@@ -19897,6 +19901,25 @@ void SkWinCore::CURE_POISON(U16 player)
 		glbChampionSquad[di].PoisonValue = 0;
 	}
 	//^2C1D:1C08
+	return;
+}
+
+// SPX: New function CURE_PLAGUE, similar to CURE_POISON
+void SkWinCore::CURE_PLAGUE(U16 player)
+{
+	i16 di = player;
+	if (di != -1) {
+		U16 si = 0;
+		Timer *bp04 = glbTimersTable;
+		for (; si < glbTimersActiveCount; bp04++, si++) {
+			if (bp04->TimerType() == ttyPlague) {
+				if (bp04->actor == di) {
+					DELETE_TIMER(si);
+				}
+			}
+		}
+		glbChampionSquad[di].PlagueValue = 0;
+	}
 	return;
 }
 
@@ -41132,6 +41155,9 @@ void SkWinCore::PROCESS_PLAGUE(i16 player, Bit16u counters)
 	WOUND_PLAYER(player, 1, 0, 0);
 	ADJUST_STAMINA(player, max_value(1, si << 4));
 	champion->curWater(champion->curWater() -100);
+	if (champion->curWater() < WATER_MIN)
+		champion->curWater(WATER_MIN);
+
 
 	champion->heroFlag |= CHAMPION_FLAG_0800;	// 0x800
 	champion->heroFlag |= CHAMPION_FLAG_2000;	// 0x2000
@@ -62715,6 +62741,10 @@ void SkWinCore::CHAMPION_DEFEATED(X16 player)
 	if (champion->PoisonValue != 0)
 		//^2C1D:1732
 		CURE_POISON(di);
+#if (DM2_EXTENDED_MODE == 1)
+	if (champion->PlagueValue != 0)
+		CURE_PLAGUE(di);
+#endif
 	//^2C1D:1739
 	X16 si;
 	for (si = 0; si < glbChampionsCount && glbChampionSquad[si].curHP() == 0; si++);

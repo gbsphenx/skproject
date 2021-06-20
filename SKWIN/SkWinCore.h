@@ -1289,6 +1289,7 @@ protected:
 	U16 QUERY_GDAT_FOOD_VALUE_FROM_RECORD(ObjectID rl);
 	U16 IS_MISCITEM_DRINK_WATER(ObjectID rlMiscItem);
 	void CURE_POISON(U16 player);
+	void CURE_PLAGUE(U16 player);	// SPX: new function
 	void PROCEED_ENCHANTMENT_SELF(U16 mask, U16 yy, U16 zz, U16 tick);
 	void PLAYER_CONSUME_OBJECT(U16 player, ObjectID rlConsume, i16 possess);
 
