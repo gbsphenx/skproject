@@ -45,10 +45,12 @@ END_MESSAGE_MAP()
 bool CEdPICreaturePage::RevertRecord(DMDBU &rec, bool fRevert)
 {
 	if (fRevert) {
-		m_iSel = (rec.r4.b4) & 127;
+		//m_iSel = (rec.r4.b4) & 127;
+		m_iSel = (rec.r4.b4) & 255;
 		m_iDir = (rec.r4.w14 >> 8) & 3;
 	} else {
-		ModifySetVal(rec.r4.b4, 0x7F, m_iSel & 127);
+		//ModifySetVal(rec.r4.b4, 0x7F, m_iSel & 127);
+		ModifySetVal(rec.r4.b4, 0xFF, m_iSel & 255);
 		ModifySetVal(rec.r4.w14, 0x0300, m_iDir << 8);
 	}
 	return true;
@@ -58,7 +60,7 @@ BOOL CEdPICreaturePage::OnInitDialog()
 {
 	CEdPIDlg::OnInitDialog();
 	
-	for (int i = 0; i < 127; i++) {
+	for (int i = 0; i < 255; i++) {	// SPX: increased 127 to 255
 		m_wndSel.AddString(CDM2NameDic::GetInstance().GetName(4, i));
 	}
 

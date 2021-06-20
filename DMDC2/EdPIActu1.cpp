@@ -107,7 +107,8 @@ bool CEdPIActu1Page::RevertRecord(DMDBU &rec, bool fRevert)
 			}
 		case a1tCreature:
 			{
-				x = m_iCreature & 127;
+				//x = m_iCreature & 127;
+				x = m_iCreature & 255;	// SPX: extension to 255
 
 				ModifySetVal(rec.r3.w2, 0x3F80, x*0x80);
 				break;
@@ -218,7 +219,8 @@ void CEdPIActu1Page::UpdateRecord(DMDBU rec)
 		}
 	case a1tCreature:
 		{
-			m_iCreature = x & 127;
+			//m_iCreature = x & 127;
+			m_iCreature = x & 255;	// SPX: extension to 255
 			Active1(IDC_STATIC_CREATURE);
 			break;
 		}
