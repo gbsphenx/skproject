@@ -307,7 +307,7 @@ enum SkillLevel {
 #define SOUND_STD_TELEPORT				0x89
 #define SOUND_STD_TELEPORT_MESSAGE		0x02	// Sound teleporter in message category, only for PC9821
 #define SOUND_CHAMPION_BUMP				0x8A
-#define SOUND__0x8B						0x8B
+#define SOUND_MINION_TRANSFORMS			0x8B
 
 #define SOUND_OBJECT_GETHIT				0x8D	// Works for creature and doors
 #define SOUND_DOOR_STEP					0x8E
@@ -319,6 +319,27 @@ enum SkillLevel {
 #define SOUND_ACTIVATION_LOOP			0xA0	// SPX: CUSTOM, for animated ornate having a default loop sound
 
 #define SOUND_NONE						0xFF
+
+// Creature sounds
+#define SOUND_CREATURE_MOVE				0x00
+#define SOUND_CREATURE_TURN				0x01	// Minion
+#define SOUND_CREATURE_GET_HIT			0x02	// Rocky, Guard-Archer (Shoot)
+#define SOUND_CREATURE_REFLECTOR		0x03	// Dragoth
+#define SOUND_CREATURE_JUMP				0x04	// Rocky
+#define SOUND_CREATURE_SWING_STEP		0x05	// ?? Rocky ?? Put Down ? Land after jump ??
+#define SOUND_CREATURE_XXX				0x06	// ?? Rocky, Dragoth (Hard Hit ?), Wolf
+#define SOUND_CREATURE_ATTACK_1			0x07
+#define SOUND_CREATURE_PICK_STEAL		0x08	// Thief,	Vexirk (Transform?), Magic Merchant (Put Item)
+#define SOUND_CREATURE_GET_HIT_2		0x09	// Dragoth (Hit)
+#define SOUND_CREATURE_ACTIVATE_TRIGGER	0x0A	// Giggler, Dragoth (Hit?)
+#define SOUND_CREATURE_CONSIDER			0x0B	// Merchant
+#define SOUND_CREATURE_ACCEPT			0x0C	// Merchant
+#define SOUND_CREATURE_REFUSE			0x0D	// Merchant
+#define SOUND_CREATURE_YELL				0x0E	// Thorn Demon,		Dragoth (Spawn Minion)
+#define SOUND_CREATURE_GROWL			0x0F	// Vegmouth
+#define SOUND_CREATURE_SPAWN			0x10	// Rocky, CaveIn, Minion, Mummy
+#define SOUND_CREATURE_DEATH			0x11
+#define SOUND_CREATURE_ATTACK_2			0x12	// Thorn Demon
 
 
 //------------------------------------------------------------------------------

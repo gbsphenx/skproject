@@ -49045,15 +49045,16 @@ void SkWinCore::QUEUE_NOISE_GEN1(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u xx, B
 }
 
 //^482B:00BF
-void SkWinCore::QUEUE_NOISE_GEN2(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u cls2alt, __int16 xpos, __int16 ypos, Bit16u tickDelta, Bit8u ss, Bit8u tt)
+//void SkWinCore::QUEUE_NOISE_GEN2(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u cls2alt, __int16 xpos, __int16 ypos, Bit16u tickDelta, Bit8u ss, Bit8u tt)
+void SkWinCore::QUEUE_NOISE_GEN2(Bit8u cls1, Bit8u cls2, Bit8u iSoundID, Bit8u cls2alt, __int16 xpos, __int16 ypos, Bit16u tickDelta, Bit8u ss, Bit8u tt)
 {
 	//^482B:00BF
 	//^482B:00C2
 	// SPX: In the case of sound at cls2 is not found, use the default with cls2alt
 	QUEUE_NOISE_GEN1(
 		cls1,
-		(QUERY_SND_ENTRY_INDEX(cls1, cls2, cls4) != 0) ? cls2 : cls2alt,
-		cls4,
+		(QUERY_SND_ENTRY_INDEX(cls1, cls2, iSoundID) != 0) ? cls2 : cls2alt,
+		iSoundID,
 		ss,
 		tt,
 		xpos,
@@ -59539,7 +59540,7 @@ void SkWinCore::CREATURE_TRANSFORM()
 		}
 		//^1887:130C
 		if (bp07 < 3) {
-			QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES, 0, SOUND__0x8B, 0x6C, 0xC8, di, si, 1);
+			QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES, 0, SOUND_MINION_TRANSFORMS, 0x6C, 0xC8, di, si, 1);
 		}
 		else {
 			//^1887:1321
