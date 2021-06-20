@@ -58793,6 +58793,19 @@ i16 SkWinCore::CREATURE_ATTACKS_PLAYER(Creature *ref, U16 player)
 				//^075F:1F16
 				PROCESS_POISON(player, di);
 			}
+
+#if DM2_EXTENDED_MODE == 1
+			{
+				U16 iPlagueDamage = 0;
+				// Get plague damage from creature if any
+				//iPlagueDamage = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_CREATURES, ref->CreatureType(), dtWordValueExt, GDAT_AI_PLAGUE_DAMAGE);
+				iPlagueDamage = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_CREATURES, ref->CreatureType(), dtWordValue, GDAT_AI_PLAGUE_DAMAGE);
+				if (iPlagueDamage > 0 && iPlagueDamage < 255)
+					PROCESS_PLAGUE(player, iPlagueDamage);
+				
+			}
+
+#endif
 		}
 	}
 	//^075F:1F21

@@ -33,7 +33,9 @@ enum dtIndex
 	dtWordValue = 11,
 	dtImageOffset = 12,
 	dtPalette	= 13,
-		dt0d	= 13,
+		dt0d		= 13,
+		dt0e		= 14,
+	dtWordValueExt	= 15,	// SPX: Normally unused, proceed as Word
 };
 
 #if !defined(SPELL_TYPE_POTION)
@@ -677,6 +679,8 @@ enum SkillLevel {
 //#define GDAT_AI_STAT_W30
 	#define	AI_W30_FLAGS__TURN_MISSILE		0x0800
 
+// Note: I allow these values to be found under the Creature category stored as dtWordValue0E to make no conflict with standard Words (0x0B)
+#define GDAT_AI_PLAGUE_DAMAGE			0x66	// SPX: Custom
 
 #define CREATURE_GENERATED_DROPS		0	// 0 = do generated drop
 #define CREATURE_DROP_POSSESSION_ONLY	1	// 1 = no generated drop, only drop possession
