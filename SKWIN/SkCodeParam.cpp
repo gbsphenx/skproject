@@ -6,8 +6,10 @@ bool SkCodeParam::bUsePowerDebug = true;
 bool SkCodeParam::bUseFixedMode = true;
 bool SkCodeParam::bUseIngameDebug = false;
 
+bool SkCodeParam::bUseSuperInfoEye = false;
+
 bool SkCodeParam::bDisableFogEffect = false;
-bool SkCodeParam::bWeakDoors = true;
+bool SkCodeParam::bWeakDoors = false;
 bool SkCodeParam::bWalkOverPits = false;
 bool SkCodeParam::bUseCustomSpells = false;
 bool SkCodeParam::bUnlimitedCharges = true;
@@ -18,7 +20,7 @@ bool SkCodeParam::bUseScrollIDType = false;
 
 bool SkCodeParam::bForceOrnateSound = true;
 
-bool SkCodeParam::bFullLight = true;
+bool SkCodeParam::bFullLight = false;
 
 #if (DM2_EXTENDED_MODE == 0)
 bool SkCodeParam::bUseVaryingPlaybackFrequency = false;

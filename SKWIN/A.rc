@@ -108,19 +108,14 @@ BEGIN
     POPUP "&Dungeon"
     BEGIN
         MENUITEM "&Dungeon Master",             40061
-//        MENUITEM "&Chaos Strikes Back",         40062
-//        MENUITEM "&Theron's Quests",            40063
         MENUITEM "&Skullkeep (beta)",           40064
         MENUITEM "&Skullkeep",                  40065
     END
     POPUP "Version"
     BEGIN
         MENUITEM "&No specific / Original",     40080
-//        MENUITEM "&V1 Classic",                 40081
-//        MENUITEM "&V2 Classic",                 40082
         MENUITEM "&V3 Classic",                 40083
         MENUITEM "&V4 Classic",                 40084
-//        MENUITEM "&V5 Classic",                 40085
         MENUITEM "&V5 Cartoony",                40086
     END
     POPUP "(Extra)"
@@ -132,7 +127,8 @@ BEGIN
         MENUITEM "Use custom spells",           40075
         MENUITEM "Extra sounds",                40072
         MENUITEM "Player footstep sound",       40073
-        MENUITEM "*Super mode*",	            40076
+        MENUITEM "Super Info Eye",              ID_SUPER_INFO_EYE
+        MENUITEM "*Super mode*",                40076
     END
     POPUP "?", HELP
     BEGIN
@@ -153,19 +149,24 @@ FONT 8, "MS Shell Dlg"
 BEGIN
     LTEXT           "Credits in Dungeon Master II",IDC_STATIC,91,7,97,8
     LTEXT           "Skullkeepers",IDC_STATIC,7,19,265,8
-    LTEXT           "Wayne Holder ...................................... Producer",IDC_STATIC,7,29,265,8
-    LTEXT           "Doug Bell ............................................... Director",IDC_STATIC,7,39,265,8
-    LTEXT           "Bill Kelly ..................................... Monster Trainer",IDC_STATIC,7,49,265,8
-    LTEXT           "Kirk Baker ........................... Master of Machines",IDC_STATIC,7,59,265,8
-    LTEXT           "Bert Huml ...................................... World Creator",IDC_STATIC,7,69,265,8
-    LTEXT           "Andy Jaros ............................ Graphics Magician",IDC_STATIC,7,79,265,8
-    LTEXT           "with: David Simon, Dan Hewitt, Dennis Walker",IDC_STATIC,7,89,265,8
-
+    LTEXT           "Wayne Holder ...................................... Producer",
+                    IDC_STATIC,7,29,265,8
+    LTEXT           "Doug Bell ............................................... Director",
+                    IDC_STATIC,7,39,265,8
+    LTEXT           "Bill Kelly ..................................... Monster Trainer",
+                    IDC_STATIC,7,49,265,8
+    LTEXT           "Kirk Baker ........................... Master of Machines",
+                    IDC_STATIC,7,59,265,8
+    LTEXT           "Bert Huml ...................................... World Creator",
+                    IDC_STATIC,7,69,265,8
+    LTEXT           "Andy Jaros ............................ Graphics Magician",
+                    IDC_STATIC,7,79,265,8
+    LTEXT           "with: David Simon, Dan Hewitt, Dennis Walker",
+                    IDC_STATIC,7,89,265,8
     LTEXT           "skwin (2021-05-16)",IDC_STATIC,7,106,63,8
     LTEXT           "An unofficial experimental port. started by kentaro-k.21. modified by sphenx.",
                     IDC_STATIC,7,118,184,22
     DEFPUSHBUTTON   "OK",IDOK,115,148,50,14
-	
 END
 
 

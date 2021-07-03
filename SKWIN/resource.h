@@ -56,6 +56,7 @@
 #define ID_SUPER_MODE                   40076
 #define ID_MIDI_MUSIC_ENABLED           40074
 #define ID_USE_CUSTOM_SPELLS            40075
+#define ID_SUPER_INFO_EYE               40077
 #define ID_VERSION_NO_SPECIFIC          40080
 #define ID_VERSION_V1                   40081
 #define ID_VERSION_V2                   40082

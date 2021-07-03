@@ -13985,6 +13985,15 @@ U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, Bit16u xx)
 				);
 		}
 	}
+//--- SPX: Info about the power bars displayed for items
+// For weapons, power is displayed either using STRENGTH value (KU symbol) or THROW value (ROS symbol) for missiles such as arrows and shooters such as bows.
+//	Clothings and armours also display a KU symbol for their armour strength.
+//	A potion have a NETA symbol for its power level.
+//	These bars are displayed in BROWN color.
+
+//	An item with charges will have a CYAN GOR bar with the number of remaining charges
+
+
 	//^24A5:0DE0
 	U8 rune;		// bp11 This holds the rune to be displayed along the power bar
 	U16 max;	//bp14
@@ -14070,6 +14079,7 @@ U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, Bit16u xx)
 
 //--- NEW CODE -------------------------------------
 	// SPX: Added code to display hidden stats such as magical bonuses
+	if (SkCodeParam::bUseSuperInfoEye)
 	{
 		char str[32];
 		Bit16u	yy = 95;
@@ -14102,6 +14112,7 @@ U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, Bit16u xx)
 		if ( bp10 != 0 || value != 0)
 			yy += 2;
 		yy += ((bp10 + (value != 0 ? 1 : 0))*12);
+		
 		// Bonus display
 		for (U8 bonus = GDAT_ITEM_STATS_FOOD_VALUE; bonus <= GDAT_ITEM_STATS_MISSILE_SPELL; bonus++)
 		{
@@ -14398,7 +14409,7 @@ void SkWinCore::DRAW_SKILL_PANEL()
 	U8 bp0090[128];
 	U16 bp06;
 
-	if (SkCodeParam::bUseDM2ExtendedMode)
+	if (SkCodeParam::bUseSuperInfoEye && SkCodeParam::bUseDM2ExtendedMode)
 	{
 		glbPanelStatsYDelta = 6;		// Instead of 7, it is Y delta between each attribute text string
 	}
@@ -14430,7 +14441,7 @@ void SkWinCore::DRAW_SKILL_PANEL()
 	// SPX: Display attributes (STR, DEX, WIS, VIT, AF, AM)
 	// SPX: The first is luck; the GDAT2 resource 07-00 20-00-00 (TXT) must be defined as "LUCK".
 	U16 attributeStart = ATTRIBUTE_FIRST+1;	// Start at 1=STR
-	if (SkCodeParam::bUseDM2ExtendedMode)
+	if (SkCodeParam::bUseSuperInfoEye && SkCodeParam::bUseDM2ExtendedMode)
 	{
 		attributeStart = ATTRIBUTE_FIRST;	// Start at 0=LUCK
 	}

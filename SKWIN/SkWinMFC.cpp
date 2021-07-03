@@ -236,7 +236,7 @@ void CSkWinMFC::ProcessArgs(int argc, char** argv)
 		else if (!strcmp(argv[iArgIndex], "-it"))
 			lang = 0x60;	// italian
 
-		else if (!strcmp(argv[iArgIndex], "-vx"))
+		else if (!strcmp(argv[iArgIndex], "-vo"))	// original version, in case of PC-9821, it is the Japanese version
 			gdat_vers = 0;
 		else if (!strcmp(argv[iArgIndex], "-v1"))
 			gdat_vers = 1;
@@ -664,6 +664,7 @@ void CSkWinMFC::OnVideo1x(UINT nID) {
 		case ID_USE_CUSTOM_SPELLS: SkCodeParam::bUseCustomSpells = !SkCodeParam::bUseCustomSpells; break;
 		case ID_EXTRA_SOUNDS: SkCodeParam::bUseExtendedSound = !SkCodeParam::bUseExtendedSound; break;
 		case ID_SOUND_FOOTSTEP: SkCodeParam::bUsePlayerWalkSound = !SkCodeParam::bUsePlayerWalkSound; break;
+		case ID_SUPER_INFO_EYE: SkCodeParam::bUseSuperInfoEye = !SkCodeParam::bUseSuperInfoEye; break;
 		case ID_SUPER_MODE: SkCodeParam::bUseSuperMode = !SkCodeParam::bUseSuperMode; break;
 	}
 	if (sxfact != -1) {
@@ -781,6 +782,7 @@ void CSkWinMFC::OnUpdateVideo1x(CCmdUI *pCmdUI) {
 		case ID_USE_CUSTOM_SPELLS: pCmdUI->SetCheck(SkCodeParam::bUseCustomSpells); break;
 		case ID_EXTRA_SOUNDS: pCmdUI->SetCheck(SkCodeParam::bUseExtendedSound); break;
 		case ID_SOUND_FOOTSTEP: pCmdUI->SetCheck(SkCodeParam::bUsePlayerWalkSound); break;
+		case ID_SUPER_INFO_EYE: pCmdUI->SetCheck(SkCodeParam::bUseSuperInfoEye); break;
 		case ID_SUPER_MODE: pCmdUI->SetCheck(SkCodeParam::bUseSuperMode); break;
 	}
 }
