@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{18387834-9F9F-4DBC-AD6D-ED5DF3440EC5}</ProjectGuid>
+    <RootNamespace>DM2GDED</RootNamespace>
+    <Keyword>MFCProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>Static</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>Dynamic</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>16.0.31401.40</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>.\Debug\</OutDir>
+    <IntDir>.\Debug\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>.\Release\</OutDir>
+    <IntDir>.\Release\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Midl>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TargetEnvironment>Win32</TargetEnvironment>
+      <TypeLibraryName>.\Debug/DM2GDED.tlb</TypeLibraryName>
+      <HeaderFileName />
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>./hyperlink;./scb;./gridctrl;./tabcontrol;./flatbar_src;./XHyperLink_demo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>.\Debug/DM2GDED.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>.\Debug/</AssemblerListingLocation>
+      <ObjectFileName>.\Debug/</ObjectFileName>
+      <ProgramDataBaseFileName>.\Debug/</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;_HAVE_MANIFEST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0411</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>winmm.lib;msacm32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>.\Debug/DM2GDED.exe</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>.\Debug/DM2GDED.pdb</ProgramDatabaseFile>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Debug/DM2GDED.bsc</OutputFile>
+    </Bscmake>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Midl>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TargetEnvironment>Win32</TargetEnvironment>
+      <TypeLibraryName>.\Release/DM2GDED.tlb</TypeLibraryName>
+      <HeaderFileName />
+    </Midl>
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <AdditionalIncludeDirectories>./hyperlink;./scb;./gridctrl;./tabcontrol;./flatbar_src;./XHyperLink_demo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>.\Release/DM2GDED.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>.\Release/</AssemblerListingLocation>
+      <ObjectFileName>.\Release/</ObjectFileName>
+      <ProgramDataBaseFileName>.\Release/</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;_HAVE_MANIFEST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0411</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>winmm.lib;msacm32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>.\Release/DM2GDED.exe</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <ProgramDatabaseFile>.\Release/DM2GDED.pdb</ProgramDatabaseFile>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Release/DM2GDED.bsc</OutputFile>
+    </Bscmake>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="AddImageDlg.cpp" />
+    <ClCompile Include="AddImageDlg2.cpp" />
+    <ClCompile Include="AnchorDlg.cpp" />
+    <ClCompile Include="ChildFrame.cpp" />
+    <ClCompile Include="CompatDC.cpp" />
+    <ClCompile Include="CSVrw.cpp" />
+    <ClCompile Include="CustRichEditCtrl.cpp" />
+    <ClCompile Include="DGridCtrl.cpp" />
+    <ClCompile Include="DiffExportDlg.cpp" />
+    <ClCompile Include="DiffExportExec.cpp" />
+    <ClCompile Include="DiffImportDlg.cpp" />
+    <ClCompile Include="DiffImportExec.cpp" />
+    <ClCompile Include="DM1ImageComp.cpp" />
+    <ClCompile Include="DM2BSwDomain.cpp" />
+    <ClCompile Include="DM2CompAdv.cpp" />
+    <ClCompile Include="DM2DescriptCtx.cpp" />
+    <ClCompile Include="DM2EdPicFrame.cpp" />
+    <ClCompile Include="DM2EdPicView.cpp" />
+    <ClCompile Include="DM2GDED.cpp" />
+    <ClCompile Include="DM2GDEDDoc.cpp" />
+    <ClCompile Include="DM2GDEDOPInfoDlg.cpp" />
+    <ClCompile Include="DM2GDEDSplitterWnd.cpp" />
+    <ClCompile Include="DM2GDEDTeView.cpp" />
+    <ClCompile Include="DM2GDEDView.cpp" />
+    <ClCompile Include="DM2GDEDView2.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="DM2ImageComp.cpp" />
+    <ClCompile Include="DM2ImageExch.cpp" />
+    <ClCompile Include="DM2NI1Page.cpp" />
+    <ClCompile Include="DM2NI2Page.cpp" />
+    <ClCompile Include="DM2NI3Page.cpp" />
+    <ClCompile Include="DM2NI4Page.cpp" />
+    <ClCompile Include="DM2NIBPage.cpp" />
+    <ClCompile Include="DM2NICtx.cpp" />
+    <ClCompile Include="DM2NIMan.cpp" />
+    <ClCompile Include="DM2NIPS.cpp" />
+    <ClCompile Include="DM2NIPvFrame.cpp" />
+    <ClCompile Include="DM2NIPvView.cpp" />
+    <ClCompile Include="DM2Palo.cpp" />
+    <ClCompile Include="DM2PIPDescList.cpp" />
+    <ClCompile Include="DM2RawContConv.cpp" />
+    <ClCompile Include="DM2RPtr.cpp" />
+    <ClCompile Include="DM2RTextToken.cpp" />
+    <ClCompile Include="DM2SelColorKeyCB.cpp" />
+    <ClCompile Include="DM2SelColorKeyStatic.cpp" />
+    <ClCompile Include="DM2SIIVCtx.cpp" />
+    <ClCompile Include="DM2SkCmdList.cpp" />
+    <ClCompile Include="DM2TextEncImpl.cpp" />
+    <ClCompile Include="DM2TextEncoder.cpp" />
+    <ClCompile Include="DM2TTbl.cpp" />
+    <ClCompile Include="DM2VwPicVwPal.cpp" />
+    <ClCompile Include="DM2VwSceneFrame.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="DM2VwSceneVw.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="DMGHLci.cpp" />
+    <ClCompile Include="DMLocPalWnd.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="DTreeDock.cpp" />
+    <ClCompile Include="DTreeUsing.cpp" />
+    <ClCompile Include="DTreeView.cpp" />
+    <ClCompile Include="EditHeroStatDlg.cpp" />
+    <ClCompile Include="EditImageFragsDlg.cpp" />
+    <ClCompile Include="EditImgFlgsDlg.cpp" />
+    <ClCompile Include="EditPCMCB.cpp" />
+    <ClCompile Include="EditPCMDlg.cpp" />
+    <ClCompile Include="EditStandbyDlg.cpp" />
+    <ClCompile Include="EditVCreaturePg.cpp" />
+    <ClCompile Include="EditVCtx.cpp" />
+    <ClCompile Include="EditVFlagsPg.cpp" />
+    <ClCompile Include="EditVIconAnimPg.cpp" />
+    <ClCompile Include="EditVIOff.cpp" />
+    <ClCompile Include="EditVMSItemsPg.cpp" />
+    <ClCompile Include="EditVPg.cpp" />
+    <ClCompile Include="EditVRuneSel.cpp" />
+    <ClCompile Include="EditVSelectPg.cpp" />
+    <ClCompile Include="EditVSharpResistPg.cpp" />
+    <ClCompile Include="EditVSKText.cpp" />
+    <ClCompile Include="EditVSSItemPg.cpp" />
+    <ClCompile Include="EditVTextPg.cpp" />
+    <ClCompile Include="EditVWordValPg.cpp" />
+    <ClCompile Include="EditVxxx.cpp" />
+    <ClCompile Include="ExportDATComment.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="ExportDATDoc.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="ExportDATFrame.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="ExportDATHintDlg.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="ExportDATListVw.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="ExportDATTreeVw.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="ExportEditCommentDlg.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="ExtBM.cpp" />
+    <ClCompile Include="F2C.cpp" />
+    <ClCompile Include="Flatbar_src\ToolBarEx.cpp" />
+    <ClCompile Include="FlatSplitterWnd.cpp" />
+    <ClCompile Include="FM.cpp" />
+    <ClCompile Include="FocusReminder.cpp" />
+    <ClCompile Include="ForthInt.cpp" />
+    <ClCompile Include="GDAT.cpp" />
+    <ClCompile Include="GDEdCtx.cpp" />
+    <ClCompile Include="GDEntry.cpp" />
+    <ClCompile Include="GridCtrl\GridCell.cpp" />
+    <ClCompile Include="GridCtrl\GridCellBase.cpp" />
+    <ClCompile Include="GridCtrl\GridCellCheck.cpp" />
+    <ClCompile Include="GridCtrl\GridCellCombo.cpp" />
+    <ClCompile Include="GridCtrl\GridCtrl.cpp" />
+    <ClCompile Include="GridCtrl\GridDropTarget.cpp" />
+    <ClCompile Include="GridCtrl\InPlaceEdit.cpp" />
+    <ClCompile Include="GridCtrl\TitleTip.cpp" />
+    <ClCompile Include="HexEditCB.cpp" />
+    <ClCompile Include="HexEditFrame.cpp" />
+    <ClCompile Include="HexEditView.cpp" />
+    <ClCompile Include="hyperlink\HyperLink.cpp" />
+    <ClCompile Include="ILSp.cpp" />
+    <ClCompile Include="ImportDATFx.cpp" />
+    <ClCompile Include="ImportQueryDlg.cpp" />
+    <ClCompile Include="ImportResDlg.cpp" />
+    <ClCompile Include="InprogressDlg.cpp" />
+    <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="OpenFileTypeDlg.cpp" />
+    <ClCompile Include="OpenFTQueryFileDlg.cpp" />
+    <ClCompile Include="OSP.cpp" />
+    <ClCompile Include="RCI.cpp" />
+    <ClCompile Include="RCT2.cpp" />
+    <ClCompile Include="ReplC1Dlg.cpp" />
+    <ClCompile Include="RuneSelStatic.cpp" />
+    <ClCompile Include="scb\scbarcf.cpp" />
+    <ClCompile Include="scb\scbarg.cpp" />
+    <ClCompile Include="scb\sizecbar.cpp" />
+    <ClCompile Include="SelCMDlg.cpp" />
+    <ClCompile Include="SizeVuff.cpp" />
+    <ClCompile Include="SKTextGridCtrl.cpp" />
+    <ClCompile Include="SplitStr.cpp" />
+    <ClCompile Include="StaticImagePv.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="StdAfx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="WVCT.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DM2GDED.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AddImageDlg.h" />
+    <ClInclude Include="AddImageDlg2.h" />
+    <ClInclude Include="AnchorDlg.h" />
+    <ClInclude Include="ChildFrame.h" />
+    <ClInclude Include="CompatDC.h" />
+    <ClInclude Include="CSVrw.h" />
+    <ClInclude Include="CustRichEditCtrl.h" />
+    <ClInclude Include="DGridCtrl.h" />
+    <ClInclude Include="DiffExportDlg.h" />
+    <ClInclude Include="DiffExportExec.h" />
+    <ClInclude Include="DiffImportDlg.h" />
+    <ClInclude Include="DiffImportExec.h" />
+    <ClInclude Include="DM1ImageComp.h" />
+    <ClInclude Include="DM2BSwDomain.h" />
+    <ClInclude Include="DM2CompAdv.h" />
+    <ClInclude Include="DM2DescriptCtx.h" />
+    <ClInclude Include="DM2EdPicFrame.h" />
+    <ClInclude Include="DM2GDED.h" />
+    <ClInclude Include="DM2GDEDDoc.h" />
+    <ClInclude Include="DM2GDEDOPInfoDlg.h" />
+    <ClInclude Include="DM2GDEDSplitterWnd.h" />
+    <ClInclude Include="DM2GDEDTeView.h" />
+    <ClInclude Include="DM2GDEDView.h" />
+    <ClInclude Include="DM2GDEDView2.h" />
+    <ClInclude Include="DM2ImageComp.h" />
+    <ClInclude Include="DM2ImageExch.h" />
+    <ClInclude Include="DM2NI1Page.h" />
+    <ClInclude Include="DM2NI2Page.h" />
+    <ClInclude Include="DM2NI3Page.h" />
+    <ClInclude Include="DM2NI4Page.h" />
+    <ClInclude Include="DM2NIBPage.h" />
+    <ClInclude Include="DM2NICtx.h" />
+    <ClInclude Include="DM2NIMan.h" />
+    <ClInclude Include="DM2NIPS.h" />
+    <ClInclude Include="DM2NIPvFrame.h" />
+    <ClInclude Include="DM2NIPvView.h" />
+    <ClInclude Include="DM2Palo.h" />
+    <ClInclude Include="DM2PIPDescList.h" />
+    <ClInclude Include="DM2RawContConv.h" />
+    <ClInclude Include="DM2RPtr.h" />
+    <ClInclude Include="DM2RTextToken.h" />
+    <ClInclude Include="DM2SelColorKeyCB.h" />
+    <ClInclude Include="DM2SelColorKeyStatic.h" />
+    <ClInclude Include="DM2SIIVCtx.h" />
+    <ClInclude Include="DM2SkCmdList.h" />
+    <ClInclude Include="DM2TextEncImpl.h" />
+    <ClInclude Include="DM2TextEncoder.h" />
+    <ClInclude Include="DM2TTbl.h" />
+    <ClInclude Include="DM2VwPicVwPal.h" />
+    <ClInclude Include="DM2VwSceneFrame.h" />
+    <ClInclude Include="DM2VwSceneVw.h" />
+    <ClInclude Include="DMGHLc.h" />
+    <ClInclude Include="DMGHLci.h" />
+    <ClInclude Include="DMGHLt.h" />
+    <ClInclude Include="DMLocPalWnd.h" />
+    <ClInclude Include="DTreeDock.h" />
+    <ClInclude Include="DTreeUsing.h" />
+    <ClInclude Include="DTreeView.h" />
+    <ClInclude Include="EditHeroStatDlg.h" />
+    <ClInclude Include="EditImageFragsDlg.h" />
+    <ClInclude Include="EditImgFlgsDlg.h" />
+    <ClInclude Include="EditPCMCB.h" />
+    <ClInclude Include="EditPCMDlg.h" />
+    <ClInclude Include="EditStandbyDlg.h" />
+    <ClInclude Include="EditVCreaturePg.h" />
+    <ClInclude Include="EditVCtx.h" />
+    <ClInclude Include="EditVFlagsPg.h" />
+    <ClInclude Include="EditVIconAnimPg.h" />
+    <ClInclude Include="EditVIOff.h" />
+    <ClInclude Include="EditVMSItemsPg.h" />
+    <ClInclude Include="EditVPg.h" />
+    <ClInclude Include="EditVPgTemp.h" />
+    <ClInclude Include="EditVRuneSel.h" />
+    <ClInclude Include="EditVSelectPg.h" />
+    <ClInclude Include="EditVSharpResistPg.h" />
+    <ClInclude Include="EditVSKText.h" />
+    <ClInclude Include="EditVSSItemPg.h" />
+    <ClInclude Include="EditVTextPg.h" />
+    <ClInclude Include="EditVWordValPg.h" />
+    <ClInclude Include="EditVxxx.h" />
+    <ClInclude Include="EndianUtil.h" />
+    <ClInclude Include="ExportDATComment.h" />
+    <ClInclude Include="ExportDATDoc.h" />
+    <ClInclude Include="ExportDATFrame.h" />
+    <ClInclude Include="ExportDATHintDlg.h" />
+    <ClInclude Include="ExportDATListVw.h" />
+    <ClInclude Include="ExportDATTreeVw.h" />
+    <ClInclude Include="ExportEditCommentDlg.h" />
+    <ClInclude Include="ExtBM.h" />
+    <ClInclude Include="F2C.h" />
+    <ClInclude Include="Flatbar_src\ToolBarEx.h" />
+    <ClInclude Include="FlatSplitterWnd.h" />
+    <ClInclude Include="FM.h" />
+    <ClInclude Include="FocusReminder.h" />
+    <ClInclude Include="ForthInt.h" />
+    <ClInclude Include="GDAT.h" />
+    <ClInclude Include="GDATDef.h" />
+    <ClInclude Include="GDEdCtx.h" />
+    <ClInclude Include="GDEdDef.h" />
+    <ClInclude Include="GDEdOpt.h" />
+    <ClInclude Include="GDEntry.h" />
+    <ClInclude Include="GridCtrl\CellRange.h" />
+    <ClInclude Include="GridCtrl\GridCell.h" />
+    <ClInclude Include="GridCtrl\GridCellBase.h" />
+    <ClInclude Include="GridCtrl\GridCellCheck.h" />
+    <ClInclude Include="GridCtrl\GridCellCombo.h" />
+    <ClInclude Include="GridCtrl\GridCtrl.h" />
+    <ClInclude Include="GridCtrl\GridDropTarget.h" />
+    <ClInclude Include="GridCtrl\InPlaceEdit.h" />
+    <ClInclude Include="GridCtrl\MemDC.h" />
+    <ClInclude Include="GridCtrl\TitleTip.h" />
+    <ClInclude Include="HexEditCB.h" />
+    <ClInclude Include="HexEditFrame.h" />
+    <ClInclude Include="HexEditView.h" />
+    <ClInclude Include="hyperlink\HyperLink.h" />
+    <ClInclude Include="ILSp.h" />
+    <ClInclude Include="ImportDATFx.h" />
+    <ClInclude Include="ImportQueryDlg.h" />
+    <ClInclude Include="ImportResDlg.h" />
+    <ClInclude Include="InprogressDlg.h" />
+    <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="MemVuff.h" />
+    <ClInclude Include="OleByteBin.h" />
+    <ClInclude Include="OpenFileTypeDlg.h" />
+    <ClInclude Include="OpenFTQueryFileDlg.h" />
+    <ClInclude Include="OSP.h" />
+    <ClInclude Include="PM.h" />
+    <ClInclude Include="RCI.h" />
+    <ClInclude Include="RCT2.h" />
+    <ClInclude Include="ReplC1Dlg.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="RuneSelStatic.h" />
+    <ClInclude Include="scb\scbarcf.h" />
+    <ClInclude Include="scb\scbarg.h" />
+    <ClInclude Include="scb\sizecbar.h" />
+    <ClInclude Include="SelCMDlg.h" />
+    <ClInclude Include="SizeVuff.h" />
+    <ClInclude Include="SKTextGridCtrl.h" />
+    <ClInclude Include="SplitStr.h" />
+    <ClInclude Include="StaticImagePv.h" />
+    <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="WVCT.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\bmp00001.bmp" />
+    <Image Include="res\bmp00002.bmp" />
+    <Image Include="res\bmp320by.bmp" />
+    <Image Include="res\CmdATT.ico" />
+    <Image Include="res\CmdDef.ico" />
+    <Image Include="res\CmdEat.ico" />
+    <Image Include="res\cmdef1.ico" />
+    <Image Include="res\CmdWiz.ico" />
+    <Image Include="res\CmdXXX.ico" />
+    <Image Include="res\cmmap.ico" />
+    <Image Include="res\cmway.ico" />
+    <Image Include="res\cmwiz1.ico" />
+    <Image Include="res\cmxxx.ico" />
+    <Image Include="res\cmxxx1.ico" />
+    <Image Include="res\DM2GDED.ico" />
+    <Image Include="res\DM2GDEDDoc.ico" />
+    <Image Include="res\GrpA.ico" />
+    <Image Include="res\GrpC.ico" />
+    <Image Include="res\GrpJ.ico" />
+    <Image Include="res\GrpM.ico" />
+    <Image Include="res\GrpP.ico" />
+    <Image Include="res\GrpS.ico" />
+    <Image Include="res\GrpW.ico" />
+    <Image Include="res\icon1.ico" />
+    <Image Include="res\idr_dm2g.ico" />
+    <Image Include="res\idr_dm2s.ico" />
+    <Image Include="res\idr_gded.ico" />
+    <Image Include="res\idr_vwsc.ico" />
+    <Image Include="res\ldef.ico" />
+    <Image Include="res\paball.ico" />
+    <Image Include="res\paew.ico" />
+    <Image Include="res\paoh.ico" />
+    <Image Include="res\paoh1.ico" />
+    <Image Include="res\papull.ico" />
+    <Image Include="res\papush.ico" />
+    <Image Include="res\paven.ico" />
+    <Image Include="res\pazo.ico" />
+    <Image Include="res\runes.bmp" />
+    <Image Include="res\Toolbar.bmp" />
+    <Image Include="res\toolbar1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="res\DM2GDED.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\About.rtf" />
+    <None Include="res\CHANGES.rtf" />
+    <None Include="res\DM2GDED.rc2" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="DM2GDED.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>
