@@ -54861,12 +54861,12 @@ void SkWinCore::INIT()
 	LOAD_GDAT_INTERFACE_00_0A();
 	U8 *bp04 = ALLOC_MEMORY_RAM(0x400, afUseLower, 1024);
 //DEBUG_DUMP_ULP();
-	LOAD_GDAT_ENTRY_DATA_TO(0x1, 0x0, dt09, 0xfe, bp04);	// C01=I00=EFE=T009 palette IRGB
+	LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dtPalIRGB, 0xFE, bp04);	// C01=I00=EFE=T009 palette IRGB (0x1, 0x0, dt09, 0xFE, bp04)
 	_44c8_1baf(bp04);
 	DEALLOC_LOWER_MEMORY(0x400);
 	LOAD_GDAT_INTERFACE_00_02();
 	//glbPaletteT16 = QUERY_GDAT_ENTRY_DATA_PTR(0x1, 0x0, dt0d, 0xfe);
-	glbPaletteT16 = QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dt0d, 0xfe);
+	glbPaletteT16 = QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dtPalette16, 0xFE);
 	_098d_1208();
 
 	// SPX: Added extended load here (requires the GDAT to be initialized, but must be before dungeon loading)

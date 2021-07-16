@@ -28,11 +28,11 @@ enum dtIndex
 	dtRaw7		= 7,
 	dtRaw8		= 8, // image chain table
 		dt08		= 8, // image chain table
-	dtPalIRGB	= 9,
+	dtPalIRGB	= 9,		// palette for the main 256 colors
 		dt09	= 9,
 	dtWordValue = 11,
 	dtImageOffset = 12,
-	dtPalette	= 13,
+	dtPalette16	= 13,		// palette for 16 colors, indexed from the 256 colors palette
 		dt0d		= 13,
 		dt0e		= 14,
 	dtWordValueExt	= 15,	// SPX: Normally unused, proceed as Word
