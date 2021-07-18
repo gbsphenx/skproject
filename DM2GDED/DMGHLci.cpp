@@ -749,6 +749,25 @@ bool DMGHLciFDM2::ReadImgDM2C4towns(int i, DMGHLiIMGM &imgm)
 		} else if (v1 == 0xA) {
 			nLen = v1 +1;
 			err += !pw.StillPixels(nLen);
+		}
+		else if (v1 == 0xD) {
+			nLen = 0;
+			nLen += (thruIn.Read4Bits() << 12);
+			nLen += (thruIn.Read4Bits() << 8);
+			nLen += (thruIn.Read4Bits() << 4);
+			nLen += (thruIn.Read4Bits() << 0);
+			if ((nLen & 1) == 0) {
+				// even
+				err += !pw.WritePixels(1, v2);
+			}
+			else {
+				// odd
+				nLen++;
+			}
+			for (int t = 0; t < nLen; t++) {
+				int n3 = thruIn.Read4Bits();
+				err += !pw.WritePixels(1, n3);
+			}
 		} else {
 			ASSERT(false);
 			return false;
