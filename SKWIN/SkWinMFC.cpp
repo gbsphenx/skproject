@@ -173,7 +173,7 @@ END_MESSAGE_MAP()
 // CSkWinMFC メッセージ ハンドラ
 
 extern U8 vram[65536];
-extern U8 _04bf_09f0[256][3];
+extern U8 glbPaletteRGB[256][3];
 
 BYTE vrbi[sizeof(BITMAPINFOHEADER) + sizeof(RGBQUAD) * 256];
 
@@ -188,9 +188,9 @@ void CSkWinMFC::OnPaint()
 	CPaintDC dc(this);
 	PBITMAPINFO pbi = reinterpret_cast<PBITMAPINFO>(vrbi);
 	for (int x=0; x<256; x++) {
-		pbi->bmiColors[x].rgbRed   = Gammac(_04bf_09f0[x][0]);
-		pbi->bmiColors[x].rgbGreen = Gammac(_04bf_09f0[x][1]);
-		pbi->bmiColors[x].rgbBlue  = Gammac(_04bf_09f0[x][2]);
+		pbi->bmiColors[x].rgbRed   = Gammac(glbPaletteRGB[x][0]);
+		pbi->bmiColors[x].rgbGreen = Gammac(glbPaletteRGB[x][1]);
+		pbi->bmiColors[x].rgbBlue  = Gammac(glbPaletteRGB[x][2]);
 		pbi->bmiColors[x].rgbReserved = 0;
 	}
 	if (sxfact == 1) {

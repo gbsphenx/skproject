@@ -814,7 +814,7 @@ protected:
 	U8		*_4976_5dbe;	// palette?
 	X16		_4976_5dc2;
 	Bit8u	*_4976_5e64;	// blit2mem src
-	Bit16u	_4976_5e68;
+	Bit16u	glbPaletteIRGBLoaded;	// (_4976_5e68) tells if the global IRGB palette has been loaded/set
 	Bit8u	*_4976_5e6a;	// blit2mem dst
 	U8		*_4976_5e6e;	// blit2mem underlay
 	X32		_4976_5e88;		// ptr int 0xff
@@ -1943,8 +1943,8 @@ protected:
 	void INIT_CPXHEAP(sk5d12 *ref, tiamat poolBuff, U32 poolSize, U16 poolflag);
 	X16 _38c8_0224(X16 xx, i32 yy);
 	void ALLOC_CPX_SETUP(X8 *xx);	// _3e74_1330 renamed ALLOC_CPX_SETUP
-	X16 _00eb_05c7(U8 (*pal)[4], X16 yy);
-	void _44c8_1baf(U8 *pal);
+	X16 SET_GRAPHICS_RGB_PALETTE(U8 (*pal)[4], X16 yy);	// _00eb_05c7 renamed GRAPHICS_SET_RGB_PALETTE
+	void SET_RGB_PALETTE_FROM_DATA(U8 *pal);	// _44c8_1baf renamed SET_RGB_PALETTE_FROM_DATA
 	void INIT();	// _38c8_04aa renamed INIT
 	X16 IS_TIMER_TO_PROCEED();
 	void GET_AND_DELETE_NEXT_TIMER(Timer *ref);

@@ -79,6 +79,8 @@ _04bf_0519    renamed   glbSomeCounter_0519
 
 _04bf_0661		renamed		strPC286Required
 
+_04bf_09f0		renamed		glbPaletteRGB
+
 _04bf_0e52    renamed   sysMousePositionCaptured
 
 _04bf_17a6    renamed   sndSoundPlaybackFrequency
@@ -415,6 +417,7 @@ _4976_5d30		renamed		glbFreeRAMMemPool
 _4976_5d74		renamed		glbNumberOfMements
 _4976_5d8c		renamed		glbFreeEMSMemPool
 
+_4976_5e68		renamed		glbPaletteIRGBLoaded
 _4976_5eaa		renamed		glbTickStepValue
 _4976_5eba		renamed		glbDriveNumber
 

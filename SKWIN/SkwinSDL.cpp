@@ -13,7 +13,7 @@
 #pragma comment(lib, "user32.lib")
 
 extern U8 vram[65536];
-extern U8 _04bf_09f0[256][3];
+extern U8 glbPaletteRGB[256][3];
 
 U8 tbl_gammac[64];
 
@@ -79,9 +79,9 @@ void CSkWinSDL::paint(SDL_Surface *surface) {
 
 		SDL_Color clrs[256];
 		for (int x=0; x<256; x++)
-			clrs[x].r = Gammac(_04bf_09f0[x][0]),
-			clrs[x].g = Gammac(_04bf_09f0[x][1]),
-			clrs[x].b = Gammac(_04bf_09f0[x][2]);
+			clrs[x].r = Gammac(glbPaletteRGB[x][0]),
+			clrs[x].g = Gammac(glbPaletteRGB[x][1]),
+			clrs[x].b = Gammac(glbPaletteRGB[x][2]);
 		SDL_SetPalette(surface, SDL_PHYSPAL, clrs, 0, 256);
 	}
 #else
@@ -130,9 +130,9 @@ void CSkWinSDL::paint(SDL_Surface *surface) {
 
 			SDL_Color clrs[256];
 			for (int x=0; x<256; x++)
-				clrs[x].r = Gammac(_04bf_09f0[x][0]),
-				clrs[x].g = Gammac(_04bf_09f0[x][1]),
-				clrs[x].b = Gammac(_04bf_09f0[x][2]);
+				clrs[x].r = Gammac(glbPaletteRGB[x][0]),
+				clrs[x].g = Gammac(glbPaletteRGB[x][1]),
+				clrs[x].b = Gammac(glbPaletteRGB[x][2]);
 			SDL_SetPalette(surfMine, SDL_LOGPAL, clrs, 0, 256);
 
 			if (SDL_BlitSurface(surfMine, NULL, surface, NULL) == 0) {

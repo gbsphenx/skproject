@@ -1270,9 +1270,9 @@ void SkWinCore::_00eb_04bc(skxxxj *xx, U16 yy) //#DS=04BF
 	//^00EB:04D1
 	for (si = 0; si < 16; si++) {
 		//^00EB:04D6
-		_04bf_09f0[(si +di)][0] = U8(xx[si].b1 >> 2);
-		_04bf_09f0[(si +di)][1] = U8(xx[si].b2 >> 2);
-		_04bf_09f0[(si +di)][2] = U8(xx[si].b3 >> 2);
+		glbPaletteRGB[(si +di)][0] = U8(xx[si].b1 >> 2);
+		glbPaletteRGB[(si +di)][1] = U8(xx[si].b2 >> 2);
+		glbPaletteRGB[(si +di)][2] = U8(xx[si].b3 >> 2);
 		if (yy == 0) {
 			//^00EB:0548
 			_04bf_0a50[si][0] = U8(xx[si].b1 >> 2);
@@ -34507,7 +34507,7 @@ void SkWinCore::CHANGE_VIEWPORT_TO_INVENTORY(Bit16u xx) //#DS=4976
 	glbIsPlayerMoving = di;
 	//^44C8:1C0B
 	Bit16u si;
-	if (_4976_5e68 == 0) {
+	if (glbPaletteIRGBLoaded == 0) {
 		//^44C8:1C12
 		__int16 bp02, bp04, bp06;
 		_01b0_0d39(&bp02, &bp04, &bp06, 1) CALL_IBMIO;
@@ -34525,7 +34525,7 @@ void SkWinCore::CHANGE_VIEWPORT_TO_INVENTORY(Bit16u xx) //#DS=4976
 	//^44C8:1C5D
 	_00eb_0845(_4976_4c16, &bp0e, (glbIsPlayerMoving != 0) ? 0x8008 : 0x0008) CALL_IBMIO;
 	//^44C8:1C85
-	if (_4976_5e68 == 0 && si != 0) {
+	if (glbPaletteIRGBLoaded == 0 && si != 0) {
 		//^44C8:1C90
 		FIRE_SHOW_MOUSE_CURSOR();
 	}
@@ -34721,9 +34721,9 @@ void SkWinCore::IBMIO_UPDATE_PALETTE_SET()
 	//^00EB:0470
 	for (; si < 256; si++) {
 		//^00EB:0472
-		Bit8u bp01 = _04bf_09f0[si][0];
-		Bit8u bp02 = _04bf_09f0[si][1];
-		Bit8u bp03 = _04bf_09f0[si][2];
+		Bit8u bp01 = glbPaletteRGB[si][0];
+		Bit8u bp02 = glbPaletteRGB[si][1];
+		Bit8u bp03 = glbPaletteRGB[si][2];
 		//^00EB:04A2
 		outportb(0x03c9, bp01);
 		outportb(0x03c9, bp02);
@@ -54809,7 +54809,8 @@ void SkWinCore::ALLOC_CPX_SETUP(X8 *xx)
 }
 
 //^00EB:05C7
-X16 SkWinCore::_00eb_05c7(U8 (*pal)[4], X16 yy) //#DS=04BF
+// SPX: _00eb_05c7 renamed SET_GRAPHICS_RGB_PALETTE
+X16 SkWinCore::SET_GRAPHICS_RGB_PALETTE(U8 (*pal)[4], X16 yy) //#DS=04BF
 {
 	//^00EB:05C7
 	ENTER(0);
@@ -54818,11 +54819,11 @@ X16 SkWinCore::_00eb_05c7(U8 (*pal)[4], X16 yy) //#DS=04BF
 	i16 si;
 	for (si = 0; si < 0x100; si++) {
 		//^00EB:05D5
-		_04bf_09f0[si][0] = pal[si][1] >> 2;
+		glbPaletteRGB[si][0] = pal[si][1] >> 2;
 		//^00EB:05F7
-		_04bf_09f0[si][1] = pal[si][2] >> 2;
+		glbPaletteRGB[si][1] = pal[si][2] >> 2;
 		//^00EB:0619
-		_04bf_09f0[si][2] = pal[si][3] >> 2;
+		glbPaletteRGB[si][2] = pal[si][3] >> 2;
 		//^00EB:063B
 	}
 	//^00EB:0642
@@ -54834,12 +54835,13 @@ X16 SkWinCore::_00eb_05c7(U8 (*pal)[4], X16 yy) //#DS=04BF
 }
 
 //^44C8:1BAF
-void SkWinCore::_44c8_1baf(U8 *pal)
+// SPX: _44c8_1baf renamed SET_RGB_PALETTE_FROM_DATA
+void SkWinCore::SET_RGB_PALETTE_FROM_DATA(U8 *pal)
 {
 	//^44C8:1BAF
 	ENTER(0);
 	//^44C8:1BB2
-	_4976_5e68 = _00eb_05c7(reinterpret_cast<U8 (*)[4]>(pal), 0);
+	glbPaletteIRGBLoaded = SET_GRAPHICS_RGB_PALETTE(reinterpret_cast<U8 (*)[4]>(pal), 0);
 	//^44C8:1BC8
 	return;
 }
@@ -54862,7 +54864,7 @@ void SkWinCore::INIT()
 	U8 *bp04 = ALLOC_MEMORY_RAM(0x400, afUseLower, 1024);
 //DEBUG_DUMP_ULP();
 	LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dtPalIRGB, 0xFE, bp04);	// C01=I00=EFE=T009 palette IRGB (0x1, 0x0, dt09, 0xFE, bp04)
-	_44c8_1baf(bp04);
+	SET_RGB_PALETTE_FROM_DATA(bp04);
 	DEALLOC_LOWER_MEMORY(0x400);
 	LOAD_GDAT_INTERFACE_00_02();
 	//glbPaletteT16 = QUERY_GDAT_ENTRY_DATA_PTR(0x1, 0x0, dt0d, 0xfe);

@@ -1263,7 +1263,7 @@ U8	cram[MAX_CRAM];
 U8	cems[MAX_CEMS];
 U8	vram[MAX_VRAM];
 
-U8 	_04bf_09f0[256][3];	// palette?
+U8 	glbPaletteRGB[256][3];	// (_04bf_09f0) RGB palette
 //}}SKSAVE_OUTSORTED_VARS
 
 
