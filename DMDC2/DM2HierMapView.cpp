@@ -144,8 +144,8 @@ BEGIN_MESSAGE_MAP(CDM2HierMapView, CScrollView)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_EDIT_ROTX_P, ID_EDIT_ROTY_N, OnUpdateEditRotyN)
 	ON_COMMAND_EX(ID_OPT_RELOAD_ORNATES, OnReloadOrnates)
 	ON_COMMAND(ID_EDIT_BUILDLABYRINTH, OnEditBuildlabyrinth)
-	ON_COMMAND_RANGE(ID_OPT_ASSETS_DM2, ID_OPT_ASSETS_DM2TELOS, OnOptAssets)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_OPT_ASSETS_DM2, ID_OPT_ASSETS_DM2TELOS, OnUpdateOptAssets)
+	ON_COMMAND_RANGE(ID_OPT_ASSETS_DM1, ID_OPT_ASSETS_DM2TELOS, OnOptAssets)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_OPT_ASSETS_DM1, ID_OPT_ASSETS_DM2TELOS, OnUpdateOptAssets)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2164,6 +2164,8 @@ void CDM2HierMapView::OnEditBuildlabyrinth()
 
 void CDM2HierMapView::OnOptAssets(UINT nID) {
 	switch (nID) {
+		case ID_OPT_ASSETS_DM1: GetApp()->SetAssets("DM1"); break;
+		case ID_OPT_ASSETS_DM1CSB: GetApp()->SetAssets("DM1CSB"); break;
 		case ID_OPT_ASSETS_DM2: GetApp()->SetAssets("DM2"); break;
 		case ID_OPT_ASSETS_DM2BETA: GetApp()->SetAssets("DM2Beta"); break;
 		case ID_OPT_ASSETS_DM2TELOS: GetApp()->SetAssets("DM2TELOS"); break;
@@ -2172,6 +2174,8 @@ void CDM2HierMapView::OnOptAssets(UINT nID) {
 
 void CDM2HierMapView::OnUpdateOptAssets(CCmdUI *p) {
 	switch (p->m_nID) {
+		case ID_OPT_ASSETS_DM1: p->SetRadio(GetApp()->GetAssets() == "DM1"); break;
+		case ID_OPT_ASSETS_DM1CSB: p->SetRadio(GetApp()->GetAssets() == "DM1CSB"); break;
 		case ID_OPT_ASSETS_DM2: p->SetRadio(GetApp()->GetAssets() == "DM2"); break;
 		case ID_OPT_ASSETS_DM2BETA: p->SetRadio(GetApp()->GetAssets() == "DM2Beta"); break;
 		case ID_OPT_ASSETS_DM2TELOS: p->SetRadio(GetApp()->GetAssets() == "DM2TELOS"); break;

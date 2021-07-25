@@ -1697,6 +1697,8 @@ BEGIN
         MENUITEM "Reload ornate images",        ID_OPT_RELOAD_ORNATES
         MENUITEM "Reload text table",           ID_OPT_RELOAD_DIC
         MENUITEM SEPARATOR
+        MENUITEM "Assets: DM1",                 ID_OPT_ASSETS_DM1
+        MENUITEM "Assets: DM1 CSB",             ID_OPT_ASSETS_DM1CSB
         MENUITEM "Assets: DM2",                 ID_OPT_ASSETS_DM2
         MENUITEM "Assets: DM2Beta",             ID_OPT_ASSETS_DM2BETA
         MENUITEM "Assets: DM2 TELOS",           ID_OPT_ASSETS_DM2TELOS
@@ -2113,7 +2115,7 @@ BEGIN
             VALUE "ProductName", "DMDC2\0"
             VALUE "ProductVersion", "0, 1, 0, 0\0"
             VALUE "ReleaseDate", "2021-06-09\0"
-            VALUE "Rev", "10.1\0"
+            VALUE "Rev", "12\0"
             VALUE "SpecialBuild", "\0"
         END
     END

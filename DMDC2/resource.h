@@ -551,6 +551,8 @@
 #define ID_OPT_CHECK_LEVEL_DESC         32965
 #define ID_EDIT_BUILDLABYRINTH          32966
 #define ID_OPT_DM2_EXTENDED_MAP         32967
+#define ID_OPT_ASSETS_DM1               32968
+#define ID_OPT_ASSETS_DM1CSB            32969
 #define ID_OPT_ASSETS_DM2               32970
 #define ID_OPT_ASSETS_DM2BETA           32971
 #define ID_OPT_ASSETS_DM2TELOS          32972
