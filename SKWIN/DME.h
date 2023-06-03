@@ -138,34 +138,37 @@ namespace DMEncyclopaedia {
 		U16 w12; // 1 U16:
 		U16 w14; // 1 U16: Door graphics.
 
-		U8 Column() const { return ((w8 >> 6)&31)+1; }
-		U8 Row() const { return ((w8 >> 11)&31)+1; }
-		U16 Level() const { return w8&63; }
 		U16 Offset() const { return w0; }
-		U8 Difficulty() const { return (U8)((w12 >> 12)&0x0F); }
-		U8 RawColumn() const { return ((w8 >> 6)&31); }
-		U8 RawRow() const { return ((w8 >> 11)&31); }
-		U8 MapGraphicsStyle() const { return (w14 >> 4)&15; }
-		U8 CreaturesTypes() const { return (Bit8u)((w12 >> 4)&15); }
-		U8 WallGraphics() const { return (Bit8u)(w10 & 15); }
-		U8 WallGraphicsRandomDecorations() const { return (Bit8u)((w10 >> 4)&15); }
-		U8 FloorGraphics() const { return (Bit8u)((w10 >> 8)&15); }
-		U8 DoorDecorationGraphics() const { return (Bit8u)(w12 & 15); }
-		U8 DoorType0() const { return (U8)((w14 >> 8)&15); }
-		U8 DoorType1() const { return (U8)((w14 >>12)); }
-		U8 MapOffsetX() const { return b6; }
-		U8 MapOffsetY() const { return b7; }
-		U16 UseTeleporter() const { return (w2 >> 5)&1; }
-		U16 UseDoor0() const { return (w2 >> 7)&1; }
-		U16 UseDoor1() const { return (w2 >> 8)&1; }
-		U8 b2_7_7() const { return (U8)((w2 >> 7)&1); }
-		U8 b3_0_0() const { return (U8)((w2 >> 8)&1); }
+
 		U16 UseUpperPitfall() const { return (w2&1); }
 		U16 UseLowerPitfall() const { return (w2 >> 1)&1; }
 		U16 w2_2_2() const { return (w2 >> 2)&1; }
 		U16 UseUpStaircase() const { return (w2 >> 3)&1; }
 		U16 UseDownStaircase() const { return (w2 >> 4)&1; }
+		U16 UseTeleporter() const { return (w2 >> 5)&1; }
 		U16 w2_6_6() const { return (w2 >> 6)&1; }
+		U16 UseDoor0() const { return (w2 >> 7)&1; }
+		U16 UseDoor1() const { return (w2 >> 8)&1; }
+		U8 b2_7_7() const { return (U8)((w2 >> 7)&1); }
+		U8 b3_0_0() const { return (U8)((w2 >> 8)&1); }
+
+		U8 MapOffsetX() const { return b6; }
+		U8 MapOffsetY() const { return b7; }
+
+		U8 Column() const { return ((w8 >> 6)&31)+1; }
+		U8 Row() const { return ((w8 >> 11)&31)+1; }
+		U16 Level() const { return w8&63; }				// altitude of map
+		U8 RawColumn() const { return ((w8 >> 6)&31); }
+		U8 RawRow() const { return ((w8 >> 11)&31); }
+		U8 WallGraphics() const { return (Bit8u)(w10 & 15); }
+		U8 WallGraphicsRandomDecorations() const { return (Bit8u)((w10 >> 4)&15); }
+		U8 FloorGraphics() const { return (Bit8u)((w10 >> 8)&15); }
+		U8 CreaturesTypes() const { return (Bit8u)((w12 >> 4)&15); }
+		U8 DoorDecorationGraphics() const { return (Bit8u)(w12 & 15); }
+		U8 Difficulty() const { return (U8)((w12 >> 12)&0x0F); }
+		U8 MapGraphicsStyle() const { return (w14 >> 4)&15; }
+		U8 DoorType0() const { return (U8)((w14 >> 8)&15); }
+		U8 DoorType1() const { return (U8)((w14 >>12)); }
 	};
 	// 
 #if (DM2_EXTENDED_OBJECT_DEF == 0) || !defined DM2_EXTENDED_OBJECT_DEF
