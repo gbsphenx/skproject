@@ -34,6 +34,7 @@ public:
 
 	//--- Very specific for debugging
 	static bool bDebugNoImageDecodingAssert;
+	static bool bDebugBypassNullPointers;
 
 public:
 	SkCodeParam();

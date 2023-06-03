@@ -108,6 +108,7 @@ BEGIN
     POPUP "&Dungeon"
     BEGIN
         MENUITEM "&Dungeon Master",             40061
+        MENUITEM "&Theron's Quests",	        40063
         MENUITEM "&Skullkeep (beta)",           40064
         MENUITEM "&Skullkeep",                  40065
     END

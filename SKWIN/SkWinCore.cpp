@@ -2519,7 +2519,7 @@ Bit16u SkWinCore::_2066_1f37(ObjectID recordLink, Bit16u yy, Bit16u *zz)
 			//^2066:1F51
 			Actuator *bp04 = GET_ADDRESS_OF_ACTU(di);
 			//^2066:1F5E
-			if (bp04->ActuatorType() == 0x27) { // 0x27 -> Cross scene
+			if (bp04->ActuatorType() == ACTUATOR_FLOOR_TYPE__CROSS_SCENE) { // 0x27 -> Cross scene
 				//^2066:1F6D
 				si = 1;
 				//^2066:1F70
@@ -3137,7 +3137,7 @@ void SkWinCore::GRAPHICS_DATA_OPEN()
 		//^3E74:25C6
 		if (glbFileHandleGraphics1 < 0) {
 			//^3E74:25CD
-			RAISE_SYSERR(SYSTEM_ERROR__MISSING_GRAPHICS);
+			RAISE_SYSERR(SYSTEM_ERROR__MISSING_GRAPHICS);	// SYS ERROR 41
 		}
 		//^3E74:25D5
 		if (_4976_5c9c != 0 && _4976_5ca8 == 0) {
@@ -3146,7 +3146,7 @@ void SkWinCore::GRAPHICS_DATA_OPEN()
 			//^3E74:2603
 			if (glbFileHandleGraphics2 < 0) {
 				//^3E74:260A
-				RAISE_SYSERR(SYSTEM_ERROR__MISSING_GRAPHICS_2);
+				RAISE_SYSERR(SYSTEM_ERROR__MISSING_GRAPHICS_2);	// SYS ERROR 31
 			}
 		}
 	}
@@ -9027,7 +9027,7 @@ __int16 SkWinCore::FIND_LADDER_AROUND(__int16 xx, __int16 yy, __int16 isupper, A
 				if (di == dbActuator) {
 					//^0CEE:078C
 					Actuator *bp04 = _bp04->castToActuator();
-					if (bp04->ActuatorType() == 0x001c) { // 0x1c -> '?'
+					if (bp04->ActuatorType() == ACTUATOR_TYPE_SIMPLE_LADDER) { // SPX 0x1c -> was used only in Beta as simple ladder. Code still here
 						//^0CEE:079E
 						if (dunMapsHeaders[bp04->ActuatorData()].Level() - dunMapLocalHeader->Level() == isupper) {
 							//^0CEE:07CE
@@ -9397,7 +9397,7 @@ _1ad5:
 						Bit16u bp18 = bp04->ActuatorType();
 						//^0CEE:1BBC
 						switch (bp18) {
-							case 0x3f: // 0x3f: 'Shop panel'
+							case ACTUATOR_TYPE_SHOP_PANEL: // 0x3f: 'Shop panel'
 								{
 									//^0CEE:1BD5
 									if (bp06 == 5) {
@@ -9411,7 +9411,7 @@ _1ad5:
 									//^0CEE:1BF1
 									break;
 								}
-							case 0x7e: // 0x7e: 'Activator, resuscitation'
+							case ACTUATOR_TYPE_RESURECTOR: // 0x7e: 'Activator, resuscitation'
 								{
 									//^0CEE:1BF4
 									if (bp04->OnceOnlyActuator() != 0) {
@@ -9428,7 +9428,7 @@ _1ad5:
 									//^0CEE:1C2D
 									break;
 								}
-							case 0x17: // 0x17: 'Activator, 2 state wall switch'
+							case ACTUATOR_TYPE_2_STATE_WALL_SWITCH: // 0x17: 'Activator, 2 state wall switch'
 								{
 									//^0CEE:1C30
 									di = bp04->OnceOnlyActuator();
@@ -9440,7 +9440,7 @@ _1ad5:
 									//^0CEE:1C49
 									break;
 								}
-							case 0x18: // 0x18: 'Activator, push button wall switch'
+							case ACTUATOR_TYPE_WALL_SWITCH: // 0x18: 'Activator, push button wall switch'
 								{
 									//^0CEE:1C4C
 									di = bp04->ActiveStatus() ^ bp04->OnceOnlyActuator();
@@ -9448,7 +9448,7 @@ _1ad5:
 									//^0CEE:1D12
 									break;
 								}
-							case 0x1a: // 0x1a: 'Activator, key hole'
+							case ACTUATOR_TYPE_KEY_HOLE: // 0x1a: 'Activator, key hole'
 								{
 									//^0CEE:1C66
 									di = bp04->OnceOnlyActuator();
@@ -9462,7 +9462,7 @@ _1ad5:
 									//^0CEE:1C8A
 									break;
 								}
-							case 0x1b: // 0x1b: '-'
+							case ACTUATOR_TYPE_X1B: // 0x1b: '-'
 								{
 									//^0CEE:1C8D
 									di = bp04->ActiveStatus();
@@ -9474,7 +9474,7 @@ _1ad5:
 									//^0CEE:1CAA
 									break;
 								}
-							case 0x32: // 0x32: 'Activator, ornate animator'
+							case ACTUATOR_TYPE_ORNATE_ANIMATOR_2: // 0x32: 'Activator, ornate animator'
 								{
 									//^0CEE:1CAC
 									if (bp04->ActiveStatus() != 0) {
@@ -9486,7 +9486,7 @@ _1ad5:
 									//^0CEE:1CCF
 									break;
 								}
-							case 0x2c: // 0x2c: 'Continuous ornate animator'
+							case ACTUATOR_TYPE_ORNATE_ANIMATOR: // 0x2c: 'Continuous ornate animator'
 								{
 									//^0CEE:1CD1
 									if (bp04->ActiveStatus() != 0) {
@@ -9498,7 +9498,7 @@ _1ad5:
 									//^0CEE:1CF7
 									break;
 								}
-							case 0x41: // 0x41: 'Ornate step animator'
+							case ACTUATOR_TYPE_ORNATE_STEP_ANIMATOR: // 0x41: 'Ornate step animator'
 								{
 									//^0CEE:1CF9
 									di = bp04->ActuatorData();
@@ -9506,7 +9506,7 @@ _1ad5:
 									//^0CEE:1D12
 									break;
 								}
-							case 0x46: // 0x46: 'Activator, seal-able push button wall switch'
+							case ACTUATOR_TYPE_PUSH_BUTTON_WALL_SWITCH: // 0x46: 'Activator, seal-able push button wall switch'
 								{
 									//^0CEE:1D08
 									di = bp04->ActiveStatus();
@@ -9827,7 +9827,7 @@ _212a:
 										break;
 									//^0CEE:2132
 									Actuator *bp04 = _bp04->castToActuator();
-									if (bp04->ActuatorType() == 0x30) { // 0x30 - Shop exhibition
+									if (bp04->ActuatorType() == ACTUATOR_FLOOR_TYPE__SHOP) { // 0x30 - Shop exhibition
 										//^0CEE:2141
 										ref->w6[3] = (0);
 									}
@@ -9839,7 +9839,7 @@ _212a:
 										break;
 									//^0CEE:2161
 									switch (bp04->ActuatorType()) {
-										case 0x32: // 0x32 - Activator, ornate animator
+										case ACTUATOR_FLOOR_TYPE__ORNATE_ANIMATOR: // 0x32 - Activator, ornate animator
 											//^0CEE:217C
 											if (bp04->ActiveStatus() == 0)
 												//^0CEE:2188
@@ -9852,7 +9852,7 @@ _212a:
 											//^0CEE:21A1
 											break;
 
-										case 0x27: // 0x27 - Cross scene
+										case ACTUATOR_FLOOR_TYPE__CROSS_SCENE: // 0x27 - Cross scene
 											//^0CEE:21A3
 											if (bp04->ActuatorData() -1 != glbCurrentMapIndex)
 												//^0CEE:21B5
@@ -9865,7 +9865,7 @@ _212a:
 											//^0CEE:21CA
 											break;
 
-										case 0x2c: // 0x2c - Continuous ornate animator
+										case ACTUATOR_FLOOR_TYPE__INFINITE_ORNATE_ANIMATOR: // 0x2c - Continuous ornate animator
 											//^0CEE:21CC
 											if (bp04->ActiveStatus() != 0) {
 												//^0CEE:21DA
@@ -15443,7 +15443,7 @@ void SkWinCore::_3a15_38b6(U16 xx)
 					Actuator *bp08 = GET_ADDRESS_OF_ACTU(si);
 					//^3A15:39A4
 					switch (bp08->ActuatorType()) {
-						case 0x21: // 0x21 -> 'Activator, arrival & departure'
+						case ACTUATOR_TYPE_ARRIVAL_DEPARTURE: // 0x21 -> 'Activator, arrival & departure'
 							{
 								//^3A15:39BB
 								if (bp08->ActionType() == 3) {
@@ -15468,7 +15468,7 @@ void SkWinCore::_3a15_38b6(U16 xx)
 								//^3A15:3A2A
 								break;
 							}
-						case 0x2c: // 0x2c -> 'Continuous ornate animator'
+						case ACTUATOR_TYPE_ORNATE_ANIMATOR: // 0x2c -> 'Continuous ornate animator'
 							{
 								//^3A15:3A2C
 								if (bp08->ActiveStatus() == 1) {
@@ -16489,7 +16489,9 @@ void SkWinCore::_2f3f_04ea(Bit16u xx, Bit16u yy, Bit16u dir, Bit16u zz, Bit16u e
 				//^2F3F:0667
 				Actuator *bp08 = GET_ADDRESS_OF_ACTU(di);
 				//^2F3F:0674
-				if (bp08->ActuatorType() == 0x7e) {
+				if (bp08->ActuatorType() == ACTUATOR_TYPE_RESURECTOR
+					|| bp08->ActuatorType() == ACTUATOR_TYPE_CHAMPION_MIRROR) // SPX: handle DM1 Champion Mirror too
+				{
 					//^2F3F:0683
 					bp08->OnceOnlyActuator(0);
 					//^2F3F:0688
@@ -20610,7 +20612,7 @@ X16 SkWinCore::SELECT_CHAMPION(U16 xx, U16 yy, U16 dir, U16 mm)
 	for (xObject = GET_TILE_RECORD_LINK(xx, yy); xObject != OBJECT_END_MARKER; xObject = GET_NEXT_RECORD_LINK(xObject)) {
 		//^2F3F:0395
 		Actuator *refActuator; // bp04
-		if (xObject.DBType() == dbActuator && (refActuator = GET_ADDRESS_OF_ACTU(xObject))->ActuatorType() == ACTUATOR_TYPE_RESSURECTOR) { // 0x7E
+		if (xObject.DBType() == dbActuator && (refActuator = GET_ADDRESS_OF_ACTU(xObject))->ActuatorType() == ACTUATOR_TYPE_RESURECTOR) { // 0x7E
 			//^2F3F:03BE
 			iHeroType = refActuator->ActuatorData();
 			break;
@@ -20842,7 +20844,7 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 					//^2FCF:1C5F
 					break;
 
-				case 0x01: // 0x01 -> ?
+				case ACTUATOR_TYPE_X01: // 0x01 -> ?
 					//^2FCF:1C62
 					di = 0;
 					//^2FCF:1C64
@@ -20853,7 +20855,7 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 					//^2FCF:1C76
 					break;
 
-				case 0x02: // 0x02 -> ?
+				case ACTUATOR_TYPE_X02: // 0x02 -> ?
 					//^2FCF:1C7C
 					di = (bp04->RevertEffect() != ((si == OBJECT_NULL) ? 1 : 0)) ? 1 : 0;
 					//^2FCF:1CA2
@@ -20946,7 +20948,7 @@ _1d4d:
 					//^2FCF:1E67
 					break;
 
-				case ACTUATOR_TYPE_RESSURECTOR: // 0x7E -> 'Activator, resuscitation'
+				case ACTUATOR_TYPE_RESURECTOR: // 0x7E -> 'Activator, resuscitation'
 					//^2FCF:1E6A
 					if (bp04->OnceOnlyActuator() == 0 || ((glbPlayerDir +2) & 3) != dir)
 						//^2FCF:1E8B
@@ -20959,6 +20961,16 @@ _1d4d:
 					di = 0;
 					//^2FCF:1EAD
 					break;
+
+				case ACTUATOR_TYPE_CHAMPION_MIRROR: // 0x7F -> DM1 'Activator, resuscitation'
+
+					if (bp04->OnceOnlyActuator() == 0 || ((glbPlayerDir +2) & 3) != dir)
+						break;
+					SELECT_CHAMPION(glbPlayerPosX, glbPlayerPosY, glbPlayerDir, glbPlayerMap);
+					bp28 = 1;
+					di = 0;
+					break;
+
 
 				case ACTUATOR_TYPE_KEY_HOLE: // 0x1A -> 'Activator, key hole'
 					//^2FCF:1EB0
@@ -21004,7 +21016,7 @@ _1d4d:
 					//^2FCF:1F90
 					goto _22ab;
 
-				case 0x1B: // 0x1b -> ?
+				case ACTUATOR_TYPE_X1B: // 0x1b -> ?
 					//^2FCF:1F96
 					if (bp18 == 0)
 						//^2FCF:1F9C
@@ -22299,7 +22311,7 @@ void SkWinCore::_32cb_0f82(Actuator *ref, U8 cls4, i16 bb, i16 cellPos, U16 horz
 			//^32CB:0FBA
 			bp0c = GET_ADDRESS_OF_ACTU(di);
 			//^32CB:0FC7
-			if (bp0c->ActuatorType() == 0x30) // 0x30 -> 'Shop exhibition'
+			if (bp0c->ActuatorType() == ACTUATOR_FLOOR_TYPE__SHOP) // 0x30 -> 'Shop exhibition'
 				//^32CB:0FD4
 				break;
 		}
@@ -24901,14 +24913,14 @@ Bit8u SkWinCore::WRITE_RECORD_CHECKCODE(ObjectID recordLink, Bit8u writeDir, Bit
 
 						//^2066:07E5
 						switch (bp04->ActuatorType()) {
-						case 0x27: // 0x27: 'Cross scene'
-						case 0x1B: // 0x1B: '-'
-						case 0x1D: // 0x1D: 'Activator, counter'
-						case 0x41: // 0x41: 'Ornate step animator'
-						case 0x2C: // 0x2C: 'Continuous ornate animator'
-						case 0x32: // 0x32: 'Activator, ornate animator'
-						case 0x30: // 0x30: 'Shop exhibition'
-						case 0x2D: // 0x2D: 'Activator, finite activator relay'
+						case ACTUATOR_FLOOR_TYPE__CROSS_SCENE: // 0x27: 'Cross scene'
+						case ACTUATOR_TYPE_X1B: // 0x1B: '-'
+						case ACTUATOR_TYPE_COUNTER: // 0x1D: 'Activator, counter'
+						case ACTUATOR_TYPE_ORNATE_STEP_ANIMATOR: // 0x41: 'Ornate step animator'
+						case ACTUATOR_FLOOR_TYPE__INFINITE_ORNATE_ANIMATOR: // 0x2C: 'Continuous ornate animator'
+						case ACTUATOR_FLOOR_TYPE__ORNATE_ANIMATOR: // 0x32: 'Activator, ornate animator'
+						case ACTUATOR_FLOOR_TYPE__SHOP: // 0x30: 'Shop exhibition'
+						case ACTUATOR_FLOOR_TYPE__FINITE_ACTIVATOR_RELAY: // 0x2D: 'Activator, finite activator relay'
 							{
 								//^2066:0825
 								Bit16u data = bp04->ActuatorData();
@@ -25980,20 +25992,24 @@ void SkWinCore::_2f3f_0789()
 	glbLeaderHandPossession.object = OBJECT_NULL;
 	_4976_57de = 0xff;
 	//^2F3F:086D
-	for (ObjectID di = GET_TILE_RECORD_LINK(0, 0); di != OBJECT_END_MARKER; di = GET_NEXT_RECORD_LINK(di)) {
+	// SPX: DM2 will check a RESURECTOR at 0,0 (for THORAM), while DM/TQ expects one at 1,0 for THERON.
+
+	// DM2 Original code
+	ObjectID di = NULL;
+	for (di = GET_TILE_RECORD_LINK(0, 0); di != OBJECT_END_MARKER; di = GET_NEXT_RECORD_LINK(di)) {
 		//^2F3F:087B
 		if (di.DBType() == dbActuator) {
 			//^2F3F:0888
 			Actuator *bp08 = GET_ADDRESS_OF_ACTU(di);
 			//^2F3F:0895
-			if (bp08->ActuatorType() == ACTUATOR_TYPE_RESSURECTOR) { // 0x007E
+			if (bp08->ActuatorType() == ACTUATOR_TYPE_RESURECTOR) { // 0x007E
 				//^2F3F:08A4
 				_4976_404b = 1;
 				//^2F3F:08AA
 				// SPX: Automatic selection of champion (Thoram)
-				SELECT_CHAMPION(0, 1, 0, glbPlayerMap);
+				SELECT_CHAMPION(0, 1, DIR_NORTH, glbPlayerMap);	// player is imaginarily at 0,1 facing north
 				//^2F3F:08BB
-				_2f3f_04ea(0, 1, 0, glbPlayerMap, 160);
+				_2f3f_04ea(0, 1, DIR_NORTH, glbPlayerMap, 160);
 				//^2F3F:08CF
 				_4976_404b = 0;
 				//^2F3F:08D5
@@ -26011,6 +26027,26 @@ void SkWinCore::_2f3f_0789()
 		//^2F3F:08F4
 	}
 	//^2F3F:0905
+
+	// SPX: Second loop to check for DM/TQ at 1,0
+	for (di = GET_TILE_RECORD_LINK(1, 0); di != OBJECT_END_MARKER; di = GET_NEXT_RECORD_LINK(di)) {
+		if (di.DBType() == dbActuator) {
+			Actuator *bp08 = GET_ADDRESS_OF_ACTU(di);
+			if (bp08->ActuatorType() == ACTUATOR_TYPE_CHAMPION_MIRROR) { // 0x007E
+				_4976_404b = 1;
+				SELECT_CHAMPION(0, 0, DIR_EAST, glbPlayerMap);	// player is really at 0,0 facing east
+				_2f3f_04ea(0, 0, DIR_EAST, glbPlayerMap, 160);
+				_4976_404b = 0;
+				glbChampionSquad[0].playerDir(U8(glbPlayerDir));
+				glbChampionSquad[0].playerPos(U8(glbPlayerDir));
+				SET_PARTY_HERO_FLAG(0x4000);
+				SELECT_CHAMPION_LEADER(0);
+				return;
+			}
+		}
+	}
+	
+	
 	return;
 }
 
@@ -27632,12 +27668,12 @@ X16 SkWinCore::CREATURE_CAN_HANDLE_IT(ObjectID rlTarget, U16 flags)
 	if (bp0e == dbActuator) {
 		bp08 = GET_ADDRESS_OF_ACTU(rlTarget);
 		switch (bp08->ActuatorType()) {
-			case 0x1b: // 0x1b -> '?'
+			case ACTUATOR_TYPE_X1B: // 0x1b -> '?'
 				//^1C9A:01BD
 				if (bp08->ActuatorData() == 0)
 					return 0;
 				goto _01d1;
-			case 0x1a: // 0x1a -> 'Activator, key hole'
+			case ACTUATOR_TYPE_KEY_HOLE: // 0x1a -> 'Activator, key hole'
 				//^1C9A:01D1
 _01d1:
 				bp0c = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, GET_WALL_DECORATION_OF_ACTUATOR(bp08), dtWordValue, GDAT_WALL_ORNATE__IS_ITEM_TRIGGERED);
@@ -27877,12 +27913,12 @@ ObjectID SkWinCore::_19f0_266c(ObjectID rl, U16 dir, U16 ww, U16 bb)
 				continue;
 			Actuator *bp04 = GET_ADDRESS_OF_RECORD(si)->castToActuator();
 			U16 bp06 = bp04->ActuatorType();
-			if (bp06 == 0 || bp06 == 0x26)
+			if (bp06 == 0 || bp06 == ACTUATOR_TYPE_SWITCH_SIGN_FOR_CREATURE)	// 0x26
 				continue;
 			//^19F0:26BA
 			di = si;
 			//^19F0:26BC
-			if (bp06 != 0x1a) // 0x1a: 'Activator, key hole'
+			if (bp06 != ACTUATOR_TYPE_KEY_HOLE) // 0x1a: 'Activator, key hole'
 				continue;
 			//^19F0:26C2
 			if (bp04->OnceOnlyActuator() != 0) {
@@ -27924,25 +27960,25 @@ X16 SkWinCore::_19f0_2723(ObjectID rl, U16 ww, U16 bb, X16 cc)
 		Actuator *bp04 = GET_ADDRESS_OF_RECORD(rl)->castToActuator();
 		U16 bp06 = bp04->ActuatorType();
 		switch (bp06) {
-			case 0x01://^2775 // 0x01: -
-			case 0x18://^2775 // 0x18: Activator, push button wall switch
+			case ACTUATOR_FLOOR_TYPE__EVERYTHING://^2775 // 0x01: -
+			case ACTUATOR_TYPE_WALL_SWITCH://^2775 // 0x18: Activator, push button wall switch
 				//^19F0:2775
 				if (si == 0)
 					//^19F0:2779
 					di = 1;
 				break;
-			case 0x02://^277E // 0x02: -
+			case ACTUATOR_TYPE_X02://^277E // 0x02: -
 				//^19F0:277E
 				if (si == 0 && bb != 0xffff)
 					//^19F0:2779
 					di = 1;
 				break;
-			case 0x03://^278A // 0x03: Activator, trap floor
+			case ACTUATOR_FLOOR_TYPE__PARTY://^278A // 0x03: Activator, trap floor
 				//^19F0:278A
 				if (si == 0)
 					goto _27e2;
 				break;
-			case 0x17://^2790 // 0x17: Activator, 2 state wall switch
+			case ACTUATOR_TYPE_2_STATE_WALL_SWITCH://^2790 // 0x17: Activator, 2 state wall switch
 				//^19F0:2790
 				if (si == 0) {
 					if ((!bp04->OnceOnlyActuator()) != cc)
@@ -27950,7 +27986,7 @@ X16 SkWinCore::_19f0_2723(ObjectID rl, U16 ww, U16 bb, X16 cc)
 						di = 1;
 				}
 				break;
-			case 0x1B://^27AD // 0x1B: -
+			case ACTUATOR_TYPE_X1B://^27AD // 0x1B: -
 				//^19F0:27AD
 				if (si == 1) {
 					if (bp04->ActuatorData() != 0)
@@ -27958,7 +27994,7 @@ X16 SkWinCore::_19f0_2723(ObjectID rl, U16 ww, U16 bb, X16 cc)
 						goto _27e2;
 				}
 				break;
-			case 0x1A://^27C5 // 0x1A: Activator, key hole
+			case ACTUATOR_TYPE_KEY_HOLE://^27C5 // 0x1A: Activator, key hole
 				//^19F0:27C5
 				if ((bp04->OnceOnlyActuator() != 0) ? (si == 2) : (si == 1)) {
 					//^19F0:27E2
@@ -28024,7 +28060,7 @@ _286d:
 							if (si.Dir() != ((aa +2)&3))
 								continue;
 							bp04 = GET_ADDRESS_OF_RECORD(si)->castToActuator();
-							bp0a = (bp04->ActuatorType() == 0x26) // 0x26 -> 'Switch sign for creature' or 'Activator, missile explosion'
+							bp0a = (bp04->ActuatorType() == ACTUATOR_TYPE_SWITCH_SIGN_FOR_CREATURE) // 0x26 -> 'Switch sign for creature' or 'Activator, missile explosion'
 								? 1
 								: 0;
 							if (bp0a != 0)
@@ -32194,22 +32230,22 @@ void SkWinCore::ACTIVATE_TICK_GENERATOR(Actuator *ref, ObjectID recordLink)
 	//^3A15:3343
 	Bit16u si;
 	switch (di) {
-		case 0x001e: // 0x001e -> Activator, tick generator
+		case ACTUATOR_TYPE_TICK_GENERATOR: // 0x001e -> Activator, tick generator
 			//^3A15:3358
 			si = 1; break;
-		case 0x0033: // 0x0033 -> -
+		case ACTUATOR_TYPE_X33_V008: // 0x0033 -> -
 			//^3A15:335D
 			si = 8; break;
-		case 0x0034: // 0x0034 -> -
+		case ACTUATOR_TYPE_X34_V016: // 0x0034 -> -
 			//^3A15:3362
 			si = 16; break;
-		case 0x0035: // 0x0035 -> -
+		case ACTUATOR_TYPE_X35_V032: // 0x0035 -> -
 			//^3A15:3367
 			si = 32; break;
-		case 0x0036: // 0x0036 -> -
+		case ACTUATOR_TYPE_X36_V064: // 0x0036 -> -
 			//^3A15:336C
 			si = 64; break;
-		case 0x0037: // 0x0037 -> -
+		case ACTUATOR_TYPE_X37_V128: // 0x0037 -> -
 			//^3A15:3371
 			si = 128; break;
 	}
@@ -34510,7 +34546,7 @@ void SkWinCore::CHANGE_VIEWPORT_TO_INVENTORY(Bit16u xx) //#DS=4976
 	if (glbPaletteIRGBLoaded == 0) {
 		//^44C8:1C12
 		__int16 bp02, bp04, bp06;
-		_01b0_0d39(&bp02, &bp04, &bp06, 1) CALL_IBMIO;
+		//_01b0_0d39(&bp02, &bp04, &bp06, 1) CALL_IBMIO;
 		//^44C8:1C2E
 		if (bp0e.x +bp0e.cx -1 < bp02 || bp0e.y +bp0e.cy -1 < bp04 || bp04 +bp06 < bp0e.y) {
 			//^44C8:1C51
@@ -35439,12 +35475,12 @@ void SkWinCore::PROCESS_ACTUATOR_TICK_GENERATOR() //#DS=4976?
 							Bit16u bp1c = bp08->ActuatorType();
 							//^3A15:35ED
 							switch (bp1c) {
-								case 0x001e: // 0x001e -> 'Activator, tick generator'
-								case 0x0033: // 0x0033 -> ?
-								case 0x0034: // 0x0034 -> ?
-								case 0x0035: // 0x0035 -> ?
-								case 0x0036: // 0x0036 -> ?
-								case 0x0037: // 0x0037 -> ?
+								case ACTUATOR_TYPE_TICK_GENERATOR: // 0x001e -> 'Activator, tick generator'
+								case ACTUATOR_TYPE_X33_V008: // 0x0033 -> ?
+								case ACTUATOR_TYPE_X34_V016: // 0x0034 -> ?
+								case ACTUATOR_TYPE_X35_V032: // 0x0035 -> ?
+								case ACTUATOR_TYPE_X36_V064: // 0x0036 -> ?
+								case ACTUATOR_TYPE_X37_V128: // 0x0037 -> ?
 									{
 										//^3A15:3606
 										if (glbSpecialScreen != 0) {
@@ -35691,21 +35727,21 @@ void SkWinCore::ARRANGE_DUNGEON()
 									Bit16u bp3e = bp08->ActuatorType();
 									//^2066:2105
 									switch (bp3e) {
-										case 0x001c: // unused in retail ver.
-										case 0x003f: // Shop panel
+										case ACTUATOR_TYPE_SIMPLE_LADDER: // 0x1C unused in retail ver.
+										case ACTUATOR_TYPE_SHOP_PANEL: // 0x3F Shop panel
 											//^2066:213E
 											bp08->ActiveStatus(0);
 											bp08->OnceOnlyActuator(1);
 											break;
-										case 0x0027: // Cross scene
-										case 0x002c: // Continuous ornate animator
+										case ACTUATOR_FLOOR_TYPE__CROSS_SCENE: // 0x27 Cross scene
+										case ACTUATOR_FLOOR_TYPE__INFINITE_ORNATE_ANIMATOR: // 0x2C Continuous ornate animator
 											//^2066:211E
 											if (bp08->OnceOnlyActuator() != 1)
 												break;
 											//^2066:2133
 											bp08->ActiveStatus(1);
 											break;
-										case 0x0046: // Activator, seal-able push button wall switch
+										case ACTUATOR_TYPE_PUSH_BUTTON_WALL_SWITCH: // 0x46 Activator, seal-able push button wall switch
 											//^2066:214E
 											CHANGE_CURRENT_MAP_TO(si);
 											//^2066:2155
@@ -39939,7 +39975,7 @@ U8 SkWinCore::_0cee_0897(Teleporter **ref, i16 xx, i16 yy)
 			//^0CEE:08D2
 			if (si.DBType() != dbActuator)
 				continue;
-			if (GET_ADDRESS_OF_ACTU(si)->ActuatorType() != 0x27) // 0x27: Cross scene
+			if (GET_ADDRESS_OF_ACTU(si)->ActuatorType() != ACTUATOR_FLOOR_TYPE__CROSS_SCENE) // 0x27: Cross scene
 				continue;
 			//^0CEE:08F6
 			return (((*ref)->Rotation() +2)&3) +1;
@@ -40273,14 +40309,14 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 							//^2066:1D44
 							// SkD((DLV_FYI, "DBG: T  %02X\n", 0U +bp08->ActuatorType()));
 							switch (bp08->ActuatorType()) {
-								case 0x27: // 0x27: Cross scene
-								case 0x1B: // 0x1B: -
-								case 0x1D: // 0x1D: Activator, counter
-								case 0x41: // 0x41: Ornate step animator
-								case 0x2C: // 0x2C: Continuous ornate animator
-								case 0x32: // 0x32: Activator, ornate animator
-								case 0x30: // 0x30: Shop exhibition
-								case 0x2D: // 0x2D: Activator, finite activator relay
+								case ACTUATOR_FLOOR_TYPE__CROSS_SCENE: // 0x27: Cross scene
+								case ACTUATOR_TYPE_X1B: // 0x1B: -
+								case ACTUATOR_TYPE_COUNTER: // 0x1D: Activator, counter
+								case ACTUATOR_TYPE_ORNATE_STEP_ANIMATOR: // 0x41: Ornate step animator
+								case ACTUATOR_TYPE_ORNATE_ANIMATOR: // 0x2C: Continuous ornate animator
+								case ACTUATOR_TYPE_ORNATE_ANIMATOR_2: // 0x32: Activator, ornate animator
+								case ACTUATOR_FLOOR_TYPE__SHOP: // 0x30: Shop exhibition
+								case ACTUATOR_FLOOR_TYPE__FINITE_ACTIVATOR_RELAY: // 0x2D: Activator, finite activator relay
 									//^2066:1DA7
 									Bit16u bp1e;
 									Bit16u bp20 = 0x01FF;
@@ -41363,13 +41399,20 @@ U8 *SkWinCore::PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timer
 	//^13E4:0073
 	Creature *xCreature = glbCurrentThinkingCreatureRec = GET_ADDRESS_OF_RECORD4(rl); // bp08
 	CreatureInfoData *xCreatureInfo = (xCreature->b5_0_7() != 0xff) ? &glbTabCreaturesInfo[xCreature->b5_0_7()] : NULL; // bp0c
-	SkD((DLV_DBG_CAI, "DBG: CreatureIndex:%d, CreatureType:%02X, 4eceIndex:%u, XX=%02X, YY=%02X\n"
-		, (Bitu)rl.DBIndex()
-		, (Bitu)xCreature->CreatureType()
-		, (Bitu)xCreature->b5_0_7()
-		, (Bitu)(U8)xCreatureInfo->x
-		, (Bitu)(U8)xCreatureInfo->y
-	));
+	if (xCreatureInfo != NULL)	// SPX : NULL should not happen
+		SkD((DLV_DBG_CAI, "DBG: CreatureIndex:%d, CreatureType:%02X, 4eceIndex:%u, XX=%02X, YY=%02X\n"
+			, (Bitu)rl.DBIndex()
+			, (Bitu)xCreature->CreatureType()
+			, (Bitu)xCreature->b5_0_7()
+			, (Bitu)(U8)xCreatureInfo->x
+			, (Bitu)(U8)xCreatureInfo->y
+		));
+	else
+		SkD((DLV_DBG_CAI, "DBG: CreatureIndex:%d, CreatureType:%02X, 4eceIndex:%u, XX=NULL, YY=NULL\n"
+			, (Bitu)rl.DBIndex()
+			, (Bitu)xCreature->CreatureType()
+			, (Bitu)xCreature->b5_0_7()
+		));
 	//^13E4:00BA
 	glbCurrentThinkingCreatureData = xCreatureInfo;
 	glbAIDef = QUERY_CREATURE_AI_SPEC_FROM_TYPE(xCreature->CreatureType());
@@ -41387,6 +41430,8 @@ U8 *SkWinCore::PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timer
 	_4976_4ee6 = 0;
 	_4976_4efa = 0xffff;
 	//^13E4:014B
+	if (xCreatureInfo == NULL && SkCodeParam::bDebugBypassNullPointers == false)
+	{
 	if (timerType == tty22) {
 		_4976_4ee8 = 0;
 		_4976_4eea = 0;
@@ -41397,6 +41442,7 @@ U8 *SkWinCore::PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timer
 			xCreatureInfo->Command = ccmInv;
 		}
 	}
+	} // SPX: Debug bypass
 	//^13E4:019B
 	return bp04;
 }
@@ -41407,6 +41453,8 @@ void SkWinCore::CREATURE_THINK_FLUSH_POSITION()
 	//^14CD:0802
 	ENTER(0);
 	//^14CD:0805
+	if (glbCurrentThinkingCreatureData == NULL && SkCodeParam::bDebugBypassNullPointers == true)
+		return;
 	glbCurrentThinkingCreatureData->x = xactrNeedReset;
 	glbCurrentThinkingCreatureData->y = 0;
 	//^14CD:0813
@@ -41420,6 +41468,8 @@ X32 SkWinCore::CREATURE_SOMETHING_1c9a_0a48()
 
 	//^1C9A:0A48
 	ENTER(20);
+	if (glbCurrentThinkingCreatureData == NULL && SkCodeParam::bDebugBypassNullPointers == true) // SPX DEBUG
+		return 0;
 	//^1C9A:0A4D
 	i8 bp03 = glbAIDef->b9x;
 	U16 bp06 = glbCurrentThinkingCreatureRec->CreatureType();
@@ -41675,7 +41725,7 @@ U16 SkWinCore::ATTACK_WALL(i16 xTo, i16 yTo, i16 xFrm, i16 yFrm, U16 dirTo, Obje
 		U16 bp10 = bp04->ActuatorData();
 		U16 bp0e;
 		switch (bp04->ActuatorType()) {
-			case 0x22: // 0x22 -> Activator, knock sensor (flying item)
+			case ACTUATOR_TYPE_FLYING_ITEM_CATCHER: // 0x22 -> Activator, knock sensor (flying item)
 				//^075F:0957
 				bp0e = (bp10 == 0x1ff || GET_DISTINCTIVE_ITEMTYPE(bp0a) == bp10) ? 1 : 0;
 				if ((bp04->RevertEffect() ^ bp0e) == 0)
@@ -41700,7 +41750,7 @@ U16 SkWinCore::ATTACK_WALL(i16 xTo, i16 yTo, i16 xFrm, i16 yFrm, U16 dirTo, Obje
 				DELETE_MISSILE_RECORD(si, NULL, xTo, yTo);
 				bp0c = 1;
 				continue;
-			case 0x23: // 0x23 -> Item teleporter (flying item)
+			case ACTUATOR_TYPE_FLYING_ITEM_TELEPORTER: // 0x23 -> Item teleporter (flying item)
 				//^075F:0A34
 				if (bp0c != 0)
 					continue;
@@ -41993,7 +42043,7 @@ void SkWinCore::_075f_0182(ObjectID rl, X16 xx, X16 yy)
 		//^075F:0198
 		if (si.DBType() == dbActuator) {
 			Actuator *bp04 = GET_ADDRESS_OF_ACTU(si);
-			if (bp04->ActuatorType() == 0x26) { // 0x26 -> Activator, missile explosion
+			if (bp04->ActuatorType() == ACTUATOR_FLOOR_TYPE__MISSILE_EXPLOSION) { // 0x26 -> Activator, missile explosion
 				U16 di = bp04->RevertEffect()
 					^ ((bp04->ActuatorData() == 0x1ff || bp04->ActuatorData() == rl.MissileType()) ? 1 : 0);
 				if (bp04->ActionType() == 3) {
@@ -44135,17 +44185,17 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 								break;
 							bp0c = GET_ADDRESS_OF_ACTU(di);
 							switch (bp0c->ActuatorType()) {
-								case 0x2e: // 0x2e: Creature generator
+								case ACTUATOR_TYPE_CREATURE_GENERATOR: // 0x2e: Creature generator
 									//^2676:049B
 									if (U8(bp2a >> 5) != ttWall)
 										break;
 									bp14[bp0c->ActuatorData()] = 1;
 									break;
-								case 0x7e: // 0x7e: Activator, resuscitation
+								case ACTUATOR_TYPE_RESURECTOR: // 0x7e: Activator, resuscitation
 									//^2676:04C1
 									MARK_DYN_LOAD((U8(bp0c->ActuatorData()) << 16) + 0x1600ffff); // Mark: Champions, xxx, all, all
 									break;
-								case 0x27: // 0x27: Cross scene
+								case ACTUATOR_FLOOR_TYPE__CROSS_SCENE: // 0x27: Cross scene
 									//^2676:04E3
 									if (U8(bp2a >> 5) != ttTeleporter)
 										break;
@@ -49695,7 +49745,7 @@ void SkWinCore::_2fcf_2444(__int16 xpos, __int16 ypos, ObjectID recordLink, Bit1
 			bp3e = bp04->ActuatorType();
 			//^2FCF:28F3
 			switch (bp3e) {
-				case 0x001a: // &H1A -> Activator, key hole
+				case ACTUATOR_TYPE_KEY_HOLE: // &H1A -> Activator, key hole
 					{
 						//^2FCF:2952
 						if (bp24 != 0)
@@ -49750,7 +49800,7 @@ _29a8:
 						//^2FCF:2A59
 						continue;
 					}
-				case 0x0029: // &H29 -> -
+				case ACTUATOR_TYPE_X29: // &H29 -> -
 					{
 						//^2FCF:290C
 						if (bp20 == 0)
@@ -49759,7 +49809,7 @@ _29a8:
 						//^2FCF:2915
 						continue;
 					}
-				case 0x002a: // &H2A -> Activator, alcove item trap
+				case ACTUATOR_TYPE_ALCOVE_ITEM_TRAP: // &H2A -> Activator, alcove item trap
 					{
 						//^2FCF:2918
 						if (bp24 != 0)
@@ -49772,7 +49822,7 @@ _29a8:
 						//^2FCF:2932
 						continue;
 					}
-				case 0x002b: // &H2B -> -
+				case ACTUATOR_TYPE_X2B: // &H2B -> -
 					{
 						//^2FCF:2935
 						if (bp26 != 0)
@@ -52494,9 +52544,9 @@ ObjectID SkWinCore::RECYCLE_A_RECORD_FROM_THE_WORLD(Bit16u itemdb, Bit8u itemtyp
 							//^0CEE:107F
 							Bit16u bp1e = bp08->ActuatorType();
 							//^0CEE:108C
-							if (bp1e >= 0x2c || _4976_0c5e[bp1e] == 0) {
+							if (bp1e >= 0x2c || _4976_0c5e[bp1e] == 0) {	// >= 0x2C
 								//^0CEE:109E
-								if (bp26 != 0 && bp24 != 0 && bp1e == 0x30) {
+								if (bp26 != 0 && bp24 != 0 && bp1e == ACTUATOR_FLOOR_TYPE__SHOP) {	// 0x30
 									//^0CEE:10B9
 									bp24 = 0;
 									//^0CEE:10BE
@@ -55589,7 +55639,7 @@ _1470:
 					bp10 = di.DBType();
 					if (bp10 == dbActuator) {
 						//^14CD:1719
-						if (GET_ADDRESS_OF_ACTU(di)->ActuatorType() == 0x3f) { // 0x3f: Shop panel
+						if (GET_ADDRESS_OF_ACTU(di)->ActuatorType() == ACTUATOR_TYPE_SHOP_PANEL) { // 0x3f: Shop panel
 							goto _1470;
 						}
 					}
@@ -61335,7 +61385,7 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 			ObjectID di;
 			Door *door;	//*bp36
 			switch (bp10) {
-			case 49://^2451 // 0x31 -> 'Activator, work timer'
+			case ACTUATOR_TYPE_WORK_TIMER://^2451 // 0x31 -> 'Activator, work timer'
 				//^3A15:2451
 				if (bp04->ActiveStatus() != 0)
 					break;
@@ -61358,7 +61408,7 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 				//^3A15:24EA
 				INVOKE_ACTUATOR(bp04, (bp04->OnceOnlyActuator() != 0) ? bp04->ActionType() : ref->ActionType(), 0);
 				break;
-			case 46://^2524 // 0x2e -> 'Creature generator'
+			case ACTUATOR_TYPE_CREATURE_GENERATOR://^2524 // 0x2e -> 'Creature generator'
 				//^3A15:2524
 				if (ref->ActionType() != 0)
 					break;
@@ -61378,7 +61428,7 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 				//^3A15:25E7
 				QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES, 0, SOUND_STD_TELEPORT_MESSAGE, 0x61, 0x80, bp2a, bp2c, 1);
 				break;
-			case 29://^2606 // 0x1d -> 'Activator, counter'
+			case ACTUATOR_TYPE_COUNTER://^2606 // 0x1d -> 'Activator, counter'
 				//^3A15:2606
 				bp0c = (bp04->ActuatorData() == 0 || (bp04->ActuatorData() & 256) != 0) ? 1 : 0;
 				//^3A15:2630
@@ -61408,7 +61458,7 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 					INVOKE_ACTUATOR(bp04, bp04->ActionType(), 0);
 				}
 				break;
-			case 45://^2728 // 0x2d -> 'Activator, finite activator relay'
+			case ACTUATOR_TYPE_FINITE_ACTIVATOR_RELAY://^2728 // 0x2d -> 'Activator, finite activator relay'
 				//^3A15:2728
 				bp22 = 0;
 				if (bp04->ActuatorData() > 0 && bp04->ActuatorData() <= 400) {
@@ -61433,12 +61483,12 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 					}
 				}
 				break;
-			case 30://^2810 // 0x1e -> 'Activator, tick generator'
-			case 51://^2810 // 0x33 -> '-'
-			case 52://^2810 // 0x34 -> '-'
-			case 53://^2810 // 0x35 -> '-'
-			case 54://^2810 // 0x36 -> '-'
-			case 55://^2810 // 0x37 -> '-'
+			case ACTUATOR_TYPE_TICK_GENERATOR://^2810 // 0x1e -> 'Activator, tick generator'
+			case ACTUATOR_TYPE_X33_V008://^2810 // 0x33 -> '-'
+			case ACTUATOR_TYPE_X34_V016://^2810 // 0x34 -> '-'
+			case ACTUATOR_TYPE_X35_V032://^2810 // 0x35 -> '-'
+			case ACTUATOR_TYPE_X36_V064://^2810 // 0x36 -> '-'
+			case ACTUATOR_TYPE_X37_V128://^2810 // 0x37 -> '-'
 				//^3A15:2810
 				bp04->OnceOnlyActuator(_3a15_1da8(ref->ActionType(), bp04->OnceOnlyActuator()));
 				if (bp04->ActiveStatus() != 0 || bp04->OnceOnlyActuator() == 0)
@@ -61446,25 +61496,25 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 				//^3A15:285F
 				ACTIVATE_TICK_GENERATOR(bp04, si);
 				break;
-			case 32://^2871 // 0x20 -> 'Activator, relay 1'
-			case 69://^2871 // 0x45 -> 'Activator, relay 3'
+			case ACTUATOR_TYPE_RELAY_1://^2871 // 0x20 -> 'Activator, relay 1'
+			case ACTUATOR_TYPE_RELAY_3://^2871 // 0x45 -> 'Activator, relay 3'
 				//^3A15:2871
 				ACTIVATE_RELAY1(ref, bp04, (bp10 == 0x45) ? 1 : 0);
 				break;
-			case 61://^2891 // 0x3d -> 'Activator, relay 2'
+			case ACTUATOR_TYPE_RELAY_2://^2891 // 0x3d -> 'Activator, relay 2'
 				//^3A15:2891
 				ACTIVATE_RELAY2(ref, bp04, bp04->ActuatorData());
 				break;
-			case 7://^28B5 // 0x07 -> 'Activator, trap floor'
-			case 8://^28B5 // 0x08 -> 'Trap shooter' or 'Activator, trap floor'
-			case 9://^28B5 // 0x09 -> '-'
-			case 10://^28B5 // 0x0a -> 'Trap shooter 2'
-			case 14://^28B5 // 0x0e -> 'Item shooter'
-			case 15://^28B5 // 0x0f -> '-'
+			case ACTUATOR_TYPE_SOME_SHOOTER://^28B5 // 0x07 -> 'Activator, trap floor'
+			case ACTUATOR_TYPE_MISSILE_SHOOTER://^28B5 // 0x08 -> 'Trap shooter' or 'Activator, trap floor'
+			case ACTUATOR_TYPE_WEAPON_SHOOTER://^28B5 // 0x09 -> '-'
+			case ACTUATOR_TYPE_MISSILE_SHOOTER_2://^28B5 // 0x0a -> 'Trap shooter 2'
+			case ACTUATOR_TYPE_ITEM_SHOOTER://^28B5 // 0x0e -> 'Item shooter'
+			case ACTUATOR_TYPE_ITEM_SHOOTER_X2://^28B5 // 0x0f -> '-'
 				//^3A15:28B5
 				ACTIVATE_SHOOTER(bp04, ref);
 				break;
-			case 22://^28C8 // 0x16 -> 'Activator, cross map'
+			case ACTUATOR_TYPE_CROSS_MAP://^28C8 // 0x16 -> 'Activator, cross map'
 				//^3A15:28C8
 				bp20.SetMap(bp0a & 63);
 				bp20.SetTick(glbGameTick);
@@ -61477,51 +61527,51 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 				bp20.ActionType(ref->ActionType());
 				QUEUE_TIMER(&bp20);
 				break;
-			case 18://^2976 // 0x12 -> 'The END'
+			case ACTUATOR_TYPE_THE_END://^2976 // 0x12 -> 'The END'
 				//^3A15:2976
 				FIRE_SELECT_PALETTE_SET(0);
 				_4976_4c26 = 1;
 				SK_PREPARE_EXIT();
 				break;
-			case 50://^298C // 0x32 -> 'Activator, ornate animator'
+			case ACTUATOR_TYPE_ORNATE_ANIMATOR_2://^298C // 0x32 -> 'Activator, ornate animator'
 				//^3A15:298C
 				ACTIVATE_ORNATE_ANIMATOR(ref, bp04, si, 1);
 				break;
-			case 65://^29A1 // 0x41 -> 'Ornate step animator'
+			case ACTUATOR_TYPE_ORNATE_STEP_ANIMATOR://^29A1 // 0x41 -> 'Ornate step animator'
 				//^3A15:29A1
 				(ref->ActionType() == 0) ? bp0a++ : bp0a--;
 				//^3A15:29B3
 				bp04->ActuatorData((bp0a % GET_ORNATE_ANIM_LEN(bp04, 1)) & 511);
 				break;
-			case 44://^29E2 // 0x2c -> 'Continuous ornate animator'
+			case ACTUATOR_TYPE_ORNATE_ANIMATOR://^29E2 // 0x2c -> 'Continuous ornate animator'
 				//^3A15:29E2
 				ACTIVATE_CONTINUOUS_ORNATE_ANIMATOR(si, ref, bp04, 1);
 				break;
-			case 38://^29FB // 0x26 -> 'Switch sign for creature' or 'Activator, missile explosion'
+			case ACTUATOR_TYPE_SWITCH_SIGN_FOR_CREATURE://^29FB // 0x26 -> 'Switch sign for creature' or 'Activator, missile explosion'
 				//^3A15:29FB
 				bp04->OnceOnlyActuator(_3a15_1da8(ref->ActionType(), bp04->OnceOnlyActuator()));
 				break;
-			case 59://^2A2E // 0x3b -> 'Item teleporter (placed item)'
+			case ACTUATOR_TYPE_PLACED_ITEM_TELEPORTER://^2A2E // 0x3b -> 'Item teleporter (placed item)'
 				//^3A15:2A2E
 				ACTIVATE_ITEM_TELEPORT(ref, bp04, si, 0, 0, NULL, 0, 0);
 				break;
-			case 71://^2A3D // 0x47 -> 'Item capture'
+			case ACTUATOR_TYPE_ITEM_CAPTURE://^2A3D // 0x47 -> 'Item capture'
 				//^3A15:2A3D
 				ACTIVATE_ITEM_TELEPORT(ref, bp04, OBJECT_NULL, 0, 0, NULL, 1, 0);
 				break;
-			case 64://^2A41 // 0x40 -> 'Item recycler'
+			case ACTUATOR_TYPE_ITEM_RECYCLER://^2A41 // 0x40 -> 'Item recycler'
 				//^3A15:2A41
 				ACTIVATE_ITEM_TELEPORT(ref, bp04, si, 0, 1, NULL, 0, 0);
 				break;
-			case 72://^2A4D // 0x48 -> '-'
+			case ACTUATOR_TYPE_ITEM_TELEPORT_UNKNOWN://^2A4D // 0x48 -> '-'
 				//^3A15:2A4D
 				ACTIVATE_ITEM_TELEPORT(ref, bp04, si, 0, 0, NULL, 0, 1);
 				break;
-			case 73://^2A51 // 0x49 -> 'Item capture from creature'
+			case ACTUATOR_FLOOR_TYPE__ITEM_CAPTURE_FROM_CREATURE://^2A51 // 0x49 -> 'Item capture from creature'
 				//^3A15:2A51
 				ACTIVATE_ITEM_TELEPORT(ref, bp04, OBJECT_NULL, 0, 0, NULL, 1, 1);
 				break;
-			case 60://^2A75 // 0x3c -> 'Item generator'
+			case ACTUATOR_TYPE_ITEM_GENERATOR://^2A75 // 0x3c -> 'Item generator'
 				//^3A15:2A75
 				if (bp04->RevertEffect() != 0 || ref->ActionType() != 0) {
 					//^3A15:2A90
@@ -61541,19 +61591,19 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 				//^3A15:2B0F
 				MOVE_ITEM_TO(di, bp04, -1, -1, bp04->Xcoord(), bp04->Ycoord(), bp04->Direction(), 0, bp04->OnceOnlyActuator());
 				break;
-			case 66://^2B55 // 0x42 -> 'Change creature facing direction'
+			case ACTUATOR_FLOOR_TYPE__CREATURE_DIRECTION://^2B55 // 0x42 -> 'Change creature facing direction'
 				//^3A15:2B55
 				_3a15_0d5c(ref, bp04);
 				break;
-			case 67://^2B67 // 0x43 -> 'Activator, inverse flag'
+			case ACTUATOR_TYPE_INVERSE_FLAG://^2B67 // 0x43 -> 'Activator, inverse flag'
 				//^3A15:2B67
 				ACTIVATE_INVERSE_FLAG(ref, bp04);
 				break;
-			case 68://^2B79 // 0x44 -> 'Activator, test flag'
+			case ACTUATOR_TYPE_TEST_FLAG://^2B79 // 0x44 -> 'Activator, test flag'
 				//^3A15:2B79
 				ACTIVATE_TEST_FLAG(ref, bp04);
 				break;
-			case 70://^2B8E // 0x46 -> 'Activator, seal-able push button wall switch'
+			case ACTUATOR_TYPE_PUSH_BUTTON_WALL_SWITCH://^2B8E // 0x46 -> 'Activator, seal-able push button wall switch'
 				//^3A15:2B8E
 				// SPX: these actions work for door!
 				door = GET_ADDRESS_OF_TILE_RECORD(bp04->Xcoord(), bp04->Ycoord())->castToDoor();
@@ -61753,25 +61803,25 @@ void SkWinCore::ACTUATE_FLOOR_MECHA(Timer *ref)
 			bp10 = bp14 = bp04->ActuatorType();
 			X16 bp12;
 			switch (bp14) {
-			case 0x27://^187D // 0x27 -> 'Cross scene'
+			case ACTUATOR_FLOOR_TYPE__CROSS_SCENE://^187D // 0x27 -> 'Cross scene'
 				//^3A15:187D
 				bp04->b4_0_0(U8(_3a15_1da8(ref->ActionType(), bp04->b4_0_0())));
 				break;
-			case 0x2C://^18AB // 0x2c -> 'Continuous ornate animator'
+			case ACTUATOR_FLOOR_TYPE__INFINITE_ORNATE_ANIMATOR://^18AB // 0x2c -> 'Continuous ornate animator'
 				//^3A15:18AB
 				ACTIVATE_CONTINUOUS_ORNATE_ANIMATOR(si, ref, bp04, 0);
 				break;
-			case 0x20://^18C1 // 0x20 -> 'Activator, relay 1'
-			case 0x45://^18C1 // 0x45 -> 'Activator, relay 3'
+			case ACTUATOR_FLOOR_TYPE__RELAY_1://^18C1 // 0x20 -> 'Activator, relay 1'
+			case ACTUATOR_FLOOR_TYPE__RELAY_3://^18C1 // 0x45 -> 'Activator, relay 3'
 				//^3A15:18C1
 				ACTIVATE_RELAY1(ref, bp04, (bp10 == 0x45) ? 1 : 0);
 				break;
-			case 0x3D://^18E1 // 0x3D -> 'Activator, relay 2'
+			case ACTUATOR_FLOOR_TYPE__RELAY_2://^18E1 // 0x3D -> 'Activator, relay 2'
 				//^3A15:18E1
 				ACTIVATE_RELAY2(ref, bp04, bp04->ActuatorData());
 				break;
-			case 0x0B://^1905 // 0x0B -> 'Creature killer'
-			case 0x28://^1905 // 0x28 -> '?'
+			case ACTUATOR_FLOOR_TYPE__CREATURE_KILLER://^1905 // 0x0B -> 'Creature killer'
+			case ACTUATOR_FLOOR_TYPE__CREATURE_AI_STATE://^1905 // 0x28 -> '?'
 				//^3A15:1905
 				ACTIVATE_CREATURE_KILLER(bp04->ActuatorData()&15, 
 					(bp04->ActuatorData()>>4)&0x1f, 
@@ -61782,7 +61832,7 @@ void SkWinCore::ACTUATE_FLOOR_MECHA(Timer *ref)
 					bp10, 
 					ref->ActionType());
 				break;
-			case 0x2E://^1958 // 0x2E -> '-'
+			case ACTUATOR_FLOOR_TYPE__PARTY_TELEPORTER://^1958 // 0x2E -> '-'
 				//^3A15:1958
 				bp12 = glbCurrentMapIndex;
 				if (bp12 != glbPlayerMap) {
@@ -61818,43 +61868,43 @@ void SkWinCore::ACTUATE_FLOOR_MECHA(Timer *ref)
 					ROTATE_SQUAD((bp04->ActionType() +glbPlayerDir) & 3);
 				}
 				break;
-			case 0x32://^1A53 // 0x32 -> 'Activator, ornate animator'
+			case ACTUATOR_FLOOR_TYPE__ORNATE_ANIMATOR://^1A53 // 0x32 -> 'Activator, ornate animator'
 				//^3A15:1A55
 				ACTIVATE_ORNATE_ANIMATOR(ref, bp04, si, 0);
 				break;
-			case 0x3A://^1A6C // 0x3a -> 'Creature animator'
+			case ACTUATOR_FLOOR_TYPE__CREATURE_ANIMATOR://^1A6C // 0x3a -> 'Creature animator'
 				//^3A15:1A6C
 				ANIMATE_CREATURE(bp0a, di, (ref->ActionType() == 0) ? 1 : 0);
 				break;
-			case 0x3B://^1A8D // 0x3b -> 'Item teleporter (placed item)'
+			case ACTUATOR_FLOOR_TYPE__ITEM_TELEPORTER://^1A8D // 0x3b -> 'Item teleporter (placed item)'
 				//^3A15:1A8D
 				ACTIVATE_ITEM_TELEPORT(ref, bp04, si, 1, 0, NULL, 0, 0);
 				break;
-			case 0x47://^1A9C // 0x47 -> 'Item capture'
+			case ACTUATOR_TYPE_ITEM_CAPTURE://^1A9C // 0x47 -> 'Item capture'
 				//^3A15:1A9C
 				ACTIVATE_ITEM_TELEPORT(ref, bp04, OBJECT_NULL, 0, 0, NULL, 1, 0);
 				break;
-			case 0x40://^1AA0 // 0x40 -> 'Item recycler'
+			case ACTUATOR_FLOOR_TYPE__ITEM_RECYCLER://^1AA0 // 0x40 -> 'Item recycler'
 				//^3A15:1AA0
 				ACTIVATE_ITEM_TELEPORT(ref, bp04, si, 1, 1, NULL, 0, 0);
 				break;
-			case 0x48://^1AAC // 0x48 -> '-'
+			case ACTUATOR_TYPE_ITEM_TELEPORT_UNKNOWN://^1AAC // 0x48 -> '-'
 				//^3A15:1AAC
 				ACTIVATE_ITEM_TELEPORT(ref, bp04, si, 0, 0, NULL, 0, 1);
 				break;
-			case 0x49://^1ABA // 0x49 -> 'Item capture from creature'
+			case ACTUATOR_FLOOR_TYPE__ITEM_CAPTURE_FROM_CREATURE://^1ABA // 0x49 -> 'Item capture from creature'
 				//^3A15:1ABA
 				ACTIVATE_ITEM_TELEPORT(ref, bp04, OBJECT_NULL, 0, 0, NULL, 1, 1);
 				break;
-			case 0x42://^1ADE // 0x42 -> 'Change creature facing direction'
+			case ACTUATOR_FLOOR_TYPE__CREATURE_DIRECTION://^1ADE // 0x42 -> 'Change creature facing direction'
 				//^3A15:1ADE
 				_3a15_0d5c(ref, bp04);
 				break;
-			case 0x43://^1AF0 // 0x43 -> 'Activator, inverse flag'
+			case ACTUATOR_TYPE_INVERSE_FLAG://^1AF0 // 0x43 -> 'Activator, inverse flag'
 				//^3A15:1AF0
 				ACTIVATE_INVERSE_FLAG(ref, bp04);
 				break;
-			case 0x44://^1B02 // 0x44 -> 'Activator, test flag'
+			case ACTUATOR_TYPE_TEST_FLAG://^1B02 // 0x44 -> 'Activator, test flag'
 				//^3A15:1B02
 				ACTIVATE_TEST_FLAG(ref, bp04);
 				break;

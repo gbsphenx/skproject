@@ -44,3 +44,5 @@ bool SkCodeParam::bUseSuperMode = true;
 
 
 bool SkCodeParam::bDebugNoImageDecodingAssert = true;
+bool SkCodeParam::bDebugBypassNullPointers = true;	// DEBUG PURPOSE, try running further even with some NULL pointers.
+// Normally it would crash it if it NULL. Meaning there is something wrong before that makes that pointer NULL.
