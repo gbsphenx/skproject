@@ -5,11 +5,16 @@
 // These could also be declared as enums or constants
 
 
-#define _OPTION_DUNGEON_DM1_				1
-#define _OPTION_DUNGEON_CSB_				2
-#define _OPTION_DUNGEON_THERON_QUEST_		3
-#define _OPTION_DUNGEON_DM2_BETA_			4
-#define _OPTION_DUNGEON_DM2_				5
+#define _OPTION_DUNGEON_NO_SPECIFIC_		0	// to be used with original DATA folder
+#define _OPTION_DUNGEON_DM1_DM_				1
+#define _OPTION_DUNGEON_DM1_CSB_			2
+#define _OPTION_DUNGEON_DM1_TQ_				3
+#define _OPTION_DUNGEON_DM2_DM_				4
+#define _OPTION_DUNGEON_DM2_CSB_			5
+#define _OPTION_DUNGEON_DM2_TQ_				6
+#define _OPTION_DUNGEON_DM2_BETA_			7
+#define _OPTION_DUNGEON_DM2_DEMO_			8
+#define _OPTION_DUNGEON_DM2_SK				9
 
 
 

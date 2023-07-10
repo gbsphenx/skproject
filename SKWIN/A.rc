@@ -107,10 +107,16 @@ BEGIN
     END
     POPUP "&Dungeon"
     BEGIN
-        MENUITEM "&Dungeon Master",             40061
-        MENUITEM "&Theron's Quests",	        40063
-        MENUITEM "&Skullkeep (beta)",           40064
-        MENUITEM "&Skullkeep",                  40065
+        MENUITEM "&No Specific",                            40060
+        MENUITEM "&Dungeon Master (DM1)",                   40061
+        MENUITEM "&Chaos Strikes Back (DM1)",               40062
+        MENUITEM "&Theron's Quests (DM1)",                  40063
+        MENUITEM "&Dungeon Master (DM2 conversion)",        40064
+        MENUITEM "&Chaos Strikes Back (DM2 conversion)",    40065
+        MENUITEM "&Theron's Quests (DM2 conversion)",       40066
+        MENUITEM "&Skullkeep (beta)",                       40067
+        MENUITEM "&Skullkeep (demo)",                       40068
+        MENUITEM "&Skullkeep",                              40069
     END
     POPUP "Version"
     BEGIN
@@ -164,7 +170,7 @@ BEGIN
                     IDC_STATIC,7,79,265,8
     LTEXT           "with: David Simon, Dan Hewitt, Dennis Walker",
                     IDC_STATIC,7,89,265,8
-    LTEXT           "skwin (2021-05-16)",IDC_STATIC,7,106,63,8
+    LTEXT           "skwin (2023-07-10)",IDC_STATIC,7,106,63,8
     LTEXT           "An unofficial experimental port. started by kentaro-k.21. modified by sphenx.",
                     IDC_STATIC,7,118,184,22
     DEFPUSHBUTTON   "OK",IDOK,115,148,50,14

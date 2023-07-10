@@ -127,6 +127,7 @@ CString GetSkwinini() {
 CSkWinMFC::CSkWinMFC()
 {
 	GetSkwinini() = GetSkwinini();
+	printf("SKini file = %s\n", GetSkwinini());
 
 	sxfact = GetPrivateProfileInt(_skwin, "sxfact", 1, GetSkwinini());
 	sblast = GetPrivateProfileInt(_skwin, "sblast", 1, GetSkwinini());
@@ -250,18 +251,18 @@ void CSkWinMFC::ProcessArgs(int argc, char** argv)
 			gdat_vers = 5;
 		else if (!strcmp(argv[iArgIndex], "-cartoon"))
 			gdat_vers = 6;	// v5 + cartoon
-
+/*
 		else if (!strcmp(argv[iArgIndex], "-dm1"))
 			dung = 1;
 		else if (!strcmp(argv[iArgIndex], "-csb"))
 			dung = 2;
-//		else if (!strcmp(argv[iArgIndex], "-tq"))
-//			dung = 3;
+		else if (!strcmp(argv[iArgIndex], "-tq"))
+			dung = 3;
 		else if (!strcmp(argv[iArgIndex], "-beta"))
 			dung = 4;
 		else if (!strcmp(argv[iArgIndex], "-dm2"))
 			dung = 5;
-
+*/
 		else if (!strcmp(argv[iArgIndex], "-fhz6"))
 			freq = 6;
 		else if (!strcmp(argv[iArgIndex], "-fhz11"))
@@ -642,12 +643,18 @@ void CSkWinMFC::OnVideo1x(UINT nID) {
 		case ID_LANG_SPANISH: lang = 0x50; break;	// SPX: Additional value
 		case ID_LANG_ITALIAN: lang = 0x60; break;	// SPX: Additional value
 
-		case ID_DUNGEON_DUNGEON_MASTER:		dung = _OPTION_DUNGEON_DM1_; break;
-		case ID_DUNGEON_CHAOS_STRIKES_BACK: dung = _OPTION_DUNGEON_CSB_; break;
-		case ID_DUNGEON_THERON_QUEST:		dung = _OPTION_DUNGEON_THERON_QUEST_; break;
-		case ID_DUNGEON_SKULLKEEP_BETA:		dung = _OPTION_DUNGEON_DM2_BETA_; break;
-		case ID_DUNGEON_LEGEND_SKULLKEEP:	dung = _OPTION_DUNGEON_DM2_; break;
+		case ID_DUNGEON_DM2_NO_SPECIFIC:		dung = _OPTION_DUNGEON_NO_SPECIFIC_; break;
+		case ID_DUNGEON_DM1_DUNGEON_MASTER:		dung = _OPTION_DUNGEON_DM1_DM_; break;
+		case ID_DUNGEON_DM1_CHAOS_STRIKES_BACK:	dung = _OPTION_DUNGEON_DM1_CSB_; break;
+		case ID_DUNGEON_DM1_THERON_QUEST:		dung = _OPTION_DUNGEON_DM1_TQ_; break;
+		case ID_DUNGEON_DM2_DUNGEON_MASTER:		dung = _OPTION_DUNGEON_DM2_DM_; break;
+		case ID_DUNGEON_DM2_CHAOS_STRIKES_BACK:	dung = _OPTION_DUNGEON_DM2_CSB_; break;
+		case ID_DUNGEON_DM2_THERON_QUEST:		dung = _OPTION_DUNGEON_DM2_TQ_; break;
+		case ID_DUNGEON_DM2_SKULLKEEP_BETA:		dung = _OPTION_DUNGEON_DM2_BETA_; break;
+		case ID_DUNGEON_DM2_SKULLKEEP_DEMO:		dung = _OPTION_DUNGEON_DM2_DEMO_; break;
+		case ID_DUNGEON_DM2_LEGEND_SKULLKEEP:	dung = _OPTION_DUNGEON_DM2_SK; break;
 
+/*
 		case ID_VERSION_NO_SPECIFIC: gdat_vers = 0; break;
 		case ID_VERSION_V1: gdat_vers = 1; break;
 		case ID_VERSION_V2: gdat_vers = 2; break;
@@ -655,7 +662,7 @@ void CSkWinMFC::OnVideo1x(UINT nID) {
 		case ID_VERSION_V4: gdat_vers = 4; break;
 		case ID_VERSION_V5_CLASSIC: gdat_vers = 5; break;
 		case ID_VERSION_V5_CARTOON: gdat_vers = 6; break;
-
+*/
 
 		case ID_EXTRA_DOUBLE_STEP_MOVE: enableDoubleStepMove = !enableDoubleStepMove; break;
 		case ID_FOG_SWITCH: SkCodeParam::bDisableFogEffect = !SkCodeParam::bDisableFogEffect; break;
@@ -760,11 +767,17 @@ void CSkWinMFC::OnUpdateVideo1x(CCmdUI *pCmdUI) {
 		case ID_LANG_SPANISH: pCmdUI->SetRadio(lang == 0x50); break;	// SPX: Add usage of Spanish
 		case ID_LANG_ITALIAN: pCmdUI->SetRadio(lang == 0x60); break;	// SPX: Add usage of Italian
 
-		case ID_DUNGEON_DUNGEON_MASTER: pCmdUI->SetRadio(dung == 1); break;
-		case ID_DUNGEON_CHAOS_STRIKES_BACK: pCmdUI->SetRadio(dung == 2); break;
-		case ID_DUNGEON_THERON_QUEST: pCmdUI->SetRadio(dung == 3); break;
-		case ID_DUNGEON_SKULLKEEP_BETA: pCmdUI->SetRadio(dung == 4); break;
-		case ID_DUNGEON_LEGEND_SKULLKEEP: pCmdUI->SetRadio(dung == 5); break;
+		case ID_DUNGEON_DM2_NO_SPECIFIC:		pCmdUI->SetRadio(dung == _OPTION_DUNGEON_NO_SPECIFIC_); break;
+		case ID_DUNGEON_DM1_DUNGEON_MASTER:		pCmdUI->SetRadio(dung == _OPTION_DUNGEON_DM1_DM_); break;
+		case ID_DUNGEON_DM1_CHAOS_STRIKES_BACK: pCmdUI->SetRadio(dung == _OPTION_DUNGEON_DM1_CSB_); break;
+		case ID_DUNGEON_DM1_THERON_QUEST:		pCmdUI->SetRadio(dung == _OPTION_DUNGEON_DM1_TQ_); break;
+		case ID_DUNGEON_DM2_DUNGEON_MASTER:		pCmdUI->SetRadio(dung == _OPTION_DUNGEON_DM2_DM_); break;
+		case ID_DUNGEON_DM2_CHAOS_STRIKES_BACK: pCmdUI->SetRadio(dung == _OPTION_DUNGEON_DM2_CSB_); break;
+		case ID_DUNGEON_DM2_THERON_QUEST:		pCmdUI->SetRadio(dung == _OPTION_DUNGEON_DM2_TQ_); break;
+		case ID_DUNGEON_DM2_SKULLKEEP_BETA:		pCmdUI->SetRadio(dung == _OPTION_DUNGEON_DM2_BETA_); break;
+		case ID_DUNGEON_DM2_SKULLKEEP_DEMO:		pCmdUI->SetRadio(dung == _OPTION_DUNGEON_DM2_DEMO_); break;
+		case ID_DUNGEON_DM2_LEGEND_SKULLKEEP:	pCmdUI->SetRadio(dung == _OPTION_DUNGEON_DM2_SK); break;
+
 
 		case ID_VERSION_NO_SPECIFIC: pCmdUI->SetRadio(gdat_vers == 0); break;
 		case ID_VERSION_V1: pCmdUI->SetRadio(gdat_vers == 1); break;

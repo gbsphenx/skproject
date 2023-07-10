@@ -36699,6 +36699,7 @@ void __declspec(noreturn) SkWinCore::RAISE_SYSERR(Bit16u syserr)
 	ATLASSERT(glbLangageLetterIndex < 3U);
 	FORMAT_SKSTR(strSystemErrorTable[glbLangageLetterIndex], bp80);
 
+
 #if UseAltic
 	skwin.ShowMessage(reinterpret_cast<const char *>(bp80));
 	_exit(1);
@@ -39041,15 +39042,26 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 						// SPX: the game folder (which is DATA by default) is changed from dungeon menu (need a restart)
 						switch(skwin.dung)
 						{
-							case _OPTION_DUNGEON_DM1_:
-								bp0c = (const unsigned __int8*) ".Z008DATA_DM1\\"; break;
-							case _OPTION_DUNGEON_CSB_:
-								bp0c = (const unsigned __int8*) ".Z008DATA_CSB\\"; break;
-							case _OPTION_DUNGEON_THERON_QUEST_:
-								bp0c = (const unsigned __int8*) ".Z008DATA_TQ\\"; break;
+							case _OPTION_DUNGEON_DM1_DM_:
+								bp0c = (const unsigned __int8*) ".Z008DATA_DM1_DM\\"; break;
+							case _OPTION_DUNGEON_DM1_CSB_:
+								bp0c = (const unsigned __int8*) ".Z008DATA_DM1_CSB\\"; break;
+							case _OPTION_DUNGEON_DM1_TQ_:
+								bp0c = (const unsigned __int8*) ".Z008DATA_DM1_TQ\\"; break;
+							case _OPTION_DUNGEON_DM2_DM_:
+								bp0c = (const unsigned __int8*) ".Z008DATA_DM2_DM\\"; break;
+							case _OPTION_DUNGEON_DM2_CSB_:
+								bp0c = (const unsigned __int8*) ".Z008DATA_DM2_CSB\\"; break;
+							case _OPTION_DUNGEON_DM2_TQ_:
+								bp0c = (const unsigned __int8*) ".Z008DATA_DM2_TQ\\"; break;
 							case _OPTION_DUNGEON_DM2_BETA_:
-								bp0c = (const unsigned __int8*) ".Z008DATA_BETA\\"; break;
-							case _OPTION_DUNGEON_DM2_:
+								bp0c = (const unsigned __int8*) ".Z008DATA_DM2_BETA\\"; break;
+							case _OPTION_DUNGEON_DM2_DEMO_:
+								bp0c = (const unsigned __int8*) ".Z008DATA_DM2_DEMO\\"; break;
+							case _OPTION_DUNGEON_DM2_SK:
+								bp0c = (const unsigned __int8*) ".Z008DATA_DM2_SK\\"; break;
+							case _OPTION_DUNGEON_NO_SPECIFIC_:
+							default:
 								bp0c = (const unsigned __int8*) ".Z008DATA\\"; break;
 						} // END of specific block
 						
