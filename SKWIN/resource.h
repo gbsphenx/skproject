@@ -30,7 +30,7 @@
 #define ID_DS_AF_0                      40032
 #define ID_DS_AF_FULL                   40033
 #define ID_DS_AF_LIGHT                  40035
-#define ID_FOG_SWITCH                   40039
+
 #define ID_SPEED_1ULTRAFAST             40040
 #define ID_SPEED_2FAST                  40041
 #define ID_SPEED_3NORMAL                40042
@@ -45,25 +45,28 @@
 #define ID_LANG_SPANISH                 40057
 #define ID_LANG_ITALIAN                 40058
 
-#define ID_DUNGEON_DM2_NO_SPECIFIC	        40060
-#define ID_DUNGEON_DM1_DUNGEON_MASTER       40061
-#define ID_DUNGEON_DM1_CHAOS_STRIKES_BACK   40062
-#define ID_DUNGEON_DM1_THERON_QUEST         40063
-#define ID_DUNGEON_DM2_DUNGEON_MASTER       40064
-#define ID_DUNGEON_DM2_CHAOS_STRIKES_BACK   40065
-#define ID_DUNGEON_DM2_THERON_QUEST         40066
-#define ID_DUNGEON_DM2_SKULLKEEP_BETA       40067
-#define ID_DUNGEON_DM2_SKULLKEEP_DEMO       40068
-#define ID_DUNGEON_DM2_LEGEND_SKULLKEEP     40069
+#define ID_DUNGEON_DM2_NO_SPECIFIC	        40088
+#define ID_DUNGEON_DM1_KID_DUNGEON	        40089
+#define ID_DUNGEON_DM1_DUNGEON_MASTER       40090
+#define ID_DUNGEON_DM1_CHAOS_STRIKES_BACK   40091
+#define ID_DUNGEON_DM1_THERON_QUEST         40092
+#define ID_DUNGEON_DM2_DUNGEON_MASTER       40093
+#define ID_DUNGEON_DM2_CHAOS_STRIKES_BACK   40094
+#define ID_DUNGEON_DM2_THERON_QUEST         40095
+#define ID_DUNGEON_DM2_SKULLKEEP_BETA       40096
+#define ID_DUNGEON_DM2_SKULLKEEP_DEMO       40097
+#define ID_DUNGEON_DM2_LEGEND_SKULLKEEP     40098
 
+#define ID_FOG_SWITCH                   40039
 #define ID_DEBUG_BREAK_DOOR             40070
 #define ID_DEBUG_WALK_OVER_PIT          40071
 #define ID_EXTRA_SOUNDS                 40072
 #define ID_SOUND_FOOTSTEP               40073
-#define ID_SUPER_MODE                   40076
 #define ID_MIDI_MUSIC_ENABLED           40074
 #define ID_USE_CUSTOM_SPELLS            40075
+#define ID_SUPER_MODE                   40076
 #define ID_SUPER_INFO_EYE               40077
+
 #define ID_VERSION_NO_SPECIFIC          40080
 #define ID_VERSION_V1                   40081
 #define ID_VERSION_V2                   40082
@@ -71,6 +74,7 @@
 #define ID_VERSION_V4                   40084
 #define ID_VERSION_V5_CLASSIC           40085
 #define ID_VERSION_V5_CARTOON           40086
+
 #define ID_Dummy                        40099
 #define ID_HELP_ABOUT                   40100
 #define ID_SEPA                         40101

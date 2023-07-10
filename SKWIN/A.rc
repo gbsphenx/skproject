@@ -107,16 +107,17 @@ BEGIN
     END
     POPUP "&Dungeon"
     BEGIN
-        MENUITEM "&No Specific",                            40060
-        MENUITEM "&Dungeon Master (DM1)",                   40061
-        MENUITEM "&Chaos Strikes Back (DM1)",               40062
-        MENUITEM "&Theron's Quests (DM1)",                  40063
-        MENUITEM "&Dungeon Master (DM2 conversion)",        40064
-        MENUITEM "&Chaos Strikes Back (DM2 conversion)",    40065
-        MENUITEM "&Theron's Quests (DM2 conversion)",       40066
-        MENUITEM "&Skullkeep (beta)",                       40067
-        MENUITEM "&Skullkeep (demo)",                       40068
-        MENUITEM "&Skullkeep",                              40069
+        MENUITEM "&No Specific",                            40088
+        MENUITEM "&Kid Dungeon (DM1)",                      40089
+        MENUITEM "&Dungeon Master (DM1)",                   40090
+        MENUITEM "&Chaos Strikes Back (DM1)",               40091
+        MENUITEM "&Theron's Quests (DM1)",                  40092
+        MENUITEM "&Dungeon Master (DM2 conversion)",        40093
+        MENUITEM "&Chaos Strikes Back (DM2 conversion)",    40094
+        MENUITEM "&Theron's Quests (DM2 conversion)",       40095
+        MENUITEM "&Skullkeep (beta)",                       40096
+        MENUITEM "&Skullkeep (demo)",                       40097
+        MENUITEM "&Skullkeep",                              40098
     END
     POPUP "Version"
     BEGIN

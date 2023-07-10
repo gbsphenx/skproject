@@ -39042,6 +39042,8 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 						// SPX: the game folder (which is DATA by default) is changed from dungeon menu (need a restart)
 						switch(skwin.dung)
 						{
+							case _OPTION_DUNGEON_DM1_KID_:
+								bp0c = (const unsigned __int8*) ".Z008DATA_DM1_KID\\"; break;
 							case _OPTION_DUNGEON_DM1_DM_:
 								bp0c = (const unsigned __int8*) ".Z008DATA_DM1_DM\\"; break;
 							case _OPTION_DUNGEON_DM1_CSB_:
@@ -39098,16 +39100,29 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 							// SPX: the game folder (which is DATA by default) is changed from dungeon menu (need a restart)
 							switch(skwin.dung)
 							{
-								case 1:
-									bp0c = (const unsigned __int8*) ".Z009DATA_DM1\\"; break;
-								case 2:
-									bp0c = (const unsigned __int8*) ".Z009DATA_CSB\\"; break;
-								case 3:
-									bp0c = (const unsigned __int8*) ".Z009DATA_TQ\\"; break;
-								case 4:
-									bp0c = (const unsigned __int8*) ".Z009DATA_BETA\\"; break;
-								case 5:
-									bp0c = (const unsigned __int8*) ".Z009DATA\\"; break;
+								case _OPTION_DUNGEON_DM1_KID_:
+									bp0c = (const unsigned __int8*) ".Z008DATA_DM1_KID\\"; break;
+								case _OPTION_DUNGEON_DM1_DM_:
+									bp0c = (const unsigned __int8*) ".Z008DATA_DM1_DM\\"; break;
+								case _OPTION_DUNGEON_DM1_CSB_:
+									bp0c = (const unsigned __int8*) ".Z008DATA_DM1_CSB\\"; break;
+								case _OPTION_DUNGEON_DM1_TQ_:
+									bp0c = (const unsigned __int8*) ".Z008DATA_DM1_TQ\\"; break;
+								case _OPTION_DUNGEON_DM2_DM_:
+									bp0c = (const unsigned __int8*) ".Z008DATA_DM2_DM\\"; break;
+								case _OPTION_DUNGEON_DM2_CSB_:
+									bp0c = (const unsigned __int8*) ".Z008DATA_DM2_CSB\\"; break;
+								case _OPTION_DUNGEON_DM2_TQ_:
+									bp0c = (const unsigned __int8*) ".Z008DATA_DM2_TQ\\"; break;
+								case _OPTION_DUNGEON_DM2_BETA_:
+									bp0c = (const unsigned __int8*) ".Z008DATA_DM2_BETA\\"; break;
+								case _OPTION_DUNGEON_DM2_DEMO_:
+									bp0c = (const unsigned __int8*) ".Z008DATA_DM2_DEMO\\"; break;
+								case _OPTION_DUNGEON_DM2_SK:
+									bp0c = (const unsigned __int8*) ".Z008DATA_DM2_SK\\"; break;
+								case _OPTION_DUNGEON_NO_SPECIFIC_:
+								default:
+									bp0c = (const unsigned __int8*) ".Z008DATA\\"; break;
 							} // END of specific block
 							//^2636:024A
 							FORMAT_SKSTR(bp0c, bp0116);

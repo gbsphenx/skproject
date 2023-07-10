@@ -644,6 +644,7 @@ void CSkWinMFC::OnVideo1x(UINT nID) {
 		case ID_LANG_ITALIAN: lang = 0x60; break;	// SPX: Additional value
 
 		case ID_DUNGEON_DM2_NO_SPECIFIC:		dung = _OPTION_DUNGEON_NO_SPECIFIC_; break;
+		case ID_DUNGEON_DM1_KID_DUNGEON:		dung = _OPTION_DUNGEON_DM1_KID_; break;
 		case ID_DUNGEON_DM1_DUNGEON_MASTER:		dung = _OPTION_DUNGEON_DM1_DM_; break;
 		case ID_DUNGEON_DM1_CHAOS_STRIKES_BACK:	dung = _OPTION_DUNGEON_DM1_CSB_; break;
 		case ID_DUNGEON_DM1_THERON_QUEST:		dung = _OPTION_DUNGEON_DM1_TQ_; break;
@@ -768,6 +769,7 @@ void CSkWinMFC::OnUpdateVideo1x(CCmdUI *pCmdUI) {
 		case ID_LANG_ITALIAN: pCmdUI->SetRadio(lang == 0x60); break;	// SPX: Add usage of Italian
 
 		case ID_DUNGEON_DM2_NO_SPECIFIC:		pCmdUI->SetRadio(dung == _OPTION_DUNGEON_NO_SPECIFIC_); break;
+		case ID_DUNGEON_DM1_KID_DUNGEON:		pCmdUI->SetRadio(dung == _OPTION_DUNGEON_DM1_KID_); break;
 		case ID_DUNGEON_DM1_DUNGEON_MASTER:		pCmdUI->SetRadio(dung == _OPTION_DUNGEON_DM1_DM_); break;
 		case ID_DUNGEON_DM1_CHAOS_STRIKES_BACK: pCmdUI->SetRadio(dung == _OPTION_DUNGEON_DM1_CSB_); break;
 		case ID_DUNGEON_DM1_THERON_QUEST:		pCmdUI->SetRadio(dung == _OPTION_DUNGEON_DM1_TQ_); break;
