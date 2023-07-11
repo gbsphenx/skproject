@@ -1804,7 +1804,7 @@ protected:
 	void BLEND_TO_SNDBUFF_SNDCARD_4(void *ref, Bit16u xx, Bit16u yy, Bit16u zz); // TODO: Unr
 	Bit16u _47eb_02e0(SoundStructure *xx, SoundStructure *yy);
 	Bit8u *_47eb_0048(shelf_memory info, Bit16u physPage0to3);
-	X16 _0cee_317f(ObjectID rl);
+	X16 IS_OBJECT_ALCOVE(ObjectID rl);	// _0cee_317f
 	X16 _19f0_2024(ObjectID rl, i16 ss, i16 tt);
 	i16 _19f0_2165(X16 aa, i16 xx, i16 yy, i16 ss, i16 tt, i16 vv, i16 ww);	
 	ObjectID *OVERSEE_RECORD(ObjectID *ref, Bit8u dir, ObjectID **recordMatched, U16 (SkWinCore::*pfnFinder)(ObjectID *ref, void *pvUser), void *pvUser, Bit16u alsoCreaturePossessions, Bit16u alsoContainedObjects);

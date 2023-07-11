@@ -9185,6 +9185,7 @@ Bit16u SkWinCore::IS_WALL_ORNATE_ALCOVE(Bit8u cls2)
 {
 	// return 0 if non-alcove.
 	// return 1 if an alcove.
+	// return 2 if a shop glass
 	// return 3 if an active sleep device.
 
 	//^0CEE:315E
@@ -41720,7 +41721,7 @@ X16 SkWinCore::_0cee_319e(ObjectID rl)
 	//^0CEE:319E
 	ENTER(2);
 	//^0CEE:31A2
-	if (_0cee_317f(rl) == 0)
+	if (IS_OBJECT_ALCOVE(rl) == 0)	// _0cee_317f
 		return 0;
 	//^0CEE:31B2
 	U8 bp01 = QUERY_CLS2_FROM_RECORD(rl);
@@ -46786,7 +46787,7 @@ void SkWinCore::DRAW_WALL(i16 iViewportCell)	// i16 xx
 	i8 iXDist = glbTabXAxisDistance[RCJ(23,iViewportCell)];	// bp07
 	i16 iYDist = glbTabYAxisDistance[RCJ(23,iViewportCell)];	// bp0c
 	//^32CB:4F5F
-	U8 bp01 = (iYDist > 1) ? 0x6f : 0x6e;	// SPX TODO: unknown GDAT values! never seen them in any GDAT
+	U8 bp01 = (iYDist > 1) ? GDAT_WALL_ORNATE__DATA_6F : GDAT_WALL_ORNATE__DATA_6E;	// SPX TODO: unknown GDAT values! never seen them in any GDAT
 	X16 si = 0;
 	X16 di = 0;
 	U16 bp0a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, bp01);
@@ -48092,7 +48093,8 @@ Bit8u *SkWinCore::_47eb_0048(shelf_memory info, Bit16u physPage0to3)
 }
 
 //^0CEE:317F
-X16 SkWinCore::_0cee_317f(ObjectID rl)
+//SPX: _0cee_317f renamed IS_OBJECT_ALCOVE
+X16 SkWinCore::IS_OBJECT_ALCOVE(ObjectID rl)
 {
 	//^0CEE:317F
 	ENTER(0);
@@ -48215,7 +48217,7 @@ i16 SkWinCore::_19f0_2165(X16 aa, i16 xx, i16 yy, i16 ss, i16 tt, i16 vv, i16 ww
 						//^19F0:2262
 						for (di = _4976_521e; di != OBJECT_END_MARKER && (si = di.DBType()) <= dbActuator; di = GET_NEXT_RECORD_LINK(di)) {
 							//^19F0:2268
-							if (_0cee_317f(di) == 0)
+							if (IS_OBJECT_ALCOVE(di) == 0)	// _0cee_317f
 								continue;
 							//^19F0:2273
 							if (di.Dir() == _4976_522e[0]) {

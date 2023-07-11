@@ -608,6 +608,9 @@ enum SkillLevel {
 
 #define GDAT_WALL_ORNATE__WINDOW			0x63
 
+#define GDAT_WALL_ORNATE__DATA_6E			0x6E	// used in DRAW_WALL
+#define GDAT_WALL_ORNATE__DATA_6F			0x6F	// used in DRAW_WALL
+
 #define GDAT_WALL_ORNATE__DATA_F0			0xF0
 #define GDAT_WALL_ORNATE__DATA_F1			0xF1
 
