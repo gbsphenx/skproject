@@ -1,6 +1,9 @@
 #include <StdAfx.h>
 #include <SkCodeParam.h>
 
+
+bool SkCodeParam::bDM1Mode = false;
+
 bool SkCodeParam::bUseDM2ExtendedMode = true;
 bool SkCodeParam::bUsePowerDebug = true;
 bool SkCodeParam::bUseFixedMode = true;

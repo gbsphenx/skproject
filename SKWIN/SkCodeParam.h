@@ -6,6 +6,10 @@
 class SkCodeParam
 {
 public:
+	//--- Specific game setup
+	static bool bDM1Mode;				// dungeon loaded is a native DM1 dungeon
+
+	//--- Options
 	static bool bUseDM2ExtendedMode;
 	static bool bUsePowerDebug;
 	static bool bUseFixedMode;

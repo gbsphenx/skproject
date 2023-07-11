@@ -9411,6 +9411,7 @@ _1ad5:
 									//^0CEE:1BF1
 									break;
 								}
+							case ACTUATOR_TYPE_CHAMPION_MIRROR: // SPX: Add for DM1 retrocompatibility / 0x7F: Activator, champion mirror
 							case ACTUATOR_TYPE_RESURECTOR: // 0x7e: 'Activator, resuscitation'
 								{
 									//^0CEE:1BF4
@@ -20617,6 +20618,12 @@ X16 SkWinCore::SELECT_CHAMPION(U16 xx, U16 yy, U16 dir, U16 mm)
 			iHeroType = refActuator->ActuatorData();
 			break;
 		}
+		// SPX: Add for 0x7F :Activator, champion mirror
+		if (xObject.DBType() == dbActuator && (refActuator = GET_ADDRESS_OF_ACTU(xObject))->ActuatorType() == ACTUATOR_TYPE_CHAMPION_MIRROR) { // 0x7F
+			//^2F3F:03BE
+			iHeroType = refActuator->ActuatorData();
+			break;
+		}
 		//^2F3F:03CD
 	}
 	//^2F3F:03DB
@@ -20813,7 +20820,8 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 			//^2FCF:1BF7
 			U16 bp1a = bp04->ActionType();
 			//^2FCF:1C04
-			if (glbChampionLeader == -1 && bp16 != 0x7e)
+			//if (glbChampionLeader == -1 && bp16 != 0x7e)
+			if (glbChampionLeader == -1 && (bp16 != ACTUATOR_TYPE_RESURECTOR && bp16 != ACTUATOR_TYPE_CHAMPION_MIRROR)) // SPX : Add 0x7F
 				//^2FCF:1C11
 				continue;
 			//^2FCF:1C14
@@ -39401,6 +39409,14 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	//SPX: ? a magical number to make "the game is damaged" while reading it. What was the purpose? ...
 	if (*(Bit16u *)bp26 == 0x8104)
 		return 0;
+
+	//SPX: Add control of DM1 gfx seed
+	if (*(Bit16u *)bp26 == 0x0063) // DM1
+		SkCodeParam::bDM1Mode = true;
+	else if (*(Bit16u *)bp26 == 0x0D00) // CSB
+		SkCodeParam::bDM1Mode = true;
+	// SPX
+
 	//^2066:25E4
 	FILE_SEEK(glbDataFileHandle, _4976_524a);
 	//^2066:25F8
@@ -39424,33 +39440,37 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	glbPlayerDir = (si >> 5) & 0x0003;
 	glbPlayerMap = 0;
 	//^2066:265B
-	__int16 bp10 = dunHeader->nMaps;
+	__int16 nMaps = dunHeader->nMaps;	// bp10
 	//^2066:2664
 	// SPX: Alloc map header (x16), capped to 64 maps (64*16 = 1024 = 0x400)
 	if (_4976_3b5d != 0) {
 		//^2066:266B
-		dunMapsHeaders = reinterpret_cast<Map_definitions *>(ALLOC_MEMORY_RAM(bp10 << 4, afUseUpper, 0x400));
+		dunMapsHeaders = reinterpret_cast<Map_definitions *>(ALLOC_MEMORY_RAM(nMaps << 4, afUseUpper, 0x400));
 	}
 
 	// - Map definitions
 
 	//^2066:2685
-	if (SKLOAD_READ(dunMapsHeaders, bp10 << 4) == 0)
+	if (SKLOAD_READ(dunMapsHeaders, nMaps << 4) == 0)
 		return 0;
 	//^2066:26A2
 	if (_4976_3b5d != 0) {
 		//^2066:26A9
-		dunMapColumnsSumArray = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(bp10 << 1, afUseUpper, 0x400));
+		dunMapColumnsSumArray = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(nMaps << 1, afUseUpper, 0x400));
 	}
 	//^2066:26C5
 	Bit16u bp0e = 0;
 	//^2066:26CC
-	for (si = 0; si < bp10; si++) {
+	for (si = 0; si < nMaps; si++) {
 		//^2066:26CE
 		dunMapColumnsSumArray[si] = bp0e;
 		//^2066:26DE
 		bp0e += dunMapsHeaders[si].Column();
 		//^2066:26F7
+	
+		// SPX: adjustment for DM1 mode : put flags for activating gfx for pits, doors, etc ...
+		if (SkCodeParam::bDM1Mode == true)
+			dunMapsHeaders[si].w2 = 0xFF;
 	}
 	//^2066:26FD
 	_4976_4cb4 = bp0e;
@@ -39559,11 +39579,11 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	if (_4976_3b5d != 0) {
 		//^2066:296A
 		// SPX: 0x400 = 32*32 tiles / bp10 = #maps / _4976_4cb4 = #cols for all maps
-		glbMapTileValue = reinterpret_cast<U8 ***>(ALLOC_MEMORY_RAM((_4976_4cb4 + bp10) * sizeof(void *), afUseUpper, 0x400));
+		glbMapTileValue = reinterpret_cast<U8 ***>(ALLOC_MEMORY_RAM((_4976_4cb4 + nMaps) * sizeof(void *), afUseUpper, 0x400));
 		//^2066:298A
-		Bit8u ***bp08 = &glbMapTileValue[bp10];
+		Bit8u ***bp08 = &glbMapTileValue[nMaps];
 		//^2066:299C
-		for (di = 0; di < bp10; di++) {
+		for (di = 0; di < nMaps; di++) {
 			//^2066:29A1
 			// MARK SPX
 			glbMapTileValue[di] = reinterpret_cast<U8 **>(bp08);
@@ -39609,7 +39629,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	//^2066:2AE4
 	for (Bit16u bp12 = 0; bp12 < MAXDEPTH; bp1c++, bp12++) {
 		//^2066:2AEB
-		for (Bit16u bp1e = 0; bp1e < bp10; bp1e++) {
+		for (Bit16u bp1e = 0; bp1e < nMaps; bp1e++) {
 			//^2066:2AF2
 			if (dunMapsHeaders[bp1e].Level() == bp12) {
 				//^2066:2B0A
@@ -44212,13 +44232,14 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 								break;
 							bp0c = GET_ADDRESS_OF_ACTU(di);
 							switch (bp0c->ActuatorType()) {
-								case ACTUATOR_TYPE_CREATURE_GENERATOR: // 0x2e: Creature generator
+								case ACTUATOR_TYPE_CREATURE_GENERATOR: // 0x2E: Creature generator
 									//^2676:049B
 									if (U8(bp2a >> 5) != ttWall)
 										break;
 									bp14[bp0c->ActuatorData()] = 1;
 									break;
-								case ACTUATOR_TYPE_RESURECTOR: // 0x7e: Activator, resuscitation
+								case ACTUATOR_TYPE_CHAMPION_MIRROR: // SPX: Add for DM1 retrocompatibility / 0x7F: Activator, champion mirror
+								case ACTUATOR_TYPE_RESURECTOR: // 0x7E: Activator, resuscitation
 									//^2676:04C1
 									MARK_DYN_LOAD((U8(bp0c->ActuatorData()) << 16) + 0x1600ffff); // Mark: Champions, xxx, all, all
 									break;
