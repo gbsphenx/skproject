@@ -1335,7 +1335,7 @@ protected:
 	i16 _0b36_1446(Picture *ref, i16 xx, i16 yy, U16 colorkey);
 	U16 _32cb_00f1(U16 xx, U16 yy, i16 zz);
 	U16 _32cb_0287(U16 xx, U16 yy, U16 zz);
-	void CLICK_WALL(U16 xx); // _121e_0003
+	void CLICK_WALL(U16 iClickSide); // _121e_0003
 	U16 _32cb_35c1(i16 *xx, i16 *yy, i16 zz, i16 ww);
 	i16 ROTATE_5x5_POS(i16 _5x5, U16 dir);
 	i16 QUERY_OBJECT_5x5_POS(ObjectID rl, U16 reldir);

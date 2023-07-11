@@ -39471,7 +39471,10 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	
 		// SPX: adjustment for DM1 mode : put flags for activating gfx for pits, doors, etc ...
 		if (SkCodeParam::bDM1Mode == true)
+		{
 			dunMapsHeaders[si].w2 = 0xFF;
+			dunMapsHeaders[si].w14 = (3 << 4); // tileset = 3 (keep)
+		}
 	}
 	//^2066:26FD
 	_4976_4cb4 = bp0e;
@@ -61478,15 +61481,34 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 				//^3A15:25E7
 				QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES, 0, SOUND_STD_TELEPORT_MESSAGE, 0x61, 0x80, bp2a, bp2c, 1);
 				break;
+			case ACTUATOR_TYPE_DM1_COUNTER: // SPX: retrocompatibility, add DM1 counter
+				// DM1 counter does not work the same as DM2 counter
+				printf("COUNTER VALUE = %d with EFFECT %d\n", bp04->ActuatorData(), ref->ActionType());
+				bp0c = (bp04->ActuatorData() == 0 || (bp04->ActuatorData() & 256) != 0) ? 1 : 0;
+				if (ref->ActionType() == 1) { // close
+					bp04->ActuatorData(bp04->ActuatorData()  - 1);
+				}
+				else if (ref->ActionType() == 0) { // open
+					if (bp04->OnceOnlyActuator() == 0 || bp04->ActuatorData() != 0) {
+						bp04->ActuatorData(bp04->ActuatorData() + 1);
+					}
+				}
+				printf("COUNTER VALUE NEW = %d\n", bp04->ActuatorData());
+				// then test if the counter equals 0, if so, trigger the counter actuator action
+				bp0e = (bp04->ActuatorData() == 0 || (bp04->ActuatorData() & 256) != 0) ? 1 : 0;
+				if (bp0e != 0)
+					break;
+				INVOKE_ACTUATOR(bp04, bp04->ActionType(), 0);
+				break;
 			case ACTUATOR_TYPE_COUNTER://^2606 // 0x1d -> 'Activator, counter'
 				//^3A15:2606
 				bp0c = (bp04->ActuatorData() == 0 || (bp04->ActuatorData() & 256) != 0) ? 1 : 0;
 				//^3A15:2630
-				if (ref->ActionType() == 1) {
+				if (ref->ActionType() == 1) { // close
 					//^3A15:263A
 					bp04->ActuatorData(bp04->ActuatorData() +1);
 				}
-				else if (ref->ActionType() == 0) {
+				else if (ref->ActionType() == 0) { // open
 					//^3A15:2654
 					if (bp04->OnceOnlyActuator() == 0 || bp04->ActuatorData() != 0) {
 						//^3A15:2673
@@ -61499,7 +61521,7 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 				if (bp0e == bp0c)
 					break;
 				//^3A15:26C6
-				if (bp04->ActionType() == 3) {
+				if (bp04->ActionType() == 3) { // step in : open / step out : close
 					//^3A15:26D8
 					INVOKE_ACTUATOR(bp04, (bp04->RevertEffect() == bp0e) ? 1 : 0, 0);
 				}
