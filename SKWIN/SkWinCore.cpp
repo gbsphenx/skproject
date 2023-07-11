@@ -20973,7 +20973,7 @@ _1d4d:
 
 				case ACTUATOR_TYPE_CHAMPION_MIRROR: // 0x7F -> DM1 'Activator, resuscitation'
 
-					if (bp04->OnceOnlyActuator() == 0 || ((glbPlayerDir +2) & 3) != dir)
+					if (((glbPlayerDir +2) & 3) != dir) // for DM1, just take condition of direction
 						break;
 					SELECT_CHAMPION(glbPlayerPosX, glbPlayerPosY, glbPlayerDir, glbPlayerMap);
 					bp28 = 1;
@@ -23199,46 +23199,46 @@ U16 SkWinCore::_32cb_0287(U16 xx, U16 yy, U16 zz)
 
 //^121E:0003
 // SPX: _121e_0003 renamed CLICK_WALL
-void SkWinCore::CLICK_WALL(U16 xx)
+void SkWinCore::CLICK_WALL(U16 iClickSide)
 {
 	//^121E:0003
 	ENTER(2);
 	//^121E:0009
-	U16 bp02 = 1;
+	U16 iDirDelta = 1;	// bp02
 	//^121E:000E
-	i16 di = glbPlayerPosX;
-	i16 si = glbPlayerPosY;
+	i16 iPosX = glbPlayerPosX;	// di
+	i16 iPosY = glbPlayerPosY;	// si
 	//^121E:0016
-	switch (xx) {
-		case 1:
+	switch (iClickSide) {
+		case 1: // click on left side
 			//^121E:002A
-			di += glbXAxisDelta[(glbPlayerDir +3) & 3];
-			si += glbYAxisDelta[(glbPlayerDir +3) & 3];
+			iPosX += glbXAxisDelta[(glbPlayerDir +3) & 3];
+			iPosY += glbYAxisDelta[(glbPlayerDir +3) & 3];
 			//^121E:004C
 			break;
 
-		case 3:
+		case 3:	// click in front of player
 			//^121E:004E
-			di += glbXAxisDelta[glbPlayerDir];
-			si += glbYAxisDelta[glbPlayerDir];
+			iPosX += glbXAxisDelta[glbPlayerDir];
+			iPosY += glbYAxisDelta[glbPlayerDir];
 			//^121E:0062
-			bp02 = 2;
+			iDirDelta = 2;
 			//^121E:0067
 			break;
 
-		case 2:
+		case 2: // click on right side
 			//^121E:0069
-			di += glbXAxisDelta[(glbPlayerDir +1) & 3];
-			si += glbYAxisDelta[(glbPlayerDir +1) & 3];
+			iPosX += glbXAxisDelta[(glbPlayerDir +1) & 3];
+			iPosY += glbYAxisDelta[(glbPlayerDir +1) & 3];
 			//^121E:0087
-			bp02 = 3;
+			iDirDelta = 3;
 
 			break;
 	}
 	//^121E:008C
-	if (di >= 0 && di < glbCurrentMapWidth && si >= 0 && si < glbCurrentMapHeight) {
+	if (iPosX >= 0 && iPosX < glbCurrentMapWidth && iPosY >= 0 && iPosY < glbCurrentMapHeight) {
 		//^121E:00A0
-		MOVE_RECORD_AT_WALL(di, si, (glbPlayerDir +bp02) & 3, OBJECT_NULL, glbLeaderHandPossession.object);
+		MOVE_RECORD_AT_WALL(iPosX, iPosY, (glbPlayerDir + iDirDelta) & 3, OBJECT_NULL, glbLeaderHandPossession.object);
 	}
 	//^121E:00BA
 	return;
