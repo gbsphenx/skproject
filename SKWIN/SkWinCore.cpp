@@ -20895,6 +20895,16 @@ _1cb6:
 					//^2FCF:1D10
 					break;
 
+				// SPX: addition for DM1 retrocompatibility
+				case ACTUATOR_TYPE_DM1_ITEM_EATER: // 0x04 -> 'Activator, item eater
+					printf("ITEM EATER: expected = %d / in hand = %d\n", bp18, GET_DISTINCTIVE_ITEMTYPE(si));
+					bp2c = (GET_DISTINCTIVE_ITEMTYPE(si) == bp18) ? 1 : 0;
+					di = (bp04->RevertEffect() == bp2c) ? 1 : 0;
+					if (bp2c == 0 || bp04->OnceOnlyActuator() == 0)
+						break;
+					DEALLOC_RECORD(REMOVE_OBJECT_FROM_HAND());
+					break;
+
 				case ACTUATOR_TYPE_PUSH_BUTTON_WALL_SWITCH: // 0x46 -> 'Activator, seal-able push button wall switch'
 					//^2FCF:1D13
 					bp14 = GET_ADDRESS_OF_TILE_RECORD(bp04->Xcoord(), bp04->Ycoord())->castToDoor();
@@ -20971,6 +20981,7 @@ _1d4d:
 					//^2FCF:1EAD
 					break;
 
+				// SPX: addition for DM1 retrocompatibility
 				case ACTUATOR_TYPE_CHAMPION_MIRROR: // 0x7F -> DM1 'Activator, resuscitation'
 
 					if (((glbPlayerDir +2) & 3) != dir) // for DM1, just take condition of direction
@@ -49396,12 +49407,36 @@ Bit8u SkWinCore::GET_FLOOR_DECORATION_OF_ACTUATOR(Actuator *ref)
 	}
 }
 
+// DM1:
+// Gold coin = 127, DM2 = 264
+// The DM1 activation list is different and static
+Bit16u SkWinCore::GET_DM1_DISTINCTIVE_ITEMTYPE(ObjectID recordLink)
+{
+	// get the object type of record in the form of uniquely identified number.
+	// e.g. it always returns 2 if you get any type of weapon Torch record.
+	// returns 511 if record is no meaningful to distinct.
+
+	if (recordLink != OBJECT_NULL) {
+		Bit8u bp01 = QUERY_CLS2_FROM_RECORD(recordLink);	// item type index
+		Bit16u di = recordLink.DBType();
+		if (di == DB_CATEGORY_MISC_ITEM)
+			return 119 + bp01;
+	}
+	else {
+		return 511;
+	}
+}
+
+
 //^0CEE:2391
 Bit16u SkWinCore::GET_DISTINCTIVE_ITEMTYPE(ObjectID recordLink)
 {
 	// get the object type of record in the form of uniquely identified number.
 	// e.g. it always returns 2 if you get any type of weapon Torch record.
 	// returns 511 if record is no meaningful to distinct.
+
+	if (SkCodeParam::bDM1Mode == true)
+		return GET_DM1_DISTINCTIVE_ITEMTYPE(recordLink);
 
 	//^0CEE:2391
 	//^0CEE:2397

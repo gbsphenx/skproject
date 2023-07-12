@@ -1131,8 +1131,9 @@ enum SkillLevel {
 #define ACTUATOR_TYPE_X02								0x02	// 02
 
 #define ACTUATOR_TYPE_ITEM_WATCHER						0x03	// 03
+#define ACTUATOR_TYPE_DM1_ITEM_EATER					0x04	// 04	unimplemented in DM2, quite similar to item watcher x03
 
-#define ACTUATOR_TYPE_DM1_COUNTER						0x06	// 06	unimplemented in DM2, make it work like counter x1D
+#define ACTUATOR_TYPE_DM1_COUNTER						0x06	// 06	unimplemented in DM2, different from actuator counter x1D
 
 #define ACTUATOR_TYPE_SOME_SHOOTER						0x07	// 07	unimplemented in DM2 ?
 #define ACTUATOR_TYPE_MISSILE_SHOOTER					0x08	// 08

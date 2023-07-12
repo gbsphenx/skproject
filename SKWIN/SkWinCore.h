@@ -1825,6 +1825,7 @@ protected:
 	ObjectID ALLOC_NEW_DBITEM(Bit16u itemspec);
 	Bit8u GET_WALL_DECORATION_OF_ACTUATOR(Actuator *ref);	
 	Bit8u GET_FLOOR_DECORATION_OF_ACTUATOR(Actuator *ref);
+	Bit16u GET_DM1_DISTINCTIVE_ITEMTYPE(ObjectID recordLink);	// SPX DM1 retrocompatibiliyu
 	Bit16u GET_DISTINCTIVE_ITEMTYPE(ObjectID recordLink);
 	void INVOKE_ACTUATOR(Actuator *ref, Bit16u actionType, __int16 delayPlus);
 	U16 _1c9a_0694(ObjectID *ref, void *pv);	
