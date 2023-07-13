@@ -14093,6 +14093,8 @@ U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, Bit16u xx)
 		if (!SkCodeParam::bUseDM2ExtendedMode)
 			return 1;
 
+		printf("Number of charges = %d\n", ADD_ITEM_CHARGE(si, 0));
+
 		// Money value
 		memset(strMoneyValue, 0, 10);
 		statValue = QUERY_GDAT_DBSPEC_WORD_VALUE(si, GDAT_ITEM_STATS_MONEY_VALUE);
@@ -63172,31 +63174,31 @@ void SkWinCore::BURN_PLAYER_LIGHTING_ITEMS()
 	//^24A5:069B
 	ENTER(8);
 	//^24A5:06A1
-	X16 bp08 = 0;
-	X16 si = glbChampionsCount;
-	if (glbNextChampionNumber  != 0)
-		--si;
-	Champion *champion = glbChampionSquad;	//*bp04
-	for (; si-- != 0; champion++) {
+	X16 bRecomputeLight = 0;
+	X16 iLocalChampionCount = glbChampionsCount;
+	if (glbNextChampionNumber != 0)
+		--iLocalChampionCount;
+	Champion *xChampion = glbChampionSquad;	//*bp04
+	for (; iLocalChampionCount-- != 0; xChampion++) {
 		//^24A5:06BC
-		X16 bp06 = 2;
-		for (; bp06-- != 0; ) {
+		X16 iInventorySlot = 2;
+		for (; iInventorySlot-- != 0; ) { // go from inventory position 2 to 0 (hands)
 			//^24A5:06C3
-			ObjectID di;
-			if ((QUERY_GDAT_DBSPEC_WORD_VALUE(di = champion->Possess(bp06), 0) & 0x10) == 0)
+			ObjectID oItem = OBJECT_NULL; // SPX: add default init
+			if ((QUERY_GDAT_DBSPEC_WORD_VALUE(oItem = xChampion->Possess(iInventorySlot), 0) & ITEM_FLAG_PRODUCE_LIGHT) == 0) // if item does not have 0x10 flag, then it does not produces light.
 				continue;
-			if (ADD_ITEM_CHARGE(di, 0) == 0)
+			if (ADD_ITEM_CHARGE(oItem, 0) == 0)	// get current charge, if = 0, then do nothing
 				continue;
-			if (ADD_ITEM_CHARGE(di, -1) == 0)
-				SET_ITEM_IMPORTANCE(di, 0);
+			if (ADD_ITEM_CHARGE(oItem, -1) == 0) // decrease one charge
+				SET_ITEM_IMPORTANCE(oItem, 0);
 			//^24A5:0709
-			bp08 = 1;	// Item charge has been changed
+			bRecomputeLight = 1;	// Item charge has been changed
 			//^24A5:070E
 		}
 		//^24A5:0718
 	}
 	//^24A5:0724
-	if (bp08 != 0)
+	if (bRecomputeLight != 0)
 		RECALC_LIGHT_LEVEL();
 	//^24A5:072E
 	return;
@@ -63426,7 +63428,7 @@ _00a4:
 			, (Bitu)(Bit8u)glbTabCreaturesInfo[1].b32
 			, (Bitu)(Bit8u)glbTabCreaturesInfo[1].b33
 			));
-		if ((X16(glbGameTick) & 0x1ff) == 0)
+		if ((X16(glbGameTick) & 0x1ff) == 0)	// every 511 tick, burn lighting items
 			//^13AE:01BB
 			BURN_PLAYER_LIGHTING_ITEMS();
 		//^13AE:01C0
