@@ -61527,7 +61527,7 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 				//^3A15:25E7
 				QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES, 0, SOUND_STD_TELEPORT_MESSAGE, 0x61, 0x80, bp2a, bp2c, 1);
 				break;
-			case ACTUATOR_TYPE_DM1_COUNTER: // SPX: retrocompatibility, add DM1 counter
+			case ACTUATOR_TYPE_DM1_COUNTER: // SPX: retrocompatibility, DM1 counter
 				// DM1 counter does not work the same as DM2 counter
 				printf("COUNTER VALUE = %d with EFFECT %d\n", bp04->ActuatorData(), ref->ActionType());
 				bp0c = (bp04->ActuatorData() == 0 || (bp04->ActuatorData() & 256) != 0) ? 1 : 0;
@@ -61950,6 +61950,35 @@ void SkWinCore::ACTUATE_FLOOR_MECHA(Timer *ref)
 					bp10, 
 					ref->ActionType());
 				break;
+
+			// SPX : DM1 retrocompatibility : Creature generator
+			case ACTUATOR_FLOOR_TYPE__DM1_CREATURE_GENERATOR:
+				{
+					int iLocationX = 0;
+					int iLocationY = 0;
+					U16 iDirection = 0;
+					U16 iHealthMultiplier = 7;
+					ObjectID oNewCreature = OBJECT_NULL;
+					//if (ref->ActionType() != 0)
+					//	break;
+//					iLocationX = bp04->Xcoord();
+//					iLocationY = bp04->Ycoord();
+					// location of creature to generate does not come from actuator data, but from current actuator location
+					iLocationX = bp0a;
+					iLocationY = di;
+					iDirection = (bp04->OnceOnlyActuator() == 0) ? RAND02() : (bp04->ActionType());
+					oNewCreature = ALLOC_NEW_CREATURE(bp04->ActuatorData(), iHealthMultiplier, iDirection, iLocationX, iLocationY);
+					if (bp04->RevertEffect() != 0 && oNewCreature != OBJECT_NULL) {
+						//^3A15:25B4
+						GET_ADDRESS_OF_RECORD(oNewCreature)->castToCreature()->w8 = bp04->Delay();
+					}
+					//^3A15:25D3
+					if (bp04->SoundEffect() == 0)
+						break;
+					//^3A15:25E7
+					QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES, 0, SOUND_STD_TELEPORT_MESSAGE, 0x61, 0x80, iLocationX, iLocationY, 1);
+					break;
+				}
 			case ACTUATOR_FLOOR_TYPE__PARTY_TELEPORTER://^1958 // 0x2E -> '-'
 				//^3A15:1958
 				bp12 = glbCurrentMapIndex;
