@@ -1476,6 +1476,13 @@ namespace DM2Internal {
 		__int32 dw0;
 		Bit16u w4;
 	};
+
+	// SPX: structure for converting DM1 item to DM2 in activation list (item used by actuator)
+	struct DM1ItemConv {
+		Bit8u iItemDB;	// DM2 corresponding category
+		Bit8u iItemID;	// ID within DB
+	};
+
 	// SPX: sk03a2 renamed AIDefinition
 	struct AIDefinition { // 36 bytes
 		Bit16u w0AIFlags;		// @0 // flags

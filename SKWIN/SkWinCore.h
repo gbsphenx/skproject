@@ -848,6 +848,9 @@ protected:
 	CreatureCommandAnimation	*tlbCreaturesActionsGroupSets; // [0..471] // (_4976_5fda) Item 01-00-00 part 2 actions group sets
 	CreatureAnimationFrame	*tlbCreaturesAnimationSequences; // [0..517] // (_4976_5fde)	Item 01-00-00 part 1 animations sequences
 	U16		*tlbCreaturesActionsGroupOffsets; // [0..41]  // (_4976_5fe2) Item 01-00-00 part 3 groups beginning offsets
+
+	DM1ItemConv	glbDM1ItemConv[200];	// SPX: table for DM1 activator item conversion list
+	
 	//}}SKSAVE_DESORTED_VARS
 
 public:
@@ -856,6 +859,7 @@ public:
 // SPX: New procedures here
 	X16	EXTENDED_LOAD_SPELLS_DEFINITION(void);
 	X16 EXTENDED_LOAD_AI_DEFINITION(void);
+	X16	EXTENDED_LOAD_DM1_ITEM_CONVERSION_LIST(void);
 
 	const char *getXActrName(int x);
 	CString getSpellTypeName(U8 spelltype);

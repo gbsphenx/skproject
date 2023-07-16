@@ -182,6 +182,21 @@ void DM2DOS_R_BA7(x16 eaxw)
 
 // SPX: New procedures here
 
+X16
+SkWinCore::EXTENDED_LOAD_DM1_ITEM_CONVERSION_LIST(void)
+{
+	Bit16u iIndex = 0;
+	Bit16u iBaseIndexGroup = 0;
+	// KEYS
+	iBaseIndexGroup = 176;
+	for (iIndex = 0; iIndex < 16; iIndex++)
+	{
+		glbDM1ItemConv[iBaseIndexGroup+iIndex].iItemDB = DB_CATEGORY_MISC_ITEM;
+		glbDM1ItemConv[iBaseIndexGroup+iIndex].iItemID = 9 + iIndex;	// 9 = IRON KEY
+	}
+	//glbDM1ItemConv[];
+	return 0;
+}
 
 X16
 SkWinCore::EXTENDED_LOAD_SPELLS_DEFINITION(void)
@@ -49422,17 +49437,28 @@ Bit8u SkWinCore::GET_FLOOR_DECORATION_OF_ACTUATOR(Actuator *ref)
 // The DM1 activation list is different and static
 Bit16u SkWinCore::GET_DM1_DISTINCTIVE_ITEMTYPE(ObjectID recordLink)
 {
+	X16 iSearchIndex = 0;
 	// get the object type of record in the form of uniquely identified number.
 	// e.g. it always returns 2 if you get any type of weapon Torch record.
 	// returns 511 if record is no meaningful to distinct.
 
-	if (recordLink != OBJECT_NULL) {
-		Bit8u bp01 = QUERY_CLS2_FROM_RECORD(recordLink);	// item type index
-		Bit16u di = recordLink.DBType();
-		if (di == DB_CATEGORY_MISC_ITEM)
-			return 119 + bp01;
+	if (recordLink != OBJECT_NULL)
+	{
+		Bit8u iItemID = QUERY_CLS2_FROM_RECORD(recordLink);	// item type index
+		Bit16u iItemDB = recordLink.DBType();
+		//if (di == DB_CATEGORY_MISC_ITEM)
+		//	return 119 + bp01;
+		// Search through the table of conversion item to get the DM1 item value
+		for (iSearchIndex = 0; iSearchIndex < 200; iSearchIndex++)
+		{
+			if (iItemDB == glbDM1ItemConv[iSearchIndex].iItemDB &&
+				iItemID == glbDM1ItemConv[iSearchIndex].iItemID)
+				return iSearchIndex;
+			// SPX: TODO : special state for multi-state items (compass, torches, charged/discharged items)
+		}
 	}
-	else {
+	else 
+	{
 		return 511;
 	}
 }
@@ -63591,6 +63617,7 @@ i16 SkWinCore::FIRE_MAIN(i16 argc, char **argv, char **env) //#DS=4976
 
 	// SPX: Add some more init here, just before starting the GAME_LOOP
 	EXTENDED_LOAD_SPELLS_DEFINITION();
+	EXTENDED_LOAD_DM1_ITEM_CONVERSION_LIST();
 
 	while (true) {
 		GAME_LOOP();
