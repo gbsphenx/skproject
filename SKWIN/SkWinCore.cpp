@@ -20859,6 +20859,8 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 					//^2FCF:1C5F
 					break;
 
+				// SPX: removed native DM2 x01 case for activating back DM1 push button x01
+					/*
 				case ACTUATOR_TYPE_X01: // 0x01 -> ?
 					//^2FCF:1C62
 					di = 0;
@@ -20869,6 +20871,7 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 						continue;
 					//^2FCF:1C76
 					break;
+					*/
 
 				case ACTUATOR_TYPE_X02: // 0x02 -> ?
 					//^2FCF:1C7C
@@ -20921,6 +20924,7 @@ _1cb6:
 
 					goto _1d4d;
 
+				case ACTUATOR_TYPE_DM1_WALL_SWITCH: // SPX: Add DM1 retrocompatibility : 0x01
 				case ACTUATOR_TYPE_WALL_SWITCH: // 0x18 -> 'Activator, push button wall switch'
 					//^2FCF:1D4D
 _1d4d:

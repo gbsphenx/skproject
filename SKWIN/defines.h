@@ -1130,6 +1130,8 @@ enum SkillLevel {
 #define ACTUATOR_TYPE_X01								0x01	// 01
 #define ACTUATOR_TYPE_X02								0x02	// 02
 
+#define ACTUATOR_TYPE_DM1_WALL_SWITCH					0x01	// 01	unimplemented in DM1, similar to 24 (wall switch)
+
 #define ACTUATOR_TYPE_ITEM_WATCHER						0x03	// 03
 #define ACTUATOR_TYPE_DM1_ITEM_EATER					0x04	// 04	unimplemented in DM2, quite similar to item watcher x03
 
