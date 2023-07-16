@@ -420,7 +420,9 @@ namespace DMEncyclopaedia {
 			val <<= 7;
 			w2 |= val;
 		}
-		U8 OnceOnlyActuator() const { return (w4 >> 2)&1; } // M!4,2,01
+		U8 OnceOnlyActuator() const { 
+			return (w4 >> 2)&1; 
+		} // M!4,2,01
 		void OnceOnlyActuator(U16 val) {
 			val &= 1;
 			w4 &= 0xfffb;

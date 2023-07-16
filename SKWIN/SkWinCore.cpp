@@ -9604,7 +9604,7 @@ Bit16u SkWinCore::QUERY_ORNATE_ANIM_FRAME(Bit8u cls1, Bit8u cls2, Bit32u tick, B
 // SPX: _0cee_1dbe renamed SUMMARIZE_STONE_ROOM
 void SkWinCore::SUMMARIZE_STONE_ROOM(skxxx6 *ref, Bit16u ww, Bit16u xx, Bit16u yy)
 {
-	// CSBwinSimilarity: SummarizeStoneRoom
+	// CSBWin:Codea59a.cpp/SummarizeStoneRoom
 
 	//^0CEE:1DBE
 	ENTER(36);
@@ -14690,7 +14690,7 @@ void SkWinCore::REFRESH_PLAYER_STAT_DISP(i16 player)
 			}
 			else {
 				//^2E62:0938
-				bp12 = champion->Possess(1);
+				bp12 = champion->Possess(INVENTORY_HAND_LEFT);
 			}
 			//^2E62:0940
 			//^2E62:0943
@@ -16493,12 +16493,16 @@ void SkWinCore::_2f3f_04ea(Bit16u xx, Bit16u yy, Bit16u dir, Bit16u zz, Bit16u e
 				//^2F3F:0667
 				Actuator *bp08 = GET_ADDRESS_OF_ACTU(di);
 				//^2F3F:0674
-				if (bp08->ActuatorType() == ACTUATOR_TYPE_RESURECTOR
-					|| bp08->ActuatorType() == ACTUATOR_TYPE_CHAMPION_MIRROR) // SPX: handle DM1 Champion Mirror too
+				if (bp08->ActuatorType() == ACTUATOR_TYPE_RESURECTOR)
 				{
 					//^2F3F:0683
 					bp08->OnceOnlyActuator(0);
 					//^2F3F:0688
+					break;
+				}
+				else if (bp08->ActuatorType() == ACTUATOR_TYPE_CHAMPION_MIRROR) // SPX: handle DM1 Champion Mirror too
+				{
+					bp08->ActiveStatus(1); // change to "inactive", different from the "once only" status
 					break;
 				}
 			}
@@ -20622,7 +20626,7 @@ X16 SkWinCore::SELECT_CHAMPION(U16 xx, U16 yy, U16 dir, U16 mm)
 			break;
 		}
 		// SPX: Add for 0x7F :Activator, champion mirror
-		if (xObject.DBType() == dbActuator && (refActuator = GET_ADDRESS_OF_ACTU(xObject))->ActuatorType() == ACTUATOR_TYPE_CHAMPION_MIRROR) { // 0x7F
+		else if (xObject.DBType() == dbActuator && (refActuator = GET_ADDRESS_OF_ACTU(xObject))->ActuatorType() == ACTUATOR_TYPE_CHAMPION_MIRROR) { // 0x7F
 			//^2F3F:03BE
 			iHeroType = refActuator->ActuatorData();
 			break;
@@ -20986,7 +20990,7 @@ _1d4d:
 				// SPX: addition for DM1 retrocompatibility
 				case ACTUATOR_TYPE_CHAMPION_MIRROR: // 0x7F -> DM1 'Activator, resuscitation'
 
-					if (((glbPlayerDir +2) & 3) != dir) // for DM1, just take condition of direction
+					if (bp04->ActiveStatus() == 1 || ((glbPlayerDir +2) & 3) != dir) // for DM1, just take condition of direction
 						break;
 					SELECT_CHAMPION(glbPlayerPosX, glbPlayerPosY, glbPlayerDir, glbPlayerMap);
 					bp28 = 1;
@@ -50983,6 +50987,7 @@ CreatureAnimationFrame* SkWinCore::_4937_0036(Bit16u xx, Bit16u *yy)
 //SPX: _1c9a_198e renamed APPLY_CREATURE_POISON_RESISTANCE
 Bit16u SkWinCore::APPLY_CREATURE_POISON_RESISTANCE(ObjectID recordLink, Bit16u iPoisonDamage)
 {
+	//CSBWin:Code11f52.cpp/TAG00bbbe/DeterminePoisonDamage
 	//^1C9A:198E
 	//^1C9A:1992
 	if (iPoisonDamage != 0) {

@@ -74,6 +74,7 @@ BEGIN
         MENUITEM "&Windows Multimedia",         40005
         MENUITEM "&DirectSound/DirectSound3D",  40010
         MENUITEM "Open&AL",                     40008
+        MENUITEM "Alle&gro",                    40006
         MENUITEM "--- DirectSound BufferFlag",  40101, GRAYED, MENUBARBREAK
         MENUITEM "(Default)",                   40028
         MENUITEM "Hardware Buffer (LOCHARDWARE)", 40029

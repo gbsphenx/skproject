@@ -10,6 +10,7 @@
 #define ID_VIDEO_2X                     40003
 #define ID_VIDEO_4X                     40004
 #define ID_SOUND_WINMM                  40005
+#define ID_SOUND_ALLEGRO                40006
 #define ID_SOUND_DIRECTSOUND            40007
 #define ID_SOUND_OPENAL                 40008
 #define ID_SOUND_WINDOWSMULTIMEDIA      40009

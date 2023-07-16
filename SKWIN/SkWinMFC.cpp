@@ -18,6 +18,12 @@
 CComModule _Module;
 #endif
 
+
+// SPX: added to handle another sound method working for Windows 10
+#include "allegro5/allegro5.h"
+#include "allegro5/allegro_audio.h"
+#include "allegro5/allegro_acodec.h"
+
 // CSkApp
 
 int CSkApp::ML()
@@ -442,6 +448,11 @@ void CSkWinMFC::SndPlayLo(const U8 *buff, U32 buffSize, i8 dX, i8 dY)
 				sboa.Play(pb);
 				break;
 			}
+		case 4: // allegro
+			{
+				// to be implemented
+				break;
+			}
 	}
 }
 
@@ -620,6 +631,8 @@ void CSkWinMFC::OnVideo1x(UINT nID) {
 		case ID_SOUND_WINMM: sblast = 1; break;
 		case ID_SOUND_DS: sblast = 2; break;
 		case ID_SOUND_OPENAL: sblast = 3; break;
+		case ID_SOUND_ALLEGRO: sblast = 4; break;
+
 		case ID_DS_BF_0: sbdsbf = 0; break;
 		case ID_DS_BF_HARD: sbdsbf = 1; break;
 		case ID_DS_BF_SOFT: sbdsbf = 2; break;
@@ -745,6 +758,7 @@ void CSkWinMFC::OnUpdateVideo1x(CCmdUI *pCmdUI) {
 		case ID_SOUND_WINMM: pCmdUI->SetRadio(sblast == 1); break;
 		case ID_SOUND_DS: pCmdUI->SetRadio(sblast == 2); break;
 		case ID_SOUND_OPENAL: pCmdUI->SetRadio(sblast == 3); break;
+		case ID_SOUND_ALLEGRO: pCmdUI->SetRadio(sblast == 4); break;
 		case ID_DS_BF_0: pCmdUI->SetRadio(sbdsbf == 0); break;
 		case ID_DS_BF_HARD: pCmdUI->SetRadio(sbdsbf == 1); break;
 		case ID_DS_BF_SOFT: pCmdUI->SetRadio(sbdsbf == 2); break;
