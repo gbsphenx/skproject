@@ -39493,7 +39493,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 		// SPX: adjustment for DM1 mode : put flags for activating gfx for pits, doors, etc ...
 		if (SkCodeParam::bDM1Mode == true)
 		{
-			dunMapsHeaders[si].w2 = 0xFF;
+			dunMapsHeaders[si].bGfxFlags = MAPGFX_FLAG__PIT_UPPER_ROOF | MAPGFX_FLAG__PIT_LOWER_GROUND | MAPGFX_FLAG__STAIRS_GOING_UP | MAPGFX_FLAG__STAIRS_GOING_DOWN | MAPGFX_FLAG__TELEPORTER | MAPGFX_FLAG__DOOR_0 | MAPGFX_FLAG__DOOR_1;
 			dunMapsHeaders[si].w14 = (3 << 4); // tileset = 3 (keep)
 		}
 	}

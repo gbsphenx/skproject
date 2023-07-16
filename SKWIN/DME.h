@@ -128,29 +128,29 @@ namespace DMEncyclopaedia {
 	};
 	// 
 	struct Map_definitions {
-		U16 w0; // Offset of map data i
-		U16 w2; // nused in Dungeon Master and Chaos Strikes Back. Some values in Dungeon Master II.
-		U16 w4; // Unused
-		U8 b6; // Map offset x
-		U8 b7; // Map offset y
-		U16 w8; // Map size
-		U16 w10; // Number of graphics
-		U16 w12; // 1 U16:
-		U16 w14; // 1 U16: Door graphics.
+		U16 w0; // w0: Offset of map data i
+		U16 bGfxFlags; // w2: unused in Dungeon Master and Chaos Strikes Back. Some values in Dungeon Master II.
+		U16 w4; // w4: Unused
+		U8 b6; // b6: Map offset x
+		U8 b7; // b7: Map offset y
+		U16 w8; // w8: Map size
+		U16 w10; // w10: Number of graphics
+		U16 w12; // w12: 1 U16:
+		U16 w14; // w14: 1 U16: Door graphics.
 
 		U16 Offset() const { return w0; }
 
-		U16 UseUpperPitfall() const { return (w2&1); }
-		U16 UseLowerPitfall() const { return (w2 >> 1)&1; }
-		U16 w2_2_2() const { return (w2 >> 2)&1; }
-		U16 UseUpStaircase() const { return (w2 >> 3)&1; }
-		U16 UseDownStaircase() const { return (w2 >> 4)&1; }
-		U16 UseTeleporter() const { return (w2 >> 5)&1; }
-		U16 w2_6_6() const { return (w2 >> 6)&1; }
-		U16 UseDoor0() const { return (w2 >> 7)&1; }
-		U16 UseDoor1() const { return (w2 >> 8)&1; }
-		U8 b2_7_7() const { return (U8)((w2 >> 7)&1); }
-		U8 b3_0_0() const { return (U8)((w2 >> 8)&1); }
+		U16 UseUpperPitfall() const { return (bGfxFlags&1); }
+		U16 UseLowerPitfall() const { return (bGfxFlags >> 1)&1; }
+		U16 w2_2_2() const { return (bGfxFlags >> 2)&1; }
+		U16 UseUpStaircase() const { return (bGfxFlags >> 3)&1; }
+		U16 UseDownStaircase() const { return (bGfxFlags >> 4)&1; }
+		U16 UseTeleporter() const { return (bGfxFlags >> 5)&1; }
+		U16 w2_6_6() const { return (bGfxFlags >> 6)&1; }
+		U16 UseDoor0() const { return (bGfxFlags >> 7)&1; }
+		U16 UseDoor1() const { return (bGfxFlags >> 8)&1; }
+		U8 b2_7_7() const { return (U8)((bGfxFlags >> 7)&1); }
+		U8 b3_0_0() const { return (U8)((bGfxFlags >> 8)&1); }
 
 		U8 MapOffsetX() const { return b6; }
 		U8 MapOffsetY() const { return b7; }

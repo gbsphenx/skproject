@@ -1065,6 +1065,17 @@ enum SkillLevel {
 #define DRAW_FLAG_FLIP_1						0x0001	// One should be vertical and the other horizontal ..
 #define DRAW_FLAG_FLIP_2						0x0002
 
+// MAP GRAPHICS FLAGS
+#define MAPGFX_FLAG__PIT_UPPER_ROOF				0x0001
+#define MAPGFX_FLAG__PIT_LOWER_GROUND			0x0002
+#define MAPGFX_FLAG__X3							0x0004
+#define MAPGFX_FLAG__STAIRS_GOING_UP			0x0008
+#define MAPGFX_FLAG__STAIRS_GOING_DOWN			0x0010
+#define MAPGFX_FLAG__TELEPORTER					0x0020
+#define MAPGFX_FLAG__X6							0x0040
+#define MAPGFX_FLAG__DOOR_0						0x0080
+#define MAPGFX_FLAG__DOOR_1						0x0100
+
 //------------------------------------------------------------------------------
 // Champions flags
 
