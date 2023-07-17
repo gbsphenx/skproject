@@ -857,9 +857,9 @@ public:
 	SkWinCore();
 
 // SPX: New procedures here
+	X16	EXTENDED_LOAD_DM1_ITEM_CONVERSION_LIST(void);
 	X16	EXTENDED_LOAD_SPELLS_DEFINITION(void);
 	X16 EXTENDED_LOAD_AI_DEFINITION(void);
-	X16	EXTENDED_LOAD_DM1_ITEM_CONVERSION_LIST(void);
 
 	const char *getXActrName(int x);
 	CString getSpellTypeName(U8 spelltype);

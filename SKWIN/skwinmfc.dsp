@@ -80,7 +80,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept /libpath:"./al/libs/Win32"
+# ADD LINK32 allegro_primitives.lib allegro.lib allegro_audio.lib alleg.lib allegro_acodec.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept /libpath:"./al/libs/Win32" /libpath:"./allegro/lib" /libpath:"./allegro5/lib"
 # SUBTRACT LINK32 /pdb:none
 
 !ENDIF 
@@ -143,6 +143,10 @@ SOURCE=.\SkWin.cpp
 # Begin Source File
 
 SOURCE=.\SkWinCore.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\SkWinCore2.cpp
 # End Source File
 # Begin Source File
 

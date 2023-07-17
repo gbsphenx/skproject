@@ -183,22 +183,6 @@ void DM2DOS_R_BA7(x16 eaxw)
 // SPX: New procedures here
 
 X16
-SkWinCore::EXTENDED_LOAD_DM1_ITEM_CONVERSION_LIST(void)
-{
-	Bit16u iIndex = 0;
-	Bit16u iBaseIndexGroup = 0;
-	// KEYS
-	iBaseIndexGroup = 176;
-	for (iIndex = 0; iIndex < 16; iIndex++)
-	{
-		glbDM1ItemConv[iBaseIndexGroup+iIndex].iItemDB = DB_CATEGORY_MISC_ITEM;
-		glbDM1ItemConv[iBaseIndexGroup+iIndex].iItemID = 9 + iIndex;	// 9 = IRON KEY
-	}
-	//glbDM1ItemConv[];
-	return 0;
-}
-
-X16
 SkWinCore::EXTENDED_LOAD_SPELLS_DEFINITION(void)
 {
 //#if DM2_EXTENDED_MODE == 1
@@ -49457,10 +49441,7 @@ Bit16u SkWinCore::GET_DM1_DISTINCTIVE_ITEMTYPE(ObjectID recordLink)
 			// SPX: TODO : special state for multi-state items (compass, torches, charged/discharged items)
 		}
 	}
-	else 
-	{
-		return 511;
-	}
+	return 511;
 }
 
 
