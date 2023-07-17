@@ -1288,4 +1288,14 @@ typedef enum
 */
 
 
+
+//------------------------------------------------------------------------------
+//	SPECIFIC FUNCTIONS
+//------------------------------------------------------------------------------
+
+// for PLACE_OR_REMOVE_OBJECT_IN_ROOM
+#define FCT_REMOVE_OFF					0
+#define FCT_PLACE_ON					1
+
+
 #endif // __GENERAL_DEFINE__

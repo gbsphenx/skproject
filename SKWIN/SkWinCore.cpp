@@ -2766,6 +2766,8 @@ GenericRecord *SkWinCore::GET_ADDRESS_OF_RECORD(ObjectID rl)
 //^0CEE:0002
 void SkWinCore::CHANGE_CURRENT_MAP_TO(Bit16u new_map)
 {
+	// CSBWin:CSBCode.cpp/LoadLevel (TAG00a9d4)
+
 	//^0CEE:0002
 	__int16 si = new_map;
 	if (glbCurrentMapIndex == si)
@@ -15644,11 +15646,11 @@ void SkWinCore::PERFORM_TURN_SQUAD(Bit16u xx)
 		return;
 	}
 	//^12B4:01ED
-	_2fcf_2444(glbPlayerPosX, glbPlayerPosY, OBJECT_NULL, 1, 0, 0);
+	PLACE_OR_REMOVE_OBJECT_IN_ROOM(glbPlayerPosX, glbPlayerPosY, OBJECT_NULL, 1, FCT_REMOVE_OFF, 0);
 	//^12B4:0205
 	ROTATE_SQUAD((glbPlayerDir + ((xx == 2) ? 1 : 3)) & 3);
 	//^12B4:0224
-	_2fcf_2444(glbPlayerPosX, glbPlayerPosY, OBJECT_NULL, 1, 1, 0);
+	PLACE_OR_REMOVE_OBJECT_IN_ROOM(glbPlayerPosX, glbPlayerPosY, OBJECT_NULL, 1, FCT_PLACE_ON, 0);
 	//^12B4:023C
 	return;
 }
@@ -16023,7 +16025,7 @@ void SkWinCore::TAKE_OBJECT(ObjectID rl, U16 xx)
 		//^2C1D:0712
 		PROCESS_ITEM_BONUS(glbChampionLeader, si, -1, 1);
 		//^2C1D:0722
-		_2fcf_2444(glbPlayerPosX, glbPlayerPosY, -1, 1, 1, 0);
+		PLACE_OR_REMOVE_OBJECT_IN_ROOM(glbPlayerPosX, glbPlayerPosY, -1, 1, FCT_PLACE_ON, 0);
 
 // SPX: that part is for giving item sound when taking it
 		if (SkCodeParam::bUseExtendedSound)
@@ -49535,8 +49537,18 @@ ObjectID *SkWinCore::_1c9a_06bd(ObjectID recordLink, Bit16u ss, Bit16u dir)
 }
 
 //^2FCF:2444
-void SkWinCore::_2fcf_2444(__int16 xpos, __int16 ypos, ObjectID recordLink, Bit16u ss, Bit16u tt, Bit16u uu)
+// SPX: _2fcf_2444	renamed	PLACE_OR_REMOVE_OBJECT_IN_ROOM			(CSBWin:Code11f52.cpp/PlaceOrRemoveObjectInRoom)
+void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(__int16 xpos, __int16 ypos, ObjectID recordLink, Bit16u ss, Bit16u place, Bit16u uu)
 {
+	// CSBWin:Code11f52.cpp/PlaceOrRemoveObjectInRoom (TAG013380)
+	// PlaceOrRemoveObjectInRoom(
+    //                   i32 mapX,
+    //                   i32 mapY,
+    //                   RN object,          // RNnul refers to the party
+    //                   bool unchangedRoom, // object is in same room as before
+    //                   bool place,         // place object rather than remove
+    //                   MMRECORD *pmmr)
+
 	// you placed an item at floor.		_2fcf_2444(  3,  5,2801,1,1,0) @ 22
 	// you took an item from floor.		_2fcf_2444(  3,  5,2801,1,0,0) @ 22
 	//									_2fcf_2444(  3,  5,6009,1,0,0) @ 22
@@ -49554,6 +49566,8 @@ void SkWinCore::_2fcf_2444(__int16 xpos, __int16 ypos, ObjectID recordLink, Bit1
 	//						_2fcf_2444(  3,  5,10EB,1,0,0) @ 22
 
 	// creature has dropped	_2fcf_2444(  3,  3,6009,0,1,0) @ 22
+
+	//CSBWin:/PlaceOrRemoveObjectInRoom (TAG013380)
 
 	//^2FCF:2444
 	//^2FCF:244A
@@ -49578,7 +49592,7 @@ void SkWinCore::_2fcf_2444(__int16 xpos, __int16 ypos, ObjectID recordLink, Bit1
 			//^2FCF:2495
 			AIDefinition *bp0c = QUERY_CREATURE_AI_SPEC_FROM_TYPE(bp08->CreatureType());
 			//^2FCF:24A9
-			if (uu != 0 && (tt == 0 || (bp0c->IsStaticObject() != 0 && bp0c->w30_11_11() != 0))) {
+			if (uu != 0 && (place == FCT_REMOVE_OFF || (bp0c->IsStaticObject() != 0 && bp0c->w30_11_11() != 0))) {
 				//^2FCF:24C7
 				bp1c = &bp08->possession;
 			}
@@ -49590,7 +49604,7 @@ void SkWinCore::_2fcf_2444(__int16 xpos, __int16 ypos, ObjectID recordLink, Bit1
 		di = 0xffff;
 	}
 	//^2FCF:24DF
-	if (tt == 0 && bp0e != 0xffff) {
+	if (place == FCT_REMOVE_OFF && bp0e != 0xffff) {
 		//^2FCF:24EB
 		if (bp1c == NULL) {
 			//^2FCF:24F3
@@ -49639,7 +49653,7 @@ void SkWinCore::_2fcf_2444(__int16 xpos, __int16 ypos, ObjectID recordLink, Bit1
 				}
 			}
 			//^2FCF:25B2
-			if (bp12 == dbText && bp0e == 0xffff && tt != 0 && ss == 0) {
+			if (bp12 == dbText && bp0e == 0xffff && place == FCT_PLACE_ON && ss == 0) { // if (bp12 == dbText && bp0e == 0xffff && place != FCT_REMOVE_OFF && ss == 0) {
 				//^2FCF:25CA
 				Text *bp18 = GET_ADDRESS_OF_RECORD2(si);
 				//^2FCF:25D7
@@ -49681,7 +49695,7 @@ void SkWinCore::_2fcf_2444(__int16 xpos, __int16 ypos, ObjectID recordLink, Bit1
 		}
 	}
 	//^2FCF:26B7
-	if (tt != 0 && bp0e != 0xffff) {
+	if (place == FCT_PLACE_ON && bp0e != 0xffff) { // if (place != FCT_REMOVE_OFF && bp0e != 0xffff) {
 		//^2FCF:26C3
 		if (bp1c == NULL) {
 			//^2FCF:26CB
@@ -49733,7 +49747,7 @@ void SkWinCore::_2fcf_2444(__int16 xpos, __int16 ypos, ObjectID recordLink, Bit1
 				continue;
 			//^2FCF:27D4
 			Bit16u bp14 = bp04->ActuatorData();
-			Bit16u bp10 = tt;
+			Bit16u bp10 = place;
 			//^2FCF:27EA
 			Bit16u bp3e;
 			if (bp1e == 0xffff) {
@@ -49791,7 +49805,7 @@ void SkWinCore::_2fcf_2444(__int16 xpos, __int16 ypos, ObjectID recordLink, Bit1
 							continue;
 						}
 						//^2FCF:286C
-						if (tt == 0) {
+						if (place == FCT_REMOVE_OFF) {
 							//^2FCF:2872
 							bp10 = 0;
 							//^2FCF:2877
@@ -49857,7 +49871,7 @@ void SkWinCore::_2fcf_2444(__int16 xpos, __int16 ypos, ObjectID recordLink, Bit1
 							//^2FCF:2958
 							continue;
 						//^2FCF:295B
-						if (bp04->OnceOnlyActuator() == tt)
+						if (bp04->OnceOnlyActuator() == place)
 							//^2FCF:296D
 							continue;
 						//^2FCF:2970
@@ -49865,7 +49879,7 @@ void SkWinCore::_2fcf_2444(__int16 xpos, __int16 ypos, ObjectID recordLink, Bit1
 							//^2FCF:2990
 							continue;
 						//^2FCF:2993
-						bp04->OnceOnlyActuator(tt);
+						bp04->OnceOnlyActuator(place);
 						//^2FCF:29A8
 _29a8:
 						bp10 = bp10 ^ bp04->RevertEffect();
@@ -49963,7 +49977,7 @@ _29a8:
 							//^2FCF:2B61
 							continue;
 						//^2FCF:2B64
-						if (tt != 0)
+						if (place == FCT_PLACE_ON) // if (place != FCT_REMOVE_OFF)
 							//^2FCF:2B6A
 							continue;
 						//^2FCF:2B6D
@@ -50060,7 +50074,7 @@ _29a8:
 					continue;
 				}
 				//^2FCF:2AEA
-				Bit16u bp10 = (bp18->TextVisibility() != tt) ? 1 : 0;
+				Bit16u bp10 = (bp18->TextVisibility() != place) ? 1 : 0;
 				//^2FCF:2B00
 				INVOKE_MESSAGE(
 					xpos,
@@ -50093,7 +50107,7 @@ _29a8:
 				//^2FCF:2D25
 				continue;
 			//^2FCF:2D27
-			if (bp18->TextVisibility() == tt)
+			if (bp18->TextVisibility() == place)
 				//^2FCF:2D34
 				continue;
 			//^2FCF:2D36
@@ -50102,7 +50116,7 @@ _29a8:
 				//^2FCF:2D56
 				continue;
 			//^2FCF:2D58
-			bp18->TextVisibility(tt);
+			bp18->TextVisibility(place);
 			//^2FCF:2D6A
 			continue;
 		}
@@ -52116,7 +52130,7 @@ Bit16u SkWinCore::MOVE_RECORD_TO(ObjectID rlWhatYouMove, __int16 xposFrom, __int
 		//^2FCF:0F87
 		if (si == OBJECT_NULL) {
 			//^2FCF:0F8C
-			_2fcf_2444(xposFrom, yposFrom, -1, bp12, 0, 0);
+			PLACE_OR_REMOVE_OBJECT_IN_ROOM(xposFrom, yposFrom, -1, bp12, FCT_REMOVE_OFF, 0);
 		}
 		else {
 			//^2FCF:0FA6
@@ -52126,13 +52140,13 @@ Bit16u SkWinCore::MOVE_RECORD_TO(ObjectID rlWhatYouMove, __int16 xposFrom, __int
 			}
 			else {
 				//^2FCF:0FC1
-				_2fcf_2444(
+				PLACE_OR_REMOVE_OBJECT_IN_ROOM(
 					xposFrom, 
 					yposFrom, 
 					si, 
 					(glbCurrentMapIndex == glbMap_4c28 && glbCurrentMapIndex == glbSomePosX_4c2e && glbCurrentMapIndex == glbSomePosY_4c30) ? 1 : 0,
-					0,
-					(xposTo < 0 && yposTo < 0) ? 1 : 0
+					FCT_REMOVE_OFF,
+					(xposTo < 0 && yposTo < 0) ? 1 : 0 
 					);
 			}
 			//^2FCF:1009
@@ -52236,7 +52250,7 @@ _1183:
 		//^2FCF:1188
 		//^2FCF:1199
 		//^2FCF:155A
-		_2fcf_2444(glbPlayerPosX, glbPlayerPosY, 0xffff, bp12, 1, 0);
+		PLACE_OR_REMOVE_OBJECT_IN_ROOM(glbPlayerPosX, glbPlayerPosY, 0xffff, bp12, FCT_PLACE_ON, 0);
 	}
 	else {
 		//^2FCF:119C
@@ -52368,7 +52382,7 @@ _13ce:
 			}
 			else {
 				//^2FCF:13E9
-				_2fcf_2444(xposTo, yposTo, si, 0, 1, 0);
+				PLACE_OR_REMOVE_OBJECT_IN_ROOM(xposTo, yposTo, si, 0, FCT_PLACE_ON, 0);
 			}
 			//^2FCF:13FE
 			SET_MINION_RECENT_OPEN_DOOR_LOCATION(si, xposTo, yposTo, di, 0);
@@ -52421,12 +52435,12 @@ _13ce:
 				}
 			}
 			//^2FCF:152B
-			_2fcf_2444(
+			PLACE_OR_REMOVE_OBJECT_IN_ROOM(
 				xposTo, 
 				yposTo, 
 				si, 
 				(glbCurrentMapIndex == glbMap_4c28 && xposTo == glbSomePosX_4c2e && yposTo == glbSomePosY_4c30) ? 1 : 0,
-				1,
+				FCT_PLACE_ON,
 				bp14
 				);
 		}

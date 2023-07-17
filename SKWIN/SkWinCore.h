@@ -1834,7 +1834,7 @@ protected:
 	void INVOKE_ACTUATOR(Actuator *ref, Bit16u actionType, __int16 delayPlus);
 	U16 _1c9a_0694(ObjectID *ref, void *pv);	
 	ObjectID *_1c9a_06bd(ObjectID recordLink, Bit16u ss, Bit16u dir);
-	void _2fcf_2444(__int16 xpos, __int16 ypos, ObjectID recordLink, Bit16u ss, Bit16u tt, Bit16u uu);
+	void PLACE_OR_REMOVE_OBJECT_IN_ROOM(__int16 xpos, __int16 ypos, ObjectID recordLink, Bit16u ss, Bit16u place, Bit16u uu); // _2fcf_2444
 	void DELETE_CREATURE_RECORD(__int16 xpos, __int16 ypos, Bit16u dropMode, Bit16u tt);
 	void DROP_CREATURE_POSSESSION(ObjectID recordLink, __int16 xx, __int16 yy, Bit16u dropMode, __int16 tt);
 	ObjectID ROTATE_RECORD_BY_TELEPORTER(Teleporter *ref, ObjectID recordLink);
