@@ -16408,7 +16408,8 @@ void SkWinCore::ADD_ITEM_TO_PLAYER(U16 player, ObjectID rl)
 }
 
 //^2F3F:04EA
-void SkWinCore::_2f3f_04ea(Bit16u xx, Bit16u yy, Bit16u dir, Bit16u zz, Bit16u ee)
+// SPX: _2f3f_04ea renamed _2f3f_04ea_CHAMPION
+void SkWinCore::_2f3f_04ea_CHAMPION(Bit16u xx, Bit16u yy, Bit16u dir, Bit16u zz, Bit16u ee)
 {
 	//^2F3F:04EA
 	ENTER(142);
@@ -25955,7 +25956,8 @@ void SkWinCore::SET_PARTY_HERO_FLAG(U16 flagvalue)
 }
 
 //^2F3F:0789
-void SkWinCore::_2f3f_0789()
+// SPX: _2f3f_0789 renamed INIT_CHAMPIONS
+void SkWinCore::INIT_CHAMPIONS() // _2f3f_0789
 {
 	//^2F3F:0789
 	ENTER(8);
@@ -26040,7 +26042,7 @@ void SkWinCore::_2f3f_0789()
 				// SPX: Automatic selection of champion (Thoram)
 				SELECT_CHAMPION(0, 1, DIR_NORTH, glbPlayerMap);	// player is imaginarily at 0,1 facing north
 				//^2F3F:08BB
-				_2f3f_04ea(0, 1, DIR_NORTH, glbPlayerMap, 160);
+				_2f3f_04ea_CHAMPION(0, 1, DIR_NORTH, glbPlayerMap, 160);
 				//^2F3F:08CF
 				_4976_404b = 0;
 				//^2F3F:08D5
@@ -26063,10 +26065,10 @@ void SkWinCore::_2f3f_0789()
 	for (di = GET_TILE_RECORD_LINK(1, 0); di != OBJECT_END_MARKER; di = GET_NEXT_RECORD_LINK(di)) {
 		if (di.DBType() == dbActuator) {
 			Actuator *bp08 = GET_ADDRESS_OF_ACTU(di);
-			if (bp08->ActuatorType() == ACTUATOR_TYPE_CHAMPION_MIRROR) { // 0x007E
+			if (bp08->ActuatorType() == ACTUATOR_TYPE_CHAMPION_MIRROR) { // 0x007F
 				_4976_404b = 1;
 				SELECT_CHAMPION(0, 0, DIR_EAST, glbPlayerMap);	// player is really at 0,0 facing east
-				_2f3f_04ea(0, 0, DIR_EAST, glbPlayerMap, 160);
+				_2f3f_04ea_CHAMPION(0, 0, DIR_EAST, glbPlayerMap, 160);
 				_4976_404b = 0;
 				glbChampionSquad[0].playerDir(U8(glbPlayerDir));
 				glbChampionSquad[0].playerPos(U8(glbPlayerDir));
@@ -30096,7 +30098,7 @@ void SkWinCore::__INIT_GAME_38c8_03ad()
 	//^38C8:0488
 	_29ee_000f();
 	//^38C8:048D
-	_2f3f_0789();
+	INIT_CHAMPIONS();
 	//^38C8:0492
 	_4976_4c02 = 1;
 	//^38C8:0498
@@ -31343,7 +31345,7 @@ _1ab8:
 		if (glbNextChampionNumber != 0 && si <= UI_EVENTCODE_RETURN_VIEWPORT) {
 			//^1031:1B05
 			//^1031:1DDE
-			_2f3f_04ea(glbPlayerPosX, glbPlayerPosY, glbPlayerDir, glbPlayerMap, 0xa1);
+			_2f3f_04ea_CHAMPION(glbPlayerPosX, glbPlayerPosY, glbPlayerDir, glbPlayerMap, 0xa1);
 		}
 		else {
 			//^1031:1B0B
@@ -31555,7 +31557,7 @@ _1ab8:
 		//else if (si == 0xa0 || si == 0xa1) {
 		else if (si == UI_EVENTCODE_REVIVE_CHAMPION || si == UI_EVENTCODE_EXIT_CRYOCELL) {
 			//^1031:1DDD
-            _2f3f_04ea(glbPlayerPosX, glbPlayerPosY, glbPlayerDir, glbPlayerMap, si);
+            _2f3f_04ea_CHAMPION(glbPlayerPosX, glbPlayerPosY, glbPlayerDir, glbPlayerMap, si);
 		}
 		//^1031:1DF8
 		//else if (si == 0xd7) {
@@ -50126,6 +50128,9 @@ _29a8:
 			break;
 		//^2FCF:2D72
 	}
+	// SPX: Add for DM1 retrocompatibility
+	if (SkCodeParam::bDM1Mode)
+		DM1_ROTATE_ACTUATOR_LIST();
 	//^2FCF:2D83
 	return;
 }

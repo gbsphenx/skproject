@@ -860,6 +860,7 @@ public:
 	X16	EXTENDED_LOAD_DM1_ITEM_CONVERSION_LIST(void);
 	X16	EXTENDED_LOAD_SPELLS_DEFINITION(void);
 	X16 EXTENDED_LOAD_AI_DEFINITION(void);
+	X16 DM1_ROTATE_ACTUATOR_LIST(void);
 
 	const char *getXActrName(int x);
 	CString getSpellTypeName(U8 spelltype);
@@ -1232,7 +1233,7 @@ protected:
 	void CLICK_MONEYBOX(Bit16u xx);
 	void SELECT_CHAMPION_LEADER(Bit16u xx);
 	void ADD_ITEM_TO_PLAYER(U16 player, ObjectID rl);
-	void _2f3f_04ea(Bit16u xx, Bit16u yy, Bit16u dir, Bit16u zz, Bit16u ee);
+	void _2f3f_04ea_CHAMPION(Bit16u xx, Bit16u yy, Bit16u dir, Bit16u zz, Bit16u ee); // _2f3f_04ea
 	void INTERFACE_CHAMPION(Bit16u xx); // _24a5_1798
 	void INIT_BACKBUFF();
 	SpellDefinition *FIND_SPELL_BY_RUNES(U8 *runes);
@@ -1396,7 +1397,7 @@ protected:
 	void FILL_ORPHAN_CAII();
 	void RESET_CAII();
 	void SET_PARTY_HERO_FLAG(U16 flagvalue);
-	void _2f3f_0789();
+	void INIT_CHAMPIONS(); // _2f3f_0789
 	void FILL_U16(i16 *buff, X16 cnt, i16 val, i16 delta);
 	void _19f0_045a(i16 xx, i16 yy);
 	i16 _19f0_0207(i16 xx, i16 yy, i16 ss, i16 tt, U16 (SkWinCore::*hazardTest)(i16 xx, i16 yy));
