@@ -1153,6 +1153,7 @@ enum SkillLevel {
 #define ACTUATOR_TYPE_WEAPON_SHOOTER					0x09	// 09	unimplemented in DM2 ?
 #define ACTUATOR_TYPE_MISSILE_SHOOTER_2					0x0A	// 10
 //#define ACTUATOR_TYPE_ITEM_SHOOTER						0x0C	// 12
+#define ACTUATOR_TYPE_WALL_TOGGLER						0x0D	// 13	DM1 retrocompatibility
 #define ACTUATOR_TYPE_ITEM_SHOOTER						0x0E	// 14
 #define ACTUATOR_TYPE_ITEM_SHOOTER_X2					0x0F	// 15	unimplemented in DM2 ?
 #define ACTUATOR_TYPE_THE_END							0x12	// 18

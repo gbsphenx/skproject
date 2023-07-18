@@ -9237,7 +9237,7 @@ Bit8u SkWinCore::_0cee_1815(i16 xx, i16 yy, Bit16u ss, Bit16u tt, Bit16u uu)
 }
 
 //^0CEE:185A
-void SkWinCore::_0cee_185a(skxxx6 *ref, Bit16u xx, Bit16u yy, Bit16u zz, Bit16u ww, Bit16u vv, i16 ss, i16 tt)
+void SkWinCore::_0cee_185a(ExtendedTileInfo *ref, Bit16u xx, Bit16u yy, Bit16u zz, Bit16u ww, Bit16u vv, i16 ss, i16 tt)
 {
 	// CSBwinSimilarity: TAG00a4a2
 
@@ -9272,7 +9272,7 @@ void SkWinCore::_0cee_185a(skxxx6 *ref, Bit16u xx, Bit16u yy, Bit16u zz, Bit16u 
 }
 
 //^0CEE:1A46
-ObjectID SkWinCore::_0cee_1a46(skxxx6 *ref, ObjectID recordLink, i16 xx, i16 yy)
+ObjectID SkWinCore::_0cee_1a46(ExtendedTileInfo *ref, ObjectID recordLink, i16 xx, i16 yy)
 {
 	//^0CEE:1A46
 	ENTER(24);
@@ -9603,7 +9603,7 @@ Bit16u SkWinCore::QUERY_ORNATE_ANIM_FRAME(Bit8u cls1, Bit8u cls2, Bit32u tick, B
 
 //^0CEE:1DBE
 // SPX: _0cee_1dbe renamed SUMMARIZE_STONE_ROOM
-void SkWinCore::SUMMARIZE_STONE_ROOM(skxxx6 *ref, Bit16u ww, Bit16u xx, Bit16u yy)
+void SkWinCore::SUMMARIZE_STONE_ROOM(ExtendedTileInfo *ref, Bit16u ww, Bit16u xx, Bit16u yy)
 {
 	// CSBWin:Codea59a.cpp/SummarizeStoneRoom
 
@@ -10131,7 +10131,7 @@ void SkWinCore::DRAW_MAP_CHIP(ObjectID recordLink, __int16 ss, __int16 tt, __int
 	//^29EE:0D0A
 	Bit8u *bp2e = NULL;
 	//^29EE:0D14
-	skxxx6 bp4c;
+	ExtendedTileInfo bp4c;
 	SUMMARIZE_STONE_ROOM(&bp4c, ww, ss, tt);
 	//^29EE:0D2A
 	Bit8u bp5c[16];
@@ -20721,6 +20721,7 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 	ObjectID bp34 = OBJECT_NULL;
 	//^2FCF:1A0C
 	ObjectID bp0e = GET_TILE_RECORD_LINK(xx, yy);
+	printf("Click on wall : ---------------\n");
 	//^2FCF:1A1C
 	for (U16 bp28 = 0; bp0e != OBJECT_END_MARKER && bp28 == 0; bp0e = GET_NEXT_RECORD_LINK(bp0e)) {
 		//^2FCF:1A24
@@ -20731,6 +20732,7 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 			continue;
 		//^2FCF:1A35
 		if (IS_WALL_ORNATE_ALCOVE_FROM_RECORD(bp0e) != 0) {
+			printf("Click on wall : this is a wall alcove!\n");
 			//^2FCF:1A45
 			if (si == OBJECT_NULL) {
 				//^2FCF:1A4A
@@ -20767,11 +20769,17 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 			bp2a = 1;
 			//^2FCF:1ACD
 			MOVE_RECORD_TO(ObjectID(si, bp10), -1, 0, xx, yy);
+			
+			// SPX: Actually, DM2 code seems not to like multiple wall actuators on the same side and breaks after triggering the first one, unlike DM1 which
+			// sometimes needs several wall actuators on same side for mechanism. Then try not to break in case of DM1.
+			if (SkCodeParam::bDM1Mode)
+				continue;
 			//^2FCF:1AED
 			break;
 		}
 		//^2FCF:1AF0
 		if (IS_WALL_ORNATE_SPRING(bp0e) != 0) {
+			printf("Click on wall : this is a wall fountain!\n");
 			//^2FCF:1B00
 			if (si == OBJECT_NULL) {
 				//^2FCF:1B05
@@ -20828,6 +20836,7 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 			U16 bp18 = bp04->ActuatorData();
 			//^2FCF:1BF7
 			U16 bp1a = bp04->ActionType();
+			printf("Clicking on wall Actuator ACT=%02d action=%04x data=%04x\n", bp16, bp1a, bp18);
 			//^2FCF:1C04
 			//if (glbChampionLeader == -1 && bp16 != 0x7e)
 			if (glbChampionLeader == -1 && (bp16 != ACTUATOR_TYPE_RESURECTOR && bp16 != ACTUATOR_TYPE_CHAMPION_MIRROR)) // SPX : Add 0x7F
@@ -20852,6 +20861,7 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 				default:
 					//^2FCF:1C48
 					continue;
+
 
 				case ACTUATOR_TYPE_SHOP_PANEL: // 0x3F -> 'Shop panel'
 					//^2FCF:1C4F
@@ -22546,7 +22556,7 @@ void SkWinCore::DRAW_ALCOVE_ITEMS(U16 xx)
 	ENTER(14);
 	//^32CB:3F13
 	X16 si = xx;
-	ObjectID di = _4976_5a80[si].x2.id4();
+	ObjectID di = tblCellTilesRoom[si].x2.id4();
 	if (di == OBJECT_END_MARKER)
 		return;
 	//^32CB:3F2F
@@ -22616,7 +22626,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 			: 5
 		);
 	//^32CB:15DD
-	bp14 = _4976_5a80[cellPos].x2.w6[RCJ(4,bp14 -3)];	// get the ornate gfx id ?
+	bp14 = tblCellTilesRoom[cellPos].x2.w6[RCJ(4,bp14 -3)];	// get the ornate gfx id ?
 	//^32CB:15F9
 	i16 bp28 = bp14 >> 8;	// upper part (flags)
 	//^32CB:15FF
@@ -22669,7 +22679,8 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		//^32CB:16F7
 		U16 bp34 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp1f, dtImageOffset, GDAT_GFXSET_DATA_FD);	// 0x09 .. .. 0xFD
 		//^32CB:170D
-		QUERY_TEMP_PICST(iFlipImage, iStretchHorizontal, iStretchVertical, i8(bp34 >> 8), i8(bp34), iYDist, iRectno, iRefPoint, -1, -1, GDAT_CATEGORY_CHAMPIONS, U8(_4976_5a80[cellPos].x2.w14), 1);
+		// SPX: U8(_4976_5a80[cellPos].x2.w14) holds the Champion ID to be displayed under the Champion Cell/Mirror
+		QUERY_TEMP_PICST(iFlipImage, iStretchHorizontal, iStretchVertical, i8(bp34 >> 8), i8(bp34), iYDist, iRectno, iRefPoint, -1, -1, GDAT_CATEGORY_CHAMPIONS, U8(tblCellTilesRoom[cellPos].x2.w14), 1);
 		//^32CB:174C
 		if (zz == 0)
 			//^32CB:1752
@@ -22733,7 +22744,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 			//^32CB:1F38
 			return si;
 		//^32CB:1830
-		ObjectID bp32 = _4976_5a80[cellPos].x2.w14;
+		ObjectID bp32 = tblCellTilesRoom[cellPos].x2.w14;
 		//^32CB:1845
 		if (bp32 == OBJECT_NULL)
 			//^32CB:184A
@@ -23050,7 +23061,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		if (alcoveType == WALL_ORNATE_OBJECT__SHOP_GLASS) {	// (bp22 == 2)
 			//^32CB:1EB9
 			_32cb_0f82(
-				GET_ADDRESS_OF_ACTU(_4976_5a80[cellPos].x2.w14), 
+				GET_ADDRESS_OF_ACTU(tblCellTilesRoom[cellPos].x2.w14), 
 				bp1f, iYDist, cellPos, iStretchHorizontal, iStretchVertical, iRectno, iRefPoint, si
 				);
 			//^32CB:1EEF
@@ -23178,7 +23189,8 @@ U16 SkWinCore::_32cb_00f1(U16 xx, U16 yy, i16 zz)
 }
 
 //^32CB:0287
-U16 SkWinCore::_32cb_0287(U16 xx, U16 yy, U16 zz)
+// SPX: _32cb_0287 renamed _32cb_0287_DRAW_W_ORNATE
+U16 SkWinCore::_32cb_0287_DRAW_W_ORNATE(U16 xx, U16 yy, U16 zz)
 {
 	//^32CB:0287
 	ENTER(10);
@@ -23191,20 +23203,20 @@ U16 SkWinCore::_32cb_0287(U16 xx, U16 yy, U16 zz)
 		//^32CB:0297
 		return 0;
 	//^32CB:029C
-	sk5a80 *bp0a = _4976_5a80;
+	CellTileDetail *bp0a = tblCellTilesRoom;
 	//^32CB:02A9
-	_4976_5a80 = reinterpret_cast<sk5a80 *>(ALLOC_MEMORY_RAM(72, afDefault, 1024));
+	tblCellTilesRoom = reinterpret_cast<CellTileDetail *>(ALLOC_MEMORY_RAM(72, afDefault, 1024));
 	//^32CB:02C1
 	i16 bp04 = _4976_5a9c;
 	i16 bp06 = _4976_5a9e;
 	//^32CB:02CD
 	CALC_VECTOR_W_DIR(_4976_5aa0, _4976_40e8[si][1], _4976_40e8[si][0], &bp04, &bp06);
 	//^32CB:02F7
-	_4976_5a80[si].b0 = U8(bp04);
+	tblCellTilesRoom[si].b0 = U8(bp04);
 	//^32CB:030A
-	_4976_5a80[si].b1 = U8(bp06);
+	tblCellTilesRoom[si].b1 = U8(bp06);
 	//^32CB:031E
-	SUMMARIZE_STONE_ROOM(&_4976_5a80[si].x2, _4976_5aa0, bp04, bp06);
+	SUMMARIZE_STONE_ROOM(&tblCellTilesRoom[si].x2, _4976_5aa0, bp04, bp06);
 	//^32CB:0344
 	i16 bp02 = DRAW_WALL_ORNATE(si, glbTabXAxisDistance[RCJ(23,si)], 0);
 	//^32CB:0358
@@ -23215,7 +23227,7 @@ U16 SkWinCore::_32cb_0287(U16 xx, U16 yy, U16 zz)
 	//^32CB:036E
 	DEALLOC_UPPER_MEMORY(72);
 	//^32CB:0379
-	_4976_5a80 = bp0a;
+	tblCellTilesRoom = bp0a;
 	//^32CB:0386
 	return (si == 3 || glbTempPicture.width < 32 || glbTempPicture.height < 32) ? 1 : di;
 }
@@ -24378,7 +24390,7 @@ void SkWinCore::CLICK_VWPT(i16 xx, i16 yy)
 				case 5:
 					//^121E:0603
 					U16 bp24;
-					if (_32cb_0287(bp24 = _4976_4d1a[si].b10, xx, di) == 0)
+					if (_32cb_0287_DRAW_W_ORNATE(bp24 = _4976_4d1a[si].b10, xx, di) == 0)
 						//^121E:0626
 						continue;
 					//^121E:0629
@@ -27779,7 +27791,7 @@ void SkWinCore::ADD_BACKGROUND_LIGHT_FROM_TILE(i16 aa, U16 bb, i16 xx, i16 yy, U
 	X16 di = 0;
 	X16 bp12 = 0;
 	X16 bp14 = 0;
-	skxxx6 bp2e;
+	ExtendedTileInfo bp2e;
 	//printf("ADD_BACKGROUND_LIGHT_FROM_TILE: aa=%d bb=%d xx=%d yy=%d ww=%d\n", aa, bb, xx, yy, ww);
 	SUMMARIZE_STONE_ROOM(&bp2e,bb,xx,yy);	// SPX: light is precomputed within this function
 	i16 bp16;
@@ -44051,7 +44063,7 @@ void SkWinCore::UPDATE_WEATHER(U16 aa)	// aa = 1 when called from timer, aa = 0 
 						continue;
 					//printf("Thunder located at :%d %d\n", di, si);
 					//^3DF7:0508
-					skxxx6 bp2e;
+					ExtendedTileInfo bp2e;
 					SUMMARIZE_STONE_ROOM(&bp2e, 0, di, si);
 					if (bp2e.w0 != 1)
 						continue;
@@ -44715,35 +44727,35 @@ void SkWinCore::_32cb_4185(i16 xx, i16 yy, i16 cellPos, i16 dir)
 	i16 bp06 = xx;
 	i16 bp08 = yy;
 	CALC_VECTOR_W_DIR(dir, _4976_40e8[cellPos][1], _4976_40e8[cellPos][0], &bp06, &bp08);
-	_4976_5a80[cellPos].b0 = U8(bp06);
-	_4976_5a80[cellPos].b1 = U8(bp08);
+	tblCellTilesRoom[cellPos].b0 = U8(bp06);
+	tblCellTilesRoom[cellPos].b1 = U8(bp08);
 	//^32CB:41EB
-	SUMMARIZE_STONE_ROOM(&_4976_5a80[cellPos].x2, dir, bp06, bp08);
+	SUMMARIZE_STONE_ROOM(&tblCellTilesRoom[cellPos].x2, dir, bp06, bp08);
 	if (glbIsPlayerMoving != 0 && cellPos == 0) {
 		//^32CB:4224
-		if (_4976_5a80->x2.w0 == 0) {
-			if (_4976_5a80[3].x2.w0 == 5) {
+		if (tblCellTilesRoom->x2.w0 == 0) {
+			if (tblCellTilesRoom[3].x2.w0 == 5) {
 				//^32CB:4239
-				_4976_5a80->x2.w0 = (5);
+				tblCellTilesRoom->x2.w0 = (5);
 			}
 			else {
 				//^32CB:4241
-				_4976_5a80->x2.w6[0] = (0xff);
-				_4976_5a80->x2.w6[1] = (0xff);
-				_4976_5a80->x2.w6[2] = (0xff);
-				_4976_5a80->x2.w6[3] = (0xff);
-				_4976_5a80->x2.w6[4] = (0);
-				_4976_5a80->x2.w4 = (0xfffe);
+				tblCellTilesRoom->x2.w6[0] = (0xff);
+				tblCellTilesRoom->x2.w6[1] = (0xff);
+				tblCellTilesRoom->x2.w6[2] = (0xff);
+				tblCellTilesRoom->x2.w6[3] = (0xff);
+				tblCellTilesRoom->x2.w6[4] = (0);
+				tblCellTilesRoom->x2.w4 = (0xfffe);
 			}
 			//^32CB:4269
 			X16 si;
 			for (si = 1; si <= 2; si++) {
 				//^32CB:426F
-				skxxx6 *bp04 = &_4976_5a80[si].x2;
+				ExtendedTileInfo *bp04 = &tblCellTilesRoom[si].x2;
 				bp04->w4 = (0xfffe);
-				bp04->w2 = (_4976_5a80[si +3].x2.w2 & 0xe0);
+				bp04->w2 = (tblCellTilesRoom[si +3].x2.w2 & 0xe0);
 				X16 bp22;
-				bp04->w0 = (bp22 = _4976_5a80[si +3].x2.w0);
+				bp04->w0 = (bp22 = tblCellTilesRoom[si +3].x2.w0);
 				switch (bp22) {
 					case 0x00://^42E4
 						//^32CB:42E4
@@ -44772,17 +44784,17 @@ void SkWinCore::_32cb_4185(i16 xx, i16 yy, i16 cellPos, i16 dir)
 			}
 		}
 		//^32CB:4352
-		else if (_4976_5a80->x2.w0 == 0x11) {
+		else if (tblCellTilesRoom->x2.w0 == 0x11) {
 			//^32CB:435D
-			_4976_5a80->x2.w0 = (1);
-			_4976_5a80->x2.w2 = (0);
-			_4976_5a80->x2.w6[2] = (0xff);
+			tblCellTilesRoom->x2.w0 = (1);
+			tblCellTilesRoom->x2.w2 = (0);
+			tblCellTilesRoom->x2.w6[2] = (0xff);
 		}
 	}
 	//^32CB:436F
 	(*_4976_5a7c)[cellPos] = 0;
 	(*_4976_5be2)[cellPos] = 0;
-	if (cellPos < 0x10 && _4976_5a80[cellPos].x2.w0 != 0) { // if it is not wall
+	if (cellPos < 0x10 && tblCellTilesRoom[cellPos].x2.w0 != 0) { // if it is not wall
 		//^32CB:43B8
 		U8 *bp1e = &_4976_5a84[_4976_44c5[RCJ(16,cellPos)][0]][_4976_44c5[RCJ(16,cellPos)][1]];
 		i16 si;
@@ -44800,7 +44812,7 @@ void SkWinCore::_32cb_4185(i16 xx, i16 yy, i16 cellPos, i16 dir)
 		}
 	}
 	//^32CB:4413
-	ObjectID bp18 = _4976_5a80[cellPos].x2.id4();
+	ObjectID bp18 = tblCellTilesRoom[cellPos].x2.id4();
 	ATLASSERT(bp18 != OBJECT_NULL);
 	if (bp18 != OBJECT_END_MARKER) {
 		//^32CB:4430
@@ -44879,7 +44891,7 @@ void SkWinCore::_32cb_4185(i16 xx, i16 yy, i16 cellPos, i16 dir)
 				//^32CB:45F3
 				// SPX: Added here w0 == 17 (door tile) so that item on door tile is always displayed, even if door is open
 				// w6[0] represents open door state where 0 is fully open and 1 to 4 semi closed to closed status; so when w6[0] != 0 means does not take when door is open! (why?)
-				if (_4976_5a80[cellPos].x2.w0 == 1 || _4976_5a80[cellPos].x2.w0 == 17 || _4976_5a80[cellPos].x2.w6[0] != 0) {
+				if (tblCellTilesRoom[cellPos].x2.w0 == 1 || tblCellTilesRoom[cellPos].x2.w0 == 17 || tblCellTilesRoom[cellPos].x2.w6[0] != 0) {
 //					if (_4976_5a80[cellPos].x2.w0 == 1 || _4976_5a80[cellPos].x2.w6[0] != 0) {
 					//^32CB:461D
 					(*_4976_5be2)[cellPos] |= U32(1) << QUERY_OBJECT_5x5_POS(bp18, _4976_5aa0);
@@ -45226,11 +45238,11 @@ void SkWinCore::_32cb_5c67()
 	i16 si;
 	for (si = 0; si < 0x15; si++) {
 		//^32CB:5C72
-		if (_4976_5a80[si].x2.w0 != 1)
+		if (tblCellTilesRoom[si].x2.w0 != 1)
 			continue;
 		//^32CB:5C86
 		TELE_inf bp08;
-		if (GET_TELEPORTER_DETAIL(&bp08, U8(_4976_5a80[si].b0), U8(_4976_5a80[si].b1)) == 0)
+		if (GET_TELEPORTER_DETAIL(&bp08, U8(tblCellTilesRoom[si].b0), U8(tblCellTilesRoom[si].b1)) == 0)
 			continue;
 		//^32CB:5CBC
         i16 di;
@@ -45240,10 +45252,10 @@ void SkWinCore::_32cb_5c67()
 			if (bp01 < 0)
 				continue;
 			//^32CB:5CD0
-			if (_4976_5a80[bp01].x2.w0 != 7)
+			if (tblCellTilesRoom[bp01].x2.w0 != 7)
 				continue;
 			//^32CB:5CE4
-			_4976_5a80[bp01].x2.w0 = (0);
+			tblCellTilesRoom[bp01].x2.w0 = (0);
 			//^32CB:5CFA
 		}
 		//^32CB:5D00
@@ -45262,7 +45274,7 @@ void SkWinCore::_32cb_5a8f()
 	i16 bp0e = 0;
 	for (; bp0e < 0x10; bp0e++) {
 		//^32CB:5AAF
-		if (_4976_5a80[bp0e].x2.w0 == 0) {
+		if (tblCellTilesRoom[bp0e].x2.w0 == 0) {
 			//^32CB:5AC4
 			bp08 |= U32(1) << bp0e;
 		}
@@ -45290,9 +45302,9 @@ void SkWinCore::_32cb_5a8f()
 	//^32CB:5C0B
 	for (bp0e = 0; bp0e <= 0x16; bp0e++) {
 		//^32CB:5C12
-		if ((bp04 & bp0c) != 0 && _4976_5a80[bp0e].x2.w0 == 0) {
+		if ((bp04 & bp0c) != 0 && tblCellTilesRoom[bp0e].x2.w0 == 0) {
 			//^32CB:5C37
-			_4976_5a80[bp0e].x2.w0 = (7);
+			tblCellTilesRoom[bp0e].x2.w0 = (7);
 		}
 		//^32CB:5C4B
 		bp0c = bp0c << 1;
@@ -45433,8 +45445,8 @@ void SkWinCore::DRAW_PUT_DOWN_ITEM(ObjectID rl, i16 cellPos, i16 dir, Creature *
 			si &= 15;
 			if (cellPos == 0 || (cellPos == 3 && dir > 1)) {
 				//^32CB:3B06
-				bp14 = _4976_5a80[cellPos].b0;
-				bp16 = _4976_5a80[cellPos].b1;
+				bp14 = tblCellTilesRoom[cellPos].b0;
+				bp16 = tblCellTilesRoom[cellPos].b1;
 				bp06 = _1c9a_03cf(&bp14, &bp16, di.Dir());
 				if (bp06 == OBJECT_NULL || IS_CREATURE_FLOATING(bp06) != 0 || (_0cee_2df4(bp06) & 0x2000) != 0) {
 					//^32CB:3B6C
@@ -45554,7 +45566,7 @@ void SkWinCore::SUMMARY_DRAW_CREATURE(ObjectID rl, i16 cellPos, U32 ss)
 		if (bp0c->IsStaticObject() == 0 || bp0c->w30_0_3() == 0 || bp0e >= 4)
 			continue;
 		//^32CB:2CA4
-		if (_4976_5a80[si].x2.w0 == 0x11) {
+		if (tblCellTilesRoom[si].x2.w0 == 0x11) {
 			//^32CB:2CB8
 			ss = 0x3ff;
 		}
@@ -45788,7 +45800,7 @@ void SkWinCore::DRAW_DOOR_FRAMES(i16 iViewportCell, X16 yy)	// i16 xx, X16 yy
 	//i16 si = iViewportCell; // si
 	X8 gfxset = glbMapGraphicsSet;	// bp0f
 	X16 colorkey = glbSceneColorKey;		// di
-	ObjectID bp0e = _4976_5a80[iViewportCell].x2.w6[1];
+	ObjectID bp0e = tblCellTilesRoom[iViewportCell].x2.w6[1];
 	Door *door = GET_ADDRESS_OF_RECORD0(bp0e);	//*bp04
 	// SPX: 0x40 = GDAT_DOOR_NO_FRAMES entry. Only used for the ROOTS door type (BETA)
 	if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, glbMapDoorType[door->DoorType()], dtWordValue, GDAT_DOOR_NO_FRAMES) == 0) {
@@ -45850,9 +45862,9 @@ void SkWinCore::DRAW_DOOR_FRAMES(i16 iViewportCell, X16 yy)	// i16 xx, X16 yy
 				else {
 					//^32CB:4887
 					// In case there is a custom button (from wall ornates gfx)
-					if (_4976_5a80[iViewportCell].x2.w6[2] != 0xff) {
+					if (tblCellTilesRoom[iViewportCell].x2.w6[2] != 0xff) {
 						//^32CB:489C
-						DRAW_DEFAULT_DOOR_BUTTON(GDAT_CATEGORY_WALL_GFX, U8(_4976_5a80[iViewportCell].x2.w6[2]) & 0xff, U8(_4976_5a80[iViewportCell].x2.w6[2] >> 8) +1, iViewportCell);
+						DRAW_DEFAULT_DOOR_BUTTON(GDAT_CATEGORY_WALL_GFX, U8(tblCellTilesRoom[iViewportCell].x2.w6[2]) & 0xff, U8(tblCellTilesRoom[iViewportCell].x2.w6[2] >> 8) +1, iViewportCell);
 					}
 				}
 			}
@@ -45894,11 +45906,11 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 	}
 	
 	//^32CB:4937
-	U16 iDoorState = _4976_5a80[iCellPos].x2.w6[0];	// U16 bp06
+	U16 iDoorState = tblCellTilesRoom[iCellPos].x2.w6[0];	// U16 bp06
 	X16 iStretchDual;	// X16 si
 	if (iDoorState != 0) {	// 0 = open. 1 - 3 = intermediate state. 4 = closed. 5 = destroyed
 		//^32CB:4955
-		ObjectID bp0c = _4976_5a80[iCellPos].x2.w6[1];
+		ObjectID bp0c = tblCellTilesRoom[iCellPos].x2.w6[1];
 		i16 iYDist = glbTabYAxisDistance[RCJ(23,iCellPos)];	// i16 bp08
 		if (iYDist <= 3) {
 			//^32CB:497D
@@ -46125,7 +46137,7 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 	//^32CB:4CB1
 	if (aa != 0) {
 		//^32CB:4CB9
-		_32cb_2d8c(_4976_5a80[iCellPos].x2.w4, iCellPos, aa);
+		_32cb_2d8c(tblCellTilesRoom[iCellPos].x2.w4, iCellPos, aa);
 	}
 	//^32CB:4CDB
 	return;
@@ -46142,7 +46154,7 @@ void SkWinCore::DRAW_DOOR_TILE(i16 iCellPos)	// i16 xx
 	if (_4976_455e[RCJ(16,iCellPos)] == 0)
 		return;
 	X32 bp04 = 0x1000;
-	if (_4976_5a80[iCellPos].x2.w6[0] != 5) {
+	if (tblCellTilesRoom[iCellPos].x2.w6[0] != 5) {
 		//^32CB:4D13
 		bp04 = 0x1000;
 	}
@@ -46158,7 +46170,7 @@ void SkWinCore::DRAW_DOOR_TILE(i16 iCellPos)	// i16 xx
 				DRAW_STATIC_OBJECT(iCellPos, bp04, 0);
 			}
 			DRAW_DOOR(iCellPos, 6, 0, 0);
-			_32cb_2d8c(_4976_5a80[iCellPos].x2.w4, iCellPos, 0x01ffffff);
+			_32cb_2d8c(tblCellTilesRoom[iCellPos].x2.w4, iCellPos, 0x01ffffff);
 			return;
 		case 7://^4D96
 			//^32CB:4D96
@@ -46230,7 +46242,7 @@ void SkWinCore::DRAW_STAIRS_SIDE(i16 xx)
 	if (di > 8)
 		return;
 	//^32CB:4EE6
-	X16 si = (_4976_5a80[di].x2.w6[0] != 0) ? 1 : 0;
+	X16 si = (tblCellTilesRoom[di].x2.w6[0] != 0) ? 1 : 0;
 	X8 bp01 = tlbGraphicsStairsSide[RCJ(9,di)][RCJ(2,si)];	// bp01	, table containing 0xC7 to 0xD2 = side stairs (wood ramp)
 	if (bp01 != 0xff) {
 		//^32CB:4F12
@@ -46249,7 +46261,7 @@ void SkWinCore::DRAW_STAIRS_FRONT(i16 xx)
 	//^32CB:4E22
 	U8 gfxset = glbMapGraphicsSet;	// bp04
 	U16 colorkey = glbSceneColorKey;		// di
-	X16 si = (_4976_5a80[xx].x2.w6[0] != 0) ? 1 : 0;
+	X16 si = (tblCellTilesRoom[xx].x2.w6[0] != 0) ? 1 : 0;
 	i16 bp02 = _4976_45ae[RCJ(16,xx)][RCJ(2,si)];
 	if (bp02 < 0)
 		return;
@@ -46279,7 +46291,7 @@ void SkWinCore::DRAW_PIT_TILE(i16 xx)
 	i16 bp02 = _4976_4282[RCJ(16,si)];
 	if (bp02 < 0)
 		return;
-	if (si < 11 || _4976_5a80[si].x2.w6[0] == 0) {
+	if (si < 11 || tblCellTilesRoom[si].x2.w6[0] == 0) {
 		//^32CB:2497
 		X16 di = tlbGraphicsFlip[RCJ(16,si)];	// di
 		if (si == 0) {
@@ -46288,7 +46300,7 @@ void SkWinCore::DRAW_PIT_TILE(i16 xx)
 		}
 		//^32CB:24C4
 		DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_GRAPHICSSET, bp03
-			, (_4976_5a80[si].x2.w6[0] != 0) ? tlbGraphicsPitHidden[RCJ(16,si)] : tlbGraphicsPitNormal[RCJ(16,si)], bp02, bp06, di);
+			, (tblCellTilesRoom[si].x2.w6[0] != 0) ? tlbGraphicsPitHidden[RCJ(16,si)] : tlbGraphicsPitNormal[RCJ(16,si)], bp02, bp06, di);
 	}
 	//^32CB:24F7
 	return;
@@ -46305,15 +46317,15 @@ X16 SkWinCore::DRAW_EXTERNAL_TILE(i16 xx)
 	if (bp14 == 0xff)
 		return 0;
 	//^32CB:1F55
-	i16 bp06 = _4976_5a80[si].b0;
-	i16 bp08 = _4976_5a80[si].b1;
+	i16 bp06 = tblCellTilesRoom[si].b0;
+	i16 bp08 = tblCellTilesRoom[si].b1;
 	i16 bp18 = glbTabYAxisDistance[RCJ(23,si)];
 	//^32CB:1F86
 	TELE_inf bp2a; // bp2a-bp26
 	if (bp18 > 3 && GET_TELEPORTER_DETAIL(&bp2a, U8(bp06), U8(bp08)) == 0)
 		return 0;
 	//^32CB:1FA6
-	U16 bp02 = _4976_5a80[si].x2.w6[2];
+	U16 bp02 = tblCellTilesRoom[si].x2.w6[2];
 	X16 bp16 = bp02 >> 8;
 	bp14 += X8(bp16);
 	X8 bp13 = X8(bp02);
@@ -46453,8 +46465,8 @@ void SkWinCore::DRAW_PIT_ROOF(i16 xx)
 	if (si > 8 || (glbSceneFlags & 1) == 0)
 		return;
 	//^32CB:238F
-	i16 bp04 = _4976_5a80[si].b0;
-	i16 bp06 = _4976_5a80[si].b1;
+	i16 bp04 = tblCellTilesRoom[si].b0;
+	i16 bp06 = tblCellTilesRoom[si].b1;
 	i16 bp02 = LOCATE_OTHER_LEVEL(glbCurrentMapIndex, -1, &bp04, &bp06, NULL);
 	if (bp02 < 0)
 		return;
@@ -46496,8 +46508,8 @@ void SkWinCore::DRAW_FLYING_ITEM(ObjectID rl, i16 cellPos, X16 _5x5)
 	if (_4976_415b[RCJ(23,cellPos)] < 0)
 		return;
 	//^32CB:3193
-	X16 bp1e = _4976_5a80[cellPos].b0;
-	X16 bp20 = _4976_5a80[cellPos].b1;
+	X16 bp1e = tblCellTilesRoom[cellPos].b0;
+	X16 bp20 = tblCellTilesRoom[cellPos].b1;
 	X16 si;
 	do {
 		//^32CB:31BE
@@ -46647,8 +46659,8 @@ void SkWinCore::DRAW_STATIC_OBJECT(i16 xx, X32 ss, X16 ww)
 	if (si > 15 || _4976_43e5[RCJ(16,si)] == 0)
 		return;
 	//^32CB:3BB8
-	X16 bp1c = _4976_5a80[si].x2.w0;
-	ObjectID bp16 = _4976_5a80[si].x2.w4;
+	X16 bp1c = tblCellTilesRoom[si].x2.w0;
+	ObjectID bp16 = tblCellTilesRoom[si].x2.w4;
 	X16 bp0c = _4976_43f5[RCJ(16,si)][0];
 	X16 bp0e = _4976_43f5[RCJ(16,si)][1];
 	const U8 *displayOrder;	// *bp04 
@@ -46688,7 +46700,7 @@ void SkWinCore::DRAW_STATIC_OBJECT(i16 xx, X32 ss, X16 ww)
 				//^32CB:3CE6
 				if (((1 << bp08) & ss) != 0) {
 					//^32CB:3D04
-					SUMMARY_DRAW_CREATURE(_4976_5a80[bp13].x2.w4, bp13, ss);
+					SUMMARY_DRAW_CREATURE(tblCellTilesRoom[bp13].x2.w4, bp13, ss);
 					_4976_5aa4[bp10][bp12] = 0xff;
 					if ((*_4976_5a7c)[si] != 0) {
 						//^32CB:3D54
@@ -46820,12 +46832,12 @@ void SkWinCore::DRAW_WALL(i16 iViewportCell)	// i16 xx
 	U16 bp0a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, bp01);
 	if (iYDist > 1) { // dist 2,3,4
 		//^32CB:4F91
-		if (_4976_5a80[4].x2.w0 == 0 && (di = (bp0a >> 8)) == 0) {
+		if (tblCellTilesRoom[4].x2.w0 == 0 && (di = (bp0a >> 8)) == 0) {
 			//^32CB:4FA5
 			di = _4976_463c[RCJ(6,glbMapGraphicsSet)];
 		}
 		//^32CB:4FB2
-		if (_4976_5a80[5].x2.w0 == 0) {
+		if (tblCellTilesRoom[5].x2.w0 == 0) {
 			//^32CB:4FBD
 			si = bp0a & 0xff;
 			if (si == 0) {
@@ -46837,12 +46849,12 @@ void SkWinCore::DRAW_WALL(i16 iViewportCell)	// i16 xx
 	//^32CB:4FD8
 	else if (iYDist > 0) { // dist 1
 		//^32CB:4FDE
-		if (_4976_5a80[0].x2.w0 == 0 && (di = (bp0a >> 8)) == 0) {
+		if (tblCellTilesRoom[0].x2.w0 == 0 && (di = (bp0a >> 8)) == 0) {
 			//^32CB:4FF5
 			di = _4976_4624[RCJ(6,glbMapGraphicsSet)];
 		}
 		//^32CB:5002
-		if (_4976_5a80[2].x2.w0 == 0 && (si = (bp0a & 0xff)) == 0) {
+		if (tblCellTilesRoom[2].x2.w0 == 0 && (si = (bp0a & 0xff)) == 0) {
 			//^32CB:5019
 			si = _4976_4630[RCJ(6,glbMapGraphicsSet)];
 		}
@@ -47033,8 +47045,8 @@ void SkWinCore::DRAW_DUNGEON_TILES()
 		//^32CB:515E
 		IBMIO_USER_INPUT_CHECK();
 		i16 si;
-		X16 bp06 = _4976_5a80[si = _4976_466b[RCJ(20,bp08)]].x2.w0;
-		ObjectID di = _4976_5a80[si].x2.id4();
+		X16 bp06 = tblCellTilesRoom[si = _4976_466b[RCJ(20,bp08)]].x2.w0;
+		ObjectID di = tblCellTilesRoom[si].x2.id4();
 		if (si > 15) { // at D4
 			//^32CB:5196
 			X16 bp0a = bp06;
@@ -47101,7 +47113,7 @@ _51d7:
 				if (si == 3) {
 					//^32CB:5248
 					// Check if this door type has door frames of not. if so, then draw the door frame
-					if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, glbMapDoorType[GET_ADDRESS_OF_RECORD0(_4976_5a80[3].x2.w6[2])->DoorType()], dtWordValue, GDAT_DOOR_NO_FRAMES) == 0) {
+					if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, glbMapDoorType[GET_ADDRESS_OF_RECORD0(tblCellTilesRoom[3].x2.w6[2])->DoorType()], dtWordValue, GDAT_DOOR_NO_FRAMES) == 0) {
 						//^32CB:5279
 						QUERY_TEMP_PICST(
 							glbGeneralFlipGraphics, 0x2b, 0x2b, 0, 0, 2, QUERY_CREATURE_BLIT_RECTI(3, 2, 0), 0xffff, 
@@ -47240,14 +47252,14 @@ void SkWinCore::DRAW_PLAYER_TILE()
 	//^32CB:5346
 	X16 bp06;
 	X16 bp0e;
-	bp06 = bp0e = _4976_5a80->x2.w0;
+	bp06 = bp0e = tblCellTilesRoom->x2.w0;
 	X16 di;
 	X16 si;
 	switch (bp0e) {
 		case 0x10://^536D
 			{
 				//^32CB:536D
-				Door *door = GET_ADDRESS_OF_RECORD0(_4976_5a80->x2.w6[1]);	//*bp04
+				Door *door = GET_ADDRESS_OF_RECORD0(tblCellTilesRoom->x2.w6[1]);	//*bp04
 				if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, glbMapDoorType[door->DoorType()], dtWordValue, GDAT_DOOR_NO_FRAMES) != 0)
 					break;
 				//^32CB:53A6
@@ -47256,7 +47268,7 @@ void SkWinCore::DRAW_PLAYER_TILE()
 			}
 		case 0x13://^53CE
 			//^32CB:53CE
-			si = _4976_5a80->x2.w6[0];
+			si = tblCellTilesRoom->x2.w6[0];
 			DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet
 //					, (si != 0) ? 0x39 : 0x4D
 				, (si != 0) ? GDAT_GFXSET_STAIRS_RAMP_UP_S0_L : GDAT_GFXSET_STAIRS_RAMP_DOWN_S0_L
@@ -47279,7 +47291,7 @@ void SkWinCore::DRAW_PLAYER_TILE()
 	//^32CB:5442
 	DRAW_PIT_ROOF(0);
 	TELE_inf bp0c;
-	if ((di = GET_TELEPORTER_DETAIL(&bp0c, _4976_5a80->b0, _4976_5a80->b1)) == 0) {
+	if ((di = GET_TELEPORTER_DETAIL(&bp0c, tblCellTilesRoom->b0, tblCellTilesRoom->b1)) == 0) {
 		//^32CB:546B
 		DRAW_EXTERNAL_TILE(0);
 	}
@@ -47298,7 +47310,7 @@ _5495:
 		DRAW_EXTERNAL_TILE(0);
 	}
 	//^32CB:54A4
-	_32cb_2d8c(_4976_5a80->x2.w4, 0, 0x01ffffff);
+	_32cb_2d8c(tblCellTilesRoom->x2.w4, 0, 0x01ffffff);
 	//^32CB:54BA
 	return;
 }
@@ -47318,7 +47330,7 @@ void SkWinCore::DISPLAY_VIEWPORT(Bit16u dir, i16 xx, i16 yy)
 	_4976_5aa0 = dir;
 	_4976_5a9c = xx;
 	_4976_5a9e = yy;
-	_4976_5a80 = reinterpret_cast<sk5a80 *>(ALLOC_MEMORY_RAM(sizeof(sk5a80) * 23, afDefault, 1024));
+	tblCellTilesRoom = reinterpret_cast<CellTileDetail *>(ALLOC_MEMORY_RAM(sizeof(CellTileDetail) * 23, afDefault, 1024));
 	_4976_5a84 = reinterpret_cast<U8 (*)[17]>(ALLOC_MEMORY_RAM(358, afZeroMem, 1024));
 	_4976_5aa4 = reinterpret_cast<U8 (*)[17]>(ALLOC_MEMORY_RAM(358, afDefault, 1024));
 	FILL_STR(*_4976_5aa4, 358, 255, 1);
@@ -47377,31 +47389,31 @@ void SkWinCore::DISPLAY_VIEWPORT(Bit16u dir, i16 xx, i16 yy)
 		"|       |       |%02X %04X|%02X %04X|%02X %04X|       |       |\n"
 		"|-------|-------|-------|-------|-------|-------|-------|\n"
 		, (Bitu)glbPlayerMap, (Bitu)glbPlayerPosX, (Bitu)glbPlayerPosY, (Bitu)glbPlayerDir
-		, (Bitu)_4976_5a80[19].x2.w0, (Bitu)_4976_5a80[19].x2.w4
-		, (Bitu)_4976_5a80[17].x2.w0, (Bitu)_4976_5a80[17].x2.w4
-		, (Bitu)_4976_5a80[16].x2.w0, (Bitu)_4976_5a80[16].x2.w4
-		, (Bitu)_4976_5a80[18].x2.w0, (Bitu)_4976_5a80[18].x2.w4
-		, (Bitu)_4976_5a80[20].x2.w0, (Bitu)_4976_5a80[20].x2.w4
+		, (Bitu)tblCellTilesRoom[19].x2.w0, (Bitu)tblCellTilesRoom[19].x2.w4
+		, (Bitu)tblCellTilesRoom[17].x2.w0, (Bitu)tblCellTilesRoom[17].x2.w4
+		, (Bitu)tblCellTilesRoom[16].x2.w0, (Bitu)tblCellTilesRoom[16].x2.w4
+		, (Bitu)tblCellTilesRoom[18].x2.w0, (Bitu)tblCellTilesRoom[18].x2.w4
+		, (Bitu)tblCellTilesRoom[20].x2.w0, (Bitu)tblCellTilesRoom[20].x2.w4
 
-		, (Bitu)_4976_5a80[14].x2.w0, (Bitu)_4976_5a80[14].x2.w4
-		, (Bitu)_4976_5a80[12].x2.w0, (Bitu)_4976_5a80[12].x2.w4
-		, (Bitu)_4976_5a80[11].x2.w0, (Bitu)_4976_5a80[11].x2.w4
-		, (Bitu)_4976_5a80[13].x2.w0, (Bitu)_4976_5a80[13].x2.w4
-		, (Bitu)_4976_5a80[15].x2.w0, (Bitu)_4976_5a80[15].x2.w4
+		, (Bitu)tblCellTilesRoom[14].x2.w0, (Bitu)tblCellTilesRoom[14].x2.w4
+		, (Bitu)tblCellTilesRoom[12].x2.w0, (Bitu)tblCellTilesRoom[12].x2.w4
+		, (Bitu)tblCellTilesRoom[11].x2.w0, (Bitu)tblCellTilesRoom[11].x2.w4
+		, (Bitu)tblCellTilesRoom[13].x2.w0, (Bitu)tblCellTilesRoom[13].x2.w4
+		, (Bitu)tblCellTilesRoom[15].x2.w0, (Bitu)tblCellTilesRoom[15].x2.w4
 
-		, (Bitu)_4976_5a80[ 9].x2.w0, (Bitu)_4976_5a80[ 9].x2.w4
-		, (Bitu)_4976_5a80[ 7].x2.w0, (Bitu)_4976_5a80[ 7].x2.w4
-		, (Bitu)_4976_5a80[ 6].x2.w0, (Bitu)_4976_5a80[ 6].x2.w4
-		, (Bitu)_4976_5a80[ 8].x2.w0, (Bitu)_4976_5a80[ 8].x2.w4
-		, (Bitu)_4976_5a80[10].x2.w0, (Bitu)_4976_5a80[10].x2.w4
+		, (Bitu)tblCellTilesRoom[ 9].x2.w0, (Bitu)tblCellTilesRoom[ 9].x2.w4
+		, (Bitu)tblCellTilesRoom[ 7].x2.w0, (Bitu)tblCellTilesRoom[ 7].x2.w4
+		, (Bitu)tblCellTilesRoom[ 6].x2.w0, (Bitu)tblCellTilesRoom[ 6].x2.w4
+		, (Bitu)tblCellTilesRoom[ 8].x2.w0, (Bitu)tblCellTilesRoom[ 8].x2.w4
+		, (Bitu)tblCellTilesRoom[10].x2.w0, (Bitu)tblCellTilesRoom[10].x2.w4
 
-		, (Bitu)_4976_5a80[ 4].x2.w0, (Bitu)_4976_5a80[ 4].x2.w4
-		, (Bitu)_4976_5a80[ 3].x2.w0, (Bitu)_4976_5a80[ 3].x2.w4
-		, (Bitu)_4976_5a80[ 5].x2.w0, (Bitu)_4976_5a80[ 5].x2.w4
+		, (Bitu)tblCellTilesRoom[ 4].x2.w0, (Bitu)tblCellTilesRoom[ 4].x2.w4
+		, (Bitu)tblCellTilesRoom[ 3].x2.w0, (Bitu)tblCellTilesRoom[ 3].x2.w4
+		, (Bitu)tblCellTilesRoom[ 5].x2.w0, (Bitu)tblCellTilesRoom[ 5].x2.w4
 
-		, (Bitu)_4976_5a80[ 1].x2.w0, (Bitu)_4976_5a80[ 1].x2.w4
-		, (Bitu)_4976_5a80[ 0].x2.w0, (Bitu)_4976_5a80[ 0].x2.w4
-		, (Bitu)_4976_5a80[ 2].x2.w0, (Bitu)_4976_5a80[ 2].x2.w4
+		, (Bitu)tblCellTilesRoom[ 1].x2.w0, (Bitu)tblCellTilesRoom[ 1].x2.w4
+		, (Bitu)tblCellTilesRoom[ 0].x2.w0, (Bitu)tblCellTilesRoom[ 0].x2.w4
+		, (Bitu)tblCellTilesRoom[ 2].x2.w0, (Bitu)tblCellTilesRoom[ 2].x2.w4
 		));
 
 #if DLV_DBG_CEL2
@@ -47460,10 +47472,10 @@ void SkWinCore::DISPLAY_VIEWPORT(Bit16u dir, i16 xx, i16 yy)
 	X16 di = 0;
 	X16 bp02 = 0;
 	X8 bp03 = 0xff;
-	if (_4976_5a80[7].x2.w0 == 0 && _4976_5a80[6].x2.w0 == 0 && _4976_5a80[8].x2.w0 == 0) // wall at D2
+	if (tblCellTilesRoom[7].x2.w0 == 0 && tblCellTilesRoom[6].x2.w0 == 0 && tblCellTilesRoom[8].x2.w0 == 0) // wall at D2
 		//^32CB:5E57
 		bp03 = 0x71;
-	if (_4976_5a80[4].x2.w0 == 0 && _4976_5a80[3].x2.w0 == 0 && _4976_5a80[5].x2.w0 == 0) // wall at D1
+	if (tblCellTilesRoom[4].x2.w0 == 0 && tblCellTilesRoom[3].x2.w0 == 0 && tblCellTilesRoom[5].x2.w0 == 0) // wall at D1
 		//^32CB:5E74
 		bp03 = 0x70;
 	//^32CB:5E78
@@ -50128,9 +50140,7 @@ _29a8:
 			break;
 		//^2FCF:2D72
 	}
-	// SPX: Add for DM1 retrocompatibility
-	if (SkCodeParam::bDM1Mode)
-		DM1_ROTATE_ACTUATOR_LIST();
+
 	//^2FCF:2D83
 	return;
 }

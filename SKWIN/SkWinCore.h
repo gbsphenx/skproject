@@ -672,7 +672,7 @@ protected:
 //	X16		_4976_5978;
 	U16		glbSceneFlags;	// (_4976_5a7a) flags defined in word 0x65 of graphicsset category
 	U32		(*_4976_5a7c)[23];
-	sk5a80	*_4976_5a80;
+	CellTileDetail	*tblCellTilesRoom;	// _4976_5a80
 	U8		(*_4976_5a84)[17]; // (cx,cy)=(17,21). 17*21+1Å®358 bytes
 	i16		_4976_5a88;	// light level?
 	U32		_4976_5a8a;
@@ -860,7 +860,7 @@ public:
 	X16	EXTENDED_LOAD_DM1_ITEM_CONVERSION_LIST(void);
 	X16	EXTENDED_LOAD_SPELLS_DEFINITION(void);
 	X16 EXTENDED_LOAD_AI_DEFINITION(void);
-	X16 DM1_ROTATE_ACTUATOR_LIST(void);
+	X16 DM1_ROTATE_ACTUATOR_LIST(X16 localActionType, i16 iMapX, i16 iMapY, i16 iMapLevel);
 
 	const char *getXActrName(int x);
 	CString getSpellTypeName(U8 spelltype);
@@ -1105,10 +1105,10 @@ protected:
 	Bit16u IS_WALL_ORNATE_ALCOVE(Bit8u cls2);
 	Bit16u _0cee_17e7(Bit16u aa, Bit16u bb, Bit16u cc);
 	Bit8u _0cee_1815(i16 xx, i16 yy, Bit16u ss, Bit16u tt, Bit16u uu);
-	void _0cee_185a(skxxx6 *ref, Bit16u xx, Bit16u yy, Bit16u zz, Bit16u ww, Bit16u vv, i16 ss, i16 tt);
-	ObjectID _0cee_1a46(skxxx6 *ref, ObjectID recordLink, i16 xx, i16 yy);
+	void _0cee_185a(ExtendedTileInfo *ref, Bit16u xx, Bit16u yy, Bit16u zz, Bit16u ww, Bit16u vv, i16 ss, i16 tt);
+	ObjectID _0cee_1a46(ExtendedTileInfo *ref, ObjectID recordLink, i16 xx, i16 yy);
 	Bit16u QUERY_ORNATE_ANIM_FRAME(Bit8u cls1, Bit8u cls2, Bit32u tick, Bit32u delta);
-	void SUMMARIZE_STONE_ROOM(skxxx6 *ref, Bit16u ww, Bit16u xx, Bit16u yy);
+	void SUMMARIZE_STONE_ROOM(ExtendedTileInfo *ref, Bit16u ww, Bit16u xx, Bit16u yy);
 	__int16 QUERY_DUNGEON_MAP_CHIP_PICT(Bit8u cls1, Bit8u cls2, Bit8u **ppBuff, Bit8u *localpal);
 	void DRAW_CHIP_OF_MAGIC_MAP(const Bit8u *buff, Bit16u aa, Bit16u xx, Bit16u yy, Bit16u flipMirror, Bit8u *localpal);
 	__int16 _4937_000f(Bit16u xx, Bit16u *yy);
@@ -1339,7 +1339,7 @@ protected:
 	i16 DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz);	// _32cb_15b8
 	i16 _0b36_1446(Picture *ref, i16 xx, i16 yy, U16 colorkey);
 	U16 _32cb_00f1(U16 xx, U16 yy, i16 zz);
-	U16 _32cb_0287(U16 xx, U16 yy, U16 zz);
+	U16 _32cb_0287_DRAW_W_ORNATE(U16 xx, U16 yy, U16 zz); // _32cb_0287
 	void CLICK_WALL(U16 iClickSide); // _121e_0003
 	U16 _32cb_35c1(i16 *xx, i16 *yy, i16 zz, i16 ww);
 	i16 ROTATE_5x5_POS(i16 _5x5, U16 dir);

@@ -248,3 +248,15 @@ SkWinCore::EXTENDED_LOAD_DM1_ITEM_CONVERSION_LIST(void)
 
 	return 0;
 }
+
+
+
+
+
+// SPX: merge RotateActuatorList with caller parameters from PerformLocalAction (CSBWin reference)
+X16
+SkWinCore::DM1_ROTATE_ACTUATOR_LIST(X16 localActionType, i16 iMapX, i16 iMapY, i16 iMapLevel)
+{
+	return 0;
+}
+

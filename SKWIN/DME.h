@@ -1958,8 +1958,8 @@ namespace DM2Internal {
 		Bit8u entry;		// @2 // b2 cls4
 		Bit8u b3;		// @3
 	};
-	// 
-	struct skxxx6 { // 16 bytes
+	// SPX: skxxx6 renamed ExtendedTileInfo
+	struct ExtendedTileInfo { // 16 bytes
 		U16 w0;							// @0 // (w0) tiletype with extended value (i.e. door tile is 17, not 4!)
 		U16 w2;							// @2 // (w2) tileval?
 		U16 w4;							// @4 // (w4) tile record
@@ -2159,11 +2159,11 @@ namespace DM2Internal {
 		U8 b10;							// @10
 		U8 b11;							// @11
 	};
-	// 
-	struct sk5a80 { // 18 bytes
+	// SPX: sk5a80 renamed CellTileDetail
+	struct CellTileDetail { // 18 bytes
 		i8 b0;			// @0 // x-pos
 		i8 b1;			// @1 // y-pos
-		skxxx6 x2;		// @2 // summary room data
+		ExtendedTileInfo x2;		// @2 // summary room data
 	};
 	// 
 	struct sk4be2 { // 2 bytes
