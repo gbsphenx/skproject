@@ -1750,7 +1750,7 @@ protected:
 	void LOAD_LOCALLEVEL_DYN();	//*	interesting stuff in there
 	void CHANCE_TABLE_OPERATION();
 	void _32cb_4069(i16 xx, i16 yy, X16 ww, U16 *ss, U16 *tt);
-	void _32cb_4185(i16 xx, i16 yy, i16 cellPos, i16 dir);
+	void _32cb_4185_TILE_ROOM(i16 xx, i16 yy, i16 cellPos, i16 dir); // _32cb_4185
 	void TRIM_BLIT_RECT(i16 xx, i16 yy, i16 ss, i16 tt);
 	X16 SET_GRAPHICS_FLIP_FROM_POSITION(X16 aa, X16 ww, X16 xx, X16 yy);
 	void DRAW_DUNGEON_GRAPHIC(U8 cls1, U8 cls2, U8 cls4, X16 rectno, i16 colorkey, U16 mirrorflip);

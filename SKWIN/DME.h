@@ -1965,7 +1965,7 @@ namespace DM2Internal {
 		U16 w4;							// @4 // (w4) tile record
 		U16 w6[4];						// @6 // (w6) ornate index in GDAT // bit0-9: ornate index, bit10-15: frame index
 											// (w6[0] serving as opened door status : open = 0 .... 4 = closed
-		U16 w14;						// @14
+		U16 xvalue;					// @14 // (w14) actuator value ? portrait id ?
 
 
 
@@ -2161,9 +2161,9 @@ namespace DM2Internal {
 	};
 	// SPX: sk5a80 renamed CellTileDetail
 	struct CellTileDetail { // 18 bytes
-		i8 b0;			// @0 // x-pos
-		i8 b1;			// @1 // y-pos
-		ExtendedTileInfo x2;		// @2 // summary room data
+		i8 posx;			// @0 // b0 x-pos
+		i8 posy;			// @1 // b1 y-pos
+		ExtendedTileInfo xsrd;		// @2 // x2 summary room data
 	};
 	// 
 	struct sk4be2 { // 2 bytes
