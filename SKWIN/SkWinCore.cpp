@@ -25307,35 +25307,41 @@ U16 SkWinCore::WRITE_MINION_ASSOC()
 	// it is completely circulatory effect. minion assoc stores/recovers its connection.
 
 	//^2066:0583
-	Bit16u bp0a = glbMinionsAssocCount;
-	ObjectID *bp04 = glbMinionsObjectIDTable;
+	Bit16u iLocalCount = glbMinionsAssocCount; // bp0a
+	ObjectID *pMinionObjectID = glbMinionsObjectIDTable;	// bp04
 	//^2066:059C
-	while (bp0a-- != 0) {
+	while (iLocalCount-- != 0) {
 		//^2066:059E
-		ObjectID di = *bp04;
-		bp04++;
+		ObjectID rCurrentMinionID = *pMinionObjectID;	// di
+		pMinionObjectID++;
 		//^2066:05A8
-		GenericRecord *bp08 = reinterpret_cast<GenericRecord *>(GET_ADDRESS_OF_RECORD(di));
+		GenericRecord *pRecord = reinterpret_cast<GenericRecord *>(GET_ADDRESS_OF_RECORD(rCurrentMinionID)); // bp08
 		//^2066:05B5
-		Bit16u si;
-		switch (di.DBType()) {
+		Bit16u ref; // si
+		switch (rCurrentMinionID.DBType()) {
 			case dbContainer:	// 9
 				//^2066:05C9
-				si = _4976_5246[reinterpret_cast<Container *>(bp08)->w2 & 0x03FF];
+				//si = _4976_5246[reinterpret_cast<Container *>(pRecord)->w2 & 0x03FF];
+				ref = _4976_5246[reinterpret_cast<Container *>(pRecord)->GetContainedObject() & 0x03FF]; // _4976_5246 is allocated by number of creatures ?!
+				// SPX: just replaced direct access to w2 by function to access it
 				break;
 			case dbMissile:		// 14
-				si = _4976_5240[reinterpret_cast<Missile   *>(bp08)->w2 & 0x03FF];
+				//si = _4976_5240[reinterpret_cast<Missile   *>(pRecord)->w2 & 0x03FF];
+				ref = _4976_5240[reinterpret_cast<Missile   *>(pRecord)->GetMissileObject() & 0x03FF];
+				// SPX: just replaced direct access to w2 by function to access it
 				break;
 			default:
 				//^2066:05C7
 				continue;
 		}
 		//^2066:05EB
-		Bit16u bp0c = si;
+		//Bit16u ref = si; // bp0c
 		//^2066:05F3
-		Bit16u bp0e = 0x03FF;
-		if (SUPPRESS_WRITER(&bp0c, &bp0e, 2, 1) != 0)
+		Bit16u wmask = 0x03FF; // bp0e object id mask
+		DEBUG_HELP_WRITER("Minion", &ref, 2, 1);
+		if (SUPPRESS_WRITER(&ref, &wmask, 2, 1) != 0)
 			return 1;
+
 		//^2066:0613
 	}
 	//^2066:0620
@@ -30416,66 +30422,73 @@ _1045:
 	//^2066:1243
 	COMPACT_TIMERLIST();
 	//^2066:1248
-	skload_table_60 bp0084;
-	ZERO_MEMORY(&bp0084, 56);
+	skload_table_60 sGameVar; // bp0084
+	ZERO_MEMORY(&sGameVar, 56);
 	//^2066:125A
-	bp0084.dwGameTick = glbGameTick;
-	bp0084.dwRandomSeed = glbRandomSeed;
-	bp0084.wChampionsCount = glbChampionsCount;
-	bp0084.wPlayerPosX = glbPlayerPosX;
-	bp0084.wPlayerPosY = glbPlayerPosY;
-	bp0084.wPlayerDir = glbPlayerDir;
-	bp0084.wPlayerMap = glbPlayerMap;
-	bp0084.wChampionLeader = glbChampionLeader;
-	bp0084.wTimersCount = glbTimersCount;
-	bp0084.dw22 = _4976_0090;
-	bp0084.dw26 = _4976_4b80;
-	bp0084.w30 = _4976_4c00;
-	bp0084.wPlayerThrowCounter = glbPlayerThrowCounter;
-	bp0084.w34 = _4976_4c0c;
+	sGameVar.dwGameTick = glbGameTick;
+	sGameVar.dwRandomSeed = glbRandomSeed;
+	sGameVar.wChampionsCount = glbChampionsCount;
+	sGameVar.wPlayerPosX = glbPlayerPosX;
+	sGameVar.wPlayerPosY = glbPlayerPosY;
+	sGameVar.wPlayerDir = glbPlayerDir;
+	sGameVar.wPlayerMap = glbPlayerMap;
+	sGameVar.wChampionLeader = glbChampionLeader;
+	sGameVar.wTimersCount = glbTimersCount;
+	sGameVar.dw22 = _4976_0090;
+	sGameVar.dw26 = _4976_4b80;
+	sGameVar.w30 = _4976_4c00;
+	sGameVar.wPlayerThrowCounter = glbPlayerThrowCounter;
+	sGameVar.w34 = _4976_4c0c;
 
-	bp0084.wRainFlagSomething = glbRainFlagSomething;
-	bp0084.bRainAmbientLightModifier = glbRainAmbientLightModifier;
-	bp0084.bRainDirection = glbRainDirection;
-	bp0084.bRainStrength = glbRainStrength;
-	bp0084.bRainLevelForSky = glbRainLevelForSky;
-	bp0084.bRainLevelForGround = glbRainLevelForGround;
-	bp0084.bRainMultiplicator = glbRainMultiplicator;
-	bp0084.wRainStormController = glbRainStormController;
-	bp0084.bRainRelated3 = glbRainRelated3;
-	bp0084.bRainRelated2 = glbRainRelated2;
-	bp0084.dwRainSpecialNextTick = glbRainSpecialNextTick;
+	sGameVar.wRainFlagSomething = glbRainFlagSomething;
+	sGameVar.bRainAmbientLightModifier = glbRainAmbientLightModifier;
+	sGameVar.bRainDirection = glbRainDirection;
+	sGameVar.bRainStrength = glbRainStrength;
+	sGameVar.bRainLevelForSky = glbRainLevelForSky;
+	sGameVar.bRainLevelForGround = glbRainLevelForGround;
+	sGameVar.bRainMultiplicator = glbRainMultiplicator;
+	sGameVar.wRainStormController = glbRainStormController;
+	sGameVar.bRainRelated3 = glbRainRelated3;
+	sGameVar.bRainRelated2 = glbRainRelated2;
+	sGameVar.dwRainSpecialNextTick = glbRainSpecialNextTick;
 
 	s_testSKSave.StartWrite(FILE_TELL(glbDataFileHandle));
 
 	//^2066:1317
 	SUPPRESS_INIT();
 
+	DEBUG_HELP_WRITER("Global Game Variables", &sGameVar, 56, 1);
 	//^2066:131B
-	if (SUPPRESS_WRITER(&bp0084, _4976_395a, 56, 1) != 0)
+	if (SUPPRESS_WRITER(&sGameVar, _4976_395a, 56, 1) != 0)
 		goto _14fa;
+	DEBUG_HELP_WRITER("Ingame Global Flags", glbIngameGlobVarFlags, 1, 8);
 	//^2066:1339
 	if (SUPPRESS_WRITER(glbIngameGlobVarFlags, _4976_3956, 1, 8) != 0)
 		goto _14fa;
+	DEBUG_HELP_WRITER("Ingame Global Bytes", glbIngameGlobVarBytes, 1, 64);
 	//^2066:1355
 	if (SUPPRESS_WRITER(glbIngameGlobVarBytes, _4976_3956, 1, 64) != 0)
 		goto _14fa;
+	DEBUG_HELP_WRITER("Ingame Global Words", glbIngameGlobVarWords, 2, 64);
 	//^2066:1371
 	if (SUPPRESS_WRITER(glbIngameGlobVarWords, _4976_3956, 2, 64) != 0)
 		goto _14fa;
+	DEBUG_HELP_WRITER("Champion Squad", glbChampionSquad, 261, glbChampionsCount);
 	//^2066:138D
 	if (SUPPRESS_WRITER(glbChampionSquad, _4976_3992, 261, glbChampionsCount) != 0)
 		goto _14fa;
+	DEBUG_HELP_WRITER("Global Spell Effects", &glbGlobalSpellEffects, 6, 1);
 	//^2066:13AC
 	if (SUPPRESS_WRITER(&glbGlobalSpellEffects, _4976_3a97, 6, 1) != 0)
 		goto _14fa;
+	DEBUG_HELP_WRITER("Timers Table", glbTimersTable, 10, glbTimersCount);
 	//^2066:13C8
 	if (SUPPRESS_WRITER(glbTimersTable, _4976_3a9d, 10, glbTimersCount) != 0)
 		goto _14fa;
 	//^2066:13EA
 	_4976_5240 = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(dunHeader->nRecords[dbContainer] << 1, afDefault, 1024));
 	//^2066:140E
-	_4976_5246 = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(dunHeader->nRecords[dbCreature] << 1, afDefault, 1024));
+	_4976_5246 = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(dunHeader->nRecords[dbCreature] << 1, afDefault, 1024)); // dbCreature or dbMissile ??? (check WRITE_MINION_ASSOC)
 	//^2066:1432
 	glbMinionsObjectIDTable = reinterpret_cast<ObjectID *>(ALLOC_MEMORY_RAM(200, afDefault, 1024));
 	//^2066:144B
@@ -30495,6 +30508,7 @@ _1045:
 		}
 		//^2066:14A3
 	}
+	DEBUG_HELP_WRITER("Leader Hand Object Ref", &glbLeaderHandPossession.object, 2, 1);
 	//^2066:14AF
 	if (WRITE_RECORD_CHECKCODE(glbLeaderHandPossession.object, 0, 0) != 0)
 		goto _14fa;
@@ -61311,7 +61325,7 @@ void SkWinCore::ACTIVATE_INVERSE_FLAG(Timer *ref, Actuator *pr4)
 }
 //^3A15:1650
 // SPX: _3a15_1650 renamed ACTIVATE_TEST_FLAG. That one was activated just after the Dragon Door.
-// Is this an unimplemented actuator behaviour??
+// This checks the flag value then triggers destination trigger.
 void SkWinCore::ACTIVATE_TEST_FLAG(Timer *ref, Actuator *pr4)
 {
 	//^3A15:1650

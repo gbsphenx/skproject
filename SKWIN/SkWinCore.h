@@ -862,6 +862,8 @@ public:
 	X16 EXTENDED_LOAD_AI_DEFINITION(void);
 	X16 DM1_ROTATE_ACTUATOR_LIST(X16 localActionType, i16 iMapX, i16 iMapY, i16 iMapLevel);
 
+	void DEBUG_HELP_WRITER(const char* sinfo, const void* xdata, unsigned int blocksize, unsigned int repeat);
+
 	const char *getXActrName(int x);
 	CString getSpellTypeName(U8 spelltype);
 	CString getSkillName(U8 skill);

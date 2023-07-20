@@ -937,7 +937,7 @@ namespace DM2Internal {
 		Bit16u w38;
 		Bit16u w40;
 	};
-	// 
+	// structure of data used in savegame.dat
 	struct skload_table_60 { // 56 bytes
 		Bit32u dwGameTick;
 		Bit32u dwRandomSeed;
@@ -953,7 +953,10 @@ namespace DM2Internal {
 		Bit16u w30;
 		Bit16u wPlayerThrowCounter;
 		Bit16u w34;
-		Bit8u b36, b37, b38, b39;
+		Bit8u b36;
+		Bit8u b37;
+		Bit8u b38;
+		Bit8u b39;
 		Bit16u wRainFlagSomething;
 		Bit8u bRainAmbientLightModifier;
 		Bit8u bRainDirection;

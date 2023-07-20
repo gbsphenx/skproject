@@ -332,11 +332,13 @@ int stdTickBalance = TICK_BALANCE;
 
 //{{SKSTRTBL
 
+// SPX: Read/write mask for skload_table_60
 const Bit8u * const _4976_395a = (const Bit8u *)
 	"\xFF\xFF\xFF\x00\xFF\xFF\x00\x00\x07\x00\x1F\x00\x1F\x00\x03\x00"
 	"\x3F\x00\x03\x00\xFF\x01\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x00\x07\x00"
 	"\x07\x00\x03\x00\x01\x00\xFF\x00\x01\x00\x01\x03\xFF\xFF\xFF\x03"
 	"\xFF\x00\x1F\x03\xFF\xFF\xFF";
+// SPX: Read/write mask for game flags (bits / bytes / words)
 const Bit8u * const _4976_3956 = (const Bit8u *)
 	"\xFF\xFF";
 const Bit8u * const _4976_3992 = (const Bit8u *)

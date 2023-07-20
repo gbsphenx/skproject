@@ -300,3 +300,23 @@ SkWinCore::DM1_ROTATE_ACTUATOR_LIST(X16 localActionType, i16 iMapX, i16 iMapY, i
 	return 0;
 }
 
+
+
+void SkWinCore::DEBUG_HELP_WRITER(const char* sinfo, const void* xdata, unsigned int blocksize, unsigned int repeat)
+{
+	unsigned int icursor = 0;
+	unsigned int block = 0;
+	unsigned int bcursor = 0;
+	unsigned char* pdata = (unsigned char*) xdata;
+	printf("Savegame helper : <%s> (%d groups of size %d)\n", sinfo, repeat, blocksize);
+	for (block = 0; block < repeat; block++)
+	{
+		printf("(G: %03d): ", block);
+		icursor = block * blocksize;
+		for (bcursor = 0; bcursor < blocksize; bcursor++)
+		{
+			printf("%02X.", pdata[icursor + bcursor]);
+		}
+		printf("\n");
+	}
+}
