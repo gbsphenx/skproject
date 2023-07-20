@@ -2759,7 +2759,8 @@ GenericRecord *SkWinCore::GET_ADDRESS_OF_RECORD(ObjectID rl)
 
 	//^0CEE:09DB
 	GenericRecord *pr = reinterpret_cast<GenericRecord *>(glbDBObjectData[rl.RealDBType()] + dbSize[rl.RealDBType()] * rl.DBIndex());
-	ATLASSERT(pr->w0 != OBJECT_NULL); // shouldn't be deallocated record!
+	//SPX: I case of consuming food, the object will be already null, then assert will fail.
+	//ATLASSERT(pr->w0 != OBJECT_NULL); // shouldn't be deallocated record!
 	return pr;
 }
 
@@ -14865,7 +14866,7 @@ _0a25:
 		//^2E62:0CBD
 		_4976_022c = 0;
 		//^2E62:0CC3
-		CHANGE_VIEWPORT_TO_INVENTORY(0);
+ 		CHANGE_VIEWPORT_TO_INVENTORY(0);
 	}
 	//^2E62:0CCB
 	champion->heroFlag &= 0x03ff;	// 0x03FF
@@ -19841,38 +19842,6 @@ void SkWinCore::_443c_08ab(i16 *xx, i16 *yy, i16 *zz)
 	//^443C:08CD
 	return;
 }
-
-//==============================================================================
-//--- NEW FUNCTION -------------------------------------
-	//SPX: NEW FUNCTION, TO BE USED FOR MISSILE CONTAINED WITHIN POTION
-	U16 SkWinCore::QUERY_GDAT_POTION_SPELL_TYPE_FROM_RECORD(ObjectID rl)
-	{
-		ENTER(0);
-		return QUERY_GDAT_DBSPEC_WORD_VALUE(rl, GDAT_ITEM_STATS_MISSILE_SPELL);
-	}
-
-//--- NEW FUNCTION -------------------------------------
-	//SPX: NEW FUNCTION, TO BE USED FOR POTION TYPE
-	U16 SkWinCore::QUERY_GDAT_POTION_BEHAVIOUR_FROM_RECORD(ObjectID rl)
-	{
-		ENTER(0);
-		return QUERY_GDAT_DBSPEC_WORD_VALUE(rl, GDAT_POTION_STAT_BEHAVIOUR);
-	}
-
-//--- NEW FUNCTION -------------------------------------
-	//SPX: NEW FUNCTION, WATER VALUE, SHOULD WORK LIKE FOOD VALUE
-	U16 SkWinCore::QUERY_GDAT_WATER_VALUE_FROM_RECORD(ObjectID rl)
-	{
-		ENTER(0);
-		return QUERY_GDAT_DBSPEC_WORD_VALUE(rl, GDAT_ITEM_STATS_WATER_VALUE);
-	}
-
-//--- NEW FUNCTION -------------------------------------
-	//SPX: NEW FUNCTION, MIRROR VALUE FOR DOOR
-	U16 SkWinCore::QUERY_GDAT_DOOR_IS_MIRRORED(U8 doortype)
-	{
-		return QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, doortype, dtWordValue, GDAT_DOOR_MIRRORED);
-	}
 
 
 

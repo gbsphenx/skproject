@@ -1,3 +1,8 @@
+//--- SkWinCore2 -------------------------------------
+//SPX: This part of code will hold more easily added code for
+// - Retrocompatibility with DM1
+// - New code for expanding DM2
+
 #include <StdAfx.h>	// Required for MVC6 compilation
 
 #include <SkCodeParam.h>
@@ -26,6 +31,40 @@ using namespace kkBitBlt;
 
 #include <_4976_03a2.h>	// for dAITableGenuine (hard coded AI table)
 //--- Common part with A.cpp
+
+
+//==============================================================================
+//--- NEW FUNCTION -------------------------------------
+//SPX: NEW FUNCTION, TO BE USED FOR MISSILE CONTAINED WITHIN POTION
+U16 SkWinCore::QUERY_GDAT_POTION_SPELL_TYPE_FROM_RECORD(ObjectID rl)
+{
+	ENTER(0);
+	return QUERY_GDAT_DBSPEC_WORD_VALUE(rl, GDAT_ITEM_STATS_MISSILE_SPELL);
+}
+
+//--- NEW FUNCTION -------------------------------------
+//SPX: NEW FUNCTION, TO BE USED FOR POTION TYPE
+U16 SkWinCore::QUERY_GDAT_POTION_BEHAVIOUR_FROM_RECORD(ObjectID rl)
+{
+	ENTER(0);
+	return QUERY_GDAT_DBSPEC_WORD_VALUE(rl, GDAT_POTION_STAT_BEHAVIOUR);
+}
+
+//--- NEW FUNCTION -------------------------------------
+//SPX: NEW FUNCTION, WATER VALUE, SHOULD WORK LIKE FOOD VALUE
+U16 SkWinCore::QUERY_GDAT_WATER_VALUE_FROM_RECORD(ObjectID rl)
+{
+	ENTER(0);
+	return QUERY_GDAT_DBSPEC_WORD_VALUE(rl, GDAT_ITEM_STATS_WATER_VALUE);
+}
+
+//--- NEW FUNCTION -------------------------------------
+//SPX: NEW FUNCTION, MIRROR VALUE FOR DOOR
+U16 SkWinCore::QUERY_GDAT_DOOR_IS_MIRRORED(U8 doortype)
+{
+	return QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, doortype, dtWordValue, GDAT_DOOR_MIRRORED);
+}
+
 
 
 X16
@@ -257,6 +296,7 @@ SkWinCore::EXTENDED_LOAD_DM1_ITEM_CONVERSION_LIST(void)
 X16
 SkWinCore::DM1_ROTATE_ACTUATOR_LIST(X16 localActionType, i16 iMapX, i16 iMapY, i16 iMapLevel)
 {
+	// TODO to be implemented
 	return 0;
 }
 
