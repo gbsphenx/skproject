@@ -23,6 +23,9 @@ using namespace kkBitBlt;
 #include "SkwinSDL.h"
 #endif // _USE_SDL
 
+#include "allegro5/allegro5.h"
+#include "allegro5/allegro_audio.h"
+#include "allegro5/allegro_acodec.h"
 
 #include <_4976_03a2.h>	// for dAITableGenuine (hard coded AI table)
 //--- Common part with A.cpp
@@ -7453,7 +7456,8 @@ void SkWinCore::_44c8_1aca(Bit8u *buff, SRECT *rc, Bit16u xx, Bit16u yy)
 }
 
 //^0B36:105B
-void SkWinCore::_0b36_105b(sk3f6c *ref, SRECT *rc, Bit16u xx)
+// SPX: _0b36_105b renamed DRAW_GRAY_OVERLAY
+void SkWinCore::DRAW_GRAY_OVERLAY(sk3f6c *ref, SRECT *rc, Bit16u xx)
 {
 	//^0B36:105B
 	ENTER(8);
@@ -7525,7 +7529,7 @@ void SkWinCore::DRAW_HAND_ACTION_ICONS(Bit16u playerIndex, Bit16u possessionInde
 		//^29EE:036C
 		if (champion->handCooldown[possessionIndex] != 0 || glbIsPlayerSleeping != 0) {
 			//^29EE:0380
-			_0b36_105b(&_4976_3f6c, &bp10, 0);
+			DRAW_GRAY_OVERLAY(&_4976_3f6c, &bp10, 0);
 		}
 	}
 	//^29EE:0393
@@ -7594,7 +7598,7 @@ void SkWinCore::DRAW_SQUAD_SPELL_AND_LEADER_ICON(Bit16u player, Bit16u yy)
 			bp0144.rc36.x += _4976_3f6c.rc2.x;
 			bp0144.rc36.y += _4976_3f6c.rc2.y;
 			//^29EE:0695
-			_0b36_105b(&_4976_3f6c, &bp0144.rc36, 0);
+			DRAW_GRAY_OVERLAY(&_4976_3f6c, &bp0144.rc36, 0);
 		}
 		//^29EE:06A9
 		QUERY_GDAT_SUMMARY_IMAGE(&bp0144, 0x01, 0x04, bp01);
@@ -7613,7 +7617,7 @@ void SkWinCore::DRAW_SQUAD_SPELL_AND_LEADER_ICON(Bit16u player, Bit16u yy)
 			bp0144.rc36.x = _4976_3f6c.rc2.x;
 			bp0144.rc36.y = _4976_3f6c.rc2.y;
 			//^29EE:06FB
-			_0b36_105b(&_4976_3f6c, &bp0144.rc36, 0);
+			DRAW_GRAY_OVERLAY(&_4976_3f6c, &bp0144.rc36, 0);
 		}
 	}
 	//^29EE:070F
@@ -7839,7 +7843,7 @@ void SkWinCore::DRAW_SQUAD_POS_INTERFACE()
 	//^29EE:0563
 	if (glbIsPlayerSleeping != 0) {
 		//^29EE:056A
-		_0b36_105b(
+		DRAW_GRAY_OVERLAY(
 			&_4976_3f6c, 
 			QUERY_EXPANDED_RECT(47, &bp14),
 			0
@@ -11073,7 +11077,7 @@ void SkWinCore::DRAW_MAJIC_MAP(ObjectID recordLink)
 	if ((glbMagicalMapFlags & 0x0100) != 0 || (glbMagicalMapFlags & 0x0200) == 0) {
 		//^29EE:2025
 		SRECT bp1e;
-		_0b36_105b(&_4976_3f6c, QUERY_EXPANDED_RECT(99, &bp1e), 0);
+		DRAW_GRAY_OVERLAY(&_4976_3f6c, QUERY_EXPANDED_RECT(99, &bp1e), 0);
 	}
 	//^29EE:2044
 	return;
@@ -24733,7 +24737,7 @@ void SkWinCore::DRAW_WAKE_UP_TEXT()
 	// This fills the main viewport in black
 	FILL_ENTIRE_PICT(_4976_4c16, glbPaletteT16[COLOR_BLACK]);
 	U8 bp28[40];
-	// SPX: drawing the ZZZ / Wake up string
+	// SPX: drawing the "Wake up" string
 	DRAW_VP_RC_STR(
 		6, 
 		glbPaletteT16[COLOR_CYAN], 
@@ -63626,6 +63630,9 @@ i16 SkWinCore::FIRE_MAIN(i16 argc, char **argv, char **env) //#DS=4976
 	INIT();	// _38c8_04aa
 
 	// SPX: Add some more init here, just before starting the GAME_LOOP
+	al_init();
+	al_install_audio();
+	al_init_acodec_addon();
 	EXTENDED_LOAD_SPELLS_DEFINITION();
 	EXTENDED_LOAD_DM1_ITEM_CONVERSION_LIST();
 

@@ -1064,7 +1064,7 @@ protected:
 	Bit8u *DRAW_ITEM_ON_WOOD_PANEL(Bit16u player, Bit16u possessionIndex, Picture *ref);
 	void FIRE_BLIT_TO_MEMORY_ROW_4TO8BPP(Bit16u offSrc, Bit16u offDst, Bit16u width, __int16 colorkey);
 	void _44c8_1aca(Bit8u *buff, SRECT *rc, Bit16u xx, Bit16u yy);
-	void _0b36_105b(sk3f6c *ref, SRECT *rc, Bit16u xx);
+	void DRAW_GRAY_OVERLAY(sk3f6c *ref, SRECT *rc, Bit16u xx);	// _0b36_105b
 	void DRAW_HAND_ACTION_ICONS(Bit16u playerIndex, Bit16u possessionIndex, Bit16u leftOrRight);
 	void DRAW_SQUAD_SPELL_AND_LEADER_ICON(Bit16u player, Bit16u yy);
 	void __CHECK_ROOM_FOR_CONTAINER(ObjectID rl, Container *ref);
