@@ -322,8 +322,7 @@ void SkWinCore::DEBUG_HELP_WRITER(const char* sinfo, const void* xdata, unsigned
 }
 
 // This disable all hands and magic for some time; that allow some new type of attacks from creature
-void
-SkWinCore::STUN_CHAMPION(U16 player, U16 stunvalue)
+void SkWinCore::STUN_CHAMPION(U16 player, U16 stunvalue)
 {
 	Champion *champion = &glbChampionSquad[player];
 	U16 cooldown = 0;
@@ -340,3 +339,65 @@ SkWinCore::STUN_CHAMPION(U16 player, U16 stunvalue)
 
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+// SPX: New function CURE_PLAGUE, similar to CURE_POISON
+void SkWinCore::CURE_PLAGUE(U16 player)
+{
+	i16 di = player;
+	if (di != -1) {
+		U16 si = 0;
+		Timer *bp04 = glbTimersTable;
+		for (; si < glbTimersActiveCount; bp04++, si++) {
+			if (bp04->TimerType() == ttyPlague) {
+				if (bp04->actor == di) {
+					DELETE_TIMER(si);
+				}
+			}
+		}
+		glbChampionSquad[di].PlagueValue = 0;
+	}
+	return;
+}
+
+
+// SPX: Custom, code added, similar to POISON
+void SkWinCore::PROCESS_PLAGUE(i16 player, Bit16u counters)
+{
+	
+	if (SkCodeParam::bUseIngameDebug)
+	{
+		U8 message[64];
+		sprintf((char*)message, "PLAYER %d HAS %d PLAGUE COUNTERS.\n", player, counters);
+		DISPLAY_HINT_TEXT(glbChampionColor[player], message);
+	}
+	X16 si = counters;
+	if (player == -1)
+		return;
+	if (player +1 == glbNextChampionNumber)
+		return;
+	Champion *champion = &glbChampionSquad[player];
+	WOUND_PLAYER(player, 1, 0, 0);
+	ADJUST_STAMINA(player, max_value(1, si << 4));
+	champion->curWater(champion->curWater() -100);
+	if (champion->curWater() < WATER_MIN)
+		champion->curWater(WATER_MIN);
+
+
+	champion->heroFlag |= CHAMPION_FLAG_0800;	// 0x800
+	champion->heroFlag |= CHAMPION_FLAG_2000;	// 0x2000
+	si--;
+	if (si == 0)
+		return;
+	champion->PlagueValue++;
+
+	// Create a new timer
+	Timer newtimer;
+	newtimer.TimerType(ttyPlague);
+	newtimer.actor = (U8)player;
+	newtimer.SetMap(glbPlayerMap);
+	newtimer.SetTick(glbGameTick +0x24);
+	newtimer.value = si;
+	QUEUE_TIMER(&newtimer);
+	return;
+}

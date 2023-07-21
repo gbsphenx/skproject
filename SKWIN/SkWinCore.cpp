@@ -19916,24 +19916,6 @@ void SkWinCore::CURE_POISON(U16 player)
 	return;
 }
 
-// SPX: New function CURE_PLAGUE, similar to CURE_POISON
-void SkWinCore::CURE_PLAGUE(U16 player)
-{
-	i16 di = player;
-	if (di != -1) {
-		U16 si = 0;
-		Timer *bp04 = glbTimersTable;
-		for (; si < glbTimersActiveCount; bp04++, si++) {
-			if (bp04->TimerType() == ttyPlague) {
-				if (bp04->actor == di) {
-					DELETE_TIMER(si);
-				}
-			}
-		}
-		glbChampionSquad[di].PlagueValue = 0;
-	}
-	return;
-}
 
 //^2C1D:0009
 // SPX: _2c1d_0009 replaced by PROCEED_ENCHANTMENT_SELF
@@ -39512,7 +39494,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 		if (SkCodeParam::bDM1Mode == true)
 		{
 			dunMapsHeaders[si].bGfxFlags = MAPGFX_FLAG__PIT_UPPER_ROOF | MAPGFX_FLAG__PIT_LOWER_GROUND | MAPGFX_FLAG__STAIRS_GOING_UP | MAPGFX_FLAG__STAIRS_GOING_DOWN | MAPGFX_FLAG__TELEPORTER | MAPGFX_FLAG__DOOR_0 | MAPGFX_FLAG__DOOR_1;
-			dunMapsHeaders[si].w14 = (3 << 4); // tileset = 3 (keep)
+			dunMapsHeaders[si].w14 = (3 << 4) + (dunMapsHeaders[si].w14 & 0xFF00); // tileset = 3 (keep)
 		}
 	}
 	//^2066:26FD
@@ -41273,46 +41255,6 @@ void SkWinCore::PROCESS_POISON(i16 player, Bit16u yy) {
 	return;
 }
 
-// SPX: Custom, code added, similar to POISON
-void SkWinCore::PROCESS_PLAGUE(i16 player, Bit16u counters)
-{
-	
-	if (SkCodeParam::bUseIngameDebug)
-	{
-		U8 message[64];
-		sprintf((char*)message, "PLAYER %d HAS %d PLAGUE COUNTERS.\n", player, counters);
-		DISPLAY_HINT_TEXT(glbChampionColor[player], message);
-	}
-	X16 si = counters;
-	if (player == -1)
-		return;
-	if (player +1 == glbNextChampionNumber)
-		return;
-	Champion *champion = &glbChampionSquad[player];
-	WOUND_PLAYER(player, 1, 0, 0);
-	ADJUST_STAMINA(player, max_value(1, si << 4));
-	champion->curWater(champion->curWater() -100);
-	if (champion->curWater() < WATER_MIN)
-		champion->curWater(WATER_MIN);
-
-
-	champion->heroFlag |= CHAMPION_FLAG_0800;	// 0x800
-	champion->heroFlag |= CHAMPION_FLAG_2000;	// 0x2000
-	si--;
-	if (si == 0)
-		return;
-	champion->PlagueValue++;
-
-	// Create a new timer
-	Timer newtimer;
-	newtimer.TimerType(ttyPlague);
-	newtimer.actor = (U8)player;
-	newtimer.SetMap(glbPlayerMap);
-	newtimer.SetTick(glbGameTick +0x24);
-	newtimer.value = si;
-	QUEUE_TIMER(&newtimer);
-	return;
-}
 
 
 //^0CEE:06DC
@@ -44378,9 +44320,12 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 		// SPX: x18 GDAT2 Teleporter category
 		MARK_DYN_LOAD(0x18ffffff); // Mark: Teleporter, all, all, all
 	}
+	glbMapDoorType[0] = dunMapLocalHeader->DoorType0();
+	glbMapDoorType[1] = dunMapLocalHeader->DoorType1();
 	//^2676:072C
 	glbMapDoorType[0] = (dunMapLocalHeader->UseDoor0() != 0) ? dunMapLocalHeader->DoorType0() : 0xff;
 	glbMapDoorType[1] = (dunMapLocalHeader->UseDoor1() != 0) ? dunMapLocalHeader->DoorType1() : 0xff;
+	printf("LOAD_LEVEL : Doors 1/2 are : %02d/%02d\n", glbMapDoorType[0], glbMapDoorType[1]);
 	//^2676:076C
 	X16 bp2e;
 	X16 bp2c;
@@ -45926,6 +45871,7 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 					//^32CB:49A2
 					Door *xDoor = GET_ADDRESS_OF_RECORD0(bp0c);	// Door *bp04
 					U8 iDoorGDATIndex = glbMapDoorType[xDoor->DoorType()];	// U8 bp0e
+					printf("DRAW DOOR : type to draw : %02d => %02d\n", xDoor->DoorType(), glbMapDoorType[xDoor->DoorType()] );
 					X16 iDoorColorPassThrough = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_IMG_COLORKEY_1);	// X16 bp12
 					if (iDoorColorPassThrough != 0)
 					{
