@@ -320,3 +320,23 @@ void SkWinCore::DEBUG_HELP_WRITER(const char* sinfo, const void* xdata, unsigned
 		printf("\n");
 	}
 }
+
+// This disable all hands and magic for some time; that allow some new type of attacks from creature
+void
+SkWinCore::STUN_CHAMPION(U16 player, U16 stunvalue)
+{
+	Champion *champion = &glbChampionSquad[player];
+	U16 cooldown = 0;
+	U8 hand = 0;
+
+	for (hand = 0; hand < 2; hand++)
+	{
+		cooldown = champion->handCooldown[hand];
+		cooldown += stunvalue;
+		if (cooldown >= 256)
+			cooldown = 255;
+		champion->handCooldown[hand] = cooldown;
+	}
+
+}
+
