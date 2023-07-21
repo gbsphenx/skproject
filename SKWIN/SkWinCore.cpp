@@ -4980,7 +4980,7 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 	{
 		U8 message[32];
 		sprintf((char*)message, "PRECOMP LIGHT %d\n", glbPrecomputedLight);
-		DISPLAY_HINT_TEXT(11, message);
+		DISPLAY_HINT_TEXT(COLOR_YELLOW, message);
 		//printf((char*)message);
 	}
 	//^24A5:013D
@@ -15985,7 +15985,7 @@ void SkWinCore::DISPLAY_HINT_NEW_LINE()
 	//^3929:0B5A
 	ENTER(0);
 	//^3929:0B5D
-	DISPLAY_HINT_TEXT(0, const_cast<U8 *>(strEndLine));
+	DISPLAY_HINT_TEXT(COLOR_BLACK, const_cast<U8 *>(strEndLine));
 	//^3929:0B6A
 	return;
 }
@@ -25566,10 +25566,10 @@ void SkWinCore::_3e74_5b7c(U16 xx)
 		//^3E74:5BAD
 		const U8 *bp04 = _4976_4853;
 		//^3E74:5BB5
-		DISPLAY_HINT_TEXT(15, bp04);
+		DISPLAY_HINT_TEXT(COLOR_WHITE, bp04);
 		//^3E74:5BC5
 		U8 bp14[16];
-		DISPLAY_HINT_TEXT(15, SK_LTOA10(2, bp14));
+		DISPLAY_HINT_TEXT(COLOR_WHITE, SK_LTOA10(2, bp14));
 		//^3E74:5BE2
 		_3929_0b01(15, 46);
 		//^3E74:5BED
@@ -25597,7 +25597,7 @@ void SkWinCore::_3e74_5b7c(U16 xx)
 			//^3E74:5C69
 			bp14[2] = 0x45;
 		//^3E74:5C6D
-		DISPLAY_HINT_TEXT(15, bp14);
+		DISPLAY_HINT_TEXT(COLOR_WHITE, bp14);
 	}
 	//^3E74:5C7C
 	_4976_484d = 0;
@@ -36477,7 +36477,7 @@ tiamat SkWinCore::ALLOC_MEMORY_(i32 size, Bit16u flags, Bit16u poolno)
 	{
 		U8 message[32];
 		sprintf((char*)message, "FREE MEM = %06d , ALLOC SIZE = %05d \n", glbFreeRAMMemPool, size);
-		DISPLAY_HINT_TEXT(11, message);
+		DISPLAY_HINT_TEXT(COLOR_YELLOW, message);
 	}
 	*/
 
@@ -61945,7 +61945,7 @@ void SkWinCore::ACTUATE_FLOOR_MECHA(Timer *ref)
 			//^3A15:181A
 			U8 bp00dc[206];
 			QUERY_MESSAGE_TEXT(bp00dc, si, 1);
-			DISPLAY_HINT_TEXT(15, bp00dc);
+			DISPLAY_HINT_TEXT(COLOR_WHITE, bp00dc);
 			continue;
 		}
 		//^3A15:183E
@@ -63384,7 +63384,7 @@ void SkWinCore::GAME_LOOP()
 	{
 		U8 message[64];
 		sprintf((char*)message, "RAM = %08d / EMS = %08d\n", glbFreeRAMMemPool, glbFreeEMSMemPool);
-		DISPLAY_HINT_TEXT(11, message);
+		DISPLAY_HINT_TEXT(COLOR_YELLOW, message);
 	}
 	//^13AE:005C
 	ENTER(0);
