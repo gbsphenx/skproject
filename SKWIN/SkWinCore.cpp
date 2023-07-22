@@ -9187,7 +9187,7 @@ void SkWinCore::CALC_VECTOR_W_DIR(__int16 dir, __int16 xx, __int16 yy, __int16 *
 }
 
 //^0CEE:315E
-Bit16u SkWinCore::IS_WALL_ORNATE_ALCOVE(Bit8u cls2)
+Bit16u SkWinCore::GET_WALL_ORNATE_ALCOVE_TYPE(Bit8u cls2)
 {
 	// return 0 if non-alcove.
 	// return 1 if an alcove.
@@ -9265,7 +9265,7 @@ void SkWinCore::_0cee_185a(ExtendedTileInfo *ref, Bit16u xx, Bit16u yy, Bit16u z
 		//^0CEE:192E
 		for (si = 3; si <= 6; si++) {
 			//^0CEE:1933
-			if (IS_WALL_ORNATE_ALCOVE(Bit8u(ref->w6[RCJ(4,si -3)])) != 0) {
+			if (GET_WALL_ORNATE_ALCOVE_TYPE(Bit8u(ref->w6[RCJ(4,si -3)])) != 0) {
 				//^0CEE:194A
 				ref->w6[RCJ(4,si -3)] = 0x00ff;
 			}
@@ -20420,7 +20420,8 @@ U16 SkWinCore::IS_WALL_ORNATE_ALCOVE_FROM_RECORD(ObjectID rl)
 	//^0CEE:317F
 	ENTER(0);
 	//^0CEE:3182
-	return (IS_WALL_ORNATE_ALCOVE(QUERY_CLS2_FROM_RECORD(rl)) == 1) ? 1 : 0;
+	return (GET_WALL_ORNATE_ALCOVE_TYPE(QUERY_CLS2_FROM_RECORD(rl)) == WALL_ORNATE_OBJECT__ALCOVE) ? 1 : 0;
+	//return (GET_WALL_ORNATE_ALCOVE_TYPE(QUERY_CLS2_FROM_RECORD(rl)) == 1) ? 1 : 0;
 }
 
 //^0CEE:0AE1
@@ -20683,6 +20684,9 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 	// e.g. you place a torch at wall. _2fcf_19f4( 8, 4, 2,FFFF,1502)
 	// e.g. you take a torch at wall.  _2fcf_19f4( 8, 4, 2,FFFF,FFFF)
 
+	// SPX: this seems to behave differently from DM1. DM1 would check the last actuator to determine what is activable from user.
+	// specially seen on alcoves under key hole / coin slot to protect items to be taken in any case.
+
 	//^2FCF:19F4
 	ENTER(68);
 	//^2FCF:19FA
@@ -20693,6 +20697,27 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 	//^2FCF:1A0C
 	ObjectID bp0e = GET_TILE_RECORD_LINK(xx, yy);
 	printf("Click on wall : ---------------\n");
+
+	// SPX: for DM1 compatibility, we first get the "top" actuator on each side, so that we can compare then if it needs to be considered by interaction or not.
+	ObjectID xTopActuators[4];	// for all side
+	xTopActuators[0] = xTopActuators[1] = xTopActuators[2] = xTopActuators[3] = OBJECT_END_MARKER;
+	if (SkCodeParam::bDM1Mode)
+	{
+		for (U16 i = 0; bp0e != OBJECT_END_MARKER && i == 0; bp0e = GET_NEXT_RECORD_LINK(bp0e))
+		{
+			U16 bp1c = bp0e.DBType();
+			U16 bp10 = bp0e.Dir();
+			//if (bp10 != dir || bp1c != dbActuator)
+			//	continue;
+			if (bp1c != dbActuator)
+				continue;
+			xTopActuators[bp10] = bp0e;
+		}
+	}
+	printf("Top objects on sides N/E/S/W : %04X %04X %04X %04X\n", 
+		xTopActuators[0], xTopActuators[1], xTopActuators[2], xTopActuators[3]);
+	bp0e = GET_TILE_RECORD_LINK(xx, yy);
+
 	//^2FCF:1A1C
 	for (U16 bp28 = 0; bp0e != OBJECT_END_MARKER && bp28 == 0; bp0e = GET_NEXT_RECORD_LINK(bp0e)) {
 		//^2FCF:1A24
@@ -20703,7 +20728,14 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 			continue;
 		//^2FCF:1A35
 		if (IS_WALL_ORNATE_ALCOVE_FROM_RECORD(bp0e) != 0) {
-			printf("Click on wall : this is a wall alcove!\n");
+			printf("Click on wall %04X (dir=%d): this is a wall alcove!\n", bp0e, bp10);
+			// SPX: for DM1 compatibility, we check if this actuator is the top actuator to consider its effect as alcove
+			if (SkCodeParam::bDM1Mode && bp0e != xTopActuators[bp10])
+			{
+				printf("DM1Mode: wall alcove effect is rejected!\n");
+				// BUT we want to check its actuator code, so that we have to jump further
+				goto checkactuator;
+			}
 			//^2FCF:1A45
 			if (si == OBJECT_NULL) {
 				//^2FCF:1A4A
@@ -20750,7 +20782,7 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 		}
 		//^2FCF:1AF0
 		if (IS_WALL_ORNATE_SPRING(bp0e) != 0) {
-			printf("Click on wall : this is a wall fountain!\n");
+			printf("Click on wall %04X (dir=%d): this is a wall fountain!\n", bp0e, bp10);
 			//^2FCF:1B00
 			if (si == OBJECT_NULL) {
 				//^2FCF:1B05
@@ -20794,6 +20826,8 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 			//^2FCF:1BB7
 			break;
 		}
+//SPX: added for easy jump from DM1 mode
+checkactuator:
 		//^2FCF:1BBA
 		U16 bp1c = bp0e.DBType();
 		//^2FCF:1BC6
@@ -20807,7 +20841,7 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 			U16 bp18 = bp04->ActuatorData();
 			//^2FCF:1BF7
 			U16 bp1a = bp04->ActionType();
-			printf("Clicking on wall Actuator ACT=%02d action=%04x data=%04x\n", bp16, bp1a, bp18);
+			printf("Clicking on wall Actuator %04X (dir=%d) ACT=%02d action=%04x data=%04x\n", bp0e, bp10, bp16, bp1a, bp18);
 			//^2FCF:1C04
 			//if (glbChampionLeader == -1 && bp16 != 0x7e)
 			if (glbChampionLeader == -1 && (bp16 != ACTUATOR_TYPE_RESURECTOR && bp16 != ACTUATOR_TYPE_CHAMPION_MIRROR)) // SPX : Add 0x7F
@@ -20895,6 +20929,7 @@ _1cb6:
 					if (bp2c == 0 || bp04->OnceOnlyActuator() == 0)
 						break;
 					DEALLOC_RECORD(REMOVE_OBJECT_FROM_HAND());
+					DM1_ROTATE_ACTUATOR_LIST(2, xx, yy, -1, bp10);
 					break;
 
 				case ACTUATOR_TYPE_PUSH_BUTTON_WALL_SWITCH: // 0x46 -> 'Activator, seal-able push button wall switch'
@@ -22611,7 +22646,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 	//^32CB:161D
 	U16 bp2a = (bp1f == 0) ? 1 : 0;
 	//^32CB:162D
-	U16 alcoveType = IS_WALL_ORNATE_ALCOVE(bp1f);	// U16 bp22
+	U16 alcoveType = GET_WALL_ORNATE_ALCOVE_TYPE(bp1f);	// U16 bp22
 	//^32CB:163A
 	U16 iDoNotFlip = 0; // U16 bp24 = 0; SPX: fixed value init
 	if (bp2a == 0) {
@@ -48088,7 +48123,7 @@ X16 SkWinCore::IS_OBJECT_ALCOVE(ObjectID rl)
 	//^0CEE:317F
 	ENTER(0);
 	//^0CEE:3182
-	if (IS_WALL_ORNATE_ALCOVE(QUERY_CLS2_FROM_RECORD(rl)) == 1)
+	if (GET_WALL_ORNATE_ALCOVE_TYPE(QUERY_CLS2_FROM_RECORD(rl)) == 1)
 		return 1;
 	return 0;
 }

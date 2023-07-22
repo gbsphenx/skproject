@@ -294,9 +294,54 @@ SkWinCore::EXTENDED_LOAD_DM1_ITEM_CONVERSION_LIST(void)
 
 // SPX: merge RotateActuatorList with caller parameters from PerformLocalAction (CSBWin reference)
 X16
-SkWinCore::DM1_ROTATE_ACTUATOR_LIST(X16 localActionType, i16 iMapX, i16 iMapY, i16 iMapLevel)
+SkWinCore::DM1_ROTATE_ACTUATOR_LIST(X16 localActionType, i16 iMapX, i16 iMapY, i16 iMapLevel, U16 iSide)
 {
+	printf("DM1 Rotate Actuators on %d,%d dir=%d !\n", iMapX, iMapY, iSide);
 	// TODO to be implemented
+	ObjectID xFirstObject = GET_TILE_RECORD_LINK(iMapX, iMapY);
+	ObjectID xCurrentObject = xFirstObject;
+	ObjectID xThreeLastActuators[3];
+	ObjectID xLastActNext = OBJECT_END_MARKER;
+	U16 index = 0;
+	U16 iActuatorDirection = 0; // to be checked with side to rotate
+	U16 iObjectDBType = 0;
+
+	xThreeLastActuators[0] = xThreeLastActuators[1] = xThreeLastActuators[2] = OBJECT_END_MARKER;
+
+	for (index = 0; xCurrentObject != OBJECT_END_MARKER && index == 0; xCurrentObject = GET_NEXT_RECORD_LINK(xCurrentObject))
+	{
+		iActuatorDirection = xCurrentObject.Dir();
+		iObjectDBType = xCurrentObject.DBType();
+		if (iActuatorDirection != iSide || iObjectDBType != dbActuator)
+			continue;
+		// object is an actuator on the right side, we stack it
+		xThreeLastActuators[0] = xThreeLastActuators[1];
+		xThreeLastActuators[1] = xThreeLastActuators[2];
+		xThreeLastActuators[2] = xCurrentObject;
+		xLastActNext = GET_NEXT_RECORD_LINK(xCurrentObject);
+	}
+
+	// Perform the rotate
+	// case 1: there is actually only one actuator, then do nothing
+	if (xThreeLastActuators[0] == OBJECT_END_MARKER && xThreeLastActuators[1] == OBJECT_END_MARKER)
+		return 1;
+
+	// case 2: there are two actuators, rotate them
+	if (xThreeLastActuators[0] == OBJECT_END_MARKER &&
+			xThreeLastActuators[1] != OBJECT_END_MARKER	&& xThreeLastActuators[2] != OBJECT_END_MARKER)
+	{
+		// If ground actuator is [1], then it will be also switched.
+		//i16 index = GET_OBJECT_INDEX_FROM_TILE(iMapX, iMapY);
+		//if (index != -1)
+		//	dunGroundStacks[index] = xThreeLastActuators[2];
+
+
+		// Act[2] goes under, and gets Act[1] as next
+		APPEND_RECORD_TO(xThreeLastActuators[1], &xThreeLastActuators[2], -1, -1);
+		// Act[1] gets on top, then gets next as empty
+		APPEND_RECORD_TO(xLastActNext, &xThreeLastActuators[1], -1, -1);
+	}
+
 	return 0;
 }
 

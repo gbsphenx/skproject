@@ -860,7 +860,7 @@ public:
 	X16	EXTENDED_LOAD_DM1_ITEM_CONVERSION_LIST(void);
 	X16	EXTENDED_LOAD_SPELLS_DEFINITION(void);
 	X16 EXTENDED_LOAD_AI_DEFINITION(void);
-	X16 DM1_ROTATE_ACTUATOR_LIST(X16 localActionType, i16 iMapX, i16 iMapY, i16 iMapLevel);
+	X16 DM1_ROTATE_ACTUATOR_LIST(X16 localActionType, i16 iMapX, i16 iMapY, i16 iMapLevel, U16 iSide);
 
 	void STUN_CHAMPION(U16 player, U16 stunvalue);
 
@@ -1107,7 +1107,7 @@ protected:
 	Bit16u _19f0_124b(__int16 *xx, __int16 *yy, Bit16u ww, __int16 ss, Bit16u tt);
 	void _29ee_18eb(Bit16u xx, Bit16u yy, Bit16u zz);
 	void CALC_VECTOR_W_DIR(__int16 dir, __int16 xx, __int16 yy, __int16 *ss, __int16 *tt);
-	Bit16u IS_WALL_ORNATE_ALCOVE(Bit8u cls2);
+	Bit16u GET_WALL_ORNATE_ALCOVE_TYPE(Bit8u cls2);
 	Bit16u _0cee_17e7(Bit16u aa, Bit16u bb, Bit16u cc);
 	Bit8u _0cee_1815(i16 xx, i16 yy, Bit16u ss, Bit16u tt, Bit16u uu);
 	void _0cee_185a(ExtendedTileInfo *ref, Bit16u xx, Bit16u yy, Bit16u zz, Bit16u ww, Bit16u vv, i16 ss, i16 tt);
