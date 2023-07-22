@@ -4992,10 +4992,8 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 	if (dunMapsHeaders[glbPlayerMap].Difficulty() == 0) {
 		//^24A5:015D
 		glbLightLevel = 1;
-#if (DM2_DEBUG_SUPER_MODE == 1)
-		glbLightLevel = 0;
-#endif
-
+		if (SkCodeParam::bDM1Mode)
+			glbLightLevel = 0;
 	}
 	else {
 		//^24A5:0166
@@ -5079,6 +5077,8 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 		//^24A5:030A
 		// SPX: Get the highest default light (from wallset type)
 		i16 bp0a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_HIGHEST_LIGHT_LEVEL);
+		if (SkCodeParam::bDM1Mode)
+			bp0a = 0;
 		//^24A5:031F
 		if (glbLightLevel < bp0a) {
 			//^24A5:0327
@@ -5094,11 +5094,14 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 		}
 	}
 	//^24A5:0341
+	printf("Light level before modifier is %d\n", glbLightLevel);
 	glbLightLevel -= (glbLightModifier > 12) ? 1 : 0;
+	printf("Light level before bound is %d\n", glbLightLevel);
 	//^24A5:0353
-	glbLightLevel = BETWEEN_VALUE(0, glbLightLevel, 5);
+	glbLightLevel = BETWEEN_VALUE(0, glbLightLevel, 5);	// SPX: minimum is 5 ? but it can be even darker with 6
 	if (SkCodeParam::bFullLight)	// SPX: debug feature added to always get full light
 		glbLightLevel = 0;
+	printf("Light level final is %d\n", glbLightLevel);
 	//^24A5:0366
 }
 
@@ -20931,6 +20934,17 @@ _1cb6:
 					DEALLOC_RECORD(REMOVE_OBJECT_FROM_HAND());
 					DM1_ROTATE_ACTUATOR_LIST(2, xx, yy, -1, bp10);
 					break;
+
+				// SPX: addition for DM1 retrocompatibility
+				case ACTUATOR_TYPE_WALL_TOGGLER: // 0x04 -> 'Activator, item eater
+					printf("WALL TOGGLER: expected = %d / in hand = %d\n", bp18, GET_DISTINCTIVE_ITEMTYPE(si));
+					DM1_ROTATE_ACTUATOR_LIST(2, xx, yy, -1, bp10);
+//					bp2c = (GET_DISTINCTIVE_ITEMTYPE(si) == bp18) ? 1 : 0;
+//					di = (bp04->RevertEffect() == bp2c) ? 1 : 0;
+//					if (bp2c == 0 || bp04->OnceOnlyActuator() == 0)
+//						break;
+//					DEALLOC_RECORD(REMOVE_OBJECT_FROM_HAND());
+					continue; // because toggler will be moved, but still need to operate
 
 				case ACTUATOR_TYPE_PUSH_BUTTON_WALL_SWITCH: // 0x46 -> 'Activator, seal-able push button wall switch'
 					//^2FCF:1D13
