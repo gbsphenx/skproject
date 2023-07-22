@@ -641,6 +641,13 @@ enum SkillLevel {
 
 #define GDAT_DOOR_ORNATE__POSITION			0x08	// 0 = upper, 1 = centered, 2 = low/right
 
+#define _DOOR_STATE__OPENED_				0x00
+#define _DOOR_STATE__ONE_QUARTER_CLOSED_	0x01
+#define _DOOR_STATE__MID_CLOSED_			0x02
+#define _DOOR_STATE__THREE_QUARTERS_CLOSED_	0x03
+#define _DOOR_STATE__CLOSED_				0x04
+#define _DOOR_STATE__DESTROYED_				0x05	// ingame, doorstate = 5 => door is destroyed
+
 //------------------------------------------------------------------------------
 //	CREATURES / OBJECTS ID
 //------------------------------------------------------------------------------

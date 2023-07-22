@@ -10287,7 +10287,7 @@ _0f22:
 				//^29EE:101E
 				goto _1025;
 			}
-		case 17://^1020
+		case 17://^1020	// DOOR TILE
 			{
 				//^29EE:1020
 				bp0a = 10;
@@ -10300,7 +10300,7 @@ _1025:
 					bp0a += 2;
 				}
 				//^29EE:1057
-				if (bp4c.w6[0] == 0 || bp4c.w6[0] == 5) {
+				if (bp4c.w6[0] == _DOOR_STATE__OPENED_ || bp4c.w6[0] == _DOOR_STATE__DESTROYED_) {	// (bp4c.w6[0] == 0 || bp4c.w6[0] == 5) if door is opend or destroyed
 					//^29EE:1063
 					bp0a += 4;
 				}
@@ -41837,7 +41837,7 @@ U16 SkWinCore::ATTACK_DOOR(i16 x, i16 y, U16 damage, U16 isSpellAttack, U16 dela
 	} // End of "weak door"	
 	//^075F:2266
 	U8 *bp08 = &glbCurrentTileMap[x][y];
-	if ((*bp08 & 7) != 4)
+	if ((*bp08 & 7) != _DOOR_STATE__CLOSED_)	// ((*bp08 & 7) != 4) not closed
 		return 0;
 	//^075F:228E
 	if (delay != 0) {
@@ -41853,7 +41853,7 @@ U16 SkWinCore::ATTACK_DOOR(i16 x, i16 y, U16 damage, U16 isSpellAttack, U16 dela
 	}
 	else {
 		//^075F:22D9
-		*bp08 = (*bp08 & 0xf8) | 5; // Bashed
+		*bp08 = (*bp08 & 0xf8) | _DOOR_STATE__DESTROYED_; // (*bp08 = (*bp08 & 0xf8) | 5;) Destroyed or bashed
 	}
 	return 1;
 }
@@ -44320,12 +44320,12 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 		// SPX: x18 GDAT2 Teleporter category
 		MARK_DYN_LOAD(0x18ffffff); // Mark: Teleporter, all, all, all
 	}
-	glbMapDoorType[0] = dunMapLocalHeader->DoorType0();
-	glbMapDoorType[1] = dunMapLocalHeader->DoorType1();
+	//glbMapDoorType[0] = dunMapLocalHeader->DoorType0();
+	//glbMapDoorType[1] = dunMapLocalHeader->DoorType1();
 	//^2676:072C
 	glbMapDoorType[0] = (dunMapLocalHeader->UseDoor0() != 0) ? dunMapLocalHeader->DoorType0() : 0xff;
 	glbMapDoorType[1] = (dunMapLocalHeader->UseDoor1() != 0) ? dunMapLocalHeader->DoorType1() : 0xff;
-	printf("LOAD_LEVEL : Doors 1/2 are : %02d/%02d\n", glbMapDoorType[0], glbMapDoorType[1]);
+	//printf("LOAD_LEVEL : Doors 1/2 are : %02d/%02d\n", glbMapDoorType[0], glbMapDoorType[1]);
 	//^2676:076C
 	X16 bp2e;
 	X16 bp2c;
@@ -45871,7 +45871,7 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 					//^32CB:49A2
 					Door *xDoor = GET_ADDRESS_OF_RECORD0(bp0c);	// Door *bp04
 					U8 iDoorGDATIndex = glbMapDoorType[xDoor->DoorType()];	// U8 bp0e
-					printf("DRAW DOOR : type to draw : %02d => %02d\n", xDoor->DoorType(), glbMapDoorType[xDoor->DoorType()] );
+					//printf("DRAW DOOR : type to draw : %02d => %02d\n", xDoor->DoorType(), glbMapDoorType[xDoor->DoorType()] );
 					X16 iDoorColorPassThrough = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_IMG_COLORKEY_1);	// X16 bp12
 					if (iDoorColorPassThrough != 0)
 					{
@@ -45913,9 +45913,9 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 						X16 iOrnateIndex = xDoor->OrnateIndex();	// X16 di
 						i16 iCacheNo;	// i16 bp16
 #if (DM2_EXTENDED_MODE == 1)
-						if (iOrnateIndex != 0 || iDoorState == 5 || glbGlobalSpellEffects.SeeThruWalls > 0) {	// + window spell effect
+						if (iOrnateIndex != 0 || iDoorState == _DOOR_STATE__DESTROYED_ || glbGlobalSpellEffects.SeeThruWalls > 0) {	// + window spell effect
 #else
-						if (iOrnateIndex != 0 || iDoorState == 5) {	// If there is any ornate or door is destroyed
+						if (iOrnateIndex != 0 || iDoorState == _DOOR_STATE__DESTROYED_) {	// If there is any ornate or door is destroyed
 #endif
 							//^32CB:4A43
 							ExtendedPicture xPicture;	// ExtendedPicture bp015c;
@@ -45977,7 +45977,7 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 								DRAW_TEMP_PICST();
 							}
 							//^32CB:4B45
-							if (iDoorState == 5) {	// If door is destroyed .. then draw destroyed mask instead of any ornate
+							if (iDoorState == _DOOR_STATE__DESTROYED_) {	// (iDoorState == 5) If door is destroyed .. then draw destroyed mask over any ornate
 								//^32CB:4B4B
 								X16 iColorTransparencyOverlay = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_IMG_DOOR_COLORKEY_2);	// X16 bp14
 								if (iColorTransparencyOverlay == 0)
