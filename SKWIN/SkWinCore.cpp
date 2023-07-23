@@ -5094,14 +5094,14 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 		}
 	}
 	//^24A5:0341
-	printf("Light level before modifier is %d\n", glbLightLevel);
+	//printf("Light level before modifier is %d\n", glbLightLevel);
 	glbLightLevel -= (glbLightModifier > 12) ? 1 : 0;
-	printf("Light level before bound is %d\n", glbLightLevel);
+	//printf("Light level before bound is %d\n", glbLightLevel);
 	//^24A5:0353
 	glbLightLevel = BETWEEN_VALUE(0, glbLightLevel, 5);	// SPX: minimum is 5 ? but it can be even darker with 6
 	if (SkCodeParam::bFullLight)	// SPX: debug feature added to always get full light
 		glbLightLevel = 0;
-	printf("Light level final is %d\n", glbLightLevel);
+	//printf("Light level final is %d\n", glbLightLevel);
 	//^24A5:0366
 }
 
@@ -20696,6 +20696,8 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 	ObjectID si = rlWhatYouPlace;
 	U16 bp26 = 0;
 	U16 bp2a = 0;
+	U16 bDelayedActuatorsRotation = 0; // SPX: DM1 retrocompatibility
+	U16 iWallSideToRotate = -1; // SPX: DM1 retrocompatibility
 	ObjectID bp34 = OBJECT_NULL;
 	//^2FCF:1A0C
 	ObjectID bp0e = GET_TILE_RECORD_LINK(xx, yy);
@@ -20718,7 +20720,7 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 		}
 	}
 	printf("Top objects on sides N/E/S/W : %04X %04X %04X %04X\n", 
-		xTopActuators[0], xTopActuators[1], xTopActuators[2], xTopActuators[3]);
+		xTopActuators[0].w, xTopActuators[1].w, xTopActuators[2].w, xTopActuators[3].w);
 	bp0e = GET_TILE_RECORD_LINK(xx, yy);
 
 	//^2FCF:1A1C
@@ -20777,7 +20779,7 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 			MOVE_RECORD_TO(ObjectID(si, bp10), -1, 0, xx, yy);
 			
 			// SPX: Actually, DM2 code seems not to like multiple wall actuators on the same side and breaks after triggering the first one, unlike DM1 which
-			// sometimes needs several wall actuators on same side for mechanism. Then try not to break in case of DM1.
+			// sometimes needs several wall actuators on same side for mechanism. Then we don't want to break in case of DM1.
 			if (SkCodeParam::bDM1Mode)
 				continue;
 			//^2FCF:1AED
@@ -20932,18 +20934,40 @@ _1cb6:
 					if (bp2c == 0 || bp04->OnceOnlyActuator() == 0)
 						break;
 					DEALLOC_RECORD(REMOVE_OBJECT_FROM_HAND());
-					DM1_ROTATE_ACTUATOR_LIST(2, xx, yy, -1, bp10);
+					//DM1_ROTATE_ACTUATOR_LIST(2, xx, yy, -1, bp10);
+					bDelayedActuatorsRotation = 1;
+					iWallSideToRotate = bp10;
 					break;
 
 				// SPX: addition for DM1 retrocompatibility
-				case ACTUATOR_TYPE_WALL_TOGGLER: // 0x04 -> 'Activator, item eater
+				case ACTUATOR_TYPE_WALL_TOGGLER: // 0x0D -> 'Wall toggler (Torch holder)
 					printf("WALL TOGGLER: expected = %d / in hand = %d\n", bp18, GET_DISTINCTIVE_ITEMTYPE(si));
-					DM1_ROTATE_ACTUATOR_LIST(2, xx, yy, -1, bp10);
-//					bp2c = (GET_DISTINCTIVE_ITEMTYPE(si) == bp18) ? 1 : 0;
-//					di = (bp04->RevertEffect() == bp2c) ? 1 : 0;
-//					if (bp2c == 0 || bp04->OnceOnlyActuator() == 0)
-//						break;
-//					DEALLOC_RECORD(REMOVE_OBJECT_FROM_HAND());
+					// if hand is empty, player will get the item over the actuator, if it is on top
+					// else, if item in hand matches the expected item, it will go into the wall
+					if (xTopActuators[bp10] == bp0e && GET_DISTINCTIVE_ITEMTYPE(si) == 511) // empty hand
+					{
+						//DM1_ROTATE_ACTUATOR_LIST(2, xx, yy, -1, bp10);
+						bDelayedActuatorsRotation = 1;
+						iWallSideToRotate = bp10;
+						// get item from wall (same direction, and takeable item)
+						{
+							ObjectID oAnyItem = GET_WALL_TILE_ANY_TAKEABLE_ITEM_RECORD(xx, yy, bp10);
+							if (oAnyItem != OBJECT_NULL)
+							{
+								MOVE_RECORD_TO(oAnyItem, xx, yy, -1, 0); // remove it from wall
+								bp34 = oAnyItem; // object to take thereafter
+							}
+						}
+					}
+					else if (GET_DISTINCTIVE_ITEMTYPE(si) == bp18)
+					{
+						//DM1_ROTATE_ACTUATOR_LIST(2, xx, yy, -1, bp10);
+						bDelayedActuatorsRotation = 1;
+						iWallSideToRotate = bp10;
+						MOVE_RECORD_TO(ObjectID(si, bp10), -1, 0, xx, yy);
+						REMOVE_OBJECT_FROM_HAND();
+						//DEALLOC_RECORD(REMOVE_OBJECT_FROM_HAND());
+					}
 					continue; // because toggler will be moved, but still need to operate
 
 				case ACTUATOR_TYPE_PUSH_BUTTON_WALL_SWITCH: // 0x46 -> 'Activator, seal-able push button wall switch'
@@ -21312,6 +21336,13 @@ _22ca:
 			break;
 		//^2FCF:2365
 	}
+
+
+	// SPX: DM1: if actuators need to be rotated, do it here
+	if (bDelayedActuatorsRotation == 1)
+		DM1_ROTATE_ACTUATOR_LIST(2, xx, yy, -1, iWallSideToRotate);
+
+	
 	//^2FCF:2380
 	if (rlUnk == OBJECT_NULL) {
 		//^2FCF:2386
@@ -21340,6 +21371,7 @@ _22ca:
 		//^2FCF:23E4
 		APPEND_RECORD_TO(bp34, &bp08->possession, -1, 0);
 	}
+
 	//^2FCF:23FC
 	return;
 }
@@ -41443,7 +41475,7 @@ _05bd:
 		di = 0;
 	}
 	//^13E4:06E7
-	if (bp08->Command != ccmDestroy && (di != 0 || bp04->w6 <= quantity)) {
+	if (bp08->Command != ccmDestroy && (di != 0 || bp04->hp1 <= quantity)) {
 		//^13E4:0701
 		RELEASE_CREATURE_TIMER(rl);
 		QUEUE_THINK_CREATURE(xx, yy);
@@ -55291,7 +55323,7 @@ i16 SkWinCore::SELECT_CREATURE_4EFE(const sk4efe *ref)
 	//^14CD:0168
 	if (RAND16(di) == 0) {
 		//^14CD:0173
-		if (U32((xCreature->w6 * 100) / i16(max_value(1, glbAIDef->BaseHP))) < 0x19)
+		if (U32((xCreature->hp1 * 100) / i16(max_value(1, glbAIDef->BaseHP))) < 0x19)
 			si |= 8;
 		else	
 			si &= 0xfff7;
@@ -55788,7 +55820,7 @@ _1470:
 			break;
 		case 14://^1753
 			//^14CD:1753
-			if ((xCreature->w6 * 100) / glbAIDef->BaseHP > i16(yy))
+			if ((xCreature->hp1 * 100) / glbAIDef->BaseHP > i16(yy))
 				break;
 			//^14CD:1792
 			goto _1470;
@@ -60269,10 +60301,10 @@ void SkWinCore::THINK_CREATURE(X8 xx, X8 yy, X16 timerType)
 //		AIDefinition *bp0c = glbAIDef;
 	AIDefinition *currentAI = glbAIDef;
 	bp08->TimerIndex(0xffff);
-	if (glbCurrentThinkingCreatureRec->w6 == 0) {
+	if (glbCurrentThinkingCreatureRec->hp1 == 0) {
 		//^13E4:0D57
 		bp08->w20 = 1;
-		glbCurrentThinkingCreatureRec->w6 = 1;
+		glbCurrentThinkingCreatureRec->hp1 = 1;
 	}
 	//^13E4:0D69
 	i16 bp0e = bp08->w20;
@@ -60293,8 +60325,8 @@ void SkWinCore::THINK_CREATURE(X8 xx, X8 yy, X16 timerType)
 			if (currentAI->b3 < 0) {
 				bp0e += bp12;
 			}
-			else if (glbCurrentThinkingCreatureRec->w6 < currentAI->BaseHP) {
-				glbCurrentThinkingCreatureRec->w6 += bp12;
+			else if (glbCurrentThinkingCreatureRec->hp1 < currentAI->BaseHP) {
+				glbCurrentThinkingCreatureRec->hp1 += bp12;
 			}
 			//^13E4:0DF7
 			bp08->b6_ = U8(glbGameTick >> 2) - U8(si % di);

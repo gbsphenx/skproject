@@ -861,10 +861,13 @@ public:
 	X16	EXTENDED_LOAD_SPELLS_DEFINITION(void);
 	X16 EXTENDED_LOAD_AI_DEFINITION(void);
 	X16 DM1_ROTATE_ACTUATOR_LIST(X16 localActionType, i16 iMapX, i16 iMapY, i16 iMapLevel, U16 iSide);
+	ObjectID GET_WALL_TILE_ANY_TAKEABLE_ITEM_RECORD(U16 iMapX, U16 iMapY, U16 iDirection);
+	void SET_NEXT_RECORD_LINK(ObjectID rlSourceObject, ObjectID rlObjectToAppend);
 
 	void STUN_CHAMPION(U16 player, U16 stunvalue);
 
 	void DEBUG_HELP_WRITER(const char* sinfo, const void* xdata, unsigned int blocksize, unsigned int repeat);
+	void DEBUG_HELP_DISPLAY_STACK(i16 iMapX, i16 iMapY, i16 iMapLevel);
 
 
 	const char *getXActrName(int x);

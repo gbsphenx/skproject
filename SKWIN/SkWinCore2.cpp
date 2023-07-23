@@ -293,6 +293,7 @@ SkWinCore::EXTENDED_LOAD_DM1_ITEM_CONVERSION_LIST(void)
 
 
 // SPX: merge RotateActuatorList with caller parameters from PerformLocalAction (CSBWin reference)
+// This is actually a free implementation. It should be tested in more cases.
 X16
 SkWinCore::DM1_ROTATE_ACTUATOR_LIST(X16 localActionType, i16 iMapX, i16 iMapY, i16 iMapLevel, U16 iSide)
 {
@@ -305,6 +306,8 @@ SkWinCore::DM1_ROTATE_ACTUATOR_LIST(X16 localActionType, i16 iMapX, i16 iMapY, i
 	U16 index = 0;
 	U16 iActuatorDirection = 0; // to be checked with side to rotate
 	U16 iObjectDBType = 0;
+
+	DEBUG_HELP_DISPLAY_STACK(iMapX, iMapY, -1);
 
 	xThreeLastActuators[0] = xThreeLastActuators[1] = xThreeLastActuators[2] = OBJECT_END_MARKER;
 
@@ -324,25 +327,56 @@ SkWinCore::DM1_ROTATE_ACTUATOR_LIST(X16 localActionType, i16 iMapX, i16 iMapY, i
 	// Perform the rotate
 	// case 1: there is actually only one actuator, then do nothing
 	if (xThreeLastActuators[0] == OBJECT_END_MARKER && xThreeLastActuators[1] == OBJECT_END_MARKER)
-		return 1;
+		return 0;
 
 	// case 2: there are two actuators, rotate them
 	if (xThreeLastActuators[0] == OBJECT_END_MARKER &&
 			xThreeLastActuators[1] != OBJECT_END_MARKER	&& xThreeLastActuators[2] != OBJECT_END_MARKER)
 	{
 		// If ground actuator is [1], then it will be also switched.
-		//i16 index = GET_OBJECT_INDEX_FROM_TILE(iMapX, iMapY);
-		//if (index != -1)
-		//	dunGroundStacks[index] = xThreeLastActuators[2];
-
+		U16 xGroundItem = 0;
+		i16 index = GET_OBJECT_INDEX_FROM_TILE(iMapX, iMapY);
+		if (index != -1)
+			xGroundItem = dunGroundStacks[index];
 
 		// Act[2] goes under, and gets Act[1] as next
-		APPEND_RECORD_TO(xThreeLastActuators[1], &xThreeLastActuators[2], -1, -1);
+//		APPEND_RECORD_TO(xThreeLastActuators[1], &xThreeLastActuators[2], -1, 0);
 		// Act[1] gets on top, then gets next as empty
-		APPEND_RECORD_TO(xLastActNext, &xThreeLastActuators[1], -1, -1);
+//		APPEND_RECORD_TO(xLastActNext, &xThreeLastActuators[1], -1, 0);
+
+		SET_NEXT_RECORD_LINK(xThreeLastActuators[2], xThreeLastActuators[1]);
+		SET_NEXT_RECORD_LINK(xThreeLastActuators[1], xLastActNext);
+
+		// replace ground reference by the actuator rotated under
+		if (xGroundItem == xThreeLastActuators[1].w)
+			dunGroundStacks[index] = xThreeLastActuators[2].w;
+
 	}
 
-	return 0;
+	DEBUG_HELP_DISPLAY_STACK(iMapX, iMapY, -1);
+
+	return 1;
+}
+
+void SkWinCore::SET_NEXT_RECORD_LINK(ObjectID rlSourceObject, ObjectID rlObjectToAppend)
+{
+	GenericRecord *grObject = (GenericRecord *)GET_ADDRESS_OF_RECORD(rlSourceObject);
+	grObject->w0 = rlObjectToAppend;
+}
+
+// SPX: Help function to get any Weapon to Misc item, generally from a wall
+ObjectID SkWinCore::GET_WALL_TILE_ANY_TAKEABLE_ITEM_RECORD(U16 iMapX, U16 iMapY, U16 iDirection)
+{
+	ENTER(0);
+	ObjectID xTakenObject = OBJECT_NULL;
+	ObjectID xCurrentObject = GET_TILE_RECORD_LINK(iMapX, iMapY);
+	while (xCurrentObject.Dir() != iDirection || xCurrentObject.DBType() < dbWeapon || xCurrentObject.DBType() >= dbMissile)
+	{
+		xCurrentObject = GET_NEXT_RECORD_LINK(xCurrentObject);
+	}
+	if (xCurrentObject.Dir() == iDirection && xCurrentObject.DBType() >= dbWeapon && xCurrentObject.DBType() <= dbMiscellaneous_item)
+		xTakenObject = xCurrentObject;
+	return xTakenObject;
 }
 
 
@@ -364,6 +398,33 @@ void SkWinCore::DEBUG_HELP_WRITER(const char* sinfo, const void* xdata, unsigned
 		}
 		printf("\n");
 	}
+}
+
+void SkWinCore::DEBUG_HELP_DISPLAY_STACK(i16 iMapX, i16 iMapY, i16 iMapLevel)
+{
+	U16 xGroundItem = 0;
+	i16 index = GET_OBJECT_INDEX_FROM_TILE(iMapX, iMapY);
+	ObjectID xFirstObject = GET_TILE_RECORD_LINK(iMapX, iMapY);
+	ObjectID xCurrentObject = xFirstObject;
+	U16 iObjectDirection = 0;
+	U16 iObjectDBType = 0;
+
+	if (index != -1)
+		xGroundItem = dunGroundStacks[index];
+
+	printf("--------------------------------------------\n");
+	printf("Object stack at %02d,%02d\n", iMapX, iMapY);
+	printf("Ground Item is %04X\n", xGroundItem);
+
+	for (index = 0; xCurrentObject != OBJECT_END_MARKER; xCurrentObject = GET_NEXT_RECORD_LINK(xCurrentObject))
+	{
+		iObjectDirection = xCurrentObject.Dir();
+		iObjectDBType = xCurrentObject.DBType();
+		printf("%d) %04X (DB=%d/f=%d)\n", index, xCurrentObject.w, iObjectDBType, iObjectDirection);
+		index++;
+	}
+	printf("--------------------------------------------\n");
+
 }
 
 // This disable all hands and magic for some time; that allow some new type of attacks from creature

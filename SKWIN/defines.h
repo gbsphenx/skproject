@@ -503,7 +503,7 @@ enum SkillLevel {
 	// 0x0080	:
 #define GDAT_GFXSET_SCENE_RAIN						0x66	// An index a rain status. In table static mode, 1 and 4 will make rain
 #define GDAT_GFXSET_AMBIANT_LIGHT					0x67	// A value possibly between 0 and 100
-#define GDAT_GFXSET_HIGHEST_LIGHT_LEVEL				0x68	// Maximum light level (between 0 and 5)
+#define GDAT_GFXSET_HIGHEST_LIGHT_LEVEL				0x68	// Maximum light level (between 0 and 5) (the lower the brighter)
 
 #define GDAT_GFXSET_VOID_RANDOM_FALL				0x6A	// Used for void, falling in pit will make search a random target marker
 													// 0x80.. : use animated floor
