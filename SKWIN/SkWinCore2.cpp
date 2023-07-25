@@ -507,3 +507,25 @@ void SkWinCore::PROCESS_PLAGUE(i16 player, Bit16u counters)
 	QUEUE_TIMER(&newtimer);
 	return;
 }
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+// SPX: New function to test more text ingame
+void SkWinCore::TEST_TEXT()
+{
+	U8 str[200];
+	// Get text from new category, then display this text
+	Bit8u sBuf1[200];
+	Bit8u sBuf2[200];
+	Bit8u* sBuf3;
+
+	sBuf3 = QUERY_GDAT_TEXT(0x1B, 0, 0, sBuf1);
+
+	memset(str, 0, 200);
+	printf("TEXT: <%s>\n", sBuf3);
+
+	return;
+}
+

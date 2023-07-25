@@ -605,15 +605,15 @@ extern bool	bUsePowerDebug;
 
 
 #if DM2_EXTENDED_MODE == 1
-#define MAXHP 9999		// Max HP		= 9999
-#define MAXMP 9999		// Max Mana		= 9999
-#define MAXMP_BONUS	9999
-#define MAXSP 99999		// Max Stamina	= 9999
+	#define MAXHP 9999		// Max HP		= 9999
+	#define MAXMP 9999		// Max Mana		= 9999
+	#define MAXMP_BONUS	9999
+	#define MAXSP 99999		// Max Stamina	= 9999
 #else	// Original max values
-#define MAXHP 999
-#define MAXMP 900
-#define MAXMP_BONUS	999
-#define MAXSP 9999
+	#define MAXHP 999
+	#define MAXMP 900
+	#define MAXMP_BONUS	999
+	#define MAXSP 9999
 #endif
 
 #if (DM2_EXTENDED_MAP == 1)

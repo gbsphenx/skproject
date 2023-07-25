@@ -864,6 +864,8 @@ public:
 	ObjectID GET_WALL_TILE_ANY_TAKEABLE_ITEM_RECORD(U16 iMapX, U16 iMapY, U16 iDirection);
 	void SET_NEXT_RECORD_LINK(ObjectID rlSourceObject, ObjectID rlObjectToAppend);
 
+	void TEST_TEXT();
+
 	void STUN_CHAMPION(U16 player, U16 stunvalue);
 
 	void DEBUG_HELP_WRITER(const char* sinfo, const void* xdata, unsigned int blocksize, unsigned int repeat);
@@ -1222,7 +1224,7 @@ protected:
 	ObjectID REMOVE_OBJECT_FROM_HAND();
 	void DRAW_ITEM_IN_HAND(LeaderPossession *ref);
 	void _00eb_069a(SRECT *prc, i16 yy);
-	void _44c8_1c99();
+	void _44c8_1c99_HINT_TEXT(); // _44c8_1c99
 	void _3929_07e1(U16 xx, U16 yy);
 	void _3929_0826();
 	void _3929_0914();
@@ -1499,7 +1501,7 @@ protected:
 	skxxxf *QUERY_CHAR_METRICS(U8 cls2, U8 yy, U8 chr, U8 *tableIdxOut);
 	Bit16u QUERY_STR_METRICS(const Bit8u *buff, __int16 *xx, __int16 *yy);
 	inline Bit16u QUERY_STR_METRICS(Bit8u *buff, Bit16u *xx, Bit16u *yy);	// INLINE
-	Bit16u _3929_04e2(const Bit8u *strIn, Bit8u *strOut, Bit16u *textPos, __int16 maxWidth);
+	Bit16u _3929_04e2_DRAW_TEXT_STRINGS(const Bit8u *strIn, Bit8u *strOut, Bit16u *textPos, __int16 maxWidth); // _3929_04e2
 	const Bit8u *DRAW_MBCS_STR(const Bit8u *str,	Bit8u *dst, 	__int16 zz, 	Bit8u *ww, 	Bit16u clr1, 	Bit16u clr2, 	Bit16u *xx, 	Bit16u *yy, 	Bit16u dstpitch, 	Bit16u dstbpp);
 	Bit8u *QUERY_FONT(i8 input, Bit8u fore, Bit8u back);
 	void DRAW_STRING(Bit8u *dst, 	Bit16u ss, 	Bit16u dstpitch, 	Bit16u dstx, 	Bit16u dsty, 	Bit16u clr1, 	Bit16u clr2, 	const Bit8u *str, 	Bit16u dstbpp);
@@ -1562,7 +1564,7 @@ protected:
 	void QUERY_TOPLEFT_OF_RECT(Bit16u rectno, __int16 *xpos, __int16 *ypos);
 	void SLEEP_SEVERAL_TIME(Bit16u count);
 	void _0aaf_01db(Bit16u rectno, Bit16u yy);
-	Bit8u _0aaf_02f8(Bit8u xx, Bit8u yy);
+	Bit8u _0aaf_02f8_DIALOG_BOX(Bit8u xx, Bit8u yy);	// _0aaf_02f8
 	void GRAPHICS_DATA_CLOSE();
 	void PROCESS_ACTUATOR_TICK_GENERATOR();
 	Bit16u _RAND();

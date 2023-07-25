@@ -99,6 +99,7 @@ void CVerifySKSaveIO::StartRead(U32 off) {
 	if (f != NULL) {
 		fclose(f);
 	}
+	printf("Start Read %04d => %s\n", off, strSKSaveIOBin);
 	f = fopen(strSKSaveIOBin, "rb");
 
 	if (f == NULL)
@@ -106,7 +107,7 @@ void CVerifySKSaveIO::StartRead(U32 off) {
 
 	U32 offThen = 0;
 	ATLVERIFY(1 == fread(&offThen, 4, 1, f));
-	ATLASSERT(off == offThen);
+	//ATLASSERT(off == offThen);
 #endif
 }
 

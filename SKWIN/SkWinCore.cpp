@@ -13367,7 +13367,7 @@ void SkWinCore::DRAW_SCROLL_TEXT(ObjectID rl)
 	U16 bp06 = 0;
 	while (bp00da[bp06] != 0) {
 		//^24A5:08D9
-		_3929_04e2(bp00da, bp01a2, &bp06, bp12.cx);
+		_3929_04e2_DRAW_TEXT_STRINGS(bp00da, bp01a2, &bp06, bp12.cx);
 		_24a5_0732(bp08, bp0a, bp01a2);
 		bp0a += di;
 		if (bp00da[bp06] == 0xa)
@@ -15780,7 +15780,8 @@ void SkWinCore::_00eb_069a(SRECT *prc, i16 yy)
 }
 
 //^44C8:1C99
-void SkWinCore::_44c8_1c99()
+// SPX: _44c8_1c99 renamed _44c8_1c99_HINT_TEXT
+void SkWinCore::_44c8_1c99_HINT_TEXT()
 {
 	//^44C8:1C99
 	ENTER(8);
@@ -15924,6 +15925,7 @@ void SkWinCore::_3929_0929(U16 clr1, U8 *str)
 // SPX: _3929_09fb renamed DISPLAY_HINT_TEXT
 void SkWinCore::DISPLAY_HINT_TEXT(Bit16u color, const U8 *str) //#DS=4976
 {
+	//printf("HINT: %s\n", str);
 	//^3929:09FB
 	ENTER(102);
 	//^3929:0A01
@@ -15931,7 +15933,7 @@ void SkWinCore::DISPLAY_HINT_TEXT(Bit16u color, const U8 *str) //#DS=4976
 	//^3929:0A04
 	if (_4976_5c06 != 0) {
 		//^3929:0A0B
-		_44c8_1c99();
+		_44c8_1c99_HINT_TEXT();
 		//^3929:0A10
 		FILL_ENTIRE_PICT(_4976_5c08, glbPaletteT16[COLOR_BLACK]);
 		//^3929:0A2A
@@ -15943,7 +15945,7 @@ void SkWinCore::DISPLAY_HINT_TEXT(Bit16u color, const U8 *str) //#DS=4976
 	for (U16 bp02 = 0; str[bp02] != 0; ) {
 		//^3929:0A43
 		U8 bp66[100];
-		U16 di = _3929_04e2(str, bp66, &bp02, _4976_013e - _4976_475c);
+		U16 di = _3929_04e2_DRAW_TEXT_STRINGS(str, bp66, &bp02, _4976_013e - _4976_475c);
 		//^3929:0A64
 		if (str[bp02] == '\n') {
 			//^3929:0A70
@@ -15977,7 +15979,7 @@ void SkWinCore::DISPLAY_HINT_TEXT(Bit16u color, const U8 *str) //#DS=4976
 	//^3929:0AD1
 	if (_4976_5c06 != 0) {
 		//^3929:0AD8
-		_44c8_1c99();
+		_44c8_1c99_HINT_TEXT();
 		//^3929:0ADD
 		FILL_ENTIRE_PICT(_4976_5c08, glbPaletteT16[COLOR_BLACK]);
 	}
@@ -20941,32 +20943,39 @@ _1cb6:
 
 				// SPX: addition for DM1 retrocompatibility
 				case ACTUATOR_TYPE_WALL_TOGGLER: // 0x0D -> 'Wall toggler (Torch holder)
-					printf("WALL TOGGLER: expected = %d / in hand = %d\n", bp18, GET_DISTINCTIVE_ITEMTYPE(si));
-					// if hand is empty, player will get the item over the actuator, if it is on top
-					// else, if item in hand matches the expected item, it will go into the wall
-					if (xTopActuators[bp10] == bp0e && GET_DISTINCTIVE_ITEMTYPE(si) == 511) // empty hand
 					{
-						//DM1_ROTATE_ACTUATOR_LIST(2, xx, yy, -1, bp10);
-						bDelayedActuatorsRotation = 1;
-						iWallSideToRotate = bp10;
-						// get item from wall (same direction, and takeable item)
+						U16 iInvokeActuator = 0;
+						printf("WALL TOGGLER: expected = %d / in hand = %d\n", bp18, GET_DISTINCTIVE_ITEMTYPE(si));
+						// if hand is empty, player will get the item over the actuator, if it is on top
+						// else, if item in hand matches the expected item, it will go into the wall
+						if (xTopActuators[bp10] == bp0e && GET_DISTINCTIVE_ITEMTYPE(si) == 511) // empty hand
 						{
-							ObjectID oAnyItem = GET_WALL_TILE_ANY_TAKEABLE_ITEM_RECORD(xx, yy, bp10);
-							if (oAnyItem != OBJECT_NULL)
+							//DM1_ROTATE_ACTUATOR_LIST(2, xx, yy, -1, bp10);
+							bDelayedActuatorsRotation = 1;
+							iWallSideToRotate = bp10;
+							// get item from wall (same direction, and takeable item)
 							{
-								MOVE_RECORD_TO(oAnyItem, xx, yy, -1, 0); // remove it from wall
-								bp34 = oAnyItem; // object to take thereafter
+								ObjectID oAnyItem = GET_WALL_TILE_ANY_TAKEABLE_ITEM_RECORD(xx, yy, bp10);
+								if (oAnyItem != OBJECT_NULL)
+								{
+									MOVE_RECORD_TO(oAnyItem, xx, yy, -1, 0); // remove it from wall
+									bp34 = oAnyItem; // object to take thereafter
+									iInvokeActuator = 1;
+								}
 							}
 						}
-					}
-					else if (GET_DISTINCTIVE_ITEMTYPE(si) == bp18)
-					{
-						//DM1_ROTATE_ACTUATOR_LIST(2, xx, yy, -1, bp10);
-						bDelayedActuatorsRotation = 1;
-						iWallSideToRotate = bp10;
-						MOVE_RECORD_TO(ObjectID(si, bp10), -1, 0, xx, yy);
-						REMOVE_OBJECT_FROM_HAND();
-						//DEALLOC_RECORD(REMOVE_OBJECT_FROM_HAND());
+						else if (GET_DISTINCTIVE_ITEMTYPE(si) == bp18)
+						{
+							//DM1_ROTATE_ACTUATOR_LIST(2, xx, yy, -1, bp10);
+							bDelayedActuatorsRotation = 1;
+							iWallSideToRotate = bp10;
+							MOVE_RECORD_TO(ObjectID(si, bp10), -1, 0, xx, yy);
+							REMOVE_OBJECT_FROM_HAND();
+							//DEALLOC_RECORD(REMOVE_OBJECT_FROM_HAND());
+							iInvokeActuator = 1;
+						}
+						if (iInvokeActuator)
+							INVOKE_ACTUATOR(bp04, bp04->ActionType(), 0);
 					}
 					continue; // because toggler will be moved, but still need to operate
 
@@ -22861,7 +22870,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 					break;
 				//^32CB:196B
 				U8 bp0356[384];
-				i16 bp30 = _3929_04e2(bp009c, bp0356, &bp36, bp48 -1);
+				i16 bp30 = _3929_04e2_DRAW_TEXT_STRINGS(bp009c, bp0356, &bp36, bp48 -1);
 				//^32CB:198C
 				if (bp30 != 0) {
 					//^32CB:1995
@@ -30135,7 +30144,7 @@ void SkWinCore::__INIT_GAME_38c8_03ad()
 		//^38C8:0425
 		FIRE_FILL_SCREEN_RECT(2, 0);
 		//^38C8:0430
-		_0aaf_0067(_0aaf_02f8(6, 0));
+		_0aaf_0067(_0aaf_02f8_DIALOG_BOX(6, 0));
 		//^38C8:0442
 		U16 si = _4976_5d10;
 		//^38C8:0447
@@ -30209,7 +30218,7 @@ void SkWinCore::END_GAME(U16 xx)
 		//^101B:0076
 		if (_4976_5bf6 != 0) {
 			//^101B:007D
-			_4976_5bf2 = (_0aaf_0067(_0aaf_02f8(16, 0)) == 0) ? 1 : 0;
+			_4976_5bf2 = (_0aaf_0067(_0aaf_02f8_DIALOG_BOX(16, 0)) == 0) ? 1 : 0;
 			//^101B:009D
 			if (_4976_5bf2 != 0) {
 				//^101B:00A1
@@ -30297,7 +30306,7 @@ _0d50:
 			//^2066:0D90
 			_476d_04e8(2);
 		//^2066:0D98
-		U16 bp0e = _0aaf_0067(_0aaf_02f8((_4976_49a0 != 0) ? 0x12 : 0x0b, bp13));
+		U16 bp0e = _0aaf_0067(_0aaf_02f8_DIALOG_BOX((_4976_49a0 != 0) ? 0x12 : 0x0b, bp13));
 		//^2066:0DBB
 		if (bp0e == 3)
 			//^2066:0DC1
@@ -30315,7 +30324,7 @@ _0d50:
 			if (true
 				&& _4976_4c1a +100 < glbGameTick 
 				&& _4976_523c +100 < glbGameTick
-				&& _0aaf_0067(_0aaf_02f8(0x0c, 0x00)) == 3
+				&& _0aaf_0067(_0aaf_02f8_DIALOG_BOX(0x0c, 0x00)) == 3
 			) {
 				//^2066:0E28
 				//^2066:0DCE
@@ -30398,7 +30407,7 @@ _100f:
 	//^2066:1024
 	if (bp20 != 0) {
 		//^2066:102A
-		_0aaf_0067(_0aaf_02f8(0x13, bp21));
+		_0aaf_0067(_0aaf_02f8_DIALOG_BOX(0x13, bp21));
         //^2066:103E
 		bp21 = 0x14;
 		//^2066:1042
@@ -30415,7 +30424,7 @@ _1045:
 	_4976_525c = bp0e;
 	_4976_52e2 = U8(_4976_525c) +0x30;
 	//^2066:1062
-	_0aaf_02f8(0x0d, 0x00);
+	_0aaf_02f8_DIALOG_BOX(0x0d, 0x00);
 	//^2066:106D
 	bp08 = FORMAT_SKSTR(ptrSKSave_dat, NULL);
 	//^2066:1087
@@ -30603,7 +30612,7 @@ _14fa:
 	//^2066:1504
 	DELETE_FILE(bp08);
 	//^2066:1511
-	_0aaf_0067(_0aaf_02f8(0x00, 0x1b));
+	_0aaf_0067(_0aaf_02f8_DIALOG_BOX(0x00, 0x1b));
 
 _1523:
 	//^2066:1523
@@ -31072,8 +31081,8 @@ U16 SkWinCore::PERFORM_MOVE(X16 xx)
 	//^12B4:0367
 	U16 bp0a;
 	i16 bp0e;
-	i16 bp1a;
-	i16 bp1c;
+	i16 playerDestPosX; // bp1a
+	i16 playerDestPosY; // bp1c
 	X16 di;
 	SkD((DLV_MOVE, "Move: delay:%d, glbIsPlayerMoving:%d, move:%d, DSM:%d, _4976_4c08:%d, bp08:%d\n"
 		, bp26
@@ -31149,13 +31158,13 @@ U16 SkWinCore::PERFORM_MOVE(X16 xx)
 		CHANGE_CURRENT_MAP_TO(_4976_4c12);
 	}
 	//^12B4:04D2
-	bp1a = glbSomePosX_4c2e;
-	bp1c = glbSomePosY_4c30;
+	playerDestPosX = glbSomePosX_4c2e;
+	playerDestPosY = glbSomePosY_4c30;
 	bp0e = _4976_4c2c;
 	//^12B4:04E4
-	CALC_VECTOR_W_DIR(bp0e, _4976_19b2[RCJ(4,di)], _4976_19b6[RCJ(4,di)], &bp1a, &bp1c);
+	CALC_VECTOR_W_DIR(bp0e, _4976_19b2[RCJ(4,di)], _4976_19b6[RCJ(4,di)], &playerDestPosX, &playerDestPosY);
 	//^12B4:0505
-	bp0a = GET_TILE_VALUE(bp1a, bp1c);
+	bp0a = GET_TILE_VALUE(playerDestPosX, playerDestPosY);
 	_4976_4e5c = 1;
 	champion = glbChampionSquad;
 	//^12B4:0525
@@ -31175,12 +31184,12 @@ U16 SkWinCore::PERFORM_MOVE(X16 xx)
 	i16 bp16;
 	i16 bp18;
 	U16 bp0c;
-	switch (_12b4_0881(di, bp06, bp0a, bp1a, bp1c, &bp14)) {
+	switch (_12b4_0881(di, bp06, bp0a, playerDestPosX, playerDestPosY, &bp14)) {
 	case 2://^059A
 		//^12B4:059A
 		MOVE_RECORD_TO(OBJECT_NULL, glbPlayerPosX, glbPlayerPosY, -1, 0);
-		glbPlayerPosX = bp1a;
-		glbPlayerPosY = bp1c;
+		glbPlayerPosX = playerDestPosX;
+		glbPlayerPosY = playerDestPosY;
 		bp06 = bp0a;
 		goto _05c2;
 	case 1://^05C2
@@ -31196,20 +31205,20 @@ _05c2:
 		bp12 = QUERY_CREATURE_AI_SPEC_FLAGS(bp14) & 1;
 		if (bp12 != 0 || GET_CREATURE_WEIGHT(bp14) == 0xff) {
 			//^12B4:05FB
-			_12b4_023f(bp1a, bp1c, &bp16, &bp18, bp0e, di);
+			_12b4_023f(playerDestPosX, playerDestPosY, &bp16, &bp18, bp0e, di);
 		}
 		//^12B4:0616
 		bp24 = ((bp0e +xx) -3) & 3;
-		if (IS_CREATURE_MOVABLE_THERE(bp1a, bp1c, bp24, &bp14) != 0 && _12b4_099e(bp14) != 0) {
+		if (IS_CREATURE_MOVABLE_THERE(playerDestPosX, playerDestPosY, bp24, &bp14) != 0 && _12b4_099e(bp14) != 0) {
 			//^12B4:064C
-			_12b4_0d75(bp1a, bp1c, bp24, 0xfe);
+			_12b4_0d75(playerDestPosX, playerDestPosY, bp24, 0xfe);
 			goto _0685;
 		}
 		//^12B4:0662
 		if (bp12 != 0)
 			break;	
 		//^12B4:066B
-		ATTACK_CREATURE(OBJECT_NULL, bp1a, bp1c, 0x4005, 5, 0);
+		ATTACK_CREATURE(OBJECT_NULL, playerDestPosX, playerDestPosY, 0x4005, 5, 0);
 		break;
 	case 6://^0685
 		//^12B4:0685
@@ -31217,18 +31226,18 @@ _0685:
 		if (_4976_4c08 != 0 && di == 2) {
 			//^12B4:0691
 			CHANGE_CURRENT_MAP_TO(bp10);
-			bp1a = glbSomePosX_4c2e;
-			bp1c = glbSomePosY_4c30;
-			CALC_VECTOR_W_DIR(bp0e = _4976_4c2c, -1, 0, &bp1a, &bp1c);
+			playerDestPosX = glbSomePosX_4c2e;
+			playerDestPosY = glbSomePosY_4c30;
+			CALC_VECTOR_W_DIR(bp0e = _4976_4c2c, -1, 0, &playerDestPosX, &playerDestPosY);
 		}
 		//^12B4:06C3
 		if (bp08 != 0) {
-			MOVE_RECORD_TO(OBJECT_NULL, -1, 0, bp1a, bp1c);
+			MOVE_RECORD_TO(OBJECT_NULL, -1, 0, playerDestPosX, playerDestPosY);
 			goto _0768;
 		}
 		//^12B4:06D6
 		TELE_inf bp22;
-		if (GET_TELEPORTER_DETAIL(&bp22, U8(bp1a), U8(bp1c)) != 0) {
+		if (GET_TELEPORTER_DETAIL(&bp22, U8(playerDestPosX), U8(playerDestPosY)) != 0) {
 			if (((bp22.b1 +2) & 3) != bp0e) {
 				//^12B4:06FC
 				CHANGE_CURRENT_MAP_TO(glbPlayerMap);
@@ -31240,7 +31249,7 @@ _0685:
 			}
 		}
 		//^12B4:0750
-		MOVE_RECORD_TO(OBJECT_NULL, glbPlayerPosX, glbPlayerPosY, bp1a, bp1c);
+		MOVE_RECORD_TO(OBJECT_NULL, glbPlayerPosX, glbPlayerPosY, playerDestPosX, playerDestPosY);
 		//^12B4:0768
 _0768:
 		_4976_4c00 = bp26;
@@ -31251,7 +31260,7 @@ _0768:
 		//^12B4:0779
 		if (glbChampionsCount == 0)
 			break;
-		_12b4_023f(bp1a, bp1c, &bp16, &bp18, bp0e, di);
+		_12b4_023f(playerDestPosX, playerDestPosY, &bp16, &bp18, bp0e, di);
 		//^12B4:079E
 		if ((bp0a >> 5) != ttDoor || (bp0a & 7) != 4)
 			break;
@@ -31269,7 +31278,7 @@ _0768:
 			bp0c += STAMINA_ADJUSTED_ATTR(champion, GET_PLAYER_ABILITY(champion, abStr, 0) + (RAND() & 15));
 		}
 		//^12B4:084F
-		ATTACK_DOOR(bp1a, bp1c, bp0c, 0, 0);
+		ATTACK_DOOR(playerDestPosX, playerDestPosY, bp0c, 0, 0);
 		break;
 	case 5://^0864
 		break;
@@ -32604,7 +32613,8 @@ inline Bit16u SkWinCore::QUERY_STR_METRICS(Bit8u *buff, Bit16u *xx, Bit16u *yy)
 }
 
 //^3929:04E2
-Bit16u SkWinCore::_3929_04e2(const Bit8u *strIn, Bit8u *strOut, Bit16u *textPos, __int16 maxWidth)
+// _3929_04e2 renamed _3929_04e2_DRAW_TEXT_STRINGS
+Bit16u SkWinCore::_3929_04e2_DRAW_TEXT_STRINGS(const Bit8u *strIn, Bit8u *strOut, Bit16u *textPos, __int16 maxWidth)
 {
 	//^3929:04E2
 	//^3929:04E8
@@ -35296,7 +35306,8 @@ void SkWinCore::_0aaf_01db(Bit16u rectno, Bit16u yy)
 }
 
 //^0AAF:02F8
-Bit8u SkWinCore::_0aaf_02f8(Bit8u xx, Bit8u yy) //#DS=4976
+// _0aaf_02f8 renamed _0aaf_02f8_DIALOG_BOX
+Bit8u SkWinCore::_0aaf_02f8_DIALOG_BOX(Bit8u xx, Bit8u yy) //#DS=4976
 {
 	Bit16u si;
 	skxxx1 bp04e4[2];
@@ -35323,7 +35334,7 @@ Bit8u SkWinCore::_0aaf_02f8(Bit8u xx, Bit8u yy) //#DS=4976
 	//^0AAF:02FE
 	if (xx == 0x07 || xx == 0x13) {
 		//^0AAF:030A
-		if (QUERY_GDAT_ENTRY_IF_LOADABLE(0x001a, 0x0059, 0x0001, 0x0000) != 0) {
+		if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_DIALOG_BOXES, 0x0059, 0x0001, 0x0000) != 0) {
 			//^0AAF:031E
 			xx = 0x59;
 		}
@@ -35334,9 +35345,9 @@ Bit8u SkWinCore::_0aaf_02f8(Bit8u xx, Bit8u yy) //#DS=4976
 	//^0AAF:0338
 	if (yy != 0 && xx != 0) {
 		//^0AAF:0344
-		if (QUERY_GDAT_ENTRY_IF_LOADABLE(0x001a, 0x0000, 0x0001, 0x0000) != 0) {
+		if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_DIALOG_BOXES, 0x0000, 0x0001, 0x0000) != 0) {
 			//^0AAF:0358
-			_0aaf_0067(_0aaf_02f8(0, yy));
+			_0aaf_0067(_0aaf_02f8_DIALOG_BOX(0, yy));
 			//^0AAF:036A
 			yy = 0x00;
 		}
@@ -35346,7 +35357,7 @@ Bit8u SkWinCore::_0aaf_02f8(Bit8u xx, Bit8u yy) //#DS=4976
 	//^0AAF:0377
 	for (bp17=0; bp17 < 0x14; bp17++) {
 		//^0AAF:0379
-		bp00b4[bp0c] = QUERY_GDAT_TEXT(0x1a, xx, bp17, bp03d4[bp0c]);
+		bp00b4[bp0c] = QUERY_GDAT_TEXT(GDAT_CATEGORY_DIALOG_BOXES, xx, bp17, bp03d4[bp0c]);
 		//^0AAF:03B6
 		if (bp00b4[bp0c][0] != 0) {
 			//^0AAF:03C0
@@ -35357,11 +35368,11 @@ Bit8u SkWinCore::_0aaf_02f8(Bit8u xx, Bit8u yy) //#DS=4976
 	//^0AAF:03CC
 	if ((_4976_5cb0 != 0) && ((_4976_5d76 != 0) || (_4976_00f4 +8 <= glbFreeRAMMemPool))) {
 		//^0AAF:03F9
-		bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(0x1a, xx, 0x00);
+		bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_DIALOG_BOXES, xx, 0x00);
 		//^0AAF:040F
 		if (_4976_5d76 != 0) {
 			//^0AAF:0416
-			bp08 = QUERY_GDAT_IMAGE_LOCALPAL(0x1a, xx, 0);
+			bp08 = QUERY_GDAT_IMAGE_LOCALPAL(GDAT_CATEGORY_DIALOG_BOXES, xx, 0);
 		}
 		else {
 			//^0AAF:042B
@@ -35442,15 +35453,15 @@ Bit8u SkWinCore::_0aaf_02f8(Bit8u xx, Bit8u yy) //#DS=4976
 	//^0AAF:05C3
 	if (yy != 0 && xx == 0) {
 		//^0AAF:05CF
-		bp04e4[0].pb0 = QUERY_GDAT_TEXT(0x1a, xx, yy, bp0454);
+		bp04e4[0].pb0 = QUERY_GDAT_TEXT(GDAT_CATEGORY_DIALOG_BOXES, xx, yy, bp0454);
 	}
 	else {
 		//^0AAF:05F1
-		bp04e4[0].pb0 = QUERY_GDAT_TEXT(0x1a, xx, 0x14, bp0454);
+		bp04e4[0].pb0 = QUERY_GDAT_TEXT(GDAT_CATEGORY_DIALOG_BOXES, xx, 0x14, bp0454);
 		//^0AAF:060F
 		if (yy != 0) {
 			//^0AAF:0615
-			bp04e4[1].pb0 = QUERY_GDAT_TEXT(0x1a, 0, yy, bp04d4);
+			bp04e4[1].pb0 = QUERY_GDAT_TEXT(GDAT_CATEGORY_DIALOG_BOXES, 0, yy, bp04d4);
 			//^0AAF:0633
 			goto _0641;
 		}
@@ -35484,7 +35495,7 @@ _0641:
 			//^0AAF:06C7
 			for (bp0e=0; bp24->pb0[bp0e] != 0; ) {
 				//^0AAF:06CE
-				_3929_04e2(bp24->pb0, bp64, &bp0e, bp24->w4);
+				_3929_04e2_DRAW_TEXT_STRINGS(bp24->pb0, bp64, &bp0e, bp24->w4);
 				//^0AAF:06EE
 				di += bp24->w6 + (_4976_0134 << 1) - (_4976_0136) + 1;
 				//^0AAF:0704
@@ -35512,7 +35523,7 @@ _0641:
 				//^0AAF:077B
 				for (bp0e=0; bp24->pb0[bp0e] != 0; ) {
 					//^0AAF:0782
-					bp0a = _3929_04e2(bp24->pb0, bp64, &bp0e, bp24->w4);
+					bp0a = _3929_04e2_DRAW_TEXT_STRINGS(bp24->pb0, bp64, &bp0e, bp24->w4);
 					//^0AAF:07A5
 					DRAW_VP_STR((_4976_00f6 -bp0a) >> 1, di, bp28[bp16], bp64);
 					//^0AAF:07C9
@@ -38782,7 +38793,7 @@ Bit16u SkWinCore::_2066_03e0(Bit16u xx)
 		//^2066:041A
 		di = si = 0;
 		//^2066:0420
-		_0aaf_0067(_0aaf_02f8((_4976_5c9c != 0) ? ((_4976_5ca8 != 0) ? (0x13) : (0x14)) : (0x07), bp01 = _476d_04e8(1)));
+		_0aaf_0067(_0aaf_02f8_DIALOG_BOX((_4976_5c9c != 0) ? ((_4976_5ca8 != 0) ? (0x13) : (0x14)) : (0x07), bp01 = _476d_04e8(1)));
 		//^2066:0453
 		bp01 = 0x14;
 		//^2066:0457
@@ -39148,8 +39159,7 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 						//^DC 01
 						//^2636:0244
 						const Bit8u *bp0c = strZxxxTable[3];	// ".Z008DATA\"
-						
-						
+												
 						// SPX: the game folder (which is DATA by default) is changed from dungeon menu (need a restart)
 						switch(skwin.dung)
 						{
@@ -39177,7 +39187,13 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 							default:
 								bp0c = (const unsigned __int8*) ".Z008DATA\\"; break;
 						} // END of specific block
-						
+						// SPX: If a specific data folder name is given (within SkWin directory), it will be used instead
+						if (skwin.sCustomDataFolder != NULL)
+						{
+							static char sFolderString[256];
+							sprintf(sFolderString, ".Z008%s\\", skwin.sCustomDataFolder);
+							bp0c = (const unsigned __int8*) sFolderString;
+						}
 
 						//^2636:024A
 						FORMAT_SKSTR(bp0c, bp0116);
@@ -39504,6 +39520,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	__int16 di;
 	Bit8u bp01 = 0;
 
+	printf("Read 8 first bytes (Random seed) ...\n");
 	//SPX: Read the first 8 bytes of the dungeon.dat
 	Bit8u bp26[8];
 	if (FILE_READ(glbDataFileHandle, 8, bp26) == 0)
@@ -39516,7 +39533,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	//SPX: Add control of DM1 gfx seed
 	if (*(Bit16u *)bp26 == 0x0063) // DM1
 		SkCodeParam::bDM1Mode = true;
-	else if (*(Bit16u *)bp26 == 0x0D00) // CSB
+	else if (*(Bit16u *)bp26 == 0x0D00 || *(Bit16u *)bp26 == 0x0800) // CSB
 		SkCodeParam::bDM1Mode = true;
 	// SPX
 
@@ -39529,7 +39546,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	}
 
 	// - File header
-
+	printf("Read Dungeon Global Header ...\n");
 	//^2066:2617
 	if (SKLOAD_READ(dunHeader, 44) == 0)
 		return 0;
@@ -39553,6 +39570,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 
 	// - Map definitions
 
+	printf("Read %d Map Headers ...\n", nMaps);
 	//^2066:2685
 	if (SKLOAD_READ(dunMapsHeaders, nMaps << 4) == 0)
 		return 0;
@@ -39561,6 +39579,8 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 		//^2066:26A9
 		dunMapColumnsSumArray = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(nMaps << 1, afUseUpper, 0x400));
 	}
+
+	printf("Read %d Maps Columns Headers ...\n", nMaps);
 	//^2066:26C5
 	Bit16u bp0e = 0;
 	//^2066:26CC
@@ -39598,7 +39618,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	}
 
 	// - Index of tiles with objects on them (per column)
-
+	printf("Read Index per Columns ...\n");
 	//^2066:277C
 	if (SKLOAD_READ(dunMapTilesObjectIndexPerColumn, bp0e << 1) == 0)
 		return 0;
@@ -39630,10 +39650,11 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	}
 
 	// - List of XXX
-
+	printf("Read Objects per Category ...\n");
 	//^2066:2802
 	for (si = 0; si < 16; si++) {
 		//^2066:2807
+		printf("Category %02d of size %02d => %04d records ...\n", si, glbItemSizePerDB[si], dunHeader->nRecords[si]);
 		Bit16u di = dunHeader->nRecords[si];
 		if (isNewGame != 0) {
 			//^2066:281B
@@ -39671,6 +39692,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 		//^2066:2914
 	}
 	//^2066:291D
+	printf("Alloc RAM for maps ...\n");
 	if (_4976_3b5d != 0) {
 		//^2066:2924
 		dunMapData = ALLOC_MEMORY_RAM(dunHeader->cbMapData, afUseUpper, 0x400);
@@ -39678,6 +39700,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 
 	// - Map data
 
+	printf("Read Dungeon Map Data ...\n");
 	//^2066:2942
 	if (SKLOAD_READ(dunMapData, dunHeader->cbMapData) == 0)
 		return 0;
@@ -39708,6 +39731,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 			//^2066:2A2E
 		}
 	}
+	printf("Read Some Random Value from GDAT ??? ...\n");
 	//^2066:2A37
 	_4976_5c24 = BETWEEN_VALUE(0, QUERY_GDAT_ENTRY_DATA_INDEX(0x03, 0x00, 0x0B, 0x00), 23) * 0x0555UL;
 	//^2066:2A6A
@@ -39732,6 +39756,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	Bit16u bp14 = 0;
 	*bp1c = 0;
 	bp1c++;
+	printf("Arrange Depth of Maps ...\n");
 	//^2066:2AE4
 	for (Bit16u bp12 = 0; bp12 < MAXDEPTH; bp1c++, bp12++) {
 		//^2066:2AEB
@@ -39755,6 +39780,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	ATLASSERT(bp1c - _4976_4cb0 <= MAXDEPTH + 1U);
 	ATLASSERT(bp18 - _4976_4c72 <= MAXDEPTH + MAXMAPS + 1U);
 
+	printf("Arrange Dungeon ...\n");
 	//^2066:2B46
 	if (isNewGame != 0) {
 		//^2066:2B4C
@@ -39771,6 +39797,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 
 	//CHECK_TILE_RECORDS();
 
+	printf("Read Dungeon Structure Completed !\n");
 	return 1;
 }
 
@@ -39868,7 +39895,8 @@ int SkWinCore::SUPPRESS_READER(void *_data, const void *_mask, Bit16u buffSize, 
 	_4976_524e = bp05;
 	_4976_5258 = bp0a;
 
-	s_testSKSave.Read(_data, _mask, buffSize, repeat);
+	//SPX: removed this check against SKSaveIO.bin to allow proper savegame load !
+	//s_testSKSave.Read(_data, _mask, buffSize, repeat);
 	return 0;
 }
 
@@ -40261,7 +40289,9 @@ Bit16u SkWinCore::RECOVER_MINION_ASSOC()
 //^2066:19E7
 U16 SkWinCore::READ_SKSAVE_DUNGEON()
 {
+	printf("RESUME/LOAD SAVEGAME ---------------------------------\n");
 	//^2066:19E7
+	printf("Reset champions inventory ... \n");
 	Bit16u si;
 	for (si=0; si < glbChampionsCount; si++) {
 		//^2066:19F1
@@ -40278,6 +40308,7 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 	glbLeaderHandPossession.object = OBJECT_END_MARKER;
 	Bit16u bp18 = glbCurrentMapIndex;
 	//^2066:1A2A
+	printf("Delete records ... \n");
 	Bit16u bp16;
 	for (bp16=0; dunHeader->nMaps > bp16; bp16++) {
 		//^2066:1A32
@@ -40312,6 +40343,7 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 	//^2066:1ACE
     CHANGE_CURRENT_MAP_TO(bp18);
 	//^2066:1AD7
+	printf("Delete objects ... \n");
 	for (si = dbCreature; si < dbMax; si++) {
 		//^2066:1ADC
 		Bit16u *bp08 = reinterpret_cast<Bit16u *>(glbDBObjectData[si]);
@@ -40329,6 +40361,7 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 		//^2066:1B21
 	}
 	//^2066:1B27
+	printf("Realloc Minions Table ... \n");
 	glbMinionsObjectIDTable = reinterpret_cast<ObjectID *>(ALLOC_MEMORY_RAM(200, afDefault, 1024));
 	//^2066:1B40
 	glbMinionsAssocCount = 0;
@@ -40371,6 +40404,8 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 		}
 		//^2066:1BEA
 	}
+
+	printf("Remove leader hand possession ... \n");
 	//^2066:1BF1
 	if (glbLeaderHandPossession.object == OBJECT_END_MARKER) {
 		//^2066:1BF8
@@ -40386,6 +40421,7 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 		goto _1e7e;
 	}
 	//^2066:1C1F
+	printf("Loop through all maps ... \n");
 	bp18 = glbCurrentMapIndex;
 	for (bp16 = 0; dunHeader->nMaps > bp16; bp16++) {
 		//^2066:1C2D
@@ -40521,6 +40557,7 @@ _1e7e:
 //^2066:2D9C
 __int16 SkWinCore::GAME_LOAD()
 {
+	printf("GAME_LOAD:RESUME/LOAD SAVEGAME ---------------------------------\n");
 	//^2066:2D9C
 	Bit16u bp04 = 0;
 	Bit16u si = 0;
@@ -40567,7 +40604,7 @@ _2db4:
 				_476d_04e8(2);
 			}
 			//^2066:2E1C
-			Bit16u di = _0aaf_0067(_0aaf_02f8(15, bp01));
+			Bit16u di = _0aaf_0067(_0aaf_02f8_DIALOG_BOX(15, bp01));
 			//^2066:2E32
 			if (di == 1) {
 				//^2066:2E37
@@ -40583,7 +40620,7 @@ _2db4:
 			//^2066:2E41
 			if (bp01 != 0) {
 				//^2066:2E47
-				_0aaf_0067(_0aaf_02f8(0, bp01));
+				_0aaf_0067(_0aaf_02f8_DIALOG_BOX(0, bp01));
 			}
 		}
 		//^2066:2E5B
@@ -40684,15 +40721,19 @@ _2e5b:
 	glbSpecialScreen = !_4976_5bf2;
 	//^2066:2FBE
 	do {
+		printf("Read Dungeon Structure ...\n");
 		if (READ_DUNGEON_STRUCTURE(0) == 0)
 			break;
+		printf("Suppress Init ...\n");
 		//^2066:2FCC
 		glbSpecialScreen = 0;
 		//^2066:2FD2
 		SUPPRESS_INIT();
 
+		printf("Start Read File Handle %02d ...\n", glbDataFileHandle);
 		s_testSKSave.StartRead(FILE_TELL(glbDataFileHandle));
 
+		printf("Read Global Variables ...\n");
 		//^2066:2FD6
 		skload_table_60 t1;
 		if (SUPPRESS_READER(&t1, _4976_395a, 56, 1, 1) != 0)
@@ -40723,6 +40764,7 @@ _2e5b:
 		glbRainRelated3 = t1.bRainRelated3;
 		glbRainRelated2 = t1.bRainRelated2;
 		glbRainSpecialNextTick = t1.dwRainSpecialNextTick;
+		printf("Read Game Variables (Flags / Bytes / Words) ...\n");
 		//^2066:30B5
 		if (SUPPRESS_READER(glbIngameGlobVarFlags, _4976_3956, 1, 8, 1) != 0)
 			break;
@@ -40744,6 +40786,7 @@ _2e5b:
 		//^2066:3172
 		bp06 = glbTimersCount;
 		//^2066:3178
+		printf("Read Timers ...\n");
 		while (bp06 < glbTimersMaximumCount) {
 			//^2066:317A
 			glbTimersTable[bp06].TimerType(tty00);
@@ -40792,7 +40835,7 @@ _31b8:
 			_2066_03e0(1);
 		}
 		//^2066:322C
-		_0aaf_02f8(0x000E, 0x0000);
+		_0aaf_02f8_DIALOG_BOX(0x000E, 0x0000);
 		//^2066:3237
 		_4976_4bd8 = 0x0001;
 		glbPlayerDefeated = 0x0000;
@@ -40813,7 +40856,7 @@ _3262:
 		FILE_CLOSE(glbDataFileHandle);
 	}
 	//^2066:3272
-	_0aaf_0067(_0aaf_02f8((_4976_5bf2 == 0) ? 0 : ((_4976_5c9c != 0) ? ((_4976_5ca8 != 0) ? 0x13 : 0x14) : (0x07)), 0x001F));
+	_0aaf_0067(_0aaf_02f8_DIALOG_BOX((_4976_5bf2 == 0) ? 0 : ((_4976_5c9c != 0) ? ((_4976_5ca8 != 0) ? 0x13 : 0x14) : (0x07)), 0x001F));
 	//^2066:32A6
 	if (_4976_5bf2 == 0) {
 		//^2066:32AD
@@ -47720,7 +47763,7 @@ void SkWinCore::QUERY_MESSAGE_TEXT(U8 *str, ObjectID rl, Bit16u ww)
 	//^0CEE:15A1
 	U16 si = 0;
 	//^0CEE:15A3
-	U8 bp009a[128];
+	U8 bp009a[200];	// U8 bp009a[128]; SPX: extended to 200, else it'll crash for some DM1 texts
 	U8 *bp04 = bp009a;
 	//^0CEE:15AD
 	U8 bp19 = 0xff;
@@ -48169,7 +48212,7 @@ X16 SkWinCore::IS_OBJECT_ALCOVE(ObjectID rl)
 	//^0CEE:317F
 	ENTER(0);
 	//^0CEE:3182
-	if (GET_WALL_ORNATE_ALCOVE_TYPE(QUERY_CLS2_FROM_RECORD(rl)) == 1)
+	if (GET_WALL_ORNATE_ALCOVE_TYPE(QUERY_CLS2_FROM_RECORD(rl)) == WALL_ORNATE_OBJECT__ALCOVE) // == 1
 		return 1;
 	return 0;
 }
@@ -50009,6 +50052,13 @@ _29a8:
 			Text *bp18 = GET_ADDRESS_OF_RECORD2(si);
 			//^2FCF:2A72
 			if (bp18->TextMode() == 1) { }
+			//SPX: test DM1
+			if (SkCodeParam::bDM1Mode)
+			{
+				Bit8u bp0106[200];
+				QUERY_MESSAGE_TEXT(bp0106, si, 1);
+				DISPLAY_HINT_TEXT(COLOR_YELLOW, bp0106);
+			}
 			//^2FCF:2A81
 			if (bp1e == 0xffff) {
 				//^2FCF:2A8A
@@ -50617,7 +50667,7 @@ Bit16u SkWinCore::_2fcf_0434(ObjectID recordLink, __int16 xpos, __int16 ypos, __
 			break;
 		}
 		//^2FCF:0739
-		// SPX: Add special switchable paramater to not fall into pits
+		// SPX: Add special switchable parameter to not fall into pits
 		if (bp18 == ttPit && bp28 == 0 && (bp16 & 8) != 0 && (bp16 & 1) == 0 && !SkCodeParam::bWalkOverPits) {
 			//^2FCF:075F
 			// SPX: Retrieving 1 (only for VOID set) tells to do special treatment when falling into a pit
@@ -52091,7 +52141,7 @@ Bit16u SkWinCore::MOVE_RECORD_TO(ObjectID rlWhatYouMove, __int16 xposFrom, __int
 	Bit16u di = 0; // defaulting to 0
 	if (xposTo >= 0) {
 		//^2FCF:0E53
-		bp10 = _2fcf_0434(si, xposFrom, yposFrom, xposTo, yposTo, 1);
+		bp10 = _2fcf_0434(si, xposFrom, yposFrom, xposTo, yposTo, 1); // SPX: check if going into pit or teleporter ?
 		//^2FCF:0E6C
 		if (si != OBJECT_NULL) {
 			//^2FCF:0E71
@@ -52176,7 +52226,7 @@ Bit16u SkWinCore::MOVE_RECORD_TO(ObjectID rlWhatYouMove, __int16 xposFrom, __int
 		//^2FCF:0F87
 		if (si == OBJECT_NULL) {
 			//^2FCF:0F8C
-			PLACE_OR_REMOVE_OBJECT_IN_ROOM(xposFrom, yposFrom, -1, bp12, FCT_REMOVE_OFF, 0);
+			PLACE_OR_REMOVE_OBJECT_IN_ROOM(xposFrom, yposFrom, -1, bp12, FCT_REMOVE_OFF, 0); // SPX: remove player from source position
 		}
 		else {
 			//^2FCF:0FA6
@@ -52219,7 +52269,7 @@ Bit16u SkWinCore::MOVE_RECORD_TO(ObjectID rlWhatYouMove, __int16 xposFrom, __int
 			//^2FCF:1040
 			CHANGE_CURRENT_MAP_TO(di);
 			//^2FCF:1047
-			_2fcf_0b8b(xposTo, yposTo, di);
+			_2fcf_0b8b(xposTo, yposTo, di); // SPX: check teleporter information on tile
 			//^2FCF:1055
 			si = GET_CREATURE_AT(glbPlayerPosX, glbPlayerPosY);
 			//^2FCF:1066
@@ -54947,7 +54997,7 @@ X16 SkWinCore::_38c8_0224(X16 xx, i32 yy)
 			//^38C8:0360
 			_4976_4742 = bp04;
 			_4976_4746 = di;
-			_0aaf_0067(_0aaf_02f8(2, 0));
+			_0aaf_0067(_0aaf_02f8_DIALOG_BOX(2, 0));
 			SK_PREPARE_EXIT();
 		}
 	}
