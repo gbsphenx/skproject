@@ -39251,6 +39251,13 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 								default:
 									bp0c = (const unsigned __int8*) ".Z008DATA\\"; break;
 							} // END of specific block
+							// SPX: If a specific data folder name is given (within SkWin directory), it will be used instead
+							if (skwin.sCustomDataFolder != NULL)
+							{
+								static char sFolderString[256];
+								sprintf(sFolderString, ".Z008%s\\", skwin.sCustomDataFolder);
+								bp0c = (const unsigned __int8*) sFolderString;
+							}
 							//^2636:024A
 							FORMAT_SKSTR(bp0c, bp0116);
 							//^2636:025D
@@ -40731,7 +40738,7 @@ _2e5b:
 		SUPPRESS_INIT();
 
 		printf("Start Read File Handle %02d ...\n", glbDataFileHandle);
-		s_testSKSave.StartRead(FILE_TELL(glbDataFileHandle));
+		//s_testSKSave.StartRead(FILE_TELL(glbDataFileHandle));
 
 		printf("Read Global Variables ...\n");
 		//^2066:2FD6
