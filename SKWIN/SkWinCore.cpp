@@ -235,7 +235,8 @@ X16 SkWinCore::EXTENDED_LOAD_AI_DEFINITION(void)
 	int rc = 0;
 	U8 index = 0;
 	// SPX: If not extended, load the default table from static data / OR if dungeon selected is skullkeep (security because AI is not in GDAT currently)
-	if (!SkCodeParam::bUseDM2ExtendedMode || skwin.dung == 4 || skwin.dung == 5)
+	//if (!SkCodeParam::bUseDM2ExtendedMode || skwin.dung == _OPTION_DUNGEON_DM2_BETA_ || skwin.dung == _OPTION_DUNGEON_DM2_DEMO_ || skwin.dung == _OPTION_DUNGEON_DM2_SK)
+	// 2023-07-26 : removed the test : in all case, first setup the AI table with default DM2 values, then overwrite with what's from GDAT 
 	{
 		//&_4976_03a2[res * 0x0024]
 		//memcpy(dAITable, _4976_03a2, 62 * 36);
@@ -254,7 +255,7 @@ X16 SkWinCore::EXTENDED_LOAD_AI_DEFINITION(void)
 		}
 
 	}
-	else if (SkCodeParam::bUseDM2ExtendedMode)
+	if (SkCodeParam::bUseDM2ExtendedMode)
 	{
 		U16 value = 0;
 		U8 category = GDAT_CATEGORY_CREATURE_AI;
@@ -2753,8 +2754,8 @@ GenericRecord *SkWinCore::GET_ADDRESS_OF_RECORD(ObjectID rl)
 		static int countBadRecords = 0;
 		static GenericRecord gr;
 		gr.w0 = OBJECT_END_MARKER;
-	SkD((DLV_BUGHERE, "DEBUG: %s is bad record %02d\n"
-		, static_cast<LPCSTR>(getRecordNameOf(rl)), countBadRecords));
+	SkD((DLV_BUGHERE, "DEBUG: %s is bad record %02d (RL = %04X DB=%d IDX=%04d)\n"
+		, static_cast<LPCSTR>(getRecordNameOf(rl)), countBadRecords, rl, rl.RealDBType(), rl.DBIndex() ));
 		countBadRecords++;
 		ATLASSERT(countBadRecords < 1024);
 		return &gr;
@@ -39933,6 +39934,8 @@ int SkWinCore::READ_RECORD_CHECKCODE(__int16 xpos, __int16 ypos, ObjectID *recor
 	// readDir=(read-direction-in-record-link)
 	// readSub=(read-subsequent-records)
 
+	printf("READ_RECORD_CHECKCODE @ (%02d : %02d/%02d)\n", glbCurrentMapIndex, xpos, ypos);
+
 	//^2066:15AA
 	while (true) {
 		//^2066:15B0
@@ -40556,6 +40559,8 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 _1e7e:
 		si = 1;
 	}
+	if (SkCodeParam::bForceSaveGameReadOK == true)
+		si = 0; // all good ?
 	//^2066:1E81
 	DEALLOC_UPPER_MEMORY(200);
 	return si;
@@ -63736,7 +63741,7 @@ int SkWinCore::FIRE_BOOTSTRAP() //#DS=089C
 	// 4F75:0FE8  F8 0F 75 4F/04 10 75 4F/08 10 75 4F/00 00 00 00  EuO..uO..uO....
 	// 4F75:0FF8  43 3A 5C 46 49 52 45 2E 45 58 45 00 2B 70 6D 00  C:\FIRE.EXE.+pm.
 	// 4F75:1008  2B 73 62 00 75 49 00 00 5A 00 00 88 4F 00 00 00  +sb.uI..Z..E...
-	skmidi = new SkWinMIDI(skwin.dung);
+	skmidi = new SkWinMIDI(skwin.dung, skwin.sCustomDataFolder);
 	char *argv[] = {"FIRE.exe", "+pm", "+sb"};
 	return (FIRE_MAIN(3, argv, NULL));
 }

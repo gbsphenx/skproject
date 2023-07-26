@@ -13,9 +13,10 @@ public:
 	int		iCurrentRequestedMusic;
 	int		iNextRequestedMusic;
 	bool	bCurrentlyPlaying;
+	char	sCustomFolder[256];
 
 public:
-	SkWinMIDI(int dung);
+	SkWinMIDI(int dung, const char* folder);
 
 	void REQUEST_PLAY_MUSIC(int iNumber);
 

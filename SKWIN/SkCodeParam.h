@@ -26,6 +26,8 @@ public:
 
 	static bool bFullLight;
 
+	static bool bForceSaveGameReadOK;	// to allow return from gameload
+
 	//--- Specific parameters, for testing/debugging
 	static bool bDisableFogEffect;
 	static bool bWeakDoors;

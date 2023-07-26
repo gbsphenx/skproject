@@ -6,6 +6,7 @@
 #include <SkWinMIDI.h>
 #include <windows.h>
 #include <SkCodeParam.h>
+#include <defines.h>
 
 int iDungeonGame = 0;
 
@@ -312,19 +313,40 @@ SkWinMIDI_MIDI_LOOP(void* parameters)
 
 	char sDataRootFolder[64];
 	sprintf(sDataRootFolder, "DATA");	// default
+
+
 	switch(iDungeonGame)
 	{
-		case 1:
-			sprintf(sDataRootFolder, "DATA_DM1"); break;
-		case 2:
-			sprintf(sDataRootFolder, "DATA_CSB"); break;
-		case 3:
-			sprintf(sDataRootFolder, "DATA_TQ"); break;
-		case 4:
-			sprintf(sDataRootFolder, "DATA_BETA"); break;
-		case 5:
+		case _OPTION_DUNGEON_DM1_KID_:
+			sprintf(sDataRootFolder, "DATA_DM1_KID"); break;
+		case _OPTION_DUNGEON_DM1_DM_:
+			sprintf(sDataRootFolder, "DATA_DM1_DM"); break;
+		case _OPTION_DUNGEON_DM1_CSB_:
+			sprintf(sDataRootFolder, "DATA_DM1_CSB"); break;
+		case _OPTION_DUNGEON_DM1_TQ_:
+			sprintf(sDataRootFolder, "DATA_DM1_TQ"); break;
+		case _OPTION_DUNGEON_DM2_DM_:
+			sprintf(sDataRootFolder, "DATA_DM2_DM"); break;
+		case _OPTION_DUNGEON_DM2_CSB_:
+			sprintf(sDataRootFolder, "DATA_DM2_CSB"); break;
+		case _OPTION_DUNGEON_DM2_TQ_:
+			sprintf(sDataRootFolder, "DATA_DM2_TQ"); break;
+		case _OPTION_DUNGEON_DM2_BETA_:
+			sprintf(sDataRootFolder, "DATA_DM2_BETA"); break;
+		case _OPTION_DUNGEON_DM2_DEMO_:
+			sprintf(sDataRootFolder, "DATA_DM2_DEMO"); break;
+		case _OPTION_DUNGEON_DM2_SK:
+			sprintf(sDataRootFolder, "DATA_DM2_SK"); break;
+		case _OPTION_DUNGEON_NO_SPECIFIC_:
+		default:
 			sprintf(sDataRootFolder, "DATA"); break;
+	} // END of specific block
+	// SPX: If a specific data folder name is given (within SkWin directory), it will be used instead
+	if (xWinMIDI->sCustomFolder != NULL)
+	{
+		sprintf(sDataRootFolder, xWinMIDI->sCustomFolder);
 	}
+
 
 	//printf("%d> Requesting music %02x (%02d)\n", iThreadCounter, iHexNum, iHexNum);
 	sprintf(midifilename, "./%s/%02x.hmp.mid", sDataRootFolder, iHexNum);
@@ -455,7 +477,7 @@ int tMusicMaps[64] =
 
 //------------------------------------------------------------------------------
 
-SkWinMIDI::SkWinMIDI(int dung)
+SkWinMIDI::SkWinMIDI(int dung, const char* folder)
 {
 	iDungeonGame = dung;
 	iCurrentRequestedMusic = -1; // no music
@@ -463,6 +485,9 @@ SkWinMIDI::SkWinMIDI(int dung)
 	bCurrentlyPlaying = false;
 	//CreateThread(NULL,0, (LPTHREAD_START_ROUTINE) example_midi,NULL,0,NULL);
 	//example_midi();
+	memset(sCustomFolder, 0, 256);
+	if (folder != NULL)
+		sprintf(sCustomFolder, folder);
 }
 
 
