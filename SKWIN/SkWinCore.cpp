@@ -3002,36 +3002,37 @@ AIDefinition *SkWinCore::QUERY_CREATURE_AI_SPEC_FROM_TYPE(Bit8u creatureType)
 //^0CEE:2D36
 Bit16u SkWinCore::QUERY_GDAT_CREATURE_WORD_VALUE(Bit8u creatureType, Bit8u cls4)
 {
+	// If "glbSomeCreatureTable" is allocated, we get the value from it, else, we always query from GDAT
 	//^0CEE:2D36
 	if (glbSomeCreatureTable != NULL) {
 		//^0CEE:2D46
 		while (creatureType <= glbCreaturesMaxCount) {
 			//^0CEE:2D4F
-			Bit8u bp05;
-			if (cls4 == 0) {
-				bp05 = 0x01;
+			Bit8u tblOffset; // bp05 offset in table = byte 0, 1 or 2 to get
+			if (cls4 == CREATURE_STAT_00) { // 0
+				tblOffset = 0x01;
 			}
-			else if (cls4 == 1) {
-				bp05 = 0x00;
+			else if (cls4 == CREATURE_STAT_01) { // 1
+				tblOffset = 0x00;
 			}
-			else if (cls4 == 5) {
-				bp05 = 0x02;
+			else if (cls4 == CREATURE_STAT_AI) {	// 5 : AI
+				tblOffset = 0x02;
 			}
 			else {
 				break;
 			}
 
 			//^0CEE:2D74
-			Bit8u *bp04 = glbSomeCreatureTable + creatureType * 3 + bp05;
-			Bit16u bp08 = *bp04;
-			if (bp08 == 0xFF) {
+			Bit8u *ptblCreatureByteInfo = glbSomeCreatureTable + creatureType * 3 + tblOffset; // bp04
+			Bit16u iCreatureInfoValue = *ptblCreatureByteInfo; // bp08
+			if (iCreatureInfoValue == 0xFF) { // table is initialized with 0xFF: if so, we want to overwrite by the value from GDAT
 				//^0CEE:2DA5
-				bp08 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_CREATURES, creatureType, dtWordValue, cls4);
+				iCreatureInfoValue = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_CREATURES, creatureType, dtWordValue, cls4);
 
-				*bp04 = (Bit8u)bp08;
+				*ptblCreatureByteInfo = (Bit8u)iCreatureInfoValue; // replace the 0xFF by the value found
 			}
 			//^0CEE:2DC5
-			return bp08;
+			return iCreatureInfoValue;
 		}
 	}
 	//^0CEE:2DCA
@@ -39934,7 +39935,7 @@ int SkWinCore::READ_RECORD_CHECKCODE(__int16 xpos, __int16 ypos, ObjectID *recor
 	// readDir=(read-direction-in-record-link)
 	// readSub=(read-subsequent-records)
 
-	printf("READ_RECORD_CHECKCODE @ (%02d : %02d/%02d)\n", glbCurrentMapIndex, xpos, ypos);
+	//printf("READ_RECORD_CHECKCODE @ (%02d : %02d/%02d)\n", glbCurrentMapIndex, xpos, ypos);
 
 	//^2066:15AA
 	while (true) {
@@ -55245,6 +55246,7 @@ X16 SkWinCore::_1c9a_17c7(U8 xx, U8 yy, U8 zz)
 }
 
 //^1C9A:184C
+// SPX: return 1 if creature dies from damage
 X16 SkWinCore::WOUND_CREATURE(i16 damage)
 {
 	SkD((DLV_DBM, "DBM: WOUND_CREATURE(%3d) C:%p\n"
@@ -55253,9 +55255,9 @@ X16 SkWinCore::WOUND_CREATURE(i16 damage)
 	//^1C9A:184C
 	ENTER(12);
 	//^1C9A:1852
-	Creature *bp04 = glbCurrentThinkingCreatureRec;
-	AIDefinition *bp08 = glbAIDef;
-	X16 di = 0;
+	Creature *xLocalCreature = glbCurrentThinkingCreatureRec; // bp04
+	AIDefinition *xLocalAIDef = glbAIDef; // bp08
+	X16 bDiesFromDamage = 0; // di
 
 	if (glbCurrentMapIndex == glbPlayerMap)
 	SkD((DLV_TWEET, "Tweet: %s (a#%03d, x:%d, y:%d, map:%d) took %d damage! (hp:%d ac:%d) \n"
@@ -55265,39 +55267,48 @@ X16 SkWinCore::WOUND_CREATURE(i16 damage)
 		, glbCreatureTimer.YcoordB() // really? y
 		, glbCurrentMapIndex
 		, damage
-		, bp04->HP1()
-		, bp08->ArmorClass
+		, xLocalCreature->HP1()
+		, xLocalAIDef->ArmorClass
 		));
 
 	// If the creature has max defense, then take no damage
-	if (bp08->ArmorClass == AI_DEF_ARMOR_MAX)
-		return di;
+	if (xLocalAIDef->ArmorClass == AI_DEF_ARMOR_MAX)
+		return bDiesFromDamage;
 	X16 si = 0;	// SPX : added default value to 0
-	if (bp08->IsStaticObject() == 0) {
+	if (xLocalAIDef->IsStaticObject() == 0) {
 		//^1C9A:1882
-		X16 bp0a = QUERY_GDAT_CREATURE_WORD_VALUE(bp04->CreatureType(), 1);
+		X16 bp0a = QUERY_GDAT_CREATURE_WORD_VALUE(xLocalCreature->CreatureType(), 1);
 		si = _4976_3752[bp0a];
 		if ((si & 4) == 0) {
 			//^1C9A:18A5
-			X16 bp0c = glbCurrentMapIndex;
-			CHANGE_CURRENT_MAP_TO(bp04->TriggerMap());
-			INVOKE_MESSAGE(bp04->TriggerX(), bp04->TriggerY(), 0, 1, glbGameTick +1);
-			CHANGE_CURRENT_MAP_TO(bp0c);
+			X16 iCurrentMap = glbCurrentMapIndex; // bp0c
+			if (SkCodeParam::bUsePowerDebug) // SPX: issue here after gameload where some creature get their triggermap beyond the number of maps (then fail)
+			{ // if that case happens here, let's default trigger map to current map, and let it go that way
+				X16 iTriggerMap = xLocalCreature->TriggerMap();
+				if (iTriggerMap > dunHeader->nMaps)
+				{
+					iTriggerMap = glbCurrentMapIndex;
+					xLocalCreature->SetTriggerMap(iTriggerMap);
+				}
+			}
+			CHANGE_CURRENT_MAP_TO(xLocalCreature->TriggerMap());
+			INVOKE_MESSAGE(xLocalCreature->TriggerX(), xLocalCreature->TriggerY(), 0, 1, glbGameTick +1);
+			CHANGE_CURRENT_MAP_TO(iCurrentMap);
 		}
 	}
 	//^1C9A:18F9
-	if (bp04->HP1() > U16(damage)) {
-		bp04->HP1(bp04->HP1() - damage);
-		return di;
+	if (xLocalCreature->HP1() > U16(damage)) {
+		xLocalCreature->HP1(xLocalCreature->HP1() - damage);
+		return bDiesFromDamage;
 	}
 	// SPX : we get here if creature has not enough HP to survive damage done
 	//^1C9A:190E
-	bp04->HP1(1);
-	if (bp08->IsStaticObject() == 0) {
+	xLocalCreature->HP1(1);
+	if (xLocalAIDef->IsStaticObject() == 0) {
 		if ((si & 0x800) != 0) {
 			//^1C9A:1927
 			if (_1c9a_17c7(glbCreatureTimer.XcoordB(), glbCreatureTimer.YcoordB(), glbSomeMap_4976_4ee7) == 0)
-				return di;
+				return bDiesFromDamage;
 		}
 		//^1C9A:1944
 		if ((si & 0x800) != 0)
@@ -55307,11 +55318,11 @@ X16 SkWinCore::WOUND_CREATURE(i16 damage)
 	}
 	else {
 		//^1C9A:196E
-		di = 1;
+		bDiesFromDamage = 1;
 		DELETE_CREATURE_RECORD(glbCreatureTimer.XcoordB(), glbCreatureTimer.YcoordB(), CREATURE_GENERATED_DROPS, 1);
 	}
 	//^1C9A:1988
-	return di;
+	return bDiesFromDamage;
 }
 
 //^14CD:062E

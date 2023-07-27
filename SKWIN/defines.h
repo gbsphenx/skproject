@@ -660,6 +660,8 @@ enum SkillLevel {
 #define CREATURE_GOOD_U_HAUL_MINION		0x35
 #define CREATURE_DRAGOTH_ATTACK_MINION	0x4C
 
+#define CREATURE_STAT_00				0x00
+#define CREATURE_STAT_01				0x01
 #define CREATURE_STAT_AI				0x05
 #define CREATURE_STAT_6					0x06	// Seeing this used by SARDES Minion; would it be that creature does not attack ???
 #define CREATURE_STAT_DROP_FIRST		0x0A
