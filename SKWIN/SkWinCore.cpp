@@ -10316,7 +10316,7 @@ _1025:
 		case 19://^1069
 			{
 				//^29EE:1069
-				bp0a = (_0cee_06dc(ss, tt) - ww) & 3;
+				bp0a = (_0cee_06dc_GET_TILE_DIRECTION(ss, tt) - ww) & 3;
 				//^29EE:107F
 				if (bp4c.w6[0] != 0) {
 					//^29EE:1085
@@ -15319,7 +15319,7 @@ void SkWinCore::_12b4_00af(U16 xx)
 	MOVE_RECORD_TO(OBJECT_NULL, glbPlayerPosX, glbPlayerPosY, -1, 0);
 	glbMapToLoad = LOCATE_OTHER_LEVEL(glbPlayerMap, (xx != 0) ? -1 : +1, &glbPlayerPosX, &glbPlayerPosY, NULL);
 	CHANGE_CURRENT_MAP_TO(glbMapToLoad);
-	ROTATE_SQUAD(_0cee_06dc(glbPlayerPosX, glbPlayerPosY));
+	ROTATE_SQUAD(_0cee_06dc_GET_TILE_DIRECTION(glbPlayerPosX, glbPlayerPosY));
 	CHANGE_CURRENT_MAP_TO(glbPlayerMap);
 	//^12B4:011C
 	return;
@@ -27234,7 +27234,7 @@ _161f:
 				if (ww == 5) {
 					bp08 = ccm36;
 _169f:
-					bp0c = (_0cee_06dc(xx, yy) +2) & 3;
+					bp0c = (_0cee_06dc_GET_TILE_DIRECTION(xx, yy) +2) & 3;
 					si = 0x100;
 				}
 				break;
@@ -40216,7 +40216,8 @@ U8 SkWinCore::GET_TELEPORTER_DETAIL(TELE_inf *ref, i16 xx, i16 yy)
 }
 
 //^2066:197C
-Bit16u SkWinCore::_2066_197c()
+// _2066_197c renamed READ_SKSAVE_TIMER_3C_3D
+Bit16u SkWinCore::READ_SKSAVE_TIMER_3C_3D()
 {
 	//^2066:197C
 	ENTER(4);
@@ -40433,7 +40434,7 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 		PROCESS_ITEM_BONUS(glbChampionLeader, glbLeaderHandPossession.object, -1, 0);
 	}
 	//^2066:1C14
-	if (_2066_197c() != 0) {
+	if (READ_SKSAVE_TIMER_3C_3D() != 0) {
 		//^2066:1C1C
 		goto _1e7e;
 	}
@@ -41297,27 +41298,28 @@ Bit16u SkWinCore::GET_PARTY_SPECIAL_FORCE()
 }
 
 //^2FCF:01C5
-void SkWinCore::_2fcf_01c5(ObjectID recordLink, i16 xx, i16 yy, Bit16u curmap, Bit16u ss)
+// _2fcf_01c5 renamed SET_TIMER_3C_OR_3D
+void SkWinCore::SET_TIMER_3C_OR_3D(ObjectID recordLink, i16 xx, i16 yy, Bit16u curmap, Bit16u ss)
 {
 	//^2FCF:01C5
 	ENTER(10);
 	//^2FCF:01C9
-	Timer bp0a;
-	bp0a.SetMap(curmap);
-	bp0a.SetTick(glbGameTick +5);
+	Timer xtimer; // bp0a
+	xtimer.SetMap(curmap);
+	xtimer.SetTick(glbGameTick +5);
 	//^2FCF:01EC
 	// SPX: though .. tty3D and tty3C seems to be handled exactly the same way!
-	bp0a.TimerType((ss != 0) ? tty3D : tty3C);
+	xtimer.TimerType((ss != 0) ? tty3D : tty3C);
 	//^2FCF:01FB
-	bp0a.actor = 0;
+	xtimer.actor = 0;
 	//^2FCF:01FF
-	bp0a.Xcoord(xx);
-	bp0a.Ycoord(yy);
-	bp0a.id8(recordLink);
+	xtimer.Xcoord(xx);
+	xtimer.Ycoord(yy);
+	xtimer.id8(recordLink);
 	//^2FCF:0211
 	SET_MINION_RECENT_OPEN_DOOR_LOCATION(recordLink, xx, yy, curmap, 1);
 	//^2FCF:0226
-	QUEUE_TIMER(&bp0a);
+	QUEUE_TIMER(&xtimer);
 	//^2FCF:0232
 	return;
 }
@@ -41350,7 +41352,7 @@ X16 SkWinCore::ATTACK_PARTY(Bit16u quantity, Bit16u yy, Bit16u zz)
 }
 
 //^2C1D:1B0F
-// SPX: _2c1d_1b0f renamed PROCESS_POISON / Kentaro says it is "give_poison"
+// SPX: _2c1d_1b0f renamed PROCESS_POISON
 void SkWinCore::PROCESS_POISON(i16 player, Bit16u yy) {
 	
 	if (SkCodeParam::bUseIngameDebug)
@@ -41402,7 +41404,8 @@ void SkWinCore::PROCESS_POISON(i16 player, Bit16u yy) {
 
 //^0CEE:06DC
 // SPX TODO related to direction depending on tile (like changing stairs ?)
-Bit16u SkWinCore::_0cee_06dc(i16 xx, i16 yy)
+// _0cee_06dc renamed _0cee_06dc_GET_TILE_DIRECTION
+Bit16u SkWinCore::_0cee_06dc_GET_TILE_DIRECTION(i16 xx, i16 yy)
 {
 	//^0CEE:06DC
 	ENTER(4);
@@ -41843,13 +41846,14 @@ _0ea0:
 }
 
 //^0CEE:319E
-X16 SkWinCore::_0cee_319e(ObjectID rl)
+// _0cee_319e renamed _0cee_319e_ALCOVE_GET_GDAT_X13
+X16 SkWinCore::_0cee_319e_ALCOVE_GET_GDAT_X13(ObjectID rl)
 {
 	//^0CEE:319E
 	ENTER(2);
 	//^0CEE:31A2
 	if (IS_OBJECT_ALCOVE(rl) == 0)	// _0cee_317f
-		return 0;
+		return 0;	// not an alcove, return
 	//^0CEE:31B2
 	U8 bp01 = QUERY_CLS2_FROM_RECORD(rl);
 	if (bp01 == 0xff)
@@ -41879,7 +41883,7 @@ U16 SkWinCore::ATTACK_WALL(i16 xTo, i16 yTo, i16 xFrm, i16 yFrm, U16 dirTo, Obje
 		if (true
 			&& bp08->GetMissileObject().DBType() != dbCloud 
 			&& bp0c == 0 
-			&& _0cee_319e(di) != 0 
+			&& _0cee_319e_ALCOVE_GET_GDAT_X13(di) != 0 
 			&& RAND02() == 0
 		) {
 			//^075F:08BC
@@ -50862,7 +50866,7 @@ Bit16u SkWinCore::_2fcf_0434(ObjectID recordLink, __int16 xpos, __int16 ypos, __
 			CHANGE_CURRENT_MAP_TO(di);
 		}
 		//^2FCF:0AB8
-		Bit16u bp22 = _0cee_06dc(xx, yy);
+		Bit16u bp22 = _0cee_06dc_GET_TILE_DIRECTION(xx, yy);
 		//^2FCF:0AC8
 		xx += glbXAxisDelta[bp22];
 		//^2FCF:0AD4
@@ -52356,7 +52360,7 @@ _1151:
 	//^2FCF:1158
 	if (MOVE_RECORD_TO(si, glbPlayerPosX, glbPlayerPosY, -3, 0) == 0) {
 		//^2FCF:1170
-		_2fcf_01c5(si, glbPlayerPosX, glbPlayerPosY, di, 0);
+		SET_TIMER_3C_OR_3D(si, glbPlayerPosX, glbPlayerPosY, di, 0);
 	}
 
 	//^2FCF:1183
@@ -52427,7 +52431,7 @@ _11a3:
 					//^2FCF:12E0
 					RELEASE_CREATURE_TIMER(si);
 					//^2FCF:12E7
-					_2fcf_01c5(si, xposTo, yposTo, di, 0);
+					SET_TIMER_3C_OR_3D(si, xposTo, yposTo, di, 0);
 					//^2FCF:12F5
 					goto _1562;
 				}
@@ -52483,7 +52487,7 @@ _13a5:
 				_1c9a_0fcb(bp06);
 			}
 			//^2FCF:13B5
-			_2fcf_01c5(si, xposTo, yposTo, di, _4976_5822);
+			SET_TIMER_3C_OR_3D(si, xposTo, yposTo, di, _4976_5822);
 			//^2FCF:13CB
 			return 2;
 		}
@@ -59805,7 +59809,7 @@ X16 SkWinCore::CREATURE_USES_LADDER_HOLE()
 	//^1887:0507
 	if (bp04->Command == ccm35 || bp04->Command == ccm36) {
 		//^1887:0518
-		si = _0cee_06dc(glbCreatureTempTargetX, glbCreatureTempTargetY);
+		si = _0cee_06dc_GET_TILE_DIRECTION(glbCreatureTempTargetX, glbCreatureTempTargetY);
 	}
 	//^1887:0529
 	glbCurrentThinkingCreatureRec->b15_0_1(si);

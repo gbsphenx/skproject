@@ -1669,7 +1669,7 @@ protected:
 	int READ_RECORD_CHECKCODE(__int16 xpos, __int16 ypos, ObjectID *recordLinkPtr, Bit16u readDir, Bit16u readSub);
 	U8 _0cee_0897(Teleporter **ref, i16 xx, i16 yy);
 	U8 GET_TELEPORTER_DETAIL(TELE_inf *ref, i16 xx, i16 yy);
-	Bit16u _2066_197c();
+	Bit16u READ_SKSAVE_TIMER_3C_3D(); // _2066_197c
 	Bit16u RECOVER_MINION_ASSOC();
 	U16 READ_SKSAVE_DUNGEON();
 	__int16 GAME_LOAD();	// GAME LOAD
@@ -1686,18 +1686,18 @@ protected:
 	Bit16u TRY_PUSH_OBJECT_TO(ObjectID rl, i16 xpos, i16 ypos, i16 *xx, i16 *yy);
 	X16 GET_CHAMPION_SPECIAL_FORCE(U16 player);
 	Bit16u GET_PARTY_SPECIAL_FORCE();
-	void _2fcf_01c5(ObjectID recordLink, i16 xx, i16 yy, Bit16u curmap, Bit16u ss);
+	void SET_TIMER_3C_OR_3D(ObjectID recordLink, i16 xx, i16 yy, Bit16u curmap, Bit16u ss); // _2fcf_01c5
 	X16 ATTACK_PARTY(Bit16u quantity, Bit16u yy, Bit16u zz);
 	void PROCESS_POISON(i16 player, Bit16u yy);
 	void PROCESS_PLAGUE(i16 player, Bit16u counters);	// SPX: custom added
-	Bit16u _0cee_06dc(i16 xx, i16 yy);
+	Bit16u _0cee_06dc_GET_TILE_DIRECTION(i16 xx, i16 yy); // _0cee_06dc
 	void ATTACK_CREATURE(ObjectID rl, i16 xx, i16 yy, Bit16u ss, i16 tt, Bit16u quantity);
 	U8 *PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timerType);
 	void CREATURE_THINK_FLUSH_POSITION(); // _14cd_0802
 	X32 CREATURE_SOMETHING_1c9a_0a48();
 	void UNPREPARE_LOCAL_CREATURE_VAR(U8 *ww);
 	void ALLOC_CAII_TO_CREATURE(ObjectID rl, i16 xx, i16 yy);
-	X16 _0cee_319e(ObjectID rl);
+	X16 _0cee_319e_ALCOVE_GET_GDAT_X13(ObjectID rl); // _0cee_319e
 	U16 ATTACK_WALL(i16 xTo, i16 yTo, i16 xFrm, i16 yFrm, U16 dirTo, ObjectID rlThrown);
 	i16 QUERY_DOOR_DAMAGE_RESIST(U8 cls2);
 	U16 ATTACK_DOOR(i16 x, i16 y, U16 damage, U16 isSpellAttack, U16 delay);
