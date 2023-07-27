@@ -23154,7 +23154,8 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 }
 
 //^0B36:1446
-i16 SkWinCore::_0b36_1446(Picture *ref, i16 xx, i16 yy, U16 colorkey)
+// _0b36_1446 renamed _0b36_1446_BLIT_PICTURE
+i16 SkWinCore::_0b36_1446_BLIT_PICTURE(Picture *ref, i16 xx, i16 yy, U16 colorkey)
 {
 	//^0B36:1446
 	ENTER(20);
@@ -23207,7 +23208,8 @@ i16 SkWinCore::_0b36_1446(Picture *ref, i16 xx, i16 yy, U16 colorkey)
 }
 
 //^32CB:00F1
-U16 SkWinCore::_32cb_00f1(U16 xx, U16 yy, i16 zz)
+// _32cb_00f1 renamed _32cb_00f1_DRAW_PICTURE
+U16 SkWinCore::_32cb_00f1_DRAW_PICTURE(U16 xx, U16 yy, i16 zz)
 {
 	//^32CB:00F1
 	ENTER(10);
@@ -23244,7 +23246,7 @@ U16 SkWinCore::_32cb_00f1(U16 xx, U16 yy, i16 zz)
 	//^32CB:017B
 	_4976_5a96 = ((di -bp06) * 100) / bp06;
 	//^32CB:018C
-	i16 bp02 = _0b36_1446(&glbTempPicture, si, di, zz);
+	i16 bp02 = _0b36_1446_BLIT_PICTURE(&glbTempPicture, si, di, zz);
 	//^32CB:01A0
 	if (bp02 == -1 || bp02 == 1)
 		//^32CB:01AC
@@ -23288,7 +23290,7 @@ U16 SkWinCore::_32cb_0287_DRAW_W_ORNATE(U16 xx, U16 yy, U16 zz)
 	//^32CB:0358
 	if (bp02 >= 0) {
 		//^32CB:035C
-		di = _32cb_00f1(yy, zz, bp02);
+		di = _32cb_00f1_DRAW_PICTURE(yy, zz, bp02);
 	}
 	//^32CB:036E
 	DEALLOC_UPPER_MEMORY(72);
@@ -23741,7 +23743,7 @@ ObjectID SkWinCore::_32cb_03a6(U16 xx, U16 yy, U16 zz, U16 ww, U16 vv, ObjectID 
 			//^32CB:04B2
 			DRAW_ITEM(si, zz, 0, 0, di, bp04, 0, bp14, (tt == 3) ? 1 : 0);
 			//^32CB:04DC
-			if (_32cb_00f1(xx, yy, 10) == 1) {
+			if (_32cb_00f1_DRAW_PICTURE(xx, yy, 10) == 1) {
 				//^32CB:04F0
 				bp0c = bp08;
 				//^32CB:04FC
@@ -24206,7 +24208,7 @@ U16 SkWinCore::_32cb_01b6(U16 xx, U16 yy, U16 ss, U16 tt, U16 *ww)
 	//^32CB:023C
 	DRAW_TEMP_PICST();
 	//^32CB:0241
-	if (_32cb_00f1(xx, yy, di) == 0)
+	if (_32cb_00f1_DRAW_PICTURE(xx, yy, di) == 0)
 		//^32CB:0253
 		//^32CB:01D0
 		return 0;
@@ -25250,7 +25252,8 @@ Bit8u SkWinCore::WRITE_RECORD_CHECKCODE(ObjectID recordLink, Bit8u writeDir, Bit
 }
 
 //^2066:0B44
-i16 SkWinCore::_2066_0b44()
+// _2066_0b44 renamed _2066_0b44_WRITE_TIMERS
+i16 SkWinCore::_2066_0b44_WRITE_TIMERS()
 {
 	//^2066:0B44
 	Timer *bp04 = glbTimersTable;
@@ -25280,7 +25283,7 @@ U16 SkWinCore::STORE_EXTRA_DUNGEON_DATA()
 {
 	//^2066:0B96
 	_4976_5258 = 0;
-	if (_2066_0b44() != 0)
+	if (_2066_0b44_WRITE_TIMERS() != 0)
 		return 0;
 	Bit16u bp10 = glbCurrentMapIndex;
 	Bit16u currentMap = 0;

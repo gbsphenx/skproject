@@ -1347,8 +1347,8 @@ protected:
 	void _32cb_0f82_SHOP_GLASS(Actuator *ref, U8 cls4, i16 bb, i16 cellPos, U16 horzStretch, U16 vertStretch, U16 rectno, U16 gg, U16 colorkey1); // _32cb_0f82
 	void DRAW_ALCOVE_ITEMS(U16 xx);	// _32cb_3f0d
 	i16 DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz);	// _32cb_15b8
-	i16 _0b36_1446(Picture *ref, i16 xx, i16 yy, U16 colorkey);
-	U16 _32cb_00f1(U16 xx, U16 yy, i16 zz);
+	i16 _0b36_1446_BLIT_PICTURE(Picture *ref, i16 xx, i16 yy, U16 colorkey); // _0b36_1446
+	U16 _32cb_00f1_DRAW_PICTURE(U16 xx, U16 yy, i16 zz); // _32cb_00f1
 	U16 _32cb_0287_DRAW_W_ORNATE(U16 xx, U16 yy, U16 zz); // _32cb_0287
 	void CLICK_WALL(U16 iClickSide); // _121e_0003
 	U16 _32cb_35c1(i16 *xx, i16 *yy, i16 zz, i16 ww);
@@ -1382,7 +1382,7 @@ protected:
 	U8 SUPPRESS_WRITER(const void *pvData, const void *pvMask, U16 cbData, U32 repeat);
 	Bit8u WRITE_1BIT(Bit8u nibble);
 	Bit8u WRITE_RECORD_CHECKCODE(ObjectID recordLink, Bit8u writeDir, Bit8u writeFollowing);
-	i16 _2066_0b44();
+	i16 _2066_0b44_WRITE_TIMERS(); // _2066_0b44
 	U16 STORE_EXTRA_DUNGEON_DATA();
 	U16 WRITE_MINION_ASSOC();
 	U16 SUPPRESS_FLUSH();
