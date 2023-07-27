@@ -1344,7 +1344,7 @@ protected:
 	void DRAW_TEXT_TO_BACKBUFF(i16 xx, i16 yy, U8 *str);
 	U16 _48ae_05ae_CREATURE(i16 disit, U8 yy, U16 zz, U16 ss, U16 tt, i16 ww); // _48ae_05ae
 	U16 _48ae_0767_MONEY_VALUE(i16 xx, i16 yy, U8 *zz, i16 *vv, i16 ww); // _48ae_0767
-	void _32cb_0f82(Actuator *ref, U8 cls4, i16 bb, i16 cellPos, U16 horzStretch, U16 vertStretch, U16 rectno, U16 gg, U16 colorkey1);
+	void _32cb_0f82_SHOP_GLASS(Actuator *ref, U8 cls4, i16 bb, i16 cellPos, U16 horzStretch, U16 vertStretch, U16 rectno, U16 gg, U16 colorkey1); // _32cb_0f82
 	void DRAW_ALCOVE_ITEMS(U16 xx);	// _32cb_3f0d
 	i16 DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz);	// _32cb_15b8
 	i16 _0b36_1446(Picture *ref, i16 xx, i16 yy, U16 colorkey);
