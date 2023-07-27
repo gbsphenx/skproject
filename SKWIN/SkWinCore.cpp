@@ -22287,7 +22287,8 @@ void SkWinCore::DRAW_TEXT_TO_BACKBUFF(i16 xx, i16 yy, U8 *str)
 }
 
 //^48AE:05AE
-U16 SkWinCore::_48ae_05ae(i16 disit, U8 yy, U16 zz, U16 ss, U16 tt, i16 ww)
+// _48ae_05ae renamed _48ae_05ae_CREATURE
+U16 SkWinCore::_48ae_05ae_CREATURE(i16 disit, U8 yy, U16 zz, U16 ss, U16 tt, i16 ww)
 {
 	//^48AE:05AE
 	ENTER(10);
@@ -22364,7 +22365,8 @@ U16 SkWinCore::_48ae_05ae(i16 disit, U8 yy, U16 zz, U16 ss, U16 tt, i16 ww)
 }
 
 //^48AE:0767
-U16 SkWinCore::_48ae_0767(i16 xx, i16 yy, U8 *zz, i16 *vv, i16 ww)
+// _48ae_0767 renamed _48ae_0767_MONEY_VALUE
+U16 SkWinCore::_48ae_0767_MONEY_VALUE(i16 xx, i16 yy, U8 *zz, i16 *vv, i16 ww)
 {
 	//^48AE:0767
 	ENTER(0);
@@ -22556,9 +22558,9 @@ void SkWinCore::_32cb_0f82(Actuator *ref, U8 cls4, i16 bb, i16 cellPos, U16 horz
 	//^32CB:13C9
 	if (cellPos == 3) {
 		//^32CB:13D2
-		U16 bp22 = _48ae_05ae(bp24, bp11, ref->ShopItemPoolNo(), 1, 1, -1); // price for buy?
+		U16 bp22 = _48ae_05ae_CREATURE(bp24, bp11, ref->ShopItemPoolNo(), 1, 1, -1); // price for buy?
 		//^32CB:13F8
-		U16 bp20 = _48ae_05ae(bp24, bp11, ref->ShopItemPoolNo(), 0, 1, -1); // price for sell?
+		U16 bp20 = _48ae_05ae_CREATURE(bp24, bp11, ref->ShopItemPoolNo(), 0, 1, -1); // price for sell?
 		//^32CB:141E
 		for (i16 bp16 = 0; bp16 < 2; bp16++) {
 			//^32CB:1426
@@ -22575,7 +22577,7 @@ void SkWinCore::_32cb_0f82(Actuator *ref, U8 cls4, i16 bb, i16 cellPos, U16 horz
 			//^32CB:146C
 			U8 bp3a[16];
 			i16 bp1e;
-			_48ae_0767(bp1a, 6, bp3a, &bp1e, bp16);
+			_48ae_0767_MONEY_VALUE(bp1a, 6, bp3a, &bp1e, bp16);
 			//^32CB:1486
 			if (bp1e <= 0)
 				//^32CB:148C
@@ -57208,7 +57210,8 @@ X8 SkWinCore::PROCEED_XACT_66()
 	return bp01;
 }
 //^14CD:2807
-U16 SkWinCore::_14cd_2807(ObjectID *ref, skxxxi *pv)
+// _14cd_2807 renamed _14cd_2807_CREATURE
+U16 SkWinCore::_14cd_2807_CREATURE(ObjectID *ref, skxxxi *pv)
 {
 	//^14CD:2807
 	ENTER(0);
@@ -57217,7 +57220,7 @@ U16 SkWinCore::_14cd_2807(ObjectID *ref, skxxxi *pv)
 		//^14CD:2822
 		if (pv->w0 == -1)
 			pv->w0 = 0;
-		pv->w0 += _48ae_05ae(
+		pv->w0 += _48ae_05ae_CREATURE(
 			GET_DISTINCTIVE_ITEMTYPE(*ref), 
 			glbCurrentThinkingCreatureRec->CreatureType(), 
 			glbCurrentThinkingCreatureRec->w8, pv->w4, pv->w6, 
@@ -57228,7 +57231,8 @@ U16 SkWinCore::_14cd_2807(ObjectID *ref, skxxxi *pv)
 }
 
 //^14CD:2886
-i16 SkWinCore::_14cd_2886(ObjectID *ref, X16 xx, i8 dir, X16 ss, X16 tt, X16 ww)
+// _14cd_2886 renamed _14cd_2886_CREATURE
+i16 SkWinCore::_14cd_2886_CREATURE(ObjectID *ref, X16 xx, i8 dir, X16 ss, X16 tt, X16 ww)
 {
 	//^14CD:2886
 	ENTER(14);
@@ -57240,7 +57244,7 @@ i16 SkWinCore::_14cd_2886(ObjectID *ref, X16 xx, i8 dir, X16 ss, X16 tt, X16 ww)
 	bp0e.w6 = tt;
 	bp0e.w8 = ww;
 	ObjectID *bp04;
-	OVERSEE_RECORD(ref, dir, &bp04, (pfnOversee_t)&SkWinCore::_14cd_2807, &bp0e, 0, 1);
+	OVERSEE_RECORD(ref, dir, &bp04, (pfnOversee_t)&SkWinCore::_14cd_2807_CREATURE, &bp0e, 0, 1);
 	//^14CD:28CD
 	return bp0e.w0;
 }
@@ -57275,8 +57279,8 @@ X8 SkWinCore::PROCEED_XACT_67()
 			//^14CD:2967
 			bp04->Command = ccm1D;
 			ObjectID *bp08 = &GET_ADDRESS_OF_RECORD4(bp0a)->possession;
-			i16 si = _14cd_2886(bp08, 16, U8(bp0c), 0, 0, 0);
-			i16 bp0e = _14cd_2886(bp08, 7, U8(bp0c), 0, 0, 0);
+			i16 si = _14cd_2886_CREATURE(bp08, 16, U8(bp0c), 0, 0, 0);
+			i16 bp0e = _14cd_2886_CREATURE(bp08, 7, U8(bp0c), 0, 0, 0);
 			if (bp0e != -1) {
 				//^14CD:29BD
 				si = (si == -1) ? bp0e : (si +bp0e);
@@ -57290,10 +57294,10 @@ X8 SkWinCore::PROCEED_XACT_67()
 				}
 				else {
 					//^14CD:29DC
-					i16 di = _14cd_2886(bp08, 0x10, (bp0c +2)&3, 1, 1, 0);
+					i16 di = _14cd_2886_CREATURE(bp08, 0x10, (bp0c +2)&3, 1, 1, 0);
 					U8 bp28[22];
 					i16 bp12;
-					X16 bp16 = di = _48ae_0767(di, 0x12, bp28, &bp12, 1);
+					X16 bp16 = di = _48ae_0767_MONEY_VALUE(di, 0x12, bp28, &bp12, 1);
 					bp0e = bp04->w16;
 					bp04->w16 = si;
 					if (di > 16) {
@@ -57392,11 +57396,11 @@ X8 SkWinCore::PROCEED_XACT_68()
 			//^14CD:2F70
 			ObjectID *bp04 = &GET_ADDRESS_OF_RECORD4(bp0c)->possession;
 			bp06 = (bp06 + _4976_4ee8)&3;
-			i16 di = _14cd_2886(bp04, 0x10, (bp06 +2)&3, 1, 1, 0);
+			i16 di = _14cd_2886_CREATURE(bp04, 0x10, (bp06 +2)&3, 1, 1, 0);
 			U8 bp22[18];
 			i16 bp10;
-			di = _48ae_0767(di, 0x12, bp22, &bp10, 1);
-			i16 bp08 = _14cd_2886(bp04, 7, (bp06 +2)&3, 0, 0, 0);
+			di = _48ae_0767_MONEY_VALUE(di, 0x12, bp22, &bp10, 1);
+			i16 bp08 = _14cd_2886_CREATURE(bp04, 7, (bp06 +2)&3, 0, 0, 0);
 			if (bp08 != -1)
 				//^14CD:2FEC
 				di += bp08;
@@ -57404,8 +57408,8 @@ X8 SkWinCore::PROCEED_XACT_68()
 				//^14CD:2FF1
 				bp08 = 0;
 			//^14CD:2FF6
-			i16 si = _14cd_2886(bp04, 0x10, i8(bp06), 0, 0, 0);
-			i16 bp0a = _14cd_2886(bp04, 7, i8(bp06), 0, 0, 0);
+			i16 si = _14cd_2886_CREATURE(bp04, 0x10, i8(bp06), 0, 0, 0);
+			i16 bp0a = _14cd_2886_CREATURE(bp04, 7, i8(bp06), 0, 0, 0);
 			if (si == -1)
 				si = 0;
 			//^14CD:3034
@@ -57941,7 +57945,7 @@ X8 SkWinCore::PROCEED_XACT_82()
 			if (bp12 == OBJECT_END_MARKER)
 				bp12 = OBJECT_NULL;
 			//^14CD:375A
-			i16 di = _14cd_2886(&bp04->possession, 0x10, (bp0e +2)&3, 0, 1, 1);
+			i16 di = _14cd_2886_CREATURE(&bp04->possession, 0x10, (bp0e +2)&3, 0, 1, 1);
 			if ((di != 0 && di == -1) || bp12 == -1) {
 				//^14CD:378E
 				glbCurrentThinkingCreatureData->w16 = max_value(0, di);
@@ -57986,7 +57990,7 @@ X8 SkWinCore::PROCEED_XACT_82()
 				//^14CD:3832
 				i16 bp10;
 				U8 bp24[18];
-				_48ae_0767(*bp08, 0x12, bp24, &bp10, 0);
+				_48ae_0767_MONEY_VALUE(*bp08, 0x12, bp24, &bp10, 0);
 				*bp08 = -1;
 				if (bp10 <= 0) {
 					//^14CD:385C

@@ -1342,8 +1342,8 @@ protected:
 	ObjectID ALLOC_NEW_DBITEM_DEEPLY(U16 actuatorData);
 	U16 IS_DISTINCTIVE_ITEM_ON_ACTUATOR(Actuator *ref, U16 disit, U16 onTile);
 	void DRAW_TEXT_TO_BACKBUFF(i16 xx, i16 yy, U8 *str);
-	U16 _48ae_05ae(i16 disit, U8 yy, U16 zz, U16 ss, U16 tt, i16 ww);
-	U16 _48ae_0767(i16 xx, i16 yy, U8 *zz, i16 *vv, i16 ww);
+	U16 _48ae_05ae_CREATURE(i16 disit, U8 yy, U16 zz, U16 ss, U16 tt, i16 ww); // _48ae_05ae
+	U16 _48ae_0767_MONEY_VALUE(i16 xx, i16 yy, U8 *zz, i16 *vv, i16 ww); // _48ae_0767
 	void _32cb_0f82(Actuator *ref, U8 cls4, i16 bb, i16 cellPos, U16 horzStretch, U16 vertStretch, U16 rectno, U16 gg, U16 colorkey1);
 	void DRAW_ALCOVE_ITEMS(U16 xx);	// _32cb_3f0d
 	i16 DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz);	// _32cb_15b8
@@ -2023,8 +2023,8 @@ protected:
 	X8 PROCEED_XACT_65();
 	X16 _14cd_2662(i8 dir);
 	X8 PROCEED_XACT_66();
-	U16 _14cd_2807(ObjectID *ref, skxxxi *pv);
-	i16 _14cd_2886(ObjectID *ref, X16 xx, i8 dir, X16 ss, X16 tt, X16 ww);
+	U16 _14cd_2807_CREATURE(ObjectID *ref, skxxxi *pv); // _14cd_2807
+	i16 _14cd_2886_CREATURE(ObjectID *ref, X16 xx, i8 dir, X16 ss, X16 tt, X16 ww); // _14cd_2886
 	X8 PROCEED_XACT_67();
 	X8 PROCEED_XACT_68();
 	void PROCEED_XACT_69();
