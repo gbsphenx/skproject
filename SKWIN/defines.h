@@ -537,18 +537,20 @@ enum SkillLevel {
 #define GDAT_WALL_ORNATE__CRYOCELL			0x5B
 
 #define GDAT_WALL_ORNATE__POSITION			0x05
-//	Here are the 25 possible positions; 12 is the V/H centered default position
+//	Here are the 25 possible positions; 13 is the V/H centered default position
 // +--+--+--+--+--+
-// |00|01|02|03|04|
+// |01|02|03|04|05|
 // +--+--+--+--+--+
-// |05|06|07|08|09|
+// |06|07|08|09|10|
 // +--+--+--+--+--+
-// |10|11|12|13|14|
+// |11|12|13|14|15|	-- centered position is either 0 or 13
 // +--+--+--+--+--+
-// |15|16|17|18|19|
+// |16|17|18|19|20|
 // +--+--+--+--+--+
-// |20|21|22|23|24|
+// |21|22|23|24|25|
 // +--+--+--+--+--+
+
+// THEN internally, values are shifted -1 so that they range from 0 to 24 instead.
 #define ORNATE_POS__VFARLEFT_HFARTOP		0
 #define ORNATE_POS__VLEFT_HFARTOP			1
 #define ORNATE_POS__VCENTERED_HFARTOP		2
@@ -1162,7 +1164,7 @@ enum SkillLevel {
 #define ACTUATOR_TYPE_WEAPON_SHOOTER					0x09	// 09	unimplemented in DM2 ?
 #define ACTUATOR_TYPE_MISSILE_SHOOTER_2					0x0A	// 10
 //#define ACTUATOR_TYPE_ITEM_SHOOTER						0x0C	// 12
-#define ACTUATOR_TYPE_WALL_TOGGLER						0x0D	// 13	DM1 retrocompatibility
+#define ACTUATOR_TYPE_DM1_WALL_TOGGLER						0x0D	// 13	DM1 retrocompatibility
 #define ACTUATOR_TYPE_ITEM_SHOOTER						0x0E	// 14
 #define ACTUATOR_TYPE_ITEM_SHOOTER_X2					0x0F	// 15	unimplemented in DM2 ?
 #define ACTUATOR_TYPE_THE_END							0x12	// 18

@@ -222,6 +222,7 @@ void CSkWinMFC::ProcessArgs(int argc, char** argv)
 
 	sCustomGraphicsDatFilename = NULL;
 	sCustomDungeonDatFilename = NULL;
+	sCustomDataFolder = NULL;
 
 	while (iArgIndex < argc)
 	{
@@ -229,8 +230,6 @@ void CSkWinMFC::ProcessArgs(int argc, char** argv)
 			break;
 
 		if (!strcmp(argv[iArgIndex], "-en"))
-			lang = 0x10;	// english
-		else if (!strcmp(argv[iArgIndex], "-en"))
 			lang = 0x10;	// english
 		else if (!strcmp(argv[iArgIndex], "-jp"))
 			lang = 0x20;	// japanese
@@ -257,18 +256,28 @@ void CSkWinMFC::ProcessArgs(int argc, char** argv)
 			gdat_vers = 5;
 		else if (!strcmp(argv[iArgIndex], "-cartoon"))
 			gdat_vers = 6;	// v5 + cartoon
-/*
-		else if (!strcmp(argv[iArgIndex], "-dm1"))
+
+		else if (!strcmp(argv[iArgIndex], "-dm1_kid"))
 			dung = 1;
-		else if (!strcmp(argv[iArgIndex], "-csb"))
+		else if (!strcmp(argv[iArgIndex], "-dm1_dm"))
 			dung = 2;
-		else if (!strcmp(argv[iArgIndex], "-tq"))
+		else if (!strcmp(argv[iArgIndex], "-dm1_csb"))
 			dung = 3;
-		else if (!strcmp(argv[iArgIndex], "-beta"))
+		else if (!strcmp(argv[iArgIndex], "-dm1_tq"))
 			dung = 4;
-		else if (!strcmp(argv[iArgIndex], "-dm2"))
+		else if (!strcmp(argv[iArgIndex], "-dm2_dm"))
 			dung = 5;
-*/
+		else if (!strcmp(argv[iArgIndex], "-dm2_csb"))
+			dung = 6;
+		else if (!strcmp(argv[iArgIndex], "-dm2_tq"))
+			dung = 7;
+		else if (!strcmp(argv[iArgIndex], "-dm2_beta"))
+			dung = 8;
+		else if (!strcmp(argv[iArgIndex], "-dm2_demo"))
+			dung = 9;
+		else if (!strcmp(argv[iArgIndex], "-dm2_sk"))
+			dung = 10;
+
 		else if (!strcmp(argv[iArgIndex], "-fhz6"))
 			freq = 6;
 		else if (!strcmp(argv[iArgIndex], "-fhz11"))
@@ -290,7 +299,7 @@ void CSkWinMFC::ProcessArgs(int argc, char** argv)
 				}
 			}
 		}
-		// specifiy any dungeon.dat filename
+		// specify any dungeon.dat filename
 		else if (!strcmp(argv[iArgIndex], "-dungeon"))
 		{
 			iArgIndex++;
@@ -303,6 +312,23 @@ void CSkWinMFC::ProcessArgs(int argc, char** argv)
 					sCustomDungeonDatFilename = (char*) calloc(iArgLength+1, sizeof(char));
 					if (sCustomDungeonDatFilename != NULL)
 						strcpy(sCustomDungeonDatFilename, argv[iArgIndex]);
+				}
+			}
+		}
+
+		// specify any data folder (by default, dungeon.dat and graphics.dat will be taken from that folder)
+		else if (!strcmp(argv[iArgIndex], "-data"))
+		{
+			iArgIndex++;
+			if (argv[iArgIndex] != NULL)
+			{
+				unsigned int iArgLength = 0;
+				iArgLength = strlen(argv[iArgIndex]);
+				if (iArgLength > 0)
+				{
+					sCustomDataFolder = (char*) calloc(iArgLength+1, sizeof(char));
+					if (sCustomDataFolder != NULL)
+						strcpy(sCustomDataFolder, argv[iArgIndex]);
 				}
 			}
 		}
@@ -451,6 +477,8 @@ void CSkWinMFC::SndPlayLo(const U8 *buff, U32 buffSize, i8 dX, i8 dY)
 		case 4: // allegro
 			{
 				// to be implemented
+				ALLEGRO_SAMPLE* alsample = al_load_sample("DATA/swing.wav");
+				al_play_sample(alsample, 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE,NULL);
 				break;
 			}
 	}

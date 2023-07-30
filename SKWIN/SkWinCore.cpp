@@ -9425,19 +9425,16 @@ _1ad5:
 								}
 							case ACTUATOR_TYPE_CHAMPION_MIRROR: // SPX: Add for DM1 retrocompatibility / 0x7F: Activator, champion mirror
 								{
-									//^0CEE:1BF4
 									if (bp04->ActiveStatus() == 0) {
-										//^0CEE:1C08
 										if (bp06 == 5) {
-											//^0CEE:1C0E
 											ref->xvalue = (bp04->ActuatorData());
 										}
-										//^0CEE:1C1F
 										bp16 |= 1 << bp12;
-										//^0CEE:1C2A
 										si = 1;
 									}
-									//^0CEE:1C2D
+									else
+										ref->xvalue = 0xFF;	 /// SPX: this is special to display the "glass" image when there is no champion.
+										// this has to be done else ref->xvalue remains at 0, and portrait displayed is number 0 (i.e. Elija)
 									break;
 								}
 							case ACTUATOR_TYPE_RESURECTOR: // 0x7e: 'Activator, resuscitation'
@@ -14801,6 +14798,8 @@ _0a25:
 		if ((si & 0x0400) != 0) {
 			//^2E62:0A7B
 			di = glbPaletteT16[(player == glbChampionLeader && glbNextChampionNumber == 0) ? COLOR_ORANGE : COLOR_WHITE];
+			if (SkCodeParam::bDM1Mode)
+				di = glbPaletteT16[(player == glbChampionLeader && glbNextChampionNumber == 0) ? COLOR_YELLOW : COLOR_ORANGE];
 			//^2E62:0AA0
 			if (bp08 != 0) {
 				//^2E62:0AA9
@@ -20850,7 +20849,12 @@ checkactuator:
 			U16 bp18 = bp04->ActuatorData();
 			//^2FCF:1BF7
 			U16 bp1a = bp04->ActionType();
-			printf("Clicking on wall Actuator %04X (dir=%d) ACT=%02d action=%04x data=%04x\n", bp0e, bp10, bp16, bp1a, bp18);
+			// SPX: more data to check
+			U16 iStatus = bp04->ActiveStatus();
+			U16 iToggler = bp04->ActuatorToggler();
+			U16 iRevert = bp04->RevertEffect();
+			U16 iOnce = bp04->OnceOnlyActuator();
+			printf("Clicking on wall Actuator %04X (dir=%d) ACT=%02d (1=%d) action=%04x (R=%d) data=%04x status=%d toggler=%d\n", bp0e, bp10, bp16, iOnce, bp1a, iRevert, bp18, iStatus, iToggler);
 			//^2FCF:1C04
 			//if (glbChampionLeader == -1 && bp16 != 0x7e)
 			if (glbChampionLeader == -1 && (bp16 != ACTUATOR_TYPE_RESURECTOR && bp16 != ACTUATOR_TYPE_CHAMPION_MIRROR)) // SPX : Add 0x7F
@@ -20944,13 +20948,14 @@ _1cb6:
 					break;
 
 				// SPX: addition for DM1 retrocompatibility
-				case ACTUATOR_TYPE_WALL_TOGGLER: // 0x0D -> 'Wall toggler (Torch holder)
+				case ACTUATOR_TYPE_DM1_WALL_TOGGLER: // 0x0D -> 'Wall toggler (Torch holder)
 					{
 						U16 iInvokeActuator = 0;
 						printf("WALL TOGGLER: expected = %d / in hand = %d\n", bp18, GET_DISTINCTIVE_ITEMTYPE(si));
 						// if hand is empty, player will get the item over the actuator, if it is on top
 						// else, if item in hand matches the expected item, it will go into the wall
-						if (xTopActuators[bp10] == bp0e && GET_DISTINCTIVE_ITEMTYPE(si) == 511) // empty hand
+						//if (xTopActuators[bp10] == bp0e && GET_DISTINCTIVE_ITEMTYPE(si) == 511) // empty hand
+						if (GET_DISTINCTIVE_ITEMTYPE(si) == 511) // empty hand // UPDATE with Kid Dungeon : seems that the toggler is not necessarily on top at first
 						{
 							//DM1_ROTATE_ACTUATOR_LIST(2, xx, yy, -1, bp10);
 							bDelayedActuatorsRotation = 1;
@@ -21011,10 +21016,18 @@ _1d4d:
 					QUEUE_TIMER(&bp40);
 					//^2FCF:1DA9
 					bp04->ActiveStatus(1);
+
+					// SPX: DM1 compatibility for PUSH BUTTON with actuator toggler info (generally used for 2-image state lever, buttons ...)
+					if (bp44 == ACTUATOR_TYPE_DM1_WALL_SWITCH && bp04->ActuatorToggler() == 1)
+					{
+						bDelayedActuatorsRotation = 1;
+						iWallSideToRotate = bp10;
+					}
+					
 					//^2FCF:1DB1
 					di = 0;
 					//^2FCF:1DB3
-					if (di != 0 || bp1a != 3)
+					if (di != 0 || bp1a != 3) // SPX: if actuator effect is not 3 (step in open / step out close), then break
 						//^2FCF:1DC0
 						break;
 					//^2FCF:1DC3
@@ -22741,9 +22754,10 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 	iStretchVertical = iStretchHorizontal = tlbDistanceStretch[RCJ(5,iYDist)];
 	
 	//^32CB:16E5
-	if (alcoveType == WALL_ORNATE_OBJECT__CRYOCELL && yy == 0) {	// bp22 == 3
+	if (alcoveType == WALL_ORNATE_OBJECT__CRYOCELL && yy == 0) {	// bp22 == 3 && yy == 0
 		//^32CB:16F7
 		U16 bp34 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp1f, dtImageOffset, GDAT_GFXSET_DATA_FD);	// 0x09 .. .. 0xFD
+		// bp34 holds the offset x and y for the image
 		//^32CB:170D
 		// SPX: U8(_4976_5a80[cellPos].x2.w14) holds the portrait Champion ID to be displayed under the Champion Cell/Mirror
 		QUERY_TEMP_PICST(iFlipImage, iStretchHorizontal, iStretchVertical, i8(bp34 >> 8), i8(bp34), iYDist, iRectno, iRefPoint, -1, -1, GDAT_CATEGORY_CHAMPIONS, U8(tblCellTilesRoom[cellPos].xsrd.xvalue), 1);

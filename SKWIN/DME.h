@@ -435,6 +435,7 @@ namespace DMEncyclopaedia {
 		U8 Xcoord() const { return (w6 >> 6)&0x1f; } // M!6,6,1F
 		U16 GraphicNumber() const { return (w4 >> 12)&0x000f; } // M!4,12,0F
 		U16 Delay() const { return (w4 >> 7)&15; } // M!4,7,0F
+		U16 ActuatorToggler() const { return (w4 >> 11)&1; } // SPX: DM1 compatibility "is active" / "act/gfx toggler"
 		U16 Direction() const { return (w6 >> 4)&3; } // M!6,4,03
 		U16 ActiveStatus() const { return (w4)&1; } // M!4,0,0001	// w4_0_0()
 		void ActiveStatus(U16 val) {
@@ -1968,7 +1969,7 @@ namespace DM2Internal {
 		U16 w4;							// @4 // (w4) tile record
 		U16 w6[4];						// @6 // (w6) ornate index in GDAT // bit0-9: ornate index, bit10-15: frame index
 											// (w6[0] serving as opened door status : open = 0 .... 4 = closed
-		U16 xvalue;					// @14 // (w14) actuator value ? portrait id ?
+		U16 xvalue;					// @14 // (w14) actuator value , portrait id ..
 
 
 

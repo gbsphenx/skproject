@@ -450,7 +450,7 @@ const Bit8u * const strDungeon = (const Bit8u *)
 
 // SPX: _4976_01e0 renamed strVersionNumber
 #if (DM2_EXTENDED_MODE == 1)
-const Bit8u * const strVersionNumber = (const Bit8u *) "V1.2";
+const Bit8u * const strVersionNumber = (const Bit8u *) "V4.2";	// SPX: 4.2 because PC-9821 GDAT is 4.1 and above the last DM1/CSB version 3.6
 #else
 const Bit8u * const strVersionNumber = (const Bit8u *)
 	"\x56\x31\x2E\x30\x00";                                            // V1.0.
