@@ -308,16 +308,21 @@ enum SkillLevel {
 #define SOUND_ITEM_TAKE					0x60	// SPX: CUSTOM
 #define SOUND_ITEM_PUT_DOWN				0x61	// SPX: CUSTOM
 
-#define SOUND_STD_EXPLOSION				0x81
+#define SOUND_STD_EXPLOSION				0x81	// Message cat GDAT2 V5
 #define SOUND_CHAMPION_GETHIT			0x82
 #define SOUND_CHAMPION_EAT_DRINK		0x83
 #define SOUND_STD_DEFAULT				0x84	// Punch, Fall, Test wall, Gethit
 #define SOUND_STD_KNOCK					0x85	// Falling item, punch knock
 #define SOUND_STD_THROW					0x86	// Throw / Shoot item
 #define SOUND_CHAMPION_SCREAM			0x87
-#define SOUND_STD_ACTIVATION			0x88
-#define SOUND_STD_TELEPORT				0x89
+
+#define SOUND_STD_ACTIVATION			0x88	// GDAT2 V5
+#define SOUND_STD_TELEPORT				0x89	// GDAT2 V5
+
+#define SOUND_STD_ACTIVATION_MESSAGE	0x00	// Sound tick in message category, only for PC9821
+#define SOUND_STD_SPELL_MESSAGE			0x01	// Sound spell in message category, only for PC9821
 #define SOUND_STD_TELEPORT_MESSAGE		0x02	// Sound teleporter in message category, only for PC9821
+
 #define SOUND_CHAMPION_BUMP				0x8A
 #define SOUND_MINION_TRANSFORMS			0x8B
 
@@ -634,7 +639,7 @@ enum SkillLevel {
 #define GDAT_DOOR_MIRRORED					0x20	// CUSTOM, for MIRRORED animation (like Force Field door)
 #define GDAT_DOOR_NO_FRAMES					0x40	// When = 0, draw door frames, else, don't!
 #define GDAT_DOOR_DESTROYED_MASK			0x41
-#define GDAT_DOOR_SEE_THRU					0x42	// CUSTOM, for SEE THRU WALLS
+#define GDAT_DOOR_SEE_THRU_MASK				0x42	// CUSTOM, for SEE THRU WALLS
 
 #define GDAT_DOOR_DESTROYED_MASK_POSITION	0x0A	// 0 = upper, 1 = centered, 2 = low/right -- should always be centered
 #define GDAT_DOOR_DEFENSE					0x0E

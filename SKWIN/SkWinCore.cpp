@@ -16261,7 +16261,7 @@ void SkWinCore::PUT_ITEM_TO_PLAYER(Bit16u championIndex)
 		if (glbChampionSquad[championIndex].curHP() != 0) {
 			X16 si;
 			//^2C1D:0671  
-			for (si=INVENTORY_BACKPACK_1; si<=INVENTORY_BACKPACK_LAST; si++) {	// (si=13; si<30; si++)
+			for (si=INVENTORY_BACKPACK_1; si <= INVENTORY_BACKPACK_LAST; si++) {	// (si=13; si<30; si++)
 				//^2C1D:0676
 				if (glbChampionSquad[championIndex].Possess(si) == OBJECT_NULL)
 					break;
@@ -22786,6 +22786,8 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 	else if (iYDist == 3 && (yy <= -2 || yy >= 2))
 		//^32CB:17A3
 		iStretchHorizontal = 0x4C;	// 0x4C = 76 => 118%
+	if (SkCodeParam::bDM1Mode && iYDist >= 4)	// SPX: DM1 mode, do not display anything more than D3
+		return -1;
 	//^32CB:17A8
 	if (bp2a != 0) {
 		//^32CB:17B1
@@ -23039,6 +23041,17 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 			else {
 				//^32CB:1C9B
 				iFlipImage = 1;	// flip image
+			}
+		}
+		// SPX: experimentation with side D0 new image
+		if (SkCodeParam::bDM1Mode && iYDist == 0)
+		{
+			U16 iTestSideD0Entry = iImageEntry +U8(bp28) + 0x80;
+			if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_WALL_GFX, bp1f, dtImage, iTestSideD0Entry) != 0)
+			{
+				iStretchVertical = 0x38;
+				iStretchHorizontal = 0x38;
+				iImageEntry = iImageEntry + 0x80;
 			}
 		}
 	}
@@ -24436,7 +24449,7 @@ void SkWinCore::CLICK_VWPT(i16 xx, i16 yy)
 						if (bp0a == OBJECT_NULL) {
 							//^121E:0526
 							// SPX: This plays the TICK sound when activating a door button
-							QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES, 0x00, SOUND_STD_ACTIVATION, 0x8c, 0x80, glbPlayerPosX, glbPlayerPosY, 1);
+							QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES, 0x00, SOUND_STD_ACTIVATION_MESSAGE, 0x8c, 0x80, glbPlayerPosX, glbPlayerPosY, 1);
 							//^121E:0545
 							Timer bp22;
 							INVOKE_MESSAGE(bp16, bp18, 0, 2, glbGameTick +1);
@@ -45092,6 +45105,9 @@ void SkWinCore::DRAW_DUNGEON_GRAPHIC(U8 cls1, U8 cls2, U8 cls4, X16 rectno, i16 
 			bp013a.w34 += _4976_00fc;
 		}
 	}
+	// SPX : special fix DM1
+	if (SkCodeParam::bDM1Mode && rectno == 754) // roof door slit D1
+		bp013a.w30 -= 3;
 	//^32CB:07EB
 	DRAW_PICST(QUERY_PICST_IT(&bp013a));
 	//^32CB:0801
@@ -45948,6 +45964,9 @@ void SkWinCore::DRAW_DOOR_FRAMES(i16 iViewportCell, X16 yy)	// i16 xx, X16 yy
 			if (iDoorFrameGfx != 0xFF) {
 				//^32CB:47DD
 				QUERY_TEMP_PICST(0, 64, 64, 0, 0, 0, QUERY_CREATURE_BLIT_RECTI(iViewportCell, 10, 0), 4, colorkey, -1, GDAT_CATEGORY_GRAPHICSSET, gfxset, iDoorFrameGfx); // door frame left
+				// SPX: DM1 frame adjustment for pixel perfect
+				glbTempPicture.w28 -= 2;
+				glbTempPicture.w30 += 4;
 				DRAW_TEMP_PICST();
 			}
 		}
@@ -45959,6 +45978,9 @@ void SkWinCore::DRAW_DOOR_FRAMES(i16 iViewportCell, X16 yy)	// i16 xx, X16 yy
 			if (iDoorFrameGfx != 0xFF) {
 				//^32CB:482E
 				QUERY_TEMP_PICST(1, 64, 64, 0, 0, 0, QUERY_CREATURE_BLIT_RECTI(iViewportCell, 14, 0), 3, colorkey, -1, GDAT_CATEGORY_GRAPHICSSET, gfxset, iDoorFrameGfx); // door frame right
+				// SPX: DM1 frame adjustment for pixel perfect
+				glbTempPicture.w28 += 2;
+				glbTempPicture.w30 += 4;
 				DRAW_TEMP_PICST();
 				//^32CB:485F
 				if (door->Button() != 0) {
@@ -46177,12 +46199,12 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 								{
 									U16 iDoorSeeThruGDATIndex = iDoorGDATIndex;
 									
-									U16 iDoorSeeThruMask = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtImage, GDAT_DOOR_SEE_THRU);
+									U16 iDoorSeeThruMask = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtImage, GDAT_DOOR_SEE_THRU_MASK);
 									if (iDoorSeeThruMask == (U16)-1) // not found, get the default one
 										iDoorSeeThruGDATIndex = GDAT_ITEM_DEFAULT_INDEX;
 									QUERY_TEMP_PICST(0, iStretchHorizontal, iStretchVertical, 0, 0, iYDist, 
 										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_DOOR_DESTROYED_MASK_POSITION) << 2) + iInvertedYDist +0x7d0,
-										-1, iColorTransparencyOverlay, iDoorColorPassThrough, GDAT_CATEGORY_DOORS, iDoorSeeThruGDATIndex, GDAT_DOOR_SEE_THRU
+										-1, iColorTransparencyOverlay, iDoorColorPassThrough, GDAT_CATEGORY_DOORS, iDoorSeeThruGDATIndex, GDAT_DOOR_SEE_THRU_MASK
 										);								
 								}
 								
@@ -46230,6 +46252,7 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 						// 7 - 9 = horizontal right positions (¼, ½, ¾ closed)	=> hence +6 on rectno for horizontal opening
 						//^32CB:4C86
 						glbTempPicture.rectNo = iDoorPosRectno;
+						glbTempPicture.w30++; // SPX: added this to shift down 1 pixel to get pixel precise regarding DM1 door position
 						DRAW_TEMP_PICST();	// draw the door or LEFT part for horizontal opening
 						if (iCacheNo >= 0) {
 							//^32CB:4C96
