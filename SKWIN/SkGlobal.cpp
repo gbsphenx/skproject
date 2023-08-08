@@ -800,10 +800,12 @@ const U8 tSkillLevelNameGDAT2Entry[15] = {
 	0x12, // ARCHMASTER <01>1<00>
 };
 
-const U16 _4976_46f4[6] = {  0,105,126,126,  0,105};
-const U16 _4976_4700[6] = {  0,110,118,118, 38,110};
-const U16 _4976_470c[6] = {  0,104,116,116,  0,104};
-const U16 _4976_4718[6] = {  0, 82, 90, 90, 37, 82};
+
+// Static values for the 6 different graphics sets => required to be extended for more gfxsets
+const U16 _4976_46f4_tblGfxSet[6] = {  0,105,126,126,  0,105};
+const U16 _4976_4700_tblGfxSet[6] = {  0,110,118,118, 38,110};
+const U16 _4976_470c_tblGfxSet[6] = {  0,104,116,116,  0,104};
+const U16 _4976_4718_tblGfxSet[6] = {  0, 82, 90, 90, 37, 82};
 
 const Bit8u * const _4976_4760 = (const Bit8u *)" ";
 
@@ -1174,10 +1176,10 @@ X8 tlbGraphicsStairsFront2[16][2]; //Rr
 X16 _4976_45ae[16][2]; //Rr
 X8 tlbGraphicsStairsSide[9][2]; //Rr
 X16 _4976_4600[9][2]; //Rr
-X16 _4976_4624[6]; //Rr
-X16 _4976_4630[6]; //Rr
-X16 _4976_463c[6]; //Rr
-X16 _4976_4648[6]; //Rr
+X16 _4976_4624_tblGfxSet[6]; //Rr
+X16 _4976_4630_tblGfxSet[6]; //Rr
+X16 _4976_463c_tblGfxSet[6]; //Rr
+X16 _4976_4648_tblGfxSet[6]; //Rr
 i8 _4976_4654[23]; //Rr
 U8 _4976_466b[20]; //Rr
 X32 _4976_4684[4]; //Rr

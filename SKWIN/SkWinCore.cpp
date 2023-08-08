@@ -15408,7 +15408,7 @@ void SkWinCore::TRY_ORNATE_NOISE(Actuator *ref, ObjectID rl, U16 xx, U16 yy, U16
 	bp0a.SetTick(animLen - si + glbGameTick);
 	//^3A15:106B
 	bp0a.TimerType(tty5A);
-	bp0a.actor = 0;
+	bp0a.actor = TIMER_ACTOR__00;
 	//^3A15:1073
 	bp0a.w8 = rl;
 	bp0a.XcoordB(U8(xx));
@@ -17200,7 +17200,7 @@ void SkWinCore::SHOOT_ITEM(ObjectID rlItemThrown, U16 xx, U16 yy, U16 dir, U16 a
 	//^075F:0113
 	bp0e.TimerType((_4976_4b7e != 0) ? tty1E : tty1D);
 	//^075F:0124
-	bp0e.actor = 0;
+	bp0e.actor = TIMER_ACTOR__00;
 	//^075F:0128
 	bp0e.value = si;
 	//^075F:012B
@@ -17337,7 +17337,7 @@ void SkWinCore::PROCEED_LIGHT(U16 cmdNum, U16 yy)
 	bp0a.SetMap(glbPlayerMap);
 	bp0a.SetTick(glbGameTick +di);
 	//^2759:1683
-	bp0a.actor = 0;
+	bp0a.actor = TIMER_ACTOR__00;
 	//^2759:1687		
 	QUEUE_TIMER(&bp0a);
 	//^2759:1693
@@ -17565,7 +17565,7 @@ U16 SkWinCore::CAST_SPELL_PLAYER(U16 player, SpellDefinition *ref, U16 power)
 			{
 				//^2759:2502
 				Timer bp18;
-				bp18.actor = 0;
+				bp18.actor = TIMER_ACTOR__00;
 				//^2759:2506
 				bp08 = (power +1) << 2; // (power+1)*4
 				//^2759:2513
@@ -21009,7 +21009,7 @@ _1d4d:
 					bp40.SetTick(glbGameTick +bp18 +2);
 					//^2FCF:1D8F
 					bp40.TimerType(ttyWallButton);
-					bp40.actor = 0;
+					bp40.actor = TIMER_ACTOR__00;
 					//^2FCF:1D97
 					bp40.value = bp0e;
 					//^2FCF:1D9D
@@ -21265,7 +21265,7 @@ _1d4d:
 						bp40.SetTick(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp23, dtWordValue, GDAT_WALL_ORNATE__RESPAWN_COOLDOWN) + glbGameTick +2);
 						//^2FCF:224A
 						bp40.TimerType(ttySimpleActuTurnOn);
-						bp40.actor = 0;
+						bp40.actor = TIMER_ACTOR__00;
 						//^2FCF:2252
 						bp40.value = bp0e;
 						//^2FCF:2258
@@ -24458,7 +24458,7 @@ void SkWinCore::CLICK_VWPT(i16 xx, i16 yy)
 							bp22.SetTick(glbGameTick +1);
 							//^121E:0589
 							bp22.TimerType(ttyDoorButton);
-							bp22.actor = 0;
+							bp22.actor = TIMER_ACTOR__00;
 							//^121E:0591
 							bp22.id6(GET_TILE_RECORD_LINK(bp16, bp18));
 							//^121E:05A1
@@ -32411,7 +32411,7 @@ void SkWinCore::ACTIVATE_TICK_GENERATOR(Actuator *ref, ObjectID recordLink)
 		bp0a.SetMap(glbCurrentMapIndex);
 		bp0a.SetTick(glbGameTick + (glbGameTick % (Bit32u(ref->ActuatorData()) * Bit32u(si))));
 		bp0a.TimerType(ttyTickGenerator);
-		bp0a.actor = 0x00;
+		bp0a.actor = TIMER_ACTOR__00;
 		bp0a.value = recordLink;
 		bp0a.Value2(Bit8u(si & 0xff));
 		bp0a.ActionType(0);
@@ -41338,7 +41338,7 @@ void SkWinCore::SET_TIMER_3C_OR_3D(ObjectID recordLink, i16 xx, i16 yy, Bit16u c
 	// SPX: though .. tty3D and tty3C seems to be handled exactly the same way!
 	xtimer.TimerType((ss != 0) ? tty3D : tty3C);
 	//^2FCF:01FB
-	xtimer.actor = 0;
+	xtimer.actor = TIMER_ACTOR__00;
 	//^2FCF:01FF
 	xtimer.Xcoord(xx);
 	xtimer.Ycoord(yy);
@@ -42020,7 +42020,7 @@ U16 SkWinCore::ATTACK_DOOR(i16 x, i16 y, U16 damage, U16 isSpellAttack, U16 dela
 		bp12.SetMap(glbCurrentMapIndex);
 		bp12.SetTick(glbGameTick +delay);
 		bp12.TimerType(ttyDoorDestroy);
-		bp12.actor = 0;
+		bp12.actor = TIMER_ACTOR__00;
 		bp12.XcoordB(U8(x));
 		bp12.YcoordB(U8(y));
 		QUEUE_TIMER(&bp12);
@@ -42326,7 +42326,7 @@ void SkWinCore::CREATE_CLOUD(ObjectID rl, U16 ww, U16 xx, U16 yy, U16 ss)
 	bp24.SetMap(glbCurrentMapIndex);
 	bp24.SetTick(bp12 +glbGameTick);
 	bp24.TimerType(ttyCloud);
-	bp24.actor = 0;
+	bp24.actor = TIMER_ACTOR__00;
 	bp24.w8 = di;
 	bp24.XcoordB(U8(xx));
 	bp24.YcoordB(U8(yy));
@@ -43909,7 +43909,7 @@ void SkWinCore::SET_TIMER_WEATHER(U32 tickDelta)
 	bp0a.SetMap(0);
 	bp0a.SetTick(glbGameTick +tickDelta);
 	bp0a.TimerType(ttyWeather);
-	bp0a.actor = 0;
+	bp0a.actor = TIMER_ACTOR__00;
 	QUEUE_TIMER(&bp0a);
 	//^3DF7:0035
 	return;
@@ -44289,7 +44289,7 @@ void SkWinCore::UPDATE_WEATHER(U16 aa)	// aa = 1 when called from timer, aa = 0 
 			xTimerRef.SetMap(glbCurrentMapIndex);
 			xTimerRef.SetTick(glbGameTick + 1);
 			xTimerRef.TimerType(ttyAmbientSound);
-			xTimerRef.actor = 0;
+			xTimerRef.actor = TIMER_ACTOR__00;
 			xTimerRef.value = 0;
 			QUEUE_TIMER(&xTimerRef);
 		}
@@ -46964,33 +46964,36 @@ void SkWinCore::DRAW_WALL(i16 iViewportCell)	// i16 xx
 	X16 si = 0;
 	X16 di = 0;
 	U16 bp0a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, bp01);
-	if (iYDist > 1) { // dist 2,3,4
-		//^32CB:4F91
-		if (tblCellTilesRoom[4].xsrd.w0 == 0 && (di = (bp0a >> 8)) == 0) {
-			//^32CB:4FA5
-			di = _4976_463c[RCJ(6,glbMapGraphicsSet)];
-		}
-		//^32CB:4FB2
-		if (tblCellTilesRoom[5].xsrd.w0 == 0) {
-			//^32CB:4FBD
-			si = bp0a & 0xff;
-			if (si == 0) {
-				//^32CB:4FC9
-				si = _4976_4648[RCJ(6,glbMapGraphicsSet)];
+	// SPX: in case gfxset (custom dungeon) is >= 6, bypass these values.
+	if (SkCodeParam::bUseFixedMode && glbMapGraphicsSet >= 0 && glbMapGraphicsSet < 6) {
+		if (iYDist > 1) { // dist 2,3,4
+			//^32CB:4F91
+			if (tblCellTilesRoom[4].xsrd.w0 == 0 && (di = (bp0a >> 8)) == 0) {
+				//^32CB:4FA5
+				di = _4976_463c_tblGfxSet[RCJ(6,glbMapGraphicsSet)];
+			}
+			//^32CB:4FB2
+			if (tblCellTilesRoom[5].xsrd.w0 == 0) {
+				//^32CB:4FBD
+				si = bp0a & 0xff;
+				if (si == 0) {
+					//^32CB:4FC9
+					si = _4976_4648_tblGfxSet[RCJ(6,glbMapGraphicsSet)];
+				}
 			}
 		}
-	}
-	//^32CB:4FD8
-	else if (iYDist > 0) { // dist 1
-		//^32CB:4FDE
-		if (tblCellTilesRoom[0].xsrd.w0 == 0 && (di = (bp0a >> 8)) == 0) {
-			//^32CB:4FF5
-			di = _4976_4624[RCJ(6,glbMapGraphicsSet)];
-		}
-		//^32CB:5002
-		if (tblCellTilesRoom[2].xsrd.w0 == 0 && (si = (bp0a & 0xff)) == 0) {
-			//^32CB:5019
-			si = _4976_4630[RCJ(6,glbMapGraphicsSet)];
+		//^32CB:4FD8
+		else if (iYDist > 0) { // dist 1
+			//^32CB:4FDE
+			if (tblCellTilesRoom[0].xsrd.w0 == 0 && (di = (bp0a >> 8)) == 0) {
+				//^32CB:4FF5
+				di = _4976_4624_tblGfxSet[RCJ(6,glbMapGraphicsSet)];
+			}
+			//^32CB:5002
+			if (tblCellTilesRoom[2].xsrd.w0 == 0 && (si = (bp0a & 0xff)) == 0) {
+				//^32CB:5019
+				si = _4976_4630_tblGfxSet[RCJ(6,glbMapGraphicsSet)];
+			}
 		}
 	}
 	//^32CB:5026
@@ -47617,24 +47620,28 @@ void SkWinCore::DISPLAY_VIEWPORT(Bit16u dir, i16 xx, i16 yy)
 		U16 bp06 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, bp03);
 		di = bp06 >> 8;
 		bp02 = bp06 & 0xff;
-		if (di == 0) {
-			if (bp03 == 0x71) {
-				di = _4976_4718[RCJ(6,glbMapGraphicsSet)]; // D2 to D0
+		// SPX: if custom dungeon/GDAT use more than 6 gfxsets, better bypass these values from tables
+		if (SkCodeParam::bUseFixedMode && glbMapGraphicsSet >= 0 && glbMapGraphicsSet <= 5)
+		{
+			if (di == 0) {
+				if (bp03 == 0x71) {
+					di = _4976_4718_tblGfxSet[RCJ(6,glbMapGraphicsSet)]; // D2 to D0
+				}
+				else {
+					//^32CB:5EBC
+					di = _4976_4700_tblGfxSet[RCJ(6,glbMapGraphicsSet)]; // D1 to D0
+				}
 			}
-			else {
-				//^32CB:5EBC
-				di = _4976_4700[RCJ(6,glbMapGraphicsSet)]; // D1 to D0
-			}
-		}
-		//^32CB:5EC9
-		if (bp02 == 0) {
-			if (bp03 == 0x71) {
-				//^32CB:5ED5
-				bp02 = _4976_470c[RCJ(6,glbMapGraphicsSet)]; // envisible D2 to D0
-			}
-			else {
-				//^32CB:5EE4
-				bp02 = _4976_46f4[RCJ(6,glbMapGraphicsSet)]; // envisible D1 to D0
+			//^32CB:5EC9
+			if (bp02 == 0) {
+				if (bp03 == 0x71) {
+					//^32CB:5ED5
+					bp02 = _4976_470c_tblGfxSet[RCJ(6,glbMapGraphicsSet)]; // envisible D2 to D0
+				}
+				else {
+					//^32CB:5EE4
+					bp02 = _4976_46f4_tblGfxSet[RCJ(6,glbMapGraphicsSet)]; // envisible D1 to D0
+				}
 			}
 		}
 	}
@@ -49409,17 +49416,17 @@ void SkWinCore::INVOKE_MESSAGE(__int16 xpos, __int16 ypos, Bit16u dir, Bit16u ac
 			if (actionType == 2) {
 				//^2FCF:15C3
 				// SPX: Why not directly if actionType == 2 then actor = 2 ?
-				bp0a.actor = 2;
+				bp0a.actor = TIMER_ACTOR__02;
 			}
 		}
 		else {	// Then >= 3
 			//^2FCF:15BD
-			bp0a.actor = 3;
+			bp0a.actor = TIMER_ACTOR__03;
 		}
 	}
 	else { // Then = 1 ...
 		//^2FCF:15C9
-		bp0a.actor = 1;
+		bp0a.actor = TIMER_ACTOR__01;
 	}
 	// And no other else ? what happens if = 0 ?
 	//^2FCF:15CD
@@ -49632,6 +49639,9 @@ Bit16u SkWinCore::GET_DISTINCTIVE_ITEMTYPE(ObjectID recordLink)
 //^2FCF:15F3
 void SkWinCore::INVOKE_ACTUATOR(Actuator *ref, Bit16u actionType, __int16 delayPlus)
 {
+	SkD((DLV_DBM, "DBM: INVOKE_ACTUATOR(%4X,%2d,%d)\n"
+		, ref, (Bitu)actionType, (Bitu)delayPlus));
+
 	//^2FCF:15F3
 	//^2FCF:15F6
 	INVOKE_MESSAGE(
@@ -50162,7 +50172,7 @@ _29a8:
 							bp3c.SetMap(glbCurrentMapIndex);
 							//^2FCF:2C34
 							bp3c.TimerType(tty5D);
-							bp3c.actor = 0;
+							bp3c.actor = TIMER_ACTOR__00;
 							bp3c.b6_0_4((Bit8u)xpos);
 							bp3c.w6_5_9(ypos);
 							bp3c.Value2((Bit8u)glbPlayerMap);
@@ -50315,10 +50325,13 @@ void SkWinCore::DELETE_CREATURE_RECORD(__int16 xpos, __int16 ypos, Bit16u dropMo
 			Creature *bp0c = bp04;
 			//^1C9A:15E5
 			Bit16u bp0e = glbCurrentMapIndex;
-			//^1C9A:15EB
-			CHANGE_CURRENT_MAP_TO(bp0c->TriggerMap());
-			//^1C9A:15FF
-			INVOKE_MESSAGE(bp0c->TriggerX(), bp0c->TriggerY(), 0, 0, glbGameTick +1);
+			if (!SkCodeParam::bDM1Mode)
+			{
+				//^1C9A:15EB
+				CHANGE_CURRENT_MAP_TO(bp0c->TriggerMap());
+				//^1C9A:15FF
+				INVOKE_MESSAGE(bp0c->TriggerX(), bp0c->TriggerY(), 0, 0, glbGameTick +1);
+			}
 			//^1C9A:162E
 			CHANGE_CURRENT_MAP_TO(bp0e);
 		}
@@ -50443,8 +50456,7 @@ void SkWinCore::DROP_CREATURE_POSSESSION(ObjectID recordLink, __int16 xx, __int1
 			DEALLOC_RECORD(si);
 		}
 		else {
-			//^1C9A:1514
-			MOVE_RECORD_TO(si, -1, 0, xx, yy);
+
 
 			SkD((DLV_TWEET, "Tweet: %s (a#%03d, x:%d, y:%d, map:%d) have left %s by death! \n"
 				, static_cast<LPCSTR>(getRecordNameOf(recordLink))
@@ -50453,7 +50465,10 @@ void SkWinCore::DROP_CREATURE_POSSESSION(ObjectID recordLink, __int16 xx, __int1
 				, yy
 				, glbCurrentMapIndex
 				, static_cast<LPCSTR>(getRecordNameOf(si))
-				));
+				));			
+			
+			//^1C9A:1514
+			MOVE_RECORD_TO(si, -1, 0, xx, yy);
 
 			//^1C9A:1527
 			if (tt >= 0) {
@@ -55338,8 +55353,13 @@ X16 SkWinCore::WOUND_CREATURE(i16 damage)
 					xLocalCreature->SetTriggerMap(iTriggerMap);
 				}
 			}
-			CHANGE_CURRENT_MAP_TO(xLocalCreature->TriggerMap());
-			INVOKE_MESSAGE(xLocalCreature->TriggerX(), xLocalCreature->TriggerY(), 0, 1, glbGameTick +1);
+			// SPX: For DM1 compatibility, we do not invoke message on triggerX/Y which would be the location of creature generator; that will trigger back a creature to generate again on the same place.
+			// Then, we just keep this code for DM2, but not for DM1.
+			if (!SkCodeParam::bDM1Mode)
+			{
+				CHANGE_CURRENT_MAP_TO(xLocalCreature->TriggerMap());
+				INVOKE_MESSAGE(xLocalCreature->TriggerX(), xLocalCreature->TriggerY(), 0, 1, glbGameTick +1);
+			}
 			CHANGE_CURRENT_MAP_TO(iCurrentMap);
 		}
 	}
@@ -60701,14 +60721,22 @@ X16 SkWinCore::QUERY_DOOR_STRENGTH(X8 iDoorType)
 //^3A15:07B4
 void SkWinCore::STEP_DOOR(Timer *ref)
 {
+	SkD((DLV_DBG_DOOR, "DOOR: STEP_DOOR(TIMER=%04X,T=%d,Actor=%d,V=%2d,W8=%2d\n", (Bitu)ref->dw00, (Bitu)ref->ttype, (Bitu)ref->actor, (Bitu)ref->value, (Bitu)ref->w8));
+
+		Bit32u dw00;	// @0
+		Bit8u ttype;		// @4	b04
+		Bit8u actor;	// @5	// b5 player index or creature type or other ...
+		Bit16u value;		// @6	// w6 => position x & y	// SPX: don't it take object ID ? or spell power ? it can also be an object! (door) ..
+		Bit16u w8;		// @8
+
 	//^3A15:07B4
 	ENTER(26);
 	//^3A15:07BA
 	X16 bp18 = 0;
 	X16 bp1a = 0;
 	X16 di = ref->XcoordB();
-	X16 si;
-	U8 *bp04 = &glbCurrentTileMap[di][si = ref->YcoordB()];
+	X16 si = ref->YcoordB();
+	U8 *bp04 = &glbCurrentTileMap[di][si];
 	X16 bp0a = *bp04 & 7;
 	if (bp0a == 5)
 		return;
@@ -61036,7 +61064,7 @@ void SkWinCore::ACTIVATE_ORNATE_ANIMATOR(Timer *ref, Actuator *pr4, ObjectID rl,
 		bp0a.SetMap(glbCurrentMapIndex);
 		bp0a.SetTick(glbGameTick +1);
 		bp0a.TimerType(ttyOrnateAnimator);
-		bp0a.actor = 0;
+		bp0a.actor = TIMER_ACTOR__00;
 		bp0a.id6(rl);
 		bp0a.w8 = isWall;
 		QUEUE_TIMER(&bp0a);
@@ -61110,7 +61138,7 @@ void SkWinCore::ACTIVATE_CONTINUOUS_ORNATE_ANIMATOR(ObjectID rl, Timer *ref, Act
 				bp0c.SetMap(glbCurrentMapIndex);
 				bp0c.SetTick(glbGameTick +di);
 				bp0c.TimerType(tty59);
-				bp0c.actor = 0;
+				bp0c.actor = TIMER_ACTOR__00;
 				bp0c.id8(rl);
 				QUEUE_TIMER(&bp0c);
 			}
@@ -61681,7 +61709,7 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 				bp20.SetMap(glbCurrentMapIndex);
 				bp20.SetTick(glbGameTick +bp04->ActuatorData());
 				bp20.TimerType(tty5B);
-				bp20.actor = 0;
+				bp20.actor = TIMER_ACTOR__00;
 				bp20.id6(si);
 				QUEUE_TIMER(&bp20);
 				//^3A15:24A9
@@ -62513,7 +62541,7 @@ void SkWinCore::PROCESS_TIMER_LIGHT(Timer *ref)
 	newTimer.value = di;
 	newTimer.SetMap(glbPlayerMap);
 	newTimer.SetTick(glbGameTick +8);
-	newTimer.actor = 0;
+	newTimer.actor = TIMER_ACTOR__00;
 	QUEUE_TIMER(&newTimer);
 	//^3A15:3208
 	return;
@@ -62797,7 +62825,7 @@ void SkWinCore::PROCESS_TIMER_AMBIENT_SOUND(Timer *ref)
 	xTimerRef.SetMap(glbPlayerMap);
 	xTimerRef.SetTick(glbGameTick + iDeltaTick);
 	xTimerRef.TimerType(ttyAmbientSound);
-	xTimerRef.actor = 0;
+	xTimerRef.actor = TIMER_ACTOR__00;
 	xTimerRef.value = 0;
 	QUEUE_TIMER(&xTimerRef);
 

@@ -290,10 +290,10 @@ extern const char EnvCM_FD[];
 
 extern const U8 _4976_4813[7];
 extern const U8 tSkillLevelNameGDAT2Entry[15];
-extern const U16 _4976_46f4[6];
-extern const U16 _4976_4700[6];
-extern const U16 _4976_470c[6];
-extern const U16 _4976_4718[6];
+extern const U16 _4976_46f4_tblGfxSet[6];	// _4976_46f4
+extern const U16 _4976_4700_tblGfxSet[6]; // _4976_4700
+extern const U16 _4976_470c_tblGfxSet[6]; // _4976_470c
+extern const U16 _4976_4718_tblGfxSet[6]; // _4976_4718
 extern const Bit8u * const _4976_4760;
 extern const U8 _4976_4a04[4];
 extern const U16 _4976_3752[42];
@@ -406,10 +406,10 @@ extern X8 tlbGraphicsStairsFront2[16][2]; //Rr
 extern X16 _4976_45ae[16][2]; //Rr
 extern X8 tlbGraphicsStairsSide[9][2]; //Rr
 extern X16 _4976_4600[9][2]; //Rr
-extern X16 _4976_4624[6]; //Rr
-extern X16 _4976_4630[6]; //Rr
-extern X16 _4976_463c[6]; //Rr
-extern X16 _4976_4648[6]; //Rr
+extern X16 _4976_4624_tblGfxSet[6]; //Rr
+extern X16 _4976_4630_tblGfxSet[6]; //Rr
+extern X16 _4976_463c_tblGfxSet[6]; //Rr
+extern X16 _4976_4648_tblGfxSet[6]; //Rr
 extern i8 _4976_4654[23]; //Rr
 extern U8 _4976_466b[20]; //Rr
 extern X32 _4976_4684[4]; //Rr

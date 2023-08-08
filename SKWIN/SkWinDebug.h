@@ -20,14 +20,14 @@
 #define DLV_GUI 0
 #define DLV_MEM 0
 #define DLV_GLD 0
-#define DLV_DBM 0
+#define DLV_DBM 1
 #define DLV_DYN 0
 #define DLV_SYS 0
 #define DLV_RCT 0
 #define DLV_FIL 1	// Track file open (useful for custom GDAT)
 #define DLV_DBC 0
 #define DLV_CAI 0
-#define DLV_TWEET 0
+#define DLV_TWEET 1
 #define DLV_MOVE 0	// Player moves
 #define DLV_EUI 0	// Event from UI code
 #define DLV_CCM 0	// Creature command
@@ -49,6 +49,7 @@
 #define DLV_DBG_SND_CRE 0	// Sound requested by creature
 #define DLV_DBG_SND_OUT 0	// Sound played
 #define DLV_DBG_TICK	0	// Tick information
+#define DLV_DBG_DOOR	1
 
 #define DLV_USE_LOGX 1
 
