@@ -846,6 +846,10 @@ enum SkillLevel {
 	#define MAX_TIMER_NUMBER					50
 #endif
 
+#define TIMER_ACTOR__00			0
+#define TIMER_ACTOR__01			1
+#define TIMER_ACTOR__02			2
+#define TIMER_ACTOR__03			3
 
 
 //------------------------------------------------------------------------------
@@ -1157,21 +1161,21 @@ enum SkillLevel {
 #define ACTUATOR_TYPE_X01								0x01	// 01
 #define ACTUATOR_TYPE_X02								0x02	// 02
 
-#define ACTUATOR_TYPE_DM1_WALL_SWITCH					0x01	// 01	unimplemented in DM1, similar to 24 (wall switch)
+#define ACTUATOR_TYPE_DM1_WALL_SWITCH					0x01	// 01	was unimplemented in DM2, almost similar to 24 (wall switch)
 
 #define ACTUATOR_TYPE_ITEM_WATCHER						0x03	// 03
-#define ACTUATOR_TYPE_DM1_ITEM_EATER					0x04	// 04	unimplemented in DM2, quite similar to item watcher x03
+#define ACTUATOR_TYPE_DM1_ITEM_EATER					0x04	// 04	was unimplemented in DM2, quite similar to item watcher x03
 
-#define ACTUATOR_TYPE_DM1_COUNTER						0x06	// 06	unimplemented in DM2, different from actuator counter x1D
+#define ACTUATOR_TYPE_DM1_COUNTER						0x06	// 06	was unimplemented in DM2, different from actuator counter x1D
 
-#define ACTUATOR_TYPE_SOME_SHOOTER						0x07	// 07	unimplemented in DM2 ?
+#define ACTUATOR_TYPE_SOME_SHOOTER						0x07	// 07	was unimplemented in DM2 ?
 #define ACTUATOR_TYPE_MISSILE_SHOOTER					0x08	// 08
-#define ACTUATOR_TYPE_WEAPON_SHOOTER					0x09	// 09	unimplemented in DM2 ?
+#define ACTUATOR_TYPE_WEAPON_SHOOTER					0x09	// 09	was unimplemented in DM2 ?
 #define ACTUATOR_TYPE_MISSILE_SHOOTER_2					0x0A	// 10
 //#define ACTUATOR_TYPE_ITEM_SHOOTER						0x0C	// 12
 #define ACTUATOR_TYPE_DM1_WALL_TOGGLER						0x0D	// 13	DM1 retrocompatibility
 #define ACTUATOR_TYPE_ITEM_SHOOTER						0x0E	// 14
-#define ACTUATOR_TYPE_ITEM_SHOOTER_X2					0x0F	// 15	unimplemented in DM2 ?
+#define ACTUATOR_TYPE_ITEM_SHOOTER_X2					0x0F	// 15	was unimplemented in DM2 ?
 #define ACTUATOR_TYPE_THE_END							0x12	// 18
 
 

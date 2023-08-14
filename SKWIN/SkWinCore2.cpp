@@ -370,10 +370,14 @@ ObjectID SkWinCore::GET_WALL_TILE_ANY_TAKEABLE_ITEM_RECORD(U16 iMapX, U16 iMapY,
 	ENTER(0);
 	ObjectID xTakenObject = OBJECT_NULL;
 	ObjectID xCurrentObject = GET_TILE_RECORD_LINK(iMapX, iMapY);
-	while (xCurrentObject.Dir() != iDirection || xCurrentObject.DBType() < dbWeapon || xCurrentObject.DBType() >= dbMissile)
+//	while (xCurrentObject.Dir() != iDirection || xCurrentObject.DBType() < dbWeapon || xCurrentObject.DBType() >= dbMissile)
+	while ( (xCurrentObject.Dir() != iDirection || xCurrentObject.DBType() < dbWeapon || xCurrentObject.DBType() >= dbMissile) 
+		&& (xCurrentObject != OBJECT_END_MARKER && xCurrentObject != OBJECT_NULL) )
 	{
 		xCurrentObject = GET_NEXT_RECORD_LINK(xCurrentObject);
 	}
+	if (SkCodeParam::bUsePowerDebug && (xCurrentObject == OBJECT_NULL || xCurrentObject == OBJECT_END_MARKER))
+		return OBJECT_NULL;
 	if (xCurrentObject.Dir() == iDirection && xCurrentObject.DBType() >= dbWeapon && xCurrentObject.DBType() <= dbMiscellaneous_item)
 		xTakenObject = xCurrentObject;
 	return xTakenObject;

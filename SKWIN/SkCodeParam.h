@@ -8,6 +8,7 @@ class SkCodeParam
 public:
 	//--- Specific game setup
 	static bool bDM1Mode;				// dungeon loaded is a native DM1 dungeon
+	static bool bDM1TQMode;				// dungeon runs as TQ DM1 dungeon
 
 	//--- Options
 	static bool bUseDM2ExtendedMode;

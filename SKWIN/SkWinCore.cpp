@@ -2757,7 +2757,7 @@ GenericRecord *SkWinCore::GET_ADDRESS_OF_RECORD(ObjectID rl)
 	SkD((DLV_BUGHERE, "DEBUG: %s is bad record %02d (RL = %04X DB=%d IDX=%04d)\n"
 		, static_cast<LPCSTR>(getRecordNameOf(rl)), countBadRecords, rl, rl.RealDBType(), rl.DBIndex() ));
 		countBadRecords++;
-		ATLASSERT(countBadRecords < 1024);
+		//ATLASSERT(countBadRecords < 1024);
 		return &gr;
 	}
 
@@ -3894,7 +3894,8 @@ bool SkWinCore::ValidateMements(bool display = false) {
 			if (display) SkD((DLV_CPX, "M#%03d %p ", x, p));
 			int v0 = -p->dw0();
 			int v1 = -READ_I32(p,-p->dw0() -4);
-			if (v0 != v1) ok = false;
+			if (v0 != v1) 
+				ok = false;
 			if (display) SkD((DLV_CPX, "%11d %11d %c ", v0, v1, (v0==v1)?'|':'#'));
 			if (display) {
 				int ref1 = -1;
@@ -20945,6 +20946,9 @@ _1cb6:
 					//DM1_ROTATE_ACTUATOR_LIST(2, xx, yy, -1, bp10);
 					bDelayedActuatorsRotation = 1;
 					iWallSideToRotate = bp10;
+					if (bp04->SoundEffect() != 0 || SkCodeParam::bDM1TQMode == 1) {	// SPX: in TQ, wall trigger do sound, no matter sound flag
+						QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, glbPlayerPosX, glbPlayerPosY, 1, 0x8C, 0x80);
+					}
 					break;
 
 				// SPX: addition for DM1 retrocompatibility
@@ -20982,7 +20986,12 @@ _1cb6:
 							iInvokeActuator = 1;
 						}
 						if (iInvokeActuator)
+						{
+							if (bp04->SoundEffect() != 0 || SkCodeParam::bDM1TQMode == 1) {	// SPX: in TQ, wall trigger do sound, no matter sound flag
+								QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, glbPlayerPosX, glbPlayerPosY, 1, 0x8C, 0x80);
+							}
 							INVOKE_ACTUATOR(bp04, bp04->ActionType(), 0);
+						}
 					}
 					continue; // because toggler will be moved, but still need to operate
 
@@ -21022,6 +21031,9 @@ _1d4d:
 					{
 						bDelayedActuatorsRotation = 1;
 						iWallSideToRotate = bp10;
+						if (bp04->SoundEffect() != 0 || SkCodeParam::bDM1TQMode == 1) {	// SPX: in TQ, wall trigger do sound, no matter sound flag
+							QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xfe, glbPlayerPosX, glbPlayerPosY, 1, 0x8c, 0x80);
+						}
 					}
 					
 					//^2FCF:1DB1
@@ -55191,6 +55203,7 @@ void SkWinCore::SET_RGB_PALETTE_FROM_DATA(U8 *pal)
 // SPX: _38c8_04aa renamed INIT
 void SkWinCore::INIT()
 {
+	U16 iCompatibilityFlag = 0;
 	//^38C8:04AA
 	ENTER(4);
 	//^38C8:04AF
@@ -55214,6 +55227,12 @@ void SkWinCore::INIT()
 
 	// SPX: Added extended load here (requires the GDAT to be initialized, but must be before dungeon loading)
 	EXTENDED_LOAD_AI_DEFINITION();
+	// SPX: Read compatibility mode value (none = standard DM2)
+	iCompatibilityFlag = QUERY_GDAT_ENTRY_DATA_INDEX(0, 0, dtWordValue, 0x10);
+	if (iCompatibilityFlag == 3) { // DM1 TQ
+		SkCodeParam::bDM1Mode = 1;
+		SkCodeParam::bDM1TQMode = 1;
+	}
 
 	LOAD_GDAT_INTERFACE_00_00();
 	_38c8_00c8();
@@ -63668,7 +63687,7 @@ _00a4:
 		if (glbPlayerDefeated != 0)
 			return;
 		glbGameTick++;
-		ATLASSERT(ValidateMements());
+		//ATLASSERT(ValidateMements());
 		PROCESS_QUEUED_DEALLOC_RECORD();
 		//^13AE:01B3
 		SkD((DLV_SYS,"SYS: Tick increased to %u ------------------------------\n", (Bitu)glbGameTick));

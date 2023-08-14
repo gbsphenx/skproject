@@ -3,6 +3,7 @@
 
 
 bool SkCodeParam::bDM1Mode = false;
+bool SkCodeParam::bDM1TQMode = false;	// Try to get the more TQ compatibility mode, specially in dungeon, many visible actuators do sound whereas the sound flag is not set.
 
 bool SkCodeParam::bUseDM2ExtendedMode = true;
 bool SkCodeParam::bUsePowerDebug = true;
