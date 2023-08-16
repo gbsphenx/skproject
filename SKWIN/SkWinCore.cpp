@@ -9283,20 +9283,22 @@ void SkWinCore::_0cee_185a(ExtendedTileInfo *ref, Bit16u xx, Bit16u yy, Bit16u z
 }
 
 //^0CEE:1A46
-ObjectID SkWinCore::_0cee_1a46(ExtendedTileInfo *ref, ObjectID recordLink, i16 xx, i16 yy)
+ObjectID SkWinCore::_0cee_1a46(ExtendedTileInfo *ref, ObjectID recordLink, i16 dir, i16 yy)
 {
 	//^0CEE:1A46
 	ENTER(24);
 	//^0CEE:1A4C
-	Bit16u bp08;
+	Bit16u dbtype = -1; // bp08
+	U8 iOppositeSide = 0; // SPX: added to protect opposite side Text value overwrite current facing actuator/mirror for portrait
 	// SPX: TODO DM2_EXTENDED_DATABASE
-	for (Bit16u bp16 = 0; recordLink != OBJECT_END_MARKER && (bp08 = recordLink.DBType()) <= dbActuator; recordLink = GET_NEXT_RECORD_LINK(recordLink)) {
+	for (Bit16u bp16 = 0; recordLink != OBJECT_END_MARKER && (dbtype = recordLink.DBType()) <= dbActuator; recordLink = GET_NEXT_RECORD_LINK(recordLink)) {
 		//^0CEE:1A54
 		Bit16u bp12 = recordLink.Dir();
+		iOppositeSide = (bp12 == dir);
 		//^0CEE:1A5D
 		if ((bp16 & (1 << bp12)) == 0) {
 			//^0CEE:1A6D
-			Bit16u bp06 = ((bp12 -xx) & 3) +3;
+			Bit16u bp06 = ((bp12 - dir) & 3) +3;
 			//^0CEE:1A7C
 			if (yy == 0 || bp06 == 5) {
 				//^0CEE:1A8B
@@ -9310,7 +9312,7 @@ ObjectID SkWinCore::_0cee_1a46(ExtendedTileInfo *ref, ObjectID recordLink, i16 x
 				GenericRecord *_bp04 = GET_ADDRESS_OF_RECORD(recordLink);
 				//^0CEE:1AB4
 				Bit8u bp13;
-				if (bp08 == dbText) {
+				if (dbtype == dbText && (!SkCodeParam::bUseFixedMode || (SkCodeParam::bUseFixedMode && !iOppositeSide))) {
 					Text *bp04 = _bp04->castToText();
 					//^0CEE:1ABD
 					switch (bp04->TextMode()) {
@@ -9400,7 +9402,7 @@ _1ad5:
 				}
 				//^0CEE:1B8F
 				// TODO DM2_EXTENDED_DATABASE
-				else if (bp08 == dbActuator) {
+				else if (dbtype == dbActuator) {
 					Actuator *bp04 = _bp04->castToActuator();
 					//^0CEE:1B98
 					bp13 = GET_WALL_DECORATION_OF_ACTUATOR(bp04);
@@ -9627,14 +9629,16 @@ Bit16u SkWinCore::QUERY_ORNATE_ANIM_FRAME(Bit8u cls1, Bit8u cls2, Bit32u tick, B
 
 //^0CEE:1DBE
 // SPX: _0cee_1dbe renamed SUMMARIZE_STONE_ROOM
-void SkWinCore::SUMMARIZE_STONE_ROOM(ExtendedTileInfo *ref, Bit16u ww, Bit16u xx, Bit16u yy)
+void SkWinCore::SUMMARIZE_STONE_ROOM(ExtendedTileInfo *ref, Bit16u dir, Bit16u xx, Bit16u yy)
 {
+	// ExtendedTileInfo *ref, Bit16u ww, Bit16u xx, Bit16u yy
 	// CSBWin:Codea59a.cpp/SummarizeStoneRoom
 
 	//^0CEE:1DBE
 	ENTER(36);
 	//^0CEE:1DC4
-	__int16 si = ww;
+	__int16 ldir = dir;
+	__int16 dbtype = -1;	// SPX: note, at first, "si" was holding "dir", then "dbtype". Safer to distinguish them.
 	//^0CEE:1DC7
 	ref->w6[0] = (0x00ff);
 	ref->w6[1] = (0x00ff);
@@ -9666,7 +9670,7 @@ void SkWinCore::SUMMARIZE_STONE_ROOM(ExtendedTileInfo *ref, Bit16u ww, Bit16u xx
 		case ttWall:	// 0
 			{
 				//^0CEE:1E2F
-				switch (si) {
+				switch (ldir) {
 					case 0:
 						//^0CEE:1E40
 						bp0e = bp05 & 8;
@@ -9701,12 +9705,12 @@ void SkWinCore::SUMMARIZE_STONE_ROOM(ExtendedTileInfo *ref, Bit16u ww, Bit16u xx
 						break;
 				}
 				//^0CEE:1ED7
-				_0cee_185a(ref, bp0e, bp0a, bp08, bp0c, si, xx, yy);
+				_0cee_185a(ref, bp0e, bp0a, bp08, bp0c, ldir, xx, yy); // CSBWin : TAG00a4a2
 				//^0CEE:1EF7
 				bp10 = 0;
 				//^0CEE:1EFC
 _1efc:
-				di = _0cee_1a46(ref, di, si, 0);
+				di = _0cee_1a46(ref, di, ldir, 0);
 				//^0CEE:1F0F
 				if (bp10 != 0 && glbPlayerPosX != xx && glbPlayerPosY != yy) {
 					//^0CEE:1F25
@@ -9725,9 +9729,9 @@ _1efc:
 					bp18 = xx;
 					bp1a = yy;
 					//^0CEE:1F4D
-					bp18 += glbXAxisDelta[(si + bp14) & 3];
+					bp18 += glbXAxisDelta[(ldir + bp14) & 3];
 					//^0CEE:1F5F
-					bp1a += glbYAxisDelta[(si + bp14) & 3];
+					bp1a += glbYAxisDelta[(ldir + bp14) & 3];
 					//^0CEE:1F71
 					if ((GET_TILE_VALUE(bp18, bp1a) >> 5) == ttDoor) {
 						//^0CEE:1F86
@@ -9805,7 +9809,7 @@ _2075:
 					GenericRecord *_bp04 = GET_ADDRESS_OF_RECORD(di);
 					Text *bp04 = _bp04->castToText();
 					//^0CEE:20A2
-					if (si != dbText)
+					if (dbtype != dbText)
 						//^0CEE:20A7
 						goto _212a;
 
@@ -9849,7 +9853,7 @@ _2075:
 									//^0CEE:212A
 _212a:
 									// TODO DM2_EXTENDED_DATABASE
-									if (si != dbActuator)
+									if (dbtype != dbActuator)
 										//^0CEE:212F
 										break;
 									//^0CEE:2132
@@ -9946,9 +9950,9 @@ _2237:
 					//^0CEE:223C
 					break;
 				//^0CEE:223F
-				si = di.DBType();
+				dbtype = di.DBType();
 				//^0CEE:2249
-				if (si <= dbActuator)
+				if (dbtype <= dbActuator)
 					//^0CEE:224E
 					goto _2075;
 				//^0CEE:2251
@@ -9968,7 +9972,7 @@ _2237:
 		case ttStairs:	// 3
 			{
 				//^0CEE:227A
-				ref->w0 = ((((bp05 & 8) >> 3) == (si & 1)) ? 0x12 : 0x13);
+				ref->w0 = ((((bp05 & 8) >> 3) == (ldir & 1)) ? 0x12 : 0x13);
 				//^0CEE:229E
 				ref->w6[0] = (bp05 & 4);
 				//^0CEE:22A9
@@ -9981,7 +9985,7 @@ _2237:
 				//^0CEE:22BA
 				ref->w6[1] = (GET_TILE_RECORD_LINK(xx, yy));
 				//^0CEE:22CD
-				if (((bp05 & 8) >> 3) == (si & 1)) {
+				if (((bp05 & 8) >> 3) == (ldir & 1)) {
 					//^0CEE:22E3
 					ref->w0 = (0x0010);	// Set the north/west direction of door frame
 				}
@@ -9989,17 +9993,17 @@ _2237:
 					//^0CEE:22EA
 					ref->w0 = (0x0011);
 					//^0CEE:22F2
-					si++;
-					si &= 3;
+					ldir++;
+					ldir &= 3;
 					//^0CEE:22F7
-					bp18 = xx + glbXAxisDelta[si];
+					bp18 = xx + glbXAxisDelta[ldir];
 					//^0CEE:2305
-					bp1a = yy + glbYAxisDelta[si];
+					bp1a = yy + glbYAxisDelta[ldir];
 					//^0CEE:2313
 					_0cee_1a46(
 						ref,
 						GET_TILE_RECORD_LINK(bp18, bp1a),
-						si,
+						ldir,
 						1
 						);
 				}
@@ -22189,6 +22193,7 @@ LOGX(("%40s: C%02d=I%02X=E%02X=T%03d to %08X", "QUERY_GDAT_ENTRY_DATA_BUFF from 
 	//^3E74:518C
 	if (glbShelfMemoryTable[si].Absent()) {
 		//^3E74:51A9
+		//if (IS_CLS1_CRITICAL_FOR_LOAD(cls1) == 0 && (SkCodeParam::bUseFixedMode && cls3 != dtText)) {
 		if (IS_CLS1_CRITICAL_FOR_LOAD(cls1) == 0) {
 			//^3E74:51C7
 			//^3E74:5186
@@ -23061,8 +23066,8 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 			U16 iTestSideD0Entry = iImageEntry +U8(bp28) + 0x80;
 			if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_WALL_GFX, bp1f, dtImage, iTestSideD0Entry) != 0)
 			{
-				iStretchVertical = 0x38;
-				iStretchHorizontal = 0x38;
+				iStretchVertical = 0x40;
+				iStretchHorizontal = 0x40;
 				iImageEntry = iImageEntry + 0x80;
 			}
 		}
@@ -31984,12 +31989,17 @@ Bit16u SkWinCore::LOAD_NEW_DUNGEON()
 	DEALLOC_UPPER_MEMORY(0x400);
 	if (_4976_5bea == 0 || (glbDataFileHandle = OPEN_FILE(FORMAT_SKSTR(ptrDungenB, NULL))) < 0)
 	{
+		U8 sGDATDungeonName[0x80];
 		// Default is the DUNGEON.DAT filename
 		sDungeonFilename = (Bit8u*) ptrDungeonFilename;
 
 		if (skwin.sCustomDungeonDatFilename != NULL)
 			sDungeonFilename = (Bit8u*) skwin.sCustomDungeonDatFilename;
-		
+		//--- SPX: Get name from GDAT itself
+		//DIRECT_QUERY_GDAT_TEXT(0x03, 0x10, 6, sGDATDungeonName);
+		//if (sGDATDungeonName[0] != 0)
+		//	sDungeonFilename = sGDATDungeonName;
+
 		glbDataFileHandle = OPEN_FILE(FORMAT_SKSTR(sDungeonFilename, NULL));
 	}
 	if (glbDataFileHandle < 0) 
@@ -46474,14 +46484,14 @@ X16 SkWinCore::DRAW_EXTERNAL_TILE(i16 xx)
 	U16 bp02 = tblCellTilesRoom[si].xsrd.w6[2];
 	X16 bp16 = bp02 >> 8;
 	bp14 += X8(bp16);
-	X8 bp13 = X8(bp02);
-	if (bp13 == 0xff || bp13 == 0)
+	X8 iFloorOrnateID = X8(bp02);	// bp13
+	if (iFloorOrnateID == 0xFF || iFloorOrnateID == 0)
 		return 0;
 	//^32CB:1FDF
 	X16 bp04 = 0;
 	if (glbTabXAxisDistance[RCJ(23,si)] == 0) {
 		//^32CB:1FEB
-		if (QUERY_GDAT_ENTRY_DATA_INDEX(0xa, bp13, dtWordValue, 7) == 0) {
+		if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_FLOOR_GFX, iFloorOrnateID, dtWordValue, GDAT_FLOOR_ORNATE__DO_NOT_FLIP) == 0) {
 			//^32CB:2001
 			bp04 = glbGeneralFlipGraphics;
 			if ((bp18 & 1) == 0) {
@@ -46496,17 +46506,17 @@ X16 SkWinCore::DRAW_EXTERNAL_TILE(i16 xx)
 		bp04 = 1;
 	}
 	//^32CB:2021
-	X16 bp0e = QUERY_GDAT_ENTRY_DATA_INDEX(0xa, bp13, dtWordValue, 4);
+	X16 bp0e = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_FLOOR_GFX, iFloorOrnateID, dtWordValue, GDAT_IMG_COLORKEY_1); // 4
 	if (bp0e == 0) {
 		//^32CB:203A
 		bp0e = glbSceneColorKey;
 	}
 	//^32CB:2040
-	X16 bp0a = QUERY_GDAT_ENTRY_DATA_INDEX(0xa, bp13, dtWordValue, 5);
+	X16 bp0a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_FLOOR_GFX, iFloorOrnateID, dtWordValue, GDAT_FLOOR_ORNATE__POSITION); // 5
 	X16 bp12;
 	if (bp0a == 0) {
 		//^32CB:2059
-		bp0a = 12;
+		bp0a = ORNATE_POS__VCENTERED_HCENTERED; // bp0a = 12;
 		bp12 = 0;
 	}
 	else {
@@ -46516,11 +46526,20 @@ X16 SkWinCore::DRAW_EXTERNAL_TILE(i16 xx)
 	}
 	//^32CB:2078
 	X16 bp0c = QUERY_CREATURE_BLIT_RECTI(si, bp0a, 0);
-	X16 bp10 = 0x40;
-	if (QUERY_GDAT_ENTRY_IF_LOADABLE(0xa, bp13, dtImage, bp14) == 0) {
+	X16 bp10 = 0x40; // bp10
+	if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_FLOOR_GFX, iFloorOrnateID, dtImage, bp14) == 0) {
 		//^32CB:20A6
 		bp14 = _4976_4247[RCJ(23,si)] +X8(bp16);
 		bp10 = tlbDistanceStretch[RCJ(5,bp18)];
+		// SPX: if drawing player tile and there is a floor image at front D0, we try to get it
+		if (SkCodeParam::bUseDM2ExtendedMode && bp18 == 0)
+		{
+			if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_FLOOR_GFX, iFloorOrnateID, dtImage, bp14 + 0x80) == 1)
+			{
+				bp14 = bp14 + 0x80;
+				bp10 = 0x40; // 100% because we want to display front D0 at its real size.
+			}
+		}
 	}
 	//^32CB:20BC
 	X16 bp1a;
@@ -46532,11 +46551,11 @@ X16 SkWinCore::DRAW_EXTERNAL_TILE(i16 xx)
 	X16 bp1c;
 	if (glbTabXAxisDistance[RCJ(23,si)] == 0 && bp18 != 0) {
 		//^32CB:20CF
-		X16 bp1e = QUERY_GDAT_ENTRY_DATA_INDEX(0xa, bp13, dtWordValue, 0x63);
+		X16 bp1e = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_FLOOR_GFX, iFloorOrnateID, dtWordValue, GDAT_FLOOR_ORNATE__X63);
 		if ((bp1c = GET_TELEPORTER_DETAIL(&bp2a, U8(bp06), U8(bp08))) != 0 || bp1e != 0) {
 			//^32CB:2107
-			QUERY_TEMP_PICST(bp04, bp10, bp10, 0, 0, bp18, bp0c, bp12, -3, -3, 0xa, bp13, bp14);
-			QUERY_TEMP_PICST(bp04, bp10, bp10, glbTempPicture.w28, glbTempPicture.w30, bp18, bp0c, bp12, bp0e, -1, 0xa, bp13, bp14 +0xc8);
+			QUERY_TEMP_PICST(bp04, bp10, bp10, 0, 0, bp18, bp0c, bp12, -3, -3, GDAT_CATEGORY_FLOOR_GFX, iFloorOrnateID, bp14);
+			QUERY_TEMP_PICST(bp04, bp10, bp10, glbTempPicture.w28, glbTempPicture.w30, bp18, bp0c, bp12, bp0e, -1, GDAT_CATEGORY_FLOOR_GFX, iFloorOrnateID, bp14 +0xc8);
 			DRAW_TEMP_PICST();
 			//^32CB:2168
 			bp06 = bp2a.b2;
@@ -46566,8 +46585,8 @@ X16 SkWinCore::DRAW_EXTERNAL_TILE(i16 xx)
 			_4976_5aa0 = bp1a;
 			DRAW_STATIC_OBJECT(si, 0x000003ff, 1);
 			bp20 = QUERY_MULTILAYERS_PIC(
-				&bp0164, GDAT_CATEGORY_FLOOR_GFX, bp13, bp14, bp10, bp10, bp18, bp04, bp0e,
-				QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_FLOOR_GFX, bp13, dtWordValue, GDAT_IMG_FLOOR_COLORKEY_2)	// 0xa
+				&bp0164, GDAT_CATEGORY_FLOOR_GFX, iFloorOrnateID, bp14, bp10, bp10, bp18, bp04, bp0e,
+				QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_FLOOR_GFX, iFloorOrnateID, dtWordValue, GDAT_IMG_FLOOR_COLORKEY_2)	// 0xa
 				);
 			if (bp1e != 0) {
 				//^32CB:226E
@@ -46593,7 +46612,7 @@ X16 SkWinCore::DRAW_EXTERNAL_TILE(i16 xx)
 		}
 	}
 	//^32CB:2331
-	QUERY_TEMP_PICST(bp04, bp10, bp10, 0, 0, bp18, bp0c, bp12, bp0e, -1, 0xa, bp13, bp14);
+	QUERY_TEMP_PICST(bp04, bp10, bp10, 0, 0, bp18, bp0c, bp12, bp0e, -1, GDAT_CATEGORY_FLOOR_GFX, iFloorOrnateID, bp14);
 	DRAW_TEMP_PICST();
 	//^32CB:2361
 	return 0;
@@ -47442,7 +47461,7 @@ void SkWinCore::DRAW_PLAYER_TILE()
 	TELE_inf bp0c;
 	if ((di = GET_TELEPORTER_DETAIL(&bp0c, tblCellTilesRoom->posx, tblCellTilesRoom->posy)) == 0) {
 		//^32CB:546B
-		DRAW_EXTERNAL_TILE(0);
+		DRAW_EXTERNAL_TILE(0); // this is where floor pad is displayed
 	}
 	//^32CB:5472
 	DRAW_STATIC_OBJECT(0, 0x01ffffff, 0);

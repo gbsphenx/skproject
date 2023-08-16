@@ -865,6 +865,8 @@ public:
 	void SET_NEXT_RECORD_LINK(ObjectID rlSourceObject, ObjectID rlObjectToAppend);
 
 	void TEST_TEXT();
+	Bit8u* DIRECT_QUERY_GDAT_ENTRY_DATA_BUFF(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4);
+	Bit8u* DIRECT_QUERY_GDAT_TEXT(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u *buff);
 
 	void STUN_CHAMPION(U16 player, U16 stunvalue);
 
@@ -1118,7 +1120,7 @@ protected:
 	void _0cee_185a(ExtendedTileInfo *ref, Bit16u xx, Bit16u yy, Bit16u zz, Bit16u ww, Bit16u vv, i16 ss, i16 tt);
 	ObjectID _0cee_1a46(ExtendedTileInfo *ref, ObjectID recordLink, i16 xx, i16 yy);
 	Bit16u QUERY_ORNATE_ANIM_FRAME(Bit8u cls1, Bit8u cls2, Bit32u tick, Bit32u delta);
-	void SUMMARIZE_STONE_ROOM(ExtendedTileInfo *ref, Bit16u ww, Bit16u xx, Bit16u yy);
+	void SUMMARIZE_STONE_ROOM(ExtendedTileInfo *ref, Bit16u dir, Bit16u xx, Bit16u yy);
 	__int16 QUERY_DUNGEON_MAP_CHIP_PICT(Bit8u cls1, Bit8u cls2, Bit8u **ppBuff, Bit8u *localpal);
 	void DRAW_CHIP_OF_MAGIC_MAP(const Bit8u *buff, Bit16u aa, Bit16u xx, Bit16u yy, Bit16u flipMirror, Bit8u *localpal);
 	__int16 _4937_000f(Bit16u xx, Bit16u *yy);
