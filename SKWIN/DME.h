@@ -420,24 +420,27 @@ namespace DMEncyclopaedia {
 			val <<= 7;
 			w2 |= val;
 		}
+		U16 Direction() const { return (w6 >> 4)&3; } // M!6,4,03
+		U8 Ycoord() const { return (w6 >>11)&0x1f; } // M!7,3,1F
+		U8 Xcoord() const { return (w6 >> 6)&0x1f; } // M!6,6,1F
+		U16 GraphicNumber() const { return (w4 >> 12)&0x000f; } // M!4,12,0F
+		U16 IsDisabled() const { return (w4 >> 11)&1; } // SPX: DM1 compatibility "is inactive""
+		void Disable() { w4 |= 0x0800;	}	// SPX: DM1 compatibility
+		void DisableToNoneType() { w2 &= 0xFF80; } // SPX: DM1 compatibility
+		U16 ActuatorToggler() const { return (w4 >> 11)&1; } // SPX: DM1 compatibility "is active" / "act/gfx toggler"
+		U16 Delay() const { return (w4 >> 7)&15; } // M!4,7,0F				// bits 7 to 10
+		U8 SoundEffect() const { return (w4 >> 6)&1; } // M!4,6,01			// bit 6
+		U8 RevertEffect() const { return (w4 >> 5)&1; } // M!4,5,01			// bit 5, belonging to effect
+		U8 ActionType() const { return (w4 >> 3)&3; } // M!4,3,03			// bits 3 to 5
 		U8 OnceOnlyActuator() const { 
-			return (w4 >> 2)&1; 
+			return (w4 >> 2)&1;					// bit 2 
 		} // M!4,2,01
 		void OnceOnlyActuator(U16 val) {
 			val &= 1;
 			w4 &= 0xfffb;
 			w4 |= (val << 2);
 		}
-		U8 RevertEffect() const { return (w4 >> 5)&1; } // M!4,5,01
-		U8 ActionType() const { return (w4 >> 3)&3; } // M!4,3,03
-		U8 SoundEffect() const { return (w4 >> 6)&1; } // M!4,6,01
-		U8 Ycoord() const { return (w6 >>11)&0x1f; } // M!7,3,1F
-		U8 Xcoord() const { return (w6 >> 6)&0x1f; } // M!6,6,1F
-		U16 GraphicNumber() const { return (w4 >> 12)&0x000f; } // M!4,12,0F
-		U16 Delay() const { return (w4 >> 7)&15; } // M!4,7,0F
-		U16 ActuatorToggler() const { return (w4 >> 11)&1; } // SPX: DM1 compatibility "is active" / "act/gfx toggler"
-		U16 Direction() const { return (w6 >> 4)&3; } // M!6,4,03
-		U16 ActiveStatus() const { return (w4)&1; } // M!4,0,0001	// w4_0_0()
+		U16 ActiveStatus() const { return (w4)&1; } // M!4,0,0001	// w4_0_0()	// bit 0 (unused in DM1)
 		void ActiveStatus(U16 val) {
 			val &= 1;
 			w4 &= 0xfffe;
@@ -2733,7 +2736,7 @@ namespace DM2Internal {
 		tty3D = 0x3D,		// about minion and teleport / opening something ?
 		ttyLight			= 0x46,	// tty46 (70) light
 		ttyInvisibility		= 0x47,	// tty47 (71) csbwin OH EW SAR
-		ttyEnchantment		= 0x48, // tt48 (72) enchantment/aura timer?
+		ttyEnchantment		= 0x48, // tty48 (72) enchantment/aura timer?
 #if (DM2_EXTENDED_MODE == 1)
 		ttySeeThruWalls		= 0x49, // tty49 (73) csbwin : OH EW RA See thru walls
 #endif

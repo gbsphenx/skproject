@@ -20859,7 +20859,8 @@ checkactuator:
 			U16 iToggler = bp04->ActuatorToggler();
 			U16 iRevert = bp04->RevertEffect();
 			U16 iOnce = bp04->OnceOnlyActuator();
-			printf("Clicking on wall Actuator %04X (dir=%d) ACT=%02d (1=%d) action=%04x (R=%d) data=%04x status=%d toggler=%d\n", bp0e, bp10, bp16, iOnce, bp1a, iRevert, bp18, iStatus, iToggler);
+			U16 iDisabled = bp04->IsDisabled();
+			printf("Clicking on wall Actuator %04X (dir=%d) ACT=%02d (1=%d DIS=%d) action=%04x (R=%d) data=%04x status=%d toggler=%d\n", bp0e, bp10, bp16, iOnce, iDisabled, bp1a, iRevert, bp18, iStatus, iToggler);
 			//^2FCF:1C04
 			//if (glbChampionLeader == -1 && bp16 != 0x7e)
 			if (glbChampionLeader == -1 && (bp16 != ACTUATOR_TYPE_RESURECTOR && bp16 != ACTUATOR_TYPE_CHAMPION_MIRROR)) // SPX : Add 0x7F
@@ -21010,26 +21011,17 @@ _1cb6:
 					goto _1d4d;
 
 				case ACTUATOR_TYPE_DM1_WALL_SWITCH: // SPX: Add DM1 retrocompatibility : 0x01
-				case ACTUATOR_TYPE_WALL_SWITCH: // 0x18 -> 'Activator, push button wall switch'
-					//^2FCF:1D4D
-_1d4d:
 					if (si != OBJECT_NULL || bp04->ActiveStatus() != 0)
 						//^2FCF:1D52
 						continue;
-					//^2FCF:1D66
+					// NOTE: DM1 wall switch can't check "disabled" flag because it is the same for "rotate" which is used here. A disabled wall switch is actually changed to "NONE" actuator.
 					Timer bp40;
 					bp40.SetMap(glbCurrentMapIndex);
 					bp40.SetTick(glbGameTick +bp18 +2);
-					//^2FCF:1D8F
 					bp40.TimerType(ttyWallButton);
 					bp40.actor = TIMER_ACTOR__00;
-					//^2FCF:1D97
 					bp40.value = bp0e;
-					//^2FCF:1D9D
 					QUEUE_TIMER(&bp40);
-					//^2FCF:1DA9
-					bp04->ActiveStatus(1);
-
 					// SPX: DM1 compatibility for PUSH BUTTON with actuator toggler info (generally used for 2-image state lever, buttons ...)
 					if (bp44 == ACTUATOR_TYPE_DM1_WALL_SWITCH && bp04->ActuatorToggler() == 1)
 					{
@@ -21039,6 +21031,43 @@ _1d4d:
 							QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xfe, glbPlayerPosX, glbPlayerPosY, 1, 0x8c, 0x80);
 						}
 					}
+
+					di = 0;
+					//if (di != 0 || bp1a != 3) // SPX: if actuator effect is not 3 (step in open / step out close), then break
+					//	break;
+					bp26 = 1;
+					if (bp04->SoundEffect() != 0) {
+						QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, glbPlayerPosX, glbPlayerPosY, 1, 0x8C, 0x80);
+					}
+					INVOKE_ACTUATOR(bp04, 0, 0);
+					INVOKE_ACTUATOR(bp04, 1, bp18 +1);
+					if (bp44 == ACTUATOR_TYPE_DM1_WALL_SWITCH && bp04->OnceOnlyActuator() == 1)
+					{
+						bp04->Disable();
+						bp04->DisableToNoneType();
+						bp16 = bp04->ActuatorType();
+					}
+					continue;
+
+				case ACTUATOR_TYPE_WALL_SWITCH: // 0x18 -> 'Activator, push button wall switch'
+					//^2FCF:1D4D
+_1d4d:
+					if (si != OBJECT_NULL || bp04->ActiveStatus() != 0)
+						//^2FCF:1D52
+						continue;
+					//^2FCF:1D66
+					Timer xtimer;
+					xtimer.SetMap(glbCurrentMapIndex);
+					xtimer.SetTick(glbGameTick +bp18 +2);
+					//^2FCF:1D8F
+					xtimer.TimerType(ttyWallButton);
+					xtimer.actor = TIMER_ACTOR__00;
+					//^2FCF:1D97
+					xtimer.value = bp0e;
+					//^2FCF:1D9D
+					QUEUE_TIMER(&xtimer);
+					//^2FCF:1DA9
+						bp04->ActiveStatus(1);
 					
 					//^2FCF:1DB1
 					di = 0;
@@ -21051,7 +21080,7 @@ _1d4d:
 					//^2FCF:1DC8
 					if (bp04->SoundEffect() != 0) {
 						//^2FCF:1DD6
-						QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xfe, glbPlayerPosX, glbPlayerPosY, 1, 0x8c, 0x80);
+						QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, glbPlayerPosX, glbPlayerPosY, 1, 0x8C, 0x80);
 					}
 					//^2FCF:1DFA
 					INVOKE_ACTUATOR(bp04, 0, 0);
