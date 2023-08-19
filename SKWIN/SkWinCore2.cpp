@@ -533,3 +533,57 @@ void SkWinCore::TEST_TEXT()
 	return;
 }
 
+// SPX: Bypass shelfmemory for direct GDAT TEXT, be careful that may not work in any other place
+Bit8u *SkWinCore::DIRECT_QUERY_GDAT_ENTRY_DATA_BUFF(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4)
+{
+	LOGX(("%40s: C%02d=I%02X=E%02X=T%03d to %08X", "QUERY_GDAT_ENTRY_DATA_BUFF from ", cls1, cls2, cls4, cls3 ));
+	i16 si = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, cls3, cls4);
+	if (si == -1) {
+		return NULL;
+	}
+	if (glbShelfMemoryTable[si].Absent()) {
+		Bit16u bp02;
+		return QUERY_GDAT_DYN_BUFF(si, &bp02, 0);
+	}
+	else {
+		return REALIZE_GRAPHICS_DATA_MEMORY(glbShelfMemoryTable[si]);
+	}
+}
+
+// SPX: Bypass some control to get TEXT for loading the dungeon name, be careful that may not work in any other place
+Bit8u *SkWinCore::DIRECT_QUERY_GDAT_TEXT(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u *buff)
+{
+	*buff = 0;
+	Bit16u di = 0;
+	Bit16u si = 0;
+	Bit8u *bp0e = DIRECT_QUERY_GDAT_ENTRY_DATA_BUFF(cls1, cls2, dtText, cls4);
+	if (bp0e != NULL) {
+		Bit8u *bp0a = ALLOC_MEMORY_RAM(
+			di = si = QUERY_GDAT_ENTRY_DATA_LENGTH(cls1, cls2, dtText, cls4),
+			0,
+			1024
+			);
+		COPY_MEMORY(bp0e, bp0a, si);
+		if (glbTextEntryEncoded != 0) {
+			Bit8u *bp04 = bp0a;
+			Bit8u bp05 = 0;
+			while (di-- != 0) {
+				*bp04 = (*bp04 ^ 0xFF) - bp05;
+				bp05++;
+				bp04++;
+			}
+		}
+		FORMAT_SKSTR(bp0a, buff);
+		DEALLOC_UPPER_MEMORY(si);
+	}
+	return buff;
+}
+
+// SPX: This gets the standard CHAMPIONS BONES ID expected for either regular DM2 or regular DM1 compatible mode
+Bit8u SkWinCore::GET_CHAMPION_BONES_ITEM_ID()
+{
+	if (SkCodeParam::bDM1Mode == true)
+		return 5;
+	// else default is 0 for DM2
+	return 0;
+}

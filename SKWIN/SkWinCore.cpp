@@ -13409,8 +13409,8 @@ U8 *SkWinCore::GET_ITEM_NAME(ObjectID recordLink)
 	//^2405:007B
 	glbChampionBonesIndex = 0xffff;
 	//^2405:0081
-	// SPX: If item is CHAMPION'S BONES
-	if (iCategory == GDAT_CATEGORY_MISCELLANEOUS && iItemNumber == 0x00) { // (bp01 == 0x15 && bp02 == 0x00) ==> ITEM == BONES
+	// SPX: If item is CHAMPION'S BONES : I changed to function to get proper ID depending on DM1 or DM2 mode
+	if (iCategory == GDAT_CATEGORY_MISCELLANEOUS && iItemNumber == GET_CHAMPION_BONES_ITEM_ID()) { // (bp01 == 0x15 && bp02 == 0x00) ==> ITEM == BONES
 		//^2405:008D
 		Miscellaneous_item *bp06 = GET_ADDRESS_OF_RECORDA(di);
 		//^2405:009A
@@ -49901,7 +49901,7 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(__int16 xpos, __int16 ypos, Objec
 		if (bp1e != 0xffff	// SPX: FIX: changed to "!=" instead of "==" => bp1e = direction on wall (and 0xffff on ground...) so it must not be 0xffff
 			&& IS_REBIRTH_ALTAR(si) != 0
 			&& QUERY_CLS1_FROM_RECORD(recordLink) == GDAT_CATEGORY_MISCELLANEOUS
-			&& QUERY_CLS2_FROM_RECORD(recordLink) == 0) {	// Misc 0 = someone's bones
+			&& QUERY_CLS2_FROM_RECORD(recordLink) == GET_CHAMPION_BONES_ITEM_ID()) {	// Was Misc 0 = someone's bones in DM2 / SPX: I changed to function to get the proper Bones ID depending on DM2 or DM1 mode
 			//^2FCF:2730
 			__int16 bp2e = ADD_ITEM_CHARGE(recordLink, 0);
 			//^2FCF:273F
@@ -62617,7 +62617,7 @@ void SkWinCore::PROCESS_TIMER_RESURRECTION(Timer *ref)
 				if (true
 					&& si.Dir() == bonesPos 
 					&& QUERY_CLS1_FROM_RECORD(si) == GDAT_CATEGORY_MISCELLANEOUS
-					&& QUERY_CLS2_FROM_RECORD(si) == 0	// bones item
+					&& QUERY_CLS2_FROM_RECORD(si) == GET_CHAMPION_BONES_ITEM_ID()	// bones item (SPX: was hard coded 0, for DM1 compatibility, I changed using a function to get the correct item ID)
 					&& ADD_ITEM_CHARGE(si, 0) == championNo
 				) {
 					//^3A15:312C
@@ -63202,7 +63202,7 @@ void SkWinCore::CHAMPION_DEFEATED(X16 player)
 	if (bp0c != OBJECT_NULL) {
 		//^2C1D:16A0
 		Miscellaneous_item *bp08 = GET_ADDRESS_OF_RECORDA(bp0c);
-		bp08->ItemType(0);
+		bp08->ItemType(GET_CHAMPION_BONES_ITEM_ID()); // SPX: changed hardcoded 0 to function to get proper Bones ID depending on DM2 or DM1 mode
 		bp08->Important(1);
 		bp08->Bone(di);
 		MOVE_RECORD_TO(ObjectID(bp0c, bp0a), -1, 0, glbPlayerPosX, glbPlayerPosY);

@@ -867,12 +867,12 @@ public:
 	void TEST_TEXT();
 	Bit8u* DIRECT_QUERY_GDAT_ENTRY_DATA_BUFF(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4);
 	Bit8u* DIRECT_QUERY_GDAT_TEXT(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u *buff);
-
+	Bit8u SkWinCore::GET_CHAMPION_BONES_ITEM_ID();
 	void STUN_CHAMPION(U16 player, U16 stunvalue);
 
 	void DEBUG_HELP_WRITER(const char* sinfo, const void* xdata, unsigned int blocksize, unsigned int repeat);
 	void DEBUG_HELP_DISPLAY_STACK(i16 iMapX, i16 iMapY, i16 iMapLevel);
-
+// SPX: End of new procedures
 
 	const char *getXActrName(int x);
 	CString getSpellTypeName(U8 spelltype);
