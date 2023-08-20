@@ -20828,8 +20828,9 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 				//^2FCF:1B93
 				break;
 			}
+			if (!SkCodeParam::bDM1Mode) {
 			//^2FCF:1B96
-			if (GET_DISTINCTIVE_ITEMTYPE(si) != 0x0194)
+			if (GET_DISTINCTIVE_ITEMTYPE(si) != 0x0194) // SPX: not sure ? creature fountain ? (or tree ?)
 				//^2FCF:1BA2
 				break;
 			//^2FCF:1BA5
@@ -20839,6 +20840,7 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 			bp34 = si;
 			//^2FCF:1BB7
 			break;
+			}
 		}
 //SPX: added for easy jump from DM1 mode
 checkactuator:
@@ -21042,8 +21044,11 @@ _1cb6:
 					if (bp04->SoundEffect() != 0) {
 						QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, glbPlayerPosX, glbPlayerPosY, 1, 0x8C, 0x80);
 					}
-					INVOKE_ACTUATOR(bp04, 0, 0);
-					INVOKE_ACTUATOR(bp04, 1, bp18 +1);
+					// Note: if the push button is in ROTATE mode (which shares the INACTIVE bit), then do not trigger a target effect.
+					if (bp04->ActuatorToggler() == 0)
+					{
+						INVOKE_ACTUATOR(bp04, bp04->ActionType(), 0);
+					}
 					if (bp44 == ACTUATOR_TYPE_DM1_WALL_SWITCH && bp04->OnceOnlyActuator() == 1)
 					{
 						bp04->Disable();
@@ -49493,7 +49498,7 @@ void SkWinCore::INVOKE_MESSAGE(__int16 xpos, __int16 ypos, Bit16u dir, Bit16u ac
 				bp0a.actor = TIMER_ACTOR__02;
 			}
 		}
-		else {	// Then >= 3
+		else {	// Then should be >= 3, but actually never goes there ?!
 			//^2FCF:15BD
 			bp0a.actor = TIMER_ACTOR__03;
 		}
@@ -61764,9 +61769,6 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 		}
 		//^3A15:23F7
 		if (bp14 == dbActuator) {
-			//^3A15:2400
-			if (si.Dir() != ref->Value2())
-				continue;
 			Actuator *bp04 = GET_ADDRESS_OF_ACTU(si);
 			X16 bp10 = bp04->ActuatorType();
 			X16 bp0a = bp04->ActuatorData();
@@ -61782,6 +61784,13 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 			X16 bp12;
 			ObjectID di;
 			Door *door;	//*bp36
+
+			// SPX: in case of DM1 TRIGGER (BIT FIELDS), the actual position of the actuator is not relevant since the effect direction/facing is used to change the bit field.
+			// Then, we check if the target actuator is a TRIGGER, and let activation thereafter
+			//^3A15:2400
+			if (bp10 != ACTUATOR_TYPE_DM1_BITFIELDS_TRIGGER && (si.Dir() != ref->Value2()))
+				continue;
+					
 			switch (bp10) {
 			case ACTUATOR_TYPE_WORK_TIMER://^2451 // 0x31 -> 'Activator, work timer'
 				//^3A15:2451
@@ -61826,6 +61835,44 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 				//^3A15:25E7
 				QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES, 0, SOUND_STD_TELEPORT_MESSAGE, 0x61, 0x80, bp2a, bp2c, 1);
 				break;
+			case ACTUATOR_TYPE_DM1_BITFIELDS_TRIGGER: // SPX: retrocompatibility, DM1 BitFields Trigger
+				{
+					U8 iBitFields = bp04->ActuatorData()>>4;
+					U8 iOldBitFields = iBitFields;
+					U8 iChangeableBit = 0;
+					U8 iEffectType = bp04->ActionType();
+					U8 iActionType = ACTMSG_OPEN_SET;
+					printf("TRIGGER VALUE = %02X BITFIELDS = %X with EFFECT %d FACING %d\n", bp04->ActuatorData(), bp04->ActuatorData()>>4, ref->ActionType(), ref->Value2());
+
+					iChangeableBit = 1<<ref->Value2(); // power of 2 of the target face/dir
+					iBitFields = iBitFields ^ iChangeableBit;
+					bp04->ActuatorData((iBitFields<<4) + (bp04->ActuatorData()%16));
+
+					printf("RESULT TRIGGER VALUE = %02X BITFIELDS = %X (%X) from BITCHANGE %X\n", bp04->ActuatorData(), bp04->ActuatorData()>>4, iBitFields, iChangeableBit);
+					if (iOldBitFields != iBitFields && iBitFields == 0) // trigger actuator
+					{
+						if (iEffectType == ACTEFFECT_STEP_CONSTANT__OPEN || iEffectType == ACTEFFECT_STEP_ON__OPEN_SET)
+							iActionType = ACTMSG_OPEN_SET;
+						else if (iEffectType == ACTEFFECT_STEP_ON__CLOSE_CLEAR)
+							iActionType = ACTMSG_CLOSE_CLEAR;
+						else if (iEffectType == ACTEFFECT_STEP_ON__TOGGLE)
+							iActionType = ACTMSG_TOGGLE;
+
+						INVOKE_ACTUATOR(bp04, iActionType, 0);
+					}
+					else if (iOldBitFields == 0 && iBitFields != 0)
+					{
+						if (iEffectType == ACTEFFECT_STEP_CONSTANT__OPEN || iEffectType == ACTEFFECT_STEP_CLOSE__OPEN_SET)
+							iActionType = ACTMSG_OPEN_SET;
+						else if (iEffectType == ACTEFFECT_STEP_CLOSE__CLOSE_CLEAR)
+							iActionType = ACTMSG_CLOSE_CLEAR;
+						else if (iEffectType == ACTEFFECT_STEP_CLOSE__TOGGLE)
+							iActionType = ACTMSG_TOGGLE;
+
+						INVOKE_ACTUATOR(bp04, iActionType, 0);
+					}
+					break;
+				}
 			case ACTUATOR_TYPE_DM1_COUNTER: // SPX: retrocompatibility, DM1 counter
 				// DM1 counter does not work the same as DM2 counter
 				printf("COUNTER VALUE = %d with EFFECT %d\n", bp04->ActuatorData(), ref->ActionType());

@@ -859,6 +859,17 @@ enum SkillLevel {
 #define ACTMSG_CLOSE_CLEAR		1
 #define ACTMSG_TOGGLE			2
 
+#define ACTEFFECT_STEP_ON__OPEN_SET		0
+#define ACTEFFECT_STEP_ON__CLOSE_CLEAR	1
+#define ACTEFFECT_STEP_ON__TOGGLE		2
+#define ACTEFFECT_STEP_CONSTANT__OPEN	3	// STEP ON => OPEN / STEP OUT => CLOSE
+
+#define ACTEFFECT_STEP_CLOSE__OPEN_SET		4
+#define ACTEFFECT_STEP_CLOSE__CLOSE_CLEAR	5
+#define ACTEFFECT_STEP_CLOSE__TOGGLE		6
+#define ACTEFFECT_STEP_CONSTANT__OPEN		7	// STEP OUT => OPEN / STEP ON => CLOSE
+
+
 //------------------------------------------------------------------------------
 //	TIMER SPECIAL
 //------------------------------------------------------------------------------
@@ -1173,6 +1184,7 @@ enum SkillLevel {
 #define ACTUATOR_TYPE_ITEM_WATCHER						0x03	// 03
 #define ACTUATOR_TYPE_DM1_ITEM_EATER					0x04	// 04	was unimplemented in DM2, quite similar to item watcher x03
 
+#define ACTUATOR_TYPE_DM1_BITFIELDS_TRIGGER				0x05	// 05	was unimplemented in DM2
 #define ACTUATOR_TYPE_DM1_COUNTER						0x06	// 06	was unimplemented in DM2, different from actuator counter x1D
 
 #define ACTUATOR_TYPE_SOME_SHOOTER						0x07	// 07	was unimplemented in DM2 ?
