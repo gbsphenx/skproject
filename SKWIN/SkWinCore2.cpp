@@ -587,3 +587,17 @@ Bit8u SkWinCore::GET_CHAMPION_BONES_ITEM_ID()
 	// else default is 0 for DM2
 	return 0;
 }
+
+// SPX: For displaying wall side gibberish text or not, take an object ID and test if text is visible or not
+Bit8u SkWinCore::IS_OBJECT_VISIBLE_TEXT(ObjectID rlObject)
+{
+	if (rlObject == OBJECT_NULL)
+		return 0;
+	if (rlObject.DBType() == dbText)
+	{
+		Text *xText;
+		xText = GET_ADDRESS_OF_RECORD2(rlObject);
+		return xText->TextVisibility();
+	}
+	return 0;
+}

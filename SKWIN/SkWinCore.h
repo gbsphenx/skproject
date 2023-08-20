@@ -867,6 +867,8 @@ public:
 	void TEST_TEXT();
 	Bit8u* DIRECT_QUERY_GDAT_ENTRY_DATA_BUFF(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4);
 	Bit8u* DIRECT_QUERY_GDAT_TEXT(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u *buff);
+	Bit8u IS_OBJECT_VISIBLE_TEXT(ObjectID rlObject);
+
 	Bit8u SkWinCore::GET_CHAMPION_BONES_ITEM_ID();
 	void STUN_CHAMPION(U16 player, U16 stunvalue);
 

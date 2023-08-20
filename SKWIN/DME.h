@@ -4,6 +4,7 @@
 #include <SkVersionControl.h>
 
 #include <defines.h>
+#include <SkCodeParam.h> // SPX: allow control of DM1 vs DM2 behaviour
 
 // Signed (i)nteger
 typedef int8_t i8;
@@ -394,9 +395,19 @@ namespace DMEncyclopaedia {
 		U8 TextMode() const { return (w2 >> 1)&3; } // M!2,1,03
 		U16 TextIndex() const { return (w2 >> 3)&0x1fff; } // M!2,3,1FFF
 		U8 SimpleTextExtUsage() const { return (TextIndex() >> 8)&0x1f; } // M!3,3,1F
-		U8 TextVisibility() const { return (U8)(w2 & 0x0001); } // M!2,1,01
+		//U8 TextVisibility() const { return (U8)(w2 & 0x0001); } // M!2,1,01
+		// SPX: DM2 => bit 1 set = visible // DM1 => bit 1 set = invisible (deactivated)
+		U8 TextVisibility() {
+			U8 iVisibilityFlag = (U8)(w2 & 0x0001);
+			if (SkCodeParam::bDM1Mode)
+				return !iVisibilityFlag;
+			return iVisibilityFlag;
+		}
+
 		void TextVisibility(U16 val) {
 			val &= 0x0001;
+			if (SkCodeParam::bDM1Mode)
+				val = !val; // invert value 0 <-> 1 because DM1 visibility means INVISIBLE = 0
 			w2 &= 0xfffe;
 			w2 |= val;
 		}
@@ -1972,7 +1983,7 @@ namespace DM2Internal {
 		U16 w4;							// @4 // (w4) tile record
 		U16 w6[4];						// @6 // (w6) ornate index in GDAT // bit0-9: ornate index, bit10-15: frame index
 											// (w6[0] serving as opened door status : open = 0 .... 4 = closed
-		U16 xvalue;					// @14 // (w14) actuator value , portrait id ..
+		U16 xvalue;					// @14 // (w14) actuator value , portrait id, record link ..
 
 
 

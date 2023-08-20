@@ -9324,7 +9324,8 @@ ObjectID SkWinCore::_0cee_1a46(ExtendedTileInfo *ref, ObjectID recordLink, i16 d
 _1ad5:
 							ref->w6[RCJ(4,bp06 -3)] = 0;
 							//^0CEE:1AE4
-							if (bp06 == 5 && bp04->TextVisibility()) {
+							//if (bp06 == 5 && bp04->TextVisibility()) {
+							if ( (SkCodeParam::bDM1Mode || bp06 == 5) && bp04->TextVisibility()) { // SPX: allow DM1 text (when on side) to show in xvalue as RL, then we may display the gibberish side if visible
 								//^0CEE:1AF8
 								ref->xvalue = (recordLink);
 							}
@@ -20944,16 +20945,18 @@ _1cb6:
 				case ACTUATOR_TYPE_DM1_ITEM_EATER: // 0x04 -> 'Activator, item eater
 					printf("ITEM EATER: expected = %d / in hand = %d\n", bp18, GET_DISTINCTIVE_ITEMTYPE(si));
 					bp2c = (GET_DISTINCTIVE_ITEMTYPE(si) == bp18) ? 1 : 0;
-					di = (bp04->RevertEffect() == bp2c) ? 1 : 0;
-					if (bp2c == 0 || bp04->OnceOnlyActuator() == 0)
+					if (bp2c == 0) // not the expected item
 						break;
 					DEALLOC_RECORD(REMOVE_OBJECT_FROM_HAND());
 					//DM1_ROTATE_ACTUATOR_LIST(2, xx, yy, -1, bp10);
-					bDelayedActuatorsRotation = 1;
-					iWallSideToRotate = bp10;
+					//bDelayedActuatorsRotation = 1;
+					//iWallSideToRotate = bp10;
+					//di = (bp04->RevertEffect() == bp2c) ? 1 : 0;
+					di = 0; // allow actuator invoke further
 					if (bp04->SoundEffect() != 0 || SkCodeParam::bDM1TQMode == 1) {	// SPX: in TQ, wall trigger do sound, no matter sound flag
 						QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, glbPlayerPosX, glbPlayerPosY, 1, 0x8C, 0x80);
 					}
+
 					break;
 
 				// SPX: addition for DM1 retrocompatibility
@@ -22836,6 +22839,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		return -1;
 	//^32CB:17A8
 	if (bp2a != 0) {
+		U8 bDrawSideTextPanel = 1; // default for DM2 mode
 		//^32CB:17B1
 		U8 bp20;
 		if (yy == 0) {
@@ -22848,6 +22852,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		}
 		else {
 			//^32CB:17C9
+			// xFD is the L-side text panel, then xFE would be the R-side text panel if they were not symmetric
 			if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dtImage, 0xFE) != 0) { // SPX: GDAT2 never has 0xFE image ???
 				//^32CB:17E0
 				bp20 = 0xFE;
@@ -22864,8 +22869,17 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		if (zz == 0)
 			//^32CB:181D
 			glbTempPicture.colorKeyPassThrough = -2;
+		// SPX: this draws the text panel or default gibberish side text. In case of DM1, the gibberish must not be displayed if the text is not visible.
+		if (SkCodeParam::bDM1Mode)
+		{
+			ObjectID xTextObject = tblCellTilesRoom[cellPos].xsrd.xvalue;
+			if (!IS_OBJECT_VISIBLE_TEXT(xTextObject))
+				bDrawSideTextPanel = 0;
+		}
+
+		if (bDrawSideTextPanel == 1) // SPX: added this condition
 		//^32CB:1823
-		DRAW_TEMP_PICST();
+			DRAW_TEMP_PICST();
 		//^32CB:1827
 		if (yy != 0)
 			//^32CB:182D
@@ -61712,10 +61726,11 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 					continue;
 				//^3A15:2283
 				X16 bp10 = bp08->SimpleTextExtUsage();
-				if (bp10 != 5 && bp10 != 7)
+				if (!SkCodeParam::bDM1Mode && (bp10 != 5 && bp10 != 7)) // DM1 Compatibility mode or DM2 Ext condition
 					continue;
 				//^3A15:22A6
-				bp08->TextVisibility((ref->ActionType() == 2) ? !bp08->TextVisibility() : ((ref->ActionType() == 0) ? 1 : 0));
+				// bp08->TextVisibility((ref->ActionType() == 2 [TOGGLE] ) ? !bp08->TextVisibility() : ((ref->ActionType() == 0 [OPEN] ) ? 1 [VISIBLE] : 0 [NOT VISIBLE]));
+				bp08->TextVisibility((ref->ActionType() == ACTMSG_TOGGLE) ? !bp08->TextVisibility() : ((ref->ActionType() == ACTMSG_OPEN_SET) ? 1 : 0));
 				if (bp10 != 7)
 					continue;
 				//^3A15:22EA

@@ -632,6 +632,10 @@ enum SkillLevel {
 //#define GDAT_ORNATE_POSITION_CENTER				13
 //#define GDAT_ORNATE_POSITION_CENTER_RIGHT		18
 
+#define GDAT_FLOOR_ORNATE__POSITION			0x05
+#define GDAT_FLOOR_ORNATE__DO_NOT_FLIP		0x07	// 1 = do not flip that graphics
+#define GDAT_FLOOR_ORNATE__X63				0x63
+
 //------------------------------------------------------------------------------
 //	DOOR STATS & ATTRIBUTES
 //------------------------------------------------------------------------------
@@ -851,6 +855,9 @@ enum SkillLevel {
 #define TIMER_ACTOR__02			2
 #define TIMER_ACTOR__03			3
 
+#define ACTMSG_OPEN_SET			0
+#define ACTMSG_CLOSE_CLEAR		1
+#define ACTMSG_TOGGLE			2
 
 //------------------------------------------------------------------------------
 //	TIMER SPECIAL
