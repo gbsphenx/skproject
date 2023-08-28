@@ -995,7 +995,7 @@ protected:
 	SRECT *ALLOC_TEMP_ORIGIN_RECT(Bit16u width, Bit16u height);
 	Bit16u FIND_ICI_FROM_CACHE_HASH(Bit32u cacheHash, Bit16u *ici);
 	void RECYCLE_MEMENTI(Bit16u mementi, Bit16u yy);
-	void TEST_MEMENT(mement *bp04);
+	int TEST_MEMENT(mement *bp04);	// SPX: changed "void" to "int"
 	mement *_3e74_48c9(Bit16u mementi);
 	void FREE_CACHE_INDEX(Bit16u cacheIndex);
 	void _3e74_4549(Bit16u xx);

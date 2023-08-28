@@ -3478,12 +3478,18 @@ _48a3:
 	return;
 }
 
-void SkWinCore::TEST_MEMENT(mement *bp04)
+// SPX: changed "void" to "int" in order to allow more code on return
+int SkWinCore::TEST_MEMENT(mement *bp04)
 {
+	i32	iDW0ValLen = 0;
+	i32 len = 0;
 	//ATLASSERT(bp04 != NULL);
 	// SPX: use CheckSafePointer to trap more unexpected mem values so that it fails at ASSERT instead of crashing after.
 	ATLASSERT(CheckSafePointer(bp04));
-	i32 len = READ_I32(bp04,(abs(-bp04->dw0())) -4);
+	iDW0ValLen = (abs(-bp04->dw0())) -4;
+	if (iDW0ValLen >= 65536)
+		return 0;
+	len = READ_I32(bp04,iDW0ValLen);
 	if (SkCodeParam::bUseFixedMode)
 	{
 		if (bp04->dw0() != len)
@@ -3493,6 +3499,7 @@ void SkWinCore::TEST_MEMENT(mement *bp04)
 
 	}
 	ATLASSERT(bp04->dw0() == len);
+	return 1; // test passed
 }
 
 //^3E74:48C9
@@ -4306,7 +4313,7 @@ void SkWinCore::_3e74_2b30()
 					tlbMementsPointers[si] = bp08;
 					//^3E74:2BD4
 					COPY_MEMORY(bp04, bp08, bp0c);
-					TEST_MEMENT(bp08);
+					TEST_MEMENT(bp08);	// SPX TODO this part is prone to fail while changing level
 					//^3E74:2BEE
 					if (_4976_5d5e == bp04) {
 						//^3E74:2C02
@@ -17006,6 +17013,7 @@ void SkWinCore::ADJUST_SKILLS(U16 player, U16 yy, U16 zz)
 		//^2C1D:0BF7
 		champion->skills[si] += zz;
 	}
+	/*
 	if (SkCodeParam::bUsePowerDebug)
 	{
 		U8 message[64];
@@ -17014,7 +17022,8 @@ void SkWinCore::ADJUST_SKILLS(U16 player, U16 yy, U16 zz)
 			, getSkillName(di), champion->skills[di]);
 		DISPLAY_HINT_TEXT(glbChampionColor[player], message);
 		SkD((DLV_XP, "%s", message));
-	}
+	}*/
+
 	//^2C1D:0C0A
 	zz = QUERY_PLAYER_SKILL_LV(player, si, 0);	// Compare with new skill level
 	//^2C1D:0C1A
@@ -20468,9 +20477,31 @@ U16 SkWinCore::IS_WALL_ORNATE_SPRING(ObjectID rl)
 	return QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp01, dtWordValue, GDAT_WALL_ORNATE__IS_WATER_SPRING);
 }
 
+
+//  SPX: Taken from CSBWin : Character.cpp : TAG0139a2 / DecodeCharacterValue
+U16 DECODE_CHARACTER_VALUE(U8* buf,i16 num, bool allowTruncation = false)
+{
+  U16 result = 0;
+  do
+  {
+    result <<= 4;
+    if ( (*buf < 'A') || (*buf > 'P') ) 
+    {
+      if (allowTruncation && (*buf == 0)) return result;
+      else
+        return -1;
+    };
+    result += *(buf++) - 'A';
+    num--;
+  } while (num!=0);
+  return result;
+
+}
+
 //^2F3F:009A
 void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 {
+	//CSBWin similarities : Character.cpp:TAG0139be/AddCharacter
 	//^2F3F:009A
 	ENTER(148);
 	//^2F3F:00A0
@@ -20513,7 +20544,7 @@ void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 	champion->lastName[bp0e] = 0;
 //DEBUG_DUMP_ULP();
 	skhero *bp08 = reinterpret_cast<skhero *>(QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_CHAMPIONS, U8(heroType), dt08, 0x00));
-#if DM2_EXTENDED_MODE == 1	// TODOTo be replaced with fixedmode + checkmem
+#if DM2_EXTENDED_MODE == 1	// TODO To be replaced with fixedmode + checkmem
 	if (bp08 == NULL)
 		RAISE_SYSERR(SYSTEM_ERROR__NO_PLAYER_DATA);
 #endif
@@ -20553,6 +20584,115 @@ void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 	champion->curFood((RAND() & 255) + START_BASE_FOOD);
 	champion->curWater((RAND() & 255) + START_BASE_WATER);
 	//^2F3F:033F
+
+	// SPX: DM1 Compatibility code -- check TEXT at player position which should contain CHAMPION stats
+	if (SkCodeParam::bDM1Mode) // maybe this could be extendable for DM2 anyway
+	{
+		ObjectID xObject = OBJECT_END_MARKER;
+		U8 iPlayerPosX = glbPlayerPosX;
+		U8 iPlayerPosY = glbPlayerPosY;
+		char sHeroInfo[] =
+			"BOGUS\012ILLEGAL HERO\012\012M\012AABBAABBAABB\012ABABABABABABAB\012CCCCCCCCCCCCCCCC";
+
+		for (xObject = GET_TILE_RECORD_LINK(iPlayerPosX, iPlayerPosY); xObject != OBJECT_END_MARKER; xObject = GET_NEXT_RECORD_LINK(xObject)) {
+			if (xObject.DBType() == dbText)
+				break;
+		}
+		if (xObject != OBJECT_END_MARKER) {
+			U8* sHeroPtr = NULL;
+			U8 sBuffer[32];
+			int iStrLimit = 7;
+			int iWriteIndex = 0;
+			int iSkillIndex = 0;
+			memset(sBuffer, 0, 32);
+			QUERY_MESSAGE_TEXT((U8*)sHeroInfo, xObject, 0x8000);
+			if (sHeroInfo[0] != 0)
+			{
+				U8 sGender = '?';
+				U16 iStatValue = 0;
+				sHeroPtr = (U8*) &sHeroInfo;
+				// Read first name
+				while (*sHeroPtr != 10 && iStrLimit > 0)
+				{
+					sBuffer[iWriteIndex] = *sHeroPtr;
+					sHeroPtr++;
+					iStrLimit--;
+					iWriteIndex++;
+				}
+				memset(champion->firstName, 0, 8);
+				strcpy((char*)champion->firstName, (char*)sBuffer);
+
+				// Read last name
+				sHeroPtr++;
+				iStrLimit = 16;
+				iWriteIndex = 0;
+				while (*sHeroPtr != 10 && iStrLimit > 0)
+				{
+					sBuffer[iWriteIndex] = *sHeroPtr;
+					sHeroPtr++;
+					iStrLimit--;
+					iWriteIndex++;
+				}
+				memset(champion->lastName, 0, 16);
+				strcpy((char*)champion->lastName, (char*)sBuffer);
+
+				// Read gender
+				sHeroPtr+=2;
+				sGender=*sHeroPtr;
+
+				// Read basic stats
+				sHeroPtr+=2;
+				iStatValue = DECODE_CHARACTER_VALUE(sHeroPtr, 4);
+				champion->maxHP(iStatValue);
+				champion->curHP(iStatValue);
+				sHeroPtr+=4;
+				iStatValue = DECODE_CHARACTER_VALUE(sHeroPtr, 4);
+				champion->maxStamina(iStatValue);
+				champion->curStamina(iStatValue);
+				sHeroPtr+=4;
+				iStatValue = DECODE_CHARACTER_VALUE(sHeroPtr, 4);
+				champion->maxMP(iStatValue);
+				champion->curMP(iStatValue);
+				sHeroPtr+=4;
+
+				sHeroPtr++; // new line
+				// Read attributes stats
+				for (iSkillIndex = 0; iSkillIndex < 7; iSkillIndex++)
+				{
+					iStatValue = DECODE_CHARACTER_VALUE(sHeroPtr, 2);
+					champion->attributes[iSkillIndex][0] = iStatValue;
+					champion->attributes[iSkillIndex][1] = champion->attributes[iSkillIndex][0];
+					sHeroPtr+=2;
+				}
+
+				sHeroPtr++; // new line
+				// Read sub-skills levels
+				for (iSkillIndex = 4; iSkillIndex < 20; iSkillIndex++)
+				{
+					X32 iXP = 0;
+					iStatValue = DECODE_CHARACTER_VALUE(sHeroPtr, 1);
+					iXP = 125 << iStatValue;
+					champion->skills[iSkillIndex] = iXP;
+					sHeroPtr++;
+				}
+				//-- Main skills level
+				for (iSkillIndex = 0; iSkillIndex < 4; iSkillIndex++)
+				{
+					X32 iTotalMajorXP = 0;
+					U16 iMainSkill = 0;
+					iMainSkill = (iSkillIndex + 1) << 2;
+					U16 iSubSkill;
+					for (iSubSkill = 0; iSubSkill < 4; iSubSkill++) {
+						iTotalMajorXP += champion->skills[iMainSkill + iSubSkill];
+					}
+					champion->skills[iSkillIndex] = iTotalMajorXP;
+				}
+
+
+			}
+		}
+	}
+		
 
 	// SPX: Like a debugging character, make it strong from the beginning!
 	if (SkCodeParam::bUseSuperMode)
@@ -61876,19 +62016,20 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 			case ACTUATOR_TYPE_DM1_COUNTER: // SPX: retrocompatibility, DM1 counter
 				// DM1 counter does not work the same as DM2 counter
 				printf("COUNTER VALUE = %d with EFFECT %d\n", bp04->ActuatorData(), ref->ActionType());
-				bp0c = (bp04->ActuatorData() == 0 || (bp04->ActuatorData() & 256) != 0) ? 1 : 0;
-				if (ref->ActionType() == 1) { // close
+				bp0c = (bp04->ActuatorData() == 0 || (bp04->ActuatorData() & 256) != 0) ? 1 : 0; // not sure what this is
+				if (ref->ActionType() == ACTMSG_CLOSE_CLEAR) { // close
 					bp04->ActuatorData(bp04->ActuatorData()  - 1);
 				}
-				else if (ref->ActionType() == 0) { // open
+				else if (ref->ActionType() == ACTMSG_OPEN_SET) { // open
 					if (bp04->OnceOnlyActuator() == 0 || bp04->ActuatorData() != 0) {
 						bp04->ActuatorData(bp04->ActuatorData() + 1);
 					}
 				}
 				printf("COUNTER VALUE NEW = %d\n", bp04->ActuatorData());
 				// then test if the counter equals 0, if so, trigger the counter actuator action
-				bp0e = (bp04->ActuatorData() == 0 || (bp04->ActuatorData() & 256) != 0) ? 1 : 0;
-				if (bp0e != 0)
+				//bp0e = (bp04->ActuatorData() == 0 || (bp04->ActuatorData() & 256) != 0) ? 1 : 0;
+				bp0e = (bp04->ActuatorData() == 0) ? 1 : 0; // if counter is zero, then we can continue to invoke actuator
+				if (bp0e == 0)
 					break;
 				INVOKE_ACTUATOR(bp04, bp04->ActionType(), 0);
 				break;

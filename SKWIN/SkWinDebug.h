@@ -20,7 +20,7 @@
 #define DLV_GUI 0
 #define DLV_MEM 0
 #define DLV_GLD 0
-#define DLV_DBM 1
+#define DLV_DBM 0
 #define DLV_DYN 0
 #define DLV_SYS 0
 #define DLV_RCT 0
