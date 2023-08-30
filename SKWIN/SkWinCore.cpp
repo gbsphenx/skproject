@@ -20438,6 +20438,9 @@ _0b01:
 //^0CEE:317F
 U16 SkWinCore::IS_WALL_ORNATE_ALCOVE_FROM_RECORD(ObjectID rl)
 {
+	// SPX: Add protection : if object is not a simple actuator or actuator, then exit!
+	if (rl.RealDBType() != DB_CATEGORY_SIMPLE_ACTUATOR && rl.RealDBType() != DB_CATEGORY_ACTUATOR)
+		return 0;
 	//^0CEE:317F
 	ENTER(0);
 	//^0CEE:3182
@@ -20465,6 +20468,10 @@ ObjectID SkWinCore::GET_WALL_TILE_ANYITEM_RECORD(U16 xx, U16 yy)
 //^0CEE:31D7
 U16 SkWinCore::IS_WALL_ORNATE_SPRING(ObjectID rl)
 {
+	// SPX: Add protection : if object is not a simple actuator or actuator, then exit!
+	// (case was Drumstick (misc id = 35) leading to fountain (wall id = 35)
+	if (rl.RealDBType() != DB_CATEGORY_SIMPLE_ACTUATOR && rl.RealDBType() != DB_CATEGORY_ACTUATOR)
+		return 0;
 	//^0CEE:31D7
 	ENTER(2);
 	//^0CEE:31DB
@@ -20612,7 +20619,7 @@ void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 				U16 iStatValue = 0;
 				sHeroPtr = (U8*) &sHeroInfo;
 				// Read first name
-				while (*sHeroPtr != 10 && iStrLimit > 0)
+				while (*sHeroPtr != 10 && iStrLimit >= 0)
 				{
 					sBuffer[iWriteIndex] = *sHeroPtr;
 					sHeroPtr++;
@@ -20624,9 +20631,19 @@ void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 
 				// Read last name
 				sHeroPtr++;
+				memset(sBuffer, 0, 32);
 				iStrLimit = 16;
 				iWriteIndex = 0;
-				while (*sHeroPtr != 10 && iStrLimit > 0)
+				while (*sHeroPtr != 10 && iStrLimit >= 0)
+				{
+					sBuffer[iWriteIndex] = *sHeroPtr;
+					sHeroPtr++;
+					iStrLimit--;
+					iWriteIndex++;
+				}
+				iStrLimit=16;
+				sHeroPtr++;
+				while (*sHeroPtr != 10 && iStrLimit >= 0)
 				{
 					sBuffer[iWriteIndex] = *sHeroPtr;
 					sHeroPtr++;
@@ -20634,10 +20651,11 @@ void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 					iWriteIndex++;
 				}
 				memset(champion->lastName, 0, 16);
-				strcpy((char*)champion->lastName, (char*)sBuffer);
+				//strcpy((char*)champion->lastName, (char*)sBuffer);
+				strncpy((char*)champion->lastName, (char*)sBuffer, 16);
 
 				// Read gender
-				sHeroPtr+=2;
+				sHeroPtr+=1;
 				sGender=*sHeroPtr;
 
 				// Read basic stats
@@ -21091,14 +21109,20 @@ _1cb6:
 						break;
 					DEALLOC_RECORD(REMOVE_OBJECT_FROM_HAND());
 					//DM1_ROTATE_ACTUATOR_LIST(2, xx, yy, -1, bp10);
-					//bDelayedActuatorsRotation = 1;
-					//iWallSideToRotate = bp10;
+					bDelayedActuatorsRotation = 1;
+					iWallSideToRotate = bp10;
 					//di = (bp04->RevertEffect() == bp2c) ? 1 : 0;
 					di = 0; // allow actuator invoke further
 					if (bp04->SoundEffect() != 0 || SkCodeParam::bDM1TQMode == 1) {	// SPX: in TQ, wall trigger do sound, no matter sound flag
 						QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, glbPlayerPosX, glbPlayerPosY, 1, 0x8C, 0x80);
 					}
-
+					
+					if (bp44 == ACTUATOR_TYPE_DM1_ITEM_EATER && bp04->OnceOnlyActuator() == 1)
+					{
+						bp04->Disable();
+						bp04->DisableToNoneType();
+						bp16 = bp04->ActuatorType();
+					}
 					break;
 
 				// SPX: addition for DM1 retrocompatibility
