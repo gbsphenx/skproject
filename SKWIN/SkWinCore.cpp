@@ -5177,15 +5177,15 @@ Bit16u SkWinCore::IS_ITEM_FIT_FOR_EQUIP(ObjectID recordLink, i16 inventorySlot, 
 }
 
 //^2C1D:038B
-// SPX: _2c1d_038b renamed RETRIEVE_ITEM_BONUS
-Bit16u SkWinCore::RETRIEVE_ITEM_BONUS(ObjectID x1, Bit8u x2, Bit16u x3, Bit16u x4)
+// SPX: _2c1d_038b renamed RETRIEVE_ITEM_BONUS // changed Bit16u to Bit16 since return can be negative !
+__int16 SkWinCore::RETRIEVE_ITEM_BONUS(ObjectID x1, Bit8u x2, Bit16u x3, Bit16u x4)
 {
 	//^2C1D:038B
 	ENTER(2);
 	//^2C1D:0390
 	__int16 si = x4;
 	//^2C1D:0393
-	Bit16u bp02 = QUERY_GDAT_DBSPEC_WORD_VALUE(x1, x2);
+	__int16 bp02 = QUERY_GDAT_DBSPEC_WORD_VALUE(x1, x2);
 	//^2C1D:03A4
 	if (bp02 == 0)
 		return 0;
@@ -5256,6 +5256,7 @@ void SkWinCore::PROCESS_ITEM_BONUS(__int16 player, ObjectID recordLink, i16 inve
 	//^2C1D:03E7
 	ObjectID di = recordLink;
 	__int16 si = x4;
+	__int16 iBonusModifier = 0; // SPX: Added as a fix instead of using unsigned bp06
 	//^2C1D:03F3
 	if (player < 0)
 		return;
@@ -5283,19 +5284,31 @@ void SkWinCore::PROCESS_ITEM_BONUS(__int16 player, ObjectID recordLink, i16 inve
 			if (si != 0 && si != 3 && si != -2) {
 				//^2C1D:0472
 				// SPX: 0x14 MANA BONUS
-				bp06 = RETRIEVE_ITEM_BONUS(di, GDAT_ITEM_BONUS_MANA, bp0a, si);
+				iBonusModifier = RETRIEVE_ITEM_BONUS(di, GDAT_ITEM_BONUS_MANA, bp0a, si);
 				//^2C1D:0483
-				if (bp06 != 0) {
+				if (iBonusModifier != 0) {
 					//^2C1D:0487
 					if (si == 1 || si == -1) {
-						//^2C1D:0491
-						champion->manaMax += bp06;
+						if (SkCodeParam::bUseFixedMode) // SPX: done to prevent weird cases of bonuses not taken into account correctly.
+						{
+							__int16 iChampionManaMax = (__int16) champion->manaMax;
+							iChampionManaMax += iBonusModifier;
+							if (iChampionManaMax < 0)
+							{
+								iChampionManaMax = 0;
+								iBonusModifier = 0; // prevent bad stuff for curMP;
+							}
+							champion->manaMax = (Bit16u) iChampionManaMax;
+						}
+						else
+							//^2C1D:0491
+							champion->manaMax += iBonusModifier;
 					}
 					else {
 						//^2C1D:049D
 						if (si == 2) {
 							//^2C1D:04A2
-							champion->curMP(BETWEEN_VALUE(0, champion->curMP() + bp06, MAXMP_BONUS));
+							champion->curMP(BETWEEN_VALUE(0, champion->curMP() + iBonusModifier, MAXMP_BONUS));
 						}
 					}
 					//^2C1D:04C1
@@ -5305,17 +5318,17 @@ void SkWinCore::PROCESS_ITEM_BONUS(__int16 player, ObjectID recordLink, i16 inve
 				// SPX: Bonus 0x15 => 0x1B check for boosting attributes (x15 luck to x1B antifire)
 				for (Bit16u attributeIndex = 0; attributeIndex < ATTRIBUTE_COUNT; attributeIndex++) {
 					//^2C1D:04D1
-					bp06 = RETRIEVE_ITEM_BONUS(di, attributeIndex + GDAT_ITEM_BONUS_ATTRIBUTE_FIRST, bp0a, si);
+					iBonusModifier = RETRIEVE_ITEM_BONUS(di, attributeIndex + GDAT_ITEM_BONUS_ATTRIBUTE_FIRST, bp0a, si);
 					//^2C1D:04E6
-					if (bp06 != 0) {
+					if (iBonusModifier != 0) {
 						//^2C1D:04EA
 						if (si == 1 || si == -1) {
 							//^2C1D:04F4
-							champion->attributesEnhanced[attributeIndex] = champion->attributesEnhanced[attributeIndex] + bp06;
+							champion->attributesEnhanced[attributeIndex] = champion->attributesEnhanced[attributeIndex] + iBonusModifier;
 						}
 						else {
 							//^2C1D:050D
-							BOOST_ATTRIBUTE(champion, attributeIndex, bp06);
+							BOOST_ATTRIBUTE(champion, attributeIndex, iBonusModifier);
 						}
 						//^2C1D:0520
 						champion->heroFlag |= CHAMPION_FLAG_3000;	// 0x3000
@@ -5327,11 +5340,11 @@ void SkWinCore::PROCESS_ITEM_BONUS(__int16 player, ObjectID recordLink, i16 inve
 			// SPX: Bonus 0x1E => 0x31 , 20 values = 4*5 skills
 			for (Bit16u skillIndex = 0; skillIndex < SKILL_COUNT; skillIndex++) {
 				//^2C1D:0539
-				bp06 = RETRIEVE_ITEM_BONUS(di, skillIndex + GDAT_ITEM_BONUS_SKILL_FIRST, bp0a, si);
+				iBonusModifier = RETRIEVE_ITEM_BONUS(di, skillIndex + GDAT_ITEM_BONUS_SKILL_FIRST, bp0a, si);
 				//^2C1D:054E
 				if (bp06 != 0) {
 					//^2C1D:0552
-					champion->skillBonus[skillIndex] = champion->skillBonus[skillIndex] + bp06;
+					champion->skillBonus[skillIndex] = champion->skillBonus[skillIndex] + iBonusModifier;
 					//^2C1D:056B
 					champion->heroFlag |= CHAMPION_FLAG_2000;	// 0x2000
 					bp0c = 1;
@@ -5340,22 +5353,22 @@ void SkWinCore::PROCESS_ITEM_BONUS(__int16 player, ObjectID recordLink, i16 inve
 			}
 			//^2C1D:0582
 			// SPX: Bonus 0x33 : SPEED ?
-			bp06 = RETRIEVE_ITEM_BONUS(di, GDAT_ITEM_BONUS_WALK_SPEED, bp0a, si);
+			iBonusModifier = RETRIEVE_ITEM_BONUS(di, GDAT_ITEM_BONUS_WALK_SPEED, bp0a, si);
 			//^2C1D:0593
-			if (bp06 != 0) {
+			if (iBonusModifier != 0) {
 				//^2C1D:0597
-				champion->walkSpeed = champion->walkSpeed + bp06;
+				champion->walkSpeed = champion->walkSpeed + iBonusModifier;
 				bp0c = 1;
 			}
 			//^2C1D:05AC
 			// SPX: Bonus 0x32 : LIGHT
 			if (si != 2 && si != -1 && si != 3) {
 				//^2C1D:05BB
-				bp06 = RETRIEVE_ITEM_BONUS(di, GDAT_ITEM_BONUS_LIGHT, bp0a, si);
+				iBonusModifier = RETRIEVE_ITEM_BONUS(di, GDAT_ITEM_BONUS_LIGHT, bp0a, si);
 				//^2C1D:05CC
 				if (bp06 != 0) {
 					//^2C1D:05D0
-					glbGlobalSpellEffects.Light += bp06;
+					glbGlobalSpellEffects.Light += iBonusModifier;
 					if (si != 0) {
 						//^2C1D:05D8
 						RECALC_LIGHT_LEVEL();
@@ -49974,14 +49987,14 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(__int16 xpos, __int16 ypos, Objec
 	//^2FCF:244A
 	ObjectID *bp1c = 0;
 	//^2FCF:2454
-	Bit16u bp0e;
+	Bit16u iObjectDBType; // bp0e
 	Bit16u di;
 	/*SkD((DLV_TWEET, "Tweet: Invoked _2fcf_2444 (x:%d, y:%d, object:%s) (s:%d, t:%d, y:%d) \n"
 		, xpos, ypos, static_cast<LPCSTR>(getRecordNameOf(recordLink)), ss, tt, uu
 		));*/
 	if (recordLink != OBJECT_NULL) {
 		//^2FCF:245A
-		bp0e = recordLink.DBType();
+		iObjectDBType = recordLink.DBType();
 		//^2FCF:2466
 		di = GET_DISTINCTIVE_ITEMTYPE(recordLink);
 		//^2FCF:2471
@@ -50001,11 +50014,11 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(__int16 xpos, __int16 ypos, Objec
 	}
 	else {
 		//^2FCF:24D7
-		bp0e = 0xffff;
+		iObjectDBType = 0xFFFF;
 		di = 0xffff;
 	}
 	//^2FCF:24DF
-	if (place == FCT_REMOVE_OFF && bp0e != 0xffff) {
+	if (place == FCT_REMOVE_OFF && iObjectDBType != 0xffff) {
 		//^2FCF:24EB
 		if (bp1c == NULL) {
 			//^2FCF:24F3
@@ -50054,7 +50067,7 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(__int16 xpos, __int16 ypos, Objec
 				}
 			}
 			//^2FCF:25B2
-			if (bp12 == dbText && bp0e == 0xffff && place == FCT_PLACE_ON && ss == 0) { // if (bp12 == dbText && bp0e == 0xffff && place != FCT_REMOVE_OFF && ss == 0) {
+			if (bp12 == dbText && iObjectDBType == 0xffff && place == FCT_PLACE_ON && ss == 0) { // if (bp12 == dbText && bp0e == 0xffff && place != FCT_REMOVE_OFF && ss == 0) {
 				//^2FCF:25CA
 				Text *bp18 = GET_ADDRESS_OF_RECORD2(si);
 				//^2FCF:25D7
@@ -50096,7 +50109,7 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(__int16 xpos, __int16 ypos, Objec
 		}
 	}
 	//^2FCF:26B7
-	if (place == FCT_PLACE_ON && bp0e != 0xffff) { // if (place != FCT_REMOVE_OFF && bp0e != 0xffff) {
+	if (place == FCT_PLACE_ON && iObjectDBType != 0xffff) { // if (place != FCT_REMOVE_OFF && bp0e != 0xffff) {
 		//^2FCF:26C3
 		if (bp1c == NULL) {
 			//^2FCF:26CB
@@ -50157,7 +50170,7 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(__int16 xpos, __int16 ypos, Objec
 					default:
 						//^2FCF:2801
 						continue;
-					case 1: // 0x01: Activator, trap floor
+					case ACTUATOR_FLOOR_TYPE__EVERYTHING: // 0x01: Activator, trap floor
 						//^2FCF:280B
 						if (ss != 0)
 							//^2FCF:2811
@@ -50174,7 +50187,7 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(__int16 xpos, __int16 ypos, Objec
 						continue;
 					case 2: // 0x02: -
 						//^2FCF:2829
-						if (bp0e > 4)
+						if (iObjectDBType > 4)	// weapons to cloud
 							//^2FCF:282F
 							continue;
 						//^2FCF:2832
@@ -50187,9 +50200,9 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(__int16 xpos, __int16 ypos, Objec
 							goto _29a8;
 						//^2FCF:2844
 						continue;
-					case 3: // 0x03: Activator, trap floor
+					case ACTUATOR_FLOOR_TYPE__PARTY: // 0x03: Activator, trap floor
 						//^2FCF:2847
-						if (bp0e != 0xffff)
+						if (iObjectDBType != 0xffff)
 							//^2FCF:284D
 							continue;
 						//^2FCF:2850
@@ -50216,7 +50229,7 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(__int16 xpos, __int16 ypos, Objec
 						bp10 = (glbPlayerDir +1 == bp14) ? 1 : 0;
 						//^2FCF:288D
 						goto _29a8;
-					case 4: // 0x04: Activator, trap floor
+					case ACTUATOR_FLOOR_TYPE__ITEM: // 0x04: Activator, trap floor
 						//^2FCF:2890
 						if (bp14 != di)
 							//^2FCF:2895
@@ -50228,27 +50241,62 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(__int16 xpos, __int16 ypos, Objec
 						//^2FCF:28A1
 						continue;
 					case 5: // 0x05: -
-					case 6: // 0x06: -
+					case ACTUATOR_FLOOR_TYPE__DM1_CREATURE_GENERATOR: // 0x06: -
 						//^2FCF:2D72
 						continue;
-					case 7: // 0x07: Activator, trap floor
-						//^2FCF:28A4
-						if (bp0e > 4)
-							//^2FCF:28AA
-							continue;
-						//^2FCF:28AD
-						if (bp0e == 0xffff)
-							//^2FCF:28B3
-							continue;
-						//^2FCF:28B6
-						if (bp22 == 0)
-							//^2FCF:28BC
-							continue;
+					case ACTUATOR_FLOOR_TYPE__CREATURE: // 0x07: Activator, trap floor
+						if (!SkCodeParam::bUseFixedMode)	// SPX: the original converted code below is strange, as it never triggers something.
+						{
+							//^2FCF:28A4
+							if (iObjectDBType > 4) // weapon to cloud
+								//^2FCF:28AA
+								continue;
+							//^2FCF:28AD
+							if (iObjectDBType == 0xffff)
+								//^2FCF:28B3
+								continue;
+							//^2FCF:28B6
+							if (bp22 == 0)
+								//^2FCF:28BC
+								continue;
+						}
+						else // I reimplement from my understanding and specially for DM1 compatibility
+						{
+							if (iObjectDBType == DB_CATEGORY_CREATURE)
+							{
+								Bit8u iActuatorTriggers = 0;
+								Bit16u iActuatorEffectType = bp04->ActionType();
+
+								if (place == FCT_PLACE_ON &&
+									(iActuatorEffectType == ACTEFFECT_STEP_ON__OPEN_SET ||
+									iActuatorEffectType == ACTEFFECT_STEP_ON__CLOSE_CLEAR ||
+									iActuatorEffectType == ACTEFFECT_STEP_ON__TOGGLE ||
+									iActuatorEffectType == ACTEFFECT_STEP_CONSTANT__CLOSE))
+									iActuatorTriggers = 1;
+								else if (place == FCT_REMOVE_OFF &&
+									(iActuatorEffectType == ACTEFFECT_STEP_CLOSE__OPEN_SET ||
+									iActuatorEffectType == ACTEFFECT_STEP_CLOSE__CLOSE_CLEAR ||
+									iActuatorEffectType == ACTEFFECT_STEP_CLOSE__TOGGLE ||
+									iActuatorEffectType == ACTEFFECT_STEP_CONSTANT__OPEN))
+									iActuatorTriggers = 1;
+
+								if (iActuatorTriggers == 1)
+								{
+									if (bp04->SoundEffect() != 0) {
+										QUEUE_NOISE_GEN2(
+											(bp1e == 0xffff) ? GDAT_CATEGORY_FLOOR_GFX : GDAT_CATEGORY_WALL_GFX,
+											(bp1e == 0xffff) ? GET_FLOOR_DECORATION_OF_ACTUATOR(bp04) : GET_WALL_DECORATION_OF_ACTUATOR(bp04),
+											SOUND_STD_ACTIVATION, 0xfe, xpos, ypos, 0x01, 0x8c, 0x80);
+									}
+									INVOKE_ACTUATOR(bp04, iActuatorEffectType, 0);
+								}
+							}
+						}
 						//^2FCF:28BF
 						continue;
-					case 8: // 0x08: Activator, trap floor
+					case ACTUATOR_FLOOR_TYPE__ITEM_POSSESSION: // 0x08: Activator, trap floor
 						//^2FCF:28C2
-						if (bp0e != 0xffff)
+						if (iObjectDBType != 0xffff)
 							//^2FCF:28C8
 							continue;
 						//^2FCF:28CB
@@ -50355,6 +50403,13 @@ _29a8:
 						//^2FCF:294F
 						continue;
 					}
+				case ACTUATOR_TYPE_DM1_WALL_SWITCH: // SPX DM1 retrocompatibility, triggered when an item comes into an alcove or is removed from alcove
+					{
+						if (bp24 != 0)
+							continue;
+						goto _29a8;
+						continue;
+					}
 			}
 			//^2FCF:2905
 			continue;
@@ -50381,7 +50436,7 @@ _29a8:
 					if (bp18->SimpleTextExtUsage() == 10) { // 0x0a -> Marsh
 						//^2FCF:2AA7
 						//^2FCF:2B5B
-						if (bp0e != 0xffff)
+						if (iObjectDBType != 0xffff)
 							//^2FCF:2B61
 							continue;
 						//^2FCF:2B64
@@ -50462,7 +50517,7 @@ _29a8:
 					continue;
 				}
 				//^2FCF:2AAD
-				if (bp0e != 0xffff) {
+				if (iObjectDBType != 0xffff) {
 					//^2FCF:2AB3
 					continue;
 				}
