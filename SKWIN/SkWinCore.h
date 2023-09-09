@@ -863,6 +863,7 @@ public:
 	X16 DM1_ROTATE_ACTUATOR_LIST(X16 localActionType, i16 iMapX, i16 iMapY, i16 iMapLevel, U16 iSide);
 	ObjectID GET_WALL_TILE_ANY_TAKEABLE_ITEM_RECORD(U16 iMapX, U16 iMapY, U16 iDirection);
 	void SET_NEXT_RECORD_LINK(ObjectID rlSourceObject, ObjectID rlObjectToAppend);
+	X16 SELECT_CHAMPION_FROM_GDAT(U8 iChampionID);
 
 	void TEST_TEXT();
 	Bit8u* DIRECT_QUERY_GDAT_ENTRY_DATA_BUFF(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4);
@@ -874,6 +875,10 @@ public:
 
 	void DEBUG_HELP_WRITER(const char* sinfo, const void* xdata, unsigned int blocksize, unsigned int repeat);
 	void DEBUG_HELP_DISPLAY_STACK(i16 iMapX, i16 iMapY, i16 iMapLevel);
+// SPX: End of new procedures
+
+// SPX: Special procedures
+	int READ_DUNGEON_STRUCTURE_BW(X16 isNewGame);
 // SPX: End of new procedures
 
 	const char *getXActrName(int x);
@@ -1035,7 +1040,7 @@ protected:
 	__int16 BETWEEN_VALUE(__int16 minv, __int16 newv, __int16 maxv);
 	void RECALC_LIGHT_LEVEL();
 	Bit16u IS_ITEM_FIT_FOR_EQUIP(ObjectID recordLink, i16 inventorySlot, Bit16u onlyBodyPart);
-	Bit16u RETRIEVE_ITEM_BONUS(ObjectID x1, Bit8u x2, Bit16u x3, Bit16u x4);
+	__int16 RETRIEVE_ITEM_BONUS(ObjectID x1, Bit8u x2, Bit16u x3, Bit16u x4); // SPX: changed to __int16 SIGNED
 	void BOOST_ATTRIBUTE(Champion *ref, Bit16u xx, Bit16u yy);
 	void PROCESS_ITEM_BONUS(__int16 player, ObjectID recordLink, i16 inventorySlot, __int16 x4);	// Is that working?
 	ObjectID REMOVE_POSSESSION(Bit16u player, Bit16u possess);
@@ -1663,7 +1668,7 @@ protected:
 	Bit8u *FORMAT_SKSTR(const Bit8u *format, Bit8u *output);	// Z00* replacement
 	U16 _2066_033c(void *buff, int size);
 	int SKLOAD_READ(void *buff, int size);
-	void _3a15_0002();
+	void INIT_TIMERS(); // _3a15_0002 renamed INIT_TIMERS
 	void DECIDE_DEFAULT_DUNGEON_MAP_CHIP_SET();
 	int READ_DUNGEON_STRUCTURE(X16 isNewGame);
 	void CHECK_TILE_RECORDS();

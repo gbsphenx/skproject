@@ -4283,11 +4283,12 @@ void SkWinCore::GUARANTEE_FREE_CPXHEAP_SIZE(__int32 buffSize)
 //^3E74:2B30
 void SkWinCore::_3e74_2b30()
 {
+	int iDebugLoopCount = 0;
 	// cqOk @ 21:03 2007/02/21
 
 	//^3E74:2B30
 	//^3E74:2B36
-	if (_4976_5d94 != NULL) {
+	if (_4976_5d94 != NULL) {	// mement
 		//^3E74:2B4B
 		mement *bp04 = _4976_5ce6;
 		mement *bp08 = _4976_5ce6;
@@ -4295,6 +4296,10 @@ void SkWinCore::_3e74_2b30()
 		do {
 			//^3E74:2B5E
 			__int32 bp0c = bp04->dw0();
+			//printf("LOAD_DYN4>_3e74_2b30[MEMENT] (#%05d) bp0c (length) = %d\n", iDebugLoopCount, bp0c);
+			// SPX: we can get stuck in the loop, let's assume that after 1000 loop we try to get out, or if the length is ridiculously too much
+			if (SkCodeParam::bUseFixedMode && (iDebugLoopCount > 1000 || bp0c > 1024000))
+				break;
 			//^3E74:2B6E
 			if (bp0c > 0) {
 				//^3E74:2B78
@@ -4340,8 +4345,9 @@ void SkWinCore::_3e74_2b30()
 				//^3E74:2C84
 				PTR_PADA(bp08, bp0c);
 			}
+			iDebugLoopCount++; // debug
 			//^3E74:2C94
-		} while (bp04 != _4976_5cb2);
+		} while (bp04 != _4976_5cb2);	// at some point, this becomes impossible when bp04 never changes and we get stuck in the loop
 
 		//^3E74:2CAC
 		_4976_5cb2 = bp08;
@@ -16477,7 +16483,7 @@ void SkWinCore::_2f3f_04ea_CHAMPION(Bit16u xx, Bit16u yy, Bit16u dir, Bit16u zz,
 	//^2F3F:0513
 	ObjectID bp0e = REMOVE_OBJECT_FROM_HAND();
 	//^2F3F:051B
-	if (ee == 161) {
+	if (ee == UI_EVENTCODE_EXIT_CRYOCELL) { // 161
 		//^2F3F:0525
 		INTERFACE_CHAMPION(4);
 		//^2F3F:052D
@@ -16514,7 +16520,7 @@ void SkWinCore::_2f3f_04ea_CHAMPION(Bit16u xx, Bit16u yy, Bit16u dir, Bit16u zz,
 		//^2F3F:05CD
 		FIRE_SHOW_MOUSE_CURSOR();
 	}
-	else {
+	else { // ee = UI_EVENTCODE_REVIVE_CHAMPION (160)
 		//^2F3F:05D5
 		if (_4976_404b == 0)
 			//^2F3F:05DC
@@ -16542,28 +16548,31 @@ void SkWinCore::_2f3f_04ea_CHAMPION(Bit16u xx, Bit16u yy, Bit16u dir, Bit16u zz,
 		}
 		//^2F3F:064B
 		ObjectID di = GET_TILE_RECORD_LINK(xx, yy);
-		while (true) {
-			//^2F3F:0658
-			if (di.DBType() == dbActuator) {
-				//^2F3F:0667
-				Actuator *bp08 = GET_ADDRESS_OF_ACTU(di);
-				//^2F3F:0674
-				if (bp08->ActuatorType() == ACTUATOR_TYPE_RESURECTOR)
-				{
-					//^2F3F:0683
-					bp08->OnceOnlyActuator(0);
-					//^2F3F:0688
-					break;
+		// SPX: enter this infinite while only is there is something on the tile (normally that would be the case, calling champion from actuator), but if it isn't, just don't get in the loop.
+		if (SkCodeParam::bUseFixedMode == true && (di != OBJECT_END_MARKER && di != OBJECT_NULL)) {
+			while (true) {
+				//^2F3F:0658
+				if (di.DBType() == dbActuator) {
+					//^2F3F:0667
+					Actuator *bp08 = GET_ADDRESS_OF_ACTU(di);
+					//^2F3F:0674
+					if (bp08->ActuatorType() == ACTUATOR_TYPE_RESURECTOR)
+					{
+						//^2F3F:0683
+						bp08->OnceOnlyActuator(0);
+						//^2F3F:0688
+						break;
+					}
+					else if (bp08->ActuatorType() == ACTUATOR_TYPE_CHAMPION_MIRROR) // SPX: handle DM1 Champion Mirror too
+					{
+						bp08->ActiveStatus(1); // change to "inactive", different from the "once only" status
+						break;
+					}
 				}
-				else if (bp08->ActuatorType() == ACTUATOR_TYPE_CHAMPION_MIRROR) // SPX: handle DM1 Champion Mirror too
-				{
-					bp08->ActiveStatus(1); // change to "inactive", different from the "once only" status
-					break;
-				}
+				//^2F3F:068A
+				di = GET_NEXT_RECORD_LINK(di);
 			}
-			//^2F3F:068A
-			di = GET_NEXT_RECORD_LINK(di);
-		}
+		} // fixed mode
 		//^2F3F:0693
 		if (glbChampionsCount == 1) {
 			//^2F3F:069A
@@ -26398,7 +26407,7 @@ void SkWinCore::INIT_CHAMPIONS() // _2f3f_0789
 				// SPX: Automatic selection of champion (Thoram)
 				SELECT_CHAMPION(0, 1, DIR_NORTH, glbPlayerMap);	// player is imaginarily at 0,1 facing north
 				//^2F3F:08BB
-				_2f3f_04ea_CHAMPION(0, 1, DIR_NORTH, glbPlayerMap, 160);
+				_2f3f_04ea_CHAMPION(0, 1, DIR_NORTH, glbPlayerMap, UI_EVENTCODE_REVIVE_CHAMPION);
 				//^2F3F:08CF
 				_4976_404b = 0;
 				//^2F3F:08D5
@@ -26418,23 +26427,36 @@ void SkWinCore::INIT_CHAMPIONS() // _2f3f_0789
 	//^2F3F:0905
 
 	// SPX: Second loop to check for DM/TQ at 1,0
-	for (di = GET_TILE_RECORD_LINK(1, 0); di != OBJECT_END_MARKER; di = GET_NEXT_RECORD_LINK(di)) {
-		if (di.DBType() == dbActuator) {
-			Actuator *bp08 = GET_ADDRESS_OF_ACTU(di);
-			if (bp08->ActuatorType() == ACTUATOR_TYPE_CHAMPION_MIRROR) { // 0x007F
-				_4976_404b = 1;
-				SELECT_CHAMPION(0, 0, DIR_EAST, glbPlayerMap);	// player is really at 0,0 facing east
-				_2f3f_04ea_CHAMPION(0, 0, DIR_EAST, glbPlayerMap, 160);
-				_4976_404b = 0;
-				glbChampionSquad[0].playerDir(U8(glbPlayerDir));
-				glbChampionSquad[0].playerPos(U8(glbPlayerDir));
-				SET_PARTY_HERO_FLAG(0x4000);
-				SELECT_CHAMPION_LEADER(0);
-				return;
+	if (SkCodeParam::bDM1Mode == true || SkCodeParam::bDM1TQMode == true) {
+		for (di = GET_TILE_RECORD_LINK(1, 0); di != OBJECT_END_MARKER; di = GET_NEXT_RECORD_LINK(di)) {
+			if (di.DBType() == dbActuator) {
+				Actuator *bp08 = GET_ADDRESS_OF_ACTU(di);
+				if (bp08->ActuatorType() == ACTUATOR_TYPE_CHAMPION_MIRROR) { // 0x007F
+					_4976_404b = 1;
+					SELECT_CHAMPION(0, 0, DIR_EAST, glbPlayerMap);	// player is really at 0,0 facing east
+					_2f3f_04ea_CHAMPION(0, 0, DIR_EAST, glbPlayerMap, UI_EVENTCODE_REVIVE_CHAMPION);
+					_4976_404b = 0;
+					glbChampionSquad[0].playerDir(U8(glbPlayerDir));
+					glbChampionSquad[0].playerPos(U8(glbPlayerDir));
+					SET_PARTY_HERO_FLAG(0x4000);
+					SELECT_CHAMPION_LEADER(0);
+					return;
+				}
 			}
 		}
 	}
 	
+	if (SkCodeParam::bBWMode == true) {
+		SELECT_CHAMPION_FROM_GDAT(0);
+		//_2f3f_04ea_CHAMPION(glbPlayerPosX, glbPlayerPosY, glbPlayerDir, glbPlayerMap, UI_EVENTCODE_REVIVE_CHAMPION);
+		_4976_404b = 0;
+		glbChampionSquad[0].playerDir(U8(glbPlayerDir));
+		glbChampionSquad[0].playerPos(U8(glbPlayerDir));
+		SET_PARTY_HERO_FLAG(0x4000);
+		SELECT_CHAMPION_LEADER(0);
+		return;
+	}
+
 	
 	return;
 }
@@ -39465,6 +39487,8 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 								bp0c = (const unsigned __int8*) ".Z008DATA_DM2_DEMO\\"; break;
 							case _OPTION_DUNGEON_DM2_SK:
 								bp0c = (const unsigned __int8*) ".Z008DATA_DM2_SK\\"; break;
+							case _OPTION_DUNGEON_DMB_BW:
+								bp0c = (const unsigned __int8*) ".Z008DATA_DMW_BW\\"; break;
 							case _OPTION_DUNGEON_NO_SPECIFIC_:
 							default:
 								bp0c = (const unsigned __int8*) ".Z008DATA\\"; break;
@@ -39529,6 +39553,8 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 									bp0c = (const unsigned __int8*) ".Z008DATA_DM2_DEMO\\"; break;
 								case _OPTION_DUNGEON_DM2_SK:
 									bp0c = (const unsigned __int8*) ".Z008DATA_DM2_SK\\"; break;
+								case _OPTION_DUNGEON_DMB_BW:
+									bp0c = (const unsigned __int8*) ".Z008DATA_DMW_BW\\"; break;
 								case _OPTION_DUNGEON_NO_SPECIFIC_:
 								default:
 									bp0c = (const unsigned __int8*) ".Z008DATA\\"; break;
@@ -39728,7 +39754,8 @@ int SkWinCore::SKLOAD_READ(void *buff, int size)
 }
 
 //^3A15:0002
-void SkWinCore::_3a15_0002()
+// _3a15_0002 renamed INIT_TIMERS
+void SkWinCore::INIT_TIMERS()
 {
 	//^3A15:0002
 	ENTER(4);
@@ -39809,6 +39836,8 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	__int16 di;
 	Bit8u bp01 = 0;
 
+	return READ_DUNGEON_STRUCTURE_BW(isNewGame);
+
 	printf("Read 8 first bytes (Random seed) ...\n");
 	//SPX: Read the first 8 bytes of the dungeon.dat
 	Bit8u bp26[8];
@@ -39820,10 +39849,12 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 		return 0;
 
 	//SPX: Add control of DM1 gfx seed
-	if (*(Bit16u *)bp26 == 0x0063) // DM1
+	if (*(Bit16u *)bp26 == 0x0063) // DM1 or TQ
 		SkCodeParam::bDM1Mode = true;
 	else if (*(Bit16u *)bp26 == 0x0D00 || *(Bit16u *)bp26 == 0x0800) // CSB
 		SkCodeParam::bDM1Mode = true;
+	if (SkCodeParam::bDM1Mode == true)
+		skwin.enableDoubleStepMove = false;
 	// SPX
 
 	//^2066:25E4
@@ -40026,7 +40057,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	//^2066:2A6A
 	if (_4976_3b5d != 0) {
 		//^2066:2A71
-		_3a15_0002();
+		INIT_TIMERS();
 	}
 	//^2066:2A76
 	_3df7_0037(!_4976_3b5d);
@@ -41017,7 +41048,10 @@ _2e5b:
 	do {
 		printf("Read Dungeon Structure ...\n");
 		if (READ_DUNGEON_STRUCTURE(0) == 0)
-			break;
+		{
+			if (READ_DUNGEON_STRUCTURE_BW(0) == 0)
+				break;
+		}
 		printf("Suppress Init ...\n");
 		//^2066:2FCC
 		glbSpecialScreen = 0;
@@ -62061,13 +62095,13 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 					U8 iChangeableBit = 0;
 					U8 iEffectType = bp04->ActionType();
 					U8 iActionType = ACTMSG_OPEN_SET;
-					printf("TRIGGER VALUE = %02X BITFIELDS = %X with EFFECT %d FACING %d\n", bp04->ActuatorData(), bp04->ActuatorData()>>4, ref->ActionType(), ref->Value2());
+					//printf("TRIGGER VALUE = %02X BITFIELDS = %X with EFFECT %d FACING %d\n", bp04->ActuatorData(), bp04->ActuatorData()>>4, ref->ActionType(), ref->Value2());
 
 					iChangeableBit = 1<<ref->Value2(); // power of 2 of the target face/dir
 					iBitFields = iBitFields ^ iChangeableBit;
 					bp04->ActuatorData((iBitFields<<4) + (bp04->ActuatorData()%16));
 
-					printf("RESULT TRIGGER VALUE = %02X BITFIELDS = %X (%X) from BITCHANGE %X\n", bp04->ActuatorData(), bp04->ActuatorData()>>4, iBitFields, iChangeableBit);
+					//printf("RESULT TRIGGER VALUE = %02X BITFIELDS = %X (%X) from BITCHANGE %X\n", bp04->ActuatorData(), bp04->ActuatorData()>>4, iBitFields, iChangeableBit);
 					if (iOldBitFields != iBitFields && iBitFields == 0) // trigger actuator
 					{
 						if (iEffectType == ACTEFFECT_STEP_CONSTANT__OPEN || iEffectType == ACTEFFECT_STEP_ON__OPEN_SET)
