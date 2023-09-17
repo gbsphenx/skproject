@@ -20,6 +20,8 @@ using namespace DM2Internal;
 
 //------------------------------------------------------------------------------
 
+void CHANGE_CONSOLE_COLOR(int attr, int fg, int bg); // SkWinCore2
+
 //------------------------------------------------------------------------------
 
 /*
@@ -870,11 +872,18 @@ public:
 	Bit8u* DIRECT_QUERY_GDAT_TEXT(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u *buff);
 	Bit8u IS_OBJECT_VISIBLE_TEXT(ObjectID rlObject);
 
+	Bit16u CREATE_ABSOLUTE_ACTIVATOR_ITEM_ID(int iDBType, int iItemID);
+	void CREATE_NEW_ITEM_AT_POSITION(int iDBItem, int iItemType, int iMap, int iPosX, int iPosY, int iFace);
+	void CREATE_NEW_ITEM_FOR_PLAYER(int iDBItem, int iItemType, int iChampionNumber);
+
 	Bit8u SkWinCore::GET_CHAMPION_BONES_ITEM_ID();
 	void STUN_CHAMPION(U16 player, U16 stunvalue);
 
 	void DEBUG_HELP_WRITER(const char* sinfo, const void* xdata, unsigned int blocksize, unsigned int repeat);
 	void DEBUG_HELP_DISPLAY_STACK(i16 iMapX, i16 iMapY, i16 iMapLevel);
+
+	void LOG_FULL_DUNGEON_INFO();
+
 // SPX: End of new procedures
 
 // SPX: Special procedures

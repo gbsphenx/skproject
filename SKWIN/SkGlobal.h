@@ -440,7 +440,7 @@ extern U16	_04bf_0e54[8]; //Rp
 extern sk01b2	_04bf_01b2[4]; //Rr
 extern U8 _04bf_03d6[220]; //Rr
 extern U8 _4976_18b9[236]; //Rr
-extern U8	_4976_0252[16]; //Rr
+extern U8	tblDefaultNbItemAllocationPerDB[16]; //Rr // _4976_0252
 extern U8	_4976_3b5f[9]; //Rp
 extern X8	_4976_4736[12]; //Rp
 extern U16	_4976_404d[5][3]; //Rp

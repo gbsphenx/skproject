@@ -2823,6 +2823,8 @@ ObjectID SkWinCore::GET_TILE_RECORD_LINK(i16 xx, i16 yy)
 	i16 index = GET_OBJECT_INDEX_FROM_TILE(xx, yy);
 	if (index == -1)
 		return OBJECT_END_MARKER;
+	if (index == -2)
+		return OBJECT_NULL;
 
 	ATLASSERT(dunGroundStacks[index] != 0xFFFE && dunGroundStacks[index] != 0xFFFF);
 
@@ -3130,6 +3132,14 @@ void SkWinCore::GRAPHICS_DATA_OPEN()
 
 	sLocalGraphicsDatFileString = (Bit8u*) ptrGraphics;
 	sLocalGraphicsDatFileString2 = (Bit8u*) ptrGraphics2;
+
+	// default : ".Z020GRAPHICS.Z080.Z081.Z082.DAT"
+	if (SkCodeParam::bUseFixedMode && (ptrGraphics != NULL && ptrGraphics[0] == 0))
+	{
+		//strcpy(ptrGraphics, ".Z020GRAPHICS.Z080.Z081.Z082.DAT");
+		sLocalGraphicsDatFileString = (Bit8u*) strGraphics;
+	}
+
 
 	if (skwin.sCustomGraphicsDatFilename != NULL)
 	{
@@ -4160,11 +4170,15 @@ Bit16u SkWinCore::QUERY_MEMENTI_FROM(Bit16u xx)
 	//^3E74:0C62
 	Bit16u si = xx;
 	if ((si & 0x8000) != 0) {
+		if (SkCodeParam::bUseFixedMode && (si & 0x7fff) >= 128)	// SPX: protection to avoid further invalid pointer
+			return 0xFFFF;
 		//^3E74:0C6F
 		return _4976_5d08[si & 0x7fff];
 	}
 	else {
 		//^3E74:0C7C
+		if (SkCodeParam::bUseFixedMode && (si & 0x7fff) >= glbGDatNumberOfData) // SPX: protection to avoid further invalid pointer
+			return 0xFFFF;
 		return _4976_5c82[si];
 	}
 }
@@ -6099,6 +6113,8 @@ Bit8u *SkWinCore::QUERY_PICST_IMAGE(Picture *ref)
 	ENTER(4);
 	//^0B36:004F
 	Bit8u *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(ref->b8, ref->b9, ref->b11);
+	if (SkCodeParam::bUseFixedMode && bp04 == NULL)
+		bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_MISCELLANEOUS, GDAT_ITEM_DEFAULT_INDEX, GDAT_ITEM_DEFAULT_INDEX); // Get Yukman!
 	//^0B36:006F
 	ref->pb0 = bp04;
 	//^0B36:007F
@@ -26447,13 +26463,23 @@ void SkWinCore::INIT_CHAMPIONS() // _2f3f_0789
 	}
 	
 	if (SkCodeParam::bBWMode == true) {
-		SELECT_CHAMPION_FROM_GDAT(0);
-		//_2f3f_04ea_CHAMPION(glbPlayerPosX, glbPlayerPosY, glbPlayerDir, glbPlayerMap, UI_EVENTCODE_REVIVE_CHAMPION);
+		SELECT_CHAMPION_FROM_GDAT(rand()%16);
+		_2f3f_04ea_CHAMPION(glbPlayerPosX, glbPlayerPosY, glbPlayerDir, glbPlayerMap, UI_EVENTCODE_REVIVE_CHAMPION);
 		_4976_404b = 0;
 		glbChampionSquad[0].playerDir(U8(glbPlayerDir));
 		glbChampionSquad[0].playerPos(U8(glbPlayerDir));
 		SET_PARTY_HERO_FLAG(0x4000);
 		SELECT_CHAMPION_LEADER(0);
+
+		//CREATE_NEW_ITEM_AT_POSITION(DB_CATEGORY_MISC_ITEM, 5, glbPlayerMap, glbPlayerPosX+1, glbPlayerPosY, 0);
+		CREATE_NEW_ITEM_FOR_PLAYER(DB_CATEGORY_MISC_ITEM, 5+rand()%(22-5), 0);
+		CREATE_NEW_ITEM_FOR_PLAYER(DB_CATEGORY_MISC_ITEM, 5+rand()%(22-5), 0);
+		CREATE_NEW_ITEM_FOR_PLAYER(DB_CATEGORY_MISC_ITEM, 5+rand()%(22-5), 0);
+		CREATE_NEW_ITEM_FOR_PLAYER(DB_CATEGORY_MISC_ITEM, 5+rand()%(22-5), 0);
+		CREATE_NEW_ITEM_FOR_PLAYER(DB_CATEGORY_MISC_ITEM, 5+rand()%(22-5), 0);
+		CREATE_NEW_ITEM_FOR_PLAYER(DB_CATEGORY_MISC_ITEM, 5+rand()%(22-5), 0);
+
+		LOG_FULL_DUNGEON_INFO();
 		return;
 	}
 
@@ -38025,6 +38051,9 @@ Bit8u *SkWinCore::EXTRACT_GDAT_IMAGE(Bit16u index, i16 allocUpper)
 {
 	SkD((DLV_DBG_GETPIC,"DBG: EXTRACT_GDAT_IMAGE(%4u,%u)\n", (Bitu)index, (Bitu)allocUpper));
 
+	if (SkCodeParam::bUseFixedMode && index >= 65535)
+		return NULL;
+
 	//^3E74:4B48
 	Bit16u di = index;
 	i16 bp16 = -1;
@@ -39836,7 +39865,8 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	__int16 di;
 	Bit8u bp01 = 0;
 
-	return READ_DUNGEON_STRUCTURE_BW(isNewGame);
+	if (isNewGame == 1 && skwin.dung == _OPTION_DUNGEON_DMB_BW)
+		return READ_DUNGEON_STRUCTURE_BW(isNewGame);
 
 	printf("Read 8 first bytes (Random seed) ...\n");
 	//SPX: Read the first 8 bytes of the dungeon.dat
@@ -39978,7 +40008,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 		Bit16u di = dunHeader->nRecords[si];
 		if (isNewGame != 0) {
 			//^2066:281B
-			dunHeader->nRecords[si] = min_value((si == dbCloud) ? 0x300 : 0x400, _4976_0252[RCJ(16,si)] + di);
+			dunHeader->nRecords[si] = min_value((si == dbCloud) ? 0x300 : 0x400, tblDefaultNbItemAllocationPerDB[RCJ(16,si)] + di);
 		}
 		//^2066:2849
 		Bit16u bp0e = glbItemSizePerDB[si];
@@ -40004,7 +40034,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 			bp0e >>= 1;
 			bp04 += di * bp0e;
 			//^2066:28F5
-			for (di = _4976_0252[RCJ(16,si)]; di != 0; di--) {
+			for (di = tblDefaultNbItemAllocationPerDB[RCJ(16,si)]; di != 0; di--) {
 				*bp04 = 0xffff;
 				bp04 += bp0e;
 			}
@@ -40051,6 +40081,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 			//^2066:2A2E
 		}
 	}
+
 	printf("Read Some Random Value from GDAT ??? ...\n");
 	//^2066:2A37
 	_4976_5c24 = BETWEEN_VALUE(0, QUERY_GDAT_ENTRY_DATA_INDEX(0x03, 0x00, 0x0B, 0x00), 23) * 0x0555UL;
@@ -41049,8 +41080,7 @@ _2e5b:
 		printf("Read Dungeon Structure ...\n");
 		if (READ_DUNGEON_STRUCTURE(0) == 0)
 		{
-			if (READ_DUNGEON_STRUCTURE_BW(0) == 0)
-				break;
+			break;
 		}
 		printf("Suppress Init ...\n");
 		//^2066:2FCC
@@ -41134,6 +41164,7 @@ _2e5b:
 		//^2066:31B8
 _31b8:
 		FILE_CLOSE(glbDataFileHandle);
+		LOG_FULL_DUNGEON_INFO();	// SPX
 		//^2066:31C2
 		si = 0;
 		PROCESS_ACTUATOR_TICK_GENERATOR();
@@ -41183,6 +41214,8 @@ _3262:
 		si = 0;
 		FILE_CLOSE(glbDataFileHandle);
 	}
+
+
 	//^2066:3272
 	_0aaf_0067(_0aaf_02f8_DIALOG_BOX((_4976_5bf2 == 0) ? 0 : ((_4976_5c9c != 0) ? ((_4976_5ca8 != 0) ? 0x13 : 0x14) : (0x07)), 0x001F));
 	//^2066:32A6

@@ -16,9 +16,15 @@
 #define _OPTION_DUNGEON_DM2_BETA_			8
 #define _OPTION_DUNGEON_DM2_DEMO_			9
 #define _OPTION_DUNGEON_DM2_SK				10
+#define _OPTION_DUNGEON_DMB_BW				11
 
 
-
+#define _GDAT_LANG_ENGLISH_					0x10
+#define _GDAT_LANG_JAPANESE_				0x20
+#define _GDAT_LANG_GERMAN_					0x30
+#define _GDAT_LANG_FRENCH_					0x40
+#define _GDAT_LANG_SPANISH_					0x50	// SPX: Additional value
+#define _GDAT_LANG_ITALIAN_					0x60	// SPX: Additional value
 
 // DataTypes used in GDAT
 enum dtIndex 
@@ -845,7 +851,7 @@ enum SkillLevel {
 #define TIMER_NONE						0xFFFF
 
 #if DM2_EXTENDED_MODE == 1
-	#define MAX_TIMER_NUMBER					15000
+	#define MAX_TIMER_NUMBER					10 //15000
 #else
 	#define MAX_TIMER_NUMBER					50
 #endif
@@ -867,7 +873,7 @@ enum SkillLevel {
 #define ACTEFFECT_STEP_CLOSE__OPEN_SET		4
 #define ACTEFFECT_STEP_CLOSE__CLOSE_CLEAR	5
 #define ACTEFFECT_STEP_CLOSE__TOGGLE		6
-#define ACTEFFECT_STEP_CONSTANT__OPEN		7	// STEP OUT => OPEN / STEP ON => CLOSE
+#define ACTEFFECT_STEP_CONSTANT__CLOSE		7	// STEP OUT => OPEN / STEP ON => CLOSE
 
 
 //------------------------------------------------------------------------------
@@ -1037,8 +1043,8 @@ enum SkillLevel {
 #define UI_EVENTCODE_MAGIC_MAP_RUNE_4	0x9A	// Rune 4 : NETA for ... what ?
 
 
-#define UI_EVENTCODE_REVIVE_CHAMPION	0xA0
-#define UI_EVENTCODE_EXIT_CRYOCELL		0xA1	// Exit champion-to-be-revived inventory 
+#define UI_EVENTCODE_REVIVE_CHAMPION	0xA0	// (160)
+#define UI_EVENTCODE_EXIT_CRYOCELL		0xA1	// (161) Exit champion-to-be-revived inventory 
 
 #define UI_EVENTCODE_0A5				0xA5
 #define UI_EVENTCODE_0C6				0xC6

@@ -116,6 +116,7 @@ _4976_0232		renamed		glbXAxisDelta
 _4976_023a		renamed		glbYAxisDelta
 
 _4976_0242		renamed		glbItemSizePerDB
+_4976_0252		renamed		tblDefaultNbItemAllocationPerDB
 
 _4976_3d34(16)	renamed		tLightLevel2
 _4976_3d44(6)	renamed		tLightLevelTable
