@@ -2606,9 +2606,11 @@ void SkWinCore::APPEND_RECORD_TO(ObjectID recordLink_whatYouAppend, ObjectID *re
 			//^0CEE:0B98
 			*bp08 |= 0x10;
 			//^0CEE:0B9F
-			Bit16u *bp04 = &_4976_4c52[di +1];
+			//Bit16u *bp04 = &_4976_4c52[di +1];
+			OID_T *bp04 = &_4976_4c52[di +1];	// Bit32u *bp04
 			//^0CEE:0BB5
 			Bit16u si = _4976_4cb4 -(dunMapColumnsSumArray[glbCurrentMapIndex] +di) -1;
+			ASSERT(si < (32*256)); // SPX: suppose 256 of 32 columns each, making a value not above 8192. If not, it might be a negative value hidden by the unsigned Bit16u si; then an issue with _4976_4cb4 value.
 			//^0CEE:0BCE
 			//^0CEE:0BDA
 			for (; si-- != 0; ) {
@@ -2826,7 +2828,8 @@ ObjectID SkWinCore::GET_TILE_RECORD_LINK(i16 xx, i16 yy)
 	if (index == -2)
 		return OBJECT_NULL;
 
-	ATLASSERT(dunGroundStacks[index] != 0xFFFE && dunGroundStacks[index] != 0xFFFF);
+//	ATLASSERT(dunGroundStacks[index] != 0xFFFE && dunGroundStacks[index] != 0xFFFF);
+	ATLASSERT(dunGroundStacks[index] != OBJECT_END_MARKER && dunGroundStacks[index] != OBJECT_NULL);
 
 	//^0CEE:0AD1
 	return dunGroundStacks[index];
@@ -6115,6 +6118,8 @@ Bit8u *SkWinCore::QUERY_PICST_IMAGE(Picture *ref)
 	Bit8u *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(ref->b8, ref->b9, ref->b11);
 	if (SkCodeParam::bUseFixedMode && bp04 == NULL)
 		bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_MISCELLANEOUS, GDAT_ITEM_DEFAULT_INDEX, GDAT_ITEM_DEFAULT_INDEX); // Get Yukman!
+	if (SkCodeParam::bUseFixedMode && bp04 == NULL)
+		return NULL;
 	//^0B36:006F
 	ref->pb0 = bp04;
 	//^0B36:007F
@@ -15500,7 +15505,7 @@ void SkWinCore::_3a15_38b6(U16 xx)
 	//^3A15:38FE
 	U8 *bp04 = glbMapTileValue[glbCurrentMapIndex][0];
 	//^3A15:391A
-	U16 *bp0c = &dunGroundStacks[dunMapTilesObjectIndexPerColumn[dunMapColumnsSumArray[glbCurrentMapIndex]]];
+	OID_T *bp0c = &dunGroundStacks[dunMapTilesObjectIndexPerColumn[dunMapColumnsSumArray[glbCurrentMapIndex]]]; // U16 *bp0c
 	//^3A15:3945
 	for (U16 bp0e = 0; bp0e <= bp10; bp0e++) {
 		//^3A15:394D
@@ -15587,7 +15592,7 @@ void SkWinCore::FILL_CAII_CUR_MAP()
 	//^1C9A:3A74
 	U8 *bp04 = *glbCurrentTileMap;
 	//^1C9A:3A85
-	U16 *bp08 = &dunGroundStacks[*_4976_4c52];
+	OID_T *bp08 = &dunGroundStacks[*_4976_4c52];	// U16 *bp08 
 	//^1C9A:3A9E
 	for (U16 bp0e = 0; bp0e < glbCurrentMapWidth; bp0e++) {
 		//^1C9A:3AA6
@@ -16587,6 +16592,8 @@ void SkWinCore::_2f3f_04ea_CHAMPION(Bit16u xx, Bit16u yy, Bit16u dir, Bit16u zz,
 				}
 				//^2F3F:068A
 				di = GET_NEXT_RECORD_LINK(di);
+				if (SkCodeParam::bUseFixedMode == true && (di == OBJECT_END_MARKER || di == OBJECT_NULL))
+					break;
 			}
 		} // fixed mode
 		//^2F3F:0693
@@ -17009,6 +17016,11 @@ void SkWinCore::ADJUST_SKILLS(U16 player, U16 yy, U16 zz)
 	ENTER(142);
 	//^2C1D:0B32
 	U16 di = yy;	// main skill
+	U16 subSkill = di;
+	U16 baseXP = zz;
+	U16 doubleXP = 0;
+	U16 halfBaseXP = 0;
+	U16 halvedXP = zz;
 	//^2C1D:0B35
 	if (true
 		&& di >= 4 
@@ -17017,6 +17029,8 @@ void SkWinCore::ADJUST_SKILLS(U16 player, U16 yy, U16 zz)
 	) {
 		//^2C1D:0B5B
 		zz >>= 1;
+		halfBaseXP = 1; // SPX added for info
+		halvedXP = zz;
 	}
 	//^2C1D:0B5E
 	if (zz == 0)
@@ -17024,16 +17038,19 @@ void SkWinCore::ADJUST_SKILLS(U16 player, U16 yy, U16 zz)
 		return;
 	//^2C1D:0B67
 	U16 bp06 = dunMapLocalHeader->Difficulty();	// map XP multiplicator
-	U16 xpMapMultiplicator = bp06;	// SPX: added for reusage
+	U16 xpMapMultiplicator = bp06;	// SPX: added for reuse
+	U16	afterMapXP = 0; // for info
 	//^2C1D:0B78
 	if (bp06 != 0) {
 		//^2C1D:0B7C
 		zz = zz * bp06;
 	}
+	afterMapXP = zz;
 	//^2C1D:0B85
 	Champion *champion = &glbChampionSquad[player]; //*bp04
 	//^2C1D:0B96
 	U16 si = (di >= 4) ? ((di -4) >>2) : di;
+	U16 mainSkill = si;
 	//^2C1D:0BA9
 	bp06 = QUERY_PLAYER_SKILL_LV(player, si, 0);	// Current skill level
 	//^2C1D:0BB9
@@ -17043,6 +17060,7 @@ void SkWinCore::ADJUST_SKILLS(U16 player, U16 yy, U16 zz)
 	) {
 		//^2C1D:0BD9
 		zz <<= 1;
+		doubleXP = 1; // SPX added for info
 	}
 	//^2C1D:0BDC
 	champion->skills[di] += zz;
@@ -17051,16 +17069,25 @@ void SkWinCore::ADJUST_SKILLS(U16 player, U16 yy, U16 zz)
 		//^2C1D:0BF7
 		champion->skills[si] += zz;
 	}
-	/*
+	
 	if (SkCodeParam::bUsePowerDebug)
 	{
-		U8 message[64];
+		U8 message[256];
+		memset(message, 0, 256);
 		sprintf((char*)message, "%s: +%d XP %s (XP=%d)!\n"
 			, glbChampionTable[player+1].firstName, zz
 			, getSkillName(di), champion->skills[di]);
+		//sprintf((char*)message, "%s: Map XP Multi = %d; base XP gain = %d, Skill required = %d (main = %d), level of skill = %d | Halve = %d => %d | Map XP = %d\n",
+		//	glbChampionTable[player+1].firstName, xpMapMultiplicator, baseXP, subSkill, mainSkill, bp06, halfBaseXP, halvedXP, afterMapXP, doubleXP);
 		DISPLAY_HINT_TEXT(glbChampionColor[player], message);
+
+		sprintf((char*)message, "%s: Base XP = %d [%s][%s] Skill Level = %d || Halved? %d => %d XP || Map XP modified = %d => %d XP || Doubled? %d => %d XP (final) || Total result XP = %d (%s) - %d (%s)\n",
+			glbChampionTable[player+1].firstName, baseXP, getSkillName(subSkill), getSkillName(mainSkill), bp06,
+			halfBaseXP, halvedXP, xpMapMultiplicator, afterMapXP, doubleXP, zz,
+			champion->skills[subSkill], getSkillName(subSkill), champion->skills[mainSkill], getSkillName(mainSkill));
+			
 		SkD((DLV_XP, "%s", message));
-	}*/
+	}
 
 	//^2C1D:0C0A
 	zz = QUERY_PLAYER_SKILL_LV(player, si, 0);	// Compare with new skill level
@@ -17159,7 +17186,6 @@ _0d3a:
 			break;
 	}
 	//^2C1D:0D7B
-	// SPX: This is not the good formula -- wait ... this is the same, why did I wrote that ?
 	//bp04->maxHP(RAND16((zz >> 1) +1) +zz +bp04->maxHP());
 	// SPX: From CSBWin11 LevelUp, it should be more like this:
 	champion->maxHP(RAND16((zz / 2) +1) +zz +champion->maxHP());
@@ -18893,7 +18919,7 @@ i16 SkWinCore::SEARCH_DUNGEON_FOR_SPECIAL_MARKER(U16 ss, U16 tt, U16 uu, i16 *xx
 		//^2FCF:2DEC
 		U8 *bp04 = glbMapTileValue[si][0];	// pointer on tile
 		//^2FCF:2E07
-		U16 *bp0c = &dunGroundStacks[dunMapTilesObjectIndexPerColumn[dunMapColumnsSumArray[si]]];
+		OID_T *bp0c = &dunGroundStacks[dunMapTilesObjectIndexPerColumn[dunMapColumnsSumArray[si]]];	// U16 *bp0c
 		//^2FCF:2E31
 		for (U16 bp10 = 0; bp10 <= bp12; bp10++) {
 			//^2FCF:2E39
@@ -24206,9 +24232,10 @@ void SkWinCore::_121e_013a(U16 xx, U16 yy, U16 zz)
 			//^121E:01D6
 			MOVE_RECORD_TO(bp02, di, si, -1, 0);
 
-			SkD((DLV_TWEET, "Tweet: You (x:%d, y:%d, map:%d) have taken %s! \n"
+			SkD((DLV_TWEET, "Tweet: You (x:%d, y:%d, map:%d) have taken %s! [item DB%02d|#%04d|d:%1d] \n"
 				, glbPlayerPosX, glbPlayerPosY, glbCurrentMapIndex
 				, static_cast<LPCSTR>(getRecordNameOf(bp02))
+				, bp02.RealDBType(), bp02.DBIndex(), bp02.Dir()
 				));
 		}
 		//^121E:01E7
@@ -25585,7 +25612,7 @@ U16 SkWinCore::STORE_EXTRA_DUNGEON_DATA()
 	while (currentMap < dunHeader->nMaps) {
 		CHANGE_CURRENT_MAP_TO(currentMap);
 		Bit8u *bp04 = *glbCurrentTileMap;
-		Bit16u *bp08 = &dunGroundStacks[*_4976_4c52];
+		OID_T *bp08 = &dunGroundStacks[*_4976_4c52];	// Bit16u *bp08
 		Bit16u xpos = 0; // word [bp-0C]
         //^2066:0BF4
 		while (!(xpos >= glbCurrentMapWidth)) {
@@ -26479,7 +26506,6 @@ void SkWinCore::INIT_CHAMPIONS() // _2f3f_0789
 		CREATE_NEW_ITEM_FOR_PLAYER(DB_CATEGORY_MISC_ITEM, 5+rand()%(22-5), 0);
 		CREATE_NEW_ITEM_FOR_PLAYER(DB_CATEGORY_MISC_ITEM, 5+rand()%(22-5), 0);
 
-		LOG_FULL_DUNGEON_INFO();
 		return;
 	}
 
@@ -34989,6 +35015,11 @@ void SkWinCore::CHANGE_VIEWPORT_TO_INVENTORY(Bit16u xx) //#DS=4976
 	glbIsPlayerMoving = 0;
 	//^44C8:1BF8
 	SRECT bp0e;
+	// SPX: add value init for rect
+	bp0e.x = 0;
+	bp0e.y = 0;
+	bp0e.cx = 0;
+	bp0e.cy = 0;
 	QUERY_EXPANDED_RECT(7, &bp0e);
 	//^44C8:1C07
 	glbIsPlayerMoving = di;
@@ -35907,7 +35938,7 @@ void SkWinCore::PROCESS_ACTUATOR_TICK_GENERATOR() //#DS=4976?
 		//^3A15:354C
 		Bit8u *bp04 = *glbMapTileValue[di];
 		//^3A15:3567
-		Bit16u *bp0c = &dunGroundStacks[dunMapTilesObjectIndexPerColumn[dunMapColumnsSumArray[di]]];
+		OID_T *bp0c = &dunGroundStacks[dunMapTilesObjectIndexPerColumn[dunMapColumnsSumArray[di]]];	 // Bit16u *bp0c
 		//^3A15:3591
 		for (Bit16u bp10=0; bp10 <= bp14; bp10++) {
 			//^3A15:3599
@@ -36087,7 +36118,7 @@ void SkWinCore::ARRANGE_DUNGEON()
 		//^2066:1FE6
 		Bit8u *bp04 = *glbMapTileValue[si];
 		//^2066:2001
-		Bit16u *bp1c = &dunGroundStacks[dunMapTilesObjectIndexPerColumn[dunMapColumnsSumArray[si]]];
+		OID_T *bp1c = &dunGroundStacks[dunMapTilesObjectIndexPerColumn[dunMapColumnsSumArray[si]]]; // Bit16u *bp1c
 		//^2066:202B
 		for (Bit16u bp2a=0; bp2a <= bp2e; bp2a++) {
 			//^2066:2033
@@ -39867,6 +39898,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 
 	if (isNewGame == 1 && skwin.dung == _OPTION_DUNGEON_DMB_BW)
 		return READ_DUNGEON_STRUCTURE_BW(isNewGame);
+		//return INIT_BLANK_DUNGEON(isNewGame);
 
 	printf("Read 8 first bytes (Random seed) ...\n");
 	//SPX: Read the first 8 bytes of the dungeon.dat
@@ -39960,9 +39992,11 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	//^2066:2717
 	if (_4976_3b5d != 0) {
 		//^2066:271E
-		dunMapTilesObjectIndexPerColumn = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(bp0e << 1, afUseUpper, 0x400));
+		//dunMapTilesObjectIndexPerColumn = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(bp0e << 1, afUseUpper, 0x400));
+		dunMapTilesObjectIndexPerColumn = reinterpret_cast<OID_T *>(ALLOC_MEMORY_RAM(bp0e << OID_SIZE_BITSHIFT, afUseUpper, 0x400));
 		//^2066:273A
-		dunGroundStacks = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(dunHeader->cwListSize << 1, afUseUpper, 0x400));
+		//dunGroundStacks = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(dunHeader->cwListSize << 1, afUseUpper, 0x400));
+		dunGroundStacks = reinterpret_cast<OID_T *>(ALLOC_MEMORY_RAM(dunHeader->cwListSize << OID_SIZE_BITSHIFT, afUseUpper, 0x400));
 		//^2066:2754
 		dunTextData = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(dunHeader->cwTextData << 1, afUseUpper, 0x400));
 	}
@@ -40147,8 +40181,11 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	//^2066:2B64
 
 	//CHECK_TILE_RECORDS();
-
 	printf("Read Dungeon Structure Completed !\n");
+
+	if (SkCodeParam::bDebugInfoMapInit == true)
+		LOG_FULL_DUNGEON_INFO();
+
 	return 1;
 }
 
@@ -41164,7 +41201,6 @@ _2e5b:
 		//^2066:31B8
 _31b8:
 		FILE_CLOSE(glbDataFileHandle);
-		LOG_FULL_DUNGEON_INFO();	// SPX
 		//^2066:31C2
 		si = 0;
 		PROCESS_ACTUATOR_TICK_GENERATOR();
@@ -41290,7 +41326,7 @@ void SkWinCore::CUT_RECORD_FROM(ObjectID recordLink, ObjectID *recordLinkLookFor
 	if (xposLookFor >= 0) {
 		//^0CEE:0CE4
 		Bit16u bp0e = GET_OBJECT_INDEX_FROM_TILE(xposLookFor, yposLookFor);
-		Bit16u *bp04 = &dunGroundStacks[bp0e];
+		OID_T *bp04 = &dunGroundStacks[bp0e]; // Bit16u *bp04
 		//^0CEE:0D05
 		if (bp08->w0 == OBJECT_END_MARKER && ObjectID(*bp04).GetAsNorth() == si) {
 			//^0CEE:0D21
@@ -44683,7 +44719,7 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 	//^2676:03E1
 	_4976_52fc[_4976_5300 -1].MarkIncluded();
 	U8 *bp08 = *glbCurrentTileMap;
-	U16 *bp10 = &dunGroundStacks[*_4976_4c52];
+	OID_T *bp10 = &dunGroundStacks[*_4976_4c52]; // U16 *bp10
 	i16 bp26 = 0;
 	i16 si;
 	for (; bp26 < glbCurrentMapWidth; bp26++) {
@@ -53171,7 +53207,7 @@ ObjectID SkWinCore::RECYCLE_A_RECORD_FROM_THE_WORLD(Bit16u itemdb, Bit8u itemtyp
 		//^0CEE:0FB9
 		Bit8u *bp04 = *glbMapTileValue[bp0e];
 		//^0CEE:0FD5
-		Bit16u *bp0c = &dunGroundStacks[dunMapTilesObjectIndexPerColumn[dunMapColumnsSumArray[bp0e]]];
+		OID_T *bp0c = &dunGroundStacks[dunMapTilesObjectIndexPerColumn[dunMapColumnsSumArray[bp0e]]]; // Bit16u *bp0c
 		//^0CEE:1000
 		for (Bit16u bp10=0; bp10 <= bp14; bp10++) {
 			//^0CEE:1008
@@ -56168,7 +56204,7 @@ X16 SkWinCore::CREATURE_THINK_1316(U8 xx, X16 yy, U8 zz)
 	i16 bp10;
 	ObjectID di;
 	U8 *bp18;
-	U16 *bp1c;
+	OID_T *bp1c; // U16 *bp1c
 	X16 bp0e;
 	i16 bp12;
 	i16 bp14;

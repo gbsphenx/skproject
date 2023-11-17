@@ -9,6 +9,7 @@ public:
 	//--- Specific game setup
 	static bool bDM1Mode;				// dungeon loaded is a native DM1 dungeon
 	static bool bDM1TQMode;				// dungeon runs as TQ DM1 dungeon
+	static bool bBWMode;				// experimental Bloodwych mode
 
 	//--- Options
 	static bool bUseDM2ExtendedMode;
@@ -38,6 +39,8 @@ public:
 	static bool bUseScrollIDType;
 
 	static bool bForceOrnateSound;
+
+	static bool bDebugInfoMapInit;
 
 	//--- Very specific for debugging
 	static bool bDebugNoImageDecodingAssert;

@@ -7,7 +7,7 @@
 #define	DM2_EXTENDED_MODE		1	// Load custom GDAT categories, enhance some code
 #define DM2_EXTENDED_MAP		0	// Load a +128 maps test dungeon. (to increase maps from 64 to 256)
 #define DM2_EXTENDED_DATABASE	1	// Make usage of db11 db12 and db13 - partially implemented (tested with db11)
-#define DM2_EXTENDED_OBJECT_DEF	0	// Allow OBJECT structure to hold more items per database - EXPERIMENTAL
+#define DM2_EXTENDED_OBJECT_DEF	0	// Allow OBJECT structure to hold more items per database; uses 64bits Ref  - EXPERIMENTAL
 #define DM2_EXTENDED_BUFFER		1	// Allow more memsize for loading objects
 #define DM2_EXTENDED_LIGHT		0	// Some custom day/night light for outdoors - EXPERIMENTAL : not working because palette is applied over global viewport
 //#define DM2_INDIRECT_DATABASE	0	// Use an indirection table to increase item usage to its max : 65536 - NOT IMPLEMENTED YET

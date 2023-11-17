@@ -32,7 +32,7 @@
 #define DLV_EUI 0	// Event from UI code
 #define DLV_CCM 0	// Creature command
 #define DLV_FSM 0	// Find special marker (for x teleport and void fall)
-#define DLV_XP	0	// Display info about XP gain
+#define DLV_XP	1	// Display info about XP gain
 #define DLV_DBG_GETPIC 0
 #define DLV_DBG_CELL 0
 #define DLV_DBG_EXTRACT 0
@@ -49,7 +49,7 @@
 #define DLV_DBG_SND_CRE 0	// Sound requested by creature
 #define DLV_DBG_SND_OUT 0	// Sound played
 #define DLV_DBG_TICK	0	// Tick information
-#define DLV_DBG_DOOR	1
+#define DLV_DBG_DOOR	0
 
 #define DLV_USE_LOGX 1
 
