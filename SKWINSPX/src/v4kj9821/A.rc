@@ -1,0 +1,210 @@
+//Microsoft Developer Studio generated resource script.
+//
+//#include <skver.h>
+#include <resource.h>
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include <afxres.h>
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Japanese resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_JPN)
+#ifdef _WIN32
+LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
+#pragma code_page(932)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE MOVEABLE PURE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE MOVEABLE PURE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE MOVEABLE PURE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Cursor
+//
+
+IDC_POINTER             CURSOR  DISCARDABLE     "pointer.cur"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MENU1 MENU DISCARDABLE 
+BEGIN
+    POPUP "&Video"
+    BEGIN
+        MENUITEM "&1x",                         40002
+        MENUITEM "&2x",                         40003
+        MENUITEM "&3x",                         40011
+        MENUITEM "&4x",                         40004
+    END
+    POPUP "&Sound"
+    BEGIN
+        MENUITEM "&No",                         40012
+        MENUITEM "&Windows Multimedia",         40005
+        MENUITEM "&DirectSound/DirectSound3D",  40010
+        MENUITEM "Open&AL",                     40008
+        MENUITEM "Alle&gro",                    40006
+        MENUITEM "--- DirectSound BufferFlag",  40101, GRAYED, MENUBARBREAK
+        MENUITEM "(Default)",                   40028
+        MENUITEM "Hardware Buffer (LOCHARDWARE)", 40029
+        MENUITEM "Software Buffer (LOCSOFTWARE)", 40030
+        MENUITEM "--- DirectSound Software 3DAlgorithm", 40101, GRAYED
+        MENUITEM "(Default)",                   40032
+        MENUITEM "HRTF_FULL",                   40033
+        MENUITEM "HRTF_LIGHT",                  40035
+    END
+    POPUP "&Music"
+    BEGIN
+        MENUITEM "&MIDI Enabled",               40074
+        MENUITEM "&WAV Enabled",                40078
+    END
+    POPUP "&Speed"
+    BEGIN
+        MENUITEM "&1 Ultra Fast",               40040
+        MENUITEM "&2 Fast",                     40041
+        MENUITEM "&3 Normal",                   40042
+        MENUITEM "&4 Slow",                     40043
+        MENUITEM "&5 Very Slow",                40044
+        MENUITEM "&6 Glacial",                  40045
+    END
+    POPUP "&Lang"
+    BEGIN
+        MENUITEM "&English (US)",               40053
+        MENUITEM "&Japanese",                   40056
+        MENUITEM "&German",                     40055
+        MENUITEM "&French",                     40054
+        MENUITEM "&Spanish",                    40057
+        MENUITEM "&Italian",                    40058
+    END
+    POPUP "&Dungeon"
+    BEGIN
+        MENUITEM "&No Specific",                40088
+        MENUITEM "&Kid Dungeon (DM1)",          40089
+        MENUITEM "&Dungeon Master (DM1)",       40090
+        MENUITEM "&Chaos Strikes Back (DM1)",   40091
+        MENUITEM "&Theron's Quests (DM1)",      40092
+        MENUITEM "&Dungeon Master (DM2 conversion)", 40093
+        MENUITEM "&Chaos Strikes Back (DM2 conversion)", 40094
+        MENUITEM "&Theron's Quests (DM2 conversion)", 40095
+        MENUITEM "&Skullkeep (beta)",           40096
+        MENUITEM "&Skullkeep (demo)",           40097
+        MENUITEM "&Skullkeep",                  40098
+        MENUITEM "&Skullkeep (custom)",         40079
+        MENUITEM "&Bloodwych",                  40087
+        MENUITEM "&Eye of the Beholder",        40046
+        MENUITEM "&Surprise",                   40069
+    END
+    POPUP "(Extra)"
+    BEGIN
+        MENUITEM "Enable ""double step"" movement", 40052
+        MENUITEM "Turn off fog effect",         40039
+        MENUITEM "Extra sounds",                40072
+        MENUITEM "Player footstep sound",       40073
+        MENUITEM "Super Eye Info",              40077
+        MENUITEM "Break door",                  40070
+    END
+    POPUP "?", HELP
+    BEGIN
+        MENUITEM "&About...",                   40100
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUT DIALOG DISCARDABLE  0, 0, 279, 169
+STYLE DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About skwin"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    LTEXT           "Credits in Dungeon Master II",IDC_STATIC,91,7,97,8
+    LTEXT           "Skullkeepers",IDC_STATIC,7,19,265,8
+    LTEXT           "Wayne Holder ...................................... Producer",
+                    IDC_STATIC,7,29,265,8
+    LTEXT           "Doug Bell ............................................... Director",
+                    IDC_STATIC,7,39,265,8
+    LTEXT           "Bill Kelly ..................................... Monster Trainer",
+                    IDC_STATIC,7,49,265,8
+    LTEXT           "Kirk Baker ........................... Master of Machines",
+                    IDC_STATIC,7,59,265,8
+    LTEXT           "Bert Huml ...................................... World Creator",
+                    IDC_STATIC,7,69,265,8
+    LTEXT           "Andy Jaros ............................ Graphics Magician",
+                    IDC_STATIC,7,79,265,8
+    LTEXT           "with: David Simon, Dan Hewitt, Dennis Walker",
+                    IDC_STATIC,7,89,265,8
+    LTEXT           "skwin (2024-10-03)",IDC_STATIC,7,106,63,8
+    LTEXT           "An unofficial experimental port. started by kentaro-k.21. continued by sphenx.",
+                    IDC_STATIC,7,118,184,22
+    DEFPUSHBUTTON   "OK",IDOK,115,148,50,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO MOVEABLE PURE 
+BEGIN
+    IDD_ABOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 272
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 152
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // Japanese resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
