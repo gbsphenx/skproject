@@ -2012,6 +2012,7 @@ void SkWinCore::SET_SPELLING_CHAMPION(Bit16u iChampionNo)	// Bit16u xx
 }
 
 //^2FCF:19F4
+// For CSBWin, check TAG01a436 Mouse.HandleClickInViewport
 void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, ObjectID rlWhatYouPlace)
 {
 	// 1) call when you place an apple to the ornate wall (alcove, keyhole, shop panel)
@@ -2243,11 +2244,17 @@ checkactuator:
 					*/
 
 				case ACTUATOR_TYPE_X02: // 0x02 -> ?
+				//case ACTUATOR_TYPE_DM1_ALCOVE_ITEM:
+					if (SkCodeParam::bDM1Mode == false) { // DM2 behavior
 					//^2FCF:1C7C
 					di = (bp04->RevertEffect() != ((si == OBJECT_NULL) ? 1 : 0)) ? 1 : 0;
 					//^2FCF:1CA2
 					//^2FCF:1E65
 					//^2FCF:1E67
+					}
+					else { // DM1 alcove item = ACTUATOR_TYPE_DM1_ALCOVE_ITEM
+						;
+					}
 					break;
 
 				case ACTUATOR_TYPE_CHARGED_ITEM_WATCHER: // 0x15 -> 'Activator, charged item watcher'

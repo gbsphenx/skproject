@@ -331,4 +331,33 @@ SkWinCore::DM1_ROTATE_ACTUATOR_LIST(X16 localActionType, i16 iMapX, i16 iMapY, i
 }
 
 
+// DM1:
+// Gold coin = 127, DM2 = 264
+// The DM1 activation list is different and static
+Bit16u SkWinCore::GET_DM1_DISTINCTIVE_ITEMTYPE(ObjectID recordLink)
+{
+	X16 iSearchIndex = 0;
+	// get the object type of record in the form of uniquely identified number.
+	// e.g. it always returns 2 if you get any type of weapon Torch record.
+	// returns 511 if record is no meaningful to distinct.
+
+	if (recordLink != OBJECT_NULL)
+	{
+		Bit8u iItemID = QUERY_CLS2_FROM_RECORD(recordLink);	// item type index
+		Bit16u iItemDB = recordLink.DBType();
+		//if (di == DB_CATEGORY_MISC_ITEM)
+		//	return 119 + bp01;
+		// Search through the table of conversion item to get the DM1 item value
+		for (iSearchIndex = 0; iSearchIndex < 200; iSearchIndex++)
+		{
+			if (iItemDB == glbDM1ItemConv[iSearchIndex].iItemDB &&
+				iItemID == glbDM1ItemConv[iSearchIndex].iItemID)
+				return iSearchIndex;
+			// SPX: TODO : special state for multi-state items (compass, torches, charged/discharged items)
+		}
+	}
+	return 511;
+}
+
+
 //==============================================================================

@@ -71,22 +71,23 @@ Bit16u SkWinCore::IS_ITEM_FIT_FOR_EQUIP(ObjectID recordLink, i16 inventorySlot, 
 
 //^2C1D:038B
 // SPX: _2c1d_038b renamed RETRIEVE_ITEM_BONUS // changed Bit16u to Bit16 since return can be negative !
-i16 SkWinCore::RETRIEVE_ITEM_BONUS(ObjectID x1, Bit8u x2, Bit16u x3, Bit16u x4)
+// i16 SkWinCore::RETRIEVE_ITEM_BONUS(ObjectID x1, Bit8u x2, Bit16u x3, Bit16u x4)
+i16 SkWinCore::RETRIEVE_ITEM_BONUS(ObjectID x1, Bit8u x2, Bit16u x3, i16 iBonusDir)
 {
 	//^2C1D:038B
 	ENTER(2);
 	//^2C1D:0390
-	U16 si = x4;
+	//U16 si = x4; // iBonusDir
 	//^2C1D:0393
-	i16 bp02 = QUERY_GDAT_DBSPEC_WORD_VALUE(x1, x2);
+	i16 iBonusValue = QUERY_GDAT_DBSPEC_WORD_VALUE(x1, x2);
 	//^2C1D:03A4
-	if (bp02 == 0)
+	if (iBonusValue == 0)
 		return 0;
 	//^2C1D:03A8
-	if ((bp02 & 0x4000) != 0) {
+	if ((iBonusValue & 0x4000) != 0) {
 		//^2C1D:03AF
-		switch (si) {
-			case 0xfffe: // may come from event/timer ?
+		switch (iBonusDir) {	// iBonusDir == 0xFFFF or -1 means we want to get negative value of this bonus, certainly to remove it from champion
+			case 0xFFFE: // may come from event/timer ?
 			case 0x0002:
 			case 0x0003:
 				break;
@@ -99,19 +100,19 @@ i16 SkWinCore::RETRIEVE_ITEM_BONUS(ObjectID x1, Bit8u x2, Bit16u x3, Bit16u x4)
 		//^2C1D:03C0
 		if (x3 == 0) {
 			//^2C1D:03C6
-			if ((bp02 & 0x8000) == 0)
+			if ((iBonusValue & 0x8000) == 0)
 				return 0;
 		}
 	}
 	//^2C1D:03CD
-	bp02 = (Bit8u)bp02;
+	//iBonusValue = (Bit8u)iBonusValue;	// SPX is this to reduce to 255 max ? I remove this
 	//^2C1D:03D4
-	if (si < 0) {
+	if (iBonusDir < 0) {
 		//^2C1D:03D8
-		bp02 = -bp02;
+		iBonusValue = -iBonusValue;
 	}
 	//^2C1D:03DD
-	return bp02;
+	return iBonusValue;
 }
 
 
@@ -710,35 +711,6 @@ void SkWinCore::SET_ITEMTYPE(ObjectID recordLink, Bit8u itemType)
 	//^0CEE:25D4
 }
 
-
-
-// DM1:
-// Gold coin = 127, DM2 = 264
-// The DM1 activation list is different and static
-Bit16u SkWinCore::GET_DM1_DISTINCTIVE_ITEMTYPE(ObjectID recordLink)
-{
-	X16 iSearchIndex = 0;
-	// get the object type of record in the form of uniquely identified number.
-	// e.g. it always returns 2 if you get any type of weapon Torch record.
-	// returns 511 if record is no meaningful to distinct.
-
-	if (recordLink != OBJECT_NULL)
-	{
-		Bit8u iItemID = QUERY_CLS2_FROM_RECORD(recordLink);	// item type index
-		Bit16u iItemDB = recordLink.DBType();
-		//if (di == DB_CATEGORY_MISC_ITEM)
-		//	return 119 + bp01;
-		// Search through the table of conversion item to get the DM1 item value
-		for (iSearchIndex = 0; iSearchIndex < 200; iSearchIndex++)
-		{
-			if (iItemDB == glbDM1ItemConv[iSearchIndex].iItemDB &&
-				iItemID == glbDM1ItemConv[iSearchIndex].iItemID)
-				return iSearchIndex;
-			// SPX: TODO : special state for multi-state items (compass, torches, charged/discharged items)
-		}
-	}
-	return 511;
-}
 
 
 //^0CEE:2391

@@ -1149,7 +1149,7 @@ protected:
 	i16 BETWEEN_VALUE(i16 minv, i16 newv, i16 maxv);
 	void RECALC_LIGHT_LEVEL();
 	Bit16u IS_ITEM_FIT_FOR_EQUIP(ObjectID recordLink, i16 inventorySlot, Bit16u onlyBodyPart);
-	i16 RETRIEVE_ITEM_BONUS(ObjectID x1, Bit8u x2, Bit16u x3, Bit16u x4); // SPX: changed to i16 SIGNED
+	i16 RETRIEVE_ITEM_BONUS(ObjectID x1, Bit8u x2, Bit16u x3, i16 iBonusDir); // SPX: changed to i16 SIGNED
 	void BOOST_ATTRIBUTE(Champion *ref, Bit16u xx, Bit16u yy);
 	void PROCESS_ITEM_BONUS(i16 player, ObjectID recordLink, i16 inventorySlot, i16 x4);	// Is that working?
 	ObjectID REMOVE_POSSESSION(Bit16u player, Bit16u possess);
