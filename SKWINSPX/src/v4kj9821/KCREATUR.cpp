@@ -938,7 +938,7 @@ _1df6:
 				//^19F0:1F0F
 				if (((bp0c +2) & 3) == bp06 || bp08 != ccm02) {
 					//^19F0:1F22
-					if ((aa == 4 || aa == 5) && (_4976_3752[_4976_4efa] & 0x100) == 0 && RAND02() != 0) {
+					if ((aa == 4 || aa == 5) && (tblAIStats01[_4976_4efa] & 0x100) == 0 && RAND02() != 0) {
 						//^19F0:1F45
 						bp08 = ccm09;
 						goto _1f9a;
@@ -2009,7 +2009,7 @@ X16 SkWinCore::WOUND_CREATURE(i16 damage)
 	if (xLocalAIDef->IsStaticObject() == 0) {
 		//^1C9A:1882
 		X16 bp0a = QUERY_GDAT_CREATURE_WORD_VALUE(xLocalCreature->CreatureType(), 1);
-		si = _4976_3752[bp0a];
+		si = tblAIStats01[bp0a];
 		if ((si & 4) == 0) {
 			//^1C9A:18A5
 			X16 iCurrentMap = glbCurrentMapIndex; // bp0c
@@ -2443,7 +2443,7 @@ i8 SkWinCore::SELECT_CREATURE_3672()
 	CreatureInfoData *xCreatureInfo = glbCurrentThinkingCreatureData; // bp08
 	X16 si = (CREATURE_THINK_0389() != 0xff) ? 1 : 0;
 	X8 bp0a = 0xff;
-	if ((_4976_3752[_4976_4efa] & 1) != 0 || si == 0 || RAND02() == 0) {
+	if ((tblAIStats01[_4976_4efa] & 1) != 0 || si == 0 || RAND02() == 0) {
 		//^14CD:06CA
 		_4976_4fd8->b18(0);
 		_4976_5162 = _14cd_062e();
@@ -4158,7 +4158,7 @@ void SkWinCore::CREATURE_THINK_09E2()
 	CreatureInfoData *xCreatureInfo = glbCurrentThinkingCreatureData;	// bp08
 	Creature *xCreature = glbCurrentThinkingCreatureRec;	// bp0c
 	SELECT_CREATURE_37FC();
-	X16 bp14 = _4976_3752[_4976_4efa];
+	X16 bp14 = tblAIStats01[_4976_4efa];
 	if ((bp14 & 0x40) != 0) {
 		_4976_5163 = 0;
 	}
@@ -5727,7 +5727,7 @@ _0a6a:
 		if (xCreatureInfo->Command == ccmDestroy) {
 			//^13E4:0A74
 			xCreatureInfo->w14 = _4937_000f(bp08->w0, &bp08->w2);
-			if ((_4976_3752[QUERY_GDAT_CREATURE_WORD_VALUE(glbCurrentThinkingCreatureRec->CreatureType(), 1)] & 8) == 0) {
+			if ((tblAIStats01[QUERY_GDAT_CREATURE_WORD_VALUE(glbCurrentThinkingCreatureRec->CreatureType(), 1)] & 8) == 0) {
 				X16 iCloudPower = 0;
 				//^13E4:0AB0
 				switch (glbAIDef->b35) {

@@ -825,7 +825,7 @@ const Bit8u * const _4976_4760 = (const Bit8u *)" ";
 
 const U8 _4976_4a04[4] = { 6, 8,18,16}; // n,e,s,w	0.0110/0.1000//1.1000/1.0110
 
-const U16 _4976_3752[42] = { // by wordval 0F-xx-01
+const U16 tblAIStats01[42] = { // by wordval 0F-xx-01
 0                                                                   , //  0
 0                                                                   , //  1 ^ROCKY
 0                                         |0x20                     , //  2 ^TIGER STRIPED WORM ^SPECTRE ^MUMMY ^SKELETON ^GHOST

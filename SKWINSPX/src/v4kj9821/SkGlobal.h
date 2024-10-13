@@ -424,7 +424,7 @@ extern const U16 _4976_470c_tblGfxSet[6]; // _4976_470c
 extern const U16 _4976_4718_tblGfxSet[6]; // _4976_4718
 extern const Bit8u * const _4976_4760;
 extern const U8 _4976_4a04[4];
-extern const U16 _4976_3752[42];
+extern const U16 tblAIStats01[42];			// _4976_3752 renamed tblAIStats01
 extern const i8 glbTabYAxisDistance[23];	// (_4976_412d) y-axis distance (viewport)
 extern const U8 tlbDisplayOrderLeft[25];
 extern const U8 tlbDisplayOrderRight[25];

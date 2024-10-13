@@ -2136,19 +2136,20 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(i16 xpos, i16 ypos, ObjectID reco
 		//^2FCF:27AE
 		if (bp12 == dbActuator) {
 			//^2FCF:27B6
-			Actuator *bp04 = GET_ADDRESS_OF_ACTU(si);
+			Actuator *xActuator = GET_ADDRESS_OF_ACTU(si);	// Actuator *bp04
+			U8 iActType = xActuator->ActuatorType();
 			//^2FCF:27C3
-			if (bp04->ActuatorType() == 0)
+			if (iActType == 0)
 				//^2FCF:27D1
 				continue;
 			//^2FCF:27D4
-			Bit16u bp14 = bp04->ActuatorData();
+			Bit16u bp14 = xActuator->ActuatorData();
 			Bit16u bp10 = place;
 			//^2FCF:27EA
 			Bit16u bp3e;
 			if (bp1e == 0xffff) {
 				//^2FCF:27F3
-				switch (bp04->ActuatorType()) {
+				switch (iActType) {
 					default:
 						//^2FCF:2801
 						continue;
@@ -2169,7 +2170,7 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(i16 xpos, i16 ypos, ObjectID reco
 						continue;
 					case 2: // 0x02: -
 						//^2FCF:2829
-						if (iObjectDBType > 4)	// weapons to cloud
+						if (iObjectDBType > DB_CATEGORY_CREATURE)	// (iObjectDBType > 4) weapons to cloud
 							//^2FCF:282F
 							continue;
 						//^2FCF:2832
@@ -2222,7 +2223,7 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(i16 xpos, i16 ypos, ObjectID reco
 							goto _29a8;
 						//^2FCF:28A1
 						continue;
-					case 5: // 0x05: -
+					case ACTUATOR_FLOOR_TYPE__X5: // 0x05: -
 					case ACTUATOR_FLOOR_TYPE__DM1_CREATURE_GENERATOR: // 0x06: -
 						//^2FCF:2D72
 						continue;
@@ -2247,7 +2248,7 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(i16 xpos, i16 ypos, ObjectID reco
 							if (iObjectDBType == DB_CATEGORY_CREATURE)
 							{
 								Bit8u iActuatorTriggers = 0;
-								Bit16u iActuatorEffectType = bp04->ActionType();
+								Bit16u iActuatorEffectType = xActuator->ActionType();
 
 								if (place == FCT_PLACE_ON &&
 									(iActuatorEffectType == ACTEFFECT_STEP_ON__OPEN_SET ||
@@ -2264,13 +2265,13 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(i16 xpos, i16 ypos, ObjectID reco
 
 								if (iActuatorTriggers == 1)
 								{
-									if (bp04->SoundEffect() != 0) {
+									if (xActuator->SoundEffect() != 0) {
 										QUEUE_NOISE_GEN2(
 											(bp1e == 0xffff) ? GDAT_CATEGORY_FLOOR_GFX : GDAT_CATEGORY_WALL_GFX,
-											(bp1e == 0xffff) ? GET_FLOOR_DECORATION_OF_ACTUATOR(bp04) : GET_WALL_DECORATION_OF_ACTUATOR(bp04),
+											(bp1e == 0xffff) ? GET_FLOOR_DECORATION_OF_ACTUATOR(xActuator) : GET_WALL_DECORATION_OF_ACTUATOR(xActuator),
 											SOUND_STD_ACTIVATION, 0xfe, xpos, ypos, 0x01, 0x8c, 0x80);
 									}
-									INVOKE_ACTUATOR(bp04, iActuatorEffectType, 0);
+									INVOKE_ACTUATOR(xActuator, iActuatorEffectType, 0);
 								}
 							}
 						}
@@ -2292,9 +2293,9 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(i16 xpos, i16 ypos, ObjectID reco
 				//^2FCF:28E3
 				continue;
 			//^2FCF:28E6
-			bp3e = bp04->ActuatorType();
+			//bp3e = bp04->ActuatorType();
 			//^2FCF:28F3
-			switch (bp3e) {
+			switch (iActType) {
 				case ACTUATOR_TYPE_KEY_HOLE: // &H1A -> Activator, key hole
 					{
 						//^2FCF:2952
@@ -2302,20 +2303,20 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(i16 xpos, i16 ypos, ObjectID reco
 							//^2FCF:2958
 							continue;
 						//^2FCF:295B
-						if (bp04->OnceOnlyActuator() == place)
+						if (xActuator->OnceOnlyActuator() == place)
 							//^2FCF:296D
 							continue;
 						//^2FCF:2970
-						if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, GET_WALL_DECORATION_OF_ACTUATOR(bp04), dtWordValue, 0x0e) != di)
+						if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, GET_WALL_DECORATION_OF_ACTUATOR(xActuator), dtWordValue, 0x0e) != di)
 							//^2FCF:2990
 							continue;
 						//^2FCF:2993
-						bp04->OnceOnlyActuator(place);
+						xActuator->OnceOnlyActuator(place);
 						//^2FCF:29A8
 _29a8:
-						bp10 = bp10 ^ bp04->RevertEffect();
+						bp10 = bp10 ^ xActuator->RevertEffect();
 						//^2FCF:29BD
-						Bit16u bp28 = bp04->ActionType();
+						Bit16u bp28 = xActuator->ActionType();
 						//^2FCF:29CA
 						if (bp28 == 3) {
 							//^2FCF:29CF
@@ -2328,14 +2329,14 @@ _29a8:
 								continue;
 						}
 						//^2FCF:29EA
-						if (bp04->SoundEffect() != 0) {
+						if (xActuator->SoundEffect() != 0) {
 							//^2FCF:29FB
 							QUEUE_NOISE_GEN2(
 								(bp1e == 0xffff) ? GDAT_CATEGORY_FLOOR_GFX : GDAT_CATEGORY_WALL_GFX,
 //									(bp1e == 0xffff) ? 0x0a : 0x09,
 								(bp1e == 0xffff)
-									? GET_FLOOR_DECORATION_OF_ACTUATOR(bp04)
-									: GET_WALL_DECORATION_OF_ACTUATOR(bp04),
+									? GET_FLOOR_DECORATION_OF_ACTUATOR(xActuator)
+									: GET_WALL_DECORATION_OF_ACTUATOR(xActuator),
 								SOUND_STD_ACTIVATION,
 								0xfe,
 								xpos,
@@ -2346,7 +2347,7 @@ _29a8:
 								);
 						}
 						//^2FCF:2A47
-						INVOKE_ACTUATOR(bp04, bp28, 0);
+						INVOKE_ACTUATOR(xActuator, bp28, 0);
 						//^2FCF:2A59
 						continue;
 					}
@@ -2366,7 +2367,7 @@ _29a8:
 							//^2FCF:291E
 							continue;
 						//^2FCF:2921
-						if (bp04->ActuatorData() == di)
+						if (xActuator->ActuatorData() == di)
 							//^2FCF:2930
 							goto _29a8;
 						//^2FCF:2932
@@ -2379,7 +2380,7 @@ _29a8:
 							//^2FCF:293B
 							continue;
 						//^2FCF:293E
-						if (bp04->ActuatorData() != di)
+						if (xActuator->ActuatorData() != di)
 							//^2FCF:294D
 							goto _29a8;
 						//^2FCF:294F
@@ -2584,46 +2585,46 @@ void SkWinCore::DELETE_CREATURE_RECORD(i16 xpos, i16 ypos, Bit16u dropMode, Bit1
 
 	//^1C9A:156A
 	//^1C9A:1570
-	ObjectID si = GET_CREATURE_AT(xpos, ypos);
+	ObjectID xCreatureReference = GET_CREATURE_AT(xpos, ypos);	// ObjectID si
 	//^1C9A:157E
-	if (si == OBJECT_NULL)
+	if (xCreatureReference == OBJECT_NULL)
 		//^1C9A:1583
 		return;
 	//^1C9A:1586
-	Creature *bp04 = GET_ADDRESS_OF_RECORD4(si);
+	Creature *xCreature = GET_ADDRESS_OF_RECORD4(xCreatureReference);	// Creature *bp04
 	//^1C9A:1593
-	AIDefinition *bp08 = QUERY_CREATURE_AI_SPEC_FROM_TYPE(bp04->CreatureType());
+	AIDefinition *xAIStats = QUERY_CREATURE_AI_SPEC_FROM_TYPE(xCreature->CreatureType());	// AIDefinition *bp08
 	//^1C9A:15A7
-	if (bp08->IsStaticObject() == 0) {
+	if (xAIStats->IsStaticObject() == 0) {
 		//^1C9A:15B4
-		Bit16u bp10 = QUERY_GDAT_CREATURE_WORD_VALUE(bp04->CreatureType(), 0x01);
+		Bit16u bp10 = QUERY_GDAT_CREATURE_WORD_VALUE(xCreature->CreatureType(), CREATURE_STAT_01);	// 0x01
 		//^1C9A:15C8
-		Bit16u di = _4976_3752[bp10];
+		Bit16u di = tblAIStats01[bp10];
 		//^1C9A:15D0
 		if ((di & 0x0004) == 0) {
 			//^1C9A:15D6
-			Creature *bp0c = bp04;
+			Creature *xCreature2 = xCreature;	// Creature *bp0c
 			//^1C9A:15E5
-			Bit16u bp0e = glbCurrentMapIndex;
+			Bit16u iCurrentMapIndex = glbCurrentMapIndex;	// Bit16u bp0e
 			if (!SkCodeParam::bDM1Mode)
 			{
 				//^1C9A:15EB
-				CHANGE_CURRENT_MAP_TO(bp0c->TriggerMap());
+				CHANGE_CURRENT_MAP_TO(xCreature2->TriggerMap());
 				//^1C9A:15FF
-				INVOKE_MESSAGE(bp0c->TriggerX(), bp0c->TriggerY(), 0, 0, glbGameTick +1);
+				INVOKE_MESSAGE(xCreature2->TriggerX(), xCreature2->TriggerY(), 0, 0, glbGameTick +1);
 			}
 			//^1C9A:162E
-			CHANGE_CURRENT_MAP_TO(bp0e);
+			CHANGE_CURRENT_MAP_TO(iCurrentMapIndex);
 		}
 	}
 	//^1C9A:1637
-	MOVE_RECORD_TO(si, xpos, ypos, -4, 0);
+	MOVE_RECORD_TO(xCreatureReference, xpos, ypos, -4, 0);
 	//^1C9A:164A
-	DROP_CREATURE_POSSESSION(si, xpos, ypos, dropMode, tt);
+	DROP_CREATURE_POSSESSION(xCreatureReference, xpos, ypos, dropMode, tt);
 	//^1C9A:165E
-	_1c9a_0247(si);
+	_1c9a_0247(xCreatureReference);
 	//^1C9A:1664
-	DEALLOC_RECORD(si);
+	DEALLOC_RECORD(xCreatureReference);
 	//^1C9A:166B
 	return;
 }

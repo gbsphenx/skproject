@@ -17478,7 +17478,7 @@ U16 SkWinCore::_19f0_0891(i16 zz, X16 xx, X16 yy, i16 ss, X16 tt, X16 ww)
 						//^19F0:0A08
 						if (bp04 <= 1 || _19f0_0207(xx, yy, di, tt, &SkWinCore::_19f0_00b8) != 0) {
 							//^19F0:0A2C
-							if ((_4976_3752[_4976_4efa] & 0x200) != 0) {
+							if ((tblAIStats01[_4976_4efa] & 0x200) != 0) {
 								//^19F0:0A3A
 								_19f0_045a(di, tt);
 								//^19F0:0A48
@@ -17962,7 +17962,7 @@ X16 SkWinCore::_19f0_13aa(i16 xx, i16 yy)
 	i16 bp08 = 0;
 	do {
 		//^19F0:13B5
-		if ((_4976_3752[_4976_4efa] & 0x400) != 0 || ((glbCurrentThinkingCreatureRec->w10 & 0x80) == 0 
+		if ((tblAIStats01[_4976_4efa] & 0x400) != 0 || ((glbCurrentThinkingCreatureRec->w10 & 0x80) == 0 
 			&& (glbAIDef->w0_2_2() != 0 || glbCreatureTimer.XcoordB() != xx || glbCreatureTimer.YcoordB() != yy || ((glbCurrentThinkingCreatureRec->b15_0_1() +2) & 3) != bp08) || (RAND() & 7) == 0)) {
 			//^19F0:1410
 			i16 di = xx;
@@ -34295,7 +34295,7 @@ _2484:
 						glbCurrentThinkingCreatureData->b29 = (glbCurrentThinkingCreatureData->b29 +1) & 3;
 					}
 					//^19F0:25D4
-					if ((_4976_3752[_4976_4efa] & 0x1000) != 0 && glbCurrentThinkingCreatureData->b29 != glbCurrentThinkingCreatureRec->b15_0_1()) {
+					if ((tblAIStats01[_4976_4efa] & 0x1000) != 0 && glbCurrentThinkingCreatureData->b29 != glbCurrentThinkingCreatureRec->b15_0_1()) {
 						//^19F0:25FB
 						_19f0_0559(glbCurrentThinkingCreatureData->b29);
 						return 1;
@@ -38791,7 +38791,7 @@ i16 SkWinCore::SELECT_CREATURE_4EFE(const sk4efe *ref)
 	if ((bp0e / (0x10 - glbAIDef->w22_4_7())) == 0)
 		si &= 0xffdf;
 	//^14CD:0105
-	if ((_4976_3752[_4976_4efa] & 0x400) != 0)
+	if ((tblAIStats01[_4976_4efa] & 0x400) != 0)
 		si |= 0x2000;
 	else if ((bp0e & 0x38) == 0)
 		si &= 0xdfff;
@@ -38804,7 +38804,7 @@ i16 SkWinCore::SELECT_CREATURE_4EFE(const sk4efe *ref)
 		si &= 0xefff;
 	//^14CD:0145
 	X16 di = 2;
-	if ((_4976_3752[_4976_4efa] & 2) == 0) {
+	if ((tblAIStats01[_4976_4efa] & 2) == 0) {
 		//^14CD:0156
 		di = di * ((((glbCurrentThinkingCreatureID.DBIndex() & 3) +1) << 1) -1);
 	}

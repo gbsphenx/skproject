@@ -704,7 +704,7 @@ enum SkillLevel {
 #define CREATURE_DRAGOTH_ATTACK_MINION	0x4C
 
 #define CREATURE_STAT_00				0x00
-#define CREATURE_STAT_01				0x01
+#define CREATURE_STAT_01				0x01	// Goes to a table ?
 #define CREATURE_STAT_AI				0x05
 #define CREATURE_STAT_6					0x06	// Seeing this used by SARDES Minion; would it be that creature does not attack ???
 #define CREATURE_STAT_DROP_FIRST		0x0A
@@ -1294,6 +1294,7 @@ enum SkillLevel {
 #define ACTUATOR_FLOOR_TYPE__EVERYTHING					0x01	// 01
 #define ACTUATOR_FLOOR_TYPE__PARTY						0x03	// 03
 #define ACTUATOR_FLOOR_TYPE__ITEM						0x04	// 04
+#define ACTUATOR_FLOOR_TYPE__X5							0x05	// 05 - Unused
 #define ACTUATOR_FLOOR_TYPE__DM1_CREATURE_GENERATOR		0x06	// 06 - DM1 Retrocompatibility
 #define ACTUATOR_FLOOR_TYPE__CREATURE					0x07	// 07
 #define ACTUATOR_FLOOR_TYPE__ITEM_POSSESSION			0x08	// 08

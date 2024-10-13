@@ -2121,7 +2121,8 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 			// SPX: Actually, DM2 code seems not to like multiple wall actuators on the same side and breaks after triggering the first one, unlike DM1 which
 			// sometimes needs several wall actuators on same side for mechanism. Then we don't want to break in case of DM1.
 			if (SkCodeParam::bDM1Mode)
-				continue;
+				goto checkactuator;
+				//continue;
 			//^2FCF:1AED
 			break;
 		}
@@ -4077,7 +4078,7 @@ void SkWinCore::ATTACK_CREATURE(ObjectID rl, i16 xx, i16 yy, Bit16u ss, i16 tt, 
 		//^13E4:0545
 		if (bp12 != 0) {
 			//^13E4:054E
-			if ((_4976_3752[QUERY_GDAT_CREATURE_WORD_VALUE(bp04->CreatureType(), 1)] & 0x80) == 0 && RAND01() != 0) {
+			if ((tblAIStats01[QUERY_GDAT_CREATURE_WORD_VALUE(bp04->CreatureType(), 1)] & 0x80) == 0 && RAND01() != 0) {
 				//^13E4:057A
 				si = CALC_VECTOR_DIR(xx, yy, glbPlayerPosX, glbPlayerPosY);
 				if ((bp04->w10 & 8) != 0 && RAND02() != 0)
