@@ -1447,7 +1447,7 @@ protected:
 	U8 *_0b36_037e(U8 *localpal, i8 xx, i16 colorkey1, i16 colorkey2, i16 palentcnt);
 	void _32cb_0804(U8 *localpal, i16 cls4, U16 colorkey1, i16 colorkey2, U16 palentcnt);
 	U16 QUERY_MULTILAYERS_PIC(ExtendedPicture *ref, U8 cls1, U8 cls2, U8 cls4, U16 horzRes, U16 vertRes, i16 zz, U16 mirrorflip, i16 colorkey1, U16 colorkey2);
-	void QUERY_RAINFALL_PARAM(U8 *cls4, U16 *isMirrored);
+	void QUERY_RAINFALL_PARAM(U8 *iRainImageID, U16 *isMirrored);
 	U8 *_32cb_0649(U8 cls1, U8 cls2, U8 cls4, i16 colorkey);
 	void FIRE_UPDATE_BLIT_PALETTE(const U8 *localpal);
 	void FIRE_BLIT_TO_MEMORY_ROW_4TO8BPP_NOKEY(U16 offSrc, U16 offDst, U16 size);

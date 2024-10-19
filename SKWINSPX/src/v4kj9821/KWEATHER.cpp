@@ -11,40 +11,26 @@
 
 
 //^32CB:0AA6
-void SkWinCore::QUERY_RAINFALL_PARAM(U8 *cls4, U16 *isMirrored)
+void SkWinCore::QUERY_RAINFALL_PARAM(U8 *iRainImageID, U16 *isMirrored)
 {
-	//^32CB:0AA6
 	ENTER(0);
-	//^32CB:0AA9
 	*isMirrored = (glbRainDirection - _4976_5aa0) & 3;
-	//^32CB:0ABB
 	// SPX: 0x71 is vertical rain view / 0x6D is side rain view
-	U8 cl = (*isMirrored == 0 || *isMirrored == 2) ? GFX_ENVIRONMENT_IMG_RAIN_STRAIGHT : GFX_ENVIRONMENT_IMG_RAIN_SLANTED;
-	//^32CB:0ACF
-	U16 rainLevel = 0;	// dx
-	//^32CB:0AD1
+	U8 iImageID = (*isMirrored == 0 || *isMirrored == 2) ? GFX_ENVIRONMENT_IMG_RAIN_STRAIGHT : GFX_ENVIRONMENT_IMG_RAIN_SLANTED;
+	U16 iRainLevel = 0;	// dx
 	if (glbRainStrength >= RAIN_THRESHOLD_LEVEL_3) {
-		//^32CB:0AD8
-		rainLevel = 3;
+		iRainLevel = 3;
 	}
-	//^32CB:0ADD
 	else if (glbRainStrength >= RAIN_THRESHOLD_LEVEL_2) {
-		//^32CB:0AE4
-		rainLevel = 2;
+		iRainLevel = 2;
 	}
-	//^32CB:0AE9
 	else if (glbRainStrength >= RAIN_THRESHOLD_LEVEL_1) {
-		//^32CB:0AF0
-		rainLevel = 1;
+		iRainLevel = 1;
 	}
-	//^32CB:0AF5
 	else if (glbRainStrength > RAIN_THRESHOLD_LEVEL_0 && glbRainStrength < RAIN_THRESHOLD_LEVEL_1) {
-		//^32CB:0B03
-		rainLevel = 0;
+		iRainLevel = 0;
 	}
-	//^32CB:0B05
-	*cls4 = cl + U8(rainLevel);
-	//^32CB:0B0F
+	*iRainImageID = iImageID + U8(iRainLevel);
 	return;
 }
 
