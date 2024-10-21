@@ -546,3 +546,150 @@ void SkWinCore::QUEUE_NOISE_GEN2(Bit8u cls1, Bit8u cls2, Bit8u iSoundID, Bit8u c
 
 	return;		
 }
+
+//^482B:05BF
+void SkWinCore::_482b_05bf(Bit16u xx)
+{
+	//^482B:05BF
+	ENTER(0);
+	//^482B:05C2
+	if (xx != 0) {
+		if (_4976_49d2 > 0) {
+			PLAY_SOUND(_4976_49d2, _4976_5efe);
+		}
+		_4976_49d2 = 0;
+		return;
+	}
+	if (_4976_49d0 > 0) {
+		PLAY_SOUND(_4976_49d0, _4976_5f02);
+	}
+	//^482B:0606
+	_4976_49d0 = 0;
+	//^482B:060C
+	return;
+}
+
+//^01B0:1997
+// SPX: _01b0_1997 renamed BLEND_TO_SNDBUFF_TANDY
+void SkWinCore::BLEND_TO_SNDBUFF_TANDY(void *ref, Bit16u xx, Bit16u yy, Bit16u zz) { // TODO: Unr
+	Unr();
+}
+
+void SkWinCore::_01b0_0ec3(X16 xx) { // TODO: Unr
+	Unr();
+}
+
+//^01B0:1A6D
+// SPX: _01b0_1a6d renamed BLEND_TO_SNDBUFF_GENERAL
+void SkWinCore::BLEND_TO_SNDBUFF_GENERAL(U8 *buff, Bit16u buffSize, Bit16u volume, Bit16u caller, Bit16u ss, Bit16u tt)
+{
+	//^01B0:1A6D
+	ENTER(6);
+	//^01B0:1A73
+	X16 si = volume;
+	U16 di = caller;
+	if (si == 0)
+		return;
+	//^01B0:1A80
+	if (di > 0x1f40 && tt != 0) {
+		//^01B0:1A8C
+		di >>= 1;
+		buffSize >>= 1;
+		_01b0_14d9 = 1;
+	}
+	else {
+		//^01B0:1AA3
+		_01b0_14d9 = 0;
+	}
+	//^01B0:1AAA
+	if (glbSoundBlasterBasePort == 0)
+		return;
+	//^01B0:1AB4
+	if (_04bf_04f1 != 0) {
+		//^01B0:1ABC
+		if (_04bf_04f3 != 0) {
+			//^01B0:1AC3
+			U16 bp02;
+			for (bp02 = 0; bp02 < 0x100; bp02++) {
+				//^01B0:1ACA
+				X8 bp05 = (ss == 7)
+					? _04bf_03d6[RCJ(220,(bp02 * 220) >> 8)]
+					: ((((bp02 +0x80) * si) >> 8) +0x80)
+					;
+				_01b0_13d8[bp02] = bp05;
+				//^01B0:1B00
+			}
+		}
+		//^01B0:1B0A
+		_04bf_04f1 =  si;
+		if (ss == 7) {
+			//^01B0:1B14
+			_01b0_0ec3(si);
+            _04bf_04f3 = 0;
+		}
+	}
+	//^01B0:1B20
+	bool jne = (sndLockSoundBuffer != 0);
+	sndSoundToPlayBuffer = buff;
+	sndLockSoundBuffer = buffSize;
+	if (!jne) {
+		//^01B0:1B3F
+		U16 bp04;
+		switch (ss) {
+		case 5://^1B51	// Sound card type 5
+			//^01B0:1B51
+			glbSoundFreq_13ce = 0x1551;	// 0x1551 = 5457 (*2 = 10914)
+			goto _1b7b;
+		case 3://^1B5A	// Sound card type 3
+			//^01B0:1B5A
+			glbSoundFreq_13ce = 0x1624;	// 0x1624 = 5668 (*2 = 11336)
+			goto _1b7b;
+		case 7://^1B63	// Sound card type 7
+			//^01B0:1B63
+			outportb(_01b0_14db, 0x40);
+			glbSoundFreq_13ce = 0x15e9;
+			goto _1b7b;
+		case ScardSBlaster://^1B74	// Sound card type 6
+			//^01B0:1B74
+			glbSoundFreq_13ce = 0x159e;	// 0x159e = 5534 (*2 = 11068)
+			//^01B0:1B7B
+_1b7b:
+			bp04 = 0x001234dc / di;
+			_01b0_13c8 = bp04;
+		case 4://^1B92
+			break;
+		}
+	}
+	//^01B0:1B92
+	//^01B0:1B93
+	return;
+}
+
+//^01B0:1BA1
+// SPX: _01b0_1ba1 renamed BLEND_TO_SNDBUFF_SNDCARD_4
+void SkWinCore::BLEND_TO_SNDBUFF_SNDCARD_4(void *ref, Bit16u xx, Bit16u yy, Bit16u zz) { // TODO: Unr
+	Unr();
+}
+
+//^47EB:02E0
+Bit16u SkWinCore::_47eb_02e0(SoundStructure *xx, SoundStructure *yy)
+{
+	//^47EB:02E0
+	ENTER(0);
+	//^47EB:02E4
+	U16 si;
+	if (xx->b4 > yy->b4)
+		//^47EB:02F4
+		return si = 1;
+	//^47EB:02F9
+	if (yy->b4 == yy->b4) {
+		//^47EB:0309
+		U8 cl = xx->b8;
+		U8 dl = yy->b8;
+		if (cl >= dl)
+			return si = 1;
+		return si = 0;
+	}
+	//^47EB:032C
+	return si = 0;
+}

@@ -4009,4 +4009,33 @@ void SkWinCore::BURN_PLAYER_LIGHTING_ITEMS()
 
 
 
+//^12B4:011E
+void SkWinCore::RESET_SQUAD_DIR()
+{
+	//^12B4:011E
+	ENTER(0);
+	//^12B4:0122
+	for (U16 si = 0; si < glbChampionsCount; si++) {
+		//^12B4:0126
+		glbChampionSquad[si].playerDir(U8(glbPlayerDir));
+	}
+	//^12B4:013E
+	return;
+}
+
+//^12B4:00AF
+// SPX TODO related to rotate squad
+void SkWinCore::_12b4_00af(U16 xx)
+{
+	//^12B4:00AF
+	ENTER(0);
+	//^12B4:00B2
+	MOVE_RECORD_TO(OBJECT_NULL, glbPlayerPosX, glbPlayerPosY, -1, 0);
+	glbMapToLoad = LOCATE_OTHER_LEVEL(glbPlayerMap, (xx != 0) ? -1 : +1, &glbPlayerPosX, &glbPlayerPosY, NULL);
+	CHANGE_CURRENT_MAP_TO(glbMapToLoad);
+	ROTATE_SQUAD(_0cee_06dc_GET_TILE_DIRECTION(glbPlayerPosX, glbPlayerPosY));
+	CHANGE_CURRENT_MAP_TO(glbPlayerMap);
+	//^12B4:011C
+	return;
+}
 

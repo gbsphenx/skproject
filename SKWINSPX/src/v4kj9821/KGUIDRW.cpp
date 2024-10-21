@@ -2,6 +2,7 @@
 
 #include <SKVER.H>
 #include <KCORE.H>
+#include <SKDEBUG.H>
 
 //^0B36:131A
 void SkWinCore::DRAW_SIMPLE_STR(sk3f6c *ref, Bit16u rectno, Bit16u clr1, Bit16u clr2, Bit8u *str)
@@ -4000,6 +4001,1228 @@ _0a25:
 	return;
 }
 
+//^2405:04F4
+// SPX: _2405_04f4 renamed DRAW_ITEM_IN_HAND
+void SkWinCore::DRAW_ITEM_IN_HAND(LeaderPossession *ref)
+{
+	//^2405:04F4
+	ENTER(8);
+	//^2405:04F8
+	U8 bp05 = QUERY_CLS1_FROM_RECORD(ref->object);
+	//^2405:0507
+	U8 bp06 = QUERY_CLS2_FROM_RECORD(ref->object);
+	//^2405:0516
+	U8 bp07 = GET_ITEM_ICON_ANIM_FRAME(ref->object, -1, 1);
+	//^2405:052A
+	U8 *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(bp05, bp06, bp07);
+	//^2405:0541
+	COPY_MEMORY(
+		QUERY_GDAT_IMAGE_LOCALPAL(bp05, bp06, bp07),
+		ref->b6,
+		16
+		);
+	//^2405:056D
+	FIRE_BLIT_PICTURE(
+		bp04,
+		ref->pb2,
+        ALLOC_TEMP_ORIGIN_RECT(_4976_0106, _4976_0108),
+		0,
+		0,
+		READ_I16(bp04,-4),
+		_4976_0106,
+		-1,
+		0,
+		4,
+		4,
+		NULL
+		);
+	//^2405:05B2
+	return;
+}
+
+
+
+//^2E62:0CFA
+void SkWinCore::_2e62_0cfa(U16 xx)
+{
+	//^2E62:0CFA
+	ENTER(4);
+	//^2E62:0CFF
+	for (U16 si = 0; si < glbChampionsCount; si++) {
+		//^2E62:0D03
+		if (si +1 != glbChampionInventory) {
+			//^2E62:0D0C
+			REFRESH_PLAYER_STAT_DISP(si);
+		}
+		//^2E62:0D12
+	}
+	//^2E62:0D19
+	if (glbChampionInventory != 0) {
+		//^2E62:0D20
+		U16 si = glbChampionInventory -1;
+		//^2E62:0D26
+		Champion *champion = &glbChampionSquad[si];
+		//^2E62:0D34
+		if (champion->enchantmentPower != 0 && champion->enchantmentAura >= ENCHANTMENT_AURA_FIRST && champion->enchantmentAura <= ENCHANTMENT_AURA_LAST) {
+			//^2E62:0D4F
+			champion->heroFlag |= (glbShowItemStats != 0 && glbLeaderHandPossession.object == OBJECT_NULL) ? CHAMPION_FLAG_3000 : CHAMPION_FLAG_1000;	// 0x3000 or 0x1000
+		}
+		//^2E62:0D6C
+		REFRESH_PLAYER_STAT_DISP(glbChampionInventory -1);
+	}
+	//^2E62:0D76
+	UPDATE_RIGHT_PANEL(xx);
+	//^2E62:0D7F
+	return;
+}
+
+//^443C:0004
+void SkWinCore::_443c_0004(U8 *buffSrc, U8 *buffDst, U8 *localpal)
+{
+	//^443C:0004
+	ENTER(20);
+	//^443C:0009
+	U8 *bp04 = ALLOC_PICT_BUFF(16, 16, afDefault, 4);
+	//^443C:001F
+	U8 bp14[16];
+	for (i16 si = 0; si < 16; si++) {
+		//^443C:0023
+		bp14[si] = glbPaletteT16[COLOR_BLACK];
+		//^443C:002D
+	}
+	//^443C:0033
+	bp14[12] = localpal[12];
+	//^443C:003D
+	FILL_ENTIRE_PICT(buffDst, localpal[12]);
+	//^443C:0052
+	DRAW_DIALOGUE_PICT(buffSrc, buffDst, &_4976_4942, 0, 0, 12, bp14);
+	//^443C:0075
+	DRAW_DIALOGUE_PICT(buffSrc, buffDst, &_4976_494a, 0, 0, 12, localpal);
+	//^443C:0099
+	FREE_PICT_BUFF(bp04);
+	//^443C:00A6
+	return;
+}
+
+//^443C:0434
+void SkWinCore::_443c_0434()
+{
+	//^443C:0434
+	ENTER(4);
+	//^443C:0438
+	_4976_5dac = (glbLeaderHandPossession.object != OBJECT_NULL) ? 1 : 0;
+	//^443C:0449
+	if (_4976_5dac != 0) {
+		//^443C:044D
+		U8 *bp04 = ALLOC_PICT_BUFF(18, 18, afDefault, 8);
+		//^443C:0463
+		_443c_0004(glbLeaderHandPossession.pb2, bp04, glbLeaderHandPossession.b6);
+		//^443C:047C
+		IBMIO_SET_CURSOR_PATTERN(2, bp04, 8, 8, 18, 18, 8, NULL, glbLeaderHandPossession.b6[12]) INDIRECT_CALL;
+		//^443C:04A3
+		FREE_PICT_BUFF(bp04);
+	}
+	//^443C:04B0
+	_443c_040e();
+	//^443C:04B4
+	return;
+}
+
+
+
+
+//^0B36:1757
+// SPX: ressembles pretty much DRAW_STATIC_PIC (_0B36_1688) 
+// SPX: _0B36_1757 renamed DRAW_TRANSPARENT_STATIC_PIC
+void SkWinCore::DRAW_TRANSPARENT_STATIC_PIC(U8 cls1, U8 cls2, U8 cls4, U16 rectno, U16 colorkey)
+{
+	//^0B36:1757
+	ENTER(314);
+	//^0B36:175B
+	ExtendedPicture bp013a;
+	QUERY_GDAT_SUMMARY_IMAGE(&bp013a, cls1, cls2, cls4);
+	//^0B36:1774
+	bp013a.colorKeyPassThrough = colorkey;
+	bp013a.rectNo = rectno;
+	//^0B36:1782
+	DRAW_PICST(QUERY_PICST_IT(&bp013a));
+	//^0B36:1796
+	return;
+}
+
+
+//^32CB:0F82
+// _32cb_0f82 renamed _32cb_0f82_SHOP_GLASS
+void SkWinCore::_32cb_0f82_SHOP_GLASS(Actuator *ref, U8 cls4, i16 bb, i16 cellPos, U16 horzStretch, U16 vertStretch, U16 rectno, U16 gg, U16 colorkey1)
+{
+	//^32CB:0F82
+	ENTER(58);
+	//^32CB:0F88
+	Actuator *bp0c = NULL;
+	//^32CB:0F92
+	U16 bp26;
+	for (ObjectID di = GET_TILE_RECORD_LINK(ref->Xcoord(), ref->Ycoord()); di != OBJECT_END_MARKER && (bp26 = di.DBType()) <= dbActuator; di = GET_NEXT_RECORD_LINK(di)) {
+		//^32CB:0FB4
+		if (bp26 == dbActuator) {
+			//^32CB:0FBA
+			bp0c = GET_ADDRESS_OF_ACTU(di);
+			//^32CB:0FC7
+			if (bp0c->ActuatorType() == ACTUATOR_FLOOR_TYPE__SHOP) // 0x30 -> 'Shop exhibition'
+				//^32CB:0FD4
+				break;
+		}
+		//^32CB:0FD6
+	}
+	//^32CB:0FF4
+	i16 si = bp0c->ActuatorData();
+	U16 bp24 = si;
+	//^32CB:1006
+	U8 bp11 = U8(ref->ActuatorData());
+	//^32CB:1016
+	if (ref->ActiveStatus() == 0 || ref->OnceOnlyActuator() != 0) {
+		//^32CB:1032
+		U16 bp14 = (ref->Delay() * 3) +16;
+		//^32CB:104A
+		U8 *bp04 = ALLOC_MEMORY_RAM(64, afDefault, 1024);
+		//^32CB:1061
+		if (QUERY_CREATURES_ITEM_MASK(bp11, U8(bp14), bp04, 0) != 0) {
+			//^32CB:107F
+			U16 *bp10 = reinterpret_cast<U16 *>(QUERY_GDAT_ENTRY_DATA_BUFF(GDAT_CATEGORY_WALL_GFX, cls4, dt08, GDAT_WALL_ORNATE__DATA_13));
+			//^32CB:1097
+			i16 bp28;
+			if (bp10 != NULL) {
+				//^32CB:109B
+				bp28 = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_WALL_GFX, cls4, dt08, GDAT_WALL_ORNATE__DATA_13) >> 1;
+				//^32CB:10B2
+				for (si = 0; si < bp28; si++) {
+					//^32CB:10B6
+					if ((bp10[si] & 511) == bp24)
+						//^32CB:10C8
+						break;
+				}
+			}
+			do {
+				//^32CB:10D0
+				si += (ref->OnceOnlyActuator() != 0 || _4976_5a96 < 0) ? 1 : -1;
+				//^32CB:10F2
+				if (bp10 != NULL) {
+					//^32CB:10FA
+					if (si < 0) {
+						//^32CB:10FE
+						si = bp28 -1;
+					}
+					//^32CB:1106
+					else if (si >= bp28) {
+						//^32CB:110B
+						si = 0;
+					}
+					//^32CB:110D
+					bp24 = bp10[si] & 511;
+				}
+				else {
+					//^32CB:111E
+					si &= 511;
+					bp24 = si;
+				}
+				//^32CB:1124
+				//^32CB:1127
+			} while (false
+				|| (bp04[bp24 >> 3] & (1 << (bp24 & 7))) == 0
+				|| (true
+					&& (QUERY_GDAT_ENTRY_DATA_INDEX(QUERY_ITEMDB_FROM_DISTINCTIVE_ITEMTYPE(bp24), GET_ITEMTYPE_OF_ITEMSPEC_ACTUATOR(bp24), dtWordValue, 0) & 0x1000) != 0
+					&& IS_DISTINCTIVE_ITEM_ON_ACTUATOR(ref, bp24, 1) == 0
+					&& IS_DISTINCTIVE_ITEM_ON_ACTUATOR(bp0c, bp24, 0) == 0
+					&& _2fcf_16ff(bp24) == 0
+					)
+				);
+			//^32CB:11A2
+			ref->OnceOnlyActuator(0);
+		}
+		//^32CB:11AA
+		ref->ActiveStatus(1);
+		//^32CB:11B2
+		bp0c->ActiveStatus(1);
+		//^32CB:11BA
+		bp0c->ActuatorData(bp24);
+		//^32CB:11CD
+		DEALLOC_UPPER_MEMORY(64);
+	}
+	//^32CB:11D8
+	U16 bp18 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, cls4, dtImageOffset, GDAT_WALL_ORNATE__DATA_FD);	// 0xFD
+	//^32CB:11EE
+	QUERY_TEMP_PICST(0, horzStretch, vertStretch, i8(bp18 >> 8), i8(bp18), bb, rectno, gg, colorkey1, -1, QUERY_ITEMDB_FROM_DISTINCTIVE_ITEMTYPE(bp24),
+		GET_ITEMTYPE_OF_ITEMSPEC_ACTUATOR(bp24), 0x00);
+	//^32CB:122E
+	DRAW_TEMP_PICST();
+	//^32CB:1232
+	if (true
+		&& IS_DISTINCTIVE_ITEM_ON_ACTUATOR(ref, bp24, 1) == 0
+		&& IS_DISTINCTIVE_ITEM_ON_ACTUATOR(bp0c, bp24, 0) == 0
+	) {
+		//^32CB:1264
+		U16 *bp10 = reinterpret_cast<U16 *>(QUERY_GDAT_ENTRY_DATA_BUFF(GDAT_CATEGORY_WALL_GFX, cls4, dt08, GDAT_WALL_ORNATE__DATA_13));
+		//^32CB:127C
+		if (bp10 != NULL) {
+			//^32CB:1280
+			i16 bp28 = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_WALL_GFX, cls4, dt08, GDAT_WALL_ORNATE__DATA_13) >> 1;
+			//^32CB:1297
+			for (si = 0; si < bp28; si++) {
+				//^32CB:129B
+				if ((bp10[si] & 511) == bp24)
+					//^32CB:12AD
+					break;
+			}
+			//^32CB:12B5
+			ObjectID di;
+			if ((bp10[si] & 0x8000) != 0 && (di = ALLOC_NEW_DBITEM_DEEPLY(bp24)) != OBJECT_NULL) {
+				//^32CB:12D5
+				APPEND_RECORD_TO(di, NULL, ref->Xcoord(), ref->Ycoord());
+			}
+		}
+		else {
+			//^32CB:12FD
+			QUERY_TEMP_PICST(0, horzStretch, vertStretch, i8(bp18 >> 8), i8(bp18), bb, rectno, gg, colorkey1, -1, 9, cls4, 0x11); // sold out icon
+			//^32CB:132F
+			DRAW_TEMP_PICST();
+		}
+	}
+	//^32CB:1333
+	QUERY_TEMP_PICST(0, horzStretch, vertStretch, 0, 0, bb, rectno, gg, colorkey1, -1, 9, cls4, 0x0f); // shop panel nav board
+	//^32CB:135C
+	DRAW_TEMP_PICST();
+	//^32CB:1360
+	if (cellPos == 3) {
+		//^32CB:1366
+		i16 bp2a;
+		i16 bp2c;
+		QUERY_TOPLEFT_OF_RECT(rectno, &bp2a, &bp2c);
+		//^32CB:137B
+		U16 bp18 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, cls4, dtImageOffset, 0xf2);
+		//^32CB:1391
+		bp2a += i8(bp18 >> 8);
+		bp2c += i8(bp18);
+		//^32CB:139F
+		DRAW_TEXT_TO_BACKBUFF(bp2a, bp2c, QUERY_GDAT_ITEM_NAME(QUERY_ITEMDB_FROM_DISTINCTIVE_ITEMTYPE(bp24), GET_ITEMTYPE_OF_ITEMSPEC_ACTUATOR(bp24)));
+	}
+	//^32CB:13C9
+	if (cellPos == 3) {
+		//^32CB:13D2
+		U16 bp22 = _48ae_05ae_CREATURE(bp24, bp11, ref->ShopItemPoolNo(), 1, 1, -1); // price for buy?
+		//^32CB:13F8
+		U16 bp20 = _48ae_05ae_CREATURE(bp24, bp11, ref->ShopItemPoolNo(), 0, 1, -1); // price for sell?
+		//^32CB:141E
+		for (i16 bp16 = 0; bp16 < 2; bp16++) {
+			//^32CB:1426
+			U16 bp18 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, cls4, dtImageOffset, (bp16 != 0) ? GDAT_WALL_ORNATE__DATA_F0 : GDAT_WALL_ORNATE__DATA_F1);
+			//^32CB:1446
+			i16 bp2a = i8(bp18 >> 8);
+			i16 bp2c = i8(bp18);
+			//^32CB:1454
+			U16 bp1a = (bp16 != 0) ? bp22 : bp20;
+			//^32CB:1465
+			if (bp1a <= 0)
+				//^32CB:1469
+				continue;
+			//^32CB:146C
+			U8 bp3a[16];
+			i16 bp1e;
+			_48ae_0767_MONEY_VALUE(bp1a, 6, bp3a, &bp1e, bp16);
+			//^32CB:1486
+			if (bp1e <= 0)
+				//^32CB:148C
+				continue;
+			//^32CB:148F
+			U16 bp1c = ALLOC_TEMP_CACHE_INDEX();
+			//^32CB:1497
+			ALLOC_NEW_PICT(bp1c, bp1e << 3, 7, 4);
+			//^32CB:14AD
+			QUERY_TEMP_PICST(0, 64, 64, 0, 0, bb, -1, gg, -1, -1, 0x09, cls4, 0x10);
+			//^32CB:14D2
+			U8 *bp08 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp1c));
+			//^32CB:14E1
+			SRECT bp34;
+			SET_ORIGIN_RECT(&bp34, 8, 7);
+			//^32CB:14F2
+			for (si = 0; si < bp1e; si++) {
+				//^32CB:14F6
+				DRAW_DIALOGUE_PICT(glbTempPicture.pb0, bp08, &bp34, bp3a[si] << 3, 0, -1, NULL);
+				//^32CB:1522
+				bp34.x += 8;
+				//^32CB:1526
+			}
+			//^32CB:152C
+			DRAW_DIALOGUE_PICT(bp08, _4976_4c16, QUERY_BLIT_RECT(bp08, &bp34, rectno|0x8000, &bp2a, &bp2c, gg), 
+				0, 0, colorkey1, glbTempPicture.b58);
+			//^32CB:1576
+			FREE_TEMP_CACHE_INDEX(bp1c);
+			//^32CB:157F
+		}
+	}
+	//^32CB:158B
+	return;
+}
+
+//^32CB:3F0D
+// SPX: _32cb_3f0d renamed DRAW_ALCOVE_ITEMS
+void SkWinCore::DRAW_ALCOVE_ITEMS(U16 xx)
+{
+	//^32CB:3F0D
+	ENTER(14);
+	//^32CB:3F13
+	X16 si = xx;
+	ObjectID di = tblCellTilesRoom[si].xsrd.id4();
+	if (di == OBJECT_END_MARKER)
+		return;
+	//^32CB:3F2F
+	X16 bp08 = 2;
+	//^32CB:3F34
+	do {
+		if (di.Dir() != ((glbPlayerDir +2) & 3))
+			return;
+		//^32CB:3F4A
+		X16 bp0a = di.DBType();
+		if (bp0a >= dbWeapon && bp0a <= dbMiscellaneous_item) {
+			//^32CB:3F61
+			DRAW_ITEM(di, si, 0, 0, bp08, NULL, 1, 0, 1);
+			bp08++;
+			if (bp08 >= 0xe)
+				bp08 = 2;
+			if (si == 3)
+				//^32CB:3F91
+				MAKE_PUT_DOWN_ITEM_CLICKABLE_ZONE(8, di, si, 3);
+		}
+		//^32CB:3FA1
+		else if (bp0a == dbCloud && _4976_4463[RCJ(23,si)] != 0xff) {
+			//^32CB:3FB4
+			Cloud *bp04 = GET_ADDRESS_OF_RECORDF(di);
+			U8 bp05 = bp04->CloudType();
+			X16 bp0c = RAND02();
+			if (bp05 == 0x64) {
+				//^32CB:3FDC
+				X16 bp0e = _4976_41ed[RCJ(17,_4976_4463[RCJ(23,si)])];
+				QUERY_TEMP_PICST(bp0c, bp0e, bp0e, 0, 0, 0, QUERY_RECTNO_FOR_WALL_ORNATE(si, 0, 0xffff), 0xffff, 10, -1, 0x0d, bp05, 0xc);
+				DRAW_TEMP_PICST();
+			}
+			//^32CB:4020
+			else if (bp05 == 0x65) {
+				_32cb_2cf3(bp05, _4976_41e6[RCJ(7,_4976_4463[RCJ(23,si)])], bp0c, QUERY_RECTNO_FOR_WALL_ORNATE(si, 12, 0));
+				DRAW_TEMP_PICST();
+			}
+		}
+		//^32CB:4054
+	} while ((di = GET_NEXT_RECORD_LINK(di)) != OBJECT_END_MARKER);
+	//^32CB:4065
+	return;
+}
+
+//^32CB:15B8
+// SPX: _32cb_15b8 renamed DRAW_WALL_ORNATE
+i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
+{
+	//^32CB:15B8
+	ENTER(854);
+
+#if DM2_EXTENDED_MODE == 1
+	{
+		if (glbGlobalSpellEffects.SeeThruWalls > 0 && cellPos == 3)	// front D1 wall
+		{
+			return -1;	// in case of see thru, don't show ornate at all
+		}
+	}
+#endif
+
+
+	//^32CB:15BE
+	i16 bp14 = (yy <= -1)
+		? 4
+		: ((yy >= 1)
+			? 6
+			: 5
+		);
+	//^32CB:15DD
+	bp14 = tblCellTilesRoom[cellPos].xsrd.w6[RCJ(4,bp14 -3)];	// get the ornate gfx id ?
+	//^32CB:15F9
+	i16 bp28 = bp14 >> 8;	// upper part (flags)
+	//^32CB:15FF
+	i16 iYDist = glbTabYAxisDistance[RCJ(23,cellPos)];	// i16 di
+	//^32CB:1609
+	U8 bp1f = U8(bp14) & 0xff; // lower part : gfx id
+	//^32CB:1611
+	if (bp1f == 0xff)
+		//^32CB:1617
+		return -1;
+	//^32CB:161D
+	U16 bp2a = (bp1f == 0) ? 1 : 0;
+	//^32CB:162D
+	U16 alcoveType = GET_WALL_ORNATE_ALCOVE_TYPE(bp1f);	// U16 bp22
+	//^32CB:163A
+	U16 iDoNotFlip = 0; // U16 bp24 = 0; SPX: fixed value init
+	if (bp2a == 0) {
+		//^32CB:1640
+		iDoNotFlip = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp1f, dtWordValue, GDAT_WALL_ORNATE__DO_NOT_FLIP);	// Has some role for general graphics flip
+	}
+	//^32CB:1655
+	U16 iFlipImage = 0;	// U16 bp0e = 0; use flip or not
+	//^32CB:165A
+	U16 si = 0; // defaulting to 0
+	if (bp2a != 0 || (si = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp1f, dtWordValue, GDAT_IMG_COLORKEY_1)) == 0)
+		//^32CB:1678
+		si = glbSceneColorKey;
+	//^32CB:167C
+	U16 iOrnatePos = 0;	// U16 bp1a
+	U16 iRefPoint = 0;	// U16 bp1e
+	if (bp2a != 0 || (iOrnatePos = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp1f, dtWordValue, GDAT_WALL_ORNATE__POSITION)) == 0) {
+		//^32CB:169B
+		iOrnatePos = ORNATE_POS__VCENTERED_HCENTERED;	// SPX: that must be the default ornate position (default = 12)
+		iRefPoint = 0;	// 0 = point is centered
+	}
+	else {	// values in GDAT are 1 to 25. shift it back to 0 to 24.
+		//^32CB:16A7
+		iRefPoint = iOrnatePos >> 8;	 // SPX: value in GDAT is 2 byte. Upper byte is how to draw image from ornate position
+		iOrnatePos = (iOrnatePos & 255) -1;
+	}
+	//^32CB:16BA
+	U16 iRectno = QUERY_RECTNO_FOR_WALL_ORNATE(cellPos, iOrnatePos, (yy != 0) ? 1 : 0);	// U16 bp1c; recto
+	//^32CB:16D9
+	U16 iStretchVertical = 0;	// U16 bp18
+	U16 iStretchHorizontal = 0;	// U16 bp16
+	iStretchVertical = iStretchHorizontal = tlbDistanceStretch[RCJ(5,iYDist)];
+	
+	//^32CB:16E5
+	if (alcoveType == WALL_ORNATE_OBJECT__CRYOCELL && yy == 0) {	// bp22 == 3 && yy == 0
+		//^32CB:16F7
+		U16 bp34 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp1f, dtImageOffset, GDAT_GFXSET_DATA_FD);	// 0x09 .. .. 0xFD
+		// bp34 holds the offset x and y for the image
+		//^32CB:170D
+		// SPX: U8(_4976_5a80[cellPos].x2.w14) holds the portrait Champion ID to be displayed under the Champion Cell/Mirror
+		QUERY_TEMP_PICST(iFlipImage, iStretchHorizontal, iStretchVertical, i8(bp34 >> 8), i8(bp34), iYDist, iRectno, iRefPoint, -1, -1, GDAT_CATEGORY_CHAMPIONS, U8(tblCellTilesRoom[cellPos].xsrd.xvalue), 1);
+		//^32CB:174C
+		if (zz == 0)
+			//^32CB:1752
+			glbTempPicture.colorKeyPassThrough = -2;
+		//^32CB:1758
+		DRAW_TEMP_PICST();
+		//^32CB:175C
+		if (zz == 0)
+			//^32CB:1762
+			//^32CB:1F38
+			return si;
+		//^32CB:1765
+		if (iYDist == 1) {
+			//^32CB:176A
+			MAKE_BUTTON_CLICKABLE(&glbTempPicture.rc36, 6, U8(cellPos));
+		}
+	}
+	//^32CB:177A
+	if (iYDist == 2 && (yy <= -2 || yy >= 2))
+		//^32CB:178B
+		iStretchHorizontal = 0x72;	// 0x72 = 114	=> 178%
+	//^32CB:1792
+	else if (iYDist == 3 && (yy <= -2 || yy >= 2))
+		//^32CB:17A3
+		iStretchHorizontal = 0x4C;	// 0x4C = 76 => 118%
+	if (SkCodeParam::bDM1Mode && iYDist >= 4)	// SPX: DM1 mode, do not display anything more than D3
+		return -1;
+	//^32CB:17A8
+	if (bp2a != 0) {
+		U8 bDrawSideTextPanel = 1; // default for DM2 mode
+		//^32CB:17B1
+		U8 bp20;
+		if (yy == 0) {
+			//^32CB:17B7
+			bp20 = 0xFC;
+		}
+		else if (yy <= -1) {
+			//^32CB:17C3
+			bp20 = 0xFD;
+		}
+		else {
+			//^32CB:17C9
+			// xFD is the L-side text panel, then xFE would be the R-side text panel if they were not symmetric
+			if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dtImage, 0xFE) != 0) { // SPX: GDAT2 never has 0xFE image ???
+				//^32CB:17E0
+				bp20 = 0xFE;
+			}
+			else {
+				//^32CB:17E6
+				bp20 = 0xFD;
+				iFlipImage = 1;	// do flip
+			}
+		}
+		//^32CB:17EF
+		QUERY_TEMP_PICST(iFlipImage, iStretchHorizontal, iStretchVertical, 0, 0, iYDist, iRectno, iRefPoint, si, -1, GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, bp20);
+		//^32CB:1817
+		if (zz == 0)
+			//^32CB:181D
+			glbTempPicture.colorKeyPassThrough = -2;
+		// SPX: this draws the text panel or default gibberish side text. In case of DM1, the gibberish must not be displayed if the text is not visible.
+		if (SkCodeParam::bDM1Mode)
+		{
+			ObjectID xTextObject = tblCellTilesRoom[cellPos].xsrd.xvalue;
+			if (!IS_OBJECT_VISIBLE_TEXT(xTextObject))
+				bDrawSideTextPanel = 0;
+		}
+
+		if (bDrawSideTextPanel == 1) // SPX: added this condition
+		//^32CB:1823
+			DRAW_TEMP_PICST();
+		//^32CB:1827
+		if (yy != 0)
+			//^32CB:182D
+			//^32CB:1F38
+			return si;
+		//^32CB:1830
+		ObjectID bp32 = tblCellTilesRoom[cellPos].xsrd.xvalue;
+		//^32CB:1845
+		if (bp32 == OBJECT_NULL)
+			//^32CB:184A
+			//^32CB:1F38
+			return si;
+		//^32CB:184D
+		ExtendedPicture bp01d6;
+		QUERY_GDAT_SUMMARY_IMAGE(&bp01d6, GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, bp20);
+		//^32CB:1865
+		i16 bp2c = bp01d6.w28;
+		i16 bp2e = bp01d6.w30;
+		//^32CB:1873
+		i16 bp48;
+		i16 bp4a;
+		QUERY_GDAT_IMAGE_METRICS(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, bp20, &bp48, &bp4a);
+		//^32CB:188F
+		U16 bp26 = ALLOC_TEMP_CACHE_INDEX();
+		//^32CB:1897
+		U8 bp009c[80];
+		QUERY_MESSAGE_TEXT(bp009c, bp32, 2);
+		//^32CB:18AA
+		U16 bp36 = 0;
+		U16 bp38 = 1;
+		//^32CB:18B4
+		U8 bp45;
+		while ((bp45 = bp009c[bp36++]) != 0) {
+			//^32CB:18B6
+			if (bp45 == vbLf)
+				//^32CB:18BC
+				bp38++;
+		}
+		//^32CB:18D5
+		U16 bp4c = QUERY_MBCS_PRESENCE(bp009c);
+		//^32CB:18E5
+		U16 bp3a;
+		U16 bp3c;
+		if (bp4c != 0) {
+			//^32CB:18E9
+			bp3a = _4976_012e;
+			bp3c = _4976_0130 +2;
+			si = 0;
+		}
+		else {
+			//^32CB:18FB
+			bp3a = _4976_012a;
+			bp3c = _4976_012c +2;
+		}
+		//^32CB:1909
+		U8 *bp08 = ALLOC_NEW_PICT(bp26, bp48, bp4a, 4);
+		//^32CB:1922
+		FILL_ENTIRE_PICT(bp08, si);
+		//^32CB:1931
+		SRECT rc44;
+		rc44.y = (bp4a >> 1) - (bp3c * bp38 >> 1);
+		//^32CB:1945
+		if (bp4c != 0) {
+			//^32CB:194E
+			for (U16 bp36 = 0; bp009c[bp36] != 0; ) {
+				//^32CB:1956
+				if (bp4a - (_4976_0130 + _4976_0136 +1) <= rc44.y)
+					//^32CB:1968
+					break;
+				//^32CB:196B
+				U8 bp0356[384];
+				i16 bp30 = _3929_04e2_DRAW_TEXT_STRINGS(bp009c, bp0356, &bp36, bp48 -1);
+				//^32CB:198C
+				if (bp30 != 0) {
+					//^32CB:1995
+					rc44.x = (bp48 >> 1) - (bp30 >> 1);
+					//^32CB:19A4
+					if (rc44.y >= 0 && rc44.x >= 0 && bp30 <= bp48) {
+						//^32CB:19C1
+						DRAW_STRING(bp08, bp26, bp48, rc44.x   , rc44.y + _4976_0130 +1, 1, 0x4000, bp0356, 4);
+						//^32CB:19EE
+						DRAW_STRING(bp08, bp26, bp48, rc44.x +1, rc44.y + _4976_0130 +1, 1, 0x4000, bp0356, 4);
+						//^32CB:1A1D
+						DRAW_STRING(bp08, bp26, bp48, rc44.x   , rc44.y + _4976_0130   , 2, 0x4000, bp0356, 4);
+					}
+				}
+				//^32CB:1A49
+				if (bp009c[bp36] == vbLf)
+					//^32CB:1A58
+					bp36++;
+				//^32CB:1A5B
+				rc44.y += bp3c;
+				//^32CB:1A61
+			}
+		}
+		else {
+			//^_1a76
+			U8 *bp0c = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_LETTERS);	// 0x08 .. 0x03
+			//^32CB:1A8C
+			rc44.cx = bp3a;
+			//^32CB:1A92
+			rc44.cy = READ_I16(bp0c,-2);
+			//^32CB:1A9C
+			U8 *bp08 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp26));
+			//^32CB:1AAB
+			U8 *bp04 = bp009c;
+
+			do {
+				//^32CB:1AB5
+				U16 bp36 = 0;
+				//^32CB:1ABA
+				while (bp04[bp36] != 0 && bp04[bp36] != vbLf)
+					//^32CB:1ABC
+					bp36++;
+				//^32CB:1AD7
+				i16 bp30 = bp3a * bp36;
+				//^32CB:1AE0
+				if (bp36 != 0) {
+					//^32CB:1AE6
+					rc44.x = (bp48 >> 1) - (bp30 >> 1);
+					//^32CB:1AF5
+					if (rc44.x < 0) {
+						//^32CB:1AFB
+						bp04 += bp36;
+					}
+					else {
+						//^32CB:1AF9
+						while (bp36-- != 0) {
+							//^32CB:1B03
+							DRAW_DIALOGUE_PICT(
+								bp0c,
+								bp08,
+								&rc44,
+								SKCHR_TO_SCRIPTCHR(*(bp04++)) * bp3a,
+								0,
+								si,
+								QUERY_GDAT_IMAGE_LOCALPAL(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_LETTERS)	// 0x08 .. 0x03
+								);
+							//^32CB:1B46
+							rc44.x += bp3a;
+							//^32CB:1B49
+						}
+					}
+				}
+				//^32CB:1B56
+				rc44.y += bp3c;
+				//^32CB:1B5C
+			} while (*(bp04++) != 0);
+		}
+		//^32CB:1B6B
+		QUERY_GDAT_SUMMARY_IMAGE(&bp01d6, 0xff, 0x00, 0x00);
+		//^32CB:1B80
+		bp01d6.w12 = bp26;
+		bp01d6.w6 = 0xffff;
+		bp01d6.w52 = iStretchHorizontal;
+		bp01d6.w54 = iStretchVertical;
+		//^32CB:1B9B
+		if (bp4c != 0) {
+			//^32CB:1BA1
+			bp01d6.b58[1] = glbPaletteT16[COLOR_BLACK];
+			bp01d6.b58[2] = glbPaletteT16[COLOR_BROWN];
+		}
+		else {
+			//^32CB:1BB6
+			COPY_MEMORY(
+				QUERY_GDAT_IMAGE_LOCALPAL(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_LETTERS),	// 08 .. 03
+				bp01d6.b58,
+				16
+				);
+		}
+		//^32CB:1BDA
+		bp01d6.w56 = 16;
+		//^32CB:1BE1
+		_32cb_0804(bp01d6.b58, U8(iYDist), si, -1, bp01d6.w56);
+		//^32CB:1BF3
+		bp01d6.pb44 = _4976_4c16;
+		//^32CB:1C02
+		bp01d6.rectNo = iRectno;
+		bp01d6.w26 = iRefPoint;
+		bp01d6.w28 = bp2c;
+		bp01d6.w30 = bp2e;
+		bp01d6.colorKeyPassThrough = si;
+		//^32CB:1C22
+		DRAW_PICST(QUERY_PICST_IT(&bp01d6));
+		//^32CB:1C38
+		FREE_TEMP_CACHE_INDEX(bp26);
+		//^32CB:1C41
+		//^32CB:1F38
+		return si;
+	}
+	//^32CB:1C44
+	U8 iImageEntry;	// U8 bp20; which image entry. 1 = front / 0 = side. Add default init to FRONT
+	if (yy == 0) {	// Front image
+		//^32CB:1C4A
+		iImageEntry = GDAT_WALL_IMAGE__VIEW_FRONT;	// = 1;	front view
+		//^32CB:1C4E
+		if (iDoNotFlip == 0) {
+			//^32CB:1C54
+			if ((glbTabYAxisDistance[RCJ(23,cellPos)] & 1) != 0) {
+				//^32CB:1C5E
+				iFlipImage = glbGeneralFlipGraphics;
+			}
+			else {
+				//^32CB:1C66
+				iFlipImage = glbGeneralFlipGraphics ^ 1;
+			}
+		}
+	}
+	else {	// Side image
+		//^32CB:1C71
+		iImageEntry = GDAT_WALL_IMAGE__VIEW_SIDE_LEFT;	// = 0;	 side view on left
+		//^32CB:1C75
+		if (yy >= 1) {
+			//^32CB:1C7B
+			if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_WALL_GFX, bp1f, dtImage, U8(bp28) +2) != 0) {
+				//^32CB:1C95
+				iImageEntry = GDAT_WALL_IMAGE__VIEW_SIDE_RIGHT;	// = 2; side view on right
+			}
+			else {
+				//^32CB:1C9B
+				iFlipImage = 1;	// flip image
+			}
+		}
+		// SPX: experimentation with side D0 new image
+		if (SkCodeParam::bDM1Mode && iYDist == 0)
+		{
+			U16 iTestSideD0Entry = iImageEntry +U8(bp28) + 0x80;
+			if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_WALL_GFX, bp1f, dtImage, iTestSideD0Entry) != 0)
+			{
+				iStretchVertical = 0x40;
+				iStretchHorizontal = 0x40;
+				iImageEntry = iImageEntry + 0x80;
+			}
+		}
+	}
+	//^32CB:1CA0
+	iImageEntry = iImageEntry +U8(bp28);
+#if DM2_EXTENDED_MODE == 1
+	if (SkCodeParam::bUseExtendedSound && bp28 == 4 /*&& SkCodeParam::bForceOrnateSound == true*/)	// 4 = first anim of a loop (if several)
+	{
+		int iRandNoise = 0;
+		int iMaxLoopSoundsAvailable = 9;
+		while(iMaxLoopSoundsAvailable > 0)
+		{
+			if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_WALL_GFX, bp1f, dtSnd, SOUND_ACTIVATION_LOOP + iMaxLoopSoundsAvailable) != 0)
+				break;
+			iMaxLoopSoundsAvailable--;
+		}
+		if (iMaxLoopSoundsAvailable > 0)
+			iRandNoise = RAND()%iMaxLoopSoundsAvailable;
+
+//		i16 iYDist = glbTabYAxisDistance[RCJ(23,cellPos)];	
+		i16 iXDist = glbTabXAxisDistance[RCJ(23,cellPos)];
+		QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp1f, SOUND_ACTIVATION_LOOP + iRandNoise, 0xFE, glbPlayerPosX+iXDist, glbPlayerPosY+iYDist, 0, 140, 200);
+	}
+#endif
+	//^32CB:1CA9
+	SRECT *bp12;
+	if (yy == 0 && QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp1f, dtWordValue, GDAT_WALL_ORNATE__WINDOW) != 0) {
+		//^32CB:1CCB
+		QUERY_TEMP_PICST(iFlipImage, iStretchHorizontal, iStretchVertical, 0, 0, iYDist, iRectno, iRefPoint, -3, -3, GDAT_CATEGORY_WALL_GFX, bp1f, iImageEntry);
+		//^32CB:1CF4
+		QUERY_TEMP_PICST(iFlipImage, iStretchHorizontal, iStretchVertical, glbTempPicture.w28, glbTempPicture.w30, iYDist, iRectno, iRefPoint, si, -1, GDAT_CATEGORY_WALL_GFX, bp1f, 200);
+		//^32CB:1D1F
+		if (zz == 0)
+			//^32CB:1D25
+			glbTempPicture.colorKeyPassThrough = -1;
+		//^32CB:1D2B
+		DRAW_TEMP_PICST(); // draw window contents (outside)
+		//^32CB:1D2F
+		ExtendedPicture bp0310;
+		U16 bp26 = QUERY_MULTILAYERS_PIC(
+			&bp0310, GDAT_CATEGORY_WALL_GFX, bp1f, iImageEntry, iStretchHorizontal, iStretchVertical, iYDist, iFlipImage, si,
+			QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp1f, dtWordValue, GDAT_IMG_WALL_COLORKEY_2)	// 0x11 is colorkey2 for seeing outside through window (0xC8 image)
+			);
+		//^32CB:1D67
+		_32cb_0c7d(&bp0310, bp26, si);
+		//^32CB:1D78
+		bp0310.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp26));
+		//^32CB:1D89
+		DRAW_PICST(&bp0310);
+		//^32CB:1D96
+		FREE_PICT_MEMENT(&bp0310);
+		//^32CB:1DA3
+		bp0310.colorKeyPassThrough = bp0310.b58[si];
+		bp0310.pb44 = _4976_4c16;
+		bp0310.rectNo = iRectno;
+		bp0310.w26 = iRefPoint;
+		bp0310.w56 = 0;
+		//^32CB:1DD0
+		_0b36_00c3(bp26, &bp0310);
+		//^32CB:1DE1
+		DRAW_PICST(&bp0310);
+		//^32CB:1DEE
+		bp12 = &bp0310.rc36;
+		//^32CB:1DF8
+		FREE_TEMP_CACHE_INDEX(bp26);
+	}
+	else {	// No window, standard wall ornate to display
+		//^32CB:1E03
+		QUERY_TEMP_PICST(iFlipImage, iStretchHorizontal, iStretchVertical, 0, 0, iYDist, iRectno, iRefPoint, si, -1, GDAT_CATEGORY_WALL_GFX, bp1f, iImageEntry);
+		//^32CB:1E2B
+		if (zz == 0)
+			//^32CB:1E31
+			glbTempPicture.colorKeyPassThrough = -2;
+		//^32CB:1E37
+		DRAW_TEMP_PICST();
+		//^32CB:1E3B
+		bp12 = &glbTempPicture.rc36;
+		//^32CB:1E43
+		if (zz == 0)
+			//^32CB:1E49
+			//^32CB:1F38
+			return si;
+	}
+	//^32CB:1E4C
+	if (alcoveType != WALL_ORNATE_OBJECT__CRYOCELL && (cellPos == 1 || cellPos == 2 || cellPos == 3)) {
+		//^32CB:1E64
+		MAKE_BUTTON_CLICKABLE(bp12, 6, U8(cellPos));
+	}
+	//^32CB:1E76
+	if (alcoveType == WALL_ORNATE_OBJECT__NONE || yy != 0)	// bp22 == 0
+		//^32CB:1E85
+		//^32CB:1F38
+		return si;
+	//^32CB:1E88
+	COPY_MEMORY(&glbTempPicture, &_4976_5aa8, 314);
+	//^32CB:1E9D
+	// SPX: This is an overlay on front of wall decoration. This is only used for the shop panel
+	if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_WALL_GFX, bp1f, dtImage, GDAT_WALL_ORNATE__OVERLAY) != 0) {
+		//^32CB:1EB3
+		if (alcoveType == WALL_ORNATE_OBJECT__SHOP_GLASS) {	// (bp22 == 2)
+			//^32CB:1EB9
+			_32cb_0f82_SHOP_GLASS(
+				GET_ADDRESS_OF_ACTU(tblCellTilesRoom[cellPos].xsrd.xvalue), 
+				bp1f, iYDist, cellPos, iStretchHorizontal, iStretchVertical, iRectno, iRefPoint, si
+				);
+			//^32CB:1EEF
+			//^32CB:1F38
+			return si;
+		}
+		//^32CB:1EF1
+		QUERY_TEMP_PICST(iFlipImage, iStretchHorizontal, iStretchVertical, 0, 0, iYDist, iRectno, iRefPoint, si, -1, GDAT_CATEGORY_WALL_GFX, bp1f, GDAT_WALL_ORNATE__OVERLAY);
+		//^32CB:1F17
+		if (zz == 0)
+			//^32CB:1F1D
+			glbTempPicture.colorKeyPassThrough = -2;
+		//^32CB:1F23
+		DRAW_TEMP_PICST();
+		//^32CB:1F27
+		//^32CB:1F38
+		return si;
+	}
+	//^32CB:1F29
+	if (alcoveType == WALL_ORNATE_OBJECT__ALCOVE)	// (bp22 == 1)
+		DRAW_ALCOVE_ITEMS(cellPos);
+	//^32CB:1F38
+	return si;
+}
+
+//^0B36:1446
+// _0b36_1446 renamed _0b36_1446_BLIT_PICTURE
+i16 SkWinCore::_0b36_1446_BLIT_PICTURE(Picture *ref, i16 xx, i16 yy, U16 colorkey)
+{
+	//^0B36:1446
+	ENTER(20);
+	//^0B36:144C
+	U8 *bp04 = QUERY_PICT_BITS(ref);
+	//^0B36:145E
+	if (bp04 == NULL)
+		//^0B36:1466
+		return -1;
+	//^0B36:146C
+	U16 si = ref->w22;
+	//^0B36:1473
+	U16 bp0e = ALLOC_TEMP_CACHE_INDEX();
+	//^0B36:147B
+	ALLOC_NEW_PICT(bp0e, (si == 4) ? 2 : 1, 1, si);
+	//^0B36:1497
+	U16 bp10 = ALLOC_TEMP_CACHE_INDEX();
+	//^0B36:149F
+	U8 *bp0c = ALLOC_NEW_PICT(bp10, (si == 4) ? 2 : 1, 1, si);
+	//^0B36:14C1
+	U8 *bp08 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp0e));
+	//^0B36:14D0
+	FILL_ENTIRE_PICT(bp08, colorkey);
+	//^0B36:14E1
+	FILL_ENTIRE_PICT(bp0c, colorkey);
+	//^0B36:14F2
+	FIRE_BLIT_PICTURE(bp04 = QUERY_PICT_BITS(ref), bp08, ALLOC_TEMP_ORIGIN_RECT(1, 1), xx, yy, 
+		READ_I16(bp04,-4), (si == 4) ? 2 : 1, colorkey, 0, si, si, NULL);
+	//^0B36:1547
+	U16 bp14 = 1;
+	//^0B36:154C
+	U16 bp12 = CALC_IMAGE_BYTE_LENGTH(bp08);
+	//^0B36:155B
+	for (U16 di = 0; di < bp12; di++) {
+		//^0B36:155F
+		if (*(bp08++) != *(bp0c++)) {
+			//^0B36:1573
+			bp14 = 0;
+			//^0B36:1578
+			break;
+		}
+		//^0B36:157A
+	}
+	//^0B36:1580
+	FREE_TEMP_CACHE_INDEX(bp0e);
+	//^0B36:1589
+	FREE_TEMP_CACHE_INDEX(bp10);
+	//^0B36:1592
+	return bp14;
+}
+
+//^32CB:00F1
+// _32cb_00f1 renamed _32cb_00f1_DRAW_PICTURE
+U16 SkWinCore::_32cb_00f1_DRAW_PICTURE(U16 xx, U16 yy, i16 zz)
+{
+	//^32CB:00F1
+	ENTER(10);
+	//^32CB:00F7
+	U16 si = xx;
+	U16 di = yy;
+	//^32CB:00FD
+	if (PT_IN_RECT(&glbTempPicture.rc36, si, di) == 0) {
+		//^32CB:010F
+		return 0;
+	}
+	//^32CB:0114
+	// SPX: This test mirror flip (horizontal)
+	if ((glbTempPicture.mirrorFlip & 1) != 0) {
+		//^32CB:011C
+		si = glbTempPicture.rc36.x + glbTempPicture.rc36.cx -1 -si + glbTempPicture.w32;
+	}
+	else {
+		//^32CB:0128
+		si = si - glbTempPicture.rc36.x + glbTempPicture.w32;
+	}
+	//^32CB:0134
+	// SPX: Try to display mirror flip on y axis .. . This does nothing!!
+	//di = glbTempPicture.rc36.y + glbTempPicture.rc36.cy -1 -di + glbTempPicture.w34;
+	di = di - glbTempPicture.rc36.y + glbTempPicture.w34;
+	//^32CB:0140
+	U8 *bp0a = QUERY_PICT_BITS(&glbTempPicture);
+	//^32CB:0151
+	U16 bp04 = READ_I16(bp0a,-4) >> 1;
+	//^32CB:015D
+	_4976_5a94 = ((si - glbTempPicture.w14 -bp04) * 100) / bp04;
+	//^32CB:0172
+	U16 bp06 = READ_I16(bp0a,-2) >> 1;
+	//^32CB:017B
+	_4976_5a96 = ((di -bp06) * 100) / bp06;
+	//^32CB:018C
+	i16 bp02 = _0b36_1446_BLIT_PICTURE(&glbTempPicture, si, di, zz);
+	//^32CB:01A0
+	if (bp02 == -1 || bp02 == 1)
+		//^32CB:01AC
+		//^32CB:010F
+		return 0;
+	//^32CB:01AF
+	return 1;
+}
+
+//^32CB:0287
+// SPX: _32cb_0287 renamed _32cb_0287_DRAW_W_ORNATE
+U16 SkWinCore::_32cb_0287_DRAW_W_ORNATE(U16 xx, U16 yy, U16 zz)
+{
+	//^32CB:0287
+	ENTER(10);
+	//^32CB:028D
+	i16 si = xx;
+	//^32CB:0290
+	U16 di = 0;
+	//^32CB:0292
+	if (si > 3)
+		//^32CB:0297
+		return 0;
+	//^32CB:029C
+	CellTileDetail *bp0a = tblCellTilesRoom;
+	//^32CB:02A9
+	tblCellTilesRoom = reinterpret_cast<CellTileDetail *>(ALLOC_MEMORY_RAM(72, afDefault, 1024));
+	//^32CB:02C1
+	i16 bp04 = _4976_5a9c;
+	i16 bp06 = _4976_5a9e;
+	//^32CB:02CD
+	CALC_VECTOR_W_DIR(_4976_5aa0, _4976_40e8[si][1], _4976_40e8[si][0], &bp04, &bp06);
+	//^32CB:02F7
+	tblCellTilesRoom[si].posx = U8(bp04);
+	//^32CB:030A
+	tblCellTilesRoom[si].posy = U8(bp06);
+	//^32CB:031E
+	SUMMARIZE_STONE_ROOM(&tblCellTilesRoom[si].xsrd, _4976_5aa0, bp04, bp06);
+	//^32CB:0344
+	i16 bp02 = DRAW_WALL_ORNATE(si, glbTabXAxisDistance[RCJ(23,si)], 0);
+	//^32CB:0358
+	if (bp02 >= 0) {
+		//^32CB:035C
+		di = _32cb_00f1_DRAW_PICTURE(yy, zz, bp02);
+	}
+	//^32CB:036E
+	DEALLOC_UPPER_MEMORY(72);
+	//^32CB:0379
+	tblCellTilesRoom = bp0a;
+	//^32CB:0386
+	return (si == 3 || glbTempPicture.width < 32 || glbTempPicture.height < 32) ? 1 : di;
+}
+
+
+//^32CB:3672
+// SPX: _32cb_3672 renamed DRAW_ITEM
+void SkWinCore::DRAW_ITEM(ObjectID rl, i16 xx, U16 yy, U16 zz, i16 vv, Creature *ref, U16 ww, U16 ss, U16 tt)
+{
+	//^32CB:3672
+	ENTER(34);
+	//^32CB:3678
+	U16 si = zz;
+	//^32CB:367B
+	i16 bp18 = 12; // defaulting to 12
+	if (ref != NULL) {
+		//^32CB:3686
+		AIDefinition *bp04 = QUERY_CREATURE_AI_SPEC_FROM_TYPE(ref->CreatureType());
+		//^32CB:369A
+		U16 bp22 = bp04->w30;
+		//^32CB:36A4
+		U16 di = ((bp22 & 15) > 1) ? 0 : 1;
+		//^32CB:36B5
+		i16 bp20 = QUERY_GDAT_CREATURE_WORD_VALUE(ref->CreatureType(), 0x41);
+		//^32CB:36C9
+		if (bp20 == 0) {
+			//^32CB:36CF
+			bp20 = _4976_4398[RCJ(2,di)];
+		}
+		//^32CB:36D7
+		si -= bp20;
+		//^32CB:36DA
+		U16 bp1e = (rl.Dir() - _4976_5aa0) & 3;
+		//^32CB:36EA
+		bp18 = (xx == 3 && _4976_5aa2 != 0) ? _4976_41d0[RCJ(7,glbTargetTypeMoveObject)] : 12;
+		//^32CB:370A
+		if (_32cb_35c1(&xx, &bp18, _4976_4388[RCJ(4,di)][RCJ(4,bp1e)], _4976_4388[RCJ(4,2 +di)][RCJ(4,bp1e)]) == 0)
+			//^32CB:373B
+			return;
+	}
+	//^32CB:373E
+	else if (tt == 0) {
+		//^32CB:3744
+		bp18 = QUERY_OBJECT_5x5_POS(rl, _4976_5aa0);
+	}
+	//^32CB:3755
+	i16 bp12 = glbTabYAxisDistance[RCJ(23,xx)];
+	//^32CB:3760
+	U16 bp0a;
+	U16 bp06;
+	U16 bp1a;
+	if (tt != 0) {
+		//^32CB:3766
+		bp0a = 0;
+		//^32CB:376B
+		bp1a = QUERY_GDAT_ENTRY_DATA_INDEX(_4976_5aa8.b8, _4976_5aa8.b9, dtImageOffset, 0xfd);
+		//^32CB:3783
+		yy = _4976_5aa8.w28 + i8(bp1a >> 8) + _4976_41de[RCJ(8,_4976_41b0[RCJ(16,vv)][0])];
+		//^32CB:37A4
+		si = _4976_41de[RCJ(8,_4976_41b0[RCJ(16,vv)][1])] + (i8(bp1a) + _4976_5aa8.w30);
+		//^32CB:37C6
+		bp06 = _4976_5aa8.rectNo;
+	}
+	else {
+		//^32CB:37CB
+		bp0a = 4 -(bp18 / 5);
+		//^32CB:37DC
+		if (xx == 0 && bp0a < 2)
+			//^32CB:37E8
+			return;
+		//^32CB:37EB
+		bp06 = QUERY_CREATURE_BLIT_RECTI(xx, bp18, 0) | 0x8000;
+	}
+	//^32CB:3801
+	U16 bp1c = 0;
+	//^32CB:3806
+	U8 bp0d = QUERY_CLS1_FROM_RECORD(rl);
+	//^32CB:3812
+	U8 bp0e = QUERY_CLS2_FROM_RECORD(rl);
+	//^32CB:381E
+	if (bp0d == 0x14 && bp0e < 8) {
+		//^32CB:382A
+		if (ss == 0) {
+			//^32CB:3830
+			ss = ss +GET_ADDRESS_OF_RECORD9(rl)->IsOpened();
+		}
+		//^32CB:384C
+		bp1c = 1;
+	}
+	//^32CB:3851
+	U8 bp0f = _4976_4380[RCJ(4,ss)][0];
+	//^32CB:385D
+	U16 bp08 = 0;
+	//^32CB:3862
+	i16 bp14 = glbTabXAxisDistance[RCJ(23,xx)];
+	//^32CB:386D
+	if (bp14 == 0) {
+		//^32CB:3871
+		i16 bp16 = bp18 % 5;
+		//^32CB:387D
+		U16 bp10;
+		if (true
+			&& (bp16 == 2 || tt != 0)
+			&& QUERY_GDAT_ENTRY_IF_LOADABLE(bp0d, bp0e, dtImage, U8(bp10 = _4976_4380[RCJ(4,ss)][1])) != 0
+		) {
+			//^32CB:38AD
+			bp0f = U8(bp10);
+		}
+		//^32CB:38B5
+		else if (bp1c != 0 && tt == 0 && bp16 > 2) {
+			//^32CB:38C7
+			bp08 = 1;
+		}
+	}
+	//^32CB:38CE
+	else if (bp1c != 0 && bp14 == 1) {
+		//^32CB:38DA
+		bp08 = 1;
+	}
+	//^32CB:38DF
+	if (vv != -1) {
+		//^32CB:38E5
+		yy += _4976_41de[RCJ(8,_4976_41b0[RCJ(16,vv)][0])];
+		//^32CB:38FA
+		if (ref == NULL) {
+			//^32CB:3902
+			si += _4976_41de[RCJ(8,_4976_41b0[RCJ(16,vv)][1])];
+		}
+	}
+	//^32CB:3916
+	bp1a = QUERY_GDAT_ENTRY_DATA_INDEX(bp0d, 0xfe, dtImageOffset, bp0f);
+	//^32CB:392E
+	if (bp1a != 0) {
+		//^32CB:3932
+		yy += i8(bp1a >> 8);
+		//^32CB:3939
+		si += i8(bp1a);
+	}
+	//^32CB:393F
+	U16 bp0c = _4976_418e[RCJ(6,bp12)][1 +bp0a];
+	//^32CB:3951
+	QUERY_TEMP_PICST(bp08, bp0c, bp0c, yy, si, bp12, bp06, 0, 10, -1, bp0d, bp0e, bp0f);
+	//^32CB:397D
+	if (ww == 0)
+		//^32CB:3983
+		glbTempPicture.colorKeyPassThrough = -2;
+	//^32CB:3989
+	DRAW_TEMP_PICST();
+	//^32CB:398D
+	return;
+}
+
+
+
 //^32CB:4E1C
 // SPX: _32cb_4e1c renamed DRAW_STAIRS_FRONT
 void SkWinCore::DRAW_STAIRS_FRONT(i16 xx)
@@ -4025,6 +5248,2436 @@ void SkWinCore::DRAW_STAIRS_FRONT(i16 xx)
 	DRAW_TEMP_PICST();
 	//^32CB:4EC8
 	return;
+}
+
+
+//^2066:3697
+// SPX: _2066_3697 renamed __OPEN_DIALOG_PANEL
+void SkWinCore::__OPEN_DIALOG_PANEL(U8 cls2, U16 yy)
+{
+	//^2066:3697
+	ENTER(104);
+	//^2066:369B
+	_4976_5250 = reinterpret_cast<sksave_header_asc *>(ALLOC_MEMORY_RAM(420, afDefault, 1024));
+	//^2066:36B4
+	U8 bp6a[40];
+	// SPX: Get dialog box button 1 text
+	U8 *bp18 = QUERY_GDAT_TEXT(0x1a, cls2, 0x00, bp6a); // LOAD
+	//^2066:36CF
+	U8 bp40[40];
+	// SPX: get dialog box button 2 text
+	U8 *bp14 = QUERY_GDAT_TEXT(0x1a, cls2, 0x01, bp40); // CANCEL
+	//^2066:36EA
+	U8 *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(0x1a, cls2, 0x00);
+	//^2066:3700
+	U8 *bp08;
+	if (_4976_5d76 != 0) {
+		//^2066:3707
+		bp08 = QUERY_GDAT_IMAGE_LOCALPAL(0x1a, cls2, 0x00);
+	}
+	else {
+		//^2066:371C
+		bp08 = bp04 +CALC_IMAGE_BYTE_LENGTH(bp04);
+	}
+	//^2066:3737
+	SRECT bp10;
+	DRAW_DIALOGUE_PARTS_PICT(bp04, QUERY_EXPANDED_RECT(4, &bp10), -1, bp08);
+	//^2066:375E
+	FREE_PICT_ENTRY(bp04);
+	//^2066:376B
+	FIRE_FADE_SCREEN(1);
+	// RESUME SCREEN with list of savegame, version number, LOAD and CANCEL button
+	//^2066:3773
+	DRAW_VP_RC_STR(0x1c2, glbPaletteT16[COLOR_GRAY], strVersionNumber); // _4976_3b6f replaced by strVersionNumber
+	//^2066:378D
+	DRAW_VP_RC_STR(0x1d2, glbPaletteT16[COLOR_ORANGE], bp18);	// LOAD text
+	//^2066:37A9
+	DRAW_VP_RC_STR(0x1d3, glbPaletteT16[COLOR_ORANGE], bp14);	// CANCEL text
+	//^2066:37C5
+	_2066_38d9();
+	//^2066:37CA
+	_4976_4bd2 = yy;
+	//^2066:37D0
+	_1031_0675(4);
+	//^2066:37D8
+	_4976_523a = 0;
+	//^2066:37DE
+	while (glbMouseVisibility > 0) {
+		//^2066:37E0
+		FIRE_SHOW_MOUSE_CURSOR();
+		//^2066:37E5
+		_4976_523a++;
+		//^2066:37E9
+	}
+	//^2066:37F0
+	return;
+}
+
+
+//^2481:01D8
+void SkWinCore::SHOW_CREDITS()
+{
+	//^2481:01D8
+	ENTER(0);
+	//^2481:01DC
+	X16 si = SCREEN_CREDITS_TIMER;		// SPX: 1800 time before going back to main screen
+	FIRE_SELECT_PALETTE_SET(0);
+	FIRE_HIDE_MOUSE_CURSOR();
+	DRAW_GAMELOAD_DIALOGUE_TO_SCREEN(glbImageCreditScreen, 2, -1, _4976_52b6);
+	FIRE_SELECT_PALETTE_SET(1);
+	FIRE_SHOW_MOUSE_CURSOR();
+	_1031_0541(1);
+	do {
+		MessageLoop(true); // credits
+
+		//^2481:021D
+		MAIN_LOOP();
+		if (glbUIEventCode == UI_EVENTCODE_QUIT_CREDITS) // 239
+			break;
+		//^2481:022A
+		SLEEP_SEVERAL_TIME(1);
+		//^2481:0232
+	} while (--si != 0);
+	//^2481:0239
+	glbSpecialScreen = _MENU_SCREEN__SHOW_CREDITS;;	// 218 (0xDA)
+	_1031_0541(0);
+	FIRE_HIDE_MOUSE_CURSOR();
+	//^2481:024C
+	return;
+}
+
+
+//^0B36:1647
+void SkWinCore::DRAW_DIALOGUE_PARTS_PICT(Bit8u *buffsrc, SRECT *rc, i16 colorkey, Bit8u *localpal)
+{
+	// the back buffer is an off-screen buffer of the dungeon viewport (224x136x8bpp)
+
+	// what you draw:
+	// a) dialogue window
+	// b) dialogue button
+	// c) 18x18 bevelled icon frame
+
+	//^0B36:1647
+	//^0B36:164A
+	FIRE_BLIT_PICTURE(
+		buffsrc,
+		_4976_4c16,
+		rc,
+		0,
+		0,
+		READ_UI16(buffsrc,-4),
+		_4976_00f6,
+		colorkey,
+		0,
+		READ_UI16(buffsrc,-6),
+		8,
+		localpal
+		);
+	//^0B36:1686
+	return;
+}
+
+
+//^3929:0BD7
+void SkWinCore::DRAW_VP_RC_STR(Bit16u rectno, Bit16u clr1, const U8 *str)
+{
+	// draw string to viewport, within specified rectangle.
+
+	// like dialog ver: "V1.0"
+	// like buttons: "SAVE", "QUIT", "RESULT", ...
+	// like item name: "SCOUT MAP", ...
+
+	//^3929:0BD7
+	//^3929:0BDB
+	i16 bp02;
+	i16 bp04;
+	if (QUERY_STR_METRICS(str, &bp02, &bp04) != 0) {
+		//^3929:0BF6
+		SRECT bp0c;
+		if (QUERY_BLIT_RECT(NULL, &bp0c, rectno, &bp02, &bp04, -1) != 0) {
+			//^3929:0C1A
+			DRAW_VP_STR(bp0c.x, bp0c.y + bp0c.cy -1, clr1, str);
+		}
+	}
+	//^3929:0C35
+	return;
+}
+
+
+
+//^0B36:16E4
+void SkWinCore::DRAW_GAMELOAD_DIALOGUE_TO_SCREEN(Bit8u *buffsrc, Bit16u rectno, i16 colorkey, Bit8u localpal[16])
+{
+	//^0B36:16E4
+	//^0B36:16E8
+	i16 bp02 = 0;
+	i16 bp04 = 0;
+	SRECT bp0c;
+	//^0B36:16F2
+	if (QUERY_BLIT_RECT(buffsrc, &bp0c, rectno, &bp02, &bp04, -1) != NULL) {
+		//^0B36:1718
+		FIRE_BLIT_PICTURE(
+			buffsrc,
+			_4976_4964,
+			&bp0c,
+			bp02,
+			bp04,
+			*(Bit16u *)&buffsrc[-4],
+			glbScreenWidth,
+			colorkey,
+			0,
+			*(Bit16u *)&buffsrc[-6],
+			8,
+			localpal
+			);
+	}
+	//^0B36:1755
+	return;
+}
+
+//^29EE:000F
+void SkWinCore::_29ee_000f()
+{
+	//^29EE:000F
+	ENTER(54);
+	//^29EE:0014
+	U8 bp01 = (_4976_4ddc != 0) ? 0xe : 2;
+	sk3f6c bp36;
+	_0b36_0c52(&bp36, 9, 1);
+	FILL_ENTIRE_PICT(reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp36.w0)), glbPaletteT16[COLOR_BLACK]);
+	//^29EE:0053
+	i16 si = 0x28;
+	for (; si < 0x2e; bp01 += 2, si++) {
+		//^29EE:0058
+		DRAW_ICON_PICT_ENTRY(0x1, 0x3, bp01, &bp36, si, -1);
+	}
+	//^29EE:007E
+	_0b36_0cbe(&bp36, 1);
+	if (_4976_4ddc != 0) {
+		_1031_0541(6);
+	}
+	else {
+		_1031_0541(5);
+	}
+	//^29EE:00A0
+	return;
+}
+
+
+//^0AAF:081B
+void SkWinCore::DRAW_DIALOGUE_PROGRESS(X32 xx)
+{
+	//^0AAF:081B
+	ENTER(8);
+	//^0AAF:081F
+	if (_4976_4bd8 == 0)
+		return;
+	//^0AAF:0826
+	SRECT bp08;
+	QUERY_EXPANDED_RECT(0x1da, &bp08);
+	bp08.cx = i16((bp08.cx * xx) / 1000);
+	if (bp08.cx <= 0)
+		return;
+	FIRE_FILL_BACKBUFF_RECT(&bp08, glbPaletteT16[COLOR_ORANGE]);
+	_0aaf_002f();
+	//^0AAF:0878
+	return;
+}
+
+
+//^32CB:076E
+void SkWinCore::DRAW_DUNGEON_GRAPHIC(U8 cls1, U8 cls2, U8 cls4, X16 rectno, i16 colorkey, U16 mirrorflip)
+{
+	//^32CB:076E
+	ENTER(314);
+	//^32CB:0773
+	X16 si = rectno;
+	ExtendedPicture bp013a;
+	QUERY_GDAT_SUMMARY_IMAGE(&bp013a, U8(cls1), U8(cls2), U8(cls4));
+	_0b36_037e(bp013a.b58, U8(_4976_5a88), colorkey, -1, bp013a.w56);
+	//^32CB:07AB
+	bp013a.colorKeyPassThrough = colorkey;
+	bp013a.rectNo = si;
+	bp013a.pb44 = _4976_4c16;
+	bp013a.mirrorFlip = mirrorflip;
+	if (glbIsPlayerMoving != 0) {
+		if (si == 700) {
+			bp013a.w34 += _4976_00fa;
+		}
+		else if (si == 701) {
+			bp013a.w34 += _4976_00fc;
+		}
+	}
+	// SPX : special fix DM1
+	if (SkCodeParam::bDM1Mode && rectno == 754) // roof door slit D1
+		bp013a.w30 -= 3;
+	//^32CB:07EB
+	DRAW_PICST(QUERY_PICST_IT(&bp013a));
+	//^32CB:0801
+	return;
+}
+
+//^32CB:3991
+// SPX: _32cb_3991 renamed DRAW_PUT_DOWN_ITEM
+void SkWinCore::DRAW_PUT_DOWN_ITEM(ObjectID rl, i16 cellPos, i16 dir, Creature *ref)
+{
+	//^32CB:3991
+	ENTER(22);
+	//^32CB:3997
+	ObjectID di = rl;
+	if (di == OBJECT_END_MARKER)
+		return;
+	//^32CB:39A2
+	i16 bp0a = glbTabYAxisDistance[RCJ(23,cellPos)];
+	if (bp0a > 3) // ignore D4
+		return;
+	X16 si = 0;
+	X16 bp10;
+	X16 bp12;
+	if (ref != NULL) {
+		//^32CB:39C0
+		AIDefinition *bp04 = QUERY_CREATURE_AI_SPEC_FROM_TYPE(ref->CreatureType());
+		bp10 = bp04->w30;
+		bp12 = bp04->w32;
+	}
+	do {
+		i16 bp0c = di.DBType();
+		if (bp0c < dbWeapon || bp0c > dbMiscellaneous_item)
+			continue;
+		//^32CB:3A02
+		if (((di.Dir() - _4976_5aa0) & 3) != dir)
+			continue;
+		//^32CB:3A16
+		ObjectID bp06;
+		X16 bp08;
+		X16 bp0e;
+		i16 bp14;
+		i16 bp16;
+		if (ref != NULL) {
+			if ((bp10 & 0x400) == 0 && ((bp10 >> 4) & 15) == 0) {
+				//^32CB:3A33
+				QUERY_EXPANDED_RECT(bp12, &_4976_4d1a[_4976_4dde].rc0);
+				_4976_4d1a[_4976_4dde].b11 = 2;
+				_4976_4d1a[_4976_4dde].w8 = di;
+				_4976_4d1a[_4976_4dde].b10 = X8(cellPos);
+				_4976_4dde++;
+				return;
+			}
+			//^32CB:3A80
+			DRAW_ITEM(di, cellPos, 0, 0, si, ref, 1, 0, 0);
+			si++;
+			si &= 15;
+			if ((U8(_48ae_01af(bp10, 0)) & (1 << dir)) != 0) {
+				//^32CB:3ABE
+				bp08 = dir +4;
+				bp0e = 2;
+				goto _3b77;
+			}
+		}
+		else {
+			//^32CB:3ACF
+			DRAW_ITEM(di, cellPos, 0, 0, si, NULL, 1, 0, 0);
+			si++;
+			si &= 15;
+			if (cellPos == 0 || (cellPos == 3 && dir > 1)) {
+				//^32CB:3B06
+				bp14 = tblCellTilesRoom[cellPos].posx;
+				bp16 = tblCellTilesRoom[cellPos].posy;
+				bp06 = _1c9a_03cf(&bp14, &bp16, di.Dir());
+				if (bp06 == OBJECT_NULL || IS_CREATURE_FLOATING(bp06) != 0 || (_0cee_2df4(bp06) & 0x2000) != 0) {
+					//^32CB:3B6C
+					bp08 = dir;
+					bp0e = 1;
+					//^32CB:3B77
+_3b77:
+					MAKE_PUT_DOWN_ITEM_CLICKABLE_ZONE(bp08, di, cellPos, bp0e);
+				}
+			}
+		}
+		//^32CB:3B88
+	} while ((di = GET_NEXT_RECORD_LINK(di)) != OBJECT_END_MARKER);
+	//^32CB:3B99
+	return;
+}
+
+
+//^32CB:2BE6
+void SkWinCore::SUMMARY_DRAW_CREATURE(ObjectID rl, i16 cellPos, U32 ss)
+{
+	// SkD((DLV_BUGHERE, "DBG: SUMMARY_DRAW_CREATURE(%04X,%5d,%08X)\n"
+	//	, rl.w, cellPos, ss));
+
+	//^32CB:2BE6
+	ENTER(14);
+	//^32CB:2BEC
+	ObjectID di = rl;
+	X16 si = cellPos;
+	if (glbIsPlayerMoving != 0 && si == 0)
+		return;
+	//^32CB:2C00
+	i16 bp0e = glbTabYAxisDistance[RCJ(23,si)];
+	//^32CB:2C08
+	for (; di != OBJECT_END_MARKER; di = GET_NEXT_RECORD_LINK(di)) {
+		//^32CB:2C0B
+		if (di.DBType() != dbCreature)
+			continue;
+		//^32CB:2C1B
+		Creature *bp04 = GET_ADDRESS_OF_RECORD4(di);
+		CreatureInfoData *bp08;
+		if (bp04->b5_0_7() == 0xff) {
+			//^32CB:2C32
+			bp08 = 0;
+		}
+		else {
+			//^32CB:2C3E
+			bp08 = &glbTabCreaturesInfo[bp04->b5_0_7()];
+		}
+		//^32CB:2C5C
+		AIDefinition *bp0c = QUERY_CREATURE_AI_SPEC_FROM_TYPE(bp04->CreatureType());
+		QUERY_CREATURE_PICST(si, bp0e, bp04, bp08, di);
+		DRAW_TEMP_PICST();
+		if (bp0c->IsStaticObject() == 0 || bp0c->w30_0_3() == 0 || bp0e >= 4)
+			continue;
+		//^32CB:2CA4
+		if (tblCellTilesRoom[si].xsrd.w0 == 0x11) {
+			//^32CB:2CB8
+			ss = 0x3ff;
+		}
+		//^32CB:2CC2
+		_32cb_3e08(bp04->GetPossessionObject(), si, ss, bp04);
+		//^32CB:2CDE
+	}
+	//^32CB:2CEF
+	return;
+}
+
+
+//^32CB:4681
+void SkWinCore::DRAW_DEFAULT_DOOR_BUTTON(U8 cls1, U8 cls2, U8 cls4, i16 iViewportCell)	// U8 cls1, U8 cls2, U8 cls4, i16 ww
+{
+	//^32CB:4681
+	ENTER(4);
+	//^32CB:4687
+	X16 iViewportCellLocal = iViewportCell;	// X16 di = ww
+	i16 iButtonRectno = tlbRectnoDoorButton[RCJ(14,iViewportCellLocal)]; // i16 si
+	if (iButtonRectno < 0 || cls2 == 0xff)
+		return;
+	//^32CB:469B
+    X16 iYDistance = glbTabYAxisDistance[RCJ(23,iViewportCellLocal)]; // X16 bp04
+	X16 iStretchScale = tlbDistanceStretch[RCJ(5,iYDistance)];	// X16 bp02
+	QUERY_TEMP_PICST(0, iStretchScale, iStretchScale, 0, 0, iYDistance, 
+		QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOOR_BUTTONS, cls2, dtWordValue, 8) * 5 + iButtonRectno +1950,
+		-1, glbSceneColorKey, -1, cls1, cls2, cls4
+		);
+	DRAW_TEMP_PICST();
+	//^32CB:46F9
+	if (iButtonRectno == 3 || iButtonRectno == 4) {	// 3 is D1, 4 is D0
+		//^32CB:4703
+		MAKE_BUTTON_CLICKABLE(&glbTempPicture.rc36, 4, U8(iViewportCellLocal));
+	}
+	//^32CB:4711
+	return;
+}
+
+//^32CB:4715
+// SPX: _32cb_4715 renamed DRAW_DOOR_FRAMES
+void SkWinCore::DRAW_DOOR_FRAMES(i16 iViewportCell, X16 iDoorFrameDisplayFlags)	// i16 xx, X16 yy
+{
+	//^32CB:4715
+	ENTER(16);
+	//^32CB:471B
+	//i16 si = iViewportCell; // si
+	X8 gfxset = glbMapGraphicsSet;	// bp0f
+	X16 colorkey = glbSceneColorKey;		// di
+	ObjectID bp0e = tblCellTilesRoom[iViewportCell].xsrd.w6[1];
+	//yy = 7;
+	Door *door = GET_ADDRESS_OF_RECORD0(bp0e);	//*bp04
+	// SPX: 0x40 = GDAT_DOOR_NO_FRAMES entry. Only used for the ROOTS door type (BETA)
+	if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, glbMapDoorType[door->DoorType()], dtWordValue, GDAT_DOOR_NO_FRAMES) == 0) {
+		//^32CB:4770
+		if ((iDoorFrameDisplayFlags & DRAW_DOOR_FLAG_CEILING_SLIT) != 0) { // (0x01) ceiling slit
+			//^32CB:4777
+			X8 bp05 = tlbGraphicsDoorRoofSlits[RCJ(14,iViewportCell)];	// 0x12 to 0x17 is door ceiling slit
+			if (bp05 != 0xff) {
+				//^32CB:4782
+				// tlbRectnoDoorRoofSlits
+				DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_GRAPHICSSET, gfxset, bp05, tlbRectnoDoorRoofSlits[RCJ(14,iViewportCell)], colorkey, DRAW_FLAG_FLIP_NONE);
+			}
+		}
+		//^32CB:479B
+		X16 iLocalCell;	// X16 bp0c
+		X16 iFrameLeft;	// X16 bp08
+		X16 iFrameRight;	// X16 bp0a
+		if (glbGeneralFlipGraphics != 0) {
+			//^32CB:47A2
+			iLocalCell = tlbDoorSideFramesReorder[RCJ(23,iViewportCell)];
+			iFrameLeft = 1;	// 1 = right
+			iFrameRight = 0;	// 0 = left
+		}
+		else {
+			//^32CB:47B6
+			iLocalCell = iViewportCell;
+			iFrameLeft = 0;	// 0 = left
+			iFrameRight = 1;	// 1 = right
+		}
+		//^32CB:47C3
+		if ((iDoorFrameDisplayFlags & DRAW_DOOR_FLAG_LEFT_FRAME) != 0) {	// (0x02) left door frame
+			//^32CB:47CA
+			// X8 bp05 = tlbGraphicsDoorSideFrames[RCJ(14,bp0c)][RCJ(2,bp08)]
+			X8 iDoorFrameGfx = tlbGraphicsDoorSideFrames[RCJ(14,iLocalCell)][RCJ(2,iFrameLeft)];	// door side frames (28 slots divided into 2 parts (2 * 14))
+			if (iDoorFrameGfx != 0xFF) {
+				//^32CB:47DD
+				QUERY_TEMP_PICST(0, 64, 64, 0, 0, 0, QUERY_CREATURE_BLIT_RECTI(iViewportCell, 10, 0), 4, colorkey, -1, GDAT_CATEGORY_GRAPHICSSET, gfxset, iDoorFrameGfx); // door frame left
+				// SPX: DM1 frame adjustment for pixel perfect
+				if (SkCodeParam::bDM1Mode) {
+					glbTempPicture.w28 -= 2;
+					glbTempPicture.w30 += 4;
+				}
+				//else { // DM2 V5 adjustment
+				//	glbTempPicture.w28 -= 10;
+				//	glbTempPicture.w30 += 5;
+				//}
+				DRAW_TEMP_PICST();
+			}
+		}
+		//^32CB:480E
+		if ((iDoorFrameDisplayFlags & DRAW_DOOR_FLAG_RIGHT_FRAME) != 0) {	// (0x04) right door frame (holding button)
+			//^32CB:4818
+			// X8 bp05 = tlbGraphicsDoorSideFrames[RCJ(14,bp0c)][RCJ(2,bp0a)];
+			X8 iDoorFrameGfx = tlbGraphicsDoorSideFrames[RCJ(14,iLocalCell)][RCJ(2,iFrameRight)];
+			if (iDoorFrameGfx != 0xFF) {
+				//^32CB:482E
+				QUERY_TEMP_PICST(1, 64, 64, 0, 0, 0, QUERY_CREATURE_BLIT_RECTI(iViewportCell, 14, 0), 3, colorkey, -1, GDAT_CATEGORY_GRAPHICSSET, gfxset, iDoorFrameGfx); // door frame right
+				// SPX: DM1 frame adjustment for pixel perfect
+				if (SkCodeParam::bDM1Mode) {
+					glbTempPicture.w28 += 2;
+					glbTempPicture.w30 += 4;
+				}
+				//else { // DM2 V5 adjustment
+				//	glbTempPicture.w28 += 10;
+				//	glbTempPicture.w30 += 5;
+				//}
+				DRAW_TEMP_PICST();
+				//^32CB:485F
+				if (door->Button() != 0) {
+					//^32CB:4870
+					// SPX: Here, it is always the default 0 ... How could we custom this?
+					// At least, it could be set along the current wallset index? or door type ? ...
+					DRAW_DEFAULT_DOOR_BUTTON(GDAT_CATEGORY_DOOR_BUTTONS, 0, door->ButtonState() * 5, iViewportCell);
+					// Image for released button is 0
+					// Image for pushed button is 5 because there are 5 rectnos for buttons depending on distance.
+				}
+				else {
+					//^32CB:4887
+					// In case there is a custom button (from wall ornates gfx)
+					if (tblCellTilesRoom[iViewportCell].xsrd.w6[2] != 0xff) {
+						//^32CB:489C
+						DRAW_DEFAULT_DOOR_BUTTON(GDAT_CATEGORY_WALL_GFX, U8(tblCellTilesRoom[iViewportCell].xsrd.w6[2]) & 0xff, U8(tblCellTilesRoom[iViewportCell].xsrd.w6[2] >> 8) +1, iViewportCell);
+					}
+				}
+			}
+		}
+	}
+	//^32CB:48D1
+	return;
+}
+
+//^32CB:48D5
+X16 SkWinCore::_32cb_48d5(U16 xx, i16 yy) 
+{
+	//^32CB:48D5
+	ENTER(0);
+	//^32CB:48D9
+	i16 si = (((xx << 7) +64) / yy) >> 1;
+	if (CALC_STRETCHED_SIZE(si, yy) < xx)
+		//^32CB:48FB
+		return si +1;
+	//^32CB:4900
+	return si;
+}
+
+//^32CB:4905
+// SPX: _32cb_4905 renamed DRAW_DOOR
+void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 yy, X16 zz, X32 aa
+{
+	//^32CB:4905
+	ENTER(348);
+	//^32CB:490B
+	if (yy != 0) {
+		//^32CB:4911
+		DRAW_DOOR_FRAMES(iCellPos, yy);
+	}
+	//^32CB:491D
+	if (aa != 0) {
+		//^32CB:4925
+		DRAW_STATIC_OBJECT(iCellPos, aa, 0);
+	}
+	
+	//^32CB:4937
+	U16 iDoorState = tblCellTilesRoom[iCellPos].xsrd.w6[0];	// U16 bp06
+	X16 iStretchDual;	// X16 si
+	if (iDoorState != 0) {	// 0 = open. 1 - 3 = intermediate state. 4 = closed. 5 = destroyed
+		//^32CB:4955
+		ObjectID bp0c = tblCellTilesRoom[iCellPos].xsrd.w6[1];
+		i16 iYDist = glbTabYAxisDistance[RCJ(23,iCellPos)];	// i16 bp08
+		if (iYDist <= 3) {
+			//^32CB:497D
+			i16 iInvertedYDist = tlbInvertedDoorDistance[RCJ(5,iYDist)];	// i16 bp18
+			if (iInvertedYDist >= 0) {
+				//^32CB:498F
+				i16 iDoorPosRectno = tlbRectnoDoorPosition[RCJ(16,iCellPos)];	// i16 bp1a
+				if (iDoorPosRectno >= 0) {
+					//^32CB:49A2
+					Door *xDoor = GET_ADDRESS_OF_RECORD0(bp0c);	// Door *bp04
+					U8 iDoorGDATIndex = glbMapDoorType[xDoor->DoorType()];	// U8 bp0e
+					//printf("DRAW DOOR : type to draw : %02d => %02d\n", xDoor->DoorType(), glbMapDoorType[xDoor->DoorType()] );
+					X16 iDoorColorPassThrough = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_IMG_COLORKEY_1);	// X16 bp12
+					if (iDoorColorPassThrough != 0)
+					{
+						// SPX BEGIN
+						U8 mirroredDoor = 0;	// by default there is no mirror/flip, so value = 0
+						// SPX TEST: Here we can make pseudo animated door like DM1 force field, by playing with the mirror bit
+						if (SkCodeParam::bUseDM2ExtendedMode)
+						{
+							mirroredDoor = QUERY_GDAT_DOOR_IS_MIRRORED(iDoorGDATIndex);
+							if (mirroredDoor)
+							{
+								// RAND02 => 0 to 3
+								// Flips: 0 = none, 1 = x, 2 = y, 3 = x & y
+								mirroredDoor = RAND02();
+							}
+						}
+						// SPX END
+
+						//^32CB:49DE
+						U8 iDoorImg = U8(iYDist) -1;	// U8 bp0f / Check image no from distance; note: distance 0 would give image 0xFF.
+						// Door at Y=1 uses image 0 ; Y=2 => image 1 ; Y=3 => image 2 ; Y=0 has normally no specific image, it is image 0 streched.
+						iStretchDual = 0x40;	// si = 0x40 = 64 <=> 100%
+						X16 iLightPalette = 0;	// X16 bp0a	// 0 = light -> 4 = dark
+						if (iYDist == 0 || QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtImage, iDoorImg) == 0) {	// 0xe
+							//^32CB:4A09
+							if (iYDist != 0) {
+								//^32CB:4A0F
+								iLightPalette = iYDist;
+								iStretchDual = tlbDistanceStretch[RCJ(5,iLightPalette)];	// SPX: iLightPalette is used whereas mostly iYDist is used instead. Aren't they just the same?
+							}
+							else {
+								//^32CB:4A21
+								iStretchDual = 0x71;	// si = 0x71 = 113 <=> 176%
+							}
+							//^32CB:4A24
+							iDoorImg = 0;
+						}
+						//^32CB:4A28
+						X16 iOrnateIndex = xDoor->OrnateIndex();	// X16 di
+						i16 iCacheNo;	// i16 bp16
+#if (DM2_EXTENDED_MODE == 1)
+						if (iOrnateIndex != 0 || iDoorState == _DOOR_STATE__DESTROYED_ || glbGlobalSpellEffects.SeeThruWalls > 0) {	// + window spell effect
+#else
+						if (iOrnateIndex != 0 || iDoorState == _DOOR_STATE__DESTROYED_) {	// If there is any ornate or door is destroyed
+#endif
+							//^32CB:4A43
+							ExtendedPicture xPicture;	// ExtendedPicture bp015c;
+							// Get door graphics
+							//bp16 = QUERY_MULTILAYERS_PIC(&bp015c, GDAT_CATEGORY_DOORS, bp0e, bp0f, si, si, bp0a, 0, bp12, -1);	// 0xe
+							iCacheNo = QUERY_MULTILAYERS_PIC(&xPicture, GDAT_CATEGORY_DOORS, iDoorGDATIndex, iDoorImg, iStretchDual, iStretchDual, iLightPalette, mirroredDoor, iDoorColorPassThrough, -1);	// 0xe
+							DRAW_PICST(&xPicture);
+							FREE_PICT_MEMENT(&xPicture);
+							X16 iStretchHorizontal;	// X16 bp20
+							X16 iStretchVertical;	// X16 bp22
+							if (iStretchDual == 0x40) {
+								//^32CB:4A88
+								i16 bp1c;
+								i16 bp1e;
+								
+								QUERY_GDAT_IMAGE_METRICS(GDAT_CATEGORY_DOORS, iDoorGDATIndex, 0, &bp1c, &bp1e);	// 0xe
+								iStretchHorizontal = _32cb_48d5(glbTempPicture.width, bp1c);
+								iStretchVertical = _32cb_48d5(glbTempPicture.height, bp1e);
+								
+							}
+							else {
+								//^32CB:4AC4
+								iStretchVertical = iStretchHorizontal = iStretchDual;
+							}
+							//^32CB:4ACC
+							// If there is an ornate on the door ...
+							if (iOrnateIndex != 0) {
+								//^32CB:4AD0
+								iOrnateIndex--;
+								U8 iOrnateGDATIndex = glbMapDoorOrnatesList[iOrnateIndex];	// (bp0d) Get the real ornate gfx from the current map door ornate list.
+								// SPX: Get ornate
+								X16 iColorTransparencyOverlay = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOOR_GFX, iOrnateGDATIndex, dtWordValue, GDAT_IMG_COLORKEY_1);	// X16 bp14
+								if (iColorTransparencyOverlay == 0) {
+									//^32CB:4AEE
+									iColorTransparencyOverlay = 9;	// SPX: This is the "colorkey" index (generally not set in any GDAT2).
+								}
+								//^32CB:4AF3
+								// SPX: draw the ornate over the door // added for 
+								//QUERY_TEMP_PICST(0, bp20, bp22, 0, 0, bp08, 
+								
+								if (!SkCodeParam::bUseDM2ExtendedMode)
+									QUERY_TEMP_PICST(mirroredDoor, iStretchHorizontal, iStretchVertical, 0, 0, iYDist, 
+										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOOR_GFX, iOrnateGDATIndex, dtWordValue, GDAT_DOOR_ORNATE__POSITION) << 2) + iInvertedYDist +0x7d0,
+										-1, iColorTransparencyOverlay, -1, GDAT_CATEGORY_DOOR_GFX, iOrnateGDATIndex, GDAT_DOOR_DECORATION_MASK
+										);
+								else if (SkCodeParam::bUseDM2ExtendedMode)
+								{	// SPX: use the colorkey 10 (by default) or what's in GDAT instead of -1 for activating 'pass through' bitmaps
+									X16 iColorPassThrough = 10;	// 10 is standard DARK GREEN
+									iColorPassThrough = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOOR_GFX, iDoorGDATIndex, dtWordValue, GDAT_IMG_COLORKEY_1);
+									if (iColorPassThrough == 0)
+										iColorPassThrough = 10;
+									QUERY_TEMP_PICST(mirroredDoor, iStretchHorizontal, iStretchVertical, 0, 0, iYDist, 
+										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOOR_GFX, iOrnateGDATIndex, dtWordValue, GDAT_DOOR_ORNATE__POSITION) << 2) + iInvertedYDist +0x7d0,
+										-1, iColorTransparencyOverlay, iColorPassThrough, GDAT_CATEGORY_DOOR_GFX, iOrnateGDATIndex, GDAT_DOOR_DECORATION_MASK
+										);
+								}
+
+								glbTempPicture.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(iCacheNo));
+								DRAW_TEMP_PICST();
+							}
+							//^32CB:4B45
+							if (iDoorState == _DOOR_STATE__DESTROYED_) {	// (iDoorState == 5) If door is destroyed .. then draw destroyed mask over any ornate
+								//^32CB:4B4B
+								X16 iColorTransparencyOverlay = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_IMG_DOOR_COLORKEY_2);	// X16 bp14
+								if (iColorTransparencyOverlay == 0)
+									iColorTransparencyOverlay = 9;	// 9 is standard CYAN
+
+								// SPX: (2016-10-30) Get the destroyed door mask and use default one if available
+								if (!SkCodeParam::bUseFixedMode)
+								QUERY_TEMP_PICST(0, iStretchHorizontal, iStretchVertical, 0, 0, iYDist, 
+									(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_DOOR_DESTROYED_MASK_POSITION) << 2) + iInvertedYDist +0x7d0,
+									-1, iColorTransparencyOverlay, iDoorColorPassThrough, GDAT_CATEGORY_DOORS, iDoorGDATIndex, GDAT_DOOR_DESTROYED_MASK
+									);
+								else if (SkCodeParam::bUseFixedMode)
+								{
+									U16 iDoorDestroyedGDATIndex = iDoorGDATIndex;
+									// Check if there is a destroyed mask for the current door
+									U16 iDoorDestroyedMask = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtImage, GDAT_DOOR_DESTROYED_MASK);
+									if (iDoorDestroyedMask == (U16)-1) // not found, get the default one
+										iDoorDestroyedGDATIndex = GDAT_ITEM_DEFAULT_INDEX;
+									QUERY_TEMP_PICST(0, iStretchHorizontal, iStretchVertical, 0, 0, iYDist, 
+										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_DOOR_DESTROYED_MASK_POSITION) << 2) + iInvertedYDist +0x7d0,
+										-1, iColorTransparencyOverlay, iDoorColorPassThrough, GDAT_CATEGORY_DOORS, iDoorDestroyedGDATIndex, GDAT_DOOR_DESTROYED_MASK
+										);								
+								}
+								// End SPX: (2016-10-30) 
+								
+								glbTempPicture.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(iCacheNo));
+								DRAW_TEMP_PICST();
+							}
+#if (DM2_EXTENDED_MODE == 1)
+							if (glbGlobalSpellEffects.SeeThruWalls > 0 && iYDist == 1 && yy == 7) {	// If Window spell is active, and display only if distance = 1 and just in front
+								
+								X16 iColorTransparencyOverlay = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_IMG_DOOR_COLORKEY_2);	// X16 bp14
+								if (iColorTransparencyOverlay == 0)
+									iColorTransparencyOverlay = 9;	// 9 is standard CYAN
+								
+								{
+									U16 iDoorSeeThruGDATIndex = iDoorGDATIndex;
+									
+									U16 iDoorSeeThruMask = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtImage, GDAT_DOOR_SEE_THRU_MASK);
+									if (iDoorSeeThruMask == (U16)-1) // not found, get the default one
+										iDoorSeeThruGDATIndex = GDAT_ITEM_DEFAULT_INDEX;
+									QUERY_TEMP_PICST(0, iStretchHorizontal, iStretchVertical, 0, 0, iYDist, 
+										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_DOOR_DESTROYED_MASK_POSITION) << 2) + iInvertedYDist +0x7d0,
+										-1, iColorTransparencyOverlay, iDoorColorPassThrough, GDAT_CATEGORY_DOORS, iDoorSeeThruGDATIndex, GDAT_DOOR_SEE_THRU_MASK
+										);								
+								}
+								
+								glbTempPicture.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(iCacheNo));
+								DRAW_TEMP_PICST();
+							}
+#endif
+							//^32CB:4BBC
+							xPicture.colorKeyPassThrough = xPicture.b58[iDoorColorPassThrough];
+							xPicture.w56 = 0;
+							_0b36_00c3(iCacheNo, &xPicture);
+							// SPX: that draws the main door (without ornate)
+							COPY_MEMORY(&xPicture, &glbTempPicture, sizeof(ExtendedPicture));
+							glbTempPicture.pb44 = _4976_4c16;
+						}
+						else {
+							//^32CB:4C0C
+							iCacheNo = -1;
+							//QUERY_TEMP_PICST(0, si, si, 0, 0, bp0a, -1, -1, bp12, -1, 0xe, bp0e, bp0f);
+							QUERY_TEMP_PICST(mirroredDoor, iStretchDual, iStretchDual, 0, 0, iLightPalette, -1, -1, iDoorColorPassThrough, -1, GDAT_CATEGORY_DOORS, iDoorGDATIndex, iDoorImg);
+						}
+						//^32CB:4C36
+						// SPX: this part change position of door when in intermediate state
+						if (iDoorState < 4) {	// 4 = closed. < 4 => intermediate state. 0 = opened
+							//^32CB:4C3C
+							iDoorPosRectno = iDoorPosRectno + iDoorState;
+							if (xDoor->OpeningDir() == 0) // 0 = horizontal
+							{
+								X16 iWidth = 0;	// SPX: added this to not reuse "di" variable, already used for ornate index
+								//^32CB:4C56
+								glbTempPicture.width >>= 1;
+								iWidth = glbTempPicture.width;
+								glbTempPicture.w4 |= 0x10;
+								glbTempPicture.w14 = glbTempPicture.w14 + iWidth;
+								glbTempPicture.rectNo = iDoorPosRectno + 6;
+								DRAW_TEMP_PICST();	// will draw RIGHT part of the door
+								glbTempPicture.w14 = glbTempPicture.w14 + iWidth;
+								iDoorPosRectno += 3;
+							}
+						}
+						// Explanation on door rectno offsets:
+						// 0 = closed
+						// 1 - 3 = vertical positions (¼, ½, ¾ closed)
+						// 4 - 6 = horizontal left positions (¼, ½, ¾ closed)	=> hence +3 on rectno for horizontal opening
+						// 7 - 9 = horizontal right positions (¼, ½, ¾ closed)	=> hence +6 on rectno for horizontal opening
+						//^32CB:4C86
+						glbTempPicture.rectNo = iDoorPosRectno;
+						glbTempPicture.w30++; // SPX: added this to shift down 1 pixel to get pixel precise regarding DM1 door position
+						DRAW_TEMP_PICST();	// draw the door or LEFT part for horizontal opening
+						if (iCacheNo >= 0) {
+							//^32CB:4C96
+							FREE_TEMP_CACHE_INDEX(iCacheNo);
+						}
+					}
+				}
+			}
+		}
+	}
+	//^32CB:4C9F
+	if (zz != 0) {
+		//^32CB:4CA5
+		DRAW_DOOR_FRAMES(iCellPos, zz);
+	}
+	//^32CB:4CB1
+	if (aa != 0) {
+		//^32CB:4CB9
+		_32cb_2d8c(tblCellTilesRoom[iCellPos].xsrd.w4, iCellPos, aa);
+	}
+	//^32CB:4CDB
+	return;
+}
+
+//^32CB:4CDF
+// SPX: _32cb_4cdf renamed DRAW_DOOR_TILE
+void SkWinCore::DRAW_DOOR_TILE(i16 iCellPos)	// i16 xx
+{
+	//^32CB:4CDF
+	ENTER(6);
+	//^32CB:4CE5
+	//i16 si = xx; <= iCellPos
+	if (_4976_455e[RCJ(16,iCellPos)] == 0)
+		return;
+	X32 bp04 = 0x1000;
+	if (tblCellTilesRoom[iCellPos].xsrd.w6[0] != 5) {
+		//^32CB:4D13
+		bp04 = 0x1000;
+	}
+	// SPX: draw objects on door tile behind the door
+	DRAW_STATIC_OBJECT(iCellPos, 0x3ff, (iCellPos != 0) ? 1 : 0);
+	X16 bp06 = 0;
+	X16 di = 0;
+	switch (iCellPos) {
+		case 0://^4D4E	// SPX: player is on the tile of the door
+			//^32CB:4D4E
+			if (bp04 != 0) {
+				//^32CB:4D56
+				DRAW_STATIC_OBJECT(iCellPos, bp04, 0);
+			}
+			DRAW_DOOR(iCellPos, 6, 0, 0);
+			_32cb_2d8c(tblCellTilesRoom[iCellPos].xsrd.w4, iCellPos, 0x01ffffff);
+			return;
+		case 7://^4D96
+			//^32CB:4D96
+			di = 1;
+            bp06 = 4;
+			goto _4dc0;
+		case 8://^4DA0
+			//^32CB:4DA0
+			di = 1;
+			bp06 = 2;
+			goto _4dc0;
+		case 12://^4DA2
+			//^32CB:4DA2
+			di = 2;
+			bp06 = 4;
+			goto _4dc0;
+		case 13://^4DA7
+			//^32CB:4DA7
+			di = 4;
+			bp06 = 2;
+			goto _4dc0;
+		case 11://^4DAC
+			//^32CB:4DAC
+			di = 6;
+			goto _4dc0;
+		case 4://^4DB1
+			//^32CB:4DB1
+			di = 1;
+            bp06 = 4;
+			goto _4dc0;
+		case 5://^4DB3
+			di = 1;
+			bp06 = 2;
+			goto _4dc0;
+		case 3://^4DBD
+		case 6://^4DBD
+			di = 7;
+			goto _4dc0;
+		case 14://^4DC0
+		case 15://^4DC0
+			//^32CB:4DC0
+_4dc0:
+			DRAW_DOOR(iCellPos, di, bp06, bp04);
+			break;
+		case 1://^4DD2
+		case 2://^4DD2
+		case 9://^4DD2
+		case 10://^4DD2
+			break;
+	}
+	//^32CB:4DD2
+	// SPX: draw objects on door tile before the door
+	DRAW_STATIC_OBJECT(iCellPos, 0x01fffc00 & (~bp04), 1);
+	_32cb_3edd(iCellPos);
+	//^32CB:4DF8
+	return;
+}
+
+//^32CB:4ECC
+// SPX: _32cb_4ecc renamed DRAW_STAIRS_SIDE
+void SkWinCore::DRAW_STAIRS_SIDE(i16 xx)
+{
+	//^32CB:4ECC
+	ENTER(4);
+	//^32CB:4ED2
+	i16 di = xx;
+	U8 gfxset = glbMapGraphicsSet;	// bp02
+	i16 bp04 = glbSceneColorKey;
+	if (di > 8)
+		return;
+	//^32CB:4EE6
+	X16 si = (tblCellTilesRoom[di].xsrd.w6[0] != 0) ? 1 : 0;
+	X8 bp01 = tlbGraphicsStairsSide[RCJ(9,di)][RCJ(2,si)];	// bp01	, table containing 0xC7 to 0xD2 = side stairs (wood ramp)
+	if (bp01 != 0xff) {
+		//^32CB:4F12
+		DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_GRAPHICSSET, gfxset, bp01, _4976_4600[RCJ(9,di)][RCJ(2,si)], bp04, 0);
+	}
+	//^32CB:4F37
+	return;
+}
+
+
+//^32CB:245A
+// SPX: _32cb_245a renamed DRAW_PIT_TILE
+void SkWinCore::DRAW_PIT_TILE(i16 xx)
+{
+	//^32CB:245A
+	ENTER(6);
+	//^32CB:2460
+	i16 si = xx;
+	X8 bp03 = glbMapGraphicsSet;
+	X16 bp06 = glbSceneColorKey;
+	i16 bp02 = _4976_4282[RCJ(16,si)];
+	if (bp02 < 0)
+		return;
+	if (si < 11 || tblCellTilesRoom[si].xsrd.w6[0] == 0) {
+		//^32CB:2497
+		X16 di = tlbGraphicsFlip[RCJ(16,si)];	// di
+		if (si == 0) {
+			//^32CB:24A3
+			di = (SET_GRAPHICS_FLIP_FROM_POSITION(1, _4976_5aa0, _4976_5a9c, _4976_5a9e) != 0) ? 1 : 0;
+		}
+		//^32CB:24C4
+		DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_GRAPHICSSET, bp03
+			, (tblCellTilesRoom[si].xsrd.w6[0] != 0) ? tlbGraphicsPitHidden[RCJ(16,si)] : tlbGraphicsPitNormal[RCJ(16,si)], bp02, bp06, di);
+	}
+	//^32CB:24F7
+	return;
+}
+//^32CB:1F3E
+// SPX: _32cb_1f3e renamed DRAW_EXTERNAL_TILE
+X16 SkWinCore::DRAW_EXTERNAL_TILE(i16 xx)
+{
+	//^32CB:1F3E
+	ENTER(356);
+	//^32CB:1F44
+	i16 si = xx;
+	X8 bp14 = _4976_4230[RCJ(23,si)];
+	if (bp14 == 0xff)
+		return 0;
+	//^32CB:1F55
+	i16 bp06 = tblCellTilesRoom[si].posx;
+	i16 bp08 = tblCellTilesRoom[si].posy;
+	i16 bp18 = glbTabYAxisDistance[RCJ(23,si)];
+	//^32CB:1F86
+	TELE_inf bp2a; // bp2a-bp26
+	if (bp18 > 3 && GET_TELEPORTER_DETAIL(&bp2a, U8(bp06), U8(bp08)) == 0)
+		return 0;
+	//^32CB:1FA6
+	U16 bp02 = tblCellTilesRoom[si].xsrd.w6[2];
+	X16 bp16 = bp02 >> 8;
+	bp14 += X8(bp16);
+	X8 iFloorOrnateID = X8(bp02);	// bp13
+	if (iFloorOrnateID == 0xFF || iFloorOrnateID == 0)
+		return 0;
+	//^32CB:1FDF
+	X16 bp04 = 0;
+	if (glbTabXAxisDistance[RCJ(23,si)] == 0) {
+		//^32CB:1FEB
+		if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_FLOOR_GFX, iFloorOrnateID, dtWordValue, GDAT_FLOOR_ORNATE__DO_NOT_FLIP) == 0) {
+			//^32CB:2001
+			bp04 = glbGeneralFlipGraphics;
+			if ((bp18 & 1) == 0) {
+				//^32CB:200E
+				bp04 ^= 1;
+			}
+		}
+	}
+	//^32CB:2015
+	else if (glbTabXAxisDistance[RCJ(23,si)] >= 1) {
+		//^32CB:201C
+		bp04 = 1;
+	}
+	//^32CB:2021
+	X16 bp0e = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_FLOOR_GFX, iFloorOrnateID, dtWordValue, GDAT_IMG_COLORKEY_1); // 4
+	if (bp0e == 0) {
+		//^32CB:203A
+		bp0e = glbSceneColorKey;
+	}
+	//^32CB:2040
+	X16 bp0a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_FLOOR_GFX, iFloorOrnateID, dtWordValue, GDAT_FLOOR_ORNATE__POSITION); // 5
+	X16 bp12;
+	if (bp0a == 0) {
+		//^32CB:2059
+		bp0a = ORNATE_POS__VCENTERED_HCENTERED; // bp0a = 12;
+		bp12 = 0;
+	}
+	else {
+		//^32CB:2065
+		bp12 = bp0a >> 8;
+		bp0a = (bp0a & 0xff) -1;
+	}
+	//^32CB:2078
+	X16 bp0c = QUERY_CREATURE_BLIT_RECTI(si, bp0a, 0);
+	X16 bp10 = 0x40; // bp10
+	if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_FLOOR_GFX, iFloorOrnateID, dtImage, bp14) == 0) {
+		//^32CB:20A6
+		bp14 = _4976_4247[RCJ(23,si)] +X8(bp16);
+		bp10 = tlbDistanceStretch[RCJ(5,bp18)];
+		// SPX: if drawing player tile and there is a floor image at front D0, we try to get it
+		if (SkCodeParam::bUseDM2ExtendedMode && bp18 == 0)
+		{
+			if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_FLOOR_GFX, iFloorOrnateID, dtImage, bp14 + 0x80) == 1)
+			{
+				bp14 = bp14 + 0x80;
+				bp10 = 0x40; // 100% because we want to display front D0 at its real size.
+			}
+		}
+	}
+	//^32CB:20BC
+	X16 bp1a;
+	X16 bp22;
+	X16 bp24;
+	i16 di;
+	X16 bp20;
+	ExtendedPicture bp0164;
+	X16 bp1c;
+	if (glbTabXAxisDistance[RCJ(23,si)] == 0 && bp18 != 0) {
+		//^32CB:20CF
+		X16 bp1e = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_FLOOR_GFX, iFloorOrnateID, dtWordValue, GDAT_FLOOR_ORNATE__X63);
+		if ((bp1c = GET_TELEPORTER_DETAIL(&bp2a, U8(bp06), U8(bp08))) != 0 || bp1e != 0) {
+			//^32CB:2107
+			QUERY_TEMP_PICST(bp04, bp10, bp10, 0, 0, bp18, bp0c, bp12, -3, -3, GDAT_CATEGORY_FLOOR_GFX, iFloorOrnateID, bp14);
+			QUERY_TEMP_PICST(bp04, bp10, bp10, glbTempPicture.w28, glbTempPicture.w30, bp18, bp0c, bp12, bp0e, -1, GDAT_CATEGORY_FLOOR_GFX, iFloorOrnateID, bp14 +0xc8);
+			DRAW_TEMP_PICST();
+			//^32CB:2168
+			bp06 = bp2a.b2;
+			bp08 = bp2a.b3;
+			bp1a = _4976_5aa0;
+			_4976_5aa0 = bp2a.b1;
+			bp22 = glbCurrentMapIndex;
+			CHANGE_CURRENT_MAP_TO(bp2a.b4);
+			_4976_4212 = 1;
+			bp24 = glbTabYAxisDistance[RCJ(23,si)];
+			CALC_VECTOR_W_DIR(_4976_5aa0, -bp24, 0, &bp06, &bp08);
+			//^32CB:21C4
+			for (di = 4; di >= bp24; di--) {
+				//^32CB:21C9
+				_32cb_4185_TILE_ROOM(bp06, bp08, _4976_422b[RCJ(5,di)], _4976_5aa0);
+				//^32CB:21E1
+			}
+			//^32CB:21E7
+			for (di = 4; di > bp24; di--) {
+				//^32CB:21EC
+				DRAW_STATIC_OBJECT(_4976_422b[RCJ(5,di)], 0x01ffffff, 1);
+				//^32CB:2201
+			}
+			//^32CB:2207
+			CHANGE_CURRENT_MAP_TO(bp22);
+			_4976_4212 = 0;
+			_4976_5aa0 = bp1a;
+			DRAW_STATIC_OBJECT(si, 0x000003ff, 1);
+			bp20 = QUERY_MULTILAYERS_PIC(
+				&bp0164, GDAT_CATEGORY_FLOOR_GFX, iFloorOrnateID, bp14, bp10, bp10, bp18, bp04, bp0e,
+				QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_FLOOR_GFX, iFloorOrnateID, dtWordValue, GDAT_IMG_FLOOR_COLORKEY_2)	// 0xa
+				);
+			if (bp1e != 0) {
+				//^32CB:226E
+				_32cb_0c7d(&bp0164, bp20, bp0e);
+			}
+			else {
+				//^32CB:2283
+				FILL_ENTIRE_PICT(reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp20)), bp0164.b58[bp0e]);
+			}
+			//^32CB:22A5
+			bp0164.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp20));
+			DRAW_PICST(&bp0164);
+			FREE_PICT_MEMENT(&bp0164);
+			bp0164.colorKeyPassThrough = bp0164.b58[bp0e];
+			bp0164.pb44 = _4976_4c16;
+			bp0164.rectNo = bp0c;
+			bp0164.w26 = bp12;
+			bp0164.w56 = 0;
+			_0b36_00c3(bp20, &bp0164);
+			DRAW_PICST(&bp0164);
+			FREE_TEMP_CACHE_INDEX(bp20);
+			return bp1c;
+		}
+	}
+	//^32CB:2331
+	QUERY_TEMP_PICST(bp04, bp10, bp10, 0, 0, bp18, bp0c, bp12, bp0e, -1, GDAT_CATEGORY_FLOOR_GFX, iFloorOrnateID, bp14);
+	DRAW_TEMP_PICST();
+	//^32CB:2361
+	return 0;
+}
+//^32CB:2367
+// SPX: _32cb_2367 renamed DRAW_PIT_ROOF
+void SkWinCore::DRAW_PIT_ROOF(i16 xx)
+{
+	//^32CB:2367
+	ENTER(10);
+	//^32CB:236D
+	i16 si = xx;
+	X8 gfxset = glbMapGraphicsSet;	//bp07
+	X16 bp0a = glbSceneColorKey;
+	if (si > 8 || (glbSceneFlags & 1) == 0)
+		return;
+	//^32CB:238F
+	i16 bp04 = tblCellTilesRoom[si].posx;
+	i16 bp06 = tblCellTilesRoom[si].posy;
+	i16 bp02 = LOCATE_OTHER_LEVEL(glbCurrentMapIndex, -1, &bp04, &bp06, NULL);
+	if (bp02 < 0)
+		return;
+	//^32CB:23DB
+	bp02 = glbMapTileValue[bp02][bp04][bp06];
+	if ((bp02 >> 5) != 2 || (bp02 & 8) == 0)
+		return;
+	//^32CB:240B
+	X16 di = _4976_4279[RCJ(9,si)];
+	if (si == 0) {
+		//^32CB:2417
+		di = (SET_GRAPHICS_FLIP_FROM_POSITION(0x20, _4976_5aa0, _4976_5a9c, _4976_5a9e) != 0) ? 1 : 0;
+	}
+	//^32CB:2438
+	DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_GRAPHICSSET, gfxset, tlbGraphicsPitRoof[RCJ(9,si)], _4976_425e[RCJ(9,si)], bp0a, di);
+	//^32CB:2456
+	return;
+}
+
+//^32CB:3143
+// SPX: _32cb_3143 renamed DRAW_FLYING_ITEM
+void SkWinCore::DRAW_FLYING_ITEM(ObjectID rl, i16 cellPos, X16 _5x5)
+{
+	//^32CB:3143
+	ENTER(32);
+	//^32CB:3149
+	if (rl == OBJECT_END_MARKER)
+		return;
+	//^32CB:3152
+	i16 di = DIR_FROM_5x5_POS(_5x5);
+	if (di == -1)
+		return;
+	//^32CB:3165
+	X16 bp1a = glbTabYAxisDistance[RCJ(23,cellPos)];
+	if (bp1a == 0 && di >= 2)
+		return;
+	//^32CB:317E
+	i16 bp1c = glbTabXAxisDistance[RCJ(23,cellPos)];
+	if (_4976_415b[RCJ(23,cellPos)] < 0)
+		return;
+	//^32CB:3193
+	X16 bp1e = tblCellTilesRoom[cellPos].posx;
+	X16 bp20 = tblCellTilesRoom[cellPos].posy;
+	X16 si;
+	do {
+		//^32CB:31BE
+		if (QUERY_OBJECT_5x5_POS(rl, _4976_5aa0) != _5x5)
+			continue;
+		//^32CB:31D4
+		if (rl.DBType() != dbMissile)
+			continue;
+        //^32CB:31E5
+		i16 bp08 = QUERY_CREATURE_BLIT_RECTI(cellPos, _5x5, 0);
+        X16 bp0c = _48ae_011a(rl);
+		if (bp0c == 0xffff) {
+			//^32CB:320A
+			ObjectID bp18 = ObjectID(GET_ADDRESS_OF_RECORDE(rl)->GetMissileObject(), rl.Dir());
+			DRAW_ITEM(bp18, cellPos, 0, 0xffa4, -1, NULL, 1, 0, 0);
+			continue;
+		}
+		//^32CB:324D
+		Missile *bp04 = GET_ADDRESS_OF_RECORDE(rl);
+		U8 bp12 = QUERY_CLS1_FROM_RECORD(rl);
+		U8 bp11 = QUERY_CLS2_FROM_RECORD(rl);
+		X16 bp0e = (bp12 == 0xd) ? 1 : 0;
+		X16 bp10;
+		i16 bp16;
+		//^32CB:3284
+		if ((bp0e == 0 || bp04->EnergyRemaining() == 0xff) && bp1a == 0) {
+			//^32CB:3298
+			bp10 = bp16 = 0x40;
+		}
+		else {
+			//^32CB:32A3
+			bp16 = (bp1a << 1) -(di >> 1);
+			if (bp16 < 0)
+				continue;
+			//^32CB:32B8
+			bp10 = bp16 = _4976_41a9[RCJ(7,bp16)];
+			if (bp0e != 0) {
+				//^32CB:32CD
+				bp10 = max_value(8, CALC_STRETCHED_SIZE((((bp04->EnergyRemaining() << 7) / 255) +1) >> 1, bp10));
+			}
+		}
+		//^32CB:32FB
+		si = 0;
+		X8 bp13;
+		if (bp0c == 3) {
+			//^32CB:3303
+			bp13 = 8;
+		}
+		else {
+			//^32CB:330A
+			X16 bp0a = glbTimersTable[bp04->TimerIndex()].Direction();
+			if ((bp0a & 1) != (_4976_5aa0 & 1)) {
+				//^32CB:3338
+				bp13 = 0xc;
+				if (bp0c == 0) {
+					if (di == 0 || di == 3) {
+						//^32CB:334B
+						si |= 1;
+					}
+					//^32CB:334F
+					if (((bp1e +bp20) & 1) == 0) {
+						si ^= 1;
+					}
+				}
+				//^32CB:3364
+				else if (((_4976_5aa0 +1) & 3) == bp0a) {
+					si |= 1;
+				}
+			}
+			//^32CB:3376
+			else {
+				if (bp0c == 0) {
+					if (((bp1e +bp20) & 1) != 0) {
+						//^32CB:3387
+						si |= 2;
+						if (di < 2) {
+							//^32CB:3390
+							bp13 = 8;
+						}
+						else {
+							//^32CB:3396
+							bp13 = 9;
+						}
+					}
+					//^32CB:339C
+					else if (di >= 2) {
+						//^32CB:33A1
+						//^32CB:3390
+						bp13 = 8;
+					}
+					else {
+						//^32CB:33A3
+						bp13 = 9;
+					}
+				}
+				//^32CB:33A9
+				else if (bp0c == 2 || (bp0c == 1 && bp0a != _4976_5aa0)) {
+					//^32CB:33BE
+					//^32CB:3390
+					bp13 = 8;
+				}
+				else {
+					//^32CB:33C0
+					bp13 = 10;
+				}
+				//^32CB:33C4
+				if (bp1c < 1 && (bp1c != 0 || (di != 1 && di != 2))) {
+					//^32CB:33DA
+					si |= 1;
+				}
+				//^32CB:33DE
+				if ((di & 1) != 0 && bp12 == 0xd) {
+					//^32CB:33EA
+					si |= 2;
+				}
+			}
+		}
+		//^32CB:33EE
+		X16 bp06;
+		if (bp12 == 0xd) {
+			//^32CB:33F4
+			bp06 = QUERY_GDAT_ENTRY_DATA_INDEX(0xd, bp11, dtWordValue, 0x01);
+		}
+		else {
+			bp06 = 3;
+		}
+		//^32CB:3410
+		QUERY_TEMP_PICST(si & bp06, bp10, bp10, 0, 0, bp1a, bp08 | 0x8000, 0, 10, -1, bp12, bp11, bp13);
+		glbTempPicture.w32 += CALC_STRETCHED_SIZE(0, bp16);
+		glbTempPicture.w34 = CALC_STRETCHED_SIZE(-92, bp16);
+		DRAW_TEMP_PICST();
+		//^32CB:3467
+	} while ((rl = GET_NEXT_RECORD_LINK(rl)) != OBJECT_END_MARKER);
+	//^32CB:347B
+	return;
+}
+
+//^32CB:3B9D
+// SPX: _32cb_3b9d renamed DRAW_STATIC_OBJECT
+void SkWinCore::DRAW_STATIC_OBJECT(i16 xx, X32 ss, X16 ww)
+{
+	//^32CB:3B9D
+	ENTER(28);
+	
+	//^32CB:3BA3
+	i16 si = xx;
+	if (si > 15 || _4976_43e5[RCJ(16,si)] == 0)
+		return;
+	//^32CB:3BB8
+	X16 bp1c = tblCellTilesRoom[si].xsrd.w0;
+	ObjectID bp16 = tblCellTilesRoom[si].xsrd.w4;
+	X16 bp0c = _4976_43f5[RCJ(16,si)][0];
+	X16 bp0e = _4976_43f5[RCJ(16,si)][1];
+	const U8 *displayOrder;	// *bp04 
+	if (glbTabXAxisDistance[RCJ(23,si)] < 0) { // at left
+		//^32CB:3BFF
+		displayOrder = tlbDisplayOrderLeft;
+	}
+	//^32CB:3C06
+	else if (glbTabXAxisDistance[RCJ(23,si)] == 0) { // at center
+		//^32CB:3C0D
+		displayOrder = tlbDisplayOrderCenter;
+	}
+	else { // at right
+		//^32CB:3C14
+		displayOrder = tlbDisplayOrderRight;
+	}
+	//^32CB:3C1C
+	for (X16 di = 0; ((si == 0) ? 15 : 25) > di; di++) {
+		//^32CB:3C21
+		X16 bp08 = displayOrder[di];
+		X32 bp1a = (U32(1) << bp08) & ss;
+		if (bp1a == 0)
+			continue;
+		//^32CB:3C4C
+		// SPX: some problem here : if (*_4976_5be2)[si] is zero on a door (open) then no item will be drawn!
+		if (((*_4976_5be2)[si] & bp1a) != 0) {
+			//^32CB:3C68
+			DRAW_PUT_DOWN_ITEM(bp16, si, DIR_FROM_5x5_POS(bp08), NULL);
+		}
+		//^32CB:3C81
+		X16 bp10 = _4976_4415[RCJ(25,bp08)][0] +bp0c;
+		X16 bp12 = bp0e -_4976_4415[RCJ(25,bp08)][1];
+		if (bp1c == 0 || _4976_5a84[bp10][bp12] == si) {
+			//^32CB:3CC8
+			U8 bp13 = _4976_5aa4[bp10][bp12];
+			if (bp13 != 0xff) {
+				//^32CB:3CE6
+				if (((1 << bp08) & ss) != 0) {
+					//^32CB:3D04
+					SUMMARY_DRAW_CREATURE(tblCellTilesRoom[bp13].xsrd.w4, bp13, ss);
+					_4976_5aa4[bp10][bp12] = 0xff;
+					if ((*_4976_5a7c)[si] != 0) {
+						//^32CB:3D54
+						U16 bp06;
+						for (bp06 = di -7; bp06 < di; bp06++) {
+							//^32CB:3D5E
+							X16 bp0a = displayOrder[bp06];
+							if (((1 << bp0a) & *(*_4976_5a7c)) != 0) {
+								//^32CB:3D99
+								DRAW_FLYING_ITEM(bp16, si, bp0a);
+							}
+							//^32CB:3DA7
+						}
+					}
+				}
+			}
+		}
+		//^32CB:3DAF
+		if (((*_4976_5a7c)[si] & bp1a) != 0) {
+			//^32CB:3DCB
+			DRAW_FLYING_ITEM(bp16, si, bp08);
+		}
+		//^32CB:3DD9
+	}
+	//^32CB:3DED
+	if (ww != 0) {
+		//^32CB:3DF3
+		_32cb_2d8c(bp16, si, ss);
+	}
+	//^32CB:3E04
+	return;
+}
+
+//^32CB:24FB
+// SPX: _32cb_24fb renamed DRAW_TELEPORTER_TILE; though it can display REFLECTOR
+void SkWinCore::DRAW_TELEPORTER_TILE(i16 xx, X16 cls1, X16 cls2)
+{
+	//^32CB:24FB
+	ENTER(60);
+	//^32CB:2501
+	if (xx > 15)
+		return;
+	//^32CB:250A
+	X8 *bp04 = _4976_42f2[RCJ(23,xx)];
+	X16 bp0e = _4976_42d2[RCJ(16,xx)];
+	X16 bp10 = 0;
+	X8 bp13 = bp04[1] & 0x7f;
+	X16 bp16 = ((bp13 & 0x80) != 0) ? 1 : 0;
+	i16 bp18 = bp04[2];
+	i16 bp1a = bp04[3];
+	SRECT bp22;
+	if (QUERY_BLIT_RECT(NULL, &bp22, bp0e, &bp18, &bp1a, -1) == NULL)
+		return;
+	//^32CB:2583
+	U8 *bp08;
+	Picture bp3c;
+	U8 *bp0c;
+	if (bp04[1] == 0xff) {
+		bp08 = NULL;
+	}
+	else {
+		//^32CB:259A
+		bp3c.b8 = U8(cls1);
+		bp3c.b9 = U8(cls2);
+		bp3c.b11 = bp13;
+		bp08 = QUERY_PICST_IMAGE(&bp3c);
+		ALLOC_PICT_MEMENT(&bp3c);
+		if (bp16 != 0) {
+			//^32CB:25D3
+			X16 bp12 = ALLOC_TEMP_CACHE_INDEX();
+			X16 bp24;
+			X16 si;
+			bp0c = ALLOC_NEW_PICT(bp12, si = READ_UI16(bp08,-4), bp24 = READ_UI16(bp08,-2), 4);
+			bp08 = QUERY_PICT_BITS(&bp3c);
+			X16 di = READ_UI16(bp08,-4) & 1;
+			if (di != 0)
+				//^32CB:2622
+				di = 2 -di;
+			//^32CB:2629
+			FIRE_BLIT_PICTURE(
+				bp08, bp0c, 
+				ALLOC_TEMP_ORIGIN_RECT(si -di, bp24), 0, 0, 
+				si, si, -1, 1, 4, 4, NULL);
+			FREE_PICT_MEMENT(&bp3c);
+			_0b36_00c3(bp12, &bp3c);
+			ALLOC_PICT_MEMENT(&bp3c);
+		}
+	}
+	//^32CB:2688
+    bp0c = QUERY_GDAT_IMAGE_ENTRY_BUFF(U8(cls1), U8(cls2), 0x14);
+	if (bp04[1] != 0xff) {
+		//^32CB:26AA
+		bp08 = QUERY_PICT_BITS(&bp3c);
+	}
+	//^32CB:26BC
+	_44c8_20a4(
+		bp0c, 
+		_4976_4c16, 
+		bp08, 
+		&bp22, 
+		(bp04[0] +RAND01()) << 4, 
+		RAND() & 255,
+		_4976_00f6, 
+		bp10, 
+		_32cb_0649(U8(cls1), U8(cls2), 0x14, bp10)
+		);
+	if (bp04[1] != 0xff) {
+		//^32CB:2720
+		FREE_PICT_MEMENT(&bp3c);
+	}
+	//^32CB:272C
+	return;
+}
+
+//^32CB:4F3B
+void SkWinCore::DRAW_WALL(i16 iViewportCell)	// i16 xx
+{
+	//^32CB:4F3B
+	ENTER(12);
+	//^32CB:4F41
+	U8 iMapGfx = glbMapGraphicsSet;	// bp02
+	i16 iColorkey1 = glbSceneColorKey;	// bp06
+	i8 iXDist = glbTabXAxisDistance[RCJ(23,iViewportCell)];	// bp07
+	i16 iYDist = glbTabYAxisDistance[RCJ(23,iViewportCell)];	// bp0c
+	//^32CB:4F5F
+	U8 bp01 = (iYDist > 1) ? GDAT_WALL_ORNATE__DATA_6F : GDAT_WALL_ORNATE__DATA_6E;	// SPX TODO: unknown GDAT values! never seen them in any GDAT
+	X16 si = 0;
+	X16 di = 0;
+	U16 bp0a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, bp01);
+	// SPX: in case gfxset (custom dungeon) is >= 6, bypass these values.
+	if (SkCodeParam::bUseFixedMode && glbMapGraphicsSet >= 0 && glbMapGraphicsSet < 6) {
+		if (iYDist > 1) { // dist 2,3,4
+			//^32CB:4F91
+			if (tblCellTilesRoom[4].xsrd.w0 == 0 && (di = (bp0a >> 8)) == 0) {
+				//^32CB:4FA5
+				di = _4976_463c_tblGfxSet[RCJ(6,glbMapGraphicsSet)];
+			}
+			//^32CB:4FB2
+			if (tblCellTilesRoom[5].xsrd.w0 == 0) {
+				//^32CB:4FBD
+				si = bp0a & 0xff;
+				if (si == 0) {
+					//^32CB:4FC9
+					si = _4976_4648_tblGfxSet[RCJ(6,glbMapGraphicsSet)];
+				}
+			}
+		}
+		//^32CB:4FD8
+		else if (iYDist > 0) { // dist 1
+			//^32CB:4FDE
+			if (tblCellTilesRoom[0].xsrd.w0 == 0 && (di = (bp0a >> 8)) == 0) {
+				//^32CB:4FF5
+				di = _4976_4624_tblGfxSet[RCJ(6,glbMapGraphicsSet)];
+			}
+			//^32CB:5002
+			if (tblCellTilesRoom[2].xsrd.w0 == 0 && (si = (bp0a & 0xff)) == 0) {
+				//^32CB:5019
+				si = _4976_4630_tblGfxSet[RCJ(6,glbMapGraphicsSet)];
+			}
+		}
+	}
+	//^32CB:5026
+	if (di != 0 || si != 0) {
+		//^32CB:502E
+		TRIM_BLIT_RECT(di, 0, si, 0);
+	}
+	//^32CB:503C
+	X16 bFlip = (iXDist <= 0) ? 0 : 1;	// (bp04) 0 = left / 1 = right
+	//^32CB:504E
+	if (iViewportCell >= 0x10) { // wall at D4
+		//^32CB:5054
+		if (iXDist == -2 || iXDist == 2) {
+			//^32CB:5060
+			bFlip = 0;	// left
+		}
+		bFlip ^= glbGeneralFlipGraphics;
+		bp01 = 0x32;	// 0x32 : D4 wall front
+	}
+	//^32CB:5071
+	else if (glbGeneralFlipGraphics != 0) {
+		//^32CB:5078
+		bp01 = tlbDoorSideFramesReorder[RCJ(23,iViewportCell)] -80;
+		if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_GRAPHICSSET, iMapGfx, dtImage, bp01) == 0) {
+			if (iXDist == 0) {
+				//^32CB:509F
+				bFlip = 1;	// right
+			}
+			//^32CB:50A4
+			bp01 = bp01 +0x72;	// 0x72 is pit side D2 ...
+		}
+	}
+	else {
+		//^32CB:50AE
+		bp01 = iViewportCell +0x22;	// 0x23 is wall side D0
+	}
+
+	// SPX: 2016-11-11 : attempt having See Through Wall masks on wall
+#if (DM2_EXTENDED_MODE == 1)	// Check for possible thru wall gfx
+	{
+	
+		if (glbGlobalSpellEffects.SeeThruWalls > 0 && iViewportCell == 3)	// front D1 wall
+		{
+			i16 iColorkey2 = -1;
+			ExtendedPicture xExtPicWall;
+			i16 iPicture = 0;
+			bp01 = 0x025;	// D1 wall
+
+			iColorkey1 = 10;	// would be dark green / pass through (see what's behind wall)
+			iColorkey2 = 9;		// would be cyan / transparent (see wall)
+			
+			iPicture = QUERY_MULTILAYERS_PIC(&xExtPicWall, GDAT_CATEGORY_GRAPHICSSET, iMapGfx, bp01, 0x40, 0x40, 0, bFlip, iColorkey1, -1);
+			//iPicture = QUERY_MULTILAYERS_PIC(&xExtPicWall, GDAT_CATEGORY_GRAPHICSSET, 0xFE, 0xF2, 0x40, 0x40, 0, bFlip, iColorkey1, -1); // test wall
+			DRAW_PICST(&xExtPicWall);
+			FREE_PICT_MEMENT(&xExtPicWall);
+
+			X16 iScale = 0x40;
+			X16 bp20 = 0x40;
+			X16 bp22 = 0x40;;
+			//--- Put the metrics of that image to the TEMP image
+			if (iScale == 0x40)
+			{
+				i16 bp1c;
+				i16 bp1e;
+				
+				QUERY_GDAT_IMAGE_METRICS(GDAT_CATEGORY_GRAPHICSSET, iMapGfx, bp01, &bp1c, &bp1e);	// 0xe
+				bp20 = _32cb_48d5(glbTempPicture.width, bp1c);
+				bp22 = _32cb_48d5(glbTempPicture.height, bp1e);
+				
+			}
+			else {
+				bp22 = bp20 = iScale;
+			}
+
+			//------ part to get and draw the see thru walls
+			if (1)
+			{
+				U16 iWallSetIndex = iMapGfx;
+			
+				U16 iWallSeeThruMask = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, iMapGfx, dtImage, GDAT_GFXSET_SEE_THRU);
+				if (iWallSeeThruMask == (U16)-1) // not found, get the default one
+					iWallSetIndex = GDAT_ITEM_DEFAULT_INDEX;	// 0xFE
+				
+				i16 iRectNo = QUERY_CREATURE_BLIT_RECTI(3, 11, 0);	// That gets currently the best result for positionning 'see through wall' mask
+
+				QUERY_TEMP_PICST(bFlip, bp20, bp22, 0, 0, 
+					(glbIsPlayerMoving != 0) ? -iYDist : 0, 
+					iRectNo,
+					-1, iColorkey2, iColorkey1,
+					GDAT_CATEGORY_GRAPHICSSET, iWallSetIndex, GDAT_GFXSET_SEE_THRU
+					);
+
+				glbTempPicture.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(iPicture));
+				DRAW_TEMP_PICST();
+			}
+			//------
+
+			//--- Get correct pass through color
+			xExtPicWall.colorKeyPassThrough = xExtPicWall.b58[iColorkey1];
+			xExtPicWall.w56 = 0;
+			_0b36_00c3(iPicture, &xExtPicWall);
+			COPY_MEMORY(&xExtPicWall, &glbTempPicture, sizeof(ExtendedPicture));
+			glbTempPicture.pb44 = _4976_4c16;
+			glbTempPicture.rectNo = 3 + 0x2BE;
+			DRAW_TEMP_PICST();
+			if (iPicture >= 0)
+				FREE_TEMP_CACHE_INDEX(iPicture);
+		}
+		else
+		{
+			QUERY_TEMP_PICST(bFlip, 0x40, 0x40, 0, 0, (glbIsPlayerMoving != 0) ? -iYDist : 0, iViewportCell +0x2be, 0xffff, iColorkey1, -1, GDAT_CATEGORY_GRAPHICSSET, iMapGfx, bp01);
+			DRAW_TEMP_PICST(); // draw wall
+		}
+
+	}
+#else
+	//^32CB:50B6
+	QUERY_TEMP_PICST(bFlip, 0x40, 0x40, 0, 0, (glbIsPlayerMoving != 0) ? -iYDist : 0, iViewportCell +0x2be, 0xffff, iColorkey1, -1, GDAT_CATEGORY_GRAPHICSSET, iMapGfx, bp01);
+	DRAW_TEMP_PICST(); // draw wall
+#endif
+	_098d_0c45();
+	//^32CB:50FA
+	return;
+}
+//^32CB:50FE
+// SPX: _32cb_50fe renamed DRAW_WALL_TILE
+void SkWinCore::DRAW_WALL_TILE(i16 iViewportCell)	// i16 xx
+{
+	//^32CB:50FE
+	ENTER(0);
+	//^32CB:5102
+	i16 iLocalViewportCell = iViewportCell;	//i16 si = xx;
+	DRAW_WALL(iLocalViewportCell);
+	switch (_4976_4654[RCJ(23,iLocalViewportCell)]) {
+		case 1: //^_5121	// front vision
+			//^32CB:5121
+			DRAW_WALL_ORNATE(iLocalViewportCell, 0, 1);
+			break;
+		case 3: //^_5127	// side
+			//^32CB:5127
+			DRAW_WALL_ORNATE(iLocalViewportCell, 0, 1);
+			goto _5133;
+		case 2: //^_5133	// side
+			//^32CB:5133
+_5133:
+            DRAW_WALL_ORNATE(iLocalViewportCell, glbTabXAxisDistance[RCJ(23,iLocalViewportCell)], 1);
+			break;
+	}
+	//^32CB:5143
+	return;
+}
+
+//^32CB:5146
+// SPX: _32cb_5146 renamed DRAW_DUNGEON_TILES
+void SkWinCore::DRAW_DUNGEON_TILES()
+{
+	//^32CB:5146
+	ENTER(10);
+	//^32CB:514C
+	U32 bp04 = 0x01ffffff;
+	i16 bp08 = 0;
+	for (; bp08 < 20; bp08++) {
+		static const char * pszTblDrawOrder = {"D4L2,D4R2,D4L1,D4R1,D4  ,D3L2,D3R2,D3L1,D3R1,D3  ,D2L2,D2R2,D2L1,D2R1,D2  ,D1L1,D1R1,D1  ,D0L1,D0R1"};
+		// D4L2| 0|19
+		// D4R2| 1|20
+		// D4L1| 2|17
+		// D4R1| 3|18
+		// D4  | 4|16
+		// D3L2| 5|14
+		// D3R2| 6|15
+		// D3L1| 7|12
+		// D3R1| 8|13
+		// D3  | 9|11
+		// D2L2|10| 9
+		// D2R2|11|10
+		// D2L1|12| 7
+		// D2R1|13| 8
+		// D2  |14| 6
+		// D1L1|15| 4
+		// D1R1|16| 5
+		// D1  |17| 3
+		// D0L1|18| 1
+		// D0R1|19| 2
+		SkD((DLV_DBG_CELL, "DBG: Summary#%02d (%.4s)\n", (Bitu)bp08, &pszTblDrawOrder[5*bp08]));
+
+		//^32CB:515E
+		IBMIO_USER_INPUT_CHECK();
+		i16 si;
+		X16 bp06 = tblCellTilesRoom[si = _4976_466b[RCJ(20,bp08)]].xsrd.w0;
+		ObjectID di = tblCellTilesRoom[si].xsrd.id4();
+		if (si > 15) { // at D4
+			//^32CB:5196
+			X16 bp0a = bp06;
+			switch (bp0a) {
+				case 0x00://^51B5
+					//^32CB:51B5
+					if (di != OBJECT_END_MARKER) {
+						//^32CB:51BA
+						SUMMARY_DRAW_CREATURE(di, si, 0x01ffffff);
+					}
+					//^32CB:51C8
+					DRAW_WALL_TILE(si);
+					continue;
+				case 0x01://^51D1
+				case 0x02://^51D1
+				case 0x05://^51D1
+					//^32CB:51D1
+					DRAW_EXTERNAL_TILE(si);
+					goto _51d7;
+				case 0x11://^51D7
+					//^32CB:51D7
+_51d7:
+					if (di == OBJECT_END_MARKER)
+						continue;
+					//^32CB:51DF
+					SUMMARY_DRAW_CREATURE(di, si, 0x01ffffff);
+					continue;
+			}
+			continue;
+		}
+		//^32CB:51F0
+		if (si == 3) // at D1F
+			//^32CB:51F5
+			_4976_4dda = bp06;
+		switch (bp06) {
+			case 0://^520D // wall
+				//^32CB:520D
+				if (di != OBJECT_END_MARKER) {
+					//^32CB:5212
+					SUMMARY_DRAW_CREATURE(di, si, 0x01ffffff);
+				}
+				//^32CB:5220
+				//^32CB:5222
+				DRAW_WALL_TILE(si);
+				continue;
+			case 17://^5224
+				//^32CB:5224
+				DRAW_DOOR_TILE(si);
+				continue;
+			case 18://^522B
+				//^32CB:522B
+				DRAW_STAIRS_SIDE(si);
+				goto _52d1;
+			case 19://^5233
+				//^32CB:5233
+				DRAW_STAIRS_FRONT(si);
+				goto _52d1;
+			case 2://^523B // pit
+				//^32CB:523B
+				DRAW_PIT_TILE(si);
+				goto _52b1;
+			case 16://^5243	// seeing door frame slot in front from door tile
+				//^32CB:5243
+				if (si == 3) {
+					//^32CB:5248
+					// Check if this door type has door frames of not. if so, then draw the door frame
+					if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, glbMapDoorType[GET_ADDRESS_OF_RECORD0(tblCellTilesRoom[3].xsrd.w6[2])->DoorType()], dtWordValue, GDAT_DOOR_NO_FRAMES) == 0) {
+						//^32CB:5279
+						QUERY_TEMP_PICST(
+							glbGeneralFlipGraphics, 0x2b, 0x2b, 0, 0, 2, QUERY_CREATURE_BLIT_RECTI(3, 2, 0), 0xffff, 
+							glbSceneColorKey, -1, GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, 6
+							);
+						DRAW_TEMP_PICST();
+					}
+				}
+				goto _52b1;
+			case 1://^52B1 // floor
+			case 5://^52B1 // teleporter
+				//^32CB:52B1
+_52b1:
+				bp04 = (DRAW_EXTERNAL_TILE(si) != 0) ? 0x01fffc00 : 0x01ffffff;
+				DRAW_PIT_ROOF(si);
+				//^32CB:52D1
+_52d1:
+				DRAW_STATIC_OBJECT(si, bp04, 1);
+				if (bp06 == 5)	// teleporter
+				{
+					//^32CB:52E8
+					DRAW_TELEPORTER_TILE(si, GDAT_CATEGORY_TELEPORTERS, 0); // DRAW_TELEPORTER_TILE(si, 0x18, 0)
+				}
+				break;
+			case 3://^52F4 // stair case
+			case 4://^52F4 // door
+			case 6://^52F4 // false wall
+			case 7://^52F4 // map exit
+			case 8://^52F4
+			case 9://^52F4
+			case 10://^52F4
+			case 11://^52F4
+			case 12://^52F4
+			case 13://^52F4
+			case 14://^52F4
+			case 15://^52F4
+				break;
+		}
+		//^32CB:52F4
+	}
+	//^32CB:5300
+	return;
+}
+
+//^3E74:5A0C
+void SkWinCore::COPY_SKIMAGE_HEADER(const U8 *xx, U8 *yy)
+{
+	//^3E74:5A0C
+	ENTER(0);
+	//^3E74:5A0F
+	COPY_MEMORY(
+		&xx[-6],
+		&yy[-6],
+		6
+		);
+	//^3E74:5A41
+	return;
+}
+
+//^0B36:15E5
+void SkWinCore::APPLY_MIRROR_FLIP_TO(const U8 *blitSrc, U8 *blitDst, X16 mirrorFlip)
+{
+	//^0B36:15E5
+	ENTER(2);
+	//^0B36:15EB
+	X16 si = READ_UI16(blitSrc,-4);
+	X16 bp02 = READ_UI16(blitSrc,-2);
+	X16 di = READ_UI16(blitSrc,-6);
+	COPY_SKIMAGE_HEADER(blitSrc, blitDst);
+	FIRE_BLIT_PICTURE(blitSrc, blitDst, ALLOC_TEMP_ORIGIN_RECT(si, bp02), 0, 0, si, si, -1, mirrorFlip, di, di, NULL);
+	//^0B36:1643
+	return;
+}
+
+//^32CB:0753
+void SkWinCore::DRAW_MIRRORED_PIC(const U8 *blitSrc, U8 *blitDst)
+{
+	//^32CB:0753
+	ENTER(0);
+	//^32CB:0756
+	APPLY_MIRROR_FLIP_TO(blitSrc, blitDst, 1);
+	//^32CB:076C
+	return;
+}
+
+//^32CB:0B11
+// SPX: _32cb_0b11 renamed DRAW_RAIN
+void SkWinCore::DRAW_RAIN()
+{
+	//^32CB:0B11
+	ENTER(20);
+	//^32CB:0B16
+	if (glbRainStrength == 0 || tlbRainScene[RCJ(5,glbRainSceneType)][2] == 0)
+		return;
+	//^32CB:0B31
+	i16 bp0a = _4976_00f6;
+	i16 bp0c = _4976_00f8;
+	SRECT bp14;
+	if (QUERY_BLIT_RECT(NULL, &bp14, 0x2be, &bp0a, &bp0c, -1) == NULL)
+		return;
+	//^32CB:0B64
+	U8 bp07;
+	U16 bp06;
+	QUERY_RAINFALL_PARAM(&bp07, &bp06);
+	U8 *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(0x17, glbMapGraphicsSet, bp07);
+	ALLOC_IMAGE_MEMENT(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, bp07);
+	X16 si;
+	if (bp06 == 1) {
+		//^32CB:0BA5
+		si = ALLOC_TEMP_CACHE_INDEX();
+		ALLOC_NEW_PICT(si, READ_UI16(bp04,-4), READ_UI16(bp04,-2), 4);
+		bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(0x17, glbMapGraphicsSet, bp07);
+		DRAW_MIRRORED_PIC(bp04, reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(si)));
+		bp04 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(si));
+	}
+	//^32CB:0BFD
+	_44c8_20a4(bp04, _4976_4c16, NULL, &bp14, READ_UI16(bp04,-4) * READ_UI16(bp04,-2) -40 -(RAND() & 0x1f), RAND() & 255, _4976_00f6, 0,
+		_32cb_0649(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, bp07, 0)
+		);
+	if (bp06 == 1) {
+		//^32CB:0C61
+		FREE_TEMP_CACHE_INDEX(si);
+	}
+	//^32CB:0C68
+	FREE_IMAGE_MEMENT(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, bp07);
+	//^32CB:0C7A
+	return;
+}
+
+//^32CB:5340
+// SPX: _32cb_5340 renamed DRAW_PLAYER_TILE (which display the current tile the player is on)
+void SkWinCore::DRAW_PLAYER_TILE()
+{
+	//^32CB:5340
+	ENTER(14);
+	//^32CB:5346
+	X16 bp06;
+	X16 bp0e;
+	bp06 = bp0e = tblCellTilesRoom->xsrd.w0;
+	X16 di;
+	X16 si;
+	switch (bp0e) {
+		case 0x10://^536D
+			{
+				//^32CB:536D
+				Door *door = GET_ADDRESS_OF_RECORD0(tblCellTilesRoom->xsrd.w6[1]);	//*bp04
+				if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, glbMapDoorType[door->DoorType()], dtWordValue, GDAT_DOOR_NO_FRAMES) != 0)
+					break;
+				//^32CB:53A6
+				DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_DOOR_FRAME_FRONT_D1, QUERY_CREATURE_BLIT_RECTI(0, 2, 0), glbSceneColorKey, glbGeneralFlipGraphics);
+				break;
+			}
+		case 0x13://^53CE	// on stairs tile (coming from stairs)
+			//^32CB:53CE
+			si = tblCellTilesRoom->xsrd.w6[0];
+			DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet
+//					, (si != 0) ? 0x39 : 0x4D
+				, (si != 0) ? GDAT_GFXSET_STAIRS_RAMP_UP_S0_L : GDAT_GFXSET_STAIRS_RAMP_DOWN_S0_L
+				, (si != 0) ? 0x32b : 0x338, glbSceneColorKey, 0);
+			DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet
+//					, (si != 0) ? 0x3a : 0x4e
+				, (si != 0) ? GDAT_GFXSET_STAIRS_RAMP_UP_S0_R : GDAT_GFXSET_STAIRS_RAMP_DOWN_S0_R
+				, (si != 0) ? 0x32c : 0x339, glbSceneColorKey, 0);
+			break;
+		case 0x02://^542E
+			//^32CB:542E
+			DRAW_PIT_TILE(0);
+			break;
+		case 0x11://^5437
+			//^32CB:5437
+			DRAW_DOOR_TILE(0);
+			di = 0;
+			goto _5495;
+	}
+	//^32CB:5442
+	DRAW_PIT_ROOF(0);
+	TELE_inf bp0c;
+	if ((di = GET_TELEPORTER_DETAIL(&bp0c, tblCellTilesRoom->posx, tblCellTilesRoom->posy)) == 0) {
+		//^32CB:546B
+		DRAW_EXTERNAL_TILE(0); // this is where floor pad is displayed
+	}
+	//^32CB:5472
+	DRAW_STATIC_OBJECT(0, 0x01ffffff, 0);
+	if (bp06 == 5)
+	{
+		//^32CB:5488
+		DRAW_TELEPORTER_TILE(0, 0x18, 0);
+	}
+	//^32CB:5495
+_5495:
+	DRAW_RAIN();
+	if (di != 0) {
+		//^32CB:549D
+		DRAW_EXTERNAL_TILE(0);
+	}
+	//^32CB:54A4
+	_32cb_2d8c(tblCellTilesRoom->xsrd.w4, 0, 0x01ffffff);
+	//^32CB:54BA
+	return;
+}
+
+//^32CB:5D0D
+// SPX: _32cb_5d0d renamed DISPLAY_VIEWPORT
+void SkWinCore::DISPLAY_VIEWPORT(Bit16u dir, i16 xx, i16 yy)
+{
+	//^32CB:5D0D
+	ENTER(6);
+	//^32CB:5D13
+	IBMIO_USER_INPUT_CHECK();
+	// SPX: glbLightLevel is between 0 (light) and 5 (dark). Palette is thereafter controlled by value between 0 (light) and 64 (dark)
+	// Having *10 makes 0 to 50 -> loss of darkest colors. Having *13 makes 0 to 65 -> full range (full darkness)
+	_4976_5a88 = glbLightLevel * 10;	
+	//_4976_5a88 = glbLightLevel * 12;	// SPX: * 13 seems more appropriate to get darkest values
+	_4976_5aa0 = dir;
+	_4976_5a9c = xx;
+	_4976_5a9e = yy;
+	tblCellTilesRoom = reinterpret_cast<CellTileDetail *>(ALLOC_MEMORY_RAM(sizeof(CellTileDetail) * 23, afDefault, 1024));
+	_4976_5a84 = reinterpret_cast<U8 (*)[17]>(ALLOC_MEMORY_RAM(358, afZeroMem, 1024));
+	_4976_5aa4 = reinterpret_cast<U8 (*)[17]>(ALLOC_MEMORY_RAM(358, afDefault, 1024));
+	FILL_STR(*_4976_5aa4, 358, 255, 1);
+	_4976_5a7c = reinterpret_cast<U32 (*)[23]>(ALLOC_MEMORY_RAM(4*23, afZeroMem, 1024));
+	_4976_5be2 = reinterpret_cast<U32 (*)[23]>(ALLOC_MEMORY_RAM(4*23, afZeroMem, 1024));
+	_4976_4bc8 = 1;
+	INIT_BACKBUFF();
+	_4976_4dde = 9;
+	i16 si;
+
+	SkD((DLV_MOVE, "DISPLAY_VIEWPORT: dir:%d x:%d y:%d darkness:%d\n"
+		, dir
+		, xx
+		, yy
+		, _4976_5a88));
+	
+
+	//^32CB:5DDB
+	for (si = 0; si < 9; si++) {
+		//^32CB:5DDF
+		_4976_4d1a[si].w8 = OBJECT_NULL;
+		//^32CB:5DEE
+	}
+	//^32CB:5DF4
+	IBMIO_USER_INPUT_CHECK();
+	_4976_5aa2 = (_4976_4ddc != 0 || glbTableToMove != OBJECT_NULL) ? 1 : 0;
+	CHANCE_TABLE_OPERATION();
+	//^32CB:5E15
+	for (si = 0x16; si >= 0; si--) {
+		//^32CB:5E1A
+		_32cb_4185_TILE_ROOM(xx, yy, si, _4976_5aa0);
+		//^32CB:5E2C
+	}
+
+	//   |--|--|--|--|--|--|--|
+	// 4 |21|19|17|16|18|20|22|
+	//   |--|--|--|--|--|--|--|
+	// 3 |  |14|12|11|13|15|  |
+	//   |--|--|--|--|--|--|--|
+	// 2 |  | 9| 7| 6| 8|10|  |
+	//   |--|--|--|--|--|--|--|
+	// 1 |  |  | 4| 3| 5|  |  |
+	//   |--|--|--|--|--|--|--|
+	// 0 |  |  | 1| 0| 2|  |  |
+	//   |--|--|--|--|--|--|--|
+	SkD((DLV_DBG_CELL, "DBG: U r at (%2u,%2u,%2u) %u\n"
+		"|-------|-------|-------|-------|-------|-------|-------|\n"
+		"|       |%02X %04X|%02X %04X|%02X %04X|%02X %04X|%02X %04X|       |\n"
+		"|-------|-------|-------|-------|-------|-------|-------|\n"
+		"|       |%02X %04X|%02X %04X|%02X %04X|%02X %04X|%02X %04X|       |\n"
+		"|-------|-------|-------|-------|-------|-------|-------|\n"
+		"|       |%02X %04X|%02X %04X|%02X %04X|%02X %04X|%02X %04X|       |\n"
+		"|-------|-------|-------|-------|-------|-------|-------|\n"
+		"|       |       |%02X %04X|%02X %04X|%02X %04X|       |       |\n"
+		"|-------|-------|-------|-------|-------|-------|-------|\n"
+		"|       |       |%02X %04X|%02X %04X|%02X %04X|       |       |\n"
+		"|-------|-------|-------|-------|-------|-------|-------|\n"
+		, (Bitu)glbPlayerMap, (Bitu)glbPlayerPosX, (Bitu)glbPlayerPosY, (Bitu)glbPlayerDir
+		, (Bitu)tblCellTilesRoom[19].xsrd.w0, (Bitu)tblCellTilesRoom[19].xsrd.w4
+		, (Bitu)tblCellTilesRoom[17].xsrd.w0, (Bitu)tblCellTilesRoom[17].xsrd.w4
+		, (Bitu)tblCellTilesRoom[16].xsrd.w0, (Bitu)tblCellTilesRoom[16].xsrd.w4
+		, (Bitu)tblCellTilesRoom[18].xsrd.w0, (Bitu)tblCellTilesRoom[18].xsrd.w4
+		, (Bitu)tblCellTilesRoom[20].xsrd.w0, (Bitu)tblCellTilesRoom[20].xsrd.w4
+
+		, (Bitu)tblCellTilesRoom[14].xsrd.w0, (Bitu)tblCellTilesRoom[14].xsrd.w4
+		, (Bitu)tblCellTilesRoom[12].xsrd.w0, (Bitu)tblCellTilesRoom[12].xsrd.w4
+		, (Bitu)tblCellTilesRoom[11].xsrd.w0, (Bitu)tblCellTilesRoom[11].xsrd.w4
+		, (Bitu)tblCellTilesRoom[13].xsrd.w0, (Bitu)tblCellTilesRoom[13].xsrd.w4
+		, (Bitu)tblCellTilesRoom[15].xsrd.w0, (Bitu)tblCellTilesRoom[15].xsrd.w4
+
+		, (Bitu)tblCellTilesRoom[ 9].xsrd.w0, (Bitu)tblCellTilesRoom[ 9].xsrd.w4
+		, (Bitu)tblCellTilesRoom[ 7].xsrd.w0, (Bitu)tblCellTilesRoom[ 7].xsrd.w4
+		, (Bitu)tblCellTilesRoom[ 6].xsrd.w0, (Bitu)tblCellTilesRoom[ 6].xsrd.w4
+		, (Bitu)tblCellTilesRoom[ 8].xsrd.w0, (Bitu)tblCellTilesRoom[ 8].xsrd.w4
+		, (Bitu)tblCellTilesRoom[10].xsrd.w0, (Bitu)tblCellTilesRoom[10].xsrd.w4
+
+		, (Bitu)tblCellTilesRoom[ 4].xsrd.w0, (Bitu)tblCellTilesRoom[ 4].xsrd.w4
+		, (Bitu)tblCellTilesRoom[ 3].xsrd.w0, (Bitu)tblCellTilesRoom[ 3].xsrd.w4
+		, (Bitu)tblCellTilesRoom[ 5].xsrd.w0, (Bitu)tblCellTilesRoom[ 5].xsrd.w4
+
+		, (Bitu)tblCellTilesRoom[ 1].xsrd.w0, (Bitu)tblCellTilesRoom[ 1].xsrd.w4
+		, (Bitu)tblCellTilesRoom[ 0].xsrd.w0, (Bitu)tblCellTilesRoom[ 0].xsrd.w4
+		, (Bitu)tblCellTilesRoom[ 2].xsrd.w0, (Bitu)tblCellTilesRoom[ 2].xsrd.w4
+		));
+
+#if DLV_DBG_CEL2
+	{
+		char mass[21*54 +1];
+		// 54 x 21
+		strcpy(mass,
+			"XXXX|XXXX|XXXXX|XXXX|XXXX| |XXXX|XXXX|XXXXX|XXXX|XXXX\n"
+			"----+----+-----+----+----+ +----+----+-----+----+----\n"
+			"XXXX|XXXX|XXXXX|XXXX|XXXX| |XXXX|XXXX|XXXXX|XXXX|XXXX\n"
+			"XXXX|XXXX|XXXXX|XXXX|XXXX| |XXXX|XXXX|XXXXX|XXXX|XXXX\n"
+			"XXXX|XXXX|XXXXX|XXXX|XXXX| |XXXX|XXXX|XXXXX|XXXX|XXXX\n"
+			"XXXX|XXXX|XXXXX|XXXX|XXXX| |XXXX|XXXX|XXXXX|XXXX|XXXX\n"
+			"----+----+-----+----+----+ +----+----+-----+----+----\n"
+			"XXXX|XXXX|XXXXX|XXXX|XXXX| |XXXX|XXXX|XXXXX|XXXX|XXXX\n"
+			"XXXX|XXXX|XXXXX|XXXX|XXXX| |XXXX|XXXX|XXXXX|XXXX|XXXX\n"
+			"XXXX|XXXX|XXXXX|XXXX|XXXX| |XXXX|XXXX|XXXXX|XXXX|XXXX\n"
+			"XXXX|XXXX|XXXXX|XXXX|XXXX| |XXXX|XXXX|XXXXX|XXXX|XXXX\n"
+			"----+----+-----+----+----+ +----+----+-----+----+----\n"
+			"XXXX|XXXX|XXXXX|XXXX|XXXX| |XXXX|XXXX|XXXXX|XXXX|XXXX\n"
+			"XXXX|XXXX|XXXXX|XXXX|XXXX| |XXXX|XXXX|XXXXX|XXXX|XXXX\n"
+			"XXXX|XXXX|XXXXX|XXXX|XXXX| |XXXX|XXXX|XXXXX|XXXX|XXXX\n"
+			"XXXX|XXXX|XXXXX|XXXX|XXXX| |XXXX|XXXX|XXXXX|XXXX|XXXX\n"
+			"----+----+-----+----+----+ +----+----+-----+----+----\n"
+			"XXXX|XXXX|XXXXX|XXXX|XXXX| |XXXX|XXXX|XXXXX|XXXX|XXXX\n"
+			"XXXX|XXXX|XXXXX|XXXX|XXXX| |XXXX|XXXX|XXXXX|XXXX|XXXX\n"
+			"XXXX|XXXX|XXXXX|XXXX|XXXX| |XXXX|XXXX|XXXXX|XXXX|XXXX\n"
+			"XXXX|XXXX|XXXXX|XXXX|XXXX| |XXXX|XXXX|XXXXX|XXXX|XXXX\0"
+			);
+		static const U8 tblX[] = {0,1,2,3, 5,6,7,8, 10,11,12,13,14, 16,17,18,19, 21,22,23,24};
+		static const U8 tblY[] = {0, 2,3,4,5, 7,8,9,10, 12,13,14,15, 17,18,19,20};
+		for (int yc=0; yc<17; yc++) {
+			int xc;
+			for (xc=0; xc<21; xc++) {
+				U8 v = U8(_4976_5aa4[xc][16 -yc]);
+				char t = '.';
+				if (0 <= v && v <= 9) t = v + '0';
+				else if (10 <= v && v <= 15) t = v + 'A' -10;
+
+				mass[54*tblY[yc] +tblX[xc]] = t;
+			}
+			for (xc=0; xc<21; xc++) {
+				U8 v = U8(_4976_5a84[xc][16 -yc] & 15);
+				char t = '.';
+				if (0 <= v && v <= 9) t = v + '0';
+				else if (10 <= v && v <= 15) t = v + 'A' -10;
+
+				mass[54*tblY[yc] +28 +tblX[xc]] = t;
+			}
+		}
+		SkD((DLV_DBG_CEL2, "DBG: L=enemy map, R=movable map\n%s\n", mass));
+	}
+#endif
+
+	//^32CB:5E31
+	X16 di = 0;
+	X16 bp02 = 0;
+	X8 bp03 = 0xff;
+	if (tblCellTilesRoom[7].xsrd.w0 == 0 && tblCellTilesRoom[6].xsrd.w0 == 0 && tblCellTilesRoom[8].xsrd.w0 == 0) // wall at D2
+		//^32CB:5E57
+		bp03 = 0x71;
+	if (tblCellTilesRoom[4].xsrd.w0 == 0 && tblCellTilesRoom[3].xsrd.w0 == 0 && tblCellTilesRoom[5].xsrd.w0 == 0) // wall at D1
+		//^32CB:5E74
+		bp03 = 0x70;
+	//^32CB:5E78
+	if (bp03 != 0xff) { // trim ceil(bp02) and floor(di) to omit hidden area by drawing wall
+		U16 bp06 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, bp03);
+		di = bp06 >> 8;
+		bp02 = bp06 & 0xff;
+		// SPX: if custom dungeon/GDAT use more than 6 gfxsets, better bypass these values from tables
+		if (SkCodeParam::bUseFixedMode && glbMapGraphicsSet >= 0 && glbMapGraphicsSet <= 5)
+		{
+			if (di == 0) {
+				if (bp03 == 0x71) {
+					di = _4976_4718_tblGfxSet[RCJ(6,glbMapGraphicsSet)]; // D2 to D0
+				}
+				else {
+					//^32CB:5EBC
+					di = _4976_4700_tblGfxSet[RCJ(6,glbMapGraphicsSet)]; // D1 to D0
+				}
+			}
+			//^32CB:5EC9
+			if (bp02 == 0) {
+				if (bp03 == 0x71) {
+					//^32CB:5ED5
+					bp02 = _4976_470c_tblGfxSet[RCJ(6,glbMapGraphicsSet)]; // envisible D2 to D0
+				}
+				else {
+					//^32CB:5EE4
+					bp02 = _4976_46f4_tblGfxSet[RCJ(6,glbMapGraphicsSet)]; // envisible D1 to D0
+				}
+			}
+		}
+	}
+	//^32CB:5EF4
+	TRIM_BLIT_RECT(0, 0, 0, bp02);
+	if (SET_GRAPHICS_FLIP_FROM_POSITION(0x20, dir, xx, yy) != 0) {
+		//^32CB:5F1B
+		DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_CEIL, 0x2bc, -1, 1); // draw ceil
+	}
+	else {
+		//^32CB:5F1F
+		DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_CEIL, 0x2bc, -1, 0); // draw ceil
+	}
+	//^32CB:5F35
+	_098d_0c45();
+	TRIM_BLIT_RECT(0, di, 0, 0);
+	if (SET_GRAPHICS_FLIP_FROM_POSITION(1, dir, xx, yy) != 0) {
+		//^32CB:5F5F
+		DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_FLOOR, 0x2bd, -1, 1); // draw floor
+	}
+	else {
+		//^32CB:5F63
+		DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_FLOOR, 0x2bd, -1, 0); // draw floor
+	}
+	//^32CB:5F79
+	_098d_0c45();
+	glbGeneralFlipGraphics = SET_GRAPHICS_FLIP_FROM_POSITION(0, dir, xx, yy);
+	IBMIO_USER_INPUT_CHECK();
+	ENVIRONMENT_DISPLAY_ELEMENTS(dir, xx, yy);
+	_32cb_5c67();
+	_32cb_5a8f();
+	DRAW_DUNGEON_TILES(); // render walls, flying items
+	IBMIO_USER_INPUT_CHECK();
+	DRAW_PLAYER_TILE(); // render current player tile
+	IBMIO_USER_INPUT_CHECK();
+#if UseAltic
+	DEALLOC_UPPER_MEMORY(92);
+	DEALLOC_UPPER_MEMORY(92);
+	DEALLOC_UPPER_MEMORY(358);
+	DEALLOC_UPPER_MEMORY(358);
+	DEALLOC_UPPER_MEMORY(414);
+#else
+	DEALLOC_UPPER_MEMORY(414+358+358+92+92);
+#endif
+	//^32CB:5FCE
+	return;
+}
+
+//^2481:0002
+void SkWinCore::_2481_0002()
+{
+	//^2481:0002
+	ENTER(0);
+	//^2481:0005
+	FIRE_SELECT_PALETTE_SET(0);
+	if (_4976_3d2c != 0) {
+		//^2481:0014
+		FIRE_BLIT_PICTURE(
+			glbImageMenuScreen, _4976_4964, ALLOC_TEMP_ORIGIN_RECT(glbScreenWidth, glbScreenHeight),
+			0, 0, glbScreenWidth, glbScreenWidth, -1, 0, 8, 8, NULL);
+	}
+	else {
+		//^2481:0057
+		DRAW_GAMELOAD_DIALOGUE_TO_SCREEN(glbImageMenuScreen, 2, -1, _4976_52ba);
+	}
+	//^2481:0073
+	FIRE_SELECT_PALETTE_SET(1);
+	//^2481:007B
+	return;
+}
+
+
+//^0B36:0A3F
+void SkWinCore::DRAW_DEF_PICT(ExtendedPicture *ref)
+{
+	// draw almost all pictures:
+	// a) dungeon viewport: wallset/scene graphics, ornate graphics, spell graphics,
+	//		flying items (passing/coming/crossing/placing)
+	// b) inventory screen: wall paper, zzz button, X button, "water" text, "food" text, 
+	//		resurrection lever, disk button, and so on
+	// c) inventory icons: eye, mouth, item icons
+
+	//^0B36:0A3F
+	ENTER(12);
+	//^0B36:0A45
+	if (ref->width <= 0 || ref->height <= 0)
+		//^0B36:0A59
+		return;
+	//^0B36:0A5C
+	Bit8u *bp04 = QUERY_PICT_BITS(ref);
+	//^0B36:0A6E
+	Bit16u bp06 = ref->rectNo;
+	//^0B36:0A78
+	i16 bp08;
+	i16 bp0a;
+	if (bp06 == 0xffff) {
+		//^0B36:0A7D
+		bp08 = ref->w32;
+		bp0a = ref->w34;
+	}
+	else {
+		//^0B36:0A8D
+		if ((bp06 & 0x8000) == 0 || ref->w28 != 0 || ref->w30 != 0) {
+			//^0B36:0AA5
+			bp06 |= 0x8000;
+			//^0B36:0AAE
+			bp08 = ref->w32 + ref->w28;
+			bp0a = ref->w34 + ref->w30;
+		}
+		else {
+			//^0B36:0AC6
+			bp08 = ref->width;
+			bp0a = ref->height;
+		}
+		//^0B36:0AD4
+		if (QUERY_BLIT_RECT(bp04, &ref->rc36, bp06, &bp08, &bp0a, ref->w26) == NULL)
+			//^0B36:0B07
+			return;
+	}
+	//^0B36:0B0A
+	bp08 += ref->w14;
+	bp0a += ref->w16;
+	i16 si = READ_UI16(bp04,-4);
+	i16 di = ref->rc36.cx +bp08;
+	//^0B36:0B2E
+	if (si > di && (ref->mirrorFlip & 0x0001) != 0) {
+		//^0B36:0B3A
+		si -= di;
+	}
+	else {
+		//^0B36:0B3E
+		si = 0;
+	}
+	//^0B36:0B40
+	if ((ref->mirrorFlip & 0x0001) != 0) {
+		//^0B36:0B4B
+		bp08 = 0;
+	}
+	//^0B36:0B50
+	bp08 += si;
+	//^0B36:0B53
+	si = READ_I16(bp04,-2);
+	//^0B36:0B5A
+	di = ref->rc36.cy +bp0a;
+	//^0B36:0B66
+	if (si > di && (ref->mirrorFlip & 0x0002) != 0) {
+		//^0B36:0B72
+		si -= di;
+	}
+	else {
+		//^0B36:0B76
+		si = 0;
+	}
+	//^0B36:0B78
+	if ((ref->mirrorFlip & 0x0002) != 0) {
+		//^0B36:0B83
+		bp0a = 0;
+	}
+	//^0B36:0B88
+	bp0a += si;
+	//^0B36:0B8B
+	Bit16u bp0c;
+	if (ref->pb44 == _4976_4964) {
+		//^0B36:0BA2
+		si = glbScreenWidth;
+		di = glbScreenHeight;
+		bp0c = 8;
+	}
+	else {
+		//^0B36:0BB1
+		si = READ_I16(ref->pb44,-4);
+		//^0B36:0BBC
+		di = READ_I16(ref->pb44,-2);
+		//^0B36:0BC7
+		bp0c = READ_I16(ref->pb44,-6);
+	}
+	//^0B36:0BD5
+	if (ref->colorKeyPassThrough != -2) {
+		//^0B36:0BDF
+		FIRE_BLIT_PICTURE(
+			bp04,
+			ref->pb44,
+			&ref->rc36,
+			bp08,
+			bp0a,
+			READ_UI16(bp04,-4),
+			si,
+			ref->colorKeyPassThrough,
+			ref->mirrorFlip,
+			READ_UI16(bp04,-6),
+			bp0c,
+			(ref->w56 == 0) ? NULL : ref->b58
+			);
+	}
+	//^0B36:0C3D
+	ref->w32 = bp08;
+	ref->w34 = bp0a;
+	//^0B36:0C4E
+	return;
+}
+
+//^0B36:0139
+Bit8u *SkWinCore::QUERY_PICT_BITS(Picture *ref)
+{
+	//^0B36:0139
+	ENTER(0);
+	//^0B36:013D
+	Bit16u si = ref->w4;
+	//^0B36:0144
+	if ((si & 0x0004) != 0) {
+		//^0B36:014A
+		return ref->pb0 = QUERY_GDAT_IMAGE_ENTRY_BUFF(ref->b8, ref->b9, ref->b11);
+	}
+	//^0B36:016D
+	else if ((si & 0x0008) != 0) {
+		//^0B36:0173
+		return ref->pb0 = QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(ref->w12);
+	}
+	else {
+		//^0B36:0182
+		return ref->pb0;
+	}
+}
+
+//^0B36:11C0
+// TODO: image related ?
+void SkWinCore::_0b36_11c0(ExtendedPicture *xx, sk3f6c *yy, Bit16u ss, i16 colorkey2)
+{
+	//^0B36:11C0
+    ENTER(12);
+	//^0B36:11C4
+	xx->pb44 = reinterpret_cast<Bit8u *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(yy->w0));
+	//^0B36:11DB
+	SRECT bp08;
+	i16 bp0a;
+	i16 bp0c;
+	if (ss == 0xffff) {
+		ATLASSERT(false); // FTL's miss logic?
+
+		//^0B36:11E1
+		COPY_MEMORY(&xx->rc36, &bp08, 8);
+		//^0B36:11FC
+		goto _123d;
+	}
+	else {
+		//^0B36:11FE
+		bp0a = xx->width;
+		bp0c = xx->height;
+		//^0B36:120F
+		if (QUERY_BLIT_RECT(QUERY_PICT_BITS(xx), &bp08, ss, &bp0a, &bp0c, -1) != NULL) {
+			//^0B36:123D
+_123d:
+			xx->width += bp0a;
+			xx->height += bp0c;
+			//^0B36:124E
+			OFFSET_RECT(yy, &bp08, &xx->rc36);
+			//^0B36:126A
+			xx->rectNo = 0xffff;
+			xx->colorKeyPassThrough = colorkey2;
+			//^0B36:127A
+			DRAW_DEF_PICT(xx);
+			//^0B36:1286
+			_0b36_0d67(yy, &bp08);
+		}
+	}
+	//^0B36:1298
+	return;
+}
+
+//^0B36:0036
+i16 SkWinCore::CALC_STRETCHED_SIZE(i16 val, i16 fact64)
+{
+	//^0B36:0036
+	ENTER(0);
+	//^0B36:0039
+	return (i16(val * fact64) + (fact64 >> 1)) >> 6;
 }
 
 
