@@ -966,48 +966,30 @@ void SkWinCore::REMOVE_RUNE_FROM_TAIL()
 //^2759:27DF
 void SkWinCore::ADD_RUNE_TO_TAIL(Bit16u symbol_0to5)
 {
-	//^2759:27DF
 	ENTER(6);
-	//^2759:27E5
 	Champion *champion = &glbChampionTable[glbChampionIndex];	//*bp04
-	//^2759:27F6
-	U16 si = champion->RuneCnt();
-	//^2759:2801
-	U16 di = RuneManaPower[si * 6 +symbol_0to5];
-	//^2759:2813
-	if (si != 0) {	// if not on POWER rune (any other : INFLUENCE, FORM, ..)
-		//^2759:2817
-		di = (RunePowerMultiplicator[i8(champion->GetRunes()[0]) -RUNE_FIRST] * di) >> 3;
+	U16 iRuneCount = champion->RuneCnt();
+	U16 iManaCost = RuneManaPower[iRuneCount * 6 +symbol_0to5];
+	if (SkCodeParam::bInfiniteSpells)
+		iManaCost = 0;
+	if (iRuneCount != 0) {	// if not on POWER rune (any other : INFLUENCE, FORM, ..)
+		iManaCost = (RunePowerMultiplicator[i8(champion->GetRunes()[0]) -RUNE_FIRST] * iManaCost) >> 3;
 	}
-	//^2759:2832
-	U16 bp06 = 0;
-	//^2759:2837
-	if (champion->curMP() >= di) {
-		//^2759:2840
-		champion->curMP(champion->curMP() -di);
-		//^2759:284A
+	U16 iUpdateStats = 0;
+	if (champion->curMP() >= iManaCost) {
+		champion->curMP(champion->curMP() - iManaCost);
 		champion->heroFlag |= CHAMPION_FLAG_0800;	// 0x0800
-		//^2759:2850
-		champion->GetRunes()[si] = si * 6 +symbol_0to5 +RUNE_FIRST; si++;
-		//^2759:2861
-		champion->RuneCnt(U8(si));
-		//^2759:2867
-		champion->GetRunes()[si] = 0;
-		//^2759:2870
-		bp06 = 1;
+		champion->GetRunes()[iRuneCount] = iRuneCount * 6 +symbol_0to5 +RUNE_FIRST; iRuneCount++;
+		champion->RuneCnt(U8(iRuneCount));
+		champion->GetRunes()[iRuneCount] = 0;
+		iUpdateStats = 1;
 	}
-	//^2759:2875
 	glbSomeChampionPanelFlag = 1;
-	//^2759:287B
 	UPDATE_RIGHT_PANEL(0);
-	//^2759:2882
 	_1031_0667();
-	//^2759:2887
-	if (bp06 != 0) {
-		//^2759:288D
+	if (iUpdateStats != 0) {
 		REFRESH_PLAYER_STAT_DISP(glbChampionIndex -1);
 	}
-	//^2759:2898
 	return;
 }
 

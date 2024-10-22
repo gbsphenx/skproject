@@ -1938,7 +1938,7 @@ _25e8:
 						// This only does not refresh the HP bar.
 					}
 					break;*/
-#if DM2_EXTENDED_MODE == 1
+#if XDM1_EXTENDED_SEETHRUWALLS == 1
 				case 12: // SPX: Reimplementation of OH EW RA See thru walls, use TT_71)
 					bp18.TimerType(ttySeeThruWalls);
 					glbGlobalSpellEffects.SeeThruWalls++;

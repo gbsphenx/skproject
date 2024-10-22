@@ -1137,7 +1137,7 @@ extern sk4efe _4976_35e3[];
 extern sk4efe _4976_3628[];
 extern sk4efe _4976_3666[];
 
-#if DM2_EXTENDED_MODE == 1
+#if XDM2_EXTENDED_AI_TABSIZE == 1
 	#define CREATURE_AI_TAB_SIZE	64
 #else
 	#define CREATURE_AI_TAB_SIZE	42

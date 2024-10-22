@@ -1590,7 +1590,7 @@ namespace DM2Internal {
 		X8 FreezeCounter;		// b3 value used by freeze life command
 		X8 AuraOfSpeed;		// b4 used by aura of speed
 		X8 UnusedCounter;				// b5 SPX: In present code this one is never used ?? or is code missing ?
-#if (DM2_EXTENDED_MODE == 1)	// SPX: Extended mode, add SeeThruWalls from DM1
+#if (XDM1_EXTENDED_SEETHRUWALLS == 1)	// SPX: Extended mode, add SeeThruWalls from DM1
 		X8 SeeThruWalls;
 #endif
 	};
@@ -2907,7 +2907,7 @@ namespace DM2Internal {
 		ttyLight			= 0x46,	// tty46 (70) light
 		ttyInvisibility		= 0x47,	// tty47 (71) csbwin OH EW SAR
 		ttyEnchantment		= 0x48, // tty48 (72) enchantment/aura timer?
-#if (DM2_EXTENDED_MODE == 1)
+#if (XDM1_EXTENDED_SEETHRUWALLS == 1)
 		ttySeeThruWalls		= 0x49, // tty49 (73) csbwin : OH EW RA See thru walls
 #endif
 		//ttyPartyShield		= 0x4A, // tty4A (74) csbwin : YA IR

@@ -34,18 +34,24 @@
 
 //------------------------------------------------------------------------------
 
+#define XDM2_EXTENDED_AI_TABSIZE	1
+#define XDM1_EXTENDED_SEETHRUWALLS	1
+
+//------------------------------------------------------------------------------
+
 // Debug Build
-#define RELEASE_FREE		0	// Standard working debug exe 
+//#define RELEASE_FREE		0	// Standard working debug exe 
 
 // Standard Releases
-#define RELEASE_STD			1	// Release Standard
-#define RELEASE_EXT_MOD		2	// Release Extended mode
-#define RELEASE_EXT_SUPER	3	// Release Extended mode + Super champions for debug/test
+//#define RELEASE_STD			1	// Release Standard
+//#define RELEASE_EXT_MOD		2	// Release Extended mode
+//#define RELEASE_EXT_SUPER	3	// Release Extended mode + Super champions for debug/test
 
 // 2024 : REMOVE ALL THIS, NOT NEEDED ANYMORE
 
-#define CURRENT_RELEASE		RELEASE_EXT_MOD
+//#define CURRENT_RELEASE		RELEASE_EXT_MOD
 
+/*
 #if (CURRENT_RELEASE == RELEASE_STD)
 	#undef DM2_EXTENDED_MODE
 	#define DM2_EXTENDED_MODE		0
@@ -80,7 +86,7 @@
 	#undef DM2_DEBUG_SUPER_MODE
 	#define DM2_DEBUG_SUPER_MODE	1
 #endif
-
+*/
 
 //------------------------------------------------------------------------------
 

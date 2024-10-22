@@ -23,7 +23,8 @@ bool SkCodeParam::bDisableFogEffect = false;
 bool SkCodeParam::bWeakDoors = false;
 bool SkCodeParam::bWalkOverPits = false;
 bool SkCodeParam::bUseCustomSpells = false;
-bool SkCodeParam::bUnlimitedCharges = true;
+bool SkCodeParam::bUnlimitedCharges = false;
+bool SkCodeParam::bInfiniteSpells = false;
 
 bool SkCodeParam::bMIDIMusicEnabled = false;
 bool SkCodeParam::bWAVMusicEnabled = true;

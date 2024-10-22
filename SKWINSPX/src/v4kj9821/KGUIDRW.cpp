@@ -4422,7 +4422,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 	//^32CB:15B8
 	ENTER(854);
 
-#if DM2_EXTENDED_MODE == 1
+#if XDM1_EXTENDED_SEETHRUWALLS == 1
 	{
 		if (glbGlobalSpellEffects.SeeThruWalls > 0 && cellPos == 3)	// front D1 wall
 		{
@@ -5871,7 +5871,7 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 						//^32CB:4A28
 						X16 iOrnateIndex = xDoor->OrnateIndex();	// X16 di
 						i16 iCacheNo;	// i16 bp16
-#if (DM2_EXTENDED_MODE == 1)
+#if (XDM1_EXTENDED_SEETHRUWALLS == 1)
 						if (iOrnateIndex != 0 || iDoorState == _DOOR_STATE__DESTROYED_ || glbGlobalSpellEffects.SeeThruWalls > 0) {	// + window spell effect
 #else
 						if (iOrnateIndex != 0 || iDoorState == _DOOR_STATE__DESTROYED_) {	// If there is any ornate or door is destroyed
@@ -5965,7 +5965,7 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 								glbTempPicture.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(iCacheNo));
 								DRAW_TEMP_PICST();
 							}
-#if (DM2_EXTENDED_MODE == 1)
+#if (XDM1_EXTENDED_SEETHRUWALLS == 1)
 							if (glbGlobalSpellEffects.SeeThruWalls > 0 && iYDist == 1 && yy == 7) {	// If Window spell is active, and display only if distance = 1 and just in front
 								
 								X16 iColorTransparencyOverlay = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_IMG_DOOR_COLORKEY_2);	// X16 bp14
@@ -5987,7 +5987,7 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 								glbTempPicture.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(iCacheNo));
 								DRAW_TEMP_PICST();
 							}
-#endif
+#endif // XDM1_EXTENDED_SEETHRUWALLS
 							//^32CB:4BBC
 							xPicture.colorKeyPassThrough = xPicture.b58[iDoorColorPassThrough];
 							xPicture.w56 = 0;
@@ -6792,7 +6792,7 @@ void SkWinCore::DRAW_WALL(i16 iViewportCell)	// i16 xx
 	}
 
 	// SPX: 2016-11-11 : attempt having See Through Wall masks on wall
-#if (DM2_EXTENDED_MODE == 1)	// Check for possible thru wall gfx
+#if (XDM1_EXTENDED_SEETHRUWALLS == 1)	// Check for possible thru wall gfx
 	{
 	
 		if (glbGlobalSpellEffects.SeeThruWalls > 0 && iViewportCell == 3)	// front D1 wall
@@ -6869,7 +6869,7 @@ void SkWinCore::DRAW_WALL(i16 iViewportCell)	// i16 xx
 		}
 
 	}
-#else
+#else // end XDM1_EXTENDED_SEETHRUWALLS
 	//^32CB:50B6
 	QUERY_TEMP_PICST(bFlip, 0x40, 0x40, 0, 0, (glbIsPlayerMoving != 0) ? -iYDist : 0, iViewportCell +0x2be, 0xffff, iColorkey1, -1, GDAT_CATEGORY_GRAPHICSSET, iMapGfx, bp01);
 	DRAW_TEMP_PICST(); // draw wall

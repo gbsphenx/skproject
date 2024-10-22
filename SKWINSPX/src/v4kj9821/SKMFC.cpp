@@ -746,6 +746,7 @@ void CSkWinMFC::OnVideo1x(UINT nID) {
 		case ID_SOUND_FOOTSTEP: SkCodeParam::bUsePlayerWalkSound = !SkCodeParam::bUsePlayerWalkSound; break;
 		case ID_SUPER_INFO_EYE: SkCodeParam::bUseSuperInfoEye = !SkCodeParam::bUseSuperInfoEye; SkCodeParam::bShowLuck = SkCodeParam::bUseSuperInfoEye; break;
 		case ID_SUPER_MODE: SkCodeParam::bUseSuperMode = !SkCodeParam::bUseSuperMode; break;
+		case ID_DEBUG_INFINITE_SPELL: SkCodeParam::bInfiniteSpells = !SkCodeParam::bInfiniteSpells; break;
 	}
 	if (sxfact != -1) {
 		this->sxfact = sxfact;
@@ -862,6 +863,7 @@ void CSkWinMFC::OnUpdateVideo1x(CCmdUI *pCmdUI) {
 		case ID_SOUND_FOOTSTEP: pCmdUI->SetCheck(SkCodeParam::bUsePlayerWalkSound); break;
 		case ID_SUPER_INFO_EYE: pCmdUI->SetCheck(SkCodeParam::bUseSuperInfoEye); break;
 		case ID_SUPER_MODE: pCmdUI->SetCheck(SkCodeParam::bUseSuperMode); break;
+		case ID_DEBUG_INFINITE_SPELL: pCmdUI->SetCheck(SkCodeParam::bInfiniteSpells); break;
 	}
 }
 

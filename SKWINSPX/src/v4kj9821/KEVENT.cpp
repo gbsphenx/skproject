@@ -83,10 +83,9 @@ void SkWinCore::PROCEED_GLOBAL_EFFECT_TIMERS()
 					glbGlobalSpellEffects.Invisibility++;
 					break;
 				}
-#if (DM2_EXTENDED_MODE == 1)
+#if (XDM1_EXTENDED_SEETHRUWALLS == 1)
 			case ttySeeThruWalls:		// x49
 				{
-					//^2066:2C5A
 					glbGlobalSpellEffects.SeeThruWalls++;
 					break;
 				}
@@ -2942,9 +2941,8 @@ void SkWinCore::PROCEED_TIMERS()
 				}
 				//^3A15:3C9E
 				break;
-#if (DM2_EXTENDED_MODE == 1)
+#if (XDM1_EXTENDED_SEETHRUWALLS == 1)
 			case ttySeeThruWalls:	// (0x49 / 73)		// SPX: decrease see_thru_walls value
-				//^3A15:3C03
 				glbGlobalSpellEffects.SeeThruWalls = glbGlobalSpellEffects.SeeThruWalls -1;
 				break;
 #endif
