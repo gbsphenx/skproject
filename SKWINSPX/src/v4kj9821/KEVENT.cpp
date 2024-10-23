@@ -1979,15 +1979,15 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 				switch (ref->ActionType()) {
 				case 0: //^_2bcd
 					//^3A15:2BCD
-                    door->Bit13B(1);
+                    door->DoorBit13B(1);
 					break;
 				case 1: //^_2bd7
 					//^3A15:2BD7
-					door->Bit13B(0);
+					door->DoorBit13B(0);
 					break;
 				case 2: //^_2be1
 					//^3A15:2BE1
-					door->Bit13B(door->Bit13() ^ 1);
+					door->DoorBit13B(door->DoorBit13() ^ 1);
 					break;
 				}
 				break;
@@ -2244,62 +2244,225 @@ void SkWinCore::ACTUATE_PITFALL(Timer *ref)
 	//^3A15:2FE7
 	return;
 }
+
+
+//^3A15:1DA8
+// SPX: interesting ... If xx = 0 => 1, if xx = 2
+// Called from DOOR to change opening direction
+// xx = new action direction, yy = current door direction
+X16 SkWinCore::_3a15_1da8(X8 iNewDirection, X8 iCurrentDirection)
+{
+	// SPX: Here is the original code from conversion, but it misses case 1 for door to switch opening direction when asked. Careful to check with other actuators actions.
+	// SPX: to be checked: for door it was rater outside this function.
+	/*
+	ENTER(0);
+	switch (xx) {
+	case 0: //^_1db9
+		return 1;
+	case 2: //^_1dc2
+		return yy ^1;
+	}
+	return 0;
+	*/
+	switch (iNewDirection) {
+	case ACTMSG_OPEN_SET:
+		return 1;
+	case ACTMSG_TOGGLE:
+		return iCurrentDirection ^ 1;
+	}
+	return 0;
+}
+
 //^3A15:0ACD
+// CSBWin Timer.cpp:TAG0105ba/ProcessTT_DOOR
+// This one is called when a door is activated by an actuator/button. It does not process an ongoing door step timer
+// The other function to do that is STEP_DOOR
 void SkWinCore::ACTUATE_DOOR(Timer *ref)
 {
 	//^3A15:0ACD
 	ENTER(4);
 	//^3A15:0AD3
-	X16 di = glbCurrentTileMap[ref->XcoordB()][ref->YcoordB()] & 7;
-	if (di == ttTeleporter)
+	X16 iOpenCloseState = glbCurrentTileMap[ref->XcoordB()][ref->YcoordB()] & 7; // state of door : 0 is open, 4 is fully closed, 2 is mid-opened
+	if (iOpenCloseState == _DOOR_STATE__DESTROYED_) // 5, destroyed, can't operate
 		return;
 	//^3A15:0B0B
 	Door *door = GET_ADDRESS_OF_TILE_RECORD(ref->XcoordB(), ref->YcoordB())->castToDoor();	//*bp04
-	if (door->Bit10() != 0) {
+	if (door->DoorBit10() != 0) { // door is currently moving
 		//^3A15:0B3A
-		door->Bit10(U8(_3a15_1da8(ref->ActionType(), door->Bit09())));
-		if (door->Bit10() != 0)
+		//door->DoorBit10(U8(_3a15_1da8(ref->ActionType(), door->DoorBit09())));
+		door->DoorBit09(U8(_3a15_1da8(ref->ActionType(), door->DoorBit09()))); // SPX using Bit09 instead of Bit10 seems correct to change the door direction
+		if (door->DoorBit10() != 0)
 			return;
 		//^3A15:0B6F
-		door->Bit12(0);
+		door->DoorBit12(0);
 		return;
 	}
 	//^3A15:0B77
-	X16 si = 0;
-	if (di == 0) {
+	X16 iNewDoorTimer = 0; // will issue a timer again if 1
+	if (iOpenCloseState == 0) {	// totally open
 		//^3A15:0B7D
-		if (ref->ActionType() == 1 || ref->ActionType() == 2) {
+		if (ref->ActionType() == ACTMSG_CLOSE_CLEAR || ref->ActionType() == ACTMSG_TOGGLE) {	// 1 or 2
 			//^3A15:0B8E
-			door->Bit09(0);
-			si = 1;
+			door->DoorBit09(DOORACTION_CLOSING); // 0 => closing
+			iNewDoorTimer = 1;
 		}
 	}
 	//^3A15:0B9B
-	else if (di == 4) {
+	else if (iOpenCloseState == 4) { // totally closed
 		//^3A15:0BA0
-		if (ref->ActionType() == 0 || ref->ActionType() == 2) {
-			door->Bit09(1);
-			si = 1;
+		if (ref->ActionType() == ACTMSG_OPEN_SET || ref->ActionType() == ACTMSG_TOGGLE) { // 0 or 2
+			door->DoorBit09(DOORACTION_OPENING); // 1 => opening
+			iNewDoorTimer = 1;
 		}
 	}
 	else {
 		//^3A15:0BBE
-		door->Bit09((ref->ActionType() == 0) ? 1 : 0);
-		si = 1;
+		door->DoorBit09((ref->ActionType() == ACTMSG_OPEN_SET) ? DOORACTION_OPENING : DOORACTION_CLOSING);	// ? 1 : 0
+		iNewDoorTimer = 1;
 	}
 	//^3A15:0BE3
-	door->Bit10(U8(si));
-	if (door->Bit10() == 0)
+	door->DoorBit10(U8(iNewDoorTimer));
+	if (door->DoorBit10() == 0)
 		return;
 	//^3A15:0BFD
-	if (door->Bit09() == 0)
-		door->Bit12(0);
+	if (door->DoorBit09() == DOORACTION_CLOSING)	// 0
+		door->DoorBit12(0);
 	//^3A15:0C0F
 	ref->TimerType(ttyDoorStep);
 	QUEUE_TIMER(ref);
 	//^3A15:0C23
 	return;
 }
+
+//^3A15:07B4
+void SkWinCore::STEP_DOOR(Timer *ref)
+{
+	SkD((DLV_DBG_DOOR, "DOOR: STEP_DOOR(TIMER=%04X,T=%d,Actor=%d,V=%2d,W8=%2d\n", (Bitu)ref->dw00, (Bitu)ref->ttype, (Bitu)ref->actor, (Bitu)ref->value, (Bitu)ref->w8));
+
+		Bit32u dw00;	// @0
+		Bit8u ttype;		// @4	b04
+		Bit8u actor;	// @5	// b5 player index or creature type or other ...
+		Bit16u value;		// @6	// w6 => position x & y	// SPX: don't it take object ID ? or spell power ? it can also be an object! (door) ..
+		Bit16u w8;		// @8
+
+	//^3A15:07B4
+	ENTER(26);
+	//^3A15:07BA
+	X16 iNewDoorTimer = 0;	// bp18
+	X16 bp1a = 0;	// bp1a
+	X16 di = ref->XcoordB();
+	X16 si = ref->YcoordB();
+	U8 *xTileValue = &glbCurrentTileMap[di][si];	// bp04
+	X16 iOpenCloseState = *xTileValue & 7; // bp0a
+	if (iOpenCloseState == _DOOR_STATE__DESTROYED_) // 5, destroyed, can't operate
+		return;
+	//^3A15:0807
+	if (glbCurrentMapIndex == glbPlayerMap)
+		glbDoLightCheck = 1;
+	//^3A15:0816
+	Door *bp08 = GET_ADDRESS_OF_TILE_RECORD(U8(di), U8(si))->castToDoor();
+	if (bp08->DoorBit10() == 0)
+		return;
+	//^3A15:0839
+	ref->SetTick(ref->GetTick() +1);
+	if (bp08->DoorBit09() == 0) {
+		//^3A15:0858
+		if (iOpenCloseState == 4) { // totally closed
+			bp08->DoorBit10(0);
+			return;
+		}
+		//^3A15:0861
+		X16 bp0e = bp08->b2_5_5();
+		X16 bp14 = QUERY_DOOR_STRENGTH(GET_GRAPHICS_FOR_DOOR(bp08));
+		if (glbCurrentMapIndex == glbMap_4c28 && di == glbSomePosX_4c2e && si == glbSomePosY_4c30 && iOpenCloseState != 0) {
+			//^3A15:08AF
+			bp1a = 1;
+			if (glbChampionsCount > 0) {
+				//^3A15:08BB
+				*xTileValue &= 0xF8;
+				X16 bp12 = ATTACK_PARTY(bp14, ((8 |bp0e) != 0) ? 4 : 3, 2);
+				if (bp12 != 0) {
+					//^3A15:08ED
+					i16 bp16 = 0;
+					for (; bp16 < 4; bp16++) {
+						//^3A15:08F4
+						if ((bp12 & (1 << bp16)) == 0)
+							continue;
+						//^3A15:0901
+						// SPX: Bump sound when door closing on champions
+						QUEUE_NOISE_GEN2(GDAT_CATEGORY_CHAMPIONS, glbChampionSquad[bp16].HeroType(), SOUND_CHAMPION_BUMP, 0xfe, di, si, 1, 0x64, 0xc8);
+						//^3A15:0929
+					}
+				}
+			}
+		}
+		//^3A15:0932
+		ObjectID bp0c = GET_CREATURE_AT(di, si);
+		if (bp0c != OBJECT_NULL) {
+			//^3A15:0946
+			X16 bp10 = QUERY_CREATURE_AI_SPEC_FLAGS(bp0c);
+			if ((bp10 & 0x20) == 0) {
+				//^3A15:095A
+				if (((bp0e != 0) ? ((bp10 >> 6)&3) : 1) <= iOpenCloseState) {
+					//^3A15:0973
+					ATTACK_CREATURE(bp0c, di, si, 0x2006, 0x64, (QUERY_CREATURE_AI_SPEC_FROM_RECORD(bp0c)->w24_c_c() != 0) ? 0 : bp14);
+					iOpenCloseState = (iOpenCloseState == 0) ? 0 : (iOpenCloseState -1);
+					*xTileValue = *xTileValue & 0xF8 | iOpenCloseState; // write new state on tile
+					QUEUE_NOISE_GEN2(GDAT_CATEGORY_CREATURES, QUERY_CLS2_FROM_RECORD(bp0c), SOUND_OBJECT_GETHIT, 0xfe,
+						di, si, 1, 0x46, 0x80);
+					QUEUE_NOISE_GEN2(GDAT_CATEGORY_MISCELLANEOUS, 0xFE, SOUND_STD_KNOCK, 0xFE, di, si, 1, 0x46, 0x80);
+					bp1a = 1;
+				}
+			}
+		}
+		//^3A15:0A05
+		if (bp1a != 0) {
+			//^3A15:0A0B
+			ref->SetTick(ref->GetTick() +1);
+			iNewDoorTimer = 1;
+		}
+	}
+	else {
+		//^3A15:0A1E
+		if (iOpenCloseState == 0) {
+			bp08->DoorBit10(0);
+			return;
+		}
+	}
+	//^3A15:0A27
+	if (iNewDoorTimer == 0) { // has arrived either at totally closed or totally opened state
+		//^3A15:0A2D
+		iOpenCloseState += (bp08->DoorBit09() != 0) ? -1 : 1;
+		*xTileValue = (*xTileValue & 0xF8) | U8(iOpenCloseState); // write new state on tile
+		// SPX: Door step sound
+		QUEUE_NOISE_GEN2(GDAT_CATEGORY_DOORS, GET_GRAPHICS_FOR_DOOR(bp08), SOUND_DOOR_STEP, 0xfe, di, si, 1, 0x5f, 0x80);
+		if (SkCodeParam::bUseDM2ExtendedMode && iOpenCloseState == 4) // Special sound for door totally closed (exists in V5)
+			QUEUE_NOISE_GEN2(GDAT_CATEGORY_DOORS, GET_GRAPHICS_FOR_DOOR(bp08), SOUND_DOOR_CLOSE, 0xfe, di, si, 1, 0x5f, 0x80);
+		else if (SkCodeParam::bUseDM2ExtendedMode && iOpenCloseState == 0) // Special sound for totally door opened
+			QUEUE_NOISE_GEN2(GDAT_CATEGORY_DOORS, GET_GRAPHICS_FOR_DOOR(bp08), SOUND_DOOR_OPENED, 0xfe, di, si, 1, 0x5f, 0x80);
+
+		if (bp08->DoorBit09() != 0) {
+			if (iOpenCloseState != 0)
+				iNewDoorTimer = 1;
+		}
+		else if (iOpenCloseState != 4) {
+			iNewDoorTimer = 1;
+		}
+		//printf("step : iOpenCloseState = %d\n", iOpenCloseState);
+	}
+	//^3A15:0AA5
+	if (iNewDoorTimer != 0) {
+		bp08->DoorBit12(1);
+		QUEUE_TIMER(ref);
+		return;
+	}
+	//^3A15:0AC1
+	bp08->DoorBit10(0);
+	//^3A15:0AC9
+	return;
+}
+
+
 
 //^3A15:2EB5
 void SkWinCore::ACTUATE_TELEPORTER(Timer *ref)

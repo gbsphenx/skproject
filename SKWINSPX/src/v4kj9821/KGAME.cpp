@@ -2335,7 +2335,7 @@ _1cb6:
 					//^2FCF:1D13
 					bp14 = GET_ADDRESS_OF_TILE_RECORD(bp04->Xcoord(), bp04->Ycoord())->castToDoor();
 					//^2FCF:1D39
-					if (bp14->Bit13C() == 0)
+					if (bp14->DoorBit13C() == 0)
 						//^2FCF:1D4A
 						continue;
 
@@ -3838,7 +3838,7 @@ void SkWinCore::ARRANGE_DUNGEON()
 												break;
 											//^2066:2181
 											//^2066:2192
-											GET_ADDRESS_OF_TILE_RECORD(bp08->Xcoord(), bp08->Ycoord())->castToDoor()->Bit13B(bp08->OnceOnlyActuator() & 1);
+											GET_ADDRESS_OF_TILE_RECORD(bp08->Xcoord(), bp08->Ycoord())->castToDoor()->DoorBit13B(bp08->OnceOnlyActuator() & 1);
 											break;
 									}
 									break;

@@ -682,15 +682,15 @@ _1811:
 					door = GET_ADDRESS_OF_RECORD0(_4976_521e);
 					if (bp1e != 0) {
 						//^19F0:1986
-						if (door->Bit10() != 0) {
-							if (door->Bit09() != 0)
+						if (door->DoorBit10() != 0) {
+							if (door->DoorBit09() != 0)
 								goto _1a94;
 							si = 0x4200;
 							break;
 						}
 					}
 					//^19F0:19AD
-					if (door->Bit10() != 0 && door->Bit09() == 0) {
+					if (door->DoorBit10() != 0 && door->DoorBit09() == 0) {
 						si = 0x200;
 						break;
 					}

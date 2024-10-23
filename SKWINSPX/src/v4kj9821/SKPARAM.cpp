@@ -22,7 +22,7 @@ bool SkCodeParam::bShowLuck = false;
 bool SkCodeParam::bDisableFogEffect = false;
 bool SkCodeParam::bWeakDoors = false;
 bool SkCodeParam::bWalkOverPits = false;
-bool SkCodeParam::bUseCustomSpells = false;
+bool SkCodeParam::bUseCustomSpells = true;
 bool SkCodeParam::bUnlimitedCharges = false;
 bool SkCodeParam::bInfiniteSpells = false;
 

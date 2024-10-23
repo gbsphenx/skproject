@@ -389,11 +389,6 @@ namespace DMEncyclopaedia {
 		ObjectID next; // w0 Next object ID.
 		U16 w2; // Door attributes.
 
-		void Bit13(Bit16u nibble) {
-			nibble &= 1;
-			w2 &= 0xDFFF;
-			w2 |= nibble << 5 << 8;
-		}
 		U8 Button() const { return (U8)((w2 >> 6)&1); }
 		U8 DoorType() const { return (U8)(w2 & 1); }
 		void w2_b_b(U16 val) {
@@ -402,16 +397,16 @@ namespace DMEncyclopaedia {
 			w2 |= val << 11;
 		}
 		U16 ButtonState() const { return (w2 >> 11)&1; }	// w2_b_b()
-		U8 Bit13C() const { return (U8)((w2 >>13)&1); }		// w2_d_d()
 		U16 OpeningDir() const { return (w2 >> 5)&1; }
-		U8 Bit09() const { return (U8)((w2 >> 9)&1); }		// b3_1_1() Bit09
-		void Bit09(U8 val) {
+		U8 DoorBit09() const { return (U8)((w2 >> 9)&1); }		// b3_1_1() Bit09
+		void DoorBit09(U8 val) {
 			val &= 1;
 			w2 &= 0xfdff;
 			w2 |= val << 9;
 		}
-		U8 Bit10() const { return (U8)((w2 >>10)&1); }		// b3_2_2()
-		void Bit10(U8 val) {
+		// Bit10 : door is moving or not (opening or closing)
+		U8 DoorBit10() const { return (U8)((w2 >>10)&1); }		// b3_2_2()
+		void DoorBit10(U8 val) {
 			val &= 1;
 			w2 &= 0xfbff;
 			w2 |= val << 10;
@@ -422,15 +417,22 @@ namespace DMEncyclopaedia {
 			w2 |= val << 11;
 		}
 		U8 DestroyablebyFireball() const { return (w2 >> 7)&1; }
-		U8 Bit12() const { return (U8)((w2 >> 12)&1); }	// b3_4_4()
-		U8 Bit13() const { return (U8)((w2 >> 13)&1); }	// b3_5_5()
-		void Bit13B(U8 val) {
+		U8 DoorBit12() const { return (U8)((w2 >> 12)&1); }	// b3_4_4()
+		U8 DoorBit13() const { return (U8)((w2 >> 13)&1); }	// b3_5_5()
+		U8 DoorBit13C() const { return (U8)((w2 >>13)&1); }		// w2_d_d() // same as 13
+		void DoorBit13(Bit16u nibble) {	// 13B takes U8 instead ?
+			nibble &= 1;
+			w2 &= 0xDFFF;
+			w2 |= nibble << 5 << 8;
+		}
+		void DoorBit13B(U8 val) {
 			val &= 1;
-			w2 &= 0xdfff;
+			w2 &= 0xDFFF;
 			w2 |= val << 13;
 		}
+
 		U8 BashablebyChopping() const { return (w2 >> 8)&1; }
-		void Bit12(U8 val) {	// b3_4_4
+		void DoorBit12(U8 val) {	// b3_4_4
 			w2 &= 0xefff;
 			val &= 1;
 			w2 |= U16(val) << 12;

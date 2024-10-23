@@ -1275,7 +1275,7 @@ _0f22:
 _1025:
 				Door *bp04 = GET_ADDRESS_OF_RECORD0(bp4c.w6[1]);
 				//^29EE:1034
-				if (bp04->Button() == 0 && bp04->Bit13C() == 0) {
+				if (bp04->Button() == 0 && bp04->DoorBit13C() == 0) {
 					//^29EE:1053
 					bp0a += 2;
 				}

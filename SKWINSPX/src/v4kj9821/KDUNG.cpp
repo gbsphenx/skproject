@@ -2146,7 +2146,7 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(i16 xpos, i16 ypos, ObjectID reco
 			Bit16u bp14 = xActuator->ActuatorData();
 			Bit16u bp10 = place;
 			//^2FCF:27EA
-			Bit16u bp3e;
+			//Bit16u bp3e;
 			if (bp1e == 0xffff) {
 				//^2FCF:27F3
 				switch (iActType) {

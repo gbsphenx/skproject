@@ -720,7 +720,7 @@ void SkWinCore::CLICK_VWPT(i16 xx, i16 yy)
 						//^121E:0626
 						continue;
 					//^121E:0629
-					CLICK_WALL(bp24);
+					CLICK_WALL(bp24);	// When player puts item on wall
 					//^121E:0631
 					return;
 

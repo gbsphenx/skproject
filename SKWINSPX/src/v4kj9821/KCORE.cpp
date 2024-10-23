@@ -10487,7 +10487,7 @@ _0e04:
 	}
 	//^19F0:0E32
 	door = GET_ADDRESS_OF_RECORD0(_4976_521e);
-	if (ww == 2 && door->Bit12() == 0)
+	if (ww == 2 && door->DoorBit12() == 0)
 		goto _123a;
 	//^19F0:0E5C
 	i16 bp10;
@@ -10495,9 +10495,9 @@ _0e04:
 	i16 bp14;
 	U16 bp16;
 	i16 bp08;
-	if (door->Bit10() != 0) {
+	if (door->DoorBit10() != 0) {
 		//^19F0:0E6D
-		if (door->Bit09() != 0) {
+		if (door->DoorBit09() != 0) {
 			if (ww == 0)
 				goto _104f;
 		}
@@ -10519,7 +10519,7 @@ _0e04:
 			if (door->Button() != 0)
 				goto _0f9d;
 			//^19F0:0ECD
-			if (door->Bit13() != 0)
+			if (door->DoorBit13() != 0)
 				goto _0f9d;
 		}
 		//^19F0:0EDE
@@ -10541,7 +10541,7 @@ _0e04:
 		goto _123a;
 	//^19F0:0F34
 	if ((si & 1) != 0) {
-		if (door->Button() != 0 || door->Bit13() != 0)
+		if (door->Button() != 0 || door->DoorBit13() != 0)
 			goto _0f7f;
 	}
 	//^19F0:0F59
@@ -10628,7 +10628,7 @@ _108f:
 		si &= 0xffdf;
 		if (ww == 0) {
 			//^19F0:1101
-			door->Bit12(1);
+			door->DoorBit12(1);
 		}
 	}
 	//^19F0:1109
@@ -24033,7 +24033,7 @@ Bit16u SkWinCore::_075f_0af9(i16 u16tileType, i16 xpos, i16 ypos, Bit16u dir, Ob
 				//^075F:0C79
 				if (bp12 != 5 && (si == OBJECT_EFFECT_ZO_SPELL || si == OBJECT_EFFECT_ZO_2)) {	// (si == oFF84 || si == oFF8D
 					//^075F:0C89
-					if (door->Button() == 0 && door->Bit13C() == 0) {
+					if (door->Button() == 0 && door->DoorBit13C() == 0) {
 						//^075F:0C9A
 						break;
 					}
@@ -28519,151 +28519,7 @@ X16 SkWinCore::QUERY_DOOR_STRENGTH(X8 iDoorType)
 	return QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorType, dtWordValue, GDAT_DOOR_STRENGTH);
 }
 
-//^3A15:07B4
-void SkWinCore::STEP_DOOR(Timer *ref)
-{
-	SkD((DLV_DBG_DOOR, "DOOR: STEP_DOOR(TIMER=%04X,T=%d,Actor=%d,V=%2d,W8=%2d\n", (Bitu)ref->dw00, (Bitu)ref->ttype, (Bitu)ref->actor, (Bitu)ref->value, (Bitu)ref->w8));
 
-		Bit32u dw00;	// @0
-		Bit8u ttype;		// @4	b04
-		Bit8u actor;	// @5	// b5 player index or creature type or other ...
-		Bit16u value;		// @6	// w6 => position x & y	// SPX: don't it take object ID ? or spell power ? it can also be an object! (door) ..
-		Bit16u w8;		// @8
-
-	//^3A15:07B4
-	ENTER(26);
-	//^3A15:07BA
-	X16 bp18 = 0;
-	X16 bp1a = 0;
-	X16 di = ref->XcoordB();
-	X16 si = ref->YcoordB();
-	U8 *bp04 = &glbCurrentTileMap[di][si];
-	X16 bp0a = *bp04 & 7;
-	if (bp0a == 5)
-		return;
-	//^3A15:0807
-	if (glbCurrentMapIndex == glbPlayerMap)
-		glbDoLightCheck = 1;
-	//^3A15:0816
-	Door *bp08 = GET_ADDRESS_OF_TILE_RECORD(U8(di), U8(si))->castToDoor();
-	if (bp08->Bit10() == 0)
-		return;
-	//^3A15:0839
-	ref->SetTick(ref->GetTick() +1);
-	if (bp08->Bit09() == 0) {
-		//^3A15:0858
-		if (bp0a == 4) {
-			bp08->Bit10(0);
-			return;
-		}
-		//^3A15:0861
-		X16 bp0e = bp08->b2_5_5();
-		X16 bp14 = QUERY_DOOR_STRENGTH(GET_GRAPHICS_FOR_DOOR(bp08));
-		if (glbCurrentMapIndex == glbMap_4c28 && di == glbSomePosX_4c2e && si == glbSomePosY_4c30 && bp0a != 0) {
-			//^3A15:08AF
-			bp1a = 1;
-			if (glbChampionsCount > 0) {
-				//^3A15:08BB
-				*bp04 &= 0xf8;
-				X16 bp12 = ATTACK_PARTY(bp14, ((8 |bp0e) != 0) ? 4 : 3, 2);
-				if (bp12 != 0) {
-					//^3A15:08ED
-					i16 bp16 = 0;
-					for (; bp16 < 4; bp16++) {
-						//^3A15:08F4
-						if ((bp12 & (1 << bp16)) == 0)
-							continue;
-						//^3A15:0901
-						// SPX: Bump sound when door closing on champions
-						QUEUE_NOISE_GEN2(GDAT_CATEGORY_CHAMPIONS, glbChampionSquad[bp16].HeroType(), SOUND_CHAMPION_BUMP, 0xfe, di, si, 1, 0x64, 0xc8);
-						//^3A15:0929
-					}
-				}
-			}
-		}
-		//^3A15:0932
-		ObjectID bp0c = GET_CREATURE_AT(di, si);
-		if (bp0c != OBJECT_NULL) {
-			//^3A15:0946
-			X16 bp10 = QUERY_CREATURE_AI_SPEC_FLAGS(bp0c);
-			if ((bp10 & 0x20) == 0) {
-				//^3A15:095A
-				if (((bp0e != 0) ? ((bp10 >> 6)&3) : 1) <= bp0a) {
-					//^3A15:0973
-					ATTACK_CREATURE(bp0c, di, si, 0x2006, 0x64, (QUERY_CREATURE_AI_SPEC_FROM_RECORD(bp0c)->w24_c_c() != 0) ? 0 : bp14);
-					bp0a = (bp0a == 0) ? 0 : (bp0a -1);
-					*bp04 = *bp04 & 0xf8 |bp0a;
-					QUEUE_NOISE_GEN2(GDAT_CATEGORY_CREATURES, QUERY_CLS2_FROM_RECORD(bp0c), SOUND_OBJECT_GETHIT, 0xfe,
-						di, si, 1, 0x46, 0x80);
-					QUEUE_NOISE_GEN2(GDAT_CATEGORY_MISCELLANEOUS, 0xfe, SOUND_STD_KNOCK, 0xfe, di, si, 1, 0x46, 0x80);
-					bp1a = 1;
-				}
-			}
-		}
-		//^3A15:0A05
-		if (bp1a != 0) {
-			//^3A15:0A0B
-			ref->SetTick(ref->GetTick() +1);
-			bp18 = 1;
-		}
-	}
-	else {
-		//^3A15:0A1E
-		if (bp0a == 0) {
-			bp08->Bit10(0);
-			return;
-		}
-	}
-	//^3A15:0A27
-	if (bp18 == 0) {
-		//^3A15:0A2D
-		bp0a += (bp08->Bit09() != 0) ? -1 : 1;
-		*bp04 = (*bp04 & 0xf8)|U8(bp0a);
-		// SPX: Door step sound
-		QUEUE_NOISE_GEN2(GDAT_CATEGORY_DOORS, GET_GRAPHICS_FOR_DOOR(bp08), SOUND_DOOR_STEP, 0xfe, di, si, 1, 0x5f, 0x80);
-		if (SkCodeParam::bUseDM2ExtendedMode && bp0a == 4)
-			QUEUE_NOISE_GEN2(GDAT_CATEGORY_DOORS, GET_GRAPHICS_FOR_DOOR(bp08), SOUND_DOOR_CLOSE, 0xfe, di, si, 1, 0x5f, 0x80);
-		else if (SkCodeParam::bUseDM2ExtendedMode && bp0a == 0)
-			QUEUE_NOISE_GEN2(GDAT_CATEGORY_DOORS, GET_GRAPHICS_FOR_DOOR(bp08), SOUND_DOOR_OPENED, 0xfe, di, si, 1, 0x5f, 0x80);
-
-		if (bp08->Bit09() != 0) {
-			if (bp0a != 0)
-				bp18 = 1;
-		}
-		else if (bp0a != 4) {
-			bp18 = 1;
-		}
-		//printf("step : bp0a = %d\n", bp0a);
-	}
-	//^3A15:0AA5
-	if (bp18 != 0) {
-		bp08->Bit12(1);
-		QUEUE_TIMER(ref);
-		return;
-	}
-	//^3A15:0AC1
-	bp08->Bit10(0);
-	//^3A15:0AC9
-	return;
-}
-//^3A15:1DA8
-// SPX: interesting ... If xx = 0 => 1, if xx = 2
-X16 SkWinCore::_3a15_1da8(X8 xx, X8 yy)
-{
-	//^3A15:1DA8
-	ENTER(0);
-	//^3A15:1DAB
-	switch (xx) {
-	case 0: //^_1db9
-		//^3A15:1DB9
-		return 1;
-	case 2: //^_1dc2
-		//^3A15:1DC2
-		return yy ^1;
-	}
-	//^3A15:1DBE
-	return 0;
-}
 
 //^3A15:05F7
 void SkWinCore::_3a15_05f7(X16 xx)
