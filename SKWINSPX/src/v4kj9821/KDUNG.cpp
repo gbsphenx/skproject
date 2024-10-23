@@ -2014,7 +2014,7 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(i16 xpos, i16 ypos, ObjectID reco
 	//^2FCF:2514
 	Bit16u bp2a = glbCurrentTileMap[xpos][ypos];
 	//^2FCF:252E
-	Bit16u bp1e;
+	Bit16u bp1e; // item direction
 	if ((bp2a >> 5) == ttWall) {
 		//^2FCF:2535
 		bp1e = recordLink.Dir();
@@ -2388,9 +2388,46 @@ _29a8:
 					}
 				case ACTUATOR_TYPE_DM1_WALL_SWITCH: // SPX DM1 retrocompatibility, triggered when an item comes into an alcove or is removed from alcove
 					{
+						// TO BE IMPLEMENTED !!! NOT LIKE KEY HOLE
 						if (bp24 != 0)
 							continue;
-						goto _29a8;
+						// The actuator should be an alcove -- this may need to be checked
+						Bit16u iRevertEffect = bp10 ^ xActuator->RevertEffect();
+						Bit16u iActionType = xActuator->ActionType();
+						if ((iActionType & 3) == ACTEFFECT_STEP_CONSTANT__OPEN) {
+							iActionType = (iRevertEffect != 0) ? ACTMSG_OPEN_SET : ACTMSG_CLOSE_CLEAR;
+						}
+						else {
+							if (iRevertEffect == 0)
+								continue;
+						}
+						/// The alcove actuator will trigger either if first item is put into, or last item is removed from.
+						U16 iNbItems = 0;
+						// the item being put into or removed from alcove is already counted from the tile itself
+						iNbItems = GET_TILE_COUNT_TAKEABLE_ITEMS(xpos, ypos, bp1e);
+						if ( (place == FCT_REMOVE_OFF && iNbItems == 0) 
+							|| (place == FCT_PLACE_ON && iNbItems == 1) ) // then triggers
+							;
+						else
+							continue;
+
+						if (xActuator->SoundEffect() != 0) {
+							QUEUE_NOISE_GEN2(
+								(bp1e == 0xffff) ? GDAT_CATEGORY_FLOOR_GFX : GDAT_CATEGORY_WALL_GFX,
+//									(bp1e == 0xffff) ? 0x0a : 0x09,
+								(bp1e == 0xffff)
+									? GET_FLOOR_DECORATION_OF_ACTUATOR(xActuator)
+									: GET_WALL_DECORATION_OF_ACTUATOR(xActuator),
+								SOUND_STD_ACTIVATION,
+								0xFE,
+								xpos,
+								ypos,
+								0x01,
+								0x8C,
+								0x80
+								);
+						}
+						INVOKE_ACTUATOR(xActuator, iActionType, 0);
 						continue;
 					}
 			}

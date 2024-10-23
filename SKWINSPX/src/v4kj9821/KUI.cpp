@@ -346,7 +346,7 @@ void SkWinCore::TAKE_OBJECT(ObjectID rl, U16 xx)
 		//^2C1D:0712
 		PROCESS_ITEM_BONUS(glbChampionLeader, si, -1, 1);
 		//^2C1D:0722
-		PLACE_OR_REMOVE_OBJECT_IN_ROOM(glbPlayerPosX, glbPlayerPosY, -1, 1, FCT_PLACE_ON, 0);
+		PLACE_OR_REMOVE_OBJECT_IN_ROOM(glbPlayerPosX, glbPlayerPosY, -1, 1, FCT_PLACE_ON, 0); // NOTE: it is PLACE_ON or REMOVE_OFF ??? item is taken off its place!
 
 // SPX: that part is for giving item sound when taking it
 		if (SkCodeParam::bUseExtendedSound)

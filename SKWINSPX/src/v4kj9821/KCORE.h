@@ -887,6 +887,7 @@ public:
 	X16 EXTENDED_LOAD_AI_DEFINITION(void);
 	X16 DM1_ROTATE_ACTUATOR_LIST(X16 localActionType, i16 iMapX, i16 iMapY, i16 iMapLevel, U16 iSide);
 	ObjectID GET_WALL_TILE_ANY_TAKEABLE_ITEM_RECORD(U16 iMapX, U16 iMapY, U16 iDirection);
+	U16 GET_TILE_COUNT_TAKEABLE_ITEMS(U16 iMapX, U16 iMapY, U16 iDirection);
 	void SET_NEXT_RECORD_LINK(ObjectID rlSourceObject, ObjectID rlObjectToAppend);
 	X16 SELECT_CHAMPION_FROM_GDAT(U8 iChampionID);
 
