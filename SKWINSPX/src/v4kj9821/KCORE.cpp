@@ -23199,7 +23199,7 @@ Bit16u SkWinCore::_2fcf_0434(ObjectID recordLink, i16 xpos, i16 ypos, i16 xx, i1
 		//^2FCF:053A
 		if (bp18 == ttTeleporter) {
 			//^2FCF:0542
-			if ((bp16 & 0x0008) == 0)
+			if ((bp16 & 0x0008) == 0)	// if teleporter tile is not active, just leave
 				//^2FCF:0549
 				break;
 			//^2FCF:054C

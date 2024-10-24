@@ -2013,6 +2013,8 @@ namespace DM2Internal {
 	};
 	//
 	// SPX: I put the DM1 command list in correspondance. All DM1 "physical" attacks have been replaced by generic command (4 and 8)
+	// Therefore, many just do not match anymore old commands
+	// New commands would rather use ID than old DM1 ones.
 	enum CommandMeaning {
 								// 0 = N (none)
 		CmBlock=1,				// 1 = BLOCK
@@ -2041,11 +2043,11 @@ namespace DM2Internal {
 								// 24 = DISRUPT
 								// 25 = MELEE
 								// 26 = X
-								// 27 = INVOKE
+		CmInvoke=27,			// 27 = INVOKE
 								// 28 = SLASH
 								// 29 = CLEAVE
 								// 30 = BASH
-								// 31 = BASH
+								// 31 = STUN
 		CmLaunchProjectile=32,	// 32 = SHOOT
 		CmSpellshield=33,		// 33 = SPELLSHIELD
 		CmFireshield=34,		// 34 = FIRESHIELD
@@ -2057,7 +2059,7 @@ namespace DM2Internal {
 								// 40 = SPIT
 								// 41 = BRANDISH
 		CmThrow=42,				// 42 = THROW
-								// 43 = FUSE
+		CmFuse=43,				// 43 = FUSE
 		CmMark=44,
 		CmCallCarry=45,
 		CmCallFetch=46,

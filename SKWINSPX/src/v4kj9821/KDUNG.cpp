@@ -2154,6 +2154,8 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(i16 xpos, i16 ypos, ObjectID reco
 						//^2FCF:2801
 						continue;
 					case ACTUATOR_FLOOR_TYPE__EVERYTHING: // 0x01: Activator, trap floor
+						if (iObjectDBType >= DB_CATEGORY_MISSILE && iObjectDBType != 0xFFFF) // SPX: added this to prevent DM1 floor pad to trap missiles (0xFFFF is for player)
+							continue;
 						//^2FCF:280B
 						if (ss != 0)
 							//^2FCF:2811
@@ -2388,7 +2390,6 @@ _29a8:
 					}
 				case ACTUATOR_TYPE_DM1_WALL_SWITCH: // SPX DM1 retrocompatibility, triggered when an item comes into an alcove or is removed from alcove
 					{
-						// TO BE IMPLEMENTED !!! NOT LIKE KEY HOLE
 						if (bp24 != 0)
 							continue;
 						// The actuator should be an alcove -- this may need to be checked
@@ -2414,7 +2415,58 @@ _29a8:
 						if (xActuator->SoundEffect() != 0) {
 							QUEUE_NOISE_GEN2(
 								(bp1e == 0xffff) ? GDAT_CATEGORY_FLOOR_GFX : GDAT_CATEGORY_WALL_GFX,
-//									(bp1e == 0xffff) ? 0x0a : 0x09,
+								(bp1e == 0xffff)
+									? GET_FLOOR_DECORATION_OF_ACTUATOR(xActuator)
+									: GET_WALL_DECORATION_OF_ACTUATOR(xActuator),
+								SOUND_STD_ACTIVATION,
+								0xFE,
+								xpos,
+								ypos,
+								0x01,
+								0x8C,
+								0x80
+								);
+						}
+						INVOKE_ACTUATOR(xActuator, iActionType, 0);
+						continue;
+					}
+				case ACTUATOR_TYPE_DM1_ALCOVE_ITEM:	// SPX DM1 retrocompatibility, triggered when expected item is moved into or from alcove
+					{
+						if (bp24 != 0)
+							continue;
+						// The actuator should be an alcove -- this may need to be checked
+						Bit16u iRevertEffect = bp10 ^ xActuator->RevertEffect();
+						Bit16u iActionType = xActuator->ActionType();
+						if ((iActionType & 3) == ACTEFFECT_STEP_CONSTANT__OPEN) {
+							iActionType = (iRevertEffect != 0) ? ACTMSG_OPEN_SET : ACTMSG_CLOSE_CLEAR;
+						}
+						else {
+							if (iRevertEffect == 0)
+								continue;
+						}
+						/// Check that item is the expected one
+						U16 iItemMatches = 0;
+						U16 iNbItems = 0;
+						U16 iExpectedItemID = xActuator->ActuatorData();
+						// the item being put into or removed from alcove is already counted from the tile itself
+						//iNbItems = GET_TILE_COUNT_TAKEABLE_ITEMS(xpos, ypos, bp1e);
+						iItemMatches = (GET_DISTINCTIVE_ITEMTYPE(recordLink) == iExpectedItemID) ? 1 : 0;
+						
+						if (iItemMatches == 0)
+							continue;
+
+						// TODO : would check for other items of the same ID !!!
+						iNbItems = GET_TILE_COUNT_TAKEABLE_ITEMS(xpos, ypos, bp1e);
+
+						if ( (place == FCT_REMOVE_OFF && iNbItems == 0) 
+							|| (place == FCT_PLACE_ON && iNbItems == 1) ) // then triggers
+							;
+						else
+							continue;
+
+						if (xActuator->SoundEffect() != 0) {
+							QUEUE_NOISE_GEN2(
+								(bp1e == 0xffff) ? GDAT_CATEGORY_FLOOR_GFX : GDAT_CATEGORY_WALL_GFX,
 								(bp1e == 0xffff)
 									? GET_FLOOR_DECORATION_OF_ACTUATOR(xActuator)
 									: GET_WALL_DECORATION_OF_ACTUATOR(xActuator),

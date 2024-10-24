@@ -1442,6 +1442,30 @@ U16 SkWinCore::ENGAGE_COMMAND(U16 player, i16 cmdSlot)
 			//^2759:1AA5
 			break;
 
+// Check CSBWin TAG01bf9a/_Attack
+		case CmInvoke:	// DM1 retrocompatibility
+			{
+			ObjectID oMissileSpell = OBJECT_EFFECT_FIREBALL;
+			i16 iEnergyRangePower = RAND()%128 + 100;
+			  switch (RAND()%7)
+			  {
+				  case 0: oMissileSpell = OBJECT_EFFECT_POISON_BOLT; break;
+				  case 1: oMissileSpell = OBJECT_EFFECT_POISON_CLOUD; break;
+				  case 2: oMissileSpell = OBJECT_EFFECT_DISPELL; break;
+				  case 3: oMissileSpell = OBJECT_EFFECT_POISON_BLOB; break;
+				  case 4: oMissileSpell = OBJECT_EFFECT_LIGHTNING; break;
+				  default:oMissileSpell = OBJECT_EFFECT_FIREBALL; break;
+			  };
+			bp42 = 7 - min_value(SkLvlCraftsman, QUERY_PLAYER_SKILL_LV(di, bp2a, 1));
+			if (champion->curMP() < bp42) {
+				si = max_value(2, (champion->curMP() * si) / bp42);
+				bp42 = champion->curMP();
+			}
+			bp0e = CAST_CHAMPION_MISSILE_SPELL(di, oMissileSpell, iEnergyRangePower, bp42); // championid missile energy/range mana
+			if (bp0e == 0)
+				bp2c >>= 1;
+			  break;
+			}
 		case CmLaunchProjectile: // 32
 			//^2759:1AA8
 			if (IS_MISSILE_VALID_TO_LAUNCHER(di, bp34, champion->Possess(bp3a)) == 0) {
@@ -1805,7 +1829,7 @@ _CreateMinion:
 		case 24:
 		case 25:
 		case 26:
-		case 27:
+		//case 27:
 		case 28:
 		case 29:
 		case 30:
