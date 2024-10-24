@@ -528,6 +528,8 @@ namespace DMEncyclopaedia {
 			val <<= 7;
 			w2 |= val;
 		}
+		U16 BitfieldCurrent() const { return (w2>>7)&0x0F ; }; // SPX: DM1 compatibility for act5 trigger with bitfield
+		U16 BitfieldTarget() const { return (w2>>11)&0x0F; }; // SPX: DM1 compatibility for act5 trigger with bitfield
 		U16 Direction() const { return (w6 >> 4)&3; } // M!6,4,03
 		U8 Ycoord() const { return (w6 >>11)&0x1f; } // M!7,3,1F
 		U8 Xcoord() const { return (w6 >> 6)&0x1f; } // M!6,6,1F

@@ -1692,7 +1692,8 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 			// SPX: in case of DM1 TRIGGER (BIT FIELDS), the actual position of the actuator is not relevant since the effect direction/facing is used to change the bit field.
 			// Then, we check if the target actuator is a TRIGGER, and let activation thereafter
 			//^3A15:2400
-			if (bp10 != ACTUATOR_TYPE_DM1_BITFIELDS_TRIGGER && (si.Dir() != ref->Value2()))
+			if (bp10 != ACTUATOR_TYPE_DM1_BITFIELDS_TRIGGER && bp10 != ACTUATOR_TYPE_DM1_COUNTER 
+				&& (si.Dir() != ref->Value2()))
 				continue;
 					
 			switch (bp10) {
@@ -1745,15 +1746,31 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 					U8 iOldBitFields = iBitFields;
 					U8 iChangeableBit = 0;
 					U8 iEffectType = bp04->ActionType();
-					U8 iActionType = ACTMSG_OPEN_SET;
-					//printf("TRIGGER VALUE = %02X BITFIELDS = %X with EFFECT %d FACING %d\n", bp04->ActuatorData(), bp04->ActuatorData()>>4, ref->ActionType(), ref->Value2());
+					U8 iActionType = ACTMSG_OPEN_SET; // default
+					U8 iBitOperation = ref->ActionType();
+
+					U8 iTargetBitfield = bp04->BitfieldTarget();
+					U8 iCurrentBitfield = bp04->BitfieldCurrent();
+//					printf("[%08X] (%02d,%02d) TARGET BITFIELD = %02X (%02X)  CUR. BITFIELD = %X with EFFECT %d FACING %d\n", bp04, ref->XcoordB(), ref->YcoordB(), 
+//						iTargetBitfield, bp04->ActuatorData(), iCurrentBitfield, ref->ActionType(), ref->Value2());
 
 					iChangeableBit = 1<<ref->Value2(); // power of 2 of the target face/dir
 					iBitFields = iBitFields ^ iChangeableBit;
-					bp04->ActuatorData((iBitFields<<4) + (bp04->ActuatorData()%16));
 
-					//printf("RESULT TRIGGER VALUE = %02X BITFIELDS = %X (%X) from BITCHANGE %X\n", bp04->ActuatorData(), bp04->ActuatorData()>>4, iBitFields, iChangeableBit);
-					if (iOldBitFields != iBitFields && iBitFields == 0) // trigger actuator
+					if (iBitOperation == ACTMSG_OPEN_SET)
+						iCurrentBitfield = iCurrentBitfield | iChangeableBit; // add bit
+					else if (iBitOperation == ACTMSG_TOGGLE)
+						iCurrentBitfield = iCurrentBitfield ^ iChangeableBit;	// toggle bit
+					else // clear bit ACTMSG_CLOSE_CLEAR
+						iCurrentBitfield = iCurrentBitfield & ~(iChangeableBit);	// clear bit
+
+					//bp04->ActuatorData((iBitFields<<4) + (bp04->ActuatorData()%16));
+					bp04->ActuatorData((iTargetBitfield<<4) + (iCurrentBitfield));
+
+//					printf("[%08X] (%02d,%02d) TARGET BITFIELD = %02X (%02X)  CUR. BITFIELD = %X from BITCHANGE %X\n", bp04, ref->XcoordB(), ref->YcoordB(),
+//						iTargetBitfield, bp04->ActuatorData(), iCurrentBitfield, iBitFields, iChangeableBit);
+					//if (iOldBitFields != iBitFields && iBitFields == 0) // trigger actuator
+					if (iCurrentBitfield == iTargetBitfield) // trigger actuator
 					{
 						if (iEffectType == ACTEFFECT_STEP_CONSTANT__OPEN || iEffectType == ACTEFFECT_STEP_ON__OPEN_SET)
 							iActionType = ACTMSG_OPEN_SET;

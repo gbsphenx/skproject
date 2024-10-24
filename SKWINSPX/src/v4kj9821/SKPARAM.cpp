@@ -25,6 +25,7 @@ bool SkCodeParam::bWalkOverPits = false;
 bool SkCodeParam::bUseCustomSpells = true;
 bool SkCodeParam::bUnlimitedCharges = false;
 bool SkCodeParam::bInfiniteSpells = false;
+bool SkCodeParam::bNoTimer = false;
 
 bool SkCodeParam::bMIDIMusicEnabled = false;
 bool SkCodeParam::bWAVMusicEnabled = true;

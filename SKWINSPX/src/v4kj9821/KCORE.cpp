@@ -22972,7 +22972,8 @@ void SkWinCore::INVOKE_ACTUATOR(Actuator *ref, Bit16u actionType, i16 delayPlus)
 {
 	SkD((DLV_DBM, "DBM: INVOKE_ACTUATOR(%4X,%2d,%d)\n"
 		, ref, (Bitu)actionType, (Bitu)delayPlus));
-
+	if (SkCodeParam::bNoTimer == true)
+		return;
 	//^2FCF:15F3
 	//^2FCF:15F6
 	INVOKE_MESSAGE(

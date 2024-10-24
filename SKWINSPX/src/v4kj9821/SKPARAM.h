@@ -44,6 +44,7 @@ public:
 	static bool bUnlimitedCharges;
 	static bool bInfiniteSpells;
 	static bool bUseScrollIDType;
+	static bool bNoTimer;			// allow to flush/clean active timers (or auto-cycling traps)
 
 	static bool bForceOrnateSound;
 
