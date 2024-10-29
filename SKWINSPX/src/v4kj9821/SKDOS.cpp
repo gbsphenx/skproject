@@ -10,11 +10,12 @@
 #define __djgpp_conventional_base 0
 #endif
 
+#include <stdlib.h>
+#include <time.h>
+
 #ifdef __DJGPP__
 
-#include <time.h>
 #include <unistd.h>
-#include <stdlib.h>
 
 #undef inportb
 #undef outportb
@@ -23,7 +24,7 @@
 #include <go32.h>
 #include <sys/nearptr.h>
 
-#endif
+#endif // __DJGPP__
 
 
 #define VIDEO_INT 0x10
@@ -121,12 +122,15 @@ void CSkWinDOS::ProcessArgs(int argc, char** argv)
 			dung = _OPTION_DUNGEON_DM2_SK_;
 		else if (!strcmp(argv[iArgIndex], "-dm2_skx"))
 			dung = _OPTION_DUNGEON_DM2_SK_EXT_;
+
+#ifndef __SKWIN_PUBLIC_VERSION__
 		else if (!strcmp(argv[iArgIndex], "-bwy_bw"))
 			dung = _OPTION_DUNGEON_BWY_BW_;
 		else if (!strcmp(argv[iArgIndex], "-eob_eob1"))
 			dung = _OPTION_DUNGEON_EOB_EOB1_;
 		else if (!strcmp(argv[iArgIndex], "-dmx"))
 			dung = _OPTION_DUNGEON_DMX_;
+#endif
 
 		else if (!strcmp(argv[iArgIndex], "-fhz6"))
 			freq = 6;
@@ -279,7 +283,7 @@ void init_mouse() {
 void CSkWinDOS::VersionMessage()
 {
 	printf("\nDungeon Master II PC-9821/PC-DOS\n");
-	printf("Unofficial Port by Kentaro-k.21 + Sphenx (V4.2 - build 2024-10-06).\n");
+	printf("Unofficial Port by Kentaro-k.21 + Sphenx (%s - build %s).\n", strVersionNumber, __SKWIN_RELEASE_DATE__);
 }
 
 

@@ -46,7 +46,7 @@ void SkwinDEBUG (int lv, const char *psz, ...) {
 #endif // _USE_SDL
 
 
-#ifdef __DJGPP__
+#if defined(__MINGW__) || defined(__DJGPP__)
 void SkwinDEBUG (int lv, const char *psz, ...) {
 	if (lv < DLV_BUGHERE) return;
 
@@ -68,7 +68,7 @@ void Unreachable(LPCSTR funct, LPCSTR file, int line) {
 }
 #endif // defined(_USE_MFC80) || defined(_USE_MFC60)
 
-#if defined(_USE_SDL) || defined(__DJGPP__)
+#if defined(_USE_SDL) || defined(__DJGPP__) || defined(__MINGW__)
 void Unreachable(const char *funct, const char *file, int line) {
 	SkD((DLV_BUGHERE,"BUG? Unreachable funct %s at %s(%u)\n"
 		, funct, file, line));

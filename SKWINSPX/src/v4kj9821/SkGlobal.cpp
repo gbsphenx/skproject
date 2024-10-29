@@ -18,7 +18,7 @@ CSkWinMFC skwin;
 #ifdef _USE_SDL
 CSkWinSDL skwin;
 #endif
-#ifdef __DJGPP__
+#if defined(__DJGPP__) || defined(__MINGW__)
 CSkWinDOS skwin;
 #endif
 
@@ -65,7 +65,7 @@ CVerifySKSaveIO s_testSKSave;
 
 
 
-#if defined(_USE_MFC60) || defined(_USE_MFC80) || defined (__DJGPP__)
+#if defined(_USE_MFC60) || defined(_USE_MFC80) || defined (__DJGPP__) || defined (__MINGW__)
 
 CVerifySKSaveIO::CVerifySKSaveIO(): f(NULL) 
 {

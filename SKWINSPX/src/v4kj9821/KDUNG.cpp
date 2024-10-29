@@ -24,7 +24,7 @@
 ObjectID SkWinCore::GET_TILE_RECORD_LINK(i16 xx, i16 yy)
 {
 	//^0CEE:0AB5
-	i16 index = GET_OBJECT_INDEX_FROM_TILE(xx, yy); // CSBWin LOCAL_2 = GetObjectListIndex(x, y);
+	i16 index = (GET_OBJECT_INDEX_FROM_TILE(xx, yy)).w; // CSBWin LOCAL_2 = GetObjectListIndex(x, y);
 	if (index == -1)
 		return OBJECT_END_MARKER;
 	if (index == -2)

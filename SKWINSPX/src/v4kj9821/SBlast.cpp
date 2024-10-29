@@ -99,7 +99,7 @@ namespace sblast_sys {
 			int iPlaybackFrequency = iBasePlaybackFrequency;
 			int iRandomValue = rand()%750 - 500;
 			//if (SkCodeParam::bUseVaryingPlaybackFrequency)
-				iPlaybackFrequency += iRandomValue;
+				//iPlaybackFrequency += iRandomValue;	// that does not render well for doors. I disable it for now
 			// SPX
 
 			ZeroMemory(&wfex, sizeof(wfex));

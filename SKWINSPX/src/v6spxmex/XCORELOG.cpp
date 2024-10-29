@@ -28,11 +28,14 @@ using namespace kkBitBlt;
 #ifdef _USE_SDL
 #include <SkSDL.h>
 #endif // _USE_SDL
-#ifdef __DJGPP__
+#if defined(__DJGPP__) || defined (__MINGW__)
 #include <SkDOS.h>
 #include <stdlib.h> // rand note: putting stdlib here and not right after stdafx prevents a bunch of conflicts with min/max macros
 #endif // __DJGPP__
 
+#if defined (__MINGW__)
+#undef WIN32
+#endif
 
 void CHANGE_CONSOLE_COLOR(int attr, int fg, int bg)
 {
@@ -151,8 +154,8 @@ void SkWinCore::LOG_FULL_DUNGEON_INFO()
 
 	printf("Byte-size for ObjectID = %d (%d-bits)\n", sizeof(OID_T), sizeof(OID_T)*8);
 	printf("OID_T shift = %d\n", OID_SIZE_BITSHIFT);
-	printf("OID NULL = %08X\n", OBJECT_NULL);
-	printf("OID EOM  = %08X\n", OBJECT_END_MARKER);
+	printf("OID NULL = %08X\n", OBJECT_NULL.w);
+	printf("OID EOM  = %08X\n", OBJECT_END_MARKER.w);
 	
 	printf("****************************************************\n");
 	printf("LOG FULL DUNGEON INFO\n");
@@ -862,7 +865,7 @@ void SkWinCore::DEBUG_HELP_WRITER(const char* sinfo, const void* xdata, unsigned
 void SkWinCore::DEBUG_HELP_DISPLAY_STACK(i16 iMapX, i16 iMapY, i16 iMapLevel)
 {
 	U16 xGroundItem = 0;
-	i16 index = GET_OBJECT_INDEX_FROM_TILE(iMapX, iMapY);
+	U32 index = (GET_OBJECT_INDEX_FROM_TILE(iMapX, iMapY)).w;
 	ObjectID xFirstObject = GET_TILE_RECORD_LINK(iMapX, iMapY);
 	ObjectID xCurrentObject = xFirstObject;
 	U16 iObjectDirection = 0;

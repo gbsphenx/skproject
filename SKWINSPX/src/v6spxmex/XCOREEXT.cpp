@@ -38,15 +38,18 @@ using namespace kkBitBlt;
 
 //==============================================================================
 
-void SkWinCore::READ_DUNGEON_STRUCTURE_EXTENDED_GAME(X16 isNewGame, int iDungeonMode)
+int SkWinCore::READ_DUNGEON_STRUCTURE_EXTENDED_GAME(X16 isNewGame, int iDungeonMode)
 {
 	if (isNewGame == 1 && skwin.dung == _OPTION_DUNGEON_DMX_)
 		return DUNGEON_CREATE_BLANK();
+#ifdef __SK_EXTENDED_SKWIN_V6__
 	if (isNewGame == 1 && skwin.dung == _OPTION_DUNGEON_BWY_BW_)
 		return READ_DUNGEON_STRUCTURE_BW(isNewGame);
 	else if (isNewGame == 1 && skwin.dung == _OPTION_DUNGEON_EOB_EOB1_)
 		return READ_DUNGEON_STRUCTURE_EOB(isNewGame);
 		//return INIT_BLANK_DUNGEON(isNewGame);
+#endif // __SK_EXTENDED_SKWIN_V6__
+	return 0;
 }
 
 //==============================================================================

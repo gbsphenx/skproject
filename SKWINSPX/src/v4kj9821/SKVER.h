@@ -11,6 +11,9 @@
 //#define _BUILD_DATE_	__DATE__
 //#define _BUILD_TIME_	__TIME__
 
+// Activate this for preparing public release version
+#define __SKWIN_PUBLIC_VERSION__ 1
+#define __SKWIN_RELEASE_DATE__ "2024-10-27"
 
 //------------------------------------------------------------------------------
 
@@ -30,7 +33,7 @@
 #define DM2_EXTENDED_LIGHT		0	// Some custom day/night light for outdoors - EXPERIMENTAL : not working because palette is applied over global viewport
 //#define DM2_INDIRECT_DATABASE	0	// Use an indirection table to increase item usage to its max : 65536 - NOT IMPLEMENTED YET
 
-#define DM2_DEBUG_SUPER_MODE	1	// If on, champions at start will have big stats. Debug/test purpose.
+//#define DM2_DEBUG_SUPER_MODE	1	// If on, champions at start will have big stats. Debug/test purpose.
 
 //------------------------------------------------------------------------------
 

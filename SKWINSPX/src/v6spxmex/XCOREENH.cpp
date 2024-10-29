@@ -28,7 +28,7 @@ using namespace kkBitBlt;
 #ifdef _USE_SDL
 #include <SkSDL.h>
 #endif // _USE_SDL
-#ifdef __DJGPP__
+#if defined(__DJGPP__) || defined(__MINGW__)
 #include <SkDOS.h>
 #include <stdlib.h> // rand note: putting stdlib here and not right after stdafx prevents a bunch of conflicts with min/max macros
 #endif // __DJGPP__
@@ -127,7 +127,6 @@ void SkWinCore::SET_NEXT_RECORD_LINK(ObjectID rlSourceObject, ObjectID rlObjectT
 // SPX: Help function to get any Weapon to Misc item, generally from a wall
 ObjectID SkWinCore::GET_WALL_TILE_ANY_TAKEABLE_ITEM_RECORD(U16 iMapX, U16 iMapY, U16 iDirection)
 {
-	ENTER(0);
 	ObjectID xTakenObject = OBJECT_NULL;
 	ObjectID xCurrentObject = GET_TILE_RECORD_LINK(iMapX, iMapY);
 //	while (xCurrentObject.Dir() != iDirection || xCurrentObject.DBType() < dbWeapon || xCurrentObject.DBType() >= dbMissile)
@@ -143,6 +142,19 @@ ObjectID SkWinCore::GET_WALL_TILE_ANY_TAKEABLE_ITEM_RECORD(U16 iMapX, U16 iMapY,
 	return xTakenObject;
 }
 
+// SPX: Help function to get number of items within wall (alcove) in order to get some alcove actuators to trigger when expected
+U16 SkWinCore::GET_TILE_COUNT_TAKEABLE_ITEMS(U16 iMapX, U16 iMapY, U16 iDirection)
+{
+	U16 iNbItemCount = 0;
+	ObjectID xTakenObject = OBJECT_NULL;
+	ObjectID xCurrentObject = GET_TILE_RECORD_LINK(iMapX, iMapY);
+	while (xCurrentObject != OBJECT_END_MARKER && xCurrentObject != OBJECT_NULL) {
+		if (xCurrentObject.Dir() == iDirection && xCurrentObject.DBType() >= dbWeapon && xCurrentObject.DBType() < dbMissile)
+			iNbItemCount ++;
+		xCurrentObject = GET_NEXT_RECORD_LINK(xCurrentObject);
+	}
+	return iNbItemCount;
+}
 
 //==============================================================================
 

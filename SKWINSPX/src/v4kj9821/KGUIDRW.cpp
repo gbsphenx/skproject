@@ -4,6 +4,13 @@
 #include <KCORE.H>
 #include <SKDEBUG.H>
 
+#if defined(__DJGPP__) || defined (__MINGW__)
+
+#define min(A,B) ((A < B) ? A : B)
+#define max(A,B) ((A < B) ? B : A)
+
+#endif // __DJGPP__
+
 //^0B36:131A
 void SkWinCore::DRAW_SIMPLE_STR(sk3f6c *ref, Bit16u rectno, Bit16u clr1, Bit16u clr2, Bit8u *str)
 {
@@ -3258,11 +3265,13 @@ U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, Bit16u xx)
 		i16 statValue = 0;
 		U8 strMoneyValue[11];
 		U8* pstr;
+		U8 iNbCharges = 0;
 
 		if (!SkCodeParam::bUseDM2ExtendedMode)
 			return 1;
 
-		printf("Number of charges = %d\n", ADD_ITEM_CHARGE(si, 0));
+		iNbCharges = ADD_ITEM_CHARGE(si, 0);
+		//printf("Number of charges = %d\n", iNbCharges);
 
 		// Money value
 		memset(strMoneyValue, 0, 10);
@@ -3286,6 +3295,23 @@ U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, Bit16u xx)
 			yy += 2;
 		yy += ((bp10 + (value != 0 ? 1 : 0))*12);
 		
+		// Number of charges
+		if (iNbCharges != 0)
+		{
+			sprintf(str, "CHARGES: %d", iNbCharges);
+			DRAW_STRONG_TEXT(
+				_4976_4c16,
+				-1,
+				_4976_00f6,
+				100,
+				yy,
+				glbPaletteT16[COLOR_WHITE],
+				glbPaletteT16[COLOR_BLACK] | 0x4000,
+				(Bit8u*) str
+				);
+			yy += 7;
+		}
+
 		// Bonus display
 		for (U8 bonus = GDAT_ITEM_STATS_FOOD_VALUE; bonus <= GDAT_ITEM_STATS_MISSILE_SPELL; bonus++)
 		{

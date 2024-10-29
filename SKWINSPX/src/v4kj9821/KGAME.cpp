@@ -2044,7 +2044,7 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 	ObjectID bp34 = OBJECT_NULL;
 	//^2FCF:1A0C
 	ObjectID bp0e = GET_TILE_RECORD_LINK(xx, yy);
-	printf("Click on wall : ---------------\n");
+	//printf("Click on wall : ---------------\n");
 
 	// SPX: Custom script compatibility: call event on wall click
 	LUA_CALL_SCRIPT(_EXP_SCRIPT__ANY_EVENT_, glbPlayerMap, xx, yy, dir);
@@ -2065,8 +2065,10 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 			xTopActuators[bp10] = bp0e;
 		}
 	}
+#ifndef __SKWIN_PUBLIC_VERSION__
 	printf("Top objects on sides N/E/S/W : %04X %04X %04X %04X\n", 
 		xTopActuators[0].w, xTopActuators[1].w, xTopActuators[2].w, xTopActuators[3].w);
+#endif // __SKWIN_PUBLIC_VERSION__
 	bp0e = GET_TILE_RECORD_LINK(xx, yy);
 
 	//^2FCF:1A1C
@@ -2079,11 +2081,11 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 			continue;
 		//^2FCF:1A35
 		if (IS_WALL_ORNATE_ALCOVE_FROM_RECORD(bp0e) != 0) {
-			printf("Click on wall %04X (dir=%d): this is a wall alcove!\n", bp0e, bp10);
+			//printf("Click on wall %04X (dir=%d): this is a wall alcove!\n", bp0e, bp10);
 			// SPX: for DM1 compatibility, we check if this actuator is the top actuator to consider its effect as alcove
 			if (SkCodeParam::bDM1Mode && bp0e != xTopActuators[bp10])
 			{
-				printf("DM1Mode: wall alcove effect is rejected!\n");
+				//printf("DM1Mode: wall alcove effect is rejected!\n");
 				// BUT we want to check its actuator code, so that we have to jump further
 				goto checkactuator;
 			}
@@ -2134,7 +2136,7 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 		}
 		//^2FCF:1AF0
 		if (IS_WALL_ORNATE_SPRING(bp0e) != 0) {
-			printf("Click on wall %04X (dir=%d): this is a wall fountain!\n", bp0e, bp10);
+			//printf("Click on wall %04X (dir=%d): this is a wall fountain!\n", bp0e, bp10);
 			//^2FCF:1B00
 			if (si == OBJECT_NULL) {
 				//^2FCF:1B05
@@ -2201,7 +2203,7 @@ checkactuator:
 			U16 iRevert = bp04->RevertEffect();
 			U16 iOnce = bp04->OnceOnlyActuator();
 			U16 iDisabled = bp04->IsDisabled();
-			printf("Clicking on wall Actuator %04X (dir=%d) ACT=%02d (1=%d DIS=%d) action=%04x (R=%d) data=%04x status=%d toggler=%d\n", bp0e, bp10, bp16, iOnce, iDisabled, bp1a, iRevert, bp18, iStatus, iToggler);
+			//printf("Clicking on wall Actuator %04X (dir=%d) ACT=%02d (1=%d DIS=%d) action=%04x (R=%d) data=%04x status=%d toggler=%d\n", bp0e, bp10, bp16, iOnce, iDisabled, bp1a, iRevert, bp18, iStatus, iToggler);
 			//^2FCF:1C04
 			//if (glbChampionLeader == -1 && bp16 != 0x7e)
 			if (glbChampionLeader == -1 && (bp16 != ACTUATOR_TYPE_RESURECTOR && bp16 != ACTUATOR_TYPE_CHAMPION_MIRROR)) // SPX : Add 0x7F
@@ -2289,7 +2291,7 @@ _1cb6:
 
 				// SPX: addition for DM1 retrocompatibility
 				case ACTUATOR_TYPE_DM1_ITEM_EATER: // 0x04 -> 'Activator, item eater
-					printf("ITEM EATER: expected = %d / in hand = %d\n", bp18, GET_DISTINCTIVE_ITEMTYPE(si));
+					//printf("ITEM EATER: expected = %d / in hand = %d\n", bp18, GET_DISTINCTIVE_ITEMTYPE(si));
 					bp2c = (GET_DISTINCTIVE_ITEMTYPE(si) == bp18) ? 1 : 0;
 					if (bp2c == 0) // not the expected item
 						break;
@@ -2315,7 +2317,7 @@ _1cb6:
 				case ACTUATOR_TYPE_DM1_WALL_TOGGLER: // 0x0D -> 'Wall toggler (Torch holder)
 					{
 						U16 iInvokeActuator = 0;
-						printf("WALL TOGGLER: expected = %d / in hand = %d\n", bp18, GET_DISTINCTIVE_ITEMTYPE(si));
+						//printf("WALL TOGGLER: expected = %d / in hand = %d\n", bp18, GET_DISTINCTIVE_ITEMTYPE(si));
 						// if hand is empty, player will get the item over the actuator, if it is on top
 						// else, if item in hand matches the expected item, it will go into the wall
 						//if (xTopActuators[bp10] == bp0e && GET_DISTINCTIVE_ITEMTYPE(si) == 511) // empty hand
@@ -2607,7 +2609,7 @@ _1d4d:
 			//^2FCF:20FB
 			bp0c = GET_ADDRESS_OF_RECORD2(bp0e);
 			xSimpleActuator = (SimpleActuator*) bp0c;
-			printf("Current Simple Actuator GFX = %d (%02x)\n", xSimpleActuator->graphism, xSimpleActuator->graphism);
+			//printf("Current Simple Actuator GFX = %d (%02x)\n", xSimpleActuator->graphism, xSimpleActuator->graphism);
 			//^2FCF:210A
 			if (bp0c->TextMode() != 1)
 				//^2FCF:211B

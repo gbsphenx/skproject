@@ -134,6 +134,7 @@ BEGIN
         MENUITEM "Player footstep sound",       40073
         MENUITEM "Super Eye Info",              40077
         MENUITEM "Break door",                  40070
+        MENUITEM "Infinite spell",              40081
     END
     POPUP "?", HELP
     BEGIN

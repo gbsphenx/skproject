@@ -5,7 +5,7 @@
 #include <fcntl.h> // _O_BINARY etc...
 
 // SPX: that part for non Microsoft compiler
-#ifdef __DJGPP__
+#if defined(__DJGPP__) || defined (__MINGW__)
 #include <sys/stat.h>
 #include <unistd.h>
 #ifndef _S_IWRITE

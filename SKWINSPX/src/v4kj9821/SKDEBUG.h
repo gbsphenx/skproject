@@ -60,7 +60,7 @@
 void SkwinDEBUG (int lv, LPCSTR psz, ...);
 #elif defined(_USE_SDL)
 void SkwinDEBUG (int lv, const char* psz, ...);
-#elif defined(__DJGPP__)
+#elif defined(__DJGPP__) || defined(__MINGW__)
 void SkwinDEBUG (int lv, const char* psz, ...);
 #endif //
 
@@ -73,7 +73,7 @@ void SkwinDEBUG (int lv, const char* psz, ...);
 #elif defined(_USE_SDL)
 	#define Unr() Unreachable(__FUNCTION__, __FILE__, __LINE__)
 	void Unreachable(const char *funct, const char *file, int line);
-#elif defined(__DJGPP__)
+#elif defined(__DJGPP__) || defined(__MINGW__)
 	#define Unr() Unreachable(__FUNCTION__, __FILE__, __LINE__)
 	void Unreachable(const char *funct, const char *file, int line);
 #endif

@@ -27,8 +27,8 @@ bool SkCodeParam::bUnlimitedCharges = false;
 bool SkCodeParam::bInfiniteSpells = false;
 bool SkCodeParam::bNoTimer = false;
 
-bool SkCodeParam::bMIDIMusicEnabled = false;
-bool SkCodeParam::bWAVMusicEnabled = true;
+bool SkCodeParam::bMIDIMusicEnabled = true;
+bool SkCodeParam::bWAVMusicEnabled = false;
 
 bool SkCodeParam::bUseScrollIDType = false;
 
@@ -37,15 +37,16 @@ bool SkCodeParam::bForceOrnateSound = true;
 bool SkCodeParam::bFullLight = false;
 bool SkCodeParam::bForceSaveGameReadOK = true;
 
+
+bool SkCodeParam::bUseExtendedSound = false;
+
 #if (DM2_EXTENDED_MODE == 0)
 bool SkCodeParam::bUseVaryingPlaybackFrequency = false;
 bool SkCodeParam::bUseMultilanguageExtended = false;
-bool SkCodeParam::bUseExtendedSound = false;
 bool SkCodeParam::bUsePlayerWalkSound = false;
 #elif (DM2_EXTENDED_MODE == 1)
 bool SkCodeParam::bUseVaryingPlaybackFrequency = false;
 bool SkCodeParam::bUseMultilanguageExtended = true;
-bool SkCodeParam::bUseExtendedSound = true;
 bool SkCodeParam::bUsePlayerWalkSound = true;
 #endif // DM2_DEBUG_SUPER_MODE
 

@@ -59,7 +59,7 @@
 #define ID_DUNGEON_DM2_SKULLKEEP_EXTENDED 40079
 //#define ID_VERSION_NO_SPECIFIC          40080
 #define ID_DEBUG_INFINITE_SPELL           40081
-//#define ID_VERSION_V2                   40082
+#define ID_DEBUG_NO_TIMER                 40082
 //#define ID_VERSION_V3                   40083
 //#define ID_VERSION_V4                   40084
 //#define ID_VERSION_V5_CLASSIC           40085

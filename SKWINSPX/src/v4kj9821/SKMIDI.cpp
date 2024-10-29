@@ -16,7 +16,7 @@
 int iDungeonGame = 0;
 
 
-#ifndef __DJGPP__
+#if !defined(__DJGPP__) && !defined(__MINGW__)
 
 
 //#define MAX_BUFFER_SIZE (512 * 12)

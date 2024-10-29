@@ -1,6 +1,6 @@
 //Microsoft Developer Studio generated resource script.
 //
-//#include <skver.h>
+#include <skver.h>
 #include <resource.h>
 
 #define APSTUDIO_READONLY_SYMBOLS
@@ -125,12 +125,15 @@ BEGIN
     POPUP "(Extra)"
     BEGIN
         MENUITEM "Enable ""double step"" movement", 40052
-        MENUITEM "Turn off fog effect",         40039
         MENUITEM "Extra sounds",                40072
+#ifndef __SKWIN_PUBLIC_VERSION__        
+        MENUITEM "Turn off fog effect",         40039
         MENUITEM "Player footstep sound",       40073
         MENUITEM "Super Eye Info",              40077
         MENUITEM "Break door",                  40070
-        MENUITEM "Infinite spell",              40081        
+        MENUITEM "Infinite spell",              40081
+        MENUITEM "Turn off timer invocation",   40082
+#endif // __SKWIN_PUBLIC_VERSION__        
     END
     POPUP "?", HELP
     BEGIN
@@ -165,7 +168,7 @@ BEGIN
                     IDC_STATIC,7,79,265,8
     LTEXT           "with: David Simon, Dan Hewitt, Dennis Walker",
                     IDC_STATIC,7,89,265,8
-    LTEXT           "skwin (2024-10-03)",IDC_STATIC,7,106,63,8
+    LTEXT           "skwin (2024-10-27)",IDC_STATIC,7,106,63,8
     LTEXT           "An unofficial experimental port. started by kentaro-k.21. continued by sphenx.",
                     IDC_STATIC,7,118,184,22
     DEFPUSHBUTTON   "OK",IDOK,115,148,50,14

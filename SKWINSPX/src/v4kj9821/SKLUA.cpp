@@ -34,8 +34,7 @@ SkWinCore*	xCurrentGame = NULL;
 //------------------------------------------------------------------------------
 
 // no LUA there ...
-#ifdef __DJGPP__
-
+#if defined(__DJGPP__) || defined(__MINGW__)
 #define lua_State void
 
 float SkWinLua_Init_Lua(SkWinCore* xSkCore, char* sVersionName)

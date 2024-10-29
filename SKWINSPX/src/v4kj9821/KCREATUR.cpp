@@ -12,7 +12,7 @@
 
 #include <KAITABLE.h>	// for dAITableGenuine (hard coded AI table)
 
-#ifdef __DJGPP__
+#if defined(__DJGPP__) || defined (__MINGW__)
 #define min(A,B) ((A < B) ? A : B)
 #define max(A,B) ((A < B) ? B : A)
 #endif

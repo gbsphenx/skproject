@@ -24,7 +24,7 @@ using namespace kkBitBlt;
 #ifdef _USE_SDL
 #include <SkSDL.h>
 #endif // _USE_SDL
-#ifdef __DJGPP__
+#if defined(__DJGPP__) || defined(__MINGW__)
 #include <SkDOS.h>
 #endif // __DJGPP__
 
@@ -48,7 +48,6 @@ using namespace kkBitBlt;
 #include <strings.h>
 #include <time.h>
 #include <stdlib.h>
-
 
 #undef inportb
 #undef outportb
@@ -77,150 +76,34 @@ int getdrive()
 #endif // __DJGPP__
 
 
-// SPX: Functions supposed for MIDI playing from SKWIN_DM2_PCDOS
-/*
-#define MIDIPATHNAME "./DATA/%02x.hmp.mid"
+#ifdef __MINGW__
+#include <strings.h>
+#include <time.h>
+#include <stdlib.h>
+#undef inportb
+#undef outportb
+#define outportb(PORT,VAL)
+#define inportb(PORT,VAL)
+#ifndef _stricmp
+#define _stricmp strcasecmp
+#endif // _stricmp
 
-void c_midi::do_music(i16 nr)
-{
-  char songname[30];
-  sprintf(songname, MIDIPATHNAME, nr);
-  thesong = load_midi(songname);
-  if (thesong)
-    play_midi(thesong, true); // true means: looped
-}
+#ifndef _exit
+#define _exit exit
+#endif // _exit
 
-void c_midi::stop_music(void)
-{
-  if (thesong)
-  {
-    destroy_midi(thesong);
-    thesong = NULL;
-  }
-}
+int getdrive() { return 3; }
 
-void c_midi::set_midi_volume(i16 v)
-{
-  set_volume(-1, v);
-}
+#ifndef _getdrive
+#define _getdrive getdrive
+#endif // _getdrive
 
-void c_midi::init_midi(void)
-{
-  allegro_init();
-  if (install_sound(-1, MIDI_AUTODETECT, NULL) != 0)
-    throw(THROW_DMABORT);
-  set_midi_volume(128);
-}
+#define min(A,B) ((A < B) ? A : B)
+#define max(A,B) ((A < B) ? B : A)
 
-static void R_4FF39(x16 eaxw)
-{
-  if (eaxw < con(0x8))
-  {
-    ddata.v1da374[eaxw].w4 = con(0x0);
-    ddata.v1da374[eaxw].l0 = con(0x0);
-  }
-}
+#endif // __MINGW__
 
-static void DM2DOS_R_B65(void)
-{
-  if (ddata.v1d14c2 && ddata.v1d14d0)
-  {
-    // R_50012(ddata.v1dff2c); // DM's MIDI extracted
-    DM2DOS_R_4FF39(ddata.v1dff2c);
-    ddata.v1d14d0 = false;
-    ddata.v1d14cc = false;
-    ddata.v1d14ca = con(0x0);
-  }
-}
 
-static void DM2DOS_R_A0E(x8 eaxb)
-{
-  x8 vb_00;
-
-  vb_00 = eaxb;
-  if (ddata.v1d14c2 && vb_00 != 0 && ddata.v1dff86 > con(0x0))
-  {
-    DM2DOS_R_B65();
-    if (dm2sound.sndptr6 == NULL)
-      return;
-    x32 longrg1 = SKW_QUERY_GDAT_ENTRY_IF_LOADABLE(con(0x4), CUTLX8(con(0x3)), con(0x0), vb_00) ? 1 : 0;
-#if 1 // TODO
-    dm2sound.stop_music();
-#endif
-    if (longrg1 == con(0x0))
-      return;
-#if 1 // TODO
-    dm2sound.do_music(unsignedword(vb_00));
-    return;
-#else
-  $  x32 longrg6 = unsignedlong(SKW_QUERY_GDAT_ENTRY_DATA_LENGTH(con(0x4), con(0x3), con(0x0), vb_00));
-  $  SKW_COPY_MEMORY(SKW_QUERY_GDAT_ENTRY_DATA_PTR(con(0x4), con(0x3), con(0x0), vb_00), longrg6, dm2sound.sndptr6);
-  $  ddata.v1dfea8 = DSZERO;
-  $  ddata.v1dfea4 = dm2sound.sndptr6;
-  $  ddata.v1dfeb0 = con(0x0);
-  $  ddata.v1dfeac = con(0x0);
-  $  parl01 = DSZERO;
-  $  parp00 = &ddata.v1dff2c;
-  $  RG2P = ddata.v1d1378;
-  $  RG1P = &ddata.v1dfea4;
-  $  RG1L = con(0x0); // was calling R_4F75E, result 0x0 or 0xe
-  $  ddata.v1dff34 = RG1L;
-  $  if (RG1L != con(0x0)) return;
-  $  RG1L = ddata.v1dff2c;
-  $  RG1L = con(0x0); // TODO old call of R_4FF83, result can be con(0xb) to, removed, MIDI!!
-  $  ddata.v1dff34 = RG1L;
-  $  if (RG1L != con(0x0)) return;
-  $  RG1L = ddata.v1dff2c;
-  $  // R_520C3(RG1L, con(0x7f)); // DM's MIDI stuff extracted
-  $  RG1L = ddata.v1dff2c;
-  $  // R_51F94(RG1L); // DM's MIDI stuff extracted
-  $  ddata.v1d14d4 = true;
-  $  ddata.v1d14d0 = true;
-#endif
-  }
-//M_B27:
-#if 0
-$  ddata.v1d14d8 = unsignedword(vb_00);
-#endif
-//M_A05:
-}
-
-void DM2DOS_R_BA7(x16 eaxw)
-{
-  if (!ddata.v1d14c2 || !ddata.v1d14da)
-    return;
-  if (ddata.v1d14cc)
-  {
-    // DM2DOS_R_51D42(ddata.v1dff2c);  DM's MIDI stuff extracted. TODO: check what it wants to do here
-    ddata.v1d14cc = false;
-  }
-  x32 longrg1 = signedlong(ddata.v1d14ca);
-  if (longrg1 <= con(0x1))
-  {
-    if (longrg1 == con(0x1))
-    {
-      ddata.v1d1512 = ddata.v1dff8a;
-      DM2DOS_R_A0E(ddata.v1d1512);
-      ddata.v1d14ca = con(0x0);
-      return;
-    }
-  }
-  else
-  {
-    // DM2DOS_R_520C3(ddata.v1dff2c, unsignedlong(CUTX8(ddata.v1d14ca)); // DM's MIDI stuff extracted TODO: check what it wants to do here
-    ddata.v1d14ca--;
-  }
-  ddata.v1dff8a = table1410ec[eaxw];
-  if (ddata.v1d1512 != ddata.v1dff8a)
-  {
-    if (!ddata.v1d14d0 || ddata.v1d14ca != con(0x0))
-      DM2DOS_R_A0E(ddata.v1dff8a);
-    else
-      ddata.v1d14ca = con(0x7f);
-    ddata.v1d1512 = ddata.v1dff8a;
-  }
-}
-*/
 
 // SPX: New procedures here
 
@@ -948,7 +831,7 @@ CString SkWinCore::getRecordNameOf(ObjectID recordLink)
 void SkWinCore::printDistMap(int mapno, DistMapTile const (* const *bp1a)[1][32])
 {
 	if (!bp1a[mapno]) return;
-#ifndef __DJGPP__
+#if !defined(__DJGPP__) && !defined(__MINGW__)
 	CONSOLE_SCREEN_BUFFER_INFO info;
 	ATLVERIFY(GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info));
 
@@ -2283,8 +2166,10 @@ GenericRecord *SkWinCore::GET_ADDRESS_OF_RECORD(ObjectID rl)
 		static int countBadRecords = 0;
 		static GenericRecord gr;
 		gr.w0 = OBJECT_END_MARKER;
+#ifndef __MINGW__
 	SkD((DLV_BUGHERE, "DEBUG: %s is bad record %02d (RL = %04X DB=%d IDX=%04d)\n"
 		, static_cast<LPCSTR>(getRecordNameOf(rl)), countBadRecords, rl, rl.RealDBType(), rl.DBIndex() ));
+#endif // __MINGW__
 		countBadRecords++;
 		//ATLASSERT(countBadRecords < 1024);
 		return &gr;
@@ -9734,8 +9619,8 @@ _0bae:
 								X16 bp12 = si;
 								//^19F0:0BD4
 								// SPX: This part seems to work for multispell casters : Vexirks & Dragoth etc ..
-								if(SkCodeParam::bUseIngameDebug)
-									printf("BP12 = %04X, %d\n", bp12, bp12);
+//								if(SkCodeParam::bUseIngameDebug)
+//									printf("BP12 = %04X, %d\n", bp12, bp12);
 								switch (bp12) {
 									case AI_ATTACK_FLAGS__PUSH_BACK:	// 0x0002 Knock back
 										//^19F0:0BED
@@ -9753,41 +9638,41 @@ _0bae:
 									case AI_ATTACK_FLAGS__FIREBALL:	// 0x0010	- 16
 										//^19F0:0C14
 //											bp04 = i16(0xff80);		// fireball
-										bp04 = i16(OBJECT_EFFECT_FIREBALL);
+										bp04 = i16(OBJECT_EFFECT_FIREBALL.w);
 										goto _0c4a;
 									case AI_ATTACK_FLAGS__DISPELL:	// 0x0020	- 32
 										//^19F0:0C1B
 //											bp04 = i16(0xff83);		// dispell
-										bp04 = i16(OBJECT_EFFECT_DISPELL);
+										bp04 = i16(OBJECT_EFFECT_DISPELL.w);
 										goto _0c4a;
 									case AI_ATTACK_FLAGS__LIGHTNING:	// 0x0040	- 64
 										//^19F0:0C22
 //											bp04 = i16(0xff82);		// lightning
-										bp04 = i16(OBJECT_EFFECT_LIGHTNING);
+										bp04 = i16(OBJECT_EFFECT_LIGHTNING.w);
 										goto _0c4a;
 									case AI_ATTACK_FLAGS__POISON_CLOUD:	// 0x0080	- 128
 										//^19F0:0C29
 //											bp04 = i16(0xff87);		// poison cloud
-										bp04 = i16(OBJECT_EFFECT_POISON_CLOUD);
+										bp04 = i16(OBJECT_EFFECT_POISON_CLOUD.w);
 										goto _0c4a;
 									case AI_ATTACK_FLAGS__POISON_BOLT:	// 0x0100	- 256
 										//^19F0:0C30
 //											bp04 = i16(0xff86);		// poison bolt
-										bp04 = i16(OBJECT_EFFECT_POISON_BOLT);
+										bp04 = i16(OBJECT_EFFECT_POISON_BOLT.w);
 										goto _0c4a;
 									case AI_ATTACK_FLAGS__PUSH_SPELL:	// 0x0400	- 1024
 										//^19F0:0C37
 //											bp04 = i16(0xff89);		// push
-										bp04 = i16(OBJECT_EFFECT_PUSH);
+										bp04 = i16(OBJECT_EFFECT_PUSH.w);
 										goto _0c4a;
 									case AI_ATTACK_FLAGS__PULL_SPELL:	// 0x0800	- 2048
 										//^19F0:0C3E
 //											bp04 = i16(0xff8a);		// pull
-										bp04 = i16(OBJECT_EFFECT_PULL);	
+										bp04 = i16(OBJECT_EFFECT_PULL.w);	
 										goto _0c4a;
 									case AI_ATTACK_FLAGS__POISON_BLOB:	// 0x0200	- 512
 //											bp04 = i16(0xff81);		// what's this??
-										bp04 = i16(OBJECT_EFFECT_POISON_BLOB);		// what's this??
+										bp04 = i16(OBJECT_EFFECT_POISON_BLOB.w);
 										//SPX: It does look like this effect doesn't work (no image)
 										// I guess in actual code, we never reach this line.
 										//^19F0:0C4A
@@ -15466,7 +15351,7 @@ void SkWinCore::_44c8_0b8d(U16 src, U16 dst, U16 pitch)
 	const U8 *dssi = _4976_5e64;
 	dssi += src;
 	//^44C8:0BA9
-#ifdef __DJGPP__
+#if defined(__DJGPP__) || defined(__MINGW__)
 	if ((U32(dssi) & 1) != 0) {	// SPX not sure of the meaning of pointer & 1
 #else
 	if ((U8(dssi) & 1) != 0) {
@@ -15675,6 +15560,7 @@ void SkWinCore::FIRE_BLIT_PICTURE(
 	ATLASSERT(rc->y >= 0);
 	ATLASSERT(rc->cx >= 0);
 	ATLASSERT(rc->cy >= 0);
+	if (!SkCodeParam::bUseSuperInfoEye)	// for some "debug" mode, we bypass the check of rectangles bounds
 	ATLASSERT((0 +rc->x +RUp2(dsticx) * (rc->y +rc->cy -1) +rc->cx) <= (RUp2(dsticx) * dsticy));
 
 #endif
@@ -17896,7 +17782,7 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 						FORMAT_SKSTR(bp0c, bp0116);
 						//^2636:025D
 						SK_STRCAT(bp08, bp0116);
-#ifdef __DJGPP__
+#if defined (__DJGPP__) || defined(__MINGW__)
 						SK_STRCAT(bp08, (const Bit8u *) "\\");
 #endif
 						//^2636:0271
@@ -18155,64 +18041,6 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 						QUERY_GDAT_TEXT(bp12, bp13, bp14, bp0c);
 						break;
 					}
-#if DM2_EXTENDED_MODE == 1
-				// SPX : Addition to handle PC9821
-			/*	case 0x0050:	// .Z080 : GDAT Platform version
-					{
-						const Bit8u *bp0c = (const Bit8u *) "_PC9821";
-						if (skwin.gdat_vers != 0)
-						{
-							FORMAT_SKSTR(bp0c, bp0116);
-							SK_STRCAT(bp08, bp0116);
-							bp04 = bp08 +SK_STRLEN(bp08);
-						}
-						continue;
-					}
-				case 0x0051:	// .Z081 : GDAT Version number
-					{
-						
-						if (skwin.gdat_vers == 3)	// ID_VERSION_V3 CLASSIC
-						{
-							const Bit8u *bpxx = (const Bit8u *) "_V3";
-							FORMAT_SKSTR(bpxx, bp0116);
-							SK_STRCAT(bp08, bp0116);
-							bp04 = bp08 +SK_STRLEN(bp08);
-						}
-						if (skwin.gdat_vers == 4)	// ID_VERSION_V4 CLASSIC
-						{
-							const Bit8u *bpxx = (const Bit8u *) "_V4";
-							FORMAT_SKSTR(bpxx, bp0116);
-							SK_STRCAT(bp08, bp0116);
-							bp04 = bp08 +SK_STRLEN(bp08);
-						}
-						if (skwin.gdat_vers == 6)	// ID_VERSION_V5_CARTOON
-						{
-							const Bit8u *bpxx = (const Bit8u *) "_V5";
-							FORMAT_SKSTR(bpxx, bp0116);
-							SK_STRCAT(bp08, bp0116);
-							bp04 = bp08 +SK_STRLEN(bp08);
-						}
-						continue;
-					}
-				case 0x0052:	// .Z082 : GDAT Style
-					{
-						if (skwin.gdat_vers != 0 && skwin.gdat_vers < 5)
-						{
-							const Bit8u *bp0c = (const Bit8u *) "_CLASSIC";
-							FORMAT_SKSTR(bp0c, bp0116);
-							SK_STRCAT(bp08, bp0116);
-							bp04 = bp08 +SK_STRLEN(bp08);
-						}
-						if (skwin.gdat_vers == 6)		// ID_VERSION_V5_CARTOON
-						{
-							const Bit8u *bp0c = (const Bit8u *) "_CARTOON";
-							FORMAT_SKSTR(bp0c, bp0116);
-							SK_STRCAT(bp08, bp0116);
-							bp04 = bp08 +SK_STRLEN(bp08);
-						}
-						continue;
-					}*/
-#endif // DM2_EXTENDED_MODE
 			}
 			//^2636:024A
 			FORMAT_SKSTR(bp0c, bp0116);
@@ -23964,7 +23792,7 @@ Bit16u SkWinCore::_075f_0af9(i16 u16tileType, i16 xpos, i16 ypos, Bit16u dir, Ob
 				bp2a = 1;	// will explode
 				bp20 = bp20 + 0xFF00;
 				// Some control over
-				bp20 = BETWEEN_VALUE(0xFF80, bp20, 0xFFFF);											
+				bp20 = BETWEEN_VALUE(0xFF80, bp20.w, 0xFFFF);
 				bp28 = bp04->PotionPower();
 				bp1e = si;
 			}
@@ -28646,7 +28474,11 @@ void SkWinCore::GAME_LOOP()
 	if (SkCodeParam::bUseIngameDebug)
 	{
 		U8 message[64];
-		sprintf((char*)message, "RAM = %08d / EMS = %08d\n", glbFreeRAMMemPool, glbFreeEMSMemPool);
+//		sprintf((char*)message, "RAM = %08d / EMS = %08d\n", glbFreeRAMMemPool, glbFreeEMSMemPool);
+		sprintf((char*)message, "SKWIN-9821 (%s) [%s]\n", strVersionNumber, __SKWIN_RELEASE_DATE__);
+#ifdef __DJGPP__
+		sprintf((char*)message, "SKULL-V4 (%s) [%s]\n", strVersionNumber, __SKWIN_RELEASE_DATE__);
+#endif // __DJGPP__
 		DISPLAY_HINT_TEXT(COLOR_YELLOW, message);
 	}
 	//^13AE:005C
@@ -30389,7 +30221,7 @@ int main(int argc, char **argv)
 }
 #endif // _USE_SDL
 
-#if defined(__DJGPP__)
+#if defined(__DJGPP__) || defined (__MINGW__)
 int main(int argc, char **argv)
 {
 	int r = 1;

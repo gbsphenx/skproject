@@ -45,7 +45,7 @@ void CHANGE_CONSOLE_COLOR(int attr, int fg, int bg); // SkWinCore2
 */
 //------------------------------------------------------------------------------
 
-#ifdef __DJGPP__
+#if defined(__DJGPP__) || defined(__MINGW__)
 #include <stack>
 #endif // __DJGPP__
 
@@ -53,7 +53,7 @@ class SkWinCore
 {
 
 public:
-#if defined(_USE_MFC80) || defined(_USE_MFC60) || defined(_USE_SDL) || defined(__DJGPP__)
+#if defined(_USE_MFC80) || defined(_USE_MFC60) || defined(_USE_SDL) || defined(__DJGPP__) || defined(__MINGW__)
 	// 
 	std::stack<U32> vecLowerAlloc, vecUpperAlloc;
 	// 
@@ -982,6 +982,7 @@ public:
 
 // SPX: Special procedures
 	bool INIT_RANDOM();
+	int READ_DUNGEON_STRUCTURE_EXTENDED_GAME(X16 isNewGame, int iDungeonMode);
 	int READ_DUNGEON_STRUCTURE_BW(X16 isNewGame);
 	int READ_DUNGEON_STRUCTURE_EOB(X16 isNewGame);
 	int READ_DUNGEON_STRUCTURE_EOB__OLD(X16 isNewGame);
@@ -1959,7 +1960,7 @@ protected:
 	ObjectID ALLOC_NEW_DBITEM(Bit16u itemspec);
 	Bit8u GET_WALL_DECORATION_OF_ACTUATOR(Actuator *ref);	
 	Bit8u GET_FLOOR_DECORATION_OF_ACTUATOR(Actuator *ref);
-	Bit16u GET_DM1_DISTINCTIVE_ITEMTYPE(ObjectID recordLink);	// SPX DM1 retrocompatibiliyu
+	Bit16u GET_DM1_DISTINCTIVE_ITEMTYPE(ObjectID recordLink);	// SPX DM1 retrocompatibility
 	Bit16u GET_DISTINCTIVE_ITEMTYPE(ObjectID recordLink);
 	void INVOKE_ACTUATOR(Actuator *ref, Bit16u actionType, i16 delayPlus);
 	U16 _1c9a_0694(ObjectID *ref, void *pv);	

@@ -239,6 +239,7 @@ namespace DMEncyclopaedia {
 		}
 
 		operator U16() const { return w; }
+		
 
 		void ClearDir() {
 			w &= 0x3fff;
@@ -331,6 +332,7 @@ namespace DMEncyclopaedia {
 
 		operator U32() const { 
 			return w; }
+		
 
 		void ClearDir() {
 			rb.d = 0;

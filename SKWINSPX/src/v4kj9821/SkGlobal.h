@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#ifdef __DJGPP__
+#if defined(__MINGW__) || defined(__DJGPP__)
 #include <stdio.h> // for FILE
 #endif
 
@@ -20,13 +20,13 @@ using namespace DM2Internal;
 
 
 #if defined(_USE_MFC80) || defined(_USE_MFC60)
-#include "SkMFC.h"
-#include "resource.h"
+#include <SkMFC.h>
+#include <resource.h>
 #endif // defined(_USE_MFC80) || defined(_USE_MFC60)
 
 
 #ifdef _USE_SDL
-#include "SkSDL.h"
+#include <SkSDL.h>
 #endif // _USE_SDL
 
 #if defined(_USE_MFC80) || defined(_USE_MFC60)
@@ -35,13 +35,13 @@ extern CSkWinMFC skwin;
 #ifdef _USE_SDL
 extern CSkWinSDL skwin;
 #endif
-#ifdef __DJGPP__
+#if defined(__DJGPP__) || defined(__MINGW__)
 #include <SkDOS.h>
 extern CSkWinDOS skwin;
 #endif
 
 // In case of non WIN
-#ifdef __DJGPP__
+#if defined(__MINGW__) || defined(__DJGPP__)
 #ifndef LPCSTR
 #define LPCSTR const char*
 #endif // LPCSTR

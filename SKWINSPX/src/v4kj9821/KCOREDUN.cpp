@@ -27,7 +27,7 @@ using namespace kkBitBlt;
 #ifdef _USE_SDL
 #include <SkwinSDL.h>
 #endif // _USE_SDL
-#ifdef __DJGPP__
+#if defined(__DJGPP__) || defined (__MINGW__)
 #include <SkDOS.h>
 #include <stdlib.h> // rand note: putting stdlib here and not right after stdafx prevents a bunch of conflicts with min/max macros
 #endif // __DJGPP__

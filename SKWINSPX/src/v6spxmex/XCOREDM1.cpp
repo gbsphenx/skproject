@@ -307,7 +307,7 @@ SkWinCore::DM1_ROTATE_ACTUATOR_LIST(X16 localActionType, i16 iMapX, i16 iMapY, i
 	{
 		// If ground actuator is [1], then it will be also switched.
 		U16 xGroundItem = 0;
-		i16 index = GET_OBJECT_INDEX_FROM_TILE(iMapX, iMapY);
+		U32 index = (GET_OBJECT_INDEX_FROM_TILE(iMapX, iMapY)).w;
 		if (index != -1)
 			xGroundItem = dunGroundStacks[index];
 

@@ -1341,7 +1341,9 @@ void SkWinCore::ADJUST_SKILLS(U16 player, U16 yy, U16 zz)
 			, getSkillName(di), champion->skills[di]);
 		//sprintf((char*)message, "%s: Map XP Multi = %d; base XP gain = %d, Skill required = %d (main = %d), level of skill = %d | Halve = %d => %d | Map XP = %d\n",
 		//	glbChampionTable[player+1].firstName, xpMapMultiplicator, baseXP, subSkill, mainSkill, bp06, halfBaseXP, halvedXP, afterMapXP, doubleXP);
+#ifndef __SKWIN_PUBLIC_VERSION__        
 		DISPLAY_HINT_TEXT(glbChampionColor[player], message);
+#endif // __SKWIN_PUBLIC_VERSION__
 
 		consolePlayerColor = consolePlayerColorsTab[player];
 		sprintf((char*)message, "%7s: Base XP = %03d [%s][%s] Skill Level = %d || Halved? %d => %d XP || Map XP modified = %d => %d XP || Doubled? %d => %d XP (final) || Total result XP = %d (%s) - %d (%s)\n",
@@ -2011,8 +2013,10 @@ U16 SkWinCore::USE_LUCK_ATTRIBUTE(Champion *ref, U16 xx)
 	memset(message, 0, 256);
 	U8 consolePlayerColorsTab[4] = { LIGHT_GREEN, LIGHT_YELLOW, LIGHT_RED, CYAN };
 	U8 consolePlayerColor = 0;
-	sprintf((char*)message, "USE_LUCK_ATTRIBUTE(%7s, %02d)\n", ref->firstName, xx);
-	DISPLAY_HINT_TEXT(glbChampionColor[0], message);
+	
+//	sprintf((char*)message, "USE_LUCK_ATTRIBUTE(%7s, %02d)\n", ref->firstName, xx);
+//	DISPLAY_HINT_TEXT(glbChampionColor[0], message);
+
 	consolePlayerColor = consolePlayerColorsTab[player];
 	sprintf((char*)message, "USE_LUCK_ATTRIBUTE(%7s, %02d)\n", ref->firstName, xx);
 	CHANGE_CONSOLE_COLOR(BRIGHT, consolePlayerColor, BLACK);

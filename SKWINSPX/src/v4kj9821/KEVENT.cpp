@@ -2897,7 +2897,7 @@ void SkWinCore::PROCESS_TIMER_AMBIENT_SOUND(Timer *ref)
 {
 	ENTER(0);
 	// Play sound for rain ! 
-	SkD((1, "Process Timer Ambient Sound >> \n"));
+	SkD((DLV_DBG_RAIN, "Process Timer Ambient Sound >> \n"));
 	
 
 	U16 rainLevel = 0;
@@ -2924,7 +2924,7 @@ void SkWinCore::PROCESS_TIMER_AMBIENT_SOUND(Timer *ref)
 	}*/
 
 	//static int iRainSoundCount = 0;
-	SkD((1, "Tick %d / Playing Rain sound %02x ! (rain level = %d, rain strength = %d) | Map: %d / GfxSet: %d\n",
+	SkD((DLV_DBG_RAIN, "Tick %d / Playing Rain sound %02x ! (rain level = %d, rain strength = %d) | Map: %d / GfxSet: %d\n",
 		glbGameTick, iSoundID, rainLevel, glbRainStrength, glbPlayerMap, glbMapGraphicsSet));
 	
 	// Generate sound
