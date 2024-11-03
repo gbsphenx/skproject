@@ -1,7 +1,7 @@
 #include <StdAfx.h>	// Required for MVC6 compilation
 
 #include <SKVER.H>
-#include <conio.h> // getch
+//#include <conio.h> // getch
 
 #include <SkParam.h>
 #include <SkDebug.h>
@@ -9,6 +9,8 @@
 #include <KCORE.H>
 #include <SkMIDI.h>
 #include <SkLUA.h>
+
+#include <stdlib.h>
 
 //--- Common part with A.cpp
 using namespace DMEncyclopaedia;
@@ -76,7 +78,7 @@ int getdrive()
 #endif // __DJGPP__
 
 
-#ifdef __MINGW__
+#if defined(__MINGW__) || defined(__LINUX__)
 #include <strings.h>
 #include <time.h>
 #include <stdlib.h>
@@ -831,7 +833,7 @@ CString SkWinCore::getRecordNameOf(ObjectID recordLink)
 void SkWinCore::printDistMap(int mapno, DistMapTile const (* const *bp1a)[1][32])
 {
 	if (!bp1a[mapno]) return;
-#if !defined(__DJGPP__) && !defined(__MINGW__)
+#if !defined(__DJGPP__) && !defined(__MINGW__) && !defined(__LINUX__)
 	CONSOLE_SCREEN_BUFFER_INFO info;
 	ATLVERIFY(GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info));
 
@@ -12538,7 +12540,7 @@ void SkWinCore::MessageLoop(bool fBalanceWait, bool fShortWait) {
 	}
 	if (_04bf_0e7a != 0) // if block hardware interruption
 		return;
-#ifdef __DJGPP__
+#if defined(__DJGPP__) || defined(__LINUX__)
 	//printf("Call GetMousePos\n");
 	skwin.GetMousePosButtons(&mice_x, &mice_y, &mice_btn);
 	(this->*_int33_mouse_callback)();
@@ -13725,7 +13727,7 @@ void SkWinCore::COMPRESS_RECTS(i16 *data, Bit32u size, RectTable *zz, Bit8u *(Sk
 		//^098D:101B
 		bp04->b9 = (Bit8u)bp1a;
 		SkD((DLV_RCT, "RCT: COMPRESS_RECTS (%p,(%d,%d,%d,%d))\n"
-			, (Bitu)bp04->pb0, (Bitu)bp04->w4, (Bitu)bp04->w6, (Bitu)bp04->b8, (Bitu)bp04->b9));
+			, (RectTable*)bp04->pb0, (Bit16u)bp04->w4, (Bit16u)bp04->w6, (Bit8u)bp04->b8, (Bit8u)bp04->b9));
 		//^098D:1022
 		bp04++;
 		//^098D:1026
@@ -15353,6 +15355,8 @@ void SkWinCore::_44c8_0b8d(U16 src, U16 dst, U16 pitch)
 	//^44C8:0BA9
 #if defined(__DJGPP__) || defined(__MINGW__)
 	if ((U32(dssi) & 1) != 0) {	// SPX not sure of the meaning of pointer & 1
+#elif defined(__LINUX__)
+	if ((U8((*dssi)%0x100) & 1) != 0) {
 #else
 	if ((U8(dssi) & 1) != 0) {
 #endif
@@ -17775,6 +17779,9 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 					}
 				case 0x0008:	// .Z008
 					{
+#if defined (__LINUX__)
+						continue;
+#else
 						//^2636:01C3
 						//^2636:0244
 						const Bit8u *bp0c = ptrDirLetter;
@@ -17788,6 +17795,7 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 						//^2636:0271
 						bp04 = bp08 +SK_STRLEN(bp08);
 						continue;
+#endif
 					}
 				case 0x0009:	// .Z009	Directory letter
 					{
@@ -17904,7 +17912,11 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 						if (skwin.sCustomDataFolder != NULL)
 						{
 							static char sFolderString[256];
+#ifdef __LINUX__
+							sprintf(sFolderString, ".Z008%s/", skwin.sCustomDataFolder);
+#else
 							sprintf(sFolderString, ".Z008%s\\", skwin.sCustomDataFolder);
+#endif
 							bp0c = (const X8*) sFolderString;
 						}
 
@@ -17951,7 +17963,11 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 							if (skwin.sCustomDataFolder != NULL)
 							{
 								static char sFolderString[256];
+#ifdef __LINUX__
+								sprintf(sFolderString, ".Z008%s/", skwin.sCustomDataFolder);
+#else
 								sprintf(sFolderString, ".Z008%s\\", skwin.sCustomDataFolder);
+#endif
 								bp0c = (const X8*) sFolderString;
 							}
 							//^2636:024A
@@ -30221,7 +30237,7 @@ int main(int argc, char **argv)
 }
 #endif // _USE_SDL
 
-#if defined(__DJGPP__) || defined (__MINGW__)
+#if defined(__DJGPP__) || defined (__MINGW__) || defined (__LINUX__)
 int main(int argc, char **argv)
 {
 	int r = 1;

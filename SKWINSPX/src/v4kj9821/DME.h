@@ -6,6 +6,19 @@
 #include <XDEFINES.H>
 #include <SkParam.h> // SPX: allow control of DM1 vs DM2 behaviour
 
+#ifdef __LINUX__
+#include <stdint.h> // for xintx_t
+#endif // __LINUX__
+
+// Check Linux 64 compilation env
+#if defined(__LP64__) || defined (_LP64)
+#define __LINUX64__
+typedef int64_t i64;
+typedef uint64_t U64;
+typedef uint64_t X64;
+#endif //
+
+
 // Signed (i)nteger
 typedef int8_t i8;
 typedef int16_t i16;
@@ -21,11 +34,16 @@ typedef uint8_t X8;
 typedef uint16_t X16;
 typedef uint32_t X32;
 
+
 // 64-bit OS support. It is not functional yet. However it is just remark for future portability.
 #ifdef _Wp64
 typedef i32 __w64 i32ptr;
 typedef U32 __w64 U32ptr;
 typedef X32 __w64 X32ptr;
+#elif defined(__LINUX64__)
+typedef i64 i32ptr;
+typedef U64 U32ptr;
+typedef X64 X32ptr;
 #else
 typedef i32 i32ptr;
 typedef U32 U32ptr;

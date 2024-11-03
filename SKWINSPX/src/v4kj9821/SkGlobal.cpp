@@ -21,6 +21,11 @@ CSkWinSDL skwin;
 #if defined(__DJGPP__) || defined(__MINGW__)
 CSkWinDOS skwin;
 #endif
+#if defined(__LINUX__)
+CSkWinSDL2 skwin;
+#define min(A,B) ((A < B) ? A : B)
+#define max(A,B) ((A < B) ? B : A)
+#endif
 
 
 
@@ -65,7 +70,7 @@ CVerifySKSaveIO s_testSKSave;
 
 
 
-#if defined(_USE_MFC60) || defined(_USE_MFC80) || defined (__DJGPP__) || defined (__MINGW__)
+#if defined(_USE_MFC60) || defined(_USE_MFC80) || defined (__DJGPP__) || defined (__MINGW__) || defined (__LINUX__)
 
 CVerifySKSaveIO::CVerifySKSaveIO(): f(NULL) 
 {

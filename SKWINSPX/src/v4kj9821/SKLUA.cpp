@@ -12,12 +12,16 @@
 
 //------------------------------------------------------------------------------
 
+#ifndef __LINUX__
+
 extern "C"
 {
 	#include <lua.h>
 	#include <lualib.h>
 	#include <lauxlib.h>
 }
+
+#endif
 
 //// To remove MinGW warnings: "warning: deprecated conversion from string constant to 'char*'"
 #if defined (__MINGW__)
@@ -34,7 +38,7 @@ SkWinCore*	xCurrentGame = NULL;
 //------------------------------------------------------------------------------
 
 // no LUA there ...
-#if defined(__DJGPP__) || defined(__MINGW__)
+#if defined(__DJGPP__) || defined(__MINGW__) || defined(__LINUX__)
 #define lua_State void
 
 float SkWinLua_Init_Lua(SkWinCore* xSkCore, char* sVersionName)

@@ -2,7 +2,7 @@
 
 #include <SkVer.h>
 
-#include <conio.h>
+//#include <conio.h> // getch
 
 #include <KCORE.H>
 #include <SkDebug.h>

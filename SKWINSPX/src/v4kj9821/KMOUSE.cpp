@@ -609,7 +609,7 @@ void SkWinCore::IBMIO_MOUSE_HANDLER()
 	X16 dx = mice_y; // y
 
 	//printf("IBMIO_MOUSE_HANDLER\n");
-	// SkD((DLV_BUGHERE,"DBG: M(%3d,%3d) C(%3d,%3d) P(%3d,%3d)\n", glbMouseXPos, glbMouseYPos, cx, dx, glbMousePreviousXPos, glbMousePreviousYPos));
+	SkD((DLV_MOUSE,"DBG: M(%3d,%3d) Btn:(%2d) C(%3d,%3d) P(%3d,%3d)\n", glbMouseXPos, glbMouseYPos, mice_btn, cx, dx, glbMousePreviousXPos, glbMousePreviousYPos));
 
 	//^01B0:0985
 	if (_01b0_0933 == 0) {

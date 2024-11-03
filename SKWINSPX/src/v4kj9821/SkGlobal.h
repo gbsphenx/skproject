@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#if defined(__MINGW__) || defined(__DJGPP__)
+#if defined(__MINGW__) || defined(__DJGPP__) || defined(__LINUX__)
 #include <stdio.h> // for FILE
 #endif
 
@@ -39,9 +39,14 @@ extern CSkWinSDL skwin;
 #include <SkDOS.h>
 extern CSkWinDOS skwin;
 #endif
+#if defined(__LINUX__)
+#include <SkSDL2.h>
+extern CSkWinSDL2 skwin;
+#endif
+
 
 // In case of non WIN
-#if defined(__MINGW__) || defined(__DJGPP__)
+#if defined(__MINGW__) || defined(__DJGPP__) || defined(__LINUX__)
 #ifndef LPCSTR
 #define LPCSTR const char*
 #endif // LPCSTR

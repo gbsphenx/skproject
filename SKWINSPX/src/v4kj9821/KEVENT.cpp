@@ -1,5 +1,9 @@
 #include <StdAfx.h>	// Required for MVC6 compilation
-#include <conio.h>
+#ifndef __LINUX__
+	#include <conio.h>
+#else
+	#include <termios.h>
+#endif
 
 #include <SkVer.h>
 

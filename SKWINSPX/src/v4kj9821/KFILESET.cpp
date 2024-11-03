@@ -1,11 +1,17 @@
 #include <StdAfx.h>
 #include <KFILESET.H>
 #include <stdio.h>
-#include <io.h>
+#if defined(__LINUX__)
+	#include <unistd.h>
+#else
+	#include <io.h>
+#endif // __LINUX__
 #include <fcntl.h> // _O_BINARY etc...
 
+
+
 // SPX: that part for non Microsoft compiler
-#if defined(__DJGPP__) || defined (__MINGW__)
+#if defined(__DJGPP__) || defined (__MINGW__) || defined (__LINUX__)
 #include <sys/stat.h>
 #include <unistd.h>
 #ifndef _S_IWRITE
@@ -34,6 +40,20 @@ off_t tell(int fd) {
 #ifndef _close
 #define _close close
 #endif
+
+#ifdef __LINUX__
+#ifndef _write
+#define _write write
+#endif
+#ifndef _read
+#define _read read
+#endif
+#define _O_BINARY	0
+#define _O_CREAT	O_CREAT
+#define _O_RDWR		O_RDWR
+#define _O_RDONLY	O_RDONLY
+#endif // __LINUX__
+
 
 #endif // __DJGPP__
 

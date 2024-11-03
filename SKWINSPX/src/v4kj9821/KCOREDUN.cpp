@@ -13,6 +13,8 @@
 #include <SkMIDI.h>
 #include <SkLUA.h>
 
+#include <stdlib.h> // rand
+
 //--- Common part with A.cpp
 using namespace DMEncyclopaedia;
 using namespace DM2Internal;
@@ -27,7 +29,7 @@ using namespace kkBitBlt;
 #ifdef _USE_SDL
 #include <SkwinSDL.h>
 #endif // _USE_SDL
-#if defined(__DJGPP__) || defined (__MINGW__)
+#if defined(__DJGPP__) || defined (__MINGW__) || defined (__LINUX__)
 #include <SkDOS.h>
 #include <stdlib.h> // rand note: putting stdlib here and not right after stdafx prevents a bunch of conflicts with min/max macros
 #endif // __DJGPP__

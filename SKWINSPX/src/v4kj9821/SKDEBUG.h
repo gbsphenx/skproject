@@ -23,13 +23,14 @@
 #define DLV_DBM 0
 #define DLV_DYN 0
 #define DLV_SYS 0
-#define DLV_RCT 0
-#define DLV_FIL 1	// Track file open (useful for custom GDAT)
+#define DLV_RCT 1
+#define DLV_FIL 0	// Track file open (useful for custom GDAT)
 #define DLV_DBC 0
 #define DLV_CAI 0
 #define DLV_TWEET 0
 #define DLV_MOVE 0	// Player moves
 #define DLV_EUI 0	// Event from UI code
+#define DLV_MOUSE 0	// Mouse
 #define DLV_CCM 0	// Creature command
 #define DLV_FSM 0	// Find special marker (for x teleport and void fall)
 #define DLV_XP	1	// Display info about XP gain
@@ -60,7 +61,7 @@
 void SkwinDEBUG (int lv, LPCSTR psz, ...);
 #elif defined(_USE_SDL)
 void SkwinDEBUG (int lv, const char* psz, ...);
-#elif defined(__DJGPP__) || defined(__MINGW__)
+#elif defined(__DJGPP__) || defined(__MINGW__) || defined(__LINUX__)
 void SkwinDEBUG (int lv, const char* psz, ...);
 #endif //
 
@@ -73,7 +74,7 @@ void SkwinDEBUG (int lv, const char* psz, ...);
 #elif defined(_USE_SDL)
 	#define Unr() Unreachable(__FUNCTION__, __FILE__, __LINE__)
 	void Unreachable(const char *funct, const char *file, int line);
-#elif defined(__DJGPP__) || defined(__MINGW__)
+#elif defined(__DJGPP__) || defined(__MINGW__) || defined(__LINUX__)
 	#define Unr() Unreachable(__FUNCTION__, __FILE__, __LINE__)
 	void Unreachable(const char *funct, const char *file, int line);
 #endif

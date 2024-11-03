@@ -127,6 +127,27 @@ typedef unsigned int uint_t;
 #endif // __MINGW__
 
 
+#ifdef __LINUX__
+#include <assert.h>
+typedef signed char int8_t;
+typedef signed short int16_t;
+typedef signed int int32_t;
+typedef unsigned char uint8_t;
+typedef unsigned short uint16_t;
+typedef unsigned int uint32_t;
+typedef unsigned int uint_t;
+
+#if defined(__LP64__) || defined (_LP64)
+#include <stdint.h>
+#endif
+
+#define ATLASSERT(X) assert(X)
+#define ATLVERIFY(X) (X)
+//#define min(A,B) ((A < B) ? A : B)
+//#define max(A,B) ((A < B) ? B : A)
+#endif // __LINUX__
+
+
 typedef uint8_t Bit8u;
 typedef uint16_t Bit16u;
 typedef uint32_t Bit32u;

@@ -5,7 +5,7 @@
 #include <stdafx.h>
 #include <SkMIDI.h>
 
-#ifndef __DJGPP__
+#if !defined(__DJGPP__) && !defined(__LINUX__)
 #include <windows.h>
 #endif
 
@@ -16,7 +16,7 @@
 int iDungeonGame = 0;
 
 
-#if !defined(__DJGPP__) && !defined(__MINGW__)
+#if !defined(__DJGPP__) && !defined(__MINGW__) && !defined(__LINUX__)
 
 
 //#define MAX_BUFFER_SIZE (512 * 12)
@@ -488,7 +488,7 @@ SkWinMIDI::REQUEST_PLAY_MUSIC_FROM_MAP(int iMapNumber)
 
 //------------------------------------------------------------------------------
 
-#else // __DJGPP__
+#else // __DJGPP__ , __MINGW__ , __LINUX__
 
 
 SkWinMIDI::SkWinMIDI(int dung, const char* folder, const char* defaultfolder)
@@ -499,9 +499,9 @@ SkWinMIDI::SkWinMIDI(int dung, const char* folder, const char* defaultfolder)
 	bCurrentlyPlaying = false;
 	memset(sRootFolder, 0, 256);
 	if (folder != NULL)
-		sprintf(sRootFolder, folder);
+		strcpy(sRootFolder, folder);
 	else if (defaultfolder != NULL)
-		sprintf(sRootFolder, defaultfolder);
+		strcpy(sRootFolder, defaultfolder);
 }
 
 

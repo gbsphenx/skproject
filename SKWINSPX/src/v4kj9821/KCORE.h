@@ -45,7 +45,7 @@ void CHANGE_CONSOLE_COLOR(int attr, int fg, int bg); // SkWinCore2
 */
 //------------------------------------------------------------------------------
 
-#if defined(__DJGPP__) || defined(__MINGW__)
+#if defined(__DJGPP__) || defined(__MINGW__) || defined(__LINUX__)
 #include <stack>
 #endif // __DJGPP__
 
@@ -53,7 +53,7 @@ class SkWinCore
 {
 
 public:
-#if defined(_USE_MFC80) || defined(_USE_MFC60) || defined(_USE_SDL) || defined(__DJGPP__) || defined(__MINGW__)
+#if defined(_USE_MFC80) || defined(_USE_MFC60) || defined(_USE_SDL) || defined(__DJGPP__) || defined(__MINGW__) || defined(__LINUX__)
 	// 
 	std::stack<U32> vecLowerAlloc, vecUpperAlloc;
 	// 

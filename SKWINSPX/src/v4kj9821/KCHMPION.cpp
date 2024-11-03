@@ -1,6 +1,6 @@
 #include <StdAfx.h>	// Required for MVC6 compilation
 
-#include <conio.h> // getch
+//#include <conio.h> // getch
 
 #include <KCORE.H>
 #include <SkDebug.h>

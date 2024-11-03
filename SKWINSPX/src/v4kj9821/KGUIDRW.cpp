@@ -4,7 +4,7 @@
 #include <KCORE.H>
 #include <SKDEBUG.H>
 
-#if defined(__DJGPP__) || defined (__MINGW__)
+#if defined(__DJGPP__) || defined (__MINGW__) || defined (__LINUX__)
 
 #define min(A,B) ((A < B) ? A : B)
 #define max(A,B) ((A < B) ? B : A)
@@ -1121,7 +1121,7 @@ void SkWinCore::DRAW_CHIP_OF_MAGIC_MAP(const Bit8u *buff, Bit16u aa, Bit16u xx, 
 				di,
 				localpal
 				);
-			printf("");
+			//printf("");
 		}
 	}
 	//^29EE:0CFD
@@ -1369,7 +1369,7 @@ _10b7:
 					_4976_3fa4[(glbChampionSquad[bp0a].playerPos() +4 -ww) & 3],
 					QUERY_GDAT_IMAGE_LOCALPAL(bp21, bp22, 0x40)
 					);
-				printf("");
+				//printf("");
 			}
 			//^29EE:117F
 		}
