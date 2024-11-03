@@ -15,6 +15,8 @@ public:
 	static bool bRandomInitChampion;	// experimental Dungeon generation
 	static bool bAllowFreeObjectMove;
 
+	static bool bDM2V5Mode;
+
 	//--- Options
 	static bool bUseDM2ExtendedMode;
 	static bool bUsePowerDebug;

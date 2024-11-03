@@ -15153,6 +15153,14 @@ Bit16u SkWinCore::GET_CREATURE_ANIMATION_FRAME(Bit8u ct, Bit16u command, Bit16u 
 {
 	//^4937:00CC
 	SkD((DLV_DBG_SED2, "DBG: GET_CREATURE_ANIMATION_FRAME %02X ccm:%04X %04X %04X %04X \n", (Bitu)ct, (Bitu)command, (Bitu)*pw08, (Bitu)*pw0a, (Bitu)vv));
+	if (tlbCreaturesActionsGroupOffsets == NULL || tlbCreaturesActionsGroupSets == NULL || tlbCreaturesAnimationSequences == NULL) {
+		*pw0a = 0xffff;
+		*pw08 = 0;
+		return 1;
+	}
+	*pw0a = 0xffff;
+	*pw08 = 0;
+	return _4937_01a9(0, pw0a, animframe);
 	CreatureCommandAnimation *bp04 = &tlbCreaturesActionsGroupSets[tlbCreaturesActionsGroupOffsets[QUERY_GDAT_CREATURE_WORD_VALUE(ct, 0)]];
 	//^4937:00FD
 	while (bp04->ccmReference != 0xffff && bp04->ccmReference != command) {
@@ -26180,28 +26188,46 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_02()
 // The 3rd table contains a list of pointers which start to a creature behaviour description.
 void SkWinCore::LOAD_GDAT_INTERFACE_00_00()
 {
-	//^4937:0320
+	// SPX: I changed to get size of item first then check it if zero, because this item does not exist in PC-DOS version
+	i32 iItemSize = 0;
 	ENTER(8);
-	//^4937:0324
-	U8 *bp04 = ALLOC_MEMORY_RAM(
-		QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dt06, 0x0),
-		afUseUpper, 0x400);
-	LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dt06, 0x0, bp04);
-	//^4937:0360
+	U8 *bp04 = NULL;
+
+	iItemSize = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dt06, 0x0);
+	if (iItemSize <= 0) {
+		i16 hCreatureTabHandle = -1;
+		iItemSize = 5092;
+		SkCodeParam::bDM2V5Mode = true;
+		tlbCreaturesAnimationSequences = NULL;
+		tlbCreaturesActionsGroupSets = NULL;
+		tlbCreaturesActionsGroupOffsets = NULL;
+		// Then, we do a hardfile read to make up for missing item, not pretty but working
+		hCreatureTabHandle = FILE_OPEN((const U8*)"bin/v4kj9821/0652ctbl.bin");
+		bp04 = ALLOC_MEMORY_RAM(iItemSize,	afUseUpper, 0x400);
+		FILE_READ(hCreatureTabHandle, iItemSize, bp04);
+		FILE_CLOSE(hCreatureTabHandle);
+	}
+	else {
+		bp04 = ALLOC_MEMORY_RAM(
+			iItemSize,
+			afUseUpper, 0x400);
+		LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dt06, 0x0, bp04);
+	}
+
 	X32 bp08 = READ_UI32(bp04,+0);	// Read first DWORD of data, which is length of the first part : 0xC24 = 3108 = 6*518
 	bp04 += 4;
 	tlbCreaturesAnimationSequences = reinterpret_cast<CreatureAnimationFrame *>(bp04);	// This points to the first part
 	bp04 += bp08;
-	//^4937:0387
+
 	bp08 = READ_UI32(bp04,+0);	// 0x760 = 1888 = 4*472
 	bp04 += 4;
 	tlbCreaturesActionsGroupSets = reinterpret_cast<CreatureCommandAnimation *>(bp04);	// This points to the second part
 	bp04 += bp08;
-	//^4937:03AE
+
 	bp08 = READ_UI32(bp04,+0);	// 0x54 = 84 = 2*42
 	bp04 += 4;
 	tlbCreaturesActionsGroupOffsets = reinterpret_cast<U16 *>(bp04);		// This points to the third part
-	//^4937:03CF
+
 	return;
 }
 //^38C8:00C8
@@ -26889,7 +26915,7 @@ void SkWinCore::INIT()
 //printf("_482b_0004\n");
 	_482b_0004();
 //printf("LOAD_GDAT_INTERFACE_00_0A\n");
-	LOAD_GDAT_INTERFACE_00_0A();
+	LOAD_GDAT_INTERFACE_00_0A(); // game will fail if this item is not loaded, but it does not exist in PC-DOS version
 	U8 *bp04 = ALLOC_MEMORY_RAM(0x400, afUseLower, 1024);
 //DEBUG_DUMP_ULP();
 	LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dtPalIRGB, 0xFE, bp04);	// C01=I00=EFE=T009 palette IRGB (0x1, 0x0, dt09, 0xFE, bp04)
@@ -28490,10 +28516,13 @@ void SkWinCore::GAME_LOOP()
 	if (SkCodeParam::bUseIngameDebug)
 	{
 		U8 message[64];
+		char sExtraInfo[64]; memset(sExtraInfo, 0, 64);
+		if (SkCodeParam::bDM2V5Mode)
+			strcpy(sExtraInfo, " V5-GFX");
 //		sprintf((char*)message, "RAM = %08d / EMS = %08d\n", glbFreeRAMMemPool, glbFreeEMSMemPool);
-		sprintf((char*)message, "SKWIN-9821 (%s) [%s]\n", strVersionNumber, __SKWIN_RELEASE_DATE__);
+		sprintf((char*)message, "SKWIN-9821 (%s) [%s]%s\n", strVersionNumber, __SKWIN_RELEASE_DATE__, sExtraInfo);
 #ifdef __DJGPP__
-		sprintf((char*)message, "SKULL-V4 (%s) [%s]\n", strVersionNumber, __SKWIN_RELEASE_DATE__);
+		sprintf((char*)message, "SKULL-V4 (%s) [%s]%s\n", strVersionNumber, __SKWIN_RELEASE_DATE__, sExtraInfo);
 #endif // __DJGPP__
 		DISPLAY_HINT_TEXT(COLOR_YELLOW, message);
 	}

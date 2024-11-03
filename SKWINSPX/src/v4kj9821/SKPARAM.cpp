@@ -5,6 +5,9 @@
 bool SkCodeParam::bDM1Mode = false;
 bool SkCodeParam::bDM1ReadSavegame = false;
 bool SkCodeParam::bDM1TQMode = false;	// Try to get the more TQ compatibility mode, specially in dungeon, many visible actuators do sound whereas the sound flag is not set.
+
+bool SkCodeParam::bDM2V5Mode = false;	// activate when detecting PC-DOS V5 graphics.dat
+
 bool SkCodeParam::bBWMode = false;
 bool SkCodeParam::bEOBMode = false;
 bool SkCodeParam::bRandomInitChampion = false;

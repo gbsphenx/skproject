@@ -274,9 +274,17 @@ void SkWinCore::_2066_33c4(U8 *str, U16 yy)
 //^2066:398A
 void SkWinCore::_2066_398a(i16 xx)
 {
+	int iColorText = COLOR_ORANGE;
+	int iColorTextHighlighted = COLOR_YELLOW;
 	//^2066:398A
 	ENTER(10);
 	//^2066:3990
+
+	if (SkCodeParam::bDM2V5Mode) {
+		iColorText = COLOR_YELLOW;
+		iColorTextHighlighted = COLOR_WHITE;
+	}
+
 	SRECT bp0a;
 	QUERY_EXPANDED_RECT(451, &bp0a);
 	//^2066:39A0
@@ -284,7 +292,7 @@ void SkWinCore::_2066_398a(i16 xx)
 	//^2066:39A8
 	for (i16 si = 0; si < 10; si++) {
 		//^2066:39AC
-		U16 bp02 = (si == xx) ? glbPaletteT16[COLOR_YELLOW] : glbPaletteT16[COLOR_ORANGE];
+		U16 bp02 = (si == xx) ? glbPaletteT16[iColorTextHighlighted] : glbPaletteT16[iColorText];
 		//^2066:39C8
 		DRAW_VP_STR(bp0a.x, di, bp02, _4976_5250[si].sSavegameName);
 		//^2066:39EB

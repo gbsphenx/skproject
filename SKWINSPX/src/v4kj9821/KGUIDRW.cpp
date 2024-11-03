@@ -5281,9 +5281,18 @@ void SkWinCore::DRAW_STAIRS_FRONT(i16 xx)
 // SPX: _2066_3697 renamed __OPEN_DIALOG_PANEL
 void SkWinCore::__OPEN_DIALOG_PANEL(U8 cls2, U16 yy)
 {
+	int iTextButtonColor = COLOR_ORANGE; // V4
+	int iTextVersionColor = COLOR_GRAY; // V4
 	//^2066:3697
 	ENTER(104);
 	//^2066:369B
+
+	// SPX
+	if (SkCodeParam::bDM2V5Mode) {
+		iTextButtonColor = COLOR_YELLOW;
+		iTextVersionColor = COLOR_YELLOW; //PC-DOS is dark grey, but it feels like it does not match
+	}
+
 	_4976_5250 = reinterpret_cast<sksave_header_asc *>(ALLOC_MEMORY_RAM(420, afDefault, 1024));
 	//^2066:36B4
 	U8 bp6a[40];
@@ -5314,11 +5323,11 @@ void SkWinCore::__OPEN_DIALOG_PANEL(U8 cls2, U16 yy)
 	FIRE_FADE_SCREEN(1);
 	// RESUME SCREEN with list of savegame, version number, LOAD and CANCEL button
 	//^2066:3773
-	DRAW_VP_RC_STR(0x1c2, glbPaletteT16[COLOR_GRAY], strVersionNumber); // _4976_3b6f replaced by strVersionNumber
+	DRAW_VP_RC_STR(0x1c2, glbPaletteT16[iTextVersionColor], strVersionNumber); // _4976_3b6f replaced by strVersionNumber
 	//^2066:378D
-	DRAW_VP_RC_STR(0x1d2, glbPaletteT16[COLOR_ORANGE], bp18);	// LOAD text
+	DRAW_VP_RC_STR(0x1d2, glbPaletteT16[iTextButtonColor], bp18);	// (COLOR_ORANGE) LOAD text
 	//^2066:37A9
-	DRAW_VP_RC_STR(0x1d3, glbPaletteT16[COLOR_ORANGE], bp14);	// CANCEL text
+	DRAW_VP_RC_STR(0x1d3, glbPaletteT16[iTextButtonColor], bp14);	// (COLOR_ORANGE) CANCEL text
 	//^2066:37C5
 	_2066_38d9();
 	//^2066:37CA
