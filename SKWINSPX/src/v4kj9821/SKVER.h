@@ -12,8 +12,8 @@
 //#define _BUILD_TIME_	__TIME__
 
 // Activate this for preparing public release version
-#define __SKWIN_PUBLIC_VERSION__ 1
-#define __SKWIN_RELEASE_DATE__ "2024-10-27"
+//#define __SKWIN_PUBLIC_VERSION__	1
+#define __SKWIN_RELEASE_DATE__ "2024-11-03"
 
 //------------------------------------------------------------------------------
 
@@ -37,6 +37,7 @@
 
 //------------------------------------------------------------------------------
 
+#define XDM2_EXTENDED_SPELLS_TAB	1	// For using custom spells defined within graphics.dat
 #define XDM2_EXTENDED_AI_TABSIZE	1
 #define XDM1_EXTENDED_SEETHRUWALLS	1
 

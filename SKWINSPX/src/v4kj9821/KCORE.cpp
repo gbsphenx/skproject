@@ -6788,50 +6788,35 @@ SpellDefinition *SkWinCore::FIND_SPELL_BY_RUNES(U8 *runes)
 
 	//^2759:213D
 	ENTER(10);
-	//^2759:2141
 	if (runes[1] == 0)
-		//^2759:214B
-		//^2759:21EF
 		return NULL;
-	//^2759:214E
-	i16 bp06 = 24;
+	i16 iBitShifter = 24; // bp06
+	i16 iSpellIndex = 0; // bp06 (was used for 2 different things)
 	U32 bp0a = 0;
 
 	do {
-		//^2759:215D
-		bp0a |= U32(*(runes++)) << bp06;
-		//^2759:2178
-	} while (runes[0] != 0 && (bp06 -= 8) >= 0);
-	//^2759:2187
-	SpellDefinition *bp04 = const_cast<SpellDefinition *>(dSpellsTable);
+		bp0a |= U32(*(runes++)) << iBitShifter;
+	} while (runes[0] != 0 && (iBitShifter -= 8) >= 0);
+	
+	SpellDefinition *xSpell = const_cast<SpellDefinition *>(dSpellsTable);	// bp04
 	U32 iLocalMaxSpell = MAXSPELL_ORIGINAL;	// SPX added this to prevent overflow when switching tables
 
 	// SPX : Use extended spells table read from GDAT if we are in custom mode
 	if (SkCodeParam::bUseCustomSpells)
 	{
-		bp04 = const_cast<SpellDefinition *>(dSpellsTableCustom);
+		xSpell = const_cast<SpellDefinition *>(dSpellsTableCustom);
 		iLocalMaxSpell = MAXSPELL_CUSTOM;
 	} // end SPX
 
-	//^2759:218F
-	for (bp06 = iLocalMaxSpell; bp06-- != 0; bp04++) {	// (bp06 = MAXSPELL; bp06-- != 0; bp04++)
-		//^2759:2196
-		if ((bp04->dw0 & 0xff000000) != 0) {
-			//^2759:21AB
-			if (bp04->dw0 != bp0a)
-				//^2759:21BA
+	for (iSpellIndex = iLocalMaxSpell; iSpellIndex-- != 0; xSpell++) {	// (bp06 = MAXSPELL; bp06-- != 0; bp04++)
+		if ((xSpell->symbols & 0xFF000000) != 0) {
+			if (xSpell->symbols != bp0a)
 				continue;
-			//^2759:21BC
-			return bp04;
+			return xSpell;
 		}
-		//^2759:21C4
-        if ((bp0a & 0x00ffffff) == bp04->dw0)
-			//^2759:21DF
-			//^2759:21BC
-			return bp04;
-		//^2759:21E1
+	    if ((bp0a & 0x00FFFFFF) == xSpell->symbols)
+			return xSpell;
 	}
-	//^2759:21EF
 	return NULL;
 }
 
@@ -14976,7 +14961,13 @@ Bit8u SkWinCore::_0aaf_02f8_DIALOG_BOX(Bit8u xx, Bit8u yy) //#DS=4976
 	}
 	//^0AAF:050C
 	// SPX: Draw string version on dialog box
-	DRAW_VP_RC_STR(0x1c2, glbPaletteT16[COLOR_GRAY], strVersionNumber);
+	int iColorVersion = COLOR_GRAY;
+	int iColorButton = COLOR_ORANGE;
+	if (SkCodeParam::bDM2V5Mode) {
+		iColorVersion = COLOR_YELLOW;
+		iColorButton = COLOR_YELLOW;
+	}
+	DRAW_VP_RC_STR(0x1c2, glbPaletteT16[iColorVersion], strVersionNumber);
 	//^0AAF:0526
 	FIRE_FADE_SCREEN(1);
 	//^0AAF:052D
@@ -15008,9 +14999,9 @@ Bit8u SkWinCore::_0aaf_02f8_DIALOG_BOX(Bit8u xx, Bit8u yy) //#DS=4976
 			break;
 	}
 	//^0AAF:056D
-	for (si=0; si < bp0c; si++) {
+	for (si=0; si < bp0c; si++) { // display button texts
 		//^0AAF:0571
-		DRAW_VP_RC_STR(_4976_01bc[1][RCJ(8,si + bp10)], glbPaletteT16[COLOR_ORANGE], bp00b4[si]);
+		DRAW_VP_RC_STR(_4976_01bc[1][RCJ(8,si + bp10)], glbPaletteT16[iColorButton], bp00b4[si]);
 		//^0AAF:05A1
 	}
 	//^0AAF:05A7
@@ -26269,7 +26260,7 @@ void SkWinCore::KANJI_FONT_LOAD(X8 cls2)
 			bp10 = U8(bp0a);
 		}
 		//^3929:0CF5
-		bp0a = QUERY_GDAT_PICT_OFFSET(0x1c, cls2, bp0b);
+		bp0a = QUERY_GDAT_PICT_OFFSET(GDAT_CATEGORY_JAPANESE_FONT, cls2, bp0b);
 		bp08->b0 = X8(bp0e);
 		bp08->b1 = X8(bp10);
 		bp08->w6 = i8(bp0a >> 8);

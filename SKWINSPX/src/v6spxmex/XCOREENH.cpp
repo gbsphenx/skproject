@@ -28,7 +28,7 @@ using namespace kkBitBlt;
 #ifdef _USE_SDL
 #include <SkSDL.h>
 #endif // _USE_SDL
-#if defined(__DJGPP__) || defined(__MINGW__)
+#if defined(__DJGPP__) || defined(__MINGW__) || defined(__LINUX__)
 #include <SkDOS.h>
 #include <stdlib.h> // rand note: putting stdlib here and not right after stdafx prevents a bunch of conflicts with min/max macros
 #endif // __DJGPP__
@@ -41,22 +41,21 @@ using namespace kkBitBlt;
 X16
 SkWinCore::EXTENDED_LOAD_SPELLS_DEFINITION(void)
 {
-//#if DM2_EXTENDED_MODE == 1
-	if (SkCodeParam::bUseDM2ExtendedMode)
+	X16 iExtendedResult = 0;
 	{
-		U8 di = 0;
+		U8 gdatentry = 0;
 		U8 index = 0;
 		U8 category = GDAT_CATEGORY_SPELL_DEF;
 		for (index = 0; index < MAXSPELL_CUSTOM-1; index++)	// MAXSPELL_CUSTOM = 255, but the value 255 is kept for the default.
 		{
 			U8 spellname[0x80];
-			di = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 0x01); // Test if RUNE01 is used
-			if (di != 0)
+			gdatentry = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 0x01); // Test if RUNE01 is used
+			if (gdatentry != 0)
 			{
 				U8 *rc = QUERY_GDAT_TEXT(category, index, 0x18, spellname);
 				U8 rune2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 0x02);
 				U8 rune3 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 0x03);
-				dSpellsTableCustom[index].dw0 = (MkssymVal(di, rune2, rune3));
+				dSpellsTableCustom[index].symbols = (MkssymVal(gdatentry, rune2, rune3));
 				dSpellsTableCustom[index].difficulty = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 0x04);
 				dSpellsTableCustom[index].requiredSkill = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 0x05);
 				U8 type = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 0x06);
@@ -69,17 +68,21 @@ SkWinCore::EXTENDED_LOAD_SPELLS_DEFINITION(void)
 					getSpellTypeName(type), dSpellsTableCustom[index].difficulty, getSkillName(dSpellsTableCustom[index].requiredSkill),
 					dSpellsTableCustom[index].SpellCastIndex()));
 				
+				iExtendedResult = 1;
+				SkCodeParam::bUseCustomSpells = true;
 			}
 		}
+#ifdef XDM2_EXTENDED_SPELLS_TAB
 		//--- Note: Due to extended structure of SpellDefinition in extended mode, the original spell tables must be adapted to this value
 		for (index = 0; index < MAXSPELL_ORIGINAL-1; index++)
 		{
-			dSpellsTable[index].spellValue = U8((dSpellsTable[index].w6 >> 4)&0x3f);
+			dSpellsTable[index].spellValue = U8((dSpellsTable[index].w6 >> 4)&0x3F);
 		}
-		return 1;
+#endif
+		return iExtendedResult;
 	}
-//#endif
-	return 0;
+
+	return iExtendedResult;
 }
 
 //==============================================================================
@@ -462,7 +465,7 @@ U16 SkWinCore::EXT_PROCEED_DCS_GENERIC_COMMAND(const char* sCommandName, const c
 		else
 			iLoopMode = 0;	// no loop
 
-		sprintf(sBaseDir, "data_dm1_tq/music/", sIntModuleDirName);
+		sprintf(sBaseDir, "data_dm1_tq/music/%s", sIntModuleDirName);
 		sprintf(sFullMusicPath, "%s%s", sBaseDir, sSubCommand);	// sSubCommand contains music filename
 
 		PLAY_DIRECT_SOUND(sFullMusicPath, iVolume/3);
@@ -709,12 +712,18 @@ U16 SkWinCore::EXT_PROCEED_DCS_GENERIC_COMMAND(const char* sCommandName, const c
 		U16 iTargetMap = iArgMap;
 		U16 iTargetX = iArgX;
 		U16 iTargetY = iArgY;
+		int iScanTargetMap = 0;
+		int iScanTargetX = 0;
+		int iScanTargetY = 0;
 		//DCS_GenericCommand("create","actuator.floor.pad.party","tmap="..tmap..";tx="..tx..";ty="..ty,map,x,y,active,pad_gfx)
 		iGfxMapID = DUNGEON_SET_FLOOR_GFX(iGfxID, iArgMap);
 		xActuator = DUNGEON_PUT_FLOOR_ACTUATOR(iGfxID, iArgMap, iArgX, iArgY);
 		if (xActuator != NULL)
 		{
-			sscanf(sSubCommand, "tmap=%d;tx=%d;ty=%d", &iTargetMap, &iTargetX, &iTargetY);
+			sscanf(sSubCommand, "tmap=%d;tx=%d;ty=%d", &iScanTargetMap, &iScanTargetX, &iScanTargetY);
+			iTargetMap = U16(iScanTargetMap);
+			iTargetX = U16(iScanTargetX);
+			iTargetY = U16(iScanTargetY);
 			xActuator->OnceOnlyActuator(0);
 			xActuator->SetTarget(iTargetMap, iTargetX, iTargetY);
 			xActuator->GraphicNumber(iGfxMapID);
@@ -827,7 +836,9 @@ void SkWinCore::REQUEST_PLAY_MUSIC_FROM_MAP(int iMapNumber)
 
 	if (iNextRequestedMusic == iCurrentWavMusic)
 		return;
-
+#if defined(_USE_MFC80) || defined(_USE_MFC60)
+	PlaySound(NULL, NULL, SND_PURGE);
+#endif
 	/*
 	switch(skwin.dung)
 	{
@@ -858,7 +869,9 @@ void SkWinCore::REQUEST_PLAY_MUSIC(int iMusicNumber)
 	if (iNextRequestedMusic == iCurrentWavMusic)
 		return;
 
-	
+#if defined(_USE_MFC80) || defined(_USE_MFC60)
+	PlaySound(NULL, NULL, SND_PURGE);
+#endif
 	sprintf(sDataRootFolder, "%s", GET_DATA_FOLDER_NAME(skwin.dung));
 	sprintf(sFullMusicPath, "./%s/music/%02x.wav", sDataRootFolder, iNextRequestedMusic);
 	//PLAY_DIRECT_SOUND(sFullMusicPath, 50);

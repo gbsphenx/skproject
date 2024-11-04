@@ -2260,9 +2260,9 @@ namespace DM2Internal {
 	};
 	// 
 	// SPX: sk3e22 replaced by SpellDefinition
-#if DM2_EXTENDED_MODE == 0
+#if XDM2_EXTENDED_SPELLS_TAB == 0
 	struct SpellDefinition { // 8 bytes
-		U32 dw0;				// dw0 @0	//	4 Symbols (00 - 03)
+		U32 symbols;				// dw0 @0	//	4 Symbols (00 - 03)
 		U8 difficulty;			// b4 @4	// Spell difficulty
 		U8 requiredSkill;		// b5 @5	// Skill used
 		U16 w6;					// w6 @6	// Spell type / cast
@@ -2272,9 +2272,9 @@ namespace DM2Internal {
 		// <!> limited to 64 possible value (not enough compared to 254 possible creatures to be summoned for example)
 		U8 SpellCastIndex() const { return U8((w6 >> 4)&0x3f); }
 	};
-#elif DM2_EXTENDED_MODE == 1
+#elif XDM2_EXTENDED_SPELLS_TAB == 1
 	struct SpellDefinition { // 8 bytes
-		U32 dw0;				// dw0 @0	//	4 Symbols (00 - 03)
+		U32 symbols;				// dw0 @0	//	4 Symbols (00 - 03)
 		U8 difficulty;
 		U8 requiredSkill;
 		U16 w6;					// w6 @6	// Spell type / cast

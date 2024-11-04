@@ -481,6 +481,7 @@ SkWinMIDI::REQUEST_PLAY_MUSIC_FROM_MAP(int iMapNumber)
 	if (!SkCodeParam::bMIDIMusicEnabled)
 		return;
 	//printf("Asking music for map %02d\n", iMapNumber);
+	PlaySound(NULL, NULL, SND_PURGE);
 	iNextRequestedMusic = tMusicMaps[iMapNumber];
 	if (bCurrentlyPlaying == false)
 		CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) SkWinMIDI_MIDI_LOOP, this, 0, NULL);

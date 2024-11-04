@@ -160,11 +160,6 @@ extern CSkWinSDL2 skwin;
 // SPX: no surprise, this is static, but can be increased with no difficulty
 #define MAXSPELL_ORIGINAL	34
 #define MAXSPELL_CUSTOM		255
-#if DM2_EXTENDED_MODE == 0
-	#define MAXSPELL MAXSPELL_ORIGINAL
-#else 
-	#define MAXSPELL MAXSPELL_CUSTOM
-#endif
 // SPX: This MAXSPELL is used only in FIND_SPELL_BY_RUNES, so it is just for the table below.
 
 #define SPELL_TYPE_POTION	1
