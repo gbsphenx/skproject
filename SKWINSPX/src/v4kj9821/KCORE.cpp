@@ -17256,7 +17256,7 @@ void SkWinCore::DUMP_5CA4() {
 }
 
 //^3E74:4FBE
-Bit8u *SkWinCore::QUERY_GDAT_IMAGE_ENTRY_BUFF(Bit8u cls1, Bit8u cls2, Bit8u cls4)
+Bit8u* SkWinCore::QUERY_GDAT_IMAGE_ENTRY_BUFF(Bit8u cls1, Bit8u cls2, Bit8u cls4)
 {
 	SkD((DLV_DBG_GETPIC,"DBG: QUERY_GDAT_IMAGE_ENTRY_BUFF(%02X,%02X,%02X)\n", (Bitu)cls1, (Bitu)cls2, (Bitu)cls4));
 	DUMP_5CA4();
@@ -17265,43 +17265,36 @@ Bit8u *SkWinCore::QUERY_GDAT_IMAGE_ENTRY_BUFF(Bit8u cls1, Bit8u cls2, Bit8u cls4
 	// ATLASSERT(!(cls1 == 10 && cls2 == 0x37 && cls4 == 2));
 
 	//^3E74:4FBE
-	Bit16u di = 0;
+	Bit16u iCriticalLoad = 0;
+	Bit8u* xImageBuffer = NULL;
+
 	if (glbGameTick != _4976_5d2a) {
-		//^3E74:4FD9
 		_3e74_44ad();
 	}
-	//^3E74:4FDD
-	RawEntry *bp08 = QUERY_GDAT_ENTRYPTR(cls1, cls2, 1, cls4);
-	Bit16u si;
-	if (bp08 == NULL) {
-		//^3E74:5000
-		si = 0xffff;
+	RawEntry* pEntry = QUERY_GDAT_ENTRYPTR(cls1, cls2, 1, cls4);
+	Bit16u iGDATItemID;
+	if (pEntry == NULL) {
+		iGDATItemID = 0xFFFF;
 	}
 	else {
-		//^3E74:5005
-		di |= IS_CLS1_CRITICAL_FOR_LOAD(cls1);
-		//^3E74:500E
-		si = bp08->data & 0x7fff;
+		iCriticalLoad |= IS_CLS1_CRITICAL_FOR_LOAD(cls1);
+		iGDATItemID = pEntry->data & 0x7FFF;
 	}
-	//^3E74:501C
-	if (si != 0xffff) {
-		if (glbShelfMemoryTable[si].Present() || (di != 0)) {
-			//^3E74:5055
-			Bit8u *bp04 = EXTRACT_GDAT_IMAGE(si, 0);
-			//^3E74:5064
-			return bp04;
+	if (iGDATItemID != 0xFFFF) {
+		if (glbShelfMemoryTable[iGDATItemID].Present() || (iCriticalLoad != 0)) {
+			xImageBuffer = EXTRACT_GDAT_IMAGE(iGDATItemID, 0);
+			return xImageBuffer;
 		}
 	}
 	SkD((DLV_BUGHERE,"BUG? Image (%02X,%02X,%02X) not found. We just supply a \":P\" icon\n"
 		, (Bitu)cls1, (Bitu)cls2, (Bitu)cls4));
-	//^3E74:5042
+	
 	// SPX: the default image (yukman) is located as default image from MISC ITEM category
 	// If that default image is not here, it is very likely to crash thereafter (anytime the default is required)
-	si = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_MISCELLANEOUS, GDAT_ITEM_DEFAULT_INDEX, 0x01, 0xfe); // (0x15, 0xfe, 0x01, 0xfe) // the Yukman :P icon
-	//^3E74:5055
-	Bit8u *bp04 = EXTRACT_GDAT_IMAGE(si, 0);
-	//^3E74:5064
-	return bp04;
+
+	iGDATItemID = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_MISCELLANEOUS, GDAT_ITEM_DEFAULT_INDEX, 0x01, 0xFE); // (0x15, 0xfe, 0x01, 0xfe) // the Yukman :P icon
+	xImageBuffer = EXTRACT_GDAT_IMAGE(iGDATItemID, 0);
+	return xImageBuffer;
 }
 
 
@@ -26210,12 +26203,12 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_00()
 	tlbCreaturesAnimationSequences = reinterpret_cast<CreatureAnimationFrame *>(bp04);	// This points to the first part
 	bp04 += bp08;
 
-	bp08 = READ_UI32(bp04,+0);	// 0x760 = 1888 = 4*472
+	bp08 = READ_UI32(bp04,+0);	// @0C28; 0x760 = 1888 = 4*472				@0xC2C + 0x760 = @138C
 	bp04 += 4;
 	tlbCreaturesActionsGroupSets = reinterpret_cast<CreatureCommandAnimation *>(bp04);	// This points to the second part
 	bp04 += bp08;
 
-	bp08 = READ_UI32(bp04,+0);	// 0x54 = 84 = 2*42
+	bp08 = READ_UI32(bp04,+0);	// @138C; 0x54 = 84 = 2*42
 	bp04 += 4;
 	tlbCreaturesActionsGroupOffsets = reinterpret_cast<U16 *>(bp04);		// This points to the third part
 

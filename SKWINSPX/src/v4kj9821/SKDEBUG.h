@@ -7,7 +7,13 @@
 
 //------------------------------------------------------------------------------
 
-#define SkD(X) SkwinDEBUG X
+#ifdef __DJGPP__
+	#define SkD(X) ;;
+#else
+	#define SkD(X) SkwinDEBUG X
+#endif
+
+
 #ifdef _DEBUG
 	#define LOGX(X) Write2LOGX X
 #else
@@ -15,6 +21,7 @@
 #endif
 
 #define DLV_BUGHERE 1
+
 #define DLV_CPX 0
 #define DLV_FYI 0
 #define DLV_GUI 0
@@ -42,7 +49,7 @@
 #define DLV_DBG_RAND 0
 #define DLV_DBG_CEL2 0
 #define DLV_DBG_SEED 0
-#define DLV_DBG_SED2 0
+#define DLV_DBG_SED2 1		// Creature animation
 #define DLV_DBG_SED3 0
 #define DLV_DBG_RAIN 0		// Rain/Storm information
 #define DLV_DBG_DIST 0		// Distant element
@@ -53,6 +60,7 @@
 #define DLV_DBG_DOOR	0
 
 #define DLV_USE_LOGX 1
+
 
 //------------------------------------------------------------------------------
 
