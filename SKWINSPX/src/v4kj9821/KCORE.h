@@ -1102,7 +1102,7 @@ protected:
 	Bit16u QUERY_GDAT_CREATURE_WORD_VALUE(Bit8u creatureType, Bit8u cls4);
 	//void _2066_1ea3(Bit16u xx, Bit16u yy, Bit16u zz);		// An interesting one about changing bits on tile (void/pit)
 	void SET_TILE_ATTRIBUTE_02(Bit16u xx, Bit16u yy, Bit16u map); // _2066_1ea3
-	sk1c9a02c3 *_1c9a_02c3(Creature *xx, AIDefinition *yy);
+	sk1c9a02c3* GET_CREATURE_INFO_DATA(Creature *xCreature, AIDefinition *xAIDef); // _1c9a_02c3
 	Bit16u _4937_01a9(Bit16u xx, Bit16u *yy, CreatureAnimationFrame **rref);
 	void GRAPHICS_DATA_OPEN();
 		void ORIGINAL__GRAPHICS_DATA_OPEN();
@@ -1241,7 +1241,7 @@ protected:
 	void SUMMARIZE_STONE_ROOM(ExtendedTileInfo *ref, Bit16u dir, Bit16u xx, Bit16u yy);
 	i16 QUERY_DUNGEON_MAP_CHIP_PICT(Bit8u cls1, Bit8u cls2, Bit8u **ppBuff, Bit8u *localpal);
 	void DRAW_CHIP_OF_MAGIC_MAP(const Bit8u *buff, Bit16u aa, Bit16u xx, Bit16u yy, Bit16u flipMirror, Bit8u *localpal);
-	i16 _4937_000f(Bit16u xx, Bit16u *yy);
+	i16 CREATURE_SEQUENCE_4937_000f(Bit16u xx, Bit16u *yy); // 4937_000f
 	Bit16u _0cee_2df4(ObjectID recordLink);
 	Bit16u _48ae_011a(ObjectID recordLink);
 	void DRAW_MAP_CHIP(ObjectID recordLink, i16 ss, i16 tt, i16 ww, Bit16u xx, Bit16u yy, Bit8u cc, Bit16u flags);
@@ -1690,7 +1690,7 @@ protected:
 	Bit16u _RAND();
 	Bit16u GET_CREATURE_ANIMATION_FRAME(Bit8u ct, Bit16u command, Bit16u *pw08, Bit16u *pw0a, CreatureAnimationFrame **animframe, Bit16u vv);	
 
-	void _1c9a_09db(ObjectID recordLink);
+	void CREATURE_SET_ANIM_FRAME(ObjectID recordLink); // _1c9a_09db
 	void ARRANGE_DUNGEON();
 	i16 FILE_OPEN(const U8 *filename);
 	U16 FILE_READ(Bit16u handle, Bit32u buffSize, void *buff);
@@ -1895,7 +1895,7 @@ protected:
 	void MAKE_PUT_DOWN_ITEM_CLICKABLE_ZONE(X16 xx, ObjectID rl, i16 yy, X16 zz);
 	void DRAW_PUT_DOWN_ITEM(ObjectID rl, i16 cellPos, i16 dir, Creature *ref);
 	X16 DIR_FROM_5x5_POS(X16 _5x5);
-	void _32cb_3e08(ObjectID rl, X16 xx, U32 yy, Creature *ref);
+	void DRAW_ITEMS_WITHIN_OBJECT(ObjectID rl, X16 xx, U32 yy, Creature *ref); // _32cb_3e08
 	void SUMMARY_DRAW_CREATURE(ObjectID rl, i16 cellPos, U32 ss);
 	void _32cb_2cf3(U8 cls2, U16 scale64, U16 mirrorFlip, U16 rectno);
 	void _32cb_2d8c(ObjectID rl, X16 yy, X32 aa);

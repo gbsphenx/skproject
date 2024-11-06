@@ -4596,12 +4596,12 @@ Bit16u SkWinCore::QUERY_ORNATE_ANIM_FRAME(Bit8u cls1, Bit8u cls2, Bit32u tick, B
 
 
 //^4937:000F
-i16 SkWinCore::_4937_000f(Bit16u xx, Bit16u *yy)
+i16 SkWinCore::CREATURE_SEQUENCE_4937_000f(Bit16u xx, Bit16u *yy)
 {
 	//^4937:000F
 	ENTER(0);
 	//^4937:0012
-	return tlbCreaturesAnimationSequences[_4937_005c(xx, yy)].w0 & 0x03ff;
+	return tlbCreaturesAnimationSequences[_4937_005c(xx, yy)].w0 & 0x03FF;
 }
 
 //^0CEE:2DF4
@@ -6603,7 +6603,7 @@ void SkWinCore::FILL_CAII_CUR_MAP()
 						//^1C9A:3B10
 						U16 bp10 = bp0c->w10;
 						//^1C9A:3B1A
-						_1c9a_09db(si);
+						CREATURE_SET_ANIM_FRAME(si);
 						//^1C9A:3B20
 						bp0c->w10 |= bp10 & 0x6000;
 						//^1C9A:3B2D
@@ -9058,31 +9058,17 @@ void SkWinCore::FILL_ORPHAN_CAII()
 //^1C9A:3BD7
 void SkWinCore::RESET_CAII()
 {
-	//printf("RESET_CAII\n"); getch();
-	//^1C9A:3BD7
 	ENTER(4);
-	//^1C9A:3BDC
 	_4976_1a68 = 0;
-	//^1C9A:3BE2
-	U16 si;
-	for (si = 0; si < glbCreaturesCount; si++) {
-		//^1C9A:3BE6
-		glbTabCreaturesInfo[si].CreatureIndex(-1);
-		//^1C9A:3BF8
+	U16 iCreatureIndex;
+	for (iCreatureIndex = 0; iCreatureIndex < glbCreaturesCount; iCreatureIndex++) {
+		glbTabCreaturesInfo[iCreatureIndex].CreatureIndex(-1);
 	}
-	//^1C9A:3BFF
-	Creature *bp04 = reinterpret_cast<Creature *>(static_cast<U8 *>(glbDBObjectData[4]));
-	//^1C9A:3C0C
-	for (si = dunHeader->nRecords[dbCreature]; si-- != 0; bp04++) {
-		//^1C9A:3C16
-		bp04->b5 = 0xff;
+	Creature *xCreature = reinterpret_cast<Creature *>(static_cast<U8 *>(glbDBObjectData[4]));
+	for (iCreatureIndex = dunHeader->nRecords[dbCreature]; iCreatureIndex-- != 0; xCreature++) {
+		xCreature->b5 = 0xFF;
 	}
-	//^1C9A:3C29
-	//printf("FILL_ORPHAN_CAII\n");
-	// getch();
 	FILL_ORPHAN_CAII();
-	//^1C9A:3C2D
-	//printf("RESET_CAII end\n"); getch();
 	return;
 }
 
@@ -15189,23 +15175,24 @@ Bit16u SkWinCore::GET_CREATURE_ANIMATION_FRAME(Bit8u ct, Bit16u command, Bit16u 
 }
 
 //^1C9A:09DB
-void SkWinCore::_1c9a_09db(ObjectID recordLink)
+// SPX: _1c9a_09db renamed CREATURE_SET_ANIM_FRAME
+void SkWinCore::CREATURE_SET_ANIM_FRAME(ObjectID recordLink)
 {
 	//^1C9A:09DB
 	CreatureAnimationFrame bp0e;
 	CreatureAnimationFrame *bp12 = &bp0e;
 	//^1C9A:09E8
-	Creature *bp04 = GET_ADDRESS_OF_RECORD(recordLink)->castToCreature();
+	Creature* xCreature = GET_ADDRESS_OF_RECORD(recordLink)->castToCreature();	// bp04
 	//^1C9A:09F7
-	sk1c9a02c3 *bp08 = _1c9a_02c3(bp04, QUERY_CREATURE_AI_SPEC_FROM_TYPE(bp04->CreatureType()));
+	sk1c9a02c3* xInfoData = GET_CREATURE_INFO_DATA(xCreature, QUERY_CREATURE_AI_SPEC_FROM_TYPE(xCreature->CreatureType()));	// bp08
 	//^1C9A:0A1A
 	GET_CREATURE_ANIMATION_FRAME(
-		bp04->CreatureType(),
+		xCreature->CreatureType(),
 		0x11,
-		&bp08->w0,
-		&bp08->w2,
+		&xInfoData->w0,
+		&xInfoData->w2,
 		&bp12,
-		bp04->w12
+		xCreature->w12
 		);
 }
 
@@ -21892,7 +21879,8 @@ X16 SkWinCore::DIR_FROM_5x5_POS(X16 _5x5)
 }
 
 //^32CB:3E08
-void SkWinCore::_32cb_3e08(ObjectID rl, X16 xx, U32 yy, Creature *ref)
+// SPX: DRAW_ITEMS_WITHIN_OBJECT renamed DRAW_ITEMS_WITHIN_OBJECT
+void SkWinCore::DRAW_ITEMS_WITHIN_OBJECT(ObjectID rl, X16 xx, U32 yy, Creature *ref)
 {
 	//^32CB:3E08
 	ENTER(12);
@@ -22112,7 +22100,7 @@ void SkWinCore::_32cb_3edd(i16 xx)
 	//^32CB:3EE0
 	if (_4976_421a != OBJECT_END_MARKER) {
 		//^32CB:3EE7
-		_32cb_3e08(_4976_421a, xx, _4976_5a8a, _4976_5a8e);
+		DRAW_ITEMS_WITHIN_OBJECT(_4976_421a, xx, _4976_5a8a, _4976_5a8e);
 	}
 	_4976_421a = OBJECT_END_MARKER;
 	//^32CB:3F0B
@@ -23676,15 +23664,10 @@ Bit16u SkWinCore::_075f_06bd(Missile *ref, ObjectID recordLink) //#DS=4976?
 // TODO: get some info of creature anim ?
 Bit16u SkWinCore::_1c9a_0958(ObjectID recordLink)
 {
-	//^1C9A:0958
-	//^1C9A:095C
-	Creature *creature = GET_ADDRESS_OF_RECORD(recordLink)->castToCreature();	//*bp04
-	//^1C9A:096B
-	sk1c9a02c3 *bp08 = _1c9a_02c3(creature, QUERY_CREATURE_AI_SPEC_FROM_TYPE(creature->CreatureType()));
-	//^1C9A:098E
-	CreatureAnimationFrame *bp0c = _4937_0036(bp08->w0, &bp08->w2);
-	//^1C9A:09AB
-	return (bp0c->w0 & 0x4000) >> 14;
+	Creature *xCreature = GET_ADDRESS_OF_RECORD(recordLink)->castToCreature();	//*bp04
+	sk1c9a02c3* xInfoData = GET_CREATURE_INFO_DATA(xCreature, QUERY_CREATURE_AI_SPEC_FROM_TYPE(xCreature->CreatureType())); // bp08
+	CreatureAnimationFrame *xAnim = _4937_0036(xInfoData->w0, &xInfoData->w2);	// bp0c
+	return (xAnim->w0 & 0x4000) >> 14;
 }
 
 //^0CD5:0118
@@ -26113,15 +26096,30 @@ void SkWinCore::_482b_0004()
 }
 //^32CB:0008
 // SPX: _32cb_0008 renamed LOAD_GDAT_INTERFACE_00_0A
+// This item does not exist in PC-DOS version but defines creatures/objects anim frames, then it is a must have.
+// If not existing, load preextracted data to compensate
 void SkWinCore::LOAD_GDAT_INTERFACE_00_0A()
 {
-	//^32CB:0008
+	i32 iItemSize = 0;
 	ENTER(4);
-	//^32CB:000C
-	U32 bp04;
-	// SPX: This points to a 1652 bytes file .. seems to have struct of 14 bytes => 118 records.
-	_4976_5a98 = reinterpret_cast<U8 (*)[14]>(ALLOC_MEMORY_RAM(bp04 = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dt07, 0xa), afUseUpper, 0x400));
-	LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dt07, 0xa, reinterpret_cast<U8 *>(_4976_5a98));
+	U32 bp04 = 0;
+
+	iItemSize = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dt07, 0x0A);
+	if (iItemSize <= 0) {
+		i16 hAnimFrameTabHandle = -1;
+		iItemSize = 1652;
+		SkCodeParam::bDM2V5Mode = true;
+		// Then, we do a hardfile read to make up for missing item, not pretty but working
+		hAnimFrameTabHandle = FILE_OPEN((const U8*)"bin/v4kj9821/0653ctbl.bin");
+		_4976_5a98 = reinterpret_cast<U8 (*)[14]>(ALLOC_MEMORY_RAM(iItemSize,	afUseUpper, 0x400));
+		FILE_READ(hAnimFrameTabHandle, iItemSize, _4976_5a98);
+		FILE_CLOSE(hAnimFrameTabHandle);
+	}
+	else {
+	// SPX: This points to a 1652 bytes file .. seems to have struct of 14 bytes => 118 records. creature/objects anim frame size info and such
+	_4976_5a98 = reinterpret_cast<U8 (*)[14]>(ALLOC_MEMORY_RAM(bp04 = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dt07, 0x0A), afUseUpper, 0x400));
+	LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dt07, 0x0A, reinterpret_cast<U8 *>(_4976_5a98));
+	}
 	//^32CB:0052
 	return;
 }

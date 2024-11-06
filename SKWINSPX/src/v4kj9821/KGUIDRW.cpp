@@ -1488,7 +1488,7 @@ _10b7:
 		//^29EE:136B
 		if (bp18 != OBJECT_END_MARKER) {
 			//^29EE:1374
-			Creature *bp04 = GET_ADDRESS_OF_RECORD4(bp18);
+			Creature* xCreature = GET_ADDRESS_OF_RECORD4(bp18); // bp04
 			//^29EE:1383
 			Bit16u bp16 = QUERY_CREATURE_AI_SPEC_FLAGS(bp18);
 			//^29EE:138F
@@ -1522,10 +1522,9 @@ _10b7:
 			if (bp0c != 0) {
 				//^29EE:1418
 				if ((bp16 & 0x0001) != 0) {
-					//^29EE:141F
-					sk1c9a02c3 *bp08 = _1c9a_02c3(bp04, QUERY_CREATURE_AI_SPEC_FROM_TYPE(bp04->CreatureType()));
+					sk1c9a02c3* xInfoData = GET_CREATURE_INFO_DATA(xCreature, QUERY_CREATURE_AI_SPEC_FROM_TYPE(xCreature->CreatureType()));
 					//^29EE:1443
-					bp0a = _4937_000f(bp08->w0, &bp08->w2);
+					bp0a = CREATURE_SEQUENCE_4937_000f(xInfoData->w0, &xInfoData->w2);
 					//^29EE:145D
 					bp0a = (bp0a >= 4 && bp0a <= 7) ? 4 : 0;
 					//^29EE:1474
@@ -1543,7 +1542,7 @@ _10b7:
 					bp0a = i16(glbGameTick % (bp0c / 2)) << 1;
 				}
 				//^29EE:14AE
-				bp0c = (ww - bp04->b15_0_1());
+				bp0c = (ww - xCreature->b15_0_1());
 				//^29EE:14C4
 				//^29EE:14E9
 				//^29EE:154D
@@ -1573,7 +1572,7 @@ _1554:
 				//^29EE:1568
 				if ((_0cee_2df4(bp18) & 0x000f) != 0) {
 					//^29EE:1576
-					for (si = bp04->w0; si != OBJECT_END_MARKER; si = GET_NEXT_RECORD_LINK(si)) {
+					for (si = xCreature->w0; si != OBJECT_END_MARKER; si = GET_NEXT_RECORD_LINK(si)) {
 						//^29EE:157E
 						bp0a = si.DBType();
 						//^29EE:1589
@@ -5642,47 +5641,35 @@ void SkWinCore::SUMMARY_DRAW_CREATURE(ObjectID rl, i16 cellPos, U32 ss)
 	// SkD((DLV_BUGHERE, "DBG: SUMMARY_DRAW_CREATURE(%04X,%5d,%08X)\n"
 	//	, rl.w, cellPos, ss));
 
-	//^32CB:2BE6
 	ENTER(14);
-	//^32CB:2BEC
-	ObjectID di = rl;
-	X16 si = cellPos;
-	if (glbIsPlayerMoving != 0 && si == 0)
+	ObjectID rObject = rl;
+	X16 iCellPos = cellPos;
+
+	if (glbIsPlayerMoving != 0 && iCellPos == 0)
 		return;
-	//^32CB:2C00
-	i16 bp0e = glbTabYAxisDistance[RCJ(23,si)];
-	//^32CB:2C08
-	for (; di != OBJECT_END_MARKER; di = GET_NEXT_RECORD_LINK(di)) {
-		//^32CB:2C0B
-		if (di.DBType() != dbCreature)
+
+	i16 iDistToPlayer = glbTabYAxisDistance[RCJ(23,iCellPos)];
+	for (; rObject != OBJECT_END_MARKER; rObject = GET_NEXT_RECORD_LINK(rObject)) {
+		if (rObject.DBType() != dbCreature)
 			continue;
-		//^32CB:2C1B
-		Creature *bp04 = GET_ADDRESS_OF_RECORD4(di);
-		CreatureInfoData *bp08;
-		if (bp04->b5_0_7() == 0xff) {
-			//^32CB:2C32
-			bp08 = 0;
+		Creature* xCreature = GET_ADDRESS_OF_RECORD4(rObject);
+		CreatureInfoData* xInfo = NULL;
+		if (xCreature->b5_0_7() == 0xFF) {
+			xInfo = NULL; // 0
 		}
 		else {
-			//^32CB:2C3E
-			bp08 = &glbTabCreaturesInfo[bp04->b5_0_7()];
+			xInfo = &glbTabCreaturesInfo[xCreature->b5_0_7()];
 		}
-		//^32CB:2C5C
-		AIDefinition *bp0c = QUERY_CREATURE_AI_SPEC_FROM_TYPE(bp04->CreatureType());
-		QUERY_CREATURE_PICST(si, bp0e, bp04, bp08, di);
+		AIDefinition *xAIDef = QUERY_CREATURE_AI_SPEC_FROM_TYPE(xCreature->CreatureType());
+		QUERY_CREATURE_PICST(iCellPos, iDistToPlayer, xCreature, xInfo, rObject);
 		DRAW_TEMP_PICST();
-		if (bp0c->IsStaticObject() == 0 || bp0c->w30_0_3() == 0 || bp0e >= 4)
+		if (xAIDef->IsStaticObject() == 0 || xAIDef->w30_0_3() == 0 || iDistToPlayer >= 4)
 			continue;
-		//^32CB:2CA4
-		if (tblCellTilesRoom[si].xsrd.w0 == 0x11) {
-			//^32CB:2CB8
-			ss = 0x3ff;
+		if (tblCellTilesRoom[iCellPos].xsrd.w0 == 0x11) {
+			ss = 0x3FF;
 		}
-		//^32CB:2CC2
-		_32cb_3e08(bp04->GetPossessionObject(), si, ss, bp04);
-		//^32CB:2CDE
+		DRAW_ITEMS_WITHIN_OBJECT(xCreature->GetPossessionObject(), iCellPos, ss, xCreature);
 	}
-	//^32CB:2CEF
 	return;
 }
 

@@ -1717,7 +1717,7 @@ namespace DM2Internal {
 		Bit16u w22_8_b() const { return (w22 >> 8)&15; }	// xp gained by champion when attacked by creature
 		U16 w24_c_c() const { return (w24 >> 12)&1; }	// head damage immune : resistance to door and non-fireball explosion??? only for mummy and flying chest ??
 		U16 GetFireResistance() const { return (w24 >> 4)&15; }	// (w24_4_7) would be fire resistance?
-		U16 w30_0_3() const { return (w30)&15; }	// related to static objects ?
+		U16 w30_0_3() const { return (w30)&15; }	// related to static objects ? can be invisible ?
 		U16 w22_4_7() const { return (w22>>4)&15; }
 		U16 w22_c_f() const { return (w22>>12); }
 		U16 w22_0_3() const { return (w22)&15; }
@@ -2140,10 +2140,11 @@ namespace DM2Internal {
 
 		DMEncyclopaedia::ObjectID id4() const { return w4; }
 	};
-	// 
-	struct sk1c9a02c3 { // ? bytes
-		Bit16u w0;			// @0
-		Bit16u w2;			// @2
+	// SPX: sk1c9a02c3 actually holds the same type of data contained within a creature records data, starting at byte 8.
+	// Depending on creatures type, these data will come from direct creature data or some other table.
+	struct sk1c9a02c3 { // 4 bytes
+		Bit16u w0;			// @0	// Creature::w8
+		Bit16u w2;			// @2	// Creature::w10
 
 		U16 w2_e_e() const { return (w2>>14)&1; }
 		U16 w2_d_d() const { return (w2>>13)&1; }

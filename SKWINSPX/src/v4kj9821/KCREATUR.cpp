@@ -73,15 +73,13 @@ Bit16u SkWinCore::QUERY_GDAT_CREATURE_WORD_VALUE(Bit8u creatureType, Bit8u cls4)
 
 
 //^1C9A:02C3
-sk1c9a02c3 *SkWinCore::_1c9a_02c3(Creature *xx, AIDefinition *yy)
+// SPX: GET_CREATURE_INFO_DATA
+sk1c9a02c3 *SkWinCore::GET_CREATURE_INFO_DATA(Creature *xCreature, AIDefinition *xAIDef)
 {
-	//^1C9A:02C3
-	if (yy->IsStaticObject() != 0) {
-		//^1C9A:02D0
-		return reinterpret_cast<sk1c9a02c3 *>(PTR_PADD(xx,+8));
+	if (xAIDef->IsStaticObject() != 0) {
+		return reinterpret_cast<sk1c9a02c3 *>(PTR_PADD(xCreature,+8));
 	}
-	//^1C9A:02D8
-	return reinterpret_cast<sk1c9a02c3 *>(PTR_PADD(&glbTabCreaturesInfo[xx->b5_0_7()],+8));
+	return reinterpret_cast<sk1c9a02c3 *>(PTR_PADD(&glbTabCreaturesInfo[xCreature->b5_0_7()],+8));
 }
 
 //^4937:01A9
@@ -1621,8 +1619,8 @@ U16 SkWinCore::QUERY_CREATURE_5x5_POS(Creature *ref, U16 dir)
 	//^32CB:0058
 	if (ref->b5_0_7() == 0xff)
 		return 12;
-	sk1c9a02c3 *bp04 = _1c9a_02c3(ref, QUERY_CREATURE_AI_SPEC_FROM_TYPE(ref->CreatureType()));
-	i16 _5x5 = _4976_5a98[_4937_000f(bp04->w0, &bp04->w2)][0];
+	sk1c9a02c3 *bp04 = GET_CREATURE_INFO_DATA(ref, QUERY_CREATURE_AI_SPEC_FROM_TYPE(ref->CreatureType()));
+	i16 _5x5 = _4976_5a98[CREATURE_SEQUENCE_4937_000f(bp04->w0, &bp04->w2)][0];
 	return ROTATE_5x5_POS(_5x5, dir);
 }
 
@@ -5726,7 +5724,7 @@ _0a6a:
 		X16 si;
 		if (xCreatureInfo->Command == ccmDestroy) {
 			//^13E4:0A74
-			xCreatureInfo->w14 = _4937_000f(bp08->w0, &bp08->w2);
+			xCreatureInfo->w14 = CREATURE_SEQUENCE_4937_000f(bp08->w0, &bp08->w2);
 			if ((tblAIStats01[QUERY_GDAT_CREATURE_WORD_VALUE(glbCurrentThinkingCreatureRec->CreatureType(), 1)] & 8) == 0) {
 				X16 iCloudPower = 0;
 				//^13E4:0AB0
@@ -5903,8 +5901,7 @@ void SkWinCore::THINK_CREATURE(X8 xx, X8 yy, X16 timerType)
 		return;
 	U8 *bp04 = PREPARE_LOCAL_CREATURE_VAR(bp10, xx, yy, timerType);
 	CreatureInfoData *bp08 = glbCurrentThinkingCreatureData;
-//		AIDefinition *bp0c = glbAIDef;
-	AIDefinition *currentAI = glbAIDef;
+	AIDefinition* currentAI = glbAIDef;	// bp0c
 
 	// SPX: protection
 	if (bp08 == NULL)

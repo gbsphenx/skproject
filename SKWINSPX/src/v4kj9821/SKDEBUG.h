@@ -49,7 +49,7 @@
 #define DLV_DBG_RAND 0
 #define DLV_DBG_CEL2 0
 #define DLV_DBG_SEED 0
-#define DLV_DBG_SED2 1		// Creature animation
+#define DLV_DBG_SED2 0		// Creature animation
 #define DLV_DBG_SED3 0
 #define DLV_DBG_RAIN 0		// Rain/Storm information
 #define DLV_DBG_DIST 0		// Distant element

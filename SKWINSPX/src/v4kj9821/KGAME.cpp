@@ -3892,7 +3892,7 @@ void SkWinCore::ARRANGE_DUNGEON()
 									//^2066:223B
 									bp14->w8 = bp14->w10 = 0;
 									//^2066:2248
-									_1c9a_09db(di);
+									CREATURE_SET_ANIM_FRAME(di);
 									//^2066:224F
 									if (bp14->b14_7_7() != 0)
 										break;
@@ -4202,7 +4202,7 @@ U8 *SkWinCore::PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timer
 	glbCurrentThinkingCreatureData = xCreatureInfo;
 	glbAIDef = QUERY_CREATURE_AI_SPEC_FROM_TYPE(xCreature->CreatureType());
 	//^13E4:00DC
-	_4976_4ed6 = _1c9a_02c3(xCreature, glbAIDef);
+	_4976_4ed6 = GET_CREATURE_INFO_DATA(xCreature, glbAIDef);
 	glbSomeMap_4976_4ee7 = U8(bp0e);
 	glbCreatureTimer.SetMap(bp0e);
 	glbCreatureTimer.SetTick(glbGameTick);

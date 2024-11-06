@@ -793,41 +793,25 @@ void SkWinCore::_32cb_0c7d(ExtendedPicture *ref, U16 xx, U16 yy)
 
 
 //^32CB:28C7
-void SkWinCore::QUERY_CREATURE_PICST(U16 xx, i16 dist, Creature *vv, CreatureInfoData *ww, ObjectID rl)
+void SkWinCore::QUERY_CREATURE_PICST(U16 xx, i16 iDistToPlayer, Creature *xCreature, CreatureInfoData *xInfo, ObjectID rl)
 {
-	//^32CB:28C7
 	ENTER(28);
-	//^32CB:28CD
 	U16 di = 0;
-	//^32CB:28CF
-	sk1c9a02c3 *bp04 = _1c9a_02c3(vv, QUERY_CREATURE_AI_SPEC_FROM_TYPE(vv->CreatureType()));
-	//^32CB:28F3
-	i16 si = _4937_000f(bp04->w0, &bp04->w2);
-	//^32CB:290C
-	U16 bp06 = (ww == NULL) ? 0 : ww->b7;
-	//^32CB:2924
-	U16 bp0a = ((QUERY_CREATURE_AI_SPEC_FLAGS(rl) & 4) != 0) ? 2 : ((_4976_5aa0 - vv->b15_0_1()) & 3);
-	//^32CB:2950
-	U16 bp08 = _4976_5a98[si][bp0a +10];
-	//^32CB:2969
-	U8 bp0b = vv->CreatureType();
-	//^32CB:2973
+	sk1c9a02c3* xInfoData = GET_CREATURE_INFO_DATA(xCreature, QUERY_CREATURE_AI_SPEC_FROM_TYPE(xCreature->CreatureType())); // bp04
+	i16 si = CREATURE_SEQUENCE_4937_000f(xInfoData->w0, &xInfoData->w2);
+	U16 bp06 = (xInfo == NULL) ? 0 : xInfo->b7;
+	U16 bp0a = ((QUERY_CREATURE_AI_SPEC_FLAGS(rl) & 4) != 0) ? 2 : ((_4976_5aa0 - xCreature->b15_0_1()) & 3);
+	U16 bp08 = _4976_5a98[si][bp0a +10];	// _4976_5a98 table has 4+8 bytes, 4 first points to address of item 0653 loaded into mem
+	U8 bp0b = xCreature->CreatureType();
 	U8 bp0c = _4976_5a98[si][bp0a +2];
-	//^32CB:298A
-	if (QUERY_GDAT_ENTRY_IF_LOADABLE(0x0f, bp0b, dtImage, bp0c) == 0) {
-		//^32CB:299F
+
+	if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, bp0b, dtImage, bp0c) == 0) {
 		bp0c = (bp0a +2) & 3;
-		//^32CB:29A9
 		if ((bp0c & 1) != 0)
-			//^32CB:29AF
 			di = 1;
-		//^32CB:29B2
 		bp0c = _4976_5a98[si][bp0c +2];
-		//^32CB:29CD
-		if (QUERY_GDAT_ENTRY_IF_LOADABLE(0x0f, bp0b, dtImage, bp0c) == 0) {
-			//^32CB:29E2
+		if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, bp0b, dtImage, bp0c) == 0) {
 			di = 0;
-			//^32CB:29E4
 			bp0c = _4976_5a98[si][4];
 		}
 	}
@@ -840,15 +824,15 @@ void SkWinCore::QUERY_CREATURE_PICST(U16 xx, i16 dist, Creature *vv, CreatureInf
 		di = 1;
 	}
 	//^32CB:2A19
-	if (QUERY_GDAT_ENTRY_IF_LOADABLE(0x0f, bp0b, dtImage, bp0c) == 0) {
+	if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, bp0b, dtImage, bp0c) == 0) {
 		//^32CB:2A31
 		bp0c = bp0a -6;
 		//^32CB:2A39
-		if (QUERY_GDAT_ENTRY_IF_LOADABLE(0x0f, bp0b, dtImage, bp0c) == 0) {
+		if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, bp0b, dtImage, bp0c) == 0) { // try to get 0xFC ?
 			//^32CB:2A4E
 			if (true
 				&& bp0c == 0xfb
-				&& QUERY_GDAT_ENTRY_IF_LOADABLE(0x0f, bp0b, dtImage, bp0c +2) != 0
+				&& QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, bp0b, dtImage, bp0c +2) != 0
 			) {
 				//^32CB:2A6E
 				di = 1;
@@ -864,9 +848,9 @@ void SkWinCore::QUERY_CREATURE_PICST(U16 xx, i16 dist, Creature *vv, CreatureInf
 		}
 	}
 	//^32CB:2A81
-	i16 bp10 = tlbDistanceStretch[RCJ(5,dist)];
+	i16 bp10 = tlbDistanceStretch[RCJ(5,iDistToPlayer)];
 	//^32CB:2A8D
-	i16 bp14 = (ww != NULL && ww->Command == ccmDestroy) ? ww->w14 : si;
+	i16 bp14 = (xInfo != NULL && xInfo->Command == ccmDestroy) ? xInfo->w14 : si;
 	//^32CB:2AAB
 	U16 bp12 = _4976_5a98[bp14][0];
 	//^32CB:2AC1
@@ -878,7 +862,7 @@ void SkWinCore::QUERY_CREATURE_PICST(U16 xx, i16 dist, Creature *vv, CreatureInf
 	}
 	else {
 		//^32CB:2AE9
-		bp10 = CALC_STRETCHED_SIZE(_4976_5a98[si][bp0a +6], bp10);
+		bp10 = CALC_STRETCHED_SIZE(_4976_5a98[si][bp0a +6], bp10);	// table read from item 653 containing sequence/frame size info
 	}
 	//^32CB:2B0D
 	U16 bp0e = QUERY_CREATURE_BLIT_RECTI(xx, bp12, bp0a) | 0x8000;
@@ -921,8 +905,9 @@ void SkWinCore::QUERY_CREATURE_PICST(U16 xx, i16 dist, Creature *vv, CreatureInf
 		//^32CB:2B7D
 		bp18 = CALC_STRETCHED_SIZE(bp1c, bp18);
 	}
+
 	//^32CB:2B8D
-	QUERY_TEMP_PICST(di, bp10, bp10, _4976_41de[RCJ(8,bp06 & 7)] +bp16, _4976_41de[RCJ(8,(bp06 >> 3) & 7)] +bp18, dist,
+	QUERY_TEMP_PICST(di, bp10, bp10, _4976_41de[RCJ(8,bp06 & 7)] +bp16, _4976_41de[RCJ(8,(bp06 >> 3) & 7)] +bp18, iDistToPlayer,
 		bp0e, -1, _0cee_2e35(bp0b), -1, 0x0f, bp0b, bp0c);
 	//^32CB:2BDA
 	return;
