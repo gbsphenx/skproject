@@ -797,20 +797,25 @@ void SkWinCore::QUERY_CREATURE_PICST(U16 xx, i16 iDistToPlayer, Creature *xCreat
 {
 	ENTER(28);
 	U16 di = 0;
-	sk1c9a02c3* xInfoData = GET_CREATURE_INFO_DATA(xCreature, QUERY_CREATURE_AI_SPEC_FROM_TYPE(xCreature->CreatureType())); // bp04
+	static int counter = 0;
+	U8 iCreatureType = xCreature->CreatureType();
+	sk1c9a02c3* xInfoData = GET_CREATURE_INFO_DATA(xCreature, QUERY_CREATURE_AI_SPEC_FROM_TYPE(iCreatureType)); // bp04
 	i16 si = CREATURE_SEQUENCE_4937_000f(xInfoData->w0, &xInfoData->w2);
+	// SPX: there might be an issue here where animation frame is not retrieved correctly. A static object would have si = 4, so that its gets images x10 x12 x13 x12
+	si = 4 + counter;
+	counter = (counter + 1)%4;
+	printf("Creature %d => seq = %d\n", iCreatureType, si);
 	U16 bp06 = (xInfo == NULL) ? 0 : xInfo->b7;
 	U16 bp0a = ((QUERY_CREATURE_AI_SPEC_FLAGS(rl) & 4) != 0) ? 2 : ((_4976_5aa0 - xCreature->b15_0_1()) & 3);
 	U16 bp08 = _4976_5a98[si][bp0a +10];	// _4976_5a98 table has 4+8 bytes, 4 first points to address of item 0653 loaded into mem
-	U8 bp0b = xCreature->CreatureType();
 	U8 bp0c = _4976_5a98[si][bp0a +2];
 
-	if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, bp0b, dtImage, bp0c) == 0) {
+	if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, iCreatureType, dtImage, bp0c) == 0) {
 		bp0c = (bp0a +2) & 3;
 		if ((bp0c & 1) != 0)
 			di = 1;
 		bp0c = _4976_5a98[si][bp0c +2];
-		if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, bp0b, dtImage, bp0c) == 0) {
+		if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, iCreatureType, dtImage, bp0c) == 0) {
 			di = 0;
 			bp0c = _4976_5a98[si][4];
 		}
@@ -824,15 +829,15 @@ void SkWinCore::QUERY_CREATURE_PICST(U16 xx, i16 iDistToPlayer, Creature *xCreat
 		di = 1;
 	}
 	//^32CB:2A19
-	if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, bp0b, dtImage, bp0c) == 0) {
+	if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, iCreatureType, dtImage, bp0c) == 0) {
 		//^32CB:2A31
 		bp0c = bp0a -6;
 		//^32CB:2A39
-		if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, bp0b, dtImage, bp0c) == 0) { // try to get 0xFC ?
+		if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, iCreatureType, dtImage, bp0c) == 0) { // try to get 0xFC ?
 			//^32CB:2A4E
 			if (true
 				&& bp0c == 0xfb
-				&& QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, bp0b, dtImage, bp0c +2) != 0
+				&& QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, iCreatureType, dtImage, bp0c +2) != 0
 			) {
 				//^32CB:2A6E
 				di = 1;
@@ -908,7 +913,7 @@ void SkWinCore::QUERY_CREATURE_PICST(U16 xx, i16 iDistToPlayer, Creature *xCreat
 
 	//^32CB:2B8D
 	QUERY_TEMP_PICST(di, bp10, bp10, _4976_41de[RCJ(8,bp06 & 7)] +bp16, _4976_41de[RCJ(8,(bp06 >> 3) & 7)] +bp18, iDistToPlayer,
-		bp0e, -1, _0cee_2e35(bp0b), -1, 0x0f, bp0b, bp0c);
+		bp0e, -1, CREATURE_GET_COLORKEY(iCreatureType), -1, 0x0f, iCreatureType, bp0c);
 	//^32CB:2BDA
 	return;
 }

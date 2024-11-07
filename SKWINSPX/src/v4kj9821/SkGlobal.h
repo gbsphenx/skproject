@@ -430,10 +430,10 @@ extern const U8 tlbDisplayOrderLeft[25];
 extern const U8 tlbDisplayOrderRight[25];
 extern const U8 tlbDisplayOrderCenter[25];
 extern const char * const _089c_00d8;
-extern const U8 _4976_435a[6];
-extern const U16 _4976_434e[6];
-extern const U8 _4976_4360[6];
-extern const U8 _4976_4366[6];
+extern const U8 tlbPullPushArrow[6];	// _4976_435a
+extern const U16 tlbPullPushArrowRectno[6];	// _4976_434e
+extern const U8 tlbPullPushObjectMoveDirs[6];	// _4976_4360
+extern const U8 tlbPullPushPlayerMoveDirs[6];	// _4976_4366
 extern const i8 _4976_0154[32][2];
 
 extern const i8 _4976_41d0[];

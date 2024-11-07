@@ -1751,7 +1751,7 @@ namespace DM2Internal {
 		X8 b10_;		// @10 // variant index. // sk1c9a02c3::w2
 		X8 b11_;		// @11 // 
 		Ax3 w12;		// @12
-		i16 w14;		// @14
+		i16 w14;		// @14 // anim frame
 		i16 w16;		// @16
 		i8 x;			// @18 // b18 _4976_3672[xx][]  , b18 is xx
 		i8 y;			// @19 // b19 _4976_3672[xx][yy], b19 is yy
@@ -3028,7 +3028,7 @@ namespace DM2Internal {
 //		ccm42 = 0x42,	// Hello 1 (rocky) ?
 //		ccm52 = 0x52,	// Hello 2 (rocky) ?
 		
-		ccm55 = 0x55,	// Cast reflector (Dragoth) ?
+		ccm55 = 0x55,	// Cast reflector (Dragoth) ? No, will either transform to ccmCastSpell1 or ccmCastSpell2
 		ccmInv = -1,	// Idle
 	};
 	// Cloud(missile) type

@@ -497,7 +497,7 @@ protected:
 	U16		glbPosX_4976_4eae;	// x?
 	U16		glbPosY_4976_4eb0;	// y?
 	U16		_4976_4eb2;
-	Bit16u	_4976_4eb4;
+	Bit16u	glbHighlightArrowPanel;	// _4976_4eb4
 	Bit16u	_4976_4eb6;
 	U16		glbTargetPosXTest;	// (_4976_4eb8) x?
 	U16		glbTargetPosYTest; // (_4976_4eba) y?
@@ -1254,7 +1254,7 @@ protected:
 	void UPDATE_RIGHT_PANEL(Bit16u xx);
 	void _1031_04f5();
 	void HIGHLIGHT_ARROW_PANEL(Bit16u cls4, Bit16u rectno, Bit16u bright);
-	void _12b4_0092();
+	void CHOOSE_HIGHLIGHT_ARROW_PANEL(); // 12b4_0092
 	void IBMIO_FILL_HALFTONE_RECT(SRECT *rc);
 	void FIRE_FILL_HALFTONE_RECTV(SRECT *rc, Bit16u aa);
 	void FIRE_FILL_HALFTONE_RECTI(Bit16u rectno, Bit16u aa);
@@ -1481,7 +1481,7 @@ protected:
 	U16 _121e_03ae(U16 aa, U16 bb, U16 xx, U16 yy, U16 cc, U16 dd, U16 ee);
 	U16 _098d_02a2(U16 rectno, i16 xx, i16 yy);
 	void PLAYER_TESTING_WALL(U16 ww, U16 xx, U16 yy);
-	i16 _0cee_2e35(U8 cls2);
+	i16 CREATURE_GET_COLORKEY(U8 cls2); // _0cee_2e35
 	void QUERY_CREATURE_PICST(U16 xx, i16 dist, Creature *vv, CreatureInfoData *ww, ObjectID rl);
 	U16 _32cb_01b6(U16 xx, U16 yy, U16 ss, U16 tt, U16 *ww);
 	U16 _121e_0222(U16 xx, U16 yy, U16 ww);

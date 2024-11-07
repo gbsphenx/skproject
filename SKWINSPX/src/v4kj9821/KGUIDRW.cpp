@@ -577,7 +577,7 @@ void SkWinCore::DRAW_MONEYBOX(ObjectID rl)
 	//^29EE:2048
 	ENTER(56);
 	//^29EE:204E
-	DRAW_ICON_PICT_ENTRY(0x14, QUERY_CLS2_FROM_RECORD(rl), 0x10, &_4976_3f6c, 0x5c, -1);
+	DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_CONTAINERS, QUERY_CLS2_FROM_RECORD(rl), 0x10, &_4976_3f6c, 0x5c, -1);
 	i16 bp38[MONEY_ITEM_MAX];
 	COUNT_BY_COIN_TYPES(rl, bp38);
 	i16 si;
@@ -1781,7 +1781,7 @@ void SkWinCore::DRAW_MAJIC_MAP(ObjectID recordLink)
 	//^29EE:1E26
 	if ((glbMagicalMapFlags & 0x0400) == 0) {
 		//^29EE:1E2E
-		DRAW_ICON_PICT_ENTRY(0x14, glbHoldedContainerType, 0x10, &_4976_3f6c, 92, -1);
+		DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_MAGICAL_MAPS, glbHoldedContainerType, 0x10, &_4976_3f6c, 92, -1);
 		//^29EE:1E46
 		for (Bit16u si = 0; si < _4976_53a4; si++) {
 			//^29EE:1E4A
@@ -1933,11 +1933,8 @@ void SkWinCore::DRAW_PLAYER_ATTACK_DIR()
 	}
 	//^29EE:0901
 	FREE_PICT_BUFF(bp04);
-	//^29EE:090E
-	DRAW_ICON_PICT_ENTRY(0x01, 0x04, 0x10, &_4976_3f6c, 96, -1);
-	//^29EE:0924
-	DRAW_ICON_PICT_ENTRY(0x01, 0x04, 0x12, &_4976_3f6c, 97, -1);
-	//^29EE:093A
+	DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_INTERFACE_GENERAL, 0x04, 0x10, &_4976_3f6c, 96, -1);	// arrow to rotate-left champion
+	DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_INTERFACE_GENERAL, 0x04, 0x12, &_4976_3f6c, 97, -1);	// arrow to rotate-right champion
 	return;
 }
 
@@ -1947,19 +1944,20 @@ void SkWinCore::HIGHLIGHT_ARROW_PANEL(Bit16u cls4, Bit16u rectno, Bit16u bright)
 {
 	//^12B4:000D
 	ENTER(52);
+	
 	//^12B4:0012
 	X16 si = rectno;
 	_4976_4eb6 = U8(cls4);
 	_4976_4ebc = si;
-	_4976_4eb4 = bright;
-	if (_4976_4eb4 != 0)
+	glbHighlightArrowPanel = bright;
+	if (glbHighlightArrowPanel != 0)
 		cls4++;
 	//^12B4:002C
 	FIRE_HIDE_MOUSE_CURSOR();
 	sk3f6c bp34;
 	_0b36_0c52(&bp34, si, 1);
 	FILL_ENTIRE_PICT(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp34.w0), glbPaletteT16[COLOR_BLACK]);
-	DRAW_ICON_PICT_ENTRY(1, 3, U8(cls4), &bp34, si, -1);
+	DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_INTERFACE_GENERAL, 3, U8(cls4), &bp34, si, -1);
 	_0b36_0cbe(&bp34, 1);
 	FIRE_SHOW_MOUSE_CURSOR();
 	WAIT_SCREEN_REFRESH();
@@ -1968,16 +1966,12 @@ void SkWinCore::HIGHLIGHT_ARROW_PANEL(Bit16u cls4, Bit16u rectno, Bit16u bright)
 }
 
 //^12B4:0092
-void SkWinCore::_12b4_0092()
+void SkWinCore::CHOOSE_HIGHLIGHT_ARROW_PANEL()
 {
-	//^12B4:0092
 	ENTER(0);
-	//^12B4:0095
-	if (_4976_4eb4 != 0) {
-		//^12B4:009C
+	if (glbHighlightArrowPanel != 0) {
 		HIGHLIGHT_ARROW_PANEL(_4976_4eb6, _4976_4ebc, 0);
 	}
-	//^12B4:00AD
 	return;
 }
 
@@ -5483,7 +5477,7 @@ void SkWinCore::_29ee_000f()
 	i16 si = 0x28;
 	for (; si < 0x2e; bp01 += 2, si++) {
 		//^29EE:0058
-		DRAW_ICON_PICT_ENTRY(0x1, 0x3, bp01, &bp36, si, -1);
+		DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_INTERFACE_GENERAL, 0x3, bp01, &bp36, si, -1);
 	}
 	//^29EE:007E
 	_0b36_0cbe(&bp36, 1);

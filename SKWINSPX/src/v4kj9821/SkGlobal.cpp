@@ -890,10 +890,10 @@ const U8 tlbDisplayOrderCenter[25] = { 0, 4, 1, 3, 2, 5, 9, 6, 8, 7,10,14,11,13,
 const char * const _089c_00d8 = 
 	"\x61\x6E\x69\x6D\x2E\x64\x61\x74\x00";                            // anim.dat.
 
-const U8 _4976_435a[6] = {0x12, 0x10, 0x14, 0x16, 0x18, 0x0E}; // 6arrow to cls4
-const U16 _4976_434e[6] = {0x2A, 0x29, 0x2B, 0x2C, 0x2D, 0x28}; // 6arrow to rectno
-const U8 _4976_4360[6] = {0, 1, 2, 2, 2, 3}; // 6arrow to moving dir for table.
-const U8 _4976_4366[6] = {0, 0, 1, 2, 3, 0}; // 6arrow to moving dir for player.
+const U8 tlbPullPushArrow[6] = {0x12, 0x10, 0x14, 0x16, 0x18, 0x0E}; // (_4976_435a) 6arrow to cls4
+const U16 tlbPullPushArrowRectno[6] = {0x2A, 0x29, 0x2B, 0x2C, 0x2D, 0x28}; // (_4976_434e) 6arrow to rectno
+const U8 tlbPullPushObjectMoveDirs[6] = {0, 1, 2, 2, 2, 3}; // (_4976_4360) 6arrow to moving dir for table.
+const U8 tlbPullPushPlayerMoveDirs[6] = {0, 0, 1, 2, 3, 0}; // (_4976_4366) 6arrow to moving dir for player.
 
 // 4976:0154  FE 0A/F8 03/07 FD/FA 0A/08 F9/F8 0B/02 FE/08 F5  ................
 // 4976:0164  00 00/04 08/F8 F6/06 07/02 02/FA 09/FD F5/02 0B  ................
@@ -1244,7 +1244,7 @@ sk3b74	_4976_3b74[55]; //Rp
 sk0cea	_4976_0ce0[19]; //Rp
 U16		_4976_49d4[5][2]; //Rp
 U8		_4976_3fce[30]; //Rp
-U8		_4976_37a6[86]; //Rr
+U8		_4976_37a6[86]; //Rr	for holding 86 creature command info ?
 U8	_04bf_02be[128]; //Rp // rawkey to ascii
 U8	_04bf_033e[128]; //Rp // rawkey+shift to ascii
 U8	_4976_00dc[8]; //Rr

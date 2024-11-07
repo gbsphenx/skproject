@@ -249,7 +249,7 @@ U32 CSkWinDOS::GetTickCount()
 void CSkWinDOS::Sleep(U32 millisecs)
 {
 #ifdef __DJGPP__
-	usleep(millisecs * 1000);
+	usleep(millisecs); // * 1000
 #endif
 }
 
@@ -282,7 +282,7 @@ void init_mouse() {
 
 void CSkWinDOS::VersionMessage()
 {
-	printf("\nDungeon Master II PC-9821/PC-DOS\n");
+	printf("\nDungeon Master II PC-9821/PC-DOS for DOS\n");
 	printf("Unofficial Port by Kentaro-k.21 + Sphenx (%s - build %s).\n", strVersionNumber, __SKWIN_RELEASE_DATE__);
 }
 

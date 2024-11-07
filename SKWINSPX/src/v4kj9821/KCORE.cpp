@@ -28,6 +28,7 @@ using namespace kkBitBlt;
 #endif // _USE_SDL
 #if defined(__DJGPP__) || defined(__MINGW__)
 #include <SkDOS.h>
+#include <unistd.h>
 #endif // __DJGPP__
 
 
@@ -224,7 +225,8 @@ X16 SkWinCore::EXTENDED_LOAD_AI_DEFINITION(void)
 		}
 
 	}
-	if (SkCodeParam::bUseDM2ExtendedMode)
+	if (0)
+	//if (SkCodeParam::bUseDM2ExtendedMode)
 	{
 		U16 value = 0;
 		U8 category = GDAT_CATEGORY_CREATURE_AI;
@@ -7988,17 +7990,13 @@ void SkWinCore::PLAYER_TESTING_WALL(U16 ww, U16 xx, U16 yy)
 }
 
 //^0CEE:2E35
-i16 SkWinCore::_0cee_2e35(U8 cls2)
+// SPX: _0cee_2e35 renamed CREATURE_GET_COLORKEY
+i16 SkWinCore::CREATURE_GET_COLORKEY(U8 cls2)
 {
-	//^0CEE:2E35
 	ENTER(0);
-	//^0CEE:2E39
-	U16 si = QUERY_GDAT_CREATURE_WORD_VALUE(cls2, 0x04);
-	//^0CEE:2E47
+	U16 si = QUERY_GDAT_CREATURE_WORD_VALUE(cls2, GDAT_IMG_COLORKEY_1);	// 0x04
 	if (si == 0)
-		//^0CEE:2E4B
 		return 4;
-	//^0CEE:2E4E
 	return si;
 }
 
@@ -12471,9 +12469,6 @@ _1523:
 
 // SPX Renamed inportb to SK_IMPORTB to avoid confusion with DOS inportb
 U8 SkWinCore::SK_IMPORTB(U16 port) {
-#ifdef __DJGPP__
-	printf("SK_IMPORTB : %d %02x\n", port, port);
-#endif // __DJGPP__
 	switch (port) {
 		case 0x60: // key in
 		{
@@ -12504,7 +12499,7 @@ void SkWinCore::MessageLoop(bool fBalanceWait, bool fShortWait) {
 				U32 tickDelta = skwin.GetTickCount() -tickThen;
 				if (tickDelta >= (fShortWait ? (TICK_TIME_STAY >> 1) : (TICK_TIME_STAY)))
 					break;
-				skwin.Sleep(1);
+				skwin.Sleep(1); // wait 1 millisec
 			}
 			tickThen = skwin.GetTickCount();
 		}
@@ -14388,6 +14383,8 @@ Bit16u SkWinCore::CALC_IMAGE_BYTE_LENGTH(Bit8u *buff)
 //^00EB:03D5
 void SkWinCore::IBMIO_WAIT_VSYNC()
 {
+#ifndef __DJGPP__
+
 #if UseAltic
 	skwin.Sleep(1000 / 50);
 #else
@@ -14397,6 +14394,8 @@ void SkWinCore::IBMIO_WAIT_VSYNC()
 	//^00EB:03E0
 	while ((inportb(0x03da) & 0x08) == 0);
 #endif
+
+#endif // __DJGPP__
 }
 
 //^00EB:045D
@@ -17437,7 +17436,7 @@ void SkWinCore::_38c8_0002()
 		//^38C8:002D
 		_1031_04f5();
 		FIRE_HIDE_MOUSE_CURSOR();
-		_12b4_0092();
+		CHOOSE_HIGHLIGHT_ARROW_PANEL();
 		//^38C8:003C
 		if (glbChampionInventory == 0) {
 			//^38C8:0043
@@ -21574,17 +21573,17 @@ void SkWinCore::CHANCE_TABLE_OPERATION()
 		si = 2; // 2=move back right
 	}
 	//^32CB:2812
-	bp04 = (_4976_4366[RCJ(6,si)] + glbPlayerDir) & 3;
+	bp04 = (tlbPullPushPlayerMoveDirs[RCJ(6,si)] + glbPlayerDir) & 3;
 	bp06 = glbPlayerPosX;
 	bp08 = glbPlayerPosY;
 	bp06 += glbXAxisDelta[bp04];
 	bp08 += glbYAxisDelta[bp04];
 	if (IS_TILE_BLOCKED(GET_TILE_VALUE(bp06, bp08)) == 0) {
 		//^32CB:2861
-		bp04 = (_4976_4360[RCJ(6,si)] + glbPlayerDir) & 3;
+		bp04 = (tlbPullPushObjectMoveDirs[RCJ(6,si)] + glbPlayerDir) & 3;
 		if (IS_CREATURE_MOVABLE_THERE(glbPlayerPosX + glbXAxisDelta[glbPlayerDir], glbPlayerPosY + glbYAxisDelta[glbPlayerDir], bp04, NULL) != 0) {
 			//^32CB:28A3
-			HIGHLIGHT_ARROW_PANEL(_4976_435a[RCJ(6,si)], _4976_434e[RCJ(6,si)], 1);
+			HIGHLIGHT_ARROW_PANEL(tlbPullPushArrow[RCJ(6,si)], tlbPullPushArrowRectno[RCJ(6,si)], 1);
 			goto _28bf;
 		}
 	}
@@ -26114,6 +26113,17 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_0A()
 		_4976_5a98 = reinterpret_cast<U8 (*)[14]>(ALLOC_MEMORY_RAM(iItemSize,	afUseUpper, 0x400));
 		FILE_READ(hAnimFrameTabHandle, iItemSize, _4976_5a98);
 		FILE_CLOSE(hAnimFrameTabHandle);
+		//--- Display hex data of this table
+		int iNbItems = 1652 / 14;
+		U8* pTabBuffer = (U8*) _4976_5a98;
+		for (int i = 0; i < iNbItems; i++) {
+			printf("%03d)) ", i);
+			for (int b = 0; b < 14; b++) {
+				printf("%02X ", pTabBuffer[b]);
+			}
+			printf("\n");
+			pTabBuffer += 14;
+		}
 	}
 	else {
 	// SPX: This points to a 1652 bytes file .. seems to have struct of 14 bytes => 118 records. creature/objects anim frame size info and such
@@ -27003,8 +27013,8 @@ i16 SkWinCore::SELECT_CREATURE_4EFE(const sk4efe *ref)
 	//^14CD:0067
 	ENTER(16);
 	//^14CD:006D
-	CreatureInfoData *xCreatureInfo = glbCurrentThinkingCreatureData; // bp04
-	Creature *xCreature = glbCurrentThinkingCreatureRec; // bp08
+	CreatureInfoData* xCreatureInfo = glbCurrentThinkingCreatureData; // bp04
+	Creature* xCreature = glbCurrentThinkingCreatureRec; // bp08
 	X16 si = xCreature->w10;
 	X16 bp0e = RAND();
 	if (glbSomeMap_4976_4ee7 == glbCreatureMap) {
@@ -28604,7 +28614,7 @@ _00a4:
 		}
 		//printf("GAME_LOOP: updates\n"); getch();
 		//^13AE:015B
-		_12b4_0092();
+		CHOOSE_HIGHLIGHT_ARROW_PANEL();
 		_482b_05bf(0);
 		PROCESS_PLAYERS_DAMAGE();
 		if (glbGlobalSpellEffects.AuraOfSpeed != 0)
@@ -28654,7 +28664,7 @@ _00a4:
 		//^13AE:01E5
 		_3929_086f();
 		glbTickStepReached = 0;
-		_12b4_0092();
+		CHOOSE_HIGHLIGHT_ARROW_PANEL();
 		if (false) {
 			//^13AE:01F7
 _01f7:

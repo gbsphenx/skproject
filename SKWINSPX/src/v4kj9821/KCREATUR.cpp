@@ -306,6 +306,7 @@ void SkWinCore::QUEUE_THINK_CREATURE(U16 xx, U16 yy)
 }
 
 //^13E4:0360
+// Set new creature command
 void SkWinCore::_13e4_0360(ObjectID rlCreature, U16 xx, U16 yy, U8 ss, U16 tt)
 {
 	//^13E4:0360
@@ -2048,7 +2049,7 @@ X16 SkWinCore::WOUND_CREATURE(i16 damage)
 		if ((si & 0x800) != 0)
 			_4976_4dfe = 0x18;
 		//^1C9A:1950
-		_13e4_0360(glbCurrentThinkingCreatureID, glbCreatureTimer.XcoordB(), glbCreatureTimer.YcoordB(), 0x13, 1);
+		_13e4_0360(glbCurrentThinkingCreatureID, glbCreatureTimer.XcoordB(), glbCreatureTimer.YcoordB(), ccmDestroy, 1); // 0x13
 	}
 	else {
 		//^1C9A:196E
@@ -3952,7 +3953,7 @@ i8 SkWinCore::PROCEED_XACT(i8 xact)
 		//^14CD:201B
 		PROCEED_XACT_57();
 		break;
-	case 58://^2023
+	case 58://^2023	// XACT 58 tells creature to destroy itself ?
 		//^14CD:2023
 		glbCurrentThinkingCreatureData->Command = ccmDestroy;
 		break;

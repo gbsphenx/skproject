@@ -1552,7 +1552,7 @@ U16 SkWinCore::CAST_CHAMPION_MISSILE_SPELL(U16 xx, ObjectID rl, i16 zz, U16 ww)
 
 
 	//^2C1D:0186
-// SPX: _2c1d_0186 replaced by CALL_SELF_ENCHANTMENT
+// SPX: _2c1d_0186 replaced by CALL_ENCHANTMENT_SELF
 U16 SkWinCore::CALL_ENCHANTMENT_SELF(Champion *ref, i16 xx, U16 yy, U16 zz)
 {
 	//^2C1D:0186
@@ -2466,7 +2466,7 @@ void SkWinCore::PLAYER_CONSUME_OBJECT(U16 player, ObjectID rlConsume, i16 posses
 			//^24A5:11AB
 			for (bp0c = 5; (--bp0c) != 0; ) {
 				//^24A5:11B2
-				DRAW_STATIC_PIC(0x07, 0x00, ((bp0c & 1) != 0) ? 0x25 : 0x26, 545, -1);
+				DRAW_STATIC_PIC(GDAT_CATEGORY_INTERFACE_CHARSHEET, 0x00, ((bp0c & 1) != 0) ? 0x25 : 0x26, 545, -1);	// mouth icon
 				//^24A5:11D1
 				CHANGE_VIEWPORT_TO_INVENTORY(0);
 				//^24A5:11D9

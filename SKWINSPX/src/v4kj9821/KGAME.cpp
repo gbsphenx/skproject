@@ -4184,6 +4184,7 @@ U8 *SkWinCore::PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timer
 	//^13E4:0073
 	Creature *xCreature = glbCurrentThinkingCreatureRec = GET_ADDRESS_OF_RECORD4(rl); // bp08
 	CreatureInfoData *xCreatureInfo = (xCreature->b5_0_7() != 0xff) ? &glbTabCreaturesInfo[xCreature->b5_0_7()] : NULL; // bp0c
+#ifndef __DJGPP__
 	if (xCreatureInfo != NULL)	// SPX : NULL should not happen
 		SkD((DLV_DBG_CAI, "DBG: CreatureIndex:%d, CreatureType:%02X, 4eceIndex:%u, XX=%02X, YY=%02X\n"
 			, (Bitu)rl.DBIndex()
@@ -4198,6 +4199,7 @@ U8 *SkWinCore::PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timer
 			, (Bitu)xCreature->CreatureType()
 			, (Bitu)xCreature->b5_0_7()
 		));
+#endif // __DJGPP__
 	//^13E4:00BA
 	glbCurrentThinkingCreatureData = xCreatureInfo;
 	glbAIDef = QUERY_CREATURE_AI_SPEC_FROM_TYPE(xCreature->CreatureType());
