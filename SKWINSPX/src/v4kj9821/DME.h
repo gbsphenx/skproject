@@ -2143,12 +2143,12 @@ namespace DM2Internal {
 	// SPX: sk1c9a02c3 actually holds the same type of data contained within a creature records data, starting at byte 8.
 	// Depending on creatures type, these data will come from direct creature data or some other table.
 	struct sk1c9a02c3 { // 4 bytes
-		Bit16u w0;			// @0	// Creature::w8
-		Bit16u w2;			// @2	// Creature::w10
+		Bit16u iAnimSeq;			// w0 @0	// Creature::w8		-- current animation sequence
+		Bit16u iAnimFrame;			// w2 @2	// Creature::w10	-- current frame number in animation
 
-		U16 w2_e_e() const { return (w2>>14)&1; }
-		U16 w2_d_d() const { return (w2>>13)&1; }
-		U16 w2_0_5() const { return (w2)&0x3f; }
+		U16 w2_e_e() const { return (iAnimFrame>>14)&1; }
+		U16 w2_d_d() const { return (iAnimFrame>>13)&1; }
+		U16 w2_0_5() const { return (iAnimFrame)&0x3f; }
 	};
 	// 
 	struct sk0cea;

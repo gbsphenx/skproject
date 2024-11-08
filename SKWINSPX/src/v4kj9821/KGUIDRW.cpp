@@ -1524,7 +1524,7 @@ _10b7:
 				if ((bp16 & 0x0001) != 0) {
 					sk1c9a02c3* xInfoData = GET_CREATURE_INFO_DATA(xCreature, QUERY_CREATURE_AI_SPEC_FROM_TYPE(xCreature->CreatureType()));
 					//^29EE:1443
-					bp0a = CREATURE_SEQUENCE_4937_000f(xInfoData->w0, &xInfoData->w2);
+					bp0a = CREATURE_SEQUENCE_4937_000f(xInfoData->iAnimSeq, &xInfoData->iAnimFrame);
 					//^29EE:145D
 					bp0a = (bp0a >= 4 && bp0a <= 7) ? 4 : 0;
 					//^29EE:1474

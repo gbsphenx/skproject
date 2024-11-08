@@ -789,7 +789,7 @@ void SkWinCore::CREATE_CLOUD(ObjectID rl, U16 ww, U16 xx, U16 yy, U16 ss)
 			if (di != OBJECT_NULL) {
 				//^075F:0476
 _0476:
-				if (_1c9a_0958(di) == 0) {
+				if (CREATURE_1c9a_0958(di) == 0) {
 					//^075F:0481
 					Creature *bp0c = GET_ADDRESS_OF_RECORD4(di);
 					AIDefinition *bp08 = QUERY_CREATURE_AI_SPEC_FROM_TYPE(bp0c->CreatureType());
@@ -1069,7 +1069,7 @@ void SkWinCore::PROCESS_CLOUD(Timer *ref)
 		ObjectID bp08 = GET_CREATURE_AT(di, si);
 		if (bp08 != OBJECT_NULL) {
 			//^075F:19D9
-			if (_1c9a_0958(bp08) == 0) {
+			if (CREATURE_1c9a_0958(bp08) == 0) {
 				//^075F:19E6
 				bp06 = CALC_CLOUD_DAMAGE(ref->id8(), bp08);
 				if (bp06 != 0) {

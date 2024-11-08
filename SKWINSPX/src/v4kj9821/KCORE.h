@@ -1983,7 +1983,7 @@ protected:
 	void QUEUE_DEALLOC_RECORD(ObjectID recordLink);
 	void DEALLOC_RECORD(ObjectID recordLink);
 	Bit16u _075f_06bd(Missile *ref, ObjectID recordLink);
-	Bit16u _1c9a_0958(ObjectID recordLink);
+	Bit16u CREATURE_1c9a_0958(ObjectID recordLink); // 1c9a_0958
 	Bit16u _RAND01();
 	Bit16u GET_DOOR_STAT_0X10(Bit8u cls2);
 	Bit8u GET_GRAPHICS_FOR_DOOR(Door *ref);
@@ -2202,8 +2202,8 @@ protected:
 	U16 PROCEED_CCM();
 	X16 _4937_028a(U16 xx, U16 *yy, CreatureAnimationFrame **ref);
 	void CREATURE_THINK_0982(); // _13e4_0982
-	void _13e4_071b();
-	void _13e4_0806();
+	void CREATURE_13e4_071b(); // _13e4_071b
+	void CREATURE_13e4_0806();
 	void THINK_CREATURE(X8 xx, X8 yy, X16 timerType);
 	void STEP_MISSILE(Timer *ref);
 	X16 QUERY_DOOR_STRENGTH(X8 cls2);

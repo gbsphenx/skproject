@@ -2067,7 +2067,7 @@ U16 SkWinCore::CALC_PLAYER_ATTACK_DAMAGE(Champion *ref, U16 player, ObjectID rlE
 		//^075F:1FAA
 		ObjectID bp10 = GET_CREATURE_AT(xx, yy);
 		//^075F:1FBA
-		if (bp10 == OBJECT_NULL || _1c9a_0958(bp10) == 0) {
+		if (bp10 == OBJECT_NULL || CREATURE_1c9a_0958(bp10) == 0) {
 			//^075F:1FCF
 			U16 bp0e = valPb & 0x8000;
 			//^075F:1FD8

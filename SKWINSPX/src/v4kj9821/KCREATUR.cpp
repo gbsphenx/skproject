@@ -1326,8 +1326,8 @@ X32 SkWinCore::CREATURE_SOMETHING_1c9a_0a48()
 	//^1C9A:0A4D
 	i8 bp03 = glbAIDef->b9x;
 	U16 bp06 = glbCurrentThinkingCreatureRec->CreatureType();
-	U16 bp0c = _4976_4ed6->w0;
-	U16 bp0e = _4976_4ed6->w2;
+	U16 bp0c = _4976_4ed6->iAnimSeq;
+	U16 bp0e = _4976_4ed6->iAnimFrame;
 	CreatureAnimationFrame bp14;
 	X16 bp02;
 	if (glbCreatureAnimationFrame == NULL) {
@@ -1383,8 +1383,8 @@ X32 SkWinCore::CREATURE_SOMETHING_1c9a_0a48()
 	}
 	//^1C9A:0BB7
 	glbCurrentThinkingCreatureData->b7 = U8(bp02);
-	_4976_4ed6->w0 = bp0c;
-	_4976_4ed6->w2 = bp0e;
+	_4976_4ed6->iAnimSeq = bp0c;
+	_4976_4ed6->iAnimFrame = bp0e;
 	//^1C9A:0BD3
 	if (glbCreatureAnimationFrame->sound != SOUND_NONE) {	// != 0xFF
 		if (SkCodeParam::bUsePowerDebug) { 
@@ -1620,8 +1620,8 @@ U16 SkWinCore::QUERY_CREATURE_5x5_POS(Creature *ref, U16 dir)
 	//^32CB:0058
 	if (ref->b5_0_7() == 0xff)
 		return 12;
-	sk1c9a02c3 *bp04 = GET_CREATURE_INFO_DATA(ref, QUERY_CREATURE_AI_SPEC_FROM_TYPE(ref->CreatureType()));
-	i16 _5x5 = _4976_5a98[CREATURE_SEQUENCE_4937_000f(bp04->w0, &bp04->w2)][0];
+	sk1c9a02c3* xAnimInfo = GET_CREATURE_INFO_DATA(ref, QUERY_CREATURE_AI_SPEC_FROM_TYPE(ref->CreatureType()));	// bp04
+	i16 _5x5 = _4976_5a98[CREATURE_SEQUENCE_4937_000f(xAnimInfo->iAnimSeq, &xAnimInfo->iAnimFrame)][0];
 	return ROTATE_5x5_POS(_5x5, dir);
 }
 
@@ -5398,7 +5398,7 @@ void SkWinCore::CREATURE_TRANSFORM()
 			//^1887:1355
 			bp06 = glbAIDef->BaseHP;
 			glbCurrentThinkingCreatureRec->HP1(bp06 + RAND16((bp06 >> 3) +1));
-			GET_CREATURE_ANIMATION_FRAME(glbCurrentThinkingCreatureRec->CreatureType(), bp04->Command, &_4976_4ed6->w0, &_4976_4ed6->w2, &glbCreatureAnimationFrame, 0);
+			GET_CREATURE_ANIMATION_FRAME(glbCurrentThinkingCreatureRec->CreatureType(), bp04->Command, &_4976_4ed6->iAnimSeq, &_4976_4ed6->iAnimFrame, &glbCreatureAnimationFrame, 0);
 			if (IS_CREATURE_ALLOWED_ON_LEVEL(glbCurrentThinkingCreatureID, glbSomeMap_4976_4ee7) == 0) {
 				//^1887:13C1
 				DELETE_CREATURE_RECORD(di, si, CREATURE_GENERATED_DROPS, 1);
@@ -5725,7 +5725,7 @@ _0a6a:
 		X16 si;
 		if (xCreatureInfo->Command == ccmDestroy) {
 			//^13E4:0A74
-			xCreatureInfo->w14 = CREATURE_SEQUENCE_4937_000f(bp08->w0, &bp08->w2);
+			xCreatureInfo->w14 = CREATURE_SEQUENCE_4937_000f(bp08->iAnimSeq, &bp08->iAnimFrame);
 			if ((tblAIStats01[QUERY_GDAT_CREATURE_WORD_VALUE(glbCurrentThinkingCreatureRec->CreatureType(), 1)] & 8) == 0) {
 				X16 iCloudPower = 0;
 				//^13E4:0AB0
@@ -5761,12 +5761,12 @@ _0a6a:
 			si = (RAND01() != 0) ? ccmCastSpell1 : ccmCastSpell2;
 		}
 		//^13E4:0B43
-		di = GET_CREATURE_ANIMATION_FRAME(glbCurrentThinkingCreatureRec->CreatureType(), si, &bp08->w0, &bp08->w2, &glbCreatureAnimationFrame, 0);
+		di = GET_CREATURE_ANIMATION_FRAME(glbCurrentThinkingCreatureRec->CreatureType(), si, &bp08->iAnimSeq, &bp08->iAnimFrame, &glbCreatureAnimationFrame, 0);
 	}
 	else {
 		//^13E4:0B6E
 		bp0a = 0;
-		di = _4937_01a9(bp08->w0, &bp08->w2, &glbCreatureAnimationFrame);
+		di = _4937_01a9(bp08->iAnimSeq, &bp08->iAnimFrame, &glbCreatureAnimationFrame);
 	}
 	//^13E4:0B90
 _0b90:
@@ -5780,7 +5780,7 @@ _0b90:
 	//^13E4:0BCE
 	if (xCreatureInfo->b33 != 0 && glbCreatureAnimationFrame->w2_9_9() != 0) {
 		//^13E4:0BE4
-		di = _4937_028a(bp08->w0, &bp08->w2, &glbCreatureAnimationFrame);
+		di = _4937_028a(bp08->iAnimSeq, &bp08->iAnimFrame, &glbCreatureAnimationFrame);
 		if (di != 2)
 			goto _0b90;
 	}
@@ -5827,29 +5827,29 @@ _0c47:
 	return;
 }
 //^13E4:071B
-void SkWinCore::_13e4_071b()
+void SkWinCore::CREATURE_13e4_071b()
 {
 	//^13E4:071B
 	ENTER(10);
 	//^13E4:0721
-	sk1c9a02c3 *bp08 = _4976_4ed6;
-	if ((bp08->w2 & 0xe03f) == 0x8001)
+	sk1c9a02c3* xAnimInfo = _4976_4ed6; // bp08
+	if ((xAnimInfo->iAnimFrame & 0xe03f) == 0x8001)
 		return;
 	//^13E4:0740
-	CreatureAnimationFrame *bp04 = &tlbCreaturesAnimationSequences[bp08->w0];
+	CreatureAnimationFrame* bp04 = &tlbCreaturesAnimationSequences[xAnimInfo->iAnimSeq];
 	//^13E4:075B
 	i16 si = 1;
 	for (; (bp04->w2_0_3() != 0); si++, bp04++);
 	//^13E4:0770
-	X16 di = (bp08->w2 & 0xfc0);
+	X16 di = (xAnimInfo->iAnimFrame & 0xfc0);
 	X16 bp0a = (X16)((glbGameTick +di) % si);
 	if (bp0a == 0) {
 		//^13E4:079D
-		bp08->w2 = 0x8001|di;
+		xAnimInfo->iAnimFrame = 0x8001|di;
 		return;
 	}
 	//^13E4:07A7
-	bp08->w2 = si |di |0xc000;
+	xAnimInfo->iAnimFrame = si |di |0xc000;
 	RELEASE_CREATURE_TIMER(glbCurrentThinkingCreatureID);
 	glbCreatureTimer.SetMap(glbSomeMap_4976_4ee7);
     glbCreatureTimer.SetTick(glbGameTick +si -bp0a);
@@ -5858,31 +5858,31 @@ void SkWinCore::_13e4_071b()
 	return;
 }
 //^13E4:0806
-void SkWinCore::_13e4_0806()
+void SkWinCore::CREATURE_13e4_0806()
 {
 	//^13E4:0806
 	ENTER(10);
 	//^13E4:080C
-	sk1c9a02c3 *bp08 = _4976_4ed6;
-	if ((bp08->w2 & 0xe000) == 0x8000 && (bp08->w2_0_5() > 1))
+	sk1c9a02c3* xAnimInfo = _4976_4ed6;	// bp08
+	if ((xAnimInfo->iAnimFrame & 0xe000) == 0x8000 && (xAnimInfo->w2_0_5() > 1))
 		return;
 	//^13E4:0837
-	CreatureAnimationFrame *bp04 = &tlbCreaturesAnimationSequences[bp08->w0];
+	CreatureAnimationFrame *bp04 = &tlbCreaturesAnimationSequences[xAnimInfo->iAnimSeq];
 	i16 si = 1;
 	for (; bp04->w2_0_3() != 0; si++, bp04++);
 	//^13E4:0867
-	X16 di = bp08->w2 & 0x0fc0;
+	X16 di = xAnimInfo->iAnimFrame & 0x0fc0;
 	X16 bp0a = (X16)((glbGameTick +di) % si);
 	if (bp0a == 0) {
 		//^13E4:0894
-		bp08->w2 = si |di |0x8000;
+		xAnimInfo->iAnimFrame = si | di | 0x8000;
 		return;
 	}
 	//^13E4:08A0
-	bp08->w2 = si |di |0xa000;
+	xAnimInfo->iAnimFrame = si | di | 0xa000;
 	RELEASE_CREATURE_TIMER(glbCurrentThinkingCreatureID);
 	glbCreatureTimer.SetMap(glbSomeMap_4976_4ee7);
-	glbCreatureTimer.SetTick(glbGameTick +si -bp0a);
+	glbCreatureTimer.SetTick(glbGameTick + si - bp0a);
 	glbCurrentThinkingCreatureData->TimerIndex(QUEUE_TIMER(&glbCreatureTimer));
 	//^13E4:08FB
 	return;
@@ -5956,11 +5956,11 @@ void SkWinCore::THINK_CREATURE(X8 xx, X8 yy, X16 timerType)
 	else {
 		//^13E4:0E4C
 		if (_4976_4ed6->w2_e_e() != 0) {
-			_13e4_071b();
+			CREATURE_13e4_071b();
 		}
 		//^13E4:0E5E
 		else if (_4976_4ed6->w2_d_d() != 0) {
-			_13e4_0806();
+			CREATURE_13e4_0806();
 		}
 		//^13E4:0E6E
 		if (bp08->TimerIndex() == 0xffff) {
@@ -6062,11 +6062,11 @@ void SkWinCore::ANIMATE_CREATURE(X16 xx, X16 yy, X16 ww)
 	if (glbCurrentThinkingCreatureData != NULL) {
 		if (ww == 0) {
 			//^13E4:0968
-			_13e4_071b();
+			CREATURE_13e4_071b();
 		}
 		else {
 			//^13E4:096E
-			_13e4_0806();
+			CREATURE_13e4_0806();
 		}
 		//^13E4:0972
 		UNPREPARE_LOCAL_CREATURE_VAR(bp04);

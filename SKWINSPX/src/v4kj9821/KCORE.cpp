@@ -14416,9 +14416,9 @@ void SkWinCore::IBMIO_UPDATE_PALETTE_SET()
 		//^00EB:04A2
 		//bp01 = bp02 = bp03 = ((si%16)+1) << 4;
 		//outportb(0x03c8, si);
-		outportb(0x03c9, bp01);
-		outportb(0x03c9, bp02);
-		outportb(0x03c9, bp03);
+		outportb(0x03C9, bp01);
+		outportb(0x03C9, bp02);
+		outportb(0x03C9, bp03);
 		//printf("%2X%2X%2X ", bp01, bp02, bp03);
 		//^00EB:04B1
 	}
@@ -15188,8 +15188,8 @@ void SkWinCore::CREATURE_SET_ANIM_FRAME(ObjectID recordLink)
 	GET_CREATURE_ANIMATION_FRAME(
 		xCreature->CreatureType(),
 		0x11,
-		&xInfoData->w0,
-		&xInfoData->w2,
+		&xInfoData->iAnimSeq,
+		&xInfoData->iAnimFrame,
 		&bp12,
 		xCreature->w12
 		);
@@ -23661,11 +23661,11 @@ Bit16u SkWinCore::_075f_06bd(Missile *ref, ObjectID recordLink) //#DS=4976?
 
 //^1C9A:0958
 // TODO: get some info of creature anim ?
-Bit16u SkWinCore::_1c9a_0958(ObjectID recordLink)
+Bit16u SkWinCore::CREATURE_1c9a_0958(ObjectID recordLink)
 {
 	Creature *xCreature = GET_ADDRESS_OF_RECORD(recordLink)->castToCreature();	//*bp04
 	sk1c9a02c3* xInfoData = GET_CREATURE_INFO_DATA(xCreature, QUERY_CREATURE_AI_SPEC_FROM_TYPE(xCreature->CreatureType())); // bp08
-	CreatureAnimationFrame *xAnim = _4937_0036(xInfoData->w0, &xInfoData->w2);	// bp0c
+	CreatureAnimationFrame* xAnim = _4937_0036(xInfoData->iAnimSeq, &xInfoData->iAnimFrame);	// bp0c
 	return (xAnim->w0 & 0x4000) >> 14;
 }
 
@@ -23958,7 +23958,7 @@ _0e37:
 					return 0;
 				}
 				//^075F:0E6C
-				if (_1c9a_0958(bp2e) != 0) {
+				if (CREATURE_1c9a_0958(bp2e) != 0) {
 					//^075F:0E79
 					if (tileType == ttTeleporter)
 						//^075F:0E7F
