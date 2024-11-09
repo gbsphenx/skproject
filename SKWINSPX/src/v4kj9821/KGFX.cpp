@@ -804,7 +804,7 @@ void SkWinCore::QUERY_CREATURE_PICST(U16 xx, i16 iDistToPlayer, Creature *xCreat
 	// SPX: there might be an issue here where animation frame is not retrieved correctly. A static object would have si = 4, so that its gets images x10 x12 x13 x12
 	//si = 4 + counter;
 	//counter = (counter + 1)%4;
-	printf("Creature Type %d => %02X %02X => seq = %d\n", iCreatureType, xInfoData->iAnimSeq, xInfoData->iAnimFrame, si);
+	//printf("Creature Type %d => %02X %02X => seq = %d (C: %02X %02X)\n", iCreatureType, xInfoData->iAnimSeq, xInfoData->iAnimFrame, si, xCreature->iAnimSeq, xCreature->iAnimFrame);
 	U16 bp06 = (xInfo == NULL) ? 0 : xInfo->b7;
 	U16 bp0a = ((QUERY_CREATURE_AI_SPEC_FLAGS(rl) & 4) != 0) ? 2 : ((_4976_5aa0 - xCreature->b15_0_1()) & 3);
 	U16 bp08 = _4976_5a98[si][bp0a +10];	// _4976_5a98 table has 4+8 bytes, 4 first points to address of item 0653 loaded into mem

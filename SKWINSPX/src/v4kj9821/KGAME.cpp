@@ -41,7 +41,6 @@ void SkWinCore::LUA_CALL_SCRIPT(U8 iScriptEvent, i16 iPosMap, i16 iPosX, i16 iPo
 			SkWinLua_RunFunctionFromScript(this, sScriptName, "player_turned_on_tile", iPosMap, iPosX, iPosY, iDir);
 			break;
 		case _EXP_SCRIPT__ANY_EVENT_:
-			//"data_eob_eob1/script/eobmap00.lua"
 			SkWinLua_RunFunctionFromScript(this, sScriptName, "event_any", iPosMap, iPosX, iPosY, iDir);
 			break;
 	};
@@ -3890,7 +3889,9 @@ void SkWinCore::ARRANGE_DUNGEON()
 										break;
 									}
 									//^2066:223B
-									bp14->w8 = bp14->w10 = 0;
+									bp14->iAnimSeq = bp14->iAnimFrame = 0;
+									bp14->iAnimSeq = 0x01EB;
+									bp14->iAnimFrame = 0x8001;
 									//^2066:2248
 									CREATURE_SET_ANIM_FRAME(di);
 									//^2066:224F
@@ -4076,10 +4077,10 @@ void SkWinCore::ATTACK_CREATURE(ObjectID rl, i16 xx, i16 yy, Bit16u ss, i16 tt, 
 	U16 bp0e;
 	if (bp10 == 0 && tt > 0) {
 		//^13E4:04ED
-		if ((bp04->w10 & 4) == 0) {
+		if ((bp04->iAnimFrame & 4) == 0) {
 			if (quantity <= 0x1e && (quantity <= 4 || RAND02() != 0) && (((quantity * U32(0x64)) / bp0c->BaseHP) > 15)) {
 				//^13E4:0537
-				bp04->w10 |= 4;
+				bp04->iAnimFrame |= 4;
 				bp12 = 1;
 			}
 		}
@@ -4089,7 +4090,7 @@ void SkWinCore::ATTACK_CREATURE(ObjectID rl, i16 xx, i16 yy, Bit16u ss, i16 tt, 
 			if ((tblAIStats01[QUERY_GDAT_CREATURE_WORD_VALUE(bp04->CreatureType(), 1)] & 0x80) == 0 && RAND01() != 0) {
 				//^13E4:057A
 				si = CALC_VECTOR_DIR(xx, yy, glbPlayerPosX, glbPlayerPosY);
-				if ((bp04->w10 & 8) != 0 && RAND02() != 0)
+				if ((bp04->iAnimFrame & 8) != 0 && RAND02() != 0)
 					goto _05bd;
 				if ((bp04->b15 & 3) != si && RAND02() == 0) {
 					//^13E4:05BD
@@ -4125,10 +4126,10 @@ _05bd:
 			bp0e = ss & 0x8000;
 			ss = 1 << (ss & 0xff);
 			if (bp0e != 0) {
-				bp04->w10 &= ~ss;
+				bp04->iAnimFrame &= ~ss;
 			}
 			else {
-				bp04->w10 |= ss;
+				bp04->iAnimFrame |= ss;
 			}
 		}
 	}

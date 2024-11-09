@@ -5,6 +5,7 @@
 #include <string.h>
 #include <SkGlobal.h>
 #include <KCORE.H> // CHANGE_CONSOLE_COLOR
+#include <SKDEBUG.H>
 
 //------------------------------------------------------------------------------
 
@@ -74,7 +75,7 @@ float SkWinLua_Init_Lua(SkWinCore* xSkCore, char* sVersionName)
 	char sLocalVersionName[128];
 
 	CHANGE_CONSOLE_COLOR(BRIGHT, CYAN, BLACK);
-	fprintf(stdout, "LuaInit: initializing ...\n");
+	SkD((DLV_DBG_LUA, "LuaInit: initializing ...\n"));
 
 	xCurrentGame = xSkCore;
 
@@ -110,7 +111,7 @@ float SkWinLua_Init_Lua(SkWinCore* xSkCore, char* sVersionName)
 	{
 		fVersion = 0;
 	}
-	fprintf(stdout, "LuaInit: version = %s\n", sVersionName);
+	SkD((DLV_DBG_LUA, "LuaInit: version = %s\n", sVersionName));
 	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
 	return fVersion;
 }

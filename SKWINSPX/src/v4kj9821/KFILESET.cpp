@@ -120,7 +120,7 @@ U16 fileSet::fileWrite(U16 x, U32 buffSize, const void *buff) {
 }
 // 
 bool fileSet::fileClose(U16 x) {
-	printf("FILE CLOSE handle %d\n", x);
+	
 	if (x < 16 && !(realHandles[x] < 0)) {
 		ATLASSERT(realHandles[x] != -1);
 		_close(realHandles[x]);

@@ -1736,7 +1736,7 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 				bp28 = ALLOC_NEW_CREATURE(bp04->ActuatorData(), bp24, bp26, bp2a, bp2c);
 				if (bp04->RevertEffect() != 0 && bp28 != OBJECT_NULL) {
 					//^3A15:25B4
-					GET_ADDRESS_OF_RECORD(bp28)->castToCreature()->w8 = bp04->Delay();
+					GET_ADDRESS_OF_RECORD(bp28)->castToCreature()->iAnimSeq = bp04->Delay();
 				}
 				//^3A15:25D3
 				if (bp04->SoundEffect() == 0)
@@ -2144,7 +2144,7 @@ void SkWinCore::ACTUATE_FLOOR_MECHA(Timer *ref)
 					oNewCreature = ALLOC_NEW_CREATURE(bp04->ActuatorData(), iHealthMultiplier, iDirection, iLocationX, iLocationY);
 					if (bp04->RevertEffect() != 0 && oNewCreature != OBJECT_NULL) {
 						//^3A15:25B4
-						GET_ADDRESS_OF_RECORD(oNewCreature)->castToCreature()->w8 = bp04->Delay();
+						GET_ADDRESS_OF_RECORD(oNewCreature)->castToCreature()->iAnimSeq = bp04->Delay();
 					}
 					//^3A15:25D3
 					if (bp04->SoundEffect() == 0)

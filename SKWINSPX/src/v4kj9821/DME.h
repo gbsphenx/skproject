@@ -612,8 +612,8 @@ namespace DMEncyclopaedia {
 		U8 b4; // Creature type. Her
 		U8 b5; // Position of each c // where &sk4ebe[b5]
 		U16 hp1; // w6 Hit points of creature 1
-		U16 w8; // w8 Hit points of creature 2 // sk1c9a02c3::w0
-		U16 w10; // w10 Hit points of creature 3 // sk1c9a02c3::w2
+		U16 iAnimSeq; // w8 Hit points of creature 2 // sk1c9a02c3::w0		--> DM2 anim sequence
+		U16 iAnimFrame; // w10 Hit points of creature 3 // sk1c9a02c3::w2		--> DM2 anim frame (within sequence)
 		U16 w12; // w12 Hit points of creature 4
 		U8 b14; // 
 		U8 b15;
@@ -627,7 +627,7 @@ namespace DMEncyclopaedia {
 		void HP1(Bit16u val) { hp1 = val; }
 		U16 HP1() const{ return hp1; }
 
-		void HP3(Bit16u val) { w10 = val; }
+		void HP3(Bit16u val) { iAnimFrame = val; }
 
 		Bit16u TriggerX() const { // M!C,0,1F
 			return w12 & 0x001f;
@@ -674,25 +674,25 @@ namespace DMEncyclopaedia {
 		}
 		U8 b7_3_7() const { return U8(hp1 >> 11)&31; }
 		U16 w6_6_a() const { return (hp1 >> 6)&31; }
-		U16 w10_6_6() const { return (w10 >> 6)&1; }
+		U16 w10_6_6() const { return (iAnimFrame >> 6)&1; }
 		void w10_f_f(U16 val) {
 			val &= 1;
-			w10 &= 0x7fff;
-			w10 |= val << 15;
+			iAnimFrame &= 0x7fff;
+			iAnimFrame |= val << 15;
 		}
 		void w10_d_d(U16 val) {
 			val &= 1;
-			w10 &= 0xdfff;
-			w10 |= val << 13;
+			iAnimFrame &= 0xdfff;
+			iAnimFrame |= val << 13;
 		}
-		U16 w10_c_c() const { return (w10>>12)&1; }
-		U16 w10_3_3() const { return (w10>>3)&1; }
-		U16 w10_d_d() const { return (w10>>13)&1; }
-		U16 w10_7_7() const { return (w10>>7)&1; }
+		U16 w10_c_c() const { return (iAnimFrame>>12)&1; }
+		U16 w10_3_3() const { return (iAnimFrame>>3)&1; }
+		U16 w10_d_d() const { return (iAnimFrame>>13)&1; }
+		U16 w10_7_7() const { return (iAnimFrame>>7)&1; }
 		void w10_7_7(U16 val) {
 			val &= 1;
-			w10 &= 0xff7f;
-			w10 |= val << 7;
+			iAnimFrame &= 0xff7f;
+			iAnimFrame |= val << 7;
 		}
 	};
 	// 

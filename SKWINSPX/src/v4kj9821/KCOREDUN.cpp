@@ -792,8 +792,8 @@ void SkWinCore::DUNGEON_PUT_NEW_CREATURE(int iCreatureType, int iMapIndex, int i
 			xNewCreature->b4 = iCreatureType;
 			xNewCreature->b5 = 0;	// pos
 			xNewCreature->hp1 = 100;
-			xNewCreature->w8 = 0;
-			xNewCreature->w10 = 0;
+			xNewCreature->iAnimSeq = 0;
+			xNewCreature->iAnimFrame = 0;
 			xNewCreature->w12 = 0;
 			xNewCreature->b14 = 0;
 			xNewCreature->b15 = 0;

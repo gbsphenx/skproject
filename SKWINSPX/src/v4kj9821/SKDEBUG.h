@@ -58,7 +58,8 @@
 #define DLV_DBG_SND_OUT 0	// Sound played
 #define DLV_DBG_TICK	0	// Tick information
 #define DLV_DBG_DOOR	0
-
+#define DLV_DBG_GAME_LOAD	0
+#define DLV_DBG_LUA		0
 #define DLV_USE_LOGX 1
 
 

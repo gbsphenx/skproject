@@ -6603,16 +6603,16 @@ void SkWinCore::FILL_CAII_CUR_MAP()
 							break;
 						}
 						//^1C9A:3B10
-						U16 bp10 = bp0c->w10;
+						U16 bp10 = bp0c->iAnimFrame;
 						//^1C9A:3B1A
 						CREATURE_SET_ANIM_FRAME(si);
 						//^1C9A:3B20
-						bp0c->w10 |= bp10 & 0x6000;
+						bp0c->iAnimFrame |= bp10 & 0x6000;
 						//^1C9A:3B2D
 						if ((bp10 & 0x803f) == 0x8001) {
 							//^1C9A:3B38
-							bp0c->w10 &= 0xffc0;
-							bp0c->w10 |= 0x8001;
+							bp0c->iAnimFrame &= 0xffc0;
+							bp0c->iAnimFrame |= 0x8001;
 						}
 						//^1C9A:3B44
 						break;
@@ -6821,93 +6821,6 @@ SpellDefinition *SkWinCore::FIND_SPELL_BY_RUNES(U8 *runes)
 	}
 	return NULL;
 }
-
-//^1C9A:121D
-ObjectID SkWinCore::ALLOC_NEW_CREATURE(U16 creaturetype, U16 healthMultiplier_1to31_baseIs8, U16 dir, U16 xx, U16 yy)
-{
-	// arrange for a new creature record.
-
-	// (creature += 0x8000) if you wanna create minion map's minion creature. then new missile record is attached to the minion creature.
-
-	//^1C9A:121D
-	ENTER(12);
-	//^1C9A:1223
-	U16 si = healthMultiplier_1to31_baseIs8;
-	//^1C9A:1226
-	U16 bp0c = creaturetype & 0x8000;
-	//^1C9A:122F
-	ObjectID bp0a;
-	if (bp0c != 0) {
-		//^1C9A:1233
-		creaturetype &= 0x7fff;
-		//^1C9A:1238
-		bp0a = ALLOC_NEW_RECORD(dbMissile);
-		//^1C9A:1243
-		if (bp0a == OBJECT_NULL) {
-			//^1C9A:1248
-			return OBJECT_NULL;
-		}
-	}
-	//^1C9A:124E
-	ObjectID di = ALLOC_NEW_RECORD(dbCreature);
-	//^1C9A:1258
-	if (di == OBJECT_NULL || _4976_1a68 >= glbCreaturesCount) {
-		//^1C9A:1266
-		if (bp0c != 0)
-			//^1C9A:126C
-			DEALLOC_RECORD(bp0a);
-		//^1C9A:1275
-		//^1C9A:1248
-		return OBJECT_NULL;
-	}
-	//^1C9A:1277
-	Creature *creature = GET_ADDRESS_OF_RECORD4(di);	//*bp04
-	//^1C9A:1284
-	creature->CreatureType(U8(creaturetype));
-	//^1C9A:128E
-	AIDefinition *bp08 = QUERY_CREATURE_AI_SPEC_FROM_TYPE(U8(creaturetype));
-	//^1C9A:129B
-	creature->SetPossessionObject(OBJECT_END_MARKER);
-	//^1C9A:12A4
-	creature->b15 = 0xfb;
-	//^1C9A:12A9
-	creature->b15_0_1(dir);
-	//^1C9A:12B8
-	creature->b5_0_7(0xff);
-	//^1C9A:12BD
-	if (bp0c != 0) {
-		//^1C9A:12C3
-		APPEND_RECORD_TO(bp0a, &creature->possession, -1, 0);
-	}
-	//^1C9A:12DB
-	si = min_value(si, 31);
-	//^1C9A:12E8
-	// SPX: bp08->w4 = Hit Points
-	si = (si * bp08->BaseHP) >> 3;
-	//^1C9A:12F4
-	creature->HP1(RAND16((si >> 3) +1) +si);
-	//^1C9A:130A
-	creature->HP3(0);
-	//^1C9A:1310
-	creature->SetTriggerXPos(xx);
-	//^1C9A:131F
-	creature->SetTriggerYPos(yy);
-	//^1C9A:1332
-	creature->SetTriggerMap(glbCurrentMapIndex);
-	//^1C9A:1344
-	creature->w8 = 0xffff;
-	//^1C9A:134A
-	if (MOVE_RECORD_TO(di, -4, 0, xx, yy) == 1) {
-		//^1C9A:1362
-		//^1C9A:1248
-		return OBJECT_NULL;
-	}
-	//^1C9A:1365
-	creature->w8 = 0;
-	//^1C9A:136E
-	return di;
-}
-
 
 
 
@@ -9994,7 +9907,7 @@ X16 SkWinCore::_19f0_13aa(i16 xx, i16 yy)
 	i16 bp08 = 0;
 	do {
 		//^19F0:13B5
-		if ((tblAIStats01[_4976_4efa] & 0x400) != 0 || ((glbCurrentThinkingCreatureRec->w10 & 0x80) == 0 
+		if ((tblAIStats01[_4976_4efa] & 0x400) != 0 || ((glbCurrentThinkingCreatureRec->iAnimFrame & 0x80) == 0 
 			&& (glbAIDef->w0_2_2() != 0 || glbCreatureTimer.XcoordB() != xx || glbCreatureTimer.YcoordB() != yy || ((glbCurrentThinkingCreatureRec->b15_0_1() +2) & 3) != bp08) || (RAND() & 7) == 0)) {
 			//^19F0:1410
 			i16 di = xx;
@@ -15136,7 +15049,7 @@ Bit16u SkWinCore::GET_CREATURE_ANIMATION_FRAME(Bit8u ct, Bit16u command, Bit16u 
 	}
 	*pw0a = 0xffff;
 	*pw08 = 0;
-	return _4937_01a9(0, pw0a, animframe);
+	
 	CreatureCommandAnimation *bp04 = &tlbCreaturesActionsGroupSets[tlbCreaturesActionsGroupOffsets[QUERY_GDAT_CREATURE_WORD_VALUE(ct, 0)]];
 	//^4937:00FD
 	while (bp04->ccmReference != 0xffff && bp04->ccmReference != command) {
@@ -18141,10 +18054,10 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 #endif //
 
 
-	printf("Read 8 first bytes (Random seed) ...\n");
+	SkD((DLV_DBG_GAME_LOAD, "Read 8 first bytes (Random seed) ...\n"));
 	//SPX: Read the first 8 bytes of the dungeon.dat
 	Bit8u bp26[8];
-	printf("Dungeon Read iHandle = %d\n", glbDataFileHandle);
+	SkD((DLV_DBG_GAME_LOAD, "Dungeon Read iHandle = %d\n", glbDataFileHandle));
 	if (FILE_READ(glbDataFileHandle, 8, bp26) == 0)
 		return 0;
 	//^2066:25DA
@@ -18162,7 +18075,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	// SPX
 
 	//^2066:25E4
-	printf("FILE_SEEK pos @ %d", _4976_524a);
+	SkD((DLV_DBG_GAME_LOAD, "FILE_SEEK pos @ %d", _4976_524a));
 	//getch();	
 	FILE_SEEK(glbDataFileHandle, _4976_524a);
 	//^2066:25F8
@@ -18172,7 +18085,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	}
 
 	// - File header
-	printf("Read Dungeon Global Header ...\n");
+	SkD((DLV_DBG_GAME_LOAD, "Read Dungeon Global Header ...\n"));
 	//^2066:2617
 	if (SKLOAD_READ(dunHeader, 44) == 0)
 		return 0;
@@ -18209,8 +18122,8 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	glbPlayerMap = 0;
 	//^2066:265B
 	i16 nMaps = dunHeader->nMaps;	// bp10
-	printf("Maps read = %d", nMaps);
-	//getch();
+	SkD((DLV_DBG_GAME_LOAD, "Maps read = %d", nMaps));
+	
 	//^2066:2664
 	// SPX: Alloc map header (x16), capped to 64 maps (64*16 = 1024 = 0x400)
 	if (_4976_3b5d != 0) {
@@ -18220,7 +18133,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 
 	// - Map definitions
 
-	printf("Read %d Map Headers ...\n", nMaps);
+	SkD((DLV_DBG_GAME_LOAD, "Read %d Map Headers ...\n", nMaps));
 	//^2066:2685
 	if (SKLOAD_READ(dunMapsHeaders, nMaps << 4) == 0)
 		return 0;
@@ -18230,8 +18143,8 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 		dunMapColumnsSumArray = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(nMaps << 1, afUseUpper, 0x400));
 	}
 
-	printf("Read %d Maps Columns Headers ...\n", nMaps);
-	//getch();
+	SkD((DLV_DBG_GAME_LOAD, "Read %d Maps Columns Headers ...\n", nMaps));
+
 	//^2066:26C5
 	Bit16u bp0e = 0;
 	//^2066:26CC
@@ -18271,8 +18184,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	}
 
 	// - Index of tiles with objects on them (per column)
-	printf("Read Index per Columns ...\n");
-	//getch();
+	SkD((DLV_DBG_GAME_LOAD, "Read Index per Columns ...\n"));
 	//^2066:277C
 	if (SKLOAD_READ(dunMapTilesObjectIndexPerColumn, bp0e << 1) == 0)
 		return 0;
@@ -18304,11 +18216,11 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	}
 
 	// - List of XXX
-	printf("Read Objects per Category ...\n");
+	SkD((DLV_DBG_GAME_LOAD, "Read Objects per Category ...\n"));
 	//^2066:2802
 	for (si = 0; si < 16; si++) {
 		//^2066:2807
-		printf("Category %02d of size %02d => %04d records ...\n", si, glbItemSizePerDB[si], dunHeader->nRecords[si]);
+		SkD((DLV_DBG_GAME_LOAD, "Category %02d of size %02d => %04d records ...\n", si, glbItemSizePerDB[si], dunHeader->nRecords[si]));
 		Bit16u di = dunHeader->nRecords[si];
 		if (isNewGame != 0) {
 			//^2066:281B
@@ -18346,7 +18258,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 		//^2066:2914
 	}
 	//^2066:291D
-	printf("Alloc RAM for maps ...\n");
+	SkD((DLV_DBG_GAME_LOAD, "Alloc RAM for maps ...\n"));
 	if (_4976_3b5d != 0) {
 		//^2066:2924
 		dunMapData = ALLOC_MEMORY_RAM(dunHeader->cbMapData, afUseUpper, 0x400);
@@ -18354,7 +18266,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 
 	// - Map data
 
-	printf("Read Dungeon Map Data ...\n");
+	SkD((DLV_DBG_GAME_LOAD, "Read Dungeon Map Data ...\n"));
 	//getch();
 	//^2066:2942
 	if (SKLOAD_READ(dunMapData, dunHeader->cbMapData) == 0)
@@ -18387,46 +18299,43 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 		}
 	}
 
-	printf("Read Some Random Value from GDAT ??? ...\n");
+	SkD((DLV_DBG_GAME_LOAD, "Read Some Random Value from GDAT ??? ...\n"));
 	//^2066:2A37
 	_4976_5c24 = BETWEEN_VALUE(0, QUERY_GDAT_ENTRY_DATA_INDEX(0x03, 0x00, 0x0B, 0x00), 23) * 0x0555UL;
 	//^2066:2A6A
-	//printf("_4976_3b5d / INIT_TIMERS\n");
-	//getch();
+
 	if (_4976_3b5d != 0) {
 		//^2066:2A71
 		INIT_TIMERS();
 	}
 	//^2066:2A76
-	//getch();
-	//printf("_3df7_0037\n");
+
 	_3df7_0037(!_4976_3b5d);
 	//^2066:2A85
 	if (_4976_3b5d != 0) {
 		//^2066:2A8C
 		//!ALT
-		//getch();
-		printf("ALLOC_MEMORY_RAM %d %d %08x\n", MAXDEPTH, afUseUpper, 0x400);
+
+		SkD((DLV_DBG_GAME_LOAD, "ALLOC_MEMORY_RAM %d %d %08x\n", MAXDEPTH, afUseUpper, 0x400));
 		_4976_4cb0 = ALLOC_MEMORY_RAM(MAXDEPTH, afUseUpper, 0x400);
-		printf("Memret = %08x\n", _4976_4cb0);
+		SkD((DLV_DBG_GAME_LOAD, "Memret = %08x\n", _4976_4cb0));
 		//^2066:2AA4
 		//!ALT
-		//getch();
-		printf("ALLOC_MEMORY_RAM %d %d %08x\n", MAXDEPTH + MAXMAPS, afUseUpper, 0x400);
+
+		SkD((DLV_DBG_GAME_LOAD, "ALLOC_MEMORY_RAM %d %d %08x\n", MAXDEPTH + MAXMAPS, afUseUpper, 0x400));
 		_4976_4c72 = ALLOC_MEMORY_RAM(MAXDEPTH + MAXMAPS, afUseUpper, 0x400);
-		printf("Memret = %08x\n", _4976_4c72);
+		SkD((DLV_DBG_GAME_LOAD, "Memret = %08x\n", _4976_4c72));
 		// MAXDEPTH = 63
 		// MAXMAPS = 64
 	}
-	printf("Before arrange maps\n");
+	
 	//^2066:2ABC
-	//getch();
 	Bit8u *bp18 = _4976_4c72;
 	Bit8u *bp1c = _4976_4cb0;
 	Bit16u bp14 = 0;
 	*bp1c = 0;
 	bp1c++;
-	printf("Arrange Depth of Maps ... MAXDEPTH=%d, maps %d\n", MAXDEPTH, nMaps);
+	SkD((DLV_DBG_GAME_LOAD, "Arrange Depth of Maps ... MAXDEPTH=%d, maps %d\n", MAXDEPTH, nMaps));
 	//getch();
 	//^2066:2AE4
 	for (Bit16u bp12 = 0; bp12 < MAXDEPTH; bp1c++, bp12++) {
@@ -18448,45 +18357,32 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 		*bp1c = (Bit8u)bp14;
 		//^2066:2B3A
 	}
-	printf("Before assert\n");
-	//getch();
-	printf("Assert 1 : %d - %d <= %d + %d => [%d]\n", bp1c, _4976_4cb0, MAXDEPTH, 1U, (bp1c - _4976_4cb0));
-	printf("Assert 2 : %d - %d <= %d + %d + %d => [%d]\n", bp18, _4976_4c72, MAXDEPTH, MAXMAPS, 1U, (bp18 - _4976_4c72));
-	//getch();
+	SkD((DLV_DBG_GAME_LOAD, "Assert 1 : %d - %d <= %d + %d => [%d]\n", bp1c, _4976_4cb0, MAXDEPTH, 1U, (bp1c - _4976_4cb0)));
+	SkD((DLV_DBG_GAME_LOAD, "Assert 2 : %d - %d <= %d + %d + %d => [%d]\n", bp18, _4976_4c72, MAXDEPTH, MAXMAPS, 1U, (bp18 - _4976_4c72)));
 	ATLASSERT((bp1c - _4976_4cb0) <= (MAXDEPTH + 1U));
-	//getch();
 	ATLASSERT((bp18 - _4976_4c72) <= (MAXDEPTH + MAXMAPS + 1U));
-	//getch();
 
-	printf("Arrange Dungeon ...\n");
-	//getch();
 	//^2066:2B46
 	if (isNewGame != 0) {
 		//^2066:2B4C
 		ARRANGE_DUNGEON();
 	}
-	printf("DECIDE_DEFAULT_DUNGEON_MAP_CHIP_SET\n");
-	//getch();
 	//^2066:2B50
 	if (_4976_3b5d != 0) {
 		//^2066:2B57
 		DECIDE_DEFAULT_DUNGEON_MAP_CHIP_SET();
 	}
-	//printf("_4976_3b5d / Structure complete\n");
-	//getch();
 	//^2066:2B5B
 	_4976_3b5d = 0;
 	//^2066:2B64
 
 	//CHECK_TILE_RECORDS();
-	printf("Read Dungeon Structure Completed !\n");
-	//getch();
+	SkD((DLV_DBG_GAME_LOAD, "Read Dungeon Structure Completed !\n"));
 	if (SkCodeParam::bDebugInfoMapInit == true)
 		LOG_FULL_DUNGEON_INFO();
 
 	LUA_CALL_SCRIPT(_EXP_SCRIPT__GAME_INIT_, 0, 0, 0, 0);
 
-	//printf("Return 1\n"); getch();
 	return 1;
 }
 
@@ -19135,7 +19031,7 @@ _1e7e:
 //^2066:2D9C
 i16 SkWinCore::GAME_LOAD()
 {
-	printf("GAME_LOAD:RESUME/LOAD SAVEGAME ---------------------------------\n");
+	SkD((DLV_DBG_GAME_LOAD, "GAME_LOAD:RESUME/LOAD SAVEGAME ---------------------------------\n"));
 	//^2066:2D9C
 	Bit16u bp04 = 0;
 	Bit16u si = 0;
@@ -21096,19 +20992,19 @@ X16 SkWinCore::_098d_04c7(X16 rcno1, X16 rcno2, X16 scale, X16 *ss, X16 *tt)
 //^2676:0131
 void SkWinCore::LOAD_LOCALLEVEL_DYN()
 {
-	//printf("LOAD_LOCALLEVEL_DYN...\n"); getch();
+
 	//^2676:0131
 	ENTER(60);
 	//^2676:0137
 	X16 bp3c = 0;
 	_4976_5300 = 0;
-	//printf("ALLOC_MEMORY_RAM...\n"); getch();
+
 	_4976_52fc = reinterpret_cast<SkLoadEnt *>(ALLOC_MEMORY_RAM(sizeof(SkLoadEnt) * 400, 0,  1024));
 	U8 *bp14 = ALLOC_MEMORY_RAM(0xfa, afZeroMem, 1024); // creature existance-on-level bytes?
 	U8 *bp18 = ALLOC_MEMORY_RAM(0xfa, afZeroMem, 1024); // wall ornate existance-on-level bytes?
 	U8 *bp1c = ALLOC_MEMORY_RAM(0xfa, afZeroMem, 1024); // floor ornate existance-on-level bytes?
 	//^2676:01A6
-	//printf("PLENTY OF MARK_DYN_LOAD...\n"); getch();
+	
 	MARK_DYN_LOAD(0x01ff02ff); // Mark: Interface - main screen, snd, all
     MARK_DYN_LOAD(0x18ff02ff); // Mark: Teleporter, all, snd, all
 	MARK_DYN_LOAD(0x07ff02ff); // Mark: Interface - character sheet, all, snd, all
@@ -21162,7 +21058,7 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 	MARK_DYN_LOAD(0x15ffffff); // Mark: Misc, all, all, all
 	MARK_DYN_LOAD(0xffff01f9); // Mark: All, all, image, 0xF9(Map chip)
 	MARK_DYN_EXCLUDE_RANGE(0x0fff0510, 0x39); // Mark: Creature, all, text, 0x10(My enemies) to 0x39(?)
-	//printf("SERIE ON MAP...\n"); getch();
+	
 	//^2676:03E1
 	_4976_52fc[_4976_5300 -1].MarkIncluded();
 	U8 *bp08 = *glbCurrentTileMap;
@@ -21296,7 +21192,7 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 	//^2676:072C
 	glbMapDoorType[0] = (dunMapLocalHeader->UseDoor0() != 0) ? dunMapLocalHeader->DoorType0() : 0xff;
 	glbMapDoorType[1] = (dunMapLocalHeader->UseDoor1() != 0) ? dunMapLocalHeader->DoorType1() : 0xff;
-	//printf("LOAD_LEVEL : Doors 1/2 are : %02d/%02d\n", glbMapDoorType[0], glbMapDoorType[1]);
+	
 	//^2676:076C
 	X16 bp2e;
 	X16 bp2c;
@@ -21324,7 +21220,7 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 			MARK_DYN_LOAD(0x0efe02ff); // Mark: Doors, 0xFE, snd, all
 		}
 	}
-	//printf("QUERY_GDAT_ENTRY_DATA_INDEX GFX SET...\n"); getch();
+	
 	//^2676:07E9
 	U8 bp03 = dunMapLocalHeader->MapGraphicsStyle();
 	glbMapGraphicsSet = bp03;
@@ -21373,7 +21269,7 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 			MARK_DYN_EXCLUDE_RANGE(0x080001fc + (bp03 << 16), 0xfe); // Mark: Dungeon graphics, xxx, image, 0xFC to 0xFE (message board)
 		}
 	}
-	//printf("QUERY_GDAT_ENTRY_DATA_INDEX RAIN...\n"); getch();
+	
 	//^2676:09DC
 	glbRainSceneType = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_SCENE_RAIN);	// 0x66
 	if (_4976_5bee[0] == 0 && tlbRainScene[RCJ(5,glbRainSceneType)][0] != 0) {
@@ -21464,16 +21360,16 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 		//^2676:0C83
 	}
 	//^2676:0C8F
-	//printf("LOAD_DYN:_482b_060e...\n"); getch();
+	
 	if (_4976_5c8a == 0)
 		_482b_060e();
 	//^2676:0C9B
-	//printf("LOAD_DYN:LOAD_DYN4...\n"); getch();
+	
 	LOAD_DYN4(_4976_52fc, _4976_5300);
-	//printf("LOAD_DYN:LOAD_MISCITEM...\n"); getch();
+	
 	if (_4976_5c8a == 0)
 		LOAD_MISCITEM();
-	//printf("LOAD_DYN:glb Rain...\n"); getch();
+	
 	//^2676:0CBB
 	glbRainHasThunderImage = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_THUNDER_1)); // 0x64 thunder
 	glbRainHasWetGround = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_WETGROUND_1)); // 0x6a wet floor
@@ -21481,7 +21377,7 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 	glbRainHasRainFall = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_RAINFALL_STRAIGHT_1)); // 0x71 vertical direct rain fall
 	glbSceneColorKey = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_SCENE_COLORKEY); // colorkey
     glbSceneFlags = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_SCENE_FLAGS);
-    //printf("DEALLOC_UPPER_MEMORY...\n"); getch();
+    
 	//^2676:0D39
 	DEALLOC_UPPER_MEMORY(0xfa);
 	DEALLOC_UPPER_MEMORY(0xfa);
@@ -21509,12 +21405,12 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 		_4976_5be6 = 0;
 	}
 	//^2676:0DFE
-	//printf("UPDATE_WEATHER...\n"); getch();
+	
 	_4976_022c = 1;
 	UPDATE_WEATHER(0);
 	RECALC_LIGHT_LEVEL();
 	//^2676:0E11
-	//printf("LOAD_LOCALLEVEL_DYN END!\n"); getch();
+	
 	return;
 }
 
@@ -26116,6 +26012,7 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_0A()
 		//--- Display hex data of this table
 		int iNbItems = 1652 / 14;
 		U8* pTabBuffer = (U8*) _4976_5a98;
+		/*
 		for (int i = 0; i < iNbItems; i++) {
 			printf("%03d)) ", i);
 			for (int b = 0; b < 14; b++) {
@@ -26123,7 +26020,7 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_0A()
 			}
 			printf("\n");
 			pTabBuffer += 14;
-		}
+		}*/
 	}
 	else {
 	// SPX: This points to a 1652 bytes file .. seems to have struct of 14 bytes => 118 records. creature/objects anim frame size info and such
@@ -27015,7 +26912,7 @@ i16 SkWinCore::SELECT_CREATURE_4EFE(const sk4efe *ref)
 	//^14CD:006D
 	CreatureInfoData* xCreatureInfo = glbCurrentThinkingCreatureData; // bp04
 	Creature* xCreature = glbCurrentThinkingCreatureRec; // bp08
-	X16 si = xCreature->w10;
+	X16 si = xCreature->iAnimFrame;
 	X16 bp0e = RAND();
 	if (glbSomeMap_4976_4ee7 == glbCreatureMap) {
 		si &= 0x7fff;
@@ -27061,7 +26958,7 @@ i16 SkWinCore::SELECT_CREATURE_4EFE(const sk4efe *ref)
 			si &= 0xfff7;
 	}
 	//^14CD:01B6
-	xCreature->w10 = si;
+	xCreature->iAnimFrame = si;
 	X16 bp10 = 0xffff;
 	di = 0xffff;
 	X16 bp0c = 0;
@@ -27780,7 +27677,7 @@ void SkWinCore::_14cd_1eec(U8 xx, U8 yy, sk1bf9 *ss, X8 ww)
 			if (CREATURE_THINK_1316(ss->b1, ss->w2, yy) != 0) {
 				//^14CD:1F22
 				sk1bf9 bp0e = *ss;
-				bp0e.w6 = glbCurrentThinkingCreatureRec->w8;
+				bp0e.w6 = glbCurrentThinkingCreatureRec->iAnimSeq;
 				if (xx != 0)
 					bp0e.b8 = bp0e.b9 = 0;
 				//^14CD:1F4E
@@ -28260,7 +28157,7 @@ _132b:
 		di += glbXAxisDelta[bp1c];
 		bp10 += glbYAxisDelta[bp1c];
 		bp12 = GET_TILE_VALUE(di, bp10);
-		ATLASSERT((bp12 >> 5) != ttMapExit);
+		//ATLASSERT((bp12 >> 5) != ttMapExit); // SPX: why not? turn off this assert and see if it's that bad
 		if ((bp12 >> 5) != ttWall) {
 			//^075F:1414
 			if ((bp12 >> 5) != ttTrickWall || (bp12 & 5) != 0) {
