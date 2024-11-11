@@ -1,6 +1,9 @@
 #include <StdAfx.h>
 #include <SkParam.h>
 
+bool SkCodeParam::bUseBigEnd = false;	// Default is little-end
+
+bool SkCodeParam::bNoAudio = true;
 
 bool SkCodeParam::bDM1Mode = false;
 bool SkCodeParam::bDM1ReadSavegame = false;

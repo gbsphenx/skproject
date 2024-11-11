@@ -702,7 +702,7 @@ protected:
 	U16		glbGeneralFlipGraphics;		// flips graphics depending on player step
 	i16		_4976_5a94;		// clicked x?
 	i16		_4976_5a96;		// clicked y?
-	U8		(*_4976_5a98)[14]; // 01-00-07-0A-00-00
+	U8		(*tblCreatureFrameInfo14)[14]; // 01-00-07-0A-00-00 // _4976_5a98 Creature Frame Image info
 	i16		_4976_5a9c;
 	i16		_4976_5a9e;
 	U16		_4976_5aa0;		// base dir
@@ -1242,7 +1242,7 @@ protected:
 	i16 QUERY_DUNGEON_MAP_CHIP_PICT(Bit8u cls1, Bit8u cls2, Bit8u **ppBuff, Bit8u *localpal);
 	void DRAW_CHIP_OF_MAGIC_MAP(const Bit8u *buff, Bit16u aa, Bit16u xx, Bit16u yy, Bit16u flipMirror, Bit8u *localpal);
 	i16 CREATURE_SEQUENCE_4937_000f(Bit16u xx, Bit16u *yy); // 4937_000f
-	Bit16u _0cee_2df4(ObjectID recordLink);
+	Bit16u CREATURE_0cee_2df4(ObjectID recordLink);	// _0cee_2df4
 	Bit16u _48ae_011a(ObjectID recordLink);
 	void DRAW_MAP_CHIP(ObjectID recordLink, i16 ss, i16 tt, i16 ww, Bit16u xx, Bit16u yy, Bit8u cc, Bit16u flags);
 	void _29ee_1946(ObjectID recordLink, i16 xx, i16 yy, i16 zz, i16 dir, i16 ss, i16 tt, Bit16u flags);
@@ -1484,7 +1484,7 @@ protected:
 	i16 CREATURE_GET_COLORKEY(U8 cls2); // _0cee_2e35
 	void QUERY_CREATURE_PICST(U16 xx, i16 dist, Creature *vv, CreatureInfoData *ww, ObjectID rl);
 	U16 _32cb_01b6(U16 xx, U16 yy, U16 ss, U16 tt, U16 *ww);
-	U16 _121e_0222(U16 xx, U16 yy, U16 ww);
+	U16 CREATURE_121e_0222(U16 xx, U16 yy, U16 ww);	// _121e_0222
 	U16 _0cee_2e09(ObjectID rl);
 	U16 _2c1d_1fb1(U16 dir);
 	U16 _121e_0351(U16 xx, U16 yy);
@@ -1976,8 +1976,8 @@ protected:
 	i16 ABS16(i16 val);
 	Bit16u CALC_VECTOR_DIR(i16 x1, i16 y1, i16 x2, i16 y2);
 	Bit16u CALC_SQUARE_DISTANCE(i16 x1, i16 y1, i16 x2, i16 y2);
-	Bit16u _4937_005c(Bit16u xx, Bit16u *yy);
-	CreatureAnimationFrame *_4937_0036(Bit16u xx, Bit16u *yy);
+	Bit16u CREATURE_4937_005c(Bit16u xx, Bit16u *yy); // _4937_005c
+	CreatureAnimationFrame* CREATURE_4937_0036(Bit16u xx, Bit16u *yy); // _4937_0036
 	Bit16u APPLY_CREATURE_POISON_RESISTANCE(ObjectID recordLink, Bit16u xx);
 	void PROCESS_QUEUED_DEALLOC_RECORD();
 	void QUEUE_DEALLOC_RECORD(ObjectID recordLink);
@@ -1987,7 +1987,7 @@ protected:
 	Bit16u _RAND01();
 	Bit16u GET_DOOR_STAT_0X10(Bit8u cls2);
 	Bit8u GET_GRAPHICS_FOR_DOOR(Door *ref);
-	Bit16u _075f_0af9(i16 u16tileType, i16 xpos, i16 ypos, Bit16u dir, ObjectID rlMissile);
+	Bit16u MISSILE_HIT_075f_0af9(i16 u16tileType, i16 xpos, i16 ypos, Bit16u dir, ObjectID rlMissile); // 075f_0af9
 	void _2fcf_0234(i16 xposFrom, i16 yposFrom, i16 xposTo, i16 yposTo);
 	void SET_MINION_RECENT_OPEN_DOOR_LOCATION(ObjectID recordLink, i16 xpos, i16 ypos, Bit16u curmap, Bit16u ww);
 	void RELEASE_CREATURE_TIMER(ObjectID recordLink);

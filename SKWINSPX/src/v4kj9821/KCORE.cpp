@@ -319,7 +319,7 @@ X16 SkWinCore::EXTENDED_LOAD_AI_DEFINITION(void)
 
 				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 30);
 				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 31);
-				dAITable[index].w30 = byte1 + byte2*256;
+				dAITable[index].wc30 = byte1 + byte2*256;
 
 				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 32);
 				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 33);
@@ -2368,6 +2368,8 @@ void SkWinCore::RECYCLE_MEMENTI(Bit16u mementi, Bit16u yy)
 	Bit16u di = mementi;
 	//^3E74:470C
 	mement *bp04 = tlbMementsPointers[di];
+	if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(bp04))
+		return;
 	TEST_MEMENT(bp04);
 	//^3E74:4722
 	if (bp04->w4() != 0xffff) {
@@ -2486,6 +2488,8 @@ int SkWinCore::TEST_MEMENT(mement *bp04)
 	i32 len = 0;
 	//ATLASSERT(bp04 != NULL);
 	// SPX: use CheckSafePointer to trap more unexpected mem values so that it fails at ASSERT instead of crashing after.
+	if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(bp04))
+		return 0;
 	ATLASSERT(CheckSafePointer(bp04));
 	iDW0ValLen = (abs(-bp04->dw0())) -4;
 	if (iDW0ValLen >= 65536)
@@ -2512,6 +2516,8 @@ mement *SkWinCore::_3e74_48c9(Bit16u mementi)
 	//^3E74:48CF
 	mement *bp04 = tlbMementsPointers[mementi];
 	TEST_MEMENT(bp04);
+	if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(bp04))
+		return NULL;
 	//^3E74:48E8
 	Bit16u si = bp04->w4();
 	//^3E74:48EF
@@ -2692,6 +2698,8 @@ void SkWinCore::_3e74_4549(Bit16u xx)
 	//^3E74:4549
 	//^3E74:454F
 	mement *bp04 = tlbMementsPointers[xx];
+	if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(bp04))
+		return;
 	TEST_MEMENT(bp04);
 	//^3E74:4568
 	if (bp04 != NULL) {
@@ -2972,6 +2980,8 @@ void SkWinCore::FREE_INDEXED_MEMENT(Bit16u index)
 	_3e74_4549(si);
 	//^3E74:2942
 	mement *bp04 = tlbMementsPointers[si];
+	if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(bp04))
+		return;
 	TEST_MEMENT(bp04);
 	//^3E74:295A
 	tlbMementsPointers[si] = NULL;
@@ -4598,21 +4608,19 @@ Bit16u SkWinCore::QUERY_ORNATE_ANIM_FRAME(Bit8u cls1, Bit8u cls2, Bit32u tick, B
 
 
 //^4937:000F
-i16 SkWinCore::CREATURE_SEQUENCE_4937_000f(Bit16u xx, Bit16u *yy)
+i16 SkWinCore::CREATURE_SEQUENCE_4937_000f(Bit16u iAnimSeq, Bit16u* piAnimFrame)
 {
-	//^4937:000F
 	ENTER(0);
-	//^4937:0012
-	return tlbCreaturesAnimationSequences[_4937_005c(xx, yy)].w0 & 0x03FF;
+	return tlbCreaturesAnimationSequences[CREATURE_4937_005c(iAnimSeq, piAnimFrame)].w0 & 0x03FF;
 }
 
 //^0CEE:2DF4
-Bit16u SkWinCore::_0cee_2df4(ObjectID recordLink)
+Bit16u SkWinCore::CREATURE_0cee_2df4(ObjectID recordLink)
 {
 	//^0CEE:2DF4
 	ENTER(0);
 	//^0CEE:2DF7
-	return QUERY_CREATURE_AI_SPEC_FROM_RECORD(recordLink)->w30;
+	return QUERY_CREATURE_AI_SPEC_FROM_RECORD(recordLink)->wc30;
 }
 
 //^48AE:011A
@@ -7831,11 +7839,11 @@ U16 SkWinCore::_121e_03ae(U16 aa, U16 bb, U16 xx, U16 yy, U16 cc, U16 dd, U16 ee
 		//^121E:03FE
 		if (ee == 2) {
 			//^121E:0404
-			return _121e_0222(xx, yy, di +4);
+			return CREATURE_121e_0222(xx, yy, di +4);
 		}
 		else {
 			//^121E:040C
-			return _121e_0222(xx, yy, di);
+			return CREATURE_121e_0222(xx, yy, di);
 		}
 	}
 	//^121E:041C
@@ -7902,95 +7910,6 @@ void SkWinCore::PLAYER_TESTING_WALL(U16 ww, U16 xx, U16 yy)
 	return;
 }
 
-//^0CEE:2E35
-// SPX: _0cee_2e35 renamed CREATURE_GET_COLORKEY
-i16 SkWinCore::CREATURE_GET_COLORKEY(U8 cls2)
-{
-	ENTER(0);
-	U16 si = QUERY_GDAT_CREATURE_WORD_VALUE(cls2, GDAT_IMG_COLORKEY_1);	// 0x04
-	if (si == 0)
-		return 4;
-	return si;
-}
-
-
-//^121E:0222
-U16 SkWinCore::_121e_0222(U16 xx, U16 yy, U16 ww)
-{
-	//^121E:0222
-	ENTER(12);
-	//^121E:0228
-	Creature *bp0c = NULL;
-	//^121E:0232
-	if (glbChampionLeader == -1)
-		//^121E:0239
-		return 0;
-	//^121E:023E
-	U16 bp06 = (glbPlayerDir +ww) & 3;
-	//^121E:024A
-	ObjectID di = GET_CREATURE_AT(xx, yy);
-	//^121E:0259
-	if (di != OBJECT_NULL) {
-        //^121E:025E
-		AIDefinition *bp04 = QUERY_CREATURE_AI_SPEC_FROM_RECORD(di);
-		//^121E:026B
-		bp0c = GET_ADDRESS_OF_RECORD4(di);
-		//^121E:0278
-		if (true
-			&& bp04->IsStaticObject() != 0
-			&& (false
-				|| (ww >= 4 && ww <= 7 && (bp04->w30 & 0x0800) == 0)
-				|| (ww < 4 && (bp04->w30 & 0x2000) == 0)
-			)
-		) {
-			//^121E:02A7
-			//^121E:0239
-			return 0;
-		}
-	}
-	const ObjectID rlCreature = di;
-	//^121E:02A9
-	di = REMOVE_OBJECT_FROM_HAND();
-	//^121E:02B0
-	if (ww >= 4 && ww <= 7) {
-		//^121E:02BC
-		U8 bp07 = (ww -4 + glbPlayerDir) & 3;
-		//^121E:02CA
-		if (bp0c != NULL) {
-			//^121E:02D2
-			for (ObjectID si = bp0c->GetPossessionObject(); si != OBJECT_END_MARKER; si = GET_NEXT_RECORD_LINK(si)) {
-				//^121E:02DB
-				if (si.Dir() == bp07 && IS_CONTAINER_MONEYBOX(si) != 0) {
-					//^121E:02F4
-					GET_ADDRESS_OF_RECORD9(si)->b7_2_2(0);
-				}
-				//^121E:0304
-			}
-		}
-		//^121E:0312
-		MOVE_RECORD_TO(ObjectID(di, bp07), -1, -1, xx, yy);
-
-		SkD((DLV_TWEET, "Tweet: You have put %s on %s (a#%03d, x:%d, y:%d) \n"
-			, static_cast<LPCSTR>(getRecordNameOf(di))
-			, static_cast<LPCSTR>(getRecordNameOf(rlCreature))
-			, rlCreature.DBIndex()
-			, xx
-			, yy
-			));
-	}
-	else{
-		//^121E:0323
-		MOVE_RECORD_TO(ObjectID(di, bp06), -1, 0, xx, yy);
-
-		SkD((DLV_TWEET, "Tweet: You have put %s! \n"
-			, static_cast<LPCSTR>(getRecordNameOf(di))
-			));
-	}
-	//^121E:0344
-	_4976_4e5c = 1;
-	//^121E:034A
-	return 1;
-}
 
 //^0CEE:2E09
 U16 SkWinCore::_0cee_2e09(ObjectID rl)
@@ -9898,53 +9817,7 @@ _187e:
 	return si;
 }
 
-//^19F0:13AA
-X16 SkWinCore::_19f0_13aa(i16 xx, i16 yy)
-{
-	//^19F0:13AA
-	ENTER(10);
-	//^19F0:13B0
-	i16 bp08 = 0;
-	do {
-		//^19F0:13B5
-		if ((tblAIStats01[_4976_4efa] & 0x400) != 0 || ((glbCurrentThinkingCreatureRec->iAnimFrame & 0x80) == 0 
-			&& (glbAIDef->w0_2_2() != 0 || glbCreatureTimer.XcoordB() != xx || glbCreatureTimer.YcoordB() != yy || ((glbCurrentThinkingCreatureRec->b15_0_1() +2) & 3) != bp08) || (RAND() & 7) == 0)) {
-			//^19F0:1410
-			i16 di = xx;
-			i16 si = yy;
-			for (i16 bp0a = 0; bp0a++ < 3; ) {
-				//^19F0:141E
-				di += glbXAxisDelta[bp08];
-				si += glbYAxisDelta[bp08];
-				//^19F0:1430
-				if (di < 0 || di >= glbCurrentMapWidth || si < 0 || si >= glbCurrentMapHeight)
-					break;
-				//^19F0:1450
-				for (ObjectID bp06 = GET_WALL_TILE_ANYITEM_RECORD(di, si); bp06 != OBJECT_END_MARKER; bp06 = GET_NEXT_RECORD_LINK(bp06)) {
-					//^19F0:145B
-					if (bp06.DBType() == dbMissile) {
-						Missile *bp04 = GET_ADDRESS_OF_RECORDE(bp06);
-						if (glbTimersTable[bp04->TimerIndex()].Direction() == ((bp08 +2) & 3) && _075f_06bd(bp04, bp04->GetMissileObject()) != 0) {
-							//^19F0:14BA
-							return 1;
-						}
-					}
-					//^19F0:14BF
-				}
-				//^19F0:14D1
-				if (glbCreatureTimer.XcoordB() != di || glbCreatureTimer.YcoordB() != si) {
-					//^19F0:14E3
-					if (_19f0_00b8(di, si) != 0)
-						break;
-				}
-				//^19F0:14EF
-			}
-		}
-		//^19F0:14FD
-	} while (++bp08 < 4);
-	//^19F0:150B
-	return 0;
-}
+
 
 //^19F0:050F
 ObjectID SkWinCore::_19f0_050f()
@@ -15462,9 +15335,10 @@ void SkWinCore::FIRE_BLIT_PICTURE(
 	ATLASSERT(rc->y >= 0);
 	ATLASSERT(rc->cx >= 0);
 	ATLASSERT(rc->cy >= 0);
-	if (!SkCodeParam::bUseSuperInfoEye)	// for some "debug" mode, we bypass the check of rectangles bounds
+	if (!SkCodeParam::bUseSuperInfoEye && !SkCodeParam::bDM2V5Mode)	// for some "debug" mode, we bypass the check of rectangles bounds
 	ATLASSERT((0 +rc->x +RUp2(dsticx) * (rc->y +rc->cy -1) +rc->cx) <= (RUp2(dsticx) * dsticy));
-
+	if (SkCodeParam::bUsePowerDebug && (!CheckSafePointer((void*)src) /*|| dst == NULL *//*|| rc == NULL */ /*|| localPal == NULL*/))
+		return;
 #endif
 
 	//^44C8:1101
@@ -18761,9 +18635,9 @@ Bit16u SkWinCore::READ_SKSAVE_TIMER_3C_3D()
 //^2066:19E7
 U16 SkWinCore::READ_SKSAVE_DUNGEON()
 {
-	printf("RESUME/LOAD SAVEGAME ---------------------------------\n");
+	SkD((DLV_DBG_GAME_LOAD, "RESUME/LOAD SAVEGAME ---------------------------------\n"));
 	//^2066:19E7
-	printf("Reset champions inventory ... \n");
+	SkD((DLV_DBG_GAME_LOAD, "Reset champions inventory ... \n"));
 	Bit16u si;
 	for (si=0; si < glbChampionsCount; si++) {
 		//^2066:19F1
@@ -18780,7 +18654,7 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 	glbLeaderHandPossession.object = OBJECT_END_MARKER;
 	Bit16u bp18 = glbCurrentMapIndex;
 	//^2066:1A2A
-	printf("Delete records ... \n");
+	SkD((DLV_DBG_GAME_LOAD, "Delete records ... \n"));
 	Bit16u bp16;
 	for (bp16=0; dunHeader->nMaps > bp16; bp16++) {
 		//^2066:1A32
@@ -18815,7 +18689,7 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 	//^2066:1ACE
     CHANGE_CURRENT_MAP_TO(bp18);
 	//^2066:1AD7
-	printf("Delete objects ... \n");
+	SkD((DLV_DBG_GAME_LOAD, "Delete objects ... \n"));
 	for (si = dbCreature; si < dbMax; si++) {
 		//^2066:1ADC
 		Bit16u *bp08 = reinterpret_cast<Bit16u *>(glbDBObjectData[si]);
@@ -18833,7 +18707,7 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 		//^2066:1B21
 	}
 	//^2066:1B27
-	printf("Realloc Minions Table ... \n");
+	SkD((DLV_DBG_GAME_LOAD, "Realloc Minions Table ... \n"));
 	glbMinionsObjectIDTable = reinterpret_cast<ObjectID *>(ALLOC_MEMORY_RAM(200, afDefault, 1024));
 	//^2066:1B40
 	glbMinionsAssocCount = 0;
@@ -18877,7 +18751,6 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 		//^2066:1BEA
 	}
 
-	printf("Remove leader hand possession ... \n");
 	//^2066:1BF1
 	if (glbLeaderHandPossession.object == OBJECT_END_MARKER) {
 		//^2066:1BF8
@@ -18893,7 +18766,7 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 		goto _1e7e;
 	}
 	//^2066:1C1F
-	printf("Loop through all maps ... \n");
+	SkD((DLV_DBG_GAME_LOAD, "Loop through all maps ... \n"));
 	bp18 = glbCurrentMapIndex;
 	for (bp16 = 0; dunHeader->nMaps > bp16; bp16++) {
 		//^2066:1C2D
@@ -19206,25 +19079,22 @@ _2e5b:
 	{
 		//^2066:2FBE
 		do {
-			printf("Read Dungeon Structure (Native DM2) ...\n");
-			//getch();
+			SkD((DLV_DBG_GAME_LOAD, "Read Dungeon Structure (Native DM2) ...\n"));
+			
 			if (READ_DUNGEON_STRUCTURE(0) == 0)
 			{
 				printf("BREAK\n");
-				//getch();
 				break;
 			}
-			printf("Suppress Init ...\n");
-			//getch();
 			//^2066:2FCC
 			glbSpecialScreen = 0;
 			//^2066:2FD2
 			SUPPRESS_INIT();
 
-			printf("Start Read File Handle %02d ...\n", glbDataFileHandle);
+			SkD((DLV_DBG_GAME_LOAD, "Start Read File Handle %02d ...\n", glbDataFileHandle));
 			//s_testSKSave.StartRead(FILE_TELL(glbDataFileHandle));
 
-			printf("Read Global Variables ...\n");
+			SkD((DLV_DBG_GAME_LOAD, "Read Global Variables ...\n"));
 			//^2066:2FD6
 			skload_table_60 t1;
 			if (SUPPRESS_READER(&t1, _4976_395a, 56, 1, 1) != 0)
@@ -19255,7 +19125,7 @@ _2e5b:
 			glbRainRelated3 = t1.bRainRelated3;
 			glbRainRelated2 = t1.bRainRelated2;
 			glbRainSpecialNextTick = t1.dwRainSpecialNextTick;
-			printf("Read Game Variables (Flags / Bytes / Words) ...\n");
+			SkD((DLV_DBG_GAME_LOAD, "Read Game Variables (Flags / Bytes / Words) ...\n"));
 			//getch();
 			//^2066:30B5
 			if (SUPPRESS_READER(glbIngameGlobVarFlags, _4976_3956, 1, 8, 1) != 0)
@@ -19278,7 +19148,7 @@ _2e5b:
 			//^2066:3172
 			bp06 = glbTimersCount;
 			//^2066:3178
-			printf("Read Timers ...\n");
+			SkD((DLV_DBG_GAME_LOAD, "Read Timers ...\n"));
 			//getch();
 			while (bp06 < glbTimersMaximumCount) {
 				//^2066:317A
@@ -19332,8 +19202,6 @@ _31b8:		// we jump there from loading a dungeon from new game
 				//^2066:3225
 				_2066_03e0(1);
 			}
-			//printf("_0aaf_02f8_DIALOG_BOX.\n");
-			//getch();
 
 			//^2066:322C
 			_0aaf_02f8_DIALOG_BOX(0x000E, 0x0000);
@@ -19341,14 +19209,11 @@ _31b8:		// we jump there from loading a dungeon from new game
 			_4976_4bd8 = 0x0001;
 			glbPlayerDefeated = 0x0000;
 			//^2066:3243
-			//printf("_2fcf_0b8b.\n");
-			//getch();
 			_2fcf_0b8b(glbPlayerPosX, glbPlayerPosY, glbPlayerMap);
 			//^2066:3257
 			glbDoLightCheck = 0x0001;
 			//^2066:325D
 			//^2066:32B5
-			//printf("Return 1.\n"); getch();
 			return 1; // Bit16u di = 1; return di;
 		} while (false);
 	}
@@ -19357,13 +19222,13 @@ _31b8:		// we jump there from loading a dungeon from new game
 		do {
 			U8 glbDummyData[10000];
 			// there are 0x24c0 bytes of encoded data
-			printf("Read as a DM1 savegame ...\n");
+			SkD((DLV_DBG_GAME_LOAD, "Read as a DM1 savegame ...\n"));
 			// 42 bytes already been read
 			if (FILE_READ(glbDataFileHandle, 0x24C0-42, glbDummyData) == 0)
 				break;
 		
 			// then comes portraits : 4 * 29*16 bytes
-			printf("Read Portraits ...\n");
+			SkD((DLV_DBG_GAME_LOAD, "Read Portraits ...\n"));
 			bDM1PortraitsActivated = true;
 			if (FILE_READ(glbDataFileHandle, (29*16), glbDummyData) == 0)
 				break;
@@ -19391,7 +19256,7 @@ _31b8:		// we jump there from loading a dungeon from new game
 
 
 			// the regular dungeon structure starts at 0x2C00
-			printf("Read Dungeon Structure DM1 Mode ...\n");
+			SkD((DLV_DBG_GAME_LOAD, "Read Dungeon Structure DM1 Mode ...\n"));
 			//getch();
 			SkCodeParam::bDM1ReadSavegame = true;
 			if (READ_DUNGEON_STRUCTURE(0) == 0)
@@ -19401,11 +19266,11 @@ _31b8:		// we jump there from loading a dungeon from new game
 			_4976_5bf2 = 1; // load is complete
 			//getch();
 			// Copy from DM2 read
-			printf("Suppress Init ...\n");
+			SkD((DLV_DBG_GAME_LOAD, "Suppress Init ...\n"));
 			glbSpecialScreen = 0;
 			SUPPRESS_INIT();
-			printf("Start Read File Handle %02d ...\n", glbDataFileHandle);
-			printf("Read Global Variables ...\n");
+			SkD((DLV_DBG_GAME_LOAD, "Start Read File Handle %02d ...\n", glbDataFileHandle));
+			SkD((DLV_DBG_GAME_LOAD, "Read Global Variables ...\n"));
 
 			glbLeaderHandPossession.object = OBJECT_NULL;
 
@@ -19468,7 +19333,7 @@ _31b8:		// we jump there from loading a dungeon from new game
 
 			bp06 = glbTimersCount;
 
-			printf("Read Timers ...\n");
+			SkD((DLV_DBG_GAME_LOAD, "Read Timers ...\n"));
 			while (bp06 < glbTimersMaximumCount) {
 				glbTimersTable[bp06].TimerType(tty00);
 				bp06++;
@@ -22172,14 +22037,14 @@ X16 SkWinCore::_19f0_2024(ObjectID rl, i16 ss, i16 tt)
 	}
 	else if (si.DBType() == dbCreature && (_4976_4ef2 & 0x28) != 0) {
 		//^19F0:207A
-		Creature *bp04 = GET_ADDRESS_OF_RECORD4(si);
-		AIDefinition *bp0c = QUERY_CREATURE_AI_SPEC_FROM_TYPE(bp04->CreatureType());
-		bp10 = bp0c->IsStaticObject();
+		Creature* xCreature = GET_ADDRESS_OF_RECORD4(si); // bp04
+		AIDefinition* xAIDef = QUERY_CREATURE_AI_SPEC_FROM_TYPE(xCreature->CreatureType()); // bp0c
+		bp10 = xAIDef->IsStaticObject();
 		if (((bp10 != 0) ? (_4976_4ef2 & 8) : (_4976_4ef2 & 0x20)) != 0) {
 			//^19F0:20C0
 			bp0e = 8;
-			si = bp04->GetPossessionObject();
-			bp10 = (bp10 != 0) ? _48ae_01af(bp0c->w30, tt) : 0xf;
+			si = xCreature->GetPossessionObject();
+			bp10 = (bp10 != 0) ? _48ae_01af(xAIDef->wc30, tt) : 0xf;
 		}
 	}
 	else {
@@ -22210,7 +22075,7 @@ X16 SkWinCore::_19f0_2024(ObjectID rl, i16 ss, i16 tt)
 		//^19F0:2150
 	}
 	//^19F0:215E
-	return 0xffff;
+	return 0xFFFF;
 }
 
 //^19F0:2165
@@ -22414,7 +22279,7 @@ _2484:
 				else if (bp02 == ccmPlaceMerchandise) {
 					//^19F0:24DF
 					di = _19f0_050f();
-					si = _48ae_01af(_0cee_2df4(di), vv);
+					si = _48ae_01af(CREATURE_0cee_2df4(di), vv);
 					if (si == 0)
 						goto _2474;
 					//^19F0:2502
@@ -23379,57 +23244,7 @@ Bit16u SkWinCore::CALC_SQUARE_DISTANCE(i16 x1, i16 y1, i16 x2, i16 y2)
 	return ((di < 0) ? (-di) : di) + ((si < 0) ? (-si) : si);
 }
 
-//^4937:005C
-// TODO: creature animation related ?
-Bit16u SkWinCore::_4937_005c(Bit16u xx, Bit16u *yy)
-{
-	//^4937:005C
-	//^4937:0061
-	Bit16u si;
-	if ((*yy & 0x4000) != 0) {
-		//^4937:006B
-		si = 0;
-	}
-	//^4937:006F
-	else if ((*yy & 0x8000) != 0) {
-		//^4937:0079
-		Bit16u di;
-		if ((*yy & 0x1000) != 0) {
-			//^4937:0080
-			*yy &= 0xe03f;
-			di = 0;
-		}
-		else {
-			//^4937:0089
-			di = (*yy & 0x0fc0) >> 6;
-		}
-		//^4937:0097
-		// SPX: TODO / I got this fall under divide by zero when replacing static AI table
-		// by a new table. I don't understand why this happens, then I use some fix
-		if (SkCodeParam::bUseFixedMode)
-		{
-			if ( (*yy & 0x003F) == 0)
-				*yy = 1;
-		}
-		// SPX: What is this 0x3F (63) value? is it related to number of AI ??
-		si = (glbGameTick + di) % (*yy & 0x003f);
-	}
-	else {
-		//^4937:00B8
-		si = *yy & 0x003f;
-	}
-	//^4937:00C3
-	return xx + si;
-}
 
-//^4937:0036
-// TODO: creature animation related, get some sequence
-CreatureAnimationFrame* SkWinCore::_4937_0036(Bit16u xx, Bit16u *yy)
-{
-	//^4937:0036
-	//^4937:0039
-	return &tlbCreaturesAnimationSequences[_4937_005c(xx, yy)];
-}
 
 void SkWinCore::PROCESS_QUEUED_DEALLOC_RECORD() {
 	// kkdf2: ext for skwinspx
@@ -23561,7 +23376,7 @@ Bit16u SkWinCore::CREATURE_1c9a_0958(ObjectID recordLink)
 {
 	Creature *xCreature = GET_ADDRESS_OF_RECORD(recordLink)->castToCreature();	//*bp04
 	sk1c9a02c3* xInfoData = GET_CREATURE_INFO_DATA(xCreature, QUERY_CREATURE_AI_SPEC_FROM_TYPE(xCreature->CreatureType())); // bp08
-	CreatureAnimationFrame* xAnim = _4937_0036(xInfoData->iAnimSeq, &xInfoData->iAnimFrame);	// bp0c
+	CreatureAnimationFrame* xAnim = CREATURE_4937_0036(xInfoData->iAnimSeq, &xInfoData->iAnimFrame);	// bp0c
 	return (xAnim->w0 & 0x4000) >> 14;
 }
 
@@ -23614,14 +23429,14 @@ Bit8u SkWinCore::GET_GRAPHICS_FOR_DOOR(Door *ref)
 
 //^075F:0AF9
 // SPX: Something to do when an item (missile) hit an obstacle
-Bit16u SkWinCore::_075f_0af9(i16 u16tileType, i16 xpos, i16 ypos, Bit16u dir, ObjectID rlMissile)
+Bit16u SkWinCore::MISSILE_HIT_075f_0af9(i16 u16tileType, i16 xpos, i16 ypos, Bit16u dir, ObjectID rlMissile)
 {
 	//^075F:0AF9
 	//^075F:0AFF
 	Bit16u bp1c = 0;
 	Bit16u bp2a = 0;
 	//^075F:0B09
-	Missile *bp08 = GET_ADDRESS_OF_RECORDE(rlMissile);
+	Missile* bp08 = GET_ADDRESS_OF_RECORDE(rlMissile); // bp08
 	//^075F:0B18
 	ObjectID si = bp08->GetMissileObject();
 	//^075F:0B21
@@ -23864,23 +23679,18 @@ _0e37:
 					return 0;
 				}
 				//^075F:0E85
-				Creature *bp04 = GET_ADDRESS_OF_RECORD(bp2e)->castToCreature();
+				Creature* xCreature = GET_ADDRESS_OF_RECORD(bp2e)->castToCreature(); // bp04
 				//^075F:0E94
-				AIDefinition *bp0c = QUERY_CREATURE_AI_SPEC_FROM_TYPE(bp04->CreatureType());
-				//^075F:0EA8
-				if (bp0c->w0_5_5() != 0 && si != OBJECT_EFFECT_DISPELL) {	// oFF83
-					//^075F:0EB7
+				AIDefinition* xAIDef = QUERY_CREATURE_AI_SPEC_FROM_TYPE(xCreature->CreatureType()); // bp0c
+				if (xAIDef->w0_5_5() != 0 && si != OBJECT_EFFECT_DISPELL) {	// oFF83
 					if (tileType == ttTeleporter)
-						//^075F:0EBD
 						break;
-					//^075F:0EC0
-					//^075F:0D42
 					return 0;
 				}
 				//^075F:0EC3
-				if (bp0c->IsStaticObject() == 0) {
+				if (xAIDef->IsStaticObject() == 0) {
 					//^075F:0ECD
-					if (bp0c->Weight != 255) {
+					if (xAIDef->Weight != 255) {
 						//^075F:0ED4
 						goto _0f82;
 					}
@@ -23890,7 +23700,7 @@ _0e37:
 					}
 				}
 				//^075F:0ED9
-				if ((bp0c->w30 & 0x0100) != 0 && si < OBJECT_EFFECT_FIREBALL) {	// oFF80
+				if ((xAIDef->wc30 & 0x0100) != 0 && si < OBJECT_EFFECT_FIREBALL) {	// oFF80
 					//^075F:0EE7
 					//^075F:0EFA
 					if (tileType == ttTeleporter)
@@ -23901,7 +23711,7 @@ _0e37:
 					return 0;
 				}
 				//^075F:0EE9
-				if (bp0c->w0_6_7() > 1) {
+				if (xAIDef->w0_6_7() > 1) {
 					//^075F:0EFA
 					if (tileType == ttTeleporter)
 						//^075F:0F00
@@ -23912,7 +23722,7 @@ _0e37:
 				}
 				//^075F:0F06
 				// SPX: This is turning the direction of the missile (for reflectors certainly ..)
-				if ((bp0c->w30 & AI_W30_FLAGS__TURN_MISSILE) == 0) {	// 0x0800
+				if ((xAIDef->wc30 & AI_W30_FLAGS__TURN_MISSILE) == 0) {	// 0x0800
 					//^075F:0F11
 _0f11:
 					Bit16u di = glbTimersTable[bp08->TimerIndex()].Direction();	// get direction
@@ -23938,7 +23748,7 @@ _0f11:
 				}
 				//^075F:0F82
 _0f82:
-				bp16 = (_075f_06bd(bp08, si) << 6) / bp0c->ArmorClass;
+				bp16 = (_075f_06bd(bp08, si) << 6) / xAIDef->ArmorClass;
 				//^075F:0FA7
 				if (bp16 != 0) {
 					//^075F:0FAB
@@ -23948,15 +23758,15 @@ _0f82:
 						bp3a,
 						0x200d,
 						0x0064,
-						((bp0c->w24 & 0x1000) != 0 && _4976_4b7a != 1) ? 0 : (bp16 + APPLY_CREATURE_POISON_RESISTANCE(bp2e, glbPoisonAttackDamage))
+						((xAIDef->w24 & 0x1000) != 0 && _4976_4b7a != 1) ? 0 : (bp16 + APPLY_CREATURE_POISON_RESISTANCE(bp2e, glbPoisonAttackDamage))
 						);
 					//^075F:0FED
-					if (bp26 == 0 && bp0c->AbsorbsMissile() != 0) {	// if not a grey cloud and w0_9_9 = 1
+					if (bp26 == 0 && xAIDef->AbsorbsMissile() != 0) {	// if not a grey cloud and w0_9_9 = 1
 						//^075F:0FFD
 						// si is the item thrown
 						if ((QUERY_GDAT_DBSPEC_WORD_VALUE(si, 0) & ITEM_FLAG_40) != 0) {	// 0x0040
 							//^075F:100C
-							bp10 = &bp04->possession;	// bp04 is the creature
+							bp10 = &xCreature->possession;	// bp04 is the creature
 						}
 					}
 				}
@@ -24138,7 +23948,7 @@ _0368:
 					//^2FCF:03B7
 					if (bp02 != 0) {
 						//^2FCF:03BB
-						if (_075f_0af9(-3, xposFrom, yposFrom, bp02, si) != 0) {
+						if (MISSILE_HIT_075f_0af9(-3, xposFrom, yposFrom, bp02, si) != 0) {
 							//^2FCF:03D2
 							_075f_056c(si);
 							//^2FCF:03D9
@@ -24273,7 +24083,7 @@ void SkWinCore::DELETE_MISSILE_RECORD(ObjectID rlMissile, ObjectID *prlDropTo, i
 				//^075F:0602
 				Bit16u bp08 = si.Dir();
 				//^075F:060A
-				if ((QUERY_CREATURE_AI_SPEC_FROM_RECORD(bp06)->w30 & 15) == 1) {
+				if ((QUERY_CREATURE_AI_SPEC_FROM_RECORD(bp06)->wc30 & 15) == 1) {
 					//^075F:0623
 					bp08 = glbTimersTable[bp04->TimerIndex()].Direction();
 					//^075F:063F
@@ -25831,8 +25641,15 @@ void SkWinCore::READ_GRAPHICS_STRUCTURE()
 //printf("READ_FILE\n");
 	if (READ_FILE(glbFileHandleGraphics1, 4, &bp0c) == 0)	// Read the first 4 bytes of GDAT, which hold GDAT signature + nb of data items
 		goto _28d2;
-	if ((bp0c.w0 & 0x8000) == 0)
-		goto _28d2;
+	if ((bp0c.w0 & 0x8000) == 0) {	// Default data is supposed to use little-end storage (PC)
+		// try now big-end
+		if ((SWAPW(bp0c.w0) & 0x8000) == 0)
+			goto _28d2;
+		// at this point, we try big-end
+		SkCodeParam::bUseBigEnd = true;
+		bp0c.w0 = SWAPW(bp0c.w0);
+		bp0c.w2 = SWAPW(bp0c.w2);
+	}
 //printf("3E74:2677\n");
 	//^3E74:2677
 	glbGDATVersion = bp0c.w0 & 0x7fff;
@@ -26006,12 +25823,12 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_0A()
 		SkCodeParam::bDM2V5Mode = true;
 		// Then, we do a hardfile read to make up for missing item, not pretty but working
 		hAnimFrameTabHandle = FILE_OPEN((const U8*)"bin/v4kj9821/0653ctbl.bin");
-		_4976_5a98 = reinterpret_cast<U8 (*)[14]>(ALLOC_MEMORY_RAM(iItemSize,	afUseUpper, 0x400));
-		FILE_READ(hAnimFrameTabHandle, iItemSize, _4976_5a98);
+		tblCreatureFrameInfo14 = reinterpret_cast<U8 (*)[14]>(ALLOC_MEMORY_RAM(iItemSize,	afUseUpper, 0x400));
+		FILE_READ(hAnimFrameTabHandle, iItemSize, tblCreatureFrameInfo14);
 		FILE_CLOSE(hAnimFrameTabHandle);
 		//--- Display hex data of this table
 		int iNbItems = 1652 / 14;
-		U8* pTabBuffer = (U8*) _4976_5a98;
+		U8* pTabBuffer = (U8*) tblCreatureFrameInfo14;
 		/*
 		for (int i = 0; i < iNbItems; i++) {
 			printf("%03d)) ", i);
@@ -26024,8 +25841,8 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_0A()
 	}
 	else {
 	// SPX: This points to a 1652 bytes file .. seems to have struct of 14 bytes => 118 records. creature/objects anim frame size info and such
-	_4976_5a98 = reinterpret_cast<U8 (*)[14]>(ALLOC_MEMORY_RAM(bp04 = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dt07, 0x0A), afUseUpper, 0x400));
-	LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dt07, 0x0A, reinterpret_cast<U8 *>(_4976_5a98));
+	tblCreatureFrameInfo14 = reinterpret_cast<U8 (*)[14]>(ALLOC_MEMORY_RAM(bp04 = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dt07, 0x0A), afUseUpper, 0x400));
+	LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dt07, 0x0A, reinterpret_cast<U8 *>(tblCreatureFrameInfo14));
 	}
 	//^32CB:0052
 	return;
@@ -28115,14 +27932,14 @@ void SkWinCore::STEP_MISSILE(Timer *ref)
 		if (glbCurrentMapIndex == glbMap_4c28) {
 			if (di == glbSomePosX_4c2e) {
 				if (bp10 == glbSomePosY_4c30) {
-					if (_075f_0af9(-3, di, bp10, si, bp0e) != 0) {
+					if (MISSILE_HIT_075f_0af9(-3, di, bp10, si, bp0e) != 0) {
 						return;
 					}
 				}
 			}
 		}
 		//^075F:1313
-		if (_075f_0af9(-1, di, bp10, si, bp14) != 0)
+		if (MISSILE_HIT_075f_0af9(-1, di, bp10, si, bp14) != 0)
 			return;
 		//^075F:132B
 _132b:
@@ -28170,7 +27987,7 @@ _132b:
 			}
 		}
 		//^075F:144D
-		if (_075f_0af9(bp12 >> 5, bp20, bp22, si, bp0e) != 0)
+		if (MISSILE_HIT_075f_0af9(bp12 >> 5, bp20, bp22, si, bp0e) != 0)
 			return;
 		//^075F:146E
 _146e:
@@ -28255,7 +28072,7 @@ _146e:
 	}
 	else {
 		//^075F:1704
-		if ((GET_TILE_VALUE(di, bp10) >> 5) == ttDoor && _075f_0af9(4, di, bp10, bp12, bp14) != 0)
+		if ((GET_TILE_VALUE(di, bp10) >> 5) == ttDoor && MISSILE_HIT_075f_0af9(4, di, bp10, bp12, bp14) != 0)
 			return;
 		//^075F:172F
 		CUT_RECORD_FROM(bp0e, NULL, di, bp10);

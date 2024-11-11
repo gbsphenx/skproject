@@ -800,24 +800,22 @@ void SkWinCore::QUERY_CREATURE_PICST(U16 xx, i16 iDistToPlayer, Creature *xCreat
 	static int counter = 0;
 	U8 iCreatureType = xCreature->CreatureType();
 	sk1c9a02c3* xInfoData = GET_CREATURE_INFO_DATA(xCreature, QUERY_CREATURE_AI_SPEC_FROM_TYPE(iCreatureType)); // bp04
-	i16 si = CREATURE_SEQUENCE_4937_000f(xInfoData->iAnimSeq, &xInfoData->iAnimFrame);
+	i16 iFrameID = CREATURE_SEQUENCE_4937_000f(xInfoData->iAnimSeq, &xInfoData->iAnimFrame); // si
 	// SPX: there might be an issue here where animation frame is not retrieved correctly. A static object would have si = 4, so that its gets images x10 x12 x13 x12
-	//si = 4 + counter;
-	//counter = (counter + 1)%4;
-	//printf("Creature Type %d => %02X %02X => seq = %d (C: %02X %02X)\n", iCreatureType, xInfoData->iAnimSeq, xInfoData->iAnimFrame, si, xCreature->iAnimSeq, xCreature->iAnimFrame);
+	//printf("Creature Type %d => %02X %02X => seq = %d (C: %02X %02X)\n", iCreatureType, xInfoData->iAnimSeq, xInfoData->iAnimFrame, iFrameID, xCreature->iAnimSeq, xCreature->iAnimFrame);
 	U16 bp06 = (xInfo == NULL) ? 0 : xInfo->b7;
 	U16 bp0a = ((QUERY_CREATURE_AI_SPEC_FLAGS(rl) & 4) != 0) ? 2 : ((_4976_5aa0 - xCreature->b15_0_1()) & 3);
-	U16 bp08 = _4976_5a98[si][bp0a +10];	// _4976_5a98 table has 4+8 bytes, 4 first points to address of item 0653 loaded into mem
-	U8 bp0c = _4976_5a98[si][bp0a +2];
+	U16 bp08 = tblCreatureFrameInfo14[iFrameID][bp0a +10];	// _4976_5a98 table has 4+8 bytes, 4 first points to address of item 0653 loaded into mem
+	U8 bp0c = tblCreatureFrameInfo14[iFrameID][bp0a +2];
 
 	if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, iCreatureType, dtImage, bp0c) == 0) {
 		bp0c = (bp0a +2) & 3;
 		if ((bp0c & 1) != 0)
 			di = 1;
-		bp0c = _4976_5a98[si][bp0c +2];
+		bp0c = tblCreatureFrameInfo14[iFrameID][bp0c +2];
 		if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, iCreatureType, dtImage, bp0c) == 0) {
 			di = 0;
-			bp0c = _4976_5a98[si][4];
+			bp0c = tblCreatureFrameInfo14[iFrameID][4];
 		}
 	}
 	//^32CB:29FA
@@ -855,9 +853,9 @@ void SkWinCore::QUERY_CREATURE_PICST(U16 xx, i16 iDistToPlayer, Creature *xCreat
 	//^32CB:2A81
 	i16 bp10 = tlbDistanceStretch[RCJ(5,iDistToPlayer)];
 	//^32CB:2A8D
-	i16 bp14 = (xInfo != NULL && xInfo->Command == ccmDestroy) ? xInfo->w14 : si;
+	i16 bp14 = (xInfo != NULL && xInfo->Command == ccmDestroy) ? xInfo->w14 : iFrameID;
 	//^32CB:2AAB
-	U16 bp12 = _4976_5a98[bp14][0];
+	U16 bp12 = tblCreatureFrameInfo14[bp14][0];
 	//^32CB:2AC1
 	if (xx == 3 && _4976_5aa2 != 0) {
 		//^32CB:2ACE
@@ -867,13 +865,13 @@ void SkWinCore::QUERY_CREATURE_PICST(U16 xx, i16 iDistToPlayer, Creature *xCreat
 	}
 	else {
 		//^32CB:2AE9
-		bp10 = CALC_STRETCHED_SIZE(_4976_5a98[si][bp0a +6], bp10);	// table read from item 653 containing sequence/frame size info
+		bp10 = CALC_STRETCHED_SIZE(tblCreatureFrameInfo14[iFrameID][bp0a +6], bp10);	// table read from item 653 containing sequence/frame size info
 	}
 	//^32CB:2B0D
 	U16 bp0e = QUERY_CREATURE_BLIT_RECTI(xx, bp12, bp0a) | 0x8000;
 	//^32CB:2B24
 	i16 bp18, bp16;
-	bp18 = bp16 = i8(_4976_5a98[bp14][1]);
+	bp18 = bp16 = i8(tblCreatureFrameInfo14[bp14][1]);
 	//^32CB:2B3D
 	if (bp16 != 0) {
 		//^32CB:2B44

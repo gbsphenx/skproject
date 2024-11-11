@@ -329,6 +329,8 @@ SkWinMIDI_MIDI_LOOP(void* parameters)
 		sprintf(sDataRootFolder, xWinMIDI->sRootFolder);
 	}
 
+	if (SkCodeParam::bNoAudio == true)
+		SkCodeParam::bMIDIMusicEnabled = false;
 
 	//printf("%d> Requesting music %02x (%02d)\n", iThreadCounter, iHexNum, iHexNum);
 	sprintf(midifilename, "./%s/music/%02x.hmp.mid", sDataRootFolder, iHexNum);

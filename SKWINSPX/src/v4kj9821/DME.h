@@ -1685,7 +1685,7 @@ namespace DM2Internal {
 
 		U8 b28;			// @28
 		Bit8u Weight;		// Bit8u b29 @29		// Weight = Push resistance (255 = can't be pushed/moved)
-		Bit16u w30;		// @30	if 0x0800 : then it can turn missiles
+		Bit16u wc30;		// @30	if 0x0800 : then it can turn missiles
 		Bit16u w32;		// @32
 
 		i8 b34;			// @34
@@ -1717,7 +1717,8 @@ namespace DM2Internal {
 		Bit16u w22_8_b() const { return (w22 >> 8)&15; }	// xp gained by champion when attacked by creature
 		U16 w24_c_c() const { return (w24 >> 12)&1; }	// head damage immune : resistance to door and non-fireball explosion??? only for mummy and flying chest ??
 		U16 GetFireResistance() const { return (w24 >> 4)&15; }	// (w24_4_7) would be fire resistance?
-		U16 w30_0_3() const { return (w30)&15; }	// related to static objects ? can be invisible ?
+		U16 w30_0_3() const { return (wc30)&15; }	// related to static objects ? can be invisible ?
+		U16 w30_11_11() const { return (wc30 >> 11)&1; }
 		U16 w22_4_7() const { return (w22>>4)&15; }
 		U16 w22_c_f() const { return (w22>>12); }
 		U16 w22_0_3() const { return (w22)&15; }
@@ -1727,7 +1728,6 @@ namespace DM2Internal {
 		U8 b9_4_4() const { return (b9x>>4)&1; }	// 0x10	// attacks, scouts and guard minions (not all types)
 
 		U8 GetShootStrength() const { return (AttackStrength >> 2); }	// b6_2_7() : attack strength / 4, used for shooting strength
-		U16 w30_11_11() const { return (w30 >> 11)&1; }
 		U16 w16_4_7() const { return (w16 >> 4)&15; } // anti confuse factor. 15=confuse disabled.
 	};
 	// 

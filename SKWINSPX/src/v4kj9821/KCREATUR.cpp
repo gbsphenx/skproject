@@ -1293,7 +1293,7 @@ Bit16u SkWinCore::QUERY_CREATURE_AI_SPEC_FLAGS(ObjectID rl)
 }
 
 //^0CEE:2D1B
-AIDefinition *SkWinCore::QUERY_CREATURE_AI_SPEC_FROM_RECORD(ObjectID rlCreature)
+AIDefinition* SkWinCore::QUERY_CREATURE_AI_SPEC_FROM_RECORD(ObjectID rlCreature)
 {
 	return QUERY_CREATURE_AI_SPEC_FROM_TYPE(GET_ADDRESS_OF_RECORD(rlCreature)->castToCreature()->CreatureType());
 }
@@ -1621,7 +1621,7 @@ U16 SkWinCore::QUERY_CREATURE_5x5_POS(Creature *ref, U16 dir)
 	if (ref->b5_0_7() == 0xff)
 		return 12;
 	sk1c9a02c3* xAnimInfo = GET_CREATURE_INFO_DATA(ref, QUERY_CREATURE_AI_SPEC_FROM_TYPE(ref->CreatureType()));	// bp04
-	i16 _5x5 = _4976_5a98[CREATURE_SEQUENCE_4937_000f(xAnimInfo->iAnimSeq, &xAnimInfo->iAnimFrame)][0];
+	i16 _5x5 = tblCreatureFrameInfo14[CREATURE_SEQUENCE_4937_000f(xAnimInfo->iAnimSeq, &xAnimInfo->iAnimFrame)][0];
 	return ROTATE_5x5_POS(_5x5, dir);
 }
 
@@ -5984,6 +5984,54 @@ X16 SkWinCore::_1c9a_09b9(ObjectID rlCreature, X16 xx)
 	return (GET_ADDRESS_OF_RECORD4(rlCreature)->iAnimSeq == xx) ? 1 : 0;
 }
 
+//^19F0:13AA
+X16 SkWinCore::_19f0_13aa(i16 xx, i16 yy)
+{
+	//^19F0:13AA
+	ENTER(10);
+	//^19F0:13B0
+	i16 bp08 = 0;
+	do {
+		//^19F0:13B5
+		if ((tblAIStats01[_4976_4efa] & 0x400) != 0 || ((glbCurrentThinkingCreatureRec->iAnimFrame & 0x80) == 0 
+			&& (glbAIDef->w0_2_2() != 0 || glbCreatureTimer.XcoordB() != xx || glbCreatureTimer.YcoordB() != yy || ((glbCurrentThinkingCreatureRec->b15_0_1() +2) & 3) != bp08) || (RAND() & 7) == 0)) {
+			//^19F0:1410
+			i16 di = xx;
+			i16 si = yy;
+			for (i16 bp0a = 0; bp0a++ < 3; ) {
+				//^19F0:141E
+				di += glbXAxisDelta[bp08];
+				si += glbYAxisDelta[bp08];
+				//^19F0:1430
+				if (di < 0 || di >= glbCurrentMapWidth || si < 0 || si >= glbCurrentMapHeight)
+					break;
+				//^19F0:1450
+				for (ObjectID bp06 = GET_WALL_TILE_ANYITEM_RECORD(di, si); bp06 != OBJECT_END_MARKER; bp06 = GET_NEXT_RECORD_LINK(bp06)) {
+					//^19F0:145B
+					if (bp06.DBType() == dbMissile) {
+						Missile *bp04 = GET_ADDRESS_OF_RECORDE(bp06);
+						if (glbTimersTable[bp04->TimerIndex()].Direction() == ((bp08 +2) & 3) && _075f_06bd(bp04, bp04->GetMissileObject()) != 0) {
+							//^19F0:14BA
+							return 1;
+						}
+					}
+					//^19F0:14BF
+				}
+				//^19F0:14D1
+				if (glbCreatureTimer.XcoordB() != di || glbCreatureTimer.YcoordB() != si) {
+					//^19F0:14E3
+					if (_19f0_00b8(di, si) != 0)
+						break;
+				}
+				//^19F0:14EF
+			}
+		}
+		//^19F0:14FD
+	} while (++bp08 < 4);
+	//^19F0:150B
+	return 0;
+}
+
 //^3A15:0DDC
 void SkWinCore::ACTIVATE_CREATURE_KILLER(X16 argLo, X16 argHi, X16 srcx, X16 srcy, X16 tarx, X16 tary, X16 actuatorType, X16 actionType) 
 {
@@ -6150,3 +6198,132 @@ ObjectID SkWinCore::ALLOC_NEW_CREATURE(U16 creaturetype, U16 healthMultiplier_1t
 	return di;
 }
 
+
+//^0CEE:2E35
+// SPX: _0cee_2e35 renamed CREATURE_GET_COLORKEY
+i16 SkWinCore::CREATURE_GET_COLORKEY(U8 cls2)
+{
+	ENTER(0);
+	U16 si = QUERY_GDAT_CREATURE_WORD_VALUE(cls2, GDAT_IMG_COLORKEY_1);	// 0x04
+	if (si == 0)
+		return 4;
+	return si;
+}
+
+
+//^121E:0222
+U16 SkWinCore::CREATURE_121e_0222(U16 xx, U16 yy, U16 ww)
+{
+	ENTER(12);
+	Creature* xCreature = NULL;	// bp0c
+
+	if (glbChampionLeader == -1)
+		return 0;
+
+	U16 bp06 = (glbPlayerDir +ww) & 3;
+	ObjectID di = GET_CREATURE_AT(xx, yy);
+	if (di != OBJECT_NULL) {
+		AIDefinition* xAIDef = QUERY_CREATURE_AI_SPEC_FROM_RECORD(di);	// bp04
+		xCreature = GET_ADDRESS_OF_RECORD4(di);
+		if (true
+			&& xAIDef->IsStaticObject() != 0
+			&& (false
+				|| (ww >= 4 && ww <= 7 && (xAIDef->wc30 & 0x0800) == 0)
+				|| (ww < 4 && (xAIDef->wc30 & 0x2000) == 0)
+			)
+		) {
+			return 0;
+		}
+	}
+	const ObjectID rlCreature = di;
+	di = REMOVE_OBJECT_FROM_HAND();
+	//^121E:02B0
+	if (ww >= 4 && ww <= 7) {
+		//^121E:02BC
+		U8 bp07 = (ww -4 + glbPlayerDir) & 3;
+		//^121E:02CA
+		if (xCreature != NULL) {
+			//^121E:02D2
+			for (ObjectID si = xCreature->GetPossessionObject(); si != OBJECT_END_MARKER; si = GET_NEXT_RECORD_LINK(si)) {
+				//^121E:02DB
+				if (si.Dir() == bp07 && IS_CONTAINER_MONEYBOX(si) != 0) {
+					//^121E:02F4
+					GET_ADDRESS_OF_RECORD9(si)->b7_2_2(0);
+				}
+				//^121E:0304
+			}
+		}
+		//^121E:0312
+		MOVE_RECORD_TO(ObjectID(di, bp07), -1, -1, xx, yy);
+
+		SkD((DLV_TWEET, "Tweet: You have put %s on %s (a#%03d, x:%d, y:%d) \n"
+			, static_cast<LPCSTR>(getRecordNameOf(di))
+			, static_cast<LPCSTR>(getRecordNameOf(rlCreature))
+			, rlCreature.DBIndex()
+			, xx
+			, yy
+			));
+	}
+	else{
+		//^121E:0323
+		MOVE_RECORD_TO(ObjectID(di, bp06), -1, 0, xx, yy);
+
+		SkD((DLV_TWEET, "Tweet: You have put %s! \n"
+			, static_cast<LPCSTR>(getRecordNameOf(di))
+			));
+	}
+	//^121E:0344
+	_4976_4e5c = 1;
+	//^121E:034A
+	return 1;
+}
+
+//^4937:005C
+// TODO: creature animation related ?
+Bit16u SkWinCore::CREATURE_4937_005c(Bit16u xx, Bit16u *yy)
+{
+	//^4937:005C
+	//^4937:0061
+	Bit16u si;
+	if ((*yy & 0x4000) != 0) {
+		//^4937:006B
+		si = 0;
+	}
+	//^4937:006F
+	else if ((*yy & 0x8000) != 0) {
+		//^4937:0079
+		Bit16u di;
+		if ((*yy & 0x1000) != 0) {
+			//^4937:0080
+			*yy &= 0xe03f;
+			di = 0;
+		}
+		else {
+			//^4937:0089
+			di = (*yy & 0x0fc0) >> 6;
+		}
+		//^4937:0097
+		// SPX: TODO / I got this fall under divide by zero when replacing static AI table
+		// by a new table. I don't understand why this happens, then I use some fix
+		if (SkCodeParam::bUseFixedMode)
+		{
+			if ( (*yy & 0x003F) == 0)
+				*yy = 1;
+		}
+		// SPX: What is this 0x3F (63) value? is it related to number of AI ??
+		si = (glbGameTick + di) % (*yy & 0x003f);
+	}
+	else {
+		//^4937:00B8
+		si = *yy & 0x003f;
+	}
+	//^4937:00C3
+	return xx + si;
+}
+
+//^4937:0036
+// TODO: creature animation related, get some sequence
+CreatureAnimationFrame* SkWinCore::CREATURE_4937_0036(Bit16u xx, Bit16u *yy)
+{
+	return &tlbCreaturesAnimationSequences[CREATURE_4937_005c(xx, yy)];
+}

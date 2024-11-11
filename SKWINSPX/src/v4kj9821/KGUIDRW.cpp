@@ -1570,7 +1570,7 @@ _10b7:
 _1554:
 			if ((bp16 & 0x0001) != 0 && (flags & 0x0004) != 0) {
 				//^29EE:1568
-				if ((_0cee_2df4(bp18) & 0x000f) != 0) {
+				if ((CREATURE_0cee_2df4(bp18) & 0x000f) != 0) {
 					//^29EE:1576
 					for (si = xCreature->w0; si != OBJECT_END_MARKER; si = GET_NEXT_RECORD_LINK(si)) {
 						//^29EE:157E
@@ -5105,9 +5105,9 @@ void SkWinCore::DRAW_ITEM(ObjectID rl, i16 xx, U16 yy, U16 zz, i16 vv, Creature 
 	i16 bp18 = 12; // defaulting to 12
 	if (ref != NULL) {
 		//^32CB:3686
-		AIDefinition *bp04 = QUERY_CREATURE_AI_SPEC_FROM_TYPE(ref->CreatureType());
+		AIDefinition* xAIDef = QUERY_CREATURE_AI_SPEC_FROM_TYPE(ref->CreatureType()); // bp04
 		//^32CB:369A
-		U16 bp22 = bp04->w30;
+		U16 bp22 = xAIDef->wc30;
 		//^32CB:36A4
 		U16 di = ((bp22 & 15) > 1) ? 0 : 1;
 		//^32CB:36B5
@@ -5564,9 +5564,9 @@ void SkWinCore::DRAW_PUT_DOWN_ITEM(ObjectID rl, i16 cellPos, i16 dir, Creature *
 	X16 bp12;
 	if (ref != NULL) {
 		//^32CB:39C0
-		AIDefinition *bp04 = QUERY_CREATURE_AI_SPEC_FROM_TYPE(ref->CreatureType());
-		bp10 = bp04->w30;
-		bp12 = bp04->w32;
+		AIDefinition* xAIDef = QUERY_CREATURE_AI_SPEC_FROM_TYPE(ref->CreatureType());	// bp04
+		bp10 = xAIDef->wc30;
+		bp12 = xAIDef->w32;
 	}
 	do {
 		i16 bp0c = di.DBType();
@@ -5612,7 +5612,7 @@ void SkWinCore::DRAW_PUT_DOWN_ITEM(ObjectID rl, i16 cellPos, i16 dir, Creature *
 				bp14 = tblCellTilesRoom[cellPos].posx;
 				bp16 = tblCellTilesRoom[cellPos].posy;
 				bp06 = _1c9a_03cf(&bp14, &bp16, di.Dir());
-				if (bp06 == OBJECT_NULL || IS_CREATURE_FLOATING(bp06) != 0 || (_0cee_2df4(bp06) & 0x2000) != 0) {
+				if (bp06 == OBJECT_NULL || IS_CREATURE_FLOATING(bp06) != 0 || (CREATURE_0cee_2df4(bp06) & 0x2000) != 0) {
 					//^32CB:3B6C
 					bp08 = dir;
 					bp0e = 1;

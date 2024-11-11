@@ -835,7 +835,7 @@ void SkWinCore::CLICK_VWPT(i16 xx, i16 yy)
 			//^121E:0826
 			return;
 		//^121E:0829
-		if (_098d_02a2(si +760, xx, di) != 0 && _121e_0222(glbPlayerPosX, glbPlayerPosY, si) != 0)
+		if (_098d_02a2(si +760, xx, di) != 0 && CREATURE_121e_0222(glbPlayerPosX, glbPlayerPosY, si) != 0)
 			//^121E:0853
 			return;
 		//^121E:0856
@@ -851,7 +851,7 @@ void SkWinCore::CLICK_VWPT(i16 xx, i16 yy)
 			//^121E:088B
 			return;
 		//^121E:088E
-		if (_098d_02a2(si +760, xx, di) != 0 && _121e_0222(bp0c, bp0e, si) != 0)
+		if (_098d_02a2(si +760, xx, di) != 0 && CREATURE_121e_0222(bp0c, bp0e, si) != 0)
 			//^121E:08B6
 			return;
 		//^121E:08B9
@@ -861,11 +861,11 @@ void SkWinCore::CLICK_VWPT(i16 xx, i16 yy)
 	//^121E:08CF
 	if (bp10 != OBJECT_NULL) {
 		//^121E:08D4
-		AIDefinition *bp08 = QUERY_CREATURE_AI_SPEC_FROM_RECORD(bp10);
+		AIDefinition* xAIDef = QUERY_CREATURE_AI_SPEC_FROM_RECORD(bp10);	// bp08
 		//^121E:08E3
-		if (bp08->IsStaticObject() != 0) {
+		if (xAIDef->IsStaticObject() != 0) {
 			//^121E:08ED
-			for (si = 0; bp08->w30 > si; si++) {
+			for (si = 0; xAIDef->wc30 > si; si++) {
 				//^121E:08F1
 				if (_121e_03ae(xx, di, bp0c, bp0e, 3, si +2, 2) != 0)
 					//^121E:090D
@@ -873,7 +873,7 @@ void SkWinCore::CLICK_VWPT(i16 xx, i16 yy)
 				//^121E:090F
 				if (_098d_02a2(_0cee_2e09(bp10) +si, xx, di) != 0) {
 					//^121E:092B
-					if (_121e_0222(bp0c, bp0e, si +6) != 0)
+					if (CREATURE_121e_0222(bp0c, bp0e, si +6) != 0)
 						//^121E:0940
 						return;
 				}

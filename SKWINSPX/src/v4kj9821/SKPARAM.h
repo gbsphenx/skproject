@@ -6,6 +6,10 @@
 class SkCodeParam
 {
 public:
+
+	static bool bUseBigEnd;				// tell to read data files in big-end mode, specially for Amiga and Sega-CD
+	static bool bNoAudio;				// some debug flag to disable audio
+
 	//--- Specific game setup
 	static bool bDM1Mode;				// dungeon loaded is a native DM1 dungeon
 	static bool bDM1ReadSavegame;		// read savegame as a native DM1 savegame (DM1 retrocompatibility)
