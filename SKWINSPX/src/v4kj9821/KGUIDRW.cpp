@@ -1524,7 +1524,7 @@ _10b7:
 				if ((bp16 & 0x0001) != 0) {
 					sk1c9a02c3* xInfoData = GET_CREATURE_INFO_DATA(xCreature, QUERY_CREATURE_AI_SPEC_FROM_TYPE(xCreature->CreatureType()));
 					//^29EE:1443
-					bp0a = CREATURE_SEQUENCE_4937_000f(xInfoData->iAnimSeq, &xInfoData->iAnimFrame);
+					bp0a = CREATURE_SEQUENCE_4937_000f(xInfoData->iAnimSeq, &xInfoData->iAnimInfo);
 					//^29EE:145D
 					bp0a = (bp0a >= 4 && bp0a <= 7) ? 4 : 0;
 					//^29EE:1474
@@ -5848,7 +5848,7 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 					U8 iDoorGDATIndex = glbMapDoorType[xDoor->DoorType()];	// U8 bp0e
 					//printf("DRAW DOOR : type to draw : %02d => %02d\n", xDoor->DoorType(), glbMapDoorType[xDoor->DoorType()] );
 					X16 iDoorColorPassThrough = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_IMG_COLORKEY_1);	// X16 bp12
-					if (iDoorColorPassThrough != 0)
+					//if (iDoorColorPassThrough != 0)
 					{
 						// SPX BEGIN
 						U8 mirroredDoor = 0;	// by default there is no mirror/flip, so value = 0
@@ -6044,8 +6044,8 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 						// 7 - 9 = horizontal right positions (¼, ½, ¾ closed)	=> hence +6 on rectno for horizontal opening
 						//^32CB:4C86
 						glbTempPicture.rectNo = iDoorPosRectno;
-						glbTempPicture.w30++; // SPX: added this to shift down 1 pixel to get pixel precise regarding DM1 door position
-						DRAW_TEMP_PICST();	// draw the door or LEFT part for horizontal opening
+						glbTempPicture.w30;
+						DRAW_TEMP_PICST();	// draw the FULL door or LEFT part (for horizontal opening)
 						if (iCacheNo >= 0) {
 							//^32CB:4C96
 							FREE_TEMP_CACHE_INDEX(iCacheNo);
