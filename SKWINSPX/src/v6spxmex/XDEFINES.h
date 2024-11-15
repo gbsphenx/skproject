@@ -461,6 +461,15 @@ enum SkillLevel {
 #define GDAT_CATEGORY_CREATURE_AI			0x19
 
 
+// Some SubCategories -- mainly for interfaces
+#define GDAT_INTERFACE_SUBCAT_BASE_DATA					0x00
+#define GDAT_INTERFACE_SUBCAT_CHAMPION_TOPSLAB			0x02
+#define GDAT_INTERFACE_SUBCAT_MOVE_ARROWS				0x03
+#define GDAT_INTERFACE_SUBCAT_CHAMPION					0x04
+#define GDAT_INTERFACE_SUBCAT_SPELLMENU					0x05
+#define GDAT_INTERFACE_SUBCAT_CHAMPION_FACING			0x06
+#define GDAT_INTERFACE_SUBCAT_CHAMPION_AURA				0x07
+
 //------------------------------------------------------------------------------
 //	INTERFACE / MESSAGE / CHARACTERS
 //------------------------------------------------------------------------------
@@ -774,6 +783,9 @@ enum SkillLevel {
 #define CREATURE_GENERATED_DROPS		0	// 0 = do generated drop
 #define CREATURE_DROP_POSSESSION_ONLY	1	// 1 = no generated drop, only drop possession
 #define	CREATURE_NO_DROP				2	// 2 = no creature drop (not even possession)
+
+
+#define CREATURE_ANIMSEQ_SPAWN			0x11	// 17
 
 //------------------------------------------------------------------------------
 //	ITEMS STATS & ATTRIBUTES

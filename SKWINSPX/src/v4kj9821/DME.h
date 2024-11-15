@@ -1748,7 +1748,7 @@ namespace DM2Internal {
 		U8 b7;			// @7	// spx: can this be related to target champion ?? (high speculation)
 		X8 b8_;			// @8 // const base index. _4976_5fde[w8 + w10] // sk1c9a02c3::w0
 		X8 b9_;			// @9 //
-		X8 b10_;		// @10 // variant index. // sk1c9a02c3::w2
+		X8 b10_;		// @10 // variant index. // sk1c9a02c3::w2 // internal animation frame/tick ?
 		X8 b11_;		// @11 // 
 		Ax3 w12;		// @12
 		i16 w14;		// @14 // anim frame
@@ -2144,11 +2144,11 @@ namespace DM2Internal {
 	// Depending on creatures type, these data will come from direct creature data or some other table.
 	struct sk1c9a02c3 { // 4 bytes
 		Bit16u iAnimSeq;			// w0 @0	// Creature::w8		-- current animation sequence
-		Bit16u iAnimFrame;			// w2 @2	// Creature::w10	-- current frame number in animation
+		Bit16u iAnimInfo;			// w2 @2	// Creature::w10	-- current frame number in animation
 
-		U16 w2_e_e() const { return (iAnimFrame>>14)&1; }
-		U16 w2_d_d() const { return (iAnimFrame>>13)&1; }
-		U16 w2_0_5() const { return (iAnimFrame)&0x3f; }
+		U16 w2_e_e() const { return (iAnimInfo>>14)&1; }
+		U16 w2_d_d() const { return (iAnimInfo>>13)&1; }
+		U16 w2_0_5() const { return (iAnimInfo)&0x3f; }	// get number of possible frames
 	};
 	// 
 	struct sk0cea;
@@ -2916,7 +2916,7 @@ namespace DM2Internal {
 		ttyDoorDestroy		= 0x02,		// tty02 CSBWin => Bash door
 		tty04 = 0x04, // activation for tile record (such as floor/wall/pitfall/door/trickwall/teleporter)
 		// csbwin: 0x0B (11) reenable character attack
-		tty0C = 0x0C,		// csbwin 12 ?
+		tty0C = 0x0C,		// csbwin 12 ? highlight for champion damaged ?
 		ttyResurrect		= 0x0D,	// tty0D CSBWin (13) => VI Altar
 		ttyItemBonus		= 0x0E,	// item bonus ?
 		// csbwin 0x14 (20) ? queue sound
@@ -2963,7 +2963,7 @@ namespace DM2Internal {
 		ccm01 = 0x01, // walk?
 		ccm02 = 0x02, // walk?
 		ccm03 = 0x03, // turn ?
-		ccm04 = 0x04, // turn right?
+		ccm04 = 0x04, // turn right and walk ?
 		ccmJump = 0x05, // (ccm05) jump
 		ccm06 = 0x06,	// turn left -> stand ?
 		ccm07 = 0x07,	// turn right -> stand ?
@@ -3025,8 +3025,8 @@ namespace DM2Internal {
 		ccm3F = 0x3F,	// 3D 3
 		ccm40 = 0x40,	// 3D 4
 
-//		ccm42 = 0x42,	// Hello 1 (rocky) ?
-//		ccm52 = 0x52,	// Hello 2 (rocky) ?
+		ccm42 = 0x42,	// Hello 1 (rocky) ?
+		ccm52 = 0x52,	// Hello 2 (rocky) ?
 		
 		ccm55 = 0x55,	// Cast reflector (Dragoth) ? No, will either transform to ccmCastSpell1 or ccmCastSpell2
 		ccmInv = -1,	// Idle

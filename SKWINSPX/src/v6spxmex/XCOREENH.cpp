@@ -869,6 +869,9 @@ void SkWinCore::REQUEST_PLAY_MUSIC(int iMusicNumber)
 	if (iNextRequestedMusic == iCurrentWavMusic)
 		return;
 
+	if (SkCodeParam::bNoAudio == true)
+		return;
+
 #if defined(_USE_MFC80) || defined(_USE_MFC60)
 	PlaySound(NULL, NULL, SND_PURGE);
 #endif

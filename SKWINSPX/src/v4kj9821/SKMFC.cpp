@@ -463,6 +463,9 @@ void CSkWinMFC::SndPlayLo(const U8 *buff, U32 buffSize, i8 dX, i8 dY)
 	pb.af = sbdsaf;
 	pb.bf = sbdsbf;
 
+	if (SkCodeParam::bNoAudio)
+		return;
+
 	switch (sblast) {
 		case 1:
 			{

@@ -796,89 +796,94 @@ void SkWinCore::_32cb_0c7d(ExtendedPicture *ref, U16 xx, U16 yy)
 void SkWinCore::QUERY_CREATURE_PICST(U16 xx, i16 iDistToPlayer, Creature *xCreature, CreatureInfoData *xInfo, ObjectID rl)
 {
 	ENTER(28);
-	U16 di = 0;
+	U16 iVFlip = 0; // di
 	static int counter = 0;
 	U8 iCreatureType = xCreature->CreatureType();
 	sk1c9a02c3* xInfoData = GET_CREATURE_INFO_DATA(xCreature, QUERY_CREATURE_AI_SPEC_FROM_TYPE(iCreatureType)); // bp04
-	i16 iFrameID = CREATURE_SEQUENCE_4937_000f(xInfoData->iAnimSeq, &xInfoData->iAnimFrame); // si
+	i16 iFrameID = CREATURE_SEQUENCE_4937_000f(xInfoData->iAnimSeq, &xInfoData->iAnimInfo); // si
 	// SPX: there might be an issue here where animation frame is not retrieved correctly. A static object would have si = 4, so that its gets images x10 x12 x13 x12
-	//printf("Creature Type %d => %02X %02X => seq = %d (C: %02X %02X)\n", iCreatureType, xInfoData->iAnimSeq, xInfoData->iAnimFrame, iFrameID, xCreature->iAnimSeq, xCreature->iAnimFrame);
 	U16 bp06 = (xInfo == NULL) ? 0 : xInfo->b7;
-	U16 bp0a = ((QUERY_CREATURE_AI_SPEC_FLAGS(rl) & 4) != 0) ? 2 : ((_4976_5aa0 - xCreature->b15_0_1()) & 3);
-	U16 bp08 = tblCreatureFrameInfo14[iFrameID][bp0a +10];	// _4976_5a98 table has 4+8 bytes, 4 first points to address of item 0653 loaded into mem
-	U8 bp0c = tblCreatureFrameInfo14[iFrameID][bp0a +2];
+	U16 iFaceDirImg = ((QUERY_CREATURE_AI_SPEC_FLAGS(rl) & 4) != 0) ? 2 : ((_4976_5aa0 - xCreature->b15_0_1()) & 3); // bp0a
+	U16 iMirrorFlag = tblCreatureFrameInfo14[iFrameID][iFaceDirImg + 10];	// bp08 / _4976_5a98 table has 4+8 bytes, 4 first points to address of item 0653 loaded into mem
+	U8 iImageID = tblCreatureFrameInfo14[iFrameID][iFaceDirImg + 2]; // bp0c, standard front is x12
 
-	if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, iCreatureType, dtImage, bp0c) == 0) {
-		bp0c = (bp0a +2) & 3;
-		if ((bp0c & 1) != 0)
-			di = 1;
-		bp0c = tblCreatureFrameInfo14[iFrameID][bp0c +2];
-		if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, iCreatureType, dtImage, bp0c) == 0) {
-			di = 0;
-			bp0c = tblCreatureFrameInfo14[iFrameID][4];
+	CHANGE_CONSOLE_COLOR(BRIGHT, ((rl.DBIndex()+1)%8)+8, BLACK);
+	SkD((DLV_DBG_SED2, "Creature Type %d => %04X F:%04X => Table Frame = %d (C: %02X %02X) => IMG = %02X\n", 
+		iCreatureType, xInfoData->iAnimSeq, xInfoData->iAnimInfo, iFrameID, xCreature->iAnimSeq, xCreature->iAnimFrame, iImageID));
+	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
+
+	if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, iCreatureType, dtImage, iImageID) == 0) {
+		iImageID = (iFaceDirImg +2) & 3;
+		if ((iImageID & 1) != 0)
+			iVFlip = 1;
+		iImageID = tblCreatureFrameInfo14[iFrameID][iImageID + 2];
+		if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, iCreatureType, dtImage, iImageID) == 0) {
+			iVFlip = 0;
+			iImageID = tblCreatureFrameInfo14[iFrameID][4];
 		}
 	}
 	//^32CB:29FA
 	else if (false
-		|| (bp08 & 1) != 0
+		|| (iMirrorFlag & 1) != 0
 		|| ((bp06 & 64) != 0 && (bp06 & 2) != 0 && (bp06 & 1) == 0)
 	) {
 		//^32CB:2A16
-		di = 1;
+		iVFlip = 1;
 	}
 	//^32CB:2A19
-	if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, iCreatureType, dtImage, bp0c) == 0) {
+	if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, iCreatureType, dtImage, iImageID) == 0) {
 		//^32CB:2A31
-		bp0c = bp0a -6;
+		iImageID = iFaceDirImg - 6; // Standard iFaceDirImg = 2; then -6 goes to 0xFA, to fetch the "shadow" image
 		//^32CB:2A39
-		if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, iCreatureType, dtImage, bp0c) == 0) { // try to get 0xFC ?
+		if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, iCreatureType, dtImage, iImageID) == 0) { // try to get 0xFC ?
 			//^32CB:2A4E
 			if (true
-				&& bp0c == 0xfb
-				&& QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, iCreatureType, dtImage, bp0c +2) != 0
+				&& iImageID == 0xFB
+				&& QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, iCreatureType, dtImage, iImageID + 2) != 0
 			) {
 				//^32CB:2A6E
-				di = 1;
+				iVFlip = 1;
 				//^32CB:2A71
-				bp0c = bp0c +2;
+				iImageID = iImageID + 2;
 			}
 			else {
 				//^32CB:2A7B
-				di = 0;
+				iVFlip = 0;
 				//^32CB:2A7D
-				bp0c = 0xfc;
+				iImageID = 0xFC;
 			}
 		}
 	}
 	//^32CB:2A81
-	i16 bp10 = tlbDistanceStretch[RCJ(5,iDistToPlayer)];
+	i16 iImageScale = tlbDistanceStretch[RCJ(5,iDistToPlayer)]; // bp10
 	//^32CB:2A8D
-	i16 bp14 = (xInfo != NULL && xInfo->Command == ccmDestroy) ? xInfo->w14 : iFrameID;
+	i16 iFrameID2 = (xInfo != NULL && xInfo->Command == ccmDestroy) ? xInfo->w14 : iFrameID;	// bp14
 	//^32CB:2AAB
-	U16 bp12 = tblCreatureFrameInfo14[bp14][0];
+	U16 bp12 = tblCreatureFrameInfo14[iFrameID2][0];
 	//^32CB:2AC1
 	if (xx == 3 && _4976_5aa2 != 0) {
 		//^32CB:2ACE
 		bp12 = _4976_41d0[RCJ(7,glbTargetTypeMoveObject)];
-		bp10 = _4976_41d7[RCJ(7,glbTargetTypeMoveObject)];
-		bp0a = 0;
+		iImageScale = _4976_41d7[RCJ(7,glbTargetTypeMoveObject)];
+		iFaceDirImg = 0;
 	}
 	else {
 		//^32CB:2AE9
-		bp10 = CALC_STRETCHED_SIZE(tblCreatureFrameInfo14[iFrameID][bp0a +6], bp10);	// table read from item 653 containing sequence/frame size info
+		iImageScale = CALC_STRETCHED_SIZE(tblCreatureFrameInfo14[iFrameID][iFaceDirImg + 6], iImageScale);	// table read from item 653 containing sequence/frame size/scale info
 	}
 	//^32CB:2B0D
-	U16 bp0e = QUERY_CREATURE_BLIT_RECTI(xx, bp12, bp0a) | 0x8000;
+	U16 bp0e = QUERY_CREATURE_BLIT_RECTI(xx, bp12, iFaceDirImg) | 0x8000;
 	//^32CB:2B24
-	i16 bp18, bp16;
-	bp18 = bp16 = i8(tblCreatureFrameInfo14[bp14][1]);
+	i16 bp18 = 0;
+	i16 bp16 = 0;
+	bp18 = bp16 = i8(tblCreatureFrameInfo14[iFrameID2][1]);
 	//^32CB:2B3D
 	if (bp16 != 0) {
 		//^32CB:2B44
 		i16 bp1c;
 		i16 bp1a;
-		switch (bp0a) {
-		case 0:
+		switch (iFaceDirImg) {
+		case 0:	// back
 			//^32CB:2B50
 			bp1c = -7;
 			//^32CB:2B55
@@ -887,7 +892,7 @@ void SkWinCore::QUERY_CREATURE_PICST(U16 xx, i16 iDistToPlayer, Creature *xCreat
 			//^32CB:2B61
 			break;
 
-		case 2:
+		case 2: // front
 			//^32CB:2B57
 			bp1c = 7;
 			//^32CB:2B5C
@@ -895,8 +900,8 @@ void SkWinCore::QUERY_CREATURE_PICST(U16 xx, i16 iDistToPlayer, Creature *xCreat
 			//^32CB:2B61
 			break;
 
-		case 1:
-		case 3:
+		case 1: // left
+		case 3: // right
 			//^32CB:2B63
 			bp1a = -64;
 			bp1c = 0;
@@ -910,8 +915,8 @@ void SkWinCore::QUERY_CREATURE_PICST(U16 xx, i16 iDistToPlayer, Creature *xCreat
 	}
 
 	//^32CB:2B8D
-	QUERY_TEMP_PICST(di, bp10, bp10, _4976_41de[RCJ(8,bp06 & 7)] +bp16, _4976_41de[RCJ(8,(bp06 >> 3) & 7)] +bp18, iDistToPlayer,
-		bp0e, -1, CREATURE_GET_COLORKEY(iCreatureType), -1, 0x0f, iCreatureType, bp0c);
+	QUERY_TEMP_PICST(iVFlip, iImageScale, iImageScale, _4976_41de[RCJ(8,bp06 & 7)] +bp16, _4976_41de[RCJ(8,(bp06 >> 3) & 7)] +bp18, iDistToPlayer,
+		bp0e, -1, CREATURE_GET_COLORKEY(iCreatureType), -1, 0x0f, iCreatureType, iImageID);
 	//^32CB:2BDA
 	return;
 }
@@ -920,54 +925,37 @@ void SkWinCore::QUERY_CREATURE_PICST(U16 xx, i16 iDistToPlayer, Creature *xCreat
 //^32CB:01B6
 U16 SkWinCore::_32cb_01b6(U16 xx, U16 yy, U16 ss, U16 tt, U16 *ww)
 {
-	//^32CB:01B6
 	ENTER(8);
-	//^32CB:01BC
-	ObjectID si = GET_CREATURE_AT(ss, tt);
-	//^32CB:01CB
-	if (si == OBJECT_NULL)
-		//^32CB:01D0
+	ObjectID rlCreature = GET_CREATURE_AT(ss, tt); // si
+	if (rlCreature == OBJECT_NULL)
 		return 0;
-	//^32CB:01D5
-	Creature *bp04 = GET_ADDRESS_OF_RECORD4(si);
-	//^32CB:01E2
-	CreatureInfoData *bp08;
-	if (bp04->b5 == 255) {
+
+	Creature* xCreature = GET_ADDRESS_OF_RECORD4(rlCreature); // bp04
+	CreatureInfoData* xCreatureInfoData; // bp08
+	if (xCreature->b5 == 255) {
 		//^32CB:01EC
-		bp08 = NULL;
+		xCreatureInfoData = NULL;
 	}
 	else {
 		//^32CB:01F8
-		bp08 = &glbTabCreaturesInfo[bp04->b5];
+		xCreatureInfoData = &glbTabCreaturesInfo[xCreature->b5];
 	}
 	//^32CB:0216
-	QUERY_CREATURE_PICST(3, glbTabYAxisDistance[3], bp04, bp08, si);
-	//^32CB:0232
-	i16 di = glbTempPicture.colorKeyPassThrough;
-	//^32CB:0236
+	QUERY_CREATURE_PICST(3, glbTabYAxisDistance[3], xCreature, xCreatureInfoData, rlCreature);
+	i16 iColorPassThrough = glbTempPicture.colorKeyPassThrough; // di
 	glbTempPicture.colorKeyPassThrough = -2;
-	//^32CB:023C
 	DRAW_TEMP_PICST();
-	//^32CB:0241
-	if (_32cb_00f1_DRAW_PICTURE(xx, yy, di) == 0)
-		//^32CB:0253
-		//^32CB:01D0
+	if (_32cb_00f1_DRAW_PICTURE(xx, yy, iColorPassThrough) == 0)
 		return 0;
-	//^32CB:0256
 	if (_4976_5a94 < -75) {
-		//^32CB:025D
 		*ww = 3;
 	}
-	//^32CB:0267
 	else if (_4976_5a94 > 75) {
-		//^32CB:026E
 		*ww = 1;
 	}
 	else {
-		//^32CB:0278
 		*ww = 0;
 	}
-	//^32CB:0280
 	return 1;
 }
 

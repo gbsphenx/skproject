@@ -953,6 +953,7 @@ _1df6:
 			if (bp06 != bp0c && bp08 != ccm09) {
 				//^19F0:1F65
 				bp08 = (((bp06 +1) & 3) == bp0c) ? ccm04 : ccm03;
+				//bp08 = ccm1C;	// force for test
 			}
 			//^19F0:1F7C
 			else if ((_4976_37a6[RCJ(86,_4976_4ee4)] & 2) != 0 && aa != 6 && bp16 == 0) {
@@ -1324,15 +1325,15 @@ X32 SkWinCore::CREATURE_SOMETHING_1c9a_0a48()
 	if (glbCurrentThinkingCreatureData == NULL && SkCodeParam::bDebugBypassNullPointers == true) // SPX DEBUG
 		return 0;
 	//^1C9A:0A4D
-	i8 bp03 = glbAIDef->b9x;
-	U16 bp06 = glbCurrentThinkingCreatureRec->CreatureType();
+	i8 bp03 = glbAIDef->b9x; // bp03
+	U16 bp06 = glbCurrentThinkingCreatureRec->CreatureType(); // bp06
 	U16 bp0c = _4976_4ed6->iAnimSeq;
-	U16 bp0e = _4976_4ed6->iAnimFrame;
-	CreatureAnimationFrame bp14;
+	U16 iCurrentFrameInfo = _4976_4ed6->iAnimInfo;	// bp0e
+	CreatureAnimationFrame bp14; // bp14
 	X16 bp02;
 	if (glbCreatureAnimationFrame == NULL) {
 		bp02 = (glbAIDef->IsStaticObject() != 0) ? glbCurrentThinkingCreatureRec->w12 : 0;
-		GET_CREATURE_ANIMATION_FRAME(U8(bp06), glbCurrentThinkingCreatureData->Command, &bp0c, &bp0e, &glbCreatureAnimationFrame, bp02);
+		GET_CREATURE_ANIMATION_FRAME(U8(bp06), glbCurrentThinkingCreatureData->Command, &bp0c, &iCurrentFrameInfo, &glbCreatureAnimationFrame, bp02);
 		if (glbCreatureAnimationFrame == NULL) {
 			ZERO_MEMORY(&bp14, 6);
 			glbCreatureAnimationFrame = &bp14;
@@ -1384,7 +1385,7 @@ X32 SkWinCore::CREATURE_SOMETHING_1c9a_0a48()
 	//^1C9A:0BB7
 	glbCurrentThinkingCreatureData->b7 = U8(bp02);
 	_4976_4ed6->iAnimSeq = bp0c;
-	_4976_4ed6->iAnimFrame = bp0e;
+	_4976_4ed6->iAnimInfo = iCurrentFrameInfo;	// this is where creature animation change internal frame index
 	//^1C9A:0BD3
 	if (glbCreatureAnimationFrame->sound != SOUND_NONE) {	// != 0xFF
 		if (SkCodeParam::bUsePowerDebug) { 
@@ -1621,7 +1622,7 @@ U16 SkWinCore::QUERY_CREATURE_5x5_POS(Creature *ref, U16 dir)
 	if (ref->b5_0_7() == 0xff)
 		return 12;
 	sk1c9a02c3* xAnimInfo = GET_CREATURE_INFO_DATA(ref, QUERY_CREATURE_AI_SPEC_FROM_TYPE(ref->CreatureType()));	// bp04
-	i16 _5x5 = tblCreatureFrameInfo14[CREATURE_SEQUENCE_4937_000f(xAnimInfo->iAnimSeq, &xAnimInfo->iAnimFrame)][0];
+	i16 _5x5 = tblCreatureFrameInfo14[CREATURE_SEQUENCE_4937_000f(xAnimInfo->iAnimSeq, &xAnimInfo->iAnimInfo)][0];
 	return ROTATE_5x5_POS(_5x5, dir);
 }
 
@@ -5398,7 +5399,7 @@ void SkWinCore::CREATURE_TRANSFORM()
 			//^1887:1355
 			bp06 = glbAIDef->BaseHP;
 			glbCurrentThinkingCreatureRec->HP1(bp06 + RAND16((bp06 >> 3) +1));
-			GET_CREATURE_ANIMATION_FRAME(glbCurrentThinkingCreatureRec->CreatureType(), bp04->Command, &_4976_4ed6->iAnimSeq, &_4976_4ed6->iAnimFrame, &glbCreatureAnimationFrame, 0);
+			GET_CREATURE_ANIMATION_FRAME(glbCurrentThinkingCreatureRec->CreatureType(), bp04->Command, &_4976_4ed6->iAnimSeq, &_4976_4ed6->iAnimInfo, &glbCreatureAnimationFrame, 0);
 			if (IS_CREATURE_ALLOWED_ON_LEVEL(glbCurrentThinkingCreatureID, glbSomeMap_4976_4ee7) == 0) {
 				//^1887:13C1
 				DELETE_CREATURE_RECORD(di, si, CREATURE_GENERATED_DROPS, 1);
@@ -5618,7 +5619,7 @@ U16 SkWinCore::PROCEED_CCM()
 	return si;
 }
 //^4937:028A
-X16 SkWinCore::_4937_028a(U16 xx, U16 *yy, CreatureAnimationFrame **ref)
+X16 SkWinCore::CREATURE_4937_028a(U16 xx, U16 *yy, CreatureAnimationFrame **ref)
 {
 	//^4937:028A
 	ENTER(0);
@@ -5725,7 +5726,7 @@ _0a6a:
 		X16 si;
 		if (xCreatureInfo->Command == ccmDestroy) {
 			//^13E4:0A74
-			xCreatureInfo->w14 = CREATURE_SEQUENCE_4937_000f(bp08->iAnimSeq, &bp08->iAnimFrame);
+			xCreatureInfo->w14 = CREATURE_SEQUENCE_4937_000f(bp08->iAnimSeq, &bp08->iAnimInfo);
 			if ((tblAIStats01[QUERY_GDAT_CREATURE_WORD_VALUE(glbCurrentThinkingCreatureRec->CreatureType(), 1)] & 8) == 0) {
 				X16 iCloudPower = 0;
 				//^13E4:0AB0
@@ -5761,12 +5762,12 @@ _0a6a:
 			si = (RAND01() != 0) ? ccmCastSpell1 : ccmCastSpell2;
 		}
 		//^13E4:0B43
-		di = GET_CREATURE_ANIMATION_FRAME(glbCurrentThinkingCreatureRec->CreatureType(), si, &bp08->iAnimSeq, &bp08->iAnimFrame, &glbCreatureAnimationFrame, 0);
+		di = GET_CREATURE_ANIMATION_FRAME(glbCurrentThinkingCreatureRec->CreatureType(), si, &bp08->iAnimSeq, &bp08->iAnimInfo, &glbCreatureAnimationFrame, 0);
 	}
 	else {
 		//^13E4:0B6E
 		bp0a = 0;
-		di = _4937_01a9(bp08->iAnimSeq, &bp08->iAnimFrame, &glbCreatureAnimationFrame);
+		di = _4937_01a9(bp08->iAnimSeq, &bp08->iAnimInfo, &glbCreatureAnimationFrame);
 	}
 	//^13E4:0B90
 _0b90:
@@ -5780,7 +5781,7 @@ _0b90:
 	//^13E4:0BCE
 	if (xCreatureInfo->b33 != 0 && glbCreatureAnimationFrame->w2_9_9() != 0) {
 		//^13E4:0BE4
-		di = _4937_028a(bp08->iAnimSeq, &bp08->iAnimFrame, &glbCreatureAnimationFrame);
+		di = CREATURE_4937_028a(bp08->iAnimSeq, &bp08->iAnimInfo, &glbCreatureAnimationFrame);
 		if (di != 2)
 			goto _0b90;
 	}
@@ -5833,7 +5834,7 @@ void SkWinCore::CREATURE_13e4_071b()
 	ENTER(10);
 	//^13E4:0721
 	sk1c9a02c3* xAnimInfo = _4976_4ed6; // bp08
-	if ((xAnimInfo->iAnimFrame & 0xe03f) == 0x8001)
+	if ((xAnimInfo->iAnimInfo & 0xe03f) == 0x8001) // 1 possible frame and static object ?
 		return;
 	//^13E4:0740
 	CreatureAnimationFrame* bp04 = &tlbCreaturesAnimationSequences[xAnimInfo->iAnimSeq];
@@ -5841,15 +5842,15 @@ void SkWinCore::CREATURE_13e4_071b()
 	i16 si = 1;
 	for (; (bp04->w2_0_3() != 0); si++, bp04++);
 	//^13E4:0770
-	X16 di = (xAnimInfo->iAnimFrame & 0xfc0);
+	X16 di = (xAnimInfo->iAnimInfo & 0xFC0);
 	X16 bp0a = (X16)((glbGameTick +di) % si);
 	if (bp0a == 0) {
 		//^13E4:079D
-		xAnimInfo->iAnimFrame = 0x8001|di;
+		xAnimInfo->iAnimInfo = 0x8001|di;
 		return;
 	}
 	//^13E4:07A7
-	xAnimInfo->iAnimFrame = si |di |0xc000;
+	xAnimInfo->iAnimInfo = si |di |0xc000;
 	RELEASE_CREATURE_TIMER(glbCurrentThinkingCreatureID);
 	glbCreatureTimer.SetMap(glbSomeMap_4976_4ee7);
     glbCreatureTimer.SetTick(glbGameTick +si -bp0a);
@@ -5864,22 +5865,22 @@ void SkWinCore::CREATURE_13e4_0806()
 	ENTER(10);
 	//^13E4:080C
 	sk1c9a02c3* xAnimInfo = _4976_4ed6;	// bp08
-	if ((xAnimInfo->iAnimFrame & 0xe000) == 0x8000 && (xAnimInfo->w2_0_5() > 1))
+	if ((xAnimInfo->iAnimInfo & 0xE000) == 0x8000 && (xAnimInfo->w2_0_5() > 1))
 		return;
 	//^13E4:0837
 	CreatureAnimationFrame *bp04 = &tlbCreaturesAnimationSequences[xAnimInfo->iAnimSeq];
 	i16 si = 1;
 	for (; bp04->w2_0_3() != 0; si++, bp04++);
 	//^13E4:0867
-	X16 di = xAnimInfo->iAnimFrame & 0x0fc0;
+	X16 di = xAnimInfo->iAnimInfo & 0x0FC0;
 	X16 bp0a = (X16)((glbGameTick +di) % si);
 	if (bp0a == 0) {
 		//^13E4:0894
-		xAnimInfo->iAnimFrame = si | di | 0x8000;
+		xAnimInfo->iAnimInfo = si | di | 0x8000;
 		return;
 	}
 	//^13E4:08A0
-	xAnimInfo->iAnimFrame = si | di | 0xa000;
+	xAnimInfo->iAnimInfo = si | di | 0xA000;
 	RELEASE_CREATURE_TIMER(glbCurrentThinkingCreatureID);
 	glbCreatureTimer.SetMap(glbSomeMap_4976_4ee7);
 	glbCreatureTimer.SetTick(glbGameTick + si - bp0a);
@@ -6280,50 +6281,46 @@ U16 SkWinCore::CREATURE_121e_0222(U16 xx, U16 yy, U16 ww)
 
 //^4937:005C
 // TODO: creature animation related ?
-Bit16u SkWinCore::CREATURE_4937_005c(Bit16u xx, Bit16u *yy)
+Bit16u SkWinCore::CREATURE_4937_005c(Bit16u iAnimSeq, Bit16u* piSeqInfo) // xx *yy
 {
-	//^4937:005C
-	//^4937:0061
-	Bit16u si;
-	if ((*yy & 0x4000) != 0) {
-		//^4937:006B
-		si = 0;
+	// piSeqInfo XS.. .... ..FF FFFF
+	// S : Static => frame 0 will always be returned
+	// FF FFFF : Number of frames in the sequence
+
+	Bit16u iFrame = 0;
+	if ((*piSeqInfo & 0x4000) != 0) {
+		iFrame = 0;
 	}
-	//^4937:006F
-	else if ((*yy & 0x8000) != 0) {
-		//^4937:0079
+	else if ((*piSeqInfo & 0x8000) != 0) {
 		Bit16u di;
-		if ((*yy & 0x1000) != 0) {
-			//^4937:0080
-			*yy &= 0xe03f;
+		if ((*piSeqInfo & 0x1000) != 0) {
+			*piSeqInfo &= 0xE03F;
 			di = 0;
 		}
 		else {
-			//^4937:0089
-			di = (*yy & 0x0fc0) >> 6;
+			di = (*piSeqInfo & 0x0FC0) >> 6;
 		}
 		//^4937:0097
-		// SPX: TODO / I got this fall under divide by zero when replacing static AI table
-		// by a new table. I don't understand why this happens, then I use some fix
+		// SPX: I case of wrong data, avoid 0 division (because of next %) and consider anim to have at least 1 frame
 		if (SkCodeParam::bUseFixedMode)
 		{
-			if ( (*yy & 0x003F) == 0)
-				*yy = 1;
+			if ( (*piSeqInfo & 0x003F) == 0)
+				*piSeqInfo &= 1;
 		}
-		// SPX: What is this 0x3F (63) value? is it related to number of AI ??
-		si = (glbGameTick + di) % (*yy & 0x003f);
+		// Depending on game tick, select frame number within the sequence, flag x3F holding the number of possible frames.
+		iFrame = (glbGameTick + di) % (*piSeqInfo & 0x003F);
 	}
 	else {
-		//^4937:00B8
-		si = *yy & 0x003f;
+		iFrame = *piSeqInfo & 0x003F;
 	}
-	//^4937:00C3
-	return xx + si;
+	//printf("Creature Anim => Tick= %04d Frame= %02X => Final Seq = %04X (search into tlbCreaturesAnimationSequences)\n", glbGameTick, iFrame, (iAnimSeq + iFrame));
+	return iAnimSeq + iFrame;
 }
 
 //^4937:0036
 // TODO: creature animation related, get some sequence
-CreatureAnimationFrame* SkWinCore::CREATURE_4937_0036(Bit16u xx, Bit16u *yy)
+// 4937_0036 renamed CREATURE_4937_0036
+CreatureAnimationFrame* SkWinCore::CREATURE_4937_0036(Bit16u iAnimSeq, Bit16u* piAnimInfo)
 {
-	return &tlbCreaturesAnimationSequences[CREATURE_4937_005c(xx, yy)];
+	return &tlbCreaturesAnimationSequences[CREATURE_4937_005c(iAnimSeq, piAnimInfo)];
 }

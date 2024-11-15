@@ -1046,12 +1046,13 @@ sk4efe _4976_3666[] = {
 	{ 0x8000, _4976_1d6c }, // _4976_3666
 	{ 0x0000, _4976_365f }, // _4976_366c
 };
-
+/*
 #if DM2_EXTENDED_MODE == 1
 	#define CREATURE_AI_TAB_SIZE	64
 #else
 	#define CREATURE_AI_TAB_SIZE	42
 #endif // DM2_EXTENDED_MODE
+*/
 
 sk4efe *_4976_37fc[CREATURE_AI_TAB_SIZE] = { // by wordval 0F-xx-01
 	_4976_1d73,//  0 

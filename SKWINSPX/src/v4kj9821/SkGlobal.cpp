@@ -1231,7 +1231,7 @@ U16	_04bf_0e6a[8]; //Rp
 U16	_04bf_0e54[8]; //Rp
 sk01b2	_04bf_01b2[4]; //Rr
 U8 _04bf_03d6[220]; //Rr
-U8 _4976_18b9[236]; //Rr
+U8 tlbUIEventTable[236]; //Rr	// _4976_18b9
 U8	tblDefaultNbItemAllocationPerDB[16]; //Rr	// _4976_0252
 U8	_4976_3b5f[9]; //Rp
 X8	_4976_4736[12]; //Rp

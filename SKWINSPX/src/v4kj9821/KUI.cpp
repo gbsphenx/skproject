@@ -272,7 +272,7 @@ Bit8u *SkWinCore::TRANSMIT_UI_EVENT(MousePosition *xx)
 	}
 	//^1031:0F23
 _0f23:
-	return &_4976_18b9[RCJ(236,di)];
+	return &tlbUIEventTable[RCJ(236,di)];
 }
 
 
@@ -623,13 +623,10 @@ void SkWinCore::CLICK_VWPT(i16 xx, i16 yy)
 	//^121E:0428
 	U16 di = yy;
 	//^121E:042B
-	if (_4976_4ddc != 0) {
-		//^121E:0432
-		_4976_4ddc = 0;
-		//^121E:0438
+	if (glbTryPushPullObject != 0) {
+		glbTryPushPullObject = 0;
 		PUSH_PULL_RIGID_BODY(glbTargetTypeMoveObject);
-		//^121E:0442
-		_29ee_000f();
+		DRAW_ARROW_PANEL();
 	}
 	//^121E:044A
 	xx -= _4976_00e8;
@@ -812,11 +809,11 @@ void SkWinCore::CLICK_VWPT(i16 xx, i16 yy)
 				return;
 			}
 			//^121E:07BD
-			_4976_4ddc = 1;
+			glbTryPushPullObject = 1;
 			//^121E:07C3
 			_4976_4dbe = _4976_4dc0 = xx;
 			//^121E:07CD
-			_29ee_000f();
+			DRAW_ARROW_PANEL();
 			//^121E:07D2
 			glbTargetTypeMoveObject = 6;
 			//^121E:07D8
@@ -1077,7 +1074,7 @@ _19b1:
 	//else if (si == 0xe1) {
 	else if (si == UI_EVENTCODE_MOVE_OBJECT) {	// 0xE1
 		//^1031:19D8
-		_1031_04f5();
+		CLEAR_TRY_PUSH_PULL_OBJECT();
 	}
 	//^1031:19DF
 	else if (si == UI_EVENTCODE_TURN_RIGHT || si == UI_EVENTCODE_TURN_LEFT) {
@@ -1309,7 +1306,7 @@ _1ab8:
 		&& glbShowItemStats == 0 
 		&& _4976_4bfe == 0 
 		&& _4976_4c3e == 0
-		&& _4976_4ddc == 0
+		&& glbTryPushPullObject == 0
 	) {
 		//^1031:1D28
 		//if (si == 0x91) {

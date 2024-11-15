@@ -2065,8 +2065,8 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 		}
 	}
 #ifndef __SKWIN_PUBLIC_VERSION__
-	printf("Top objects on sides N/E/S/W : %04X %04X %04X %04X\n", 
-		xTopActuators[0].w, xTopActuators[1].w, xTopActuators[2].w, xTopActuators[3].w);
+	SkD((0, "Top objects on sides N/E/S/W : %04X %04X %04X %04X\n", 
+		xTopActuators[0].w, xTopActuators[1].w, xTopActuators[2].w, xTopActuators[3].w));
 #endif // __SKWIN_PUBLIC_VERSION__
 	bp0e = GET_TILE_RECORD_LINK(xx, yy);
 
@@ -3148,7 +3148,7 @@ void SkWinCore::__INIT_GAME_38c8_03ad()
 	glbShowItemStats = 0;
 	_4976_4bfe = 0;
 	_4976_4c3e = 0;
-	_4976_4ddc = 0;
+	glbTryPushPullObject = 0;
 	glbIsPlayerSleeping = 0;
 	_4976_5bec = 0;
 	//^38C8:03D5
@@ -3207,7 +3207,7 @@ void SkWinCore::__INIT_GAME_38c8_03ad()
 	//printf("38c8_03ad:FIRE_FILL_SCREEN_RECT\n"); getch();
 	FIRE_FILL_SCREEN_RECT(2, 0);
 	//^38C8:0488
-	_29ee_000f();
+	DRAW_ARROW_PANEL();
 	//^38C8:048D
 	//printf("38c8_03ad:INIT_CHAMPIONS\n"); getch();
 	SEARCH_STARTER_CHAMPION();
@@ -3389,7 +3389,7 @@ U16 SkWinCore::PERFORM_MOVE(X16 xx)
 		}
 		//^12B4:0495
 		glbTableToMove = OBJECT_NULL;
-		if (_4976_4ddc == 0)
+		if (glbTryPushPullObject == 0)
 			glbTargetTypeMoveObject = 6;
 		//^12B4:04A8
 		return 1;
@@ -3558,17 +3558,17 @@ void SkWinCore::MAIN_LOOP() //#DS=4976
 		//^1031:1E7F
 		IBMIO_USER_INPUT_CHECK();
 		//^1031:1E83
-		if (_4976_4e60 == _4976_4e5e)
+		if (glbUIClickEventIndex == glbUIClickEventLast)
 			//^1031:1E8A
 			break;
 		//^1031:1E8C
-		Bit16u si = _4976_4e60++;
+		printf("Check input %08X = %08X\n", glbUIClickEventIndex, glbUIClickEventLast);
+		Bit16u iUIClickNext = glbUIClickEventIndex++; // si
 		//^1031:1E94
-		if (_4976_4e60 > 2)
-			//^1031:1E9C
-			_4976_4e60 = 0;
+		if (glbUIClickEventIndex > 2)
+			glbUIClickEventIndex = 0;
 		//^1031:1EA2
-		if (HANDLE_UI_EVENT(&_4976_4e6c[si]) != 0) {
+		if (HANDLE_UI_EVENT(&tlbUIClickEvents[iUIClickNext]) != 0) {
 			//^1031:1EB8
 			if (_4976_4e62 != 0)
 				//^1031:1EBF
@@ -3576,7 +3576,7 @@ void SkWinCore::MAIN_LOOP() //#DS=4976
 		}
 		else {
 			//^1031:1EC5
-			_4976_4e60 = si;
+			glbUIClickEventIndex = iUIClickNext;
 		}
 		//^1031:1EC9
 	} while (_4976_4e5c == 0);
@@ -4218,19 +4218,22 @@ U8 *SkWinCore::PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timer
 	_4976_4ee6 = 0;
 	_4976_4efa = 0xffff;
 	//^13E4:014B
-	if (xCreatureInfo == NULL && SkCodeParam::bDebugBypassNullPointers == false)
-	{
-	if (timerType == tty22) {
-		_4976_4ee8 = 0;
-		_4976_4eea = 0;
-		_4976_4ee4 = (xCreatureInfo->Command == -1) ? 0 : xCreatureInfo->Command;
-		if (xCreatureInfo != NULL) {
-			//^13E4:017D
-			ZERO_MEMORY(&xCreatureInfo->w24, 10);
-			xCreatureInfo->Command = ccmInv;
+	if (xCreatureInfo == NULL && SkCodeParam::bDebugBypassNullPointers == false) {
+		if (timerType == tty22) {
+			_4976_4ee8 = 0;
+			_4976_4eea = 0;
+			_4976_4ee4 = (xCreatureInfo->Command == -1) ? 0 : xCreatureInfo->Command;
+			if (xCreatureInfo != NULL) {
+				//^13E4:017D
+				ZERO_MEMORY(&xCreatureInfo->w24, 10);
+				xCreatureInfo->Command = ccmInv;
+			}
 		}
-	}
 	} // SPX: Debug bypass
+	CHANGE_CONSOLE_COLOR(BRIGHT, ((glbCurrentThinkingCreatureID.DBIndex()+1)%8)+8, BLACK);
+	SkD((DLV_DBG_SED2, "Current creature CCM = %02x (%s) / %02X (%s)\n", glbCurrentThinkingCreatureData->Command, getCreatureCommandName(glbCurrentThinkingCreatureData->Command),
+		glbCurrentThinkingCreatureData->Command2, getCreatureCommandName(glbCurrentThinkingCreatureData->Command2)));
+	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
 	//^13E4:019B
 	return bp04;
 }

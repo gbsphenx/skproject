@@ -13,7 +13,13 @@
 
 // Activate this for preparing public release version
 //#define __SKWIN_PUBLIC_VERSION__	1
-#define __SKWIN_RELEASE_DATE__ "2024-11-03"
+#define __SKWIN_RELEASE_DATE__ "2024-11-10"
+
+#ifdef __DJGPP__
+	#define __SKWIN_PROGNAME__ "SKULL-V4"
+#else
+	#define __SKWIN_PROGNAME__ "SKWIN-9821"
+#endif // __DJGPP__
 
 //------------------------------------------------------------------------------
 

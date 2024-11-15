@@ -48,6 +48,7 @@ Bit16u SkWinCore::IS_TILE_PASSAGE(i16 xx, i16 yy)
 	ATLASSERT(U16(xx) < glbCurrentMapWidth && U16(yy) < glbCurrentMapHeight);
 
 	//^0CEE:0330
+	ATLASSERT(glbCurrentTileMap[xx]);
 	Bit8u tileType = (glbCurrentTileMap[xx])[yy] >> 5;
 	if (tileType == ttTeleporter) {
 		//^0CEE:0357

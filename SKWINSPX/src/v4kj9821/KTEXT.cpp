@@ -597,7 +597,13 @@ const Bit8u *SkWinCore::DRAW_MBCS_STR(
 	Bit16u bp18 = _4976_5ca8;
 	_4976_5ca8 = -_4976_5d76;
 	//^3929:0170
-	Bit8u *bp08 = QUERY_GDAT_IMAGE_ENTRY_BUFF(0x001c, *ww, bp0d);
+	// SPX: add protection here : if the graphics.dat does not contain japanese font, replacing the missing font with default image (yukman) will lead into a crash
+	// Therefore, we check if the font exist; if not, just leave for now.
+	int iItemSize = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_INTERFACE_GENERAL, 0x01, dtImage, 0x00);
+	if (iItemSize <= 0)
+		return (const Bit8u*) "?";
+
+	Bit8u *bp08 = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_INTERFACE_GENERAL, *ww, bp0d);	// 0x1C
 	//^3929:018B
 	Bit8u bp2a[16]; // 2a-1b
 	Bit16u bp0a;

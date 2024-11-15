@@ -460,7 +460,7 @@ protected:
 	i16		glbCurrentMapHeight;				// (_4976_4dd4) current map height
 	U16		*dunMapColumnsSumArray;	// (_4976_4dd6) array-of-sum-of-columns-per-map
 	U16		_4976_4dda;
-	Bit16u	_4976_4ddc;
+	Bit16u	glbTryPushPullObject;		// (_4976_4ddc) when trying to push/pull an object
 	U16		_4976_4dde;		// pick up able item count
 //	jmp_buf	_4976_4de0;
 	i16		_4976_4df4;
@@ -477,14 +477,14 @@ protected:
 	Bit16u	_4976_4e4c;
 	MousePosition	glbMousePosition; // (_4976_4e4e)
 	Bit16u	_4976_4e5c;
-	Bit16u	_4976_4e5e;	// (ring 0 to 2) last index of click event
-	i16		_4976_4e60;	// (ring 0 to 2) processed index of click event
+	Bit16u	glbUIClickEventLast;	// _4976_4e5e (ring 0 to 2) last index of click event
+	Bit16u	glbUIClickEventIndex;	// _4976_4e60 (ring 0 to 2) processed index of click event
 	i16		_4976_4e62;
 	Bit16u	_4976_4e64;
 	Bit16u	_4976_4e66;
 	Bit16u	_4976_4e68;
 	Bit16u	_4976_4e6a;
-	MousePosition	_4976_4e6c[3];
+	MousePosition	tlbUIClickEvents[3];	// _4976_4e6c click event table
 	Bit8u	*_4976_4e96;
 	Bit16u	_4976_4e9a;
 	Bit16u	_4976_4e9c;
@@ -848,7 +848,7 @@ protected:
 	U32		_4976_5e9c;
 	Bit8u	*_4976_5ea0;	// EMS mapped memory location (E000:0000)
 	Bit16u	_4976_5ea4;		// EMS handle
-	U32		_4976_5ea6;		// EMS alloced size
+	U32		_4976_5ea6;		// EMS allocated size
 	i16		glbTickStepValue;	// (_4976_5eaa)
 	shelf_memory _4976_5eac;		// ems last page? for back VRAM?
 	Bit16u	_4976_5eb0;
@@ -995,6 +995,8 @@ public:
 	CString getSpellTypeName(U8 spelltype);
 	CString getSkillName(U8 skill);
 	CString getStatBonusName(U8 bonus);
+	CString getCreatureSoundName(U8 cs);
+	CString getCreatureCommandName(U8 ccm);
 	CString getUIEventName(U8 event);	// to be rewritten
 	CString getAIName(U8 ai);
 	CString getRecordNameOf(ObjectID recordLink);
@@ -1252,7 +1254,7 @@ protected:
 	void _0b36_0cbe(sk3f6c *ref, Bit16u yy);
 	Bit16u IS_CONTAINER_MAP(ObjectID recordLink);
 	void UPDATE_RIGHT_PANEL(Bit16u xx);
-	void _1031_04f5();
+	void CLEAR_TRY_PUSH_PULL_OBJECT();	// _1031_04f5 renamed CLEAR_TRY_PUSH_PULL_OBJECT
 	void HIGHLIGHT_ARROW_PANEL(Bit16u cls4, Bit16u rectno, Bit16u bright);
 	void CHOOSE_HIGHLIGHT_ARROW_PANEL(); // 12b4_0092
 	void IBMIO_FILL_HALFTONE_RECT(SRECT *rc);
@@ -1330,7 +1332,7 @@ protected:
 
 	void DRAW_SKILL_PANEL();
 	void REFRESH_PLAYER_STAT_DISP(i16 player);
-	void _1031_111e(Bit16u xx);
+	void HANDLE_UI_EVENT_1031_111e(Bit16u xx);	// 1031_111e
 	void IBMIO_USER_INPUT_CHECK();
 	void RESET_SQUAD_DIR();
 	void _12b4_00af(U16 xx);
@@ -1832,7 +1834,7 @@ protected:
 	void _12b4_0d75(i16 xx, i16 yy, i16 ss, i16 tt);
 	U16 QUERY_CREATURE_5x5_POS(Creature *ref, U16 dir);
 	void _098d_000f(i16 xx, i16 yy, U16 ww, U16 *x2, U16 *y2);
-	void _29ee_000f();
+	void DRAW_ARROW_PANEL(); // _29ee_000f renamed DRAW_ARROW_PANEL
 	U16 _1c9a_08bd(Creature *ref);
 
 	U16 IS_CREATURE_FLOATING(ObjectID rl);
@@ -2200,7 +2202,7 @@ protected:
 	void CREATURE_TRANSFORM();
 	X16 CREATURE_EXPLODE_OR_SUMMON();
 	U16 PROCEED_CCM();
-	X16 _4937_028a(U16 xx, U16 *yy, CreatureAnimationFrame **ref);
+	X16 CREATURE_4937_028a(U16 xx, U16 *yy, CreatureAnimationFrame **ref);	// _4937_028a
 	void CREATURE_THINK_0982(); // _13e4_0982
 	void CREATURE_13e4_071b(); // _13e4_071b
 	void CREATURE_13e4_0806();
@@ -2282,7 +2284,7 @@ public:
 	void INIT_KBOARD_HOOK();
 	void IBMIO_KBOARD_HANDLER();
 	void _01b0_00ce(X16 xx);
-	void _01b0_00fc();
+	void IBMIO_CHECK_KEYBOARD_INPUT();	// _01b0_00fc renamed IBMIO_CHECK_KEYBOARD_INPUT
 	void _01b0_18ae(); // TODO: Unr
 	X16 _01b0_292b(); // TODO: Unr
 	void _01b0_237f(); // TODO: Unr

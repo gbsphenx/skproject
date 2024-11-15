@@ -40,12 +40,13 @@ using namespace kkBitBlt;
 
 #include <KAITABLE.h>	// for dAITableGenuine (hard coded AI table)
 //--- Common part with A.cpp
-
+/*
 #if DM2_EXTENDED_MODE == 1
 	#define CREATURE_AI_TAB_SIZE	64
 #else
 	#define CREATURE_AI_TAB_SIZE	42
 #endif // DM2_EXTENDED_MODE
+*/
 
 #ifdef __DJGPP__
 #include <strings.h>
@@ -520,6 +521,132 @@ CString SkWinCore::getStatBonusName(U8 bonus)
 	if (bonus == GDAT_ITEM_BONUS_MONEY_PER_CHARGE)	return "MONEY/CHARGE";
 	if (bonus == GDAT_ITEM_STATS_WATER_VALUE)		return "WATER";
 	if (bonus == GDAT_ITEM_STATS_MISSILE_SPELL)		return "SPELL";
+	if (text[0] != 0)
+		return (LPCSTR)text;
+	return "UNKNOWN";
+}
+
+// SPX: Name of creature standard sound
+CString SkWinCore::getCreatureSoundName(U8 cs)
+{
+	Bit8u text[128] = {0};
+	if (cs == 0xFF)			return "NONE";
+	if (cs == 0)			return "WALK/MOVE";
+	if (cs == 1)			return "MOVE/TURN";
+	if (cs == 2)			return "SHOOT";
+	if (cs == 3)			return "REFLECTOR";
+	if (cs == 4)			return "JUMP";
+	if (cs == 5)			return "JUMP END";
+	if (cs == 6)			return "YELL 1";
+	if (cs == 7)			return "ATTACK";
+	if (cs == 8)			return "STEAL / PUT / PICK";
+	if (cs == 9)			return "9";
+	if (cs == 0x0A)			return "A";
+	if (cs == 0x0B)			return "B";
+	if (cs == 0x0C)			return "C";
+	if (cs == 0x0D)			return "D";
+	if (cs == 0x0E)			return "YELL 2";
+	if (cs == 0x0F)			return "GROWL";
+	if (cs == 0x10)			return "SPAWN";
+	if (cs == 0x11)			return "DEATH";
+	if (cs == 0x12)			return "ATTACK 2";
+	if (cs == 0x8D)			return "GET HIT";
+	if (text[0] != 0)
+		return (LPCSTR)text;
+	return "UNKNOWN";
+}
+
+// SPX: Name of creature command
+CString SkWinCore::getCreatureCommandName(U8 ccm)
+{
+	Bit8u text[128] = {0};
+	sprintf((char*)text, "CCM-%02X", ccm);	// default
+	if (ccm == ccmNeutral)		return "NONE";
+	if (ccm == ccm01)			return "WALK/MOVE x01";
+	if (ccm == ccm02)			return "WALK/MOVE x02";
+	if (ccm == ccm03)			return "TURN LEFT + MOVE ? x03";	// right also ????
+	if (ccm == ccm04)			return "TURN RIGHT + MOVE x04";
+	if (ccm == ccmJump)			return "JUMP";
+	if (ccm == ccm06)			return "x06";
+	if (ccm == ccm07)			return "x07";
+	if (ccm == ccmMeleeAttack)	return "MELEE ATTACK";
+	if (ccm == ccm09)			return "WALK x09";
+	if (ccm == ccmSteal)		return "STEAL";
+	if (ccm == ccm0B)			return "ATTACK x0??";
+	if (ccm == ccm0C)			return "x0C";
+	if (ccm == ccm0D)			return "x0D";
+	if (ccm == ccmShootItem1)	return "THROW ITEM x0E";
+	if (ccm == ccmShootItem2)	return "THROW ITEM x0F";
+	if (ccm == ccm10)			return "ATTACK x10?";
+	if (ccm == ccmSpawn)		return "SPAWN";
+	if (ccm == ccm12)			return "UNUSED x12";
+	if (ccm == ccmDestroy)		return "DEATH";
+	if (ccm == ccm14)			return "x14";
+	if (ccm == ccm15)			return "x15";
+	if (ccm == ccm16)			return "x16";
+
+	if (ccm == ccmPlaceMerchandise)			return "PUT MERCHANDISE x17";
+	if (ccm == ccmTakeMerchandise)			return "TAKE MERCHANDISE x18";
+	if (ccm == ccm19)			return "GRAB ARROW ? x19";
+	if (ccm == ccm1A)			return "PICK ARROW ? x1A";
+	if (ccm == ccm1B)			return "STATE 0 / REFUSEx1B";
+	if (ccm == ccm1C)			return "STATE 1 / ACCEPT / YELL x1C";
+	if (ccm == ccm1D)			return "STATE 2 / BLINK x1D";
+	if (ccm == ccm1E)			return "STATE 3 / SORRY x1E";
+	if (ccm == ccm1F)			return "MERCHANT SORRY x1F";
+
+	if (ccm == ccm20)			return "MERCHANT THINK ? x20";
+	if (ccm == ccm21)			return "x21";
+	if (ccm == ccm22)			return "x22";
+	if (ccm == ccm23)			return "GO TO SLEEP x23";
+	if (ccm == ccm24)			return "SLEEP x24";
+	if (ccm == ccm25)			return "AWAKE x25";
+	if (ccm == ccmPushBack)		return "PUSH BACK";
+	if (ccm == ccmCastSpell1)	return "CAST SPELL 3";
+	if (ccm == ccmCastSpell2)	return "CAST SPELL 2";		
+
+	if (ccm == ccm29)			return "TAKE BONE x29";
+	if (ccm == ccm2A)			return "PUT BONE x2A";
+	if (ccm == ccm2B)			return "PICK ITEM THEN MOVE ? x2B";
+	if (ccm == ccm2C)			return "PICK ITEM THEN MOVE ? x2C";
+	if (ccm == ccm2D)			return "TAKE ? x2D";
+	if (ccm == ccm2E)			return "TAKE ? x2E";
+	if (ccm == ccm2F)			return "SWITCH BUTTON ? x2F";
+	if (ccm == ccm30)			return "SWITCH BUTTON ? x30";
+	if (ccm == ccm31)			return "SWITCH BUTTON ? x31";	
+
+	if (ccm == ccm32)			return "13E4:0AEC 1 x32";
+	if (ccm == ccm33)			return "13E4:0AEC 2 x33";
+	if (ccm == ccm34)			return "13E4:0AEC 3 x34";
+	if (ccm == ccm35)			return "MINION UP x35";
+	if (ccm == ccm36)			return "MINION COMING FROM TOP x36";
+	if (ccm == ccm38)			return "MINION UP x37";
+	if (ccm == ccm37)			return "MINION COMING FROM TOP x38";
+	if (ccm == ccm39)			return "MINION UP x39";
+	if (ccm == ccm3A)			return "MINION COMING FROM TOP x3A";	
+
+	if (ccm == ccmTransform)	return "TRANSFORM 1 x3B";
+	if (ccm == ccmTransform2)	return "TRANSFORM 2 x3C";
+	if (ccm == ccmExplode)		return "SUMMON 1 / EXPLODE 1 x3D";
+	if (ccm == ccm3E)			return "EXPLODE 2 x3E";
+	if (ccm == ccm3F)			return "EXPLODE 3 x3F";
+	if (ccm == ccm40)			return "EXPLODE 4 x40";
+	if (ccm == ccm14)			return "x41";
+	if (ccm == ccm42)			return "x42";
+//	if (ccm == ccm43)			return "x43";	
+//	if (ccm == ccm44)			return "x44";
+//	if (ccm == ccm45)			return "x45";
+//	if (ccm == ccm46)			return "x46";
+//	if (ccm == ccm47)			return "x47";
+//	if (ccm == ccm48)			return "x48";
+//	if (ccm == ccm49)			return "x49";
+
+//		ccm42 = 0x42,	// Hello 1 (rocky) ?
+//		ccm52 = 0x52,	// Hello 2 (rocky) ?
+	if (ccm == ccm52)			return "ROCKY HELLO 2 ? x52";
+	if (ccm == ccm55)			return "REFLECTOR ? x55";
+	if (ccm == ccmInv)			return "IDLE";	
+
 	if (text[0] != 0)
 		return (LPCSTR)text;
 	return "UNKNOWN";
@@ -4608,10 +4735,10 @@ Bit16u SkWinCore::QUERY_ORNATE_ANIM_FRAME(Bit8u cls1, Bit8u cls2, Bit32u tick, B
 
 
 //^4937:000F
-i16 SkWinCore::CREATURE_SEQUENCE_4937_000f(Bit16u iAnimSeq, Bit16u* piAnimFrame)
+i16 SkWinCore::CREATURE_SEQUENCE_4937_000f(Bit16u iAnimSeq, Bit16u* piAnimInfo)
 {
 	ENTER(0);
-	return tlbCreaturesAnimationSequences[CREATURE_4937_005c(iAnimSeq, piAnimFrame)].w0 & 0x03FF;
+	return tlbCreaturesAnimationSequences[CREATURE_4937_005c(iAnimSeq, piAnimInfo)].w0 & 0x03FF;
 }
 
 //^0CEE:2DF4
@@ -5364,18 +5491,14 @@ _0e03:
 }
 
 //^1031:04F5
-void SkWinCore::_1031_04f5()
+// _1031_04f5 renamed CLEAR_TRY_PUSH_PULL_OBJECT
+void SkWinCore::CLEAR_TRY_PUSH_PULL_OBJECT()
 {
-	//^1031:04F5
 	ENTER(0);
-	//^1031:04F8
-	if (_4976_4ddc != 0) {
-		//^1031:04FF
-		_4976_4ddc = 0;
-		//^1031:0505
-		_29ee_000f();
+	if (glbTryPushPullObject != 0) {
+		glbTryPushPullObject = 0;
+		DRAW_ARROW_PANEL();
 	}
-	//^1031:050A
 	return;
 }
 
@@ -5954,8 +6077,9 @@ U16 SkWinCore::_2759_0155(ObjectID rl)
 
 
 //^1031:111E
-void SkWinCore::_1031_111e(Bit16u xx)
+void SkWinCore::HANDLE_UI_EVENT_1031_111e(Bit16u xx)
 {
+	
 	//^1031:111E
 	ENTER(72);
 	//^1031:1124
@@ -5989,6 +6113,7 @@ void SkWinCore::_1031_111e(Bit16u xx)
 		bp05 = *(_4976_4e96++);
 		//^1031:1184
 		i16 si;
+		printf("HANDLEUI %04X => %04X\n", bp05, (bp05 & 0xff3f));
 		switch (bp05 & 0xff3f) {
 			case 0:
 				{
@@ -6003,13 +6128,13 @@ void SkWinCore::_1031_111e(Bit16u xx)
 			case 6:
 				{
 					//^1031:11AD
-					si = _4976_4e5e +1;
+					si = glbUIClickEventLast + 1; // si
 					//^1031:11B3
 					if (si > 2)
 						//^1031:11B8
 						si = 0;
 					//^1031:11BA
-					if (_4976_4e60 == si) {
+					if (glbUIClickEventIndex == si) {
 						//^1031:11C0
 						if (_4976_4e62 == 0)
 							//^1031:11C7
@@ -6020,9 +6145,9 @@ void SkWinCore::_1031_111e(Bit16u xx)
 						goto _1534;
 					}
 					//^1031:11D4
-					_4976_4e6c[_4976_4e5e] = glbMousePosition;
+					tlbUIClickEvents[glbUIClickEventLast] = glbMousePosition;
 					//^1031:11ED
-					_4976_4e5e = si;
+					glbUIClickEventLast = si;
 					//^1031:11F1
 					if ((bp05 & 0xff3f) == 4)
 						//^1031:11FE
@@ -6034,7 +6159,7 @@ void SkWinCore::_1031_111e(Bit16u xx)
 				{
 					//^1031:1201
 _1201:
-					_4976_4e62 = _4976_4e5e - _4976_4e60;
+					_4976_4e62 = glbUIClickEventLast - glbUIClickEventIndex;
 					//^1031:120B
 					if (_4976_4e62 >= 0)
 						//^1031:120F
@@ -6360,7 +6485,7 @@ _0fa6:
 				}
 			}
 			//^1031:10BB
-			_1031_111e(Bit16u(bp08));
+			HANDLE_UI_EVENT_1031_111e(Bit16u(bp08));
 		}
 	}
 	//^1031:10C4
@@ -8000,7 +8125,7 @@ void SkWinCore::_38c8_0060()
 				//^38C8:00BB
 				INIT_BACKBUFF();
 				//^38C8:00C0
-				_29ee_000f();
+				DRAW_ARROW_PANEL();
 			}
 		}
 	}
@@ -8022,7 +8147,7 @@ void SkWinCore::DRAW_WAKE_UP_TEXT()
 	DRAW_VP_RC_STR(
 		6, 
 		glbPaletteT16[COLOR_CYAN], 
-		QUERY_GDAT_TEXT(GDAT_CATEGORY_INTERFACE_GENERAL, 0x00, 0x11, bp28)
+		QUERY_GDAT_TEXT(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, 0x11, bp28)
 		);
 	//^1031:194F
 	return;
@@ -14169,6 +14294,7 @@ Bit16u SkWinCore::CALC_IMAGE_BYTE_LENGTH(Bit8u *buff)
 //^00EB:03D5
 void SkWinCore::IBMIO_WAIT_VSYNC()
 {
+	//printf("WAIT ON ...");
 #ifndef __DJGPP__
 
 #if UseAltic
@@ -14182,6 +14308,7 @@ void SkWinCore::IBMIO_WAIT_VSYNC()
 #endif
 
 #endif // __DJGPP__
+	//printf(" WAIT OFF.\n");
 }
 
 //^00EB:045D
@@ -14911,35 +15038,37 @@ Bit16u SkWinCore::_RAND() //#DS=4976
 //^4937:00CC
 // SPX: This function uses creature animation/sequence information related to command
 // _4937_00cc renamed GET_CREATURE_ANIMATION_FRAME
-Bit16u SkWinCore::GET_CREATURE_ANIMATION_FRAME(Bit8u ct, Bit16u command, Bit16u *pw08, Bit16u *pw0a, CreatureAnimationFrame **animframe, Bit16u vv)
+Bit16u SkWinCore::GET_CREATURE_ANIMATION_FRAME(Bit8u iCreatureType, Bit16u command, Bit16u *iAnimSeq, Bit16u *iAnimInfo, CreatureAnimationFrame **animframe, Bit16u vv)
 {
 	//^4937:00CC
-	SkD((DLV_DBG_SED2, "DBG: GET_CREATURE_ANIMATION_FRAME %02X ccm:%04X %04X %04X %04X \n", (Bitu)ct, (Bitu)command, (Bitu)*pw08, (Bitu)*pw0a, (Bitu)vv));
+	SkD((DLV_DBG_SED2, "DBG: GET_CREATURE_ANIMATION_FRAME %02X ccm:%04X %04X %04X %04X \n", (Bitu)iCreatureType, (Bitu)command, (Bitu)*iAnimSeq, (Bitu)*iAnimInfo, (Bitu)vv));
 	if (tlbCreaturesActionsGroupOffsets == NULL || tlbCreaturesActionsGroupSets == NULL || tlbCreaturesAnimationSequences == NULL) {
-		*pw0a = 0xffff;
-		*pw08 = 0;
+		*iAnimInfo = 0xFFFF;
+		*iAnimSeq = 0;
 		return 1;
 	}
-	*pw0a = 0xffff;
-	*pw08 = 0;
+	*iAnimInfo = 0xFFFF;	// pw0a
+	*iAnimSeq = 0;	// pw08
 	
-	CreatureCommandAnimation *bp04 = &tlbCreaturesActionsGroupSets[tlbCreaturesActionsGroupOffsets[QUERY_GDAT_CREATURE_WORD_VALUE(ct, 0)]];
+
+
+	CreatureCommandAnimation *bp04 = &tlbCreaturesActionsGroupSets[tlbCreaturesActionsGroupOffsets[QUERY_GDAT_CREATURE_WORD_VALUE(iCreatureType, CREATURE_STAT_00)]];
 	//^4937:00FD
 	while (bp04->ccmReference != 0xffff && bp04->ccmReference != command) {
 		bp04++;
 	}
 	//^4937:0114
 	Bit16u di = bp04->animSeqOffset;
-	*pw08 = di;	// Is the base anim offset
+	*iAnimSeq = di;	// Is the base anim offset
 	//^4937:0123
-	if (QUERY_CREATURE_AI_SPEC_FROM_TYPE(ct)->IsStaticObject() != 0) {
+	if (QUERY_CREATURE_AI_SPEC_FROM_TYPE(iCreatureType)->IsStaticObject() != 0) {
 		//^4937:0138
 		Bit16u si = 0;
 		CreatureAnimationFrame *bp08 = &tlbCreaturesAnimationSequences[di];
 		//^4937:0151
 		do {
 			si++;
-		} while((bp08++)->w2_0_3() != 0);
+		} while((bp08++)->w2_0_3() != 0); // count the number of frame within the sequence offset
 		//^4937:0161
 		if (vv != 0) {
 			//^4937:0167
@@ -14950,33 +15079,29 @@ Bit16u SkWinCore::GET_CREATURE_ANIMATION_FRAME(Bit8u ct, Bit16u command, Bit16u 
 			si |= 0x9000;
 		}
 		//^4937:017D
-		*pw0a = si;	// would be the number of frames within animation
+		*iAnimInfo = si;	// would be the number of frames within animation
 		return 1;
 	}
 	//^4937:0188
-	*pw0a = 0xffff;
+	*iAnimInfo = 0xffff;
 	//^4937:0190
-	return _4937_01a9(di, pw0a, animframe);
+	return _4937_01a9(di, iAnimInfo, animframe);
 }
 
 //^1C9A:09DB
 // SPX: _1c9a_09db renamed CREATURE_SET_ANIM_FRAME
 void SkWinCore::CREATURE_SET_ANIM_FRAME(ObjectID recordLink)
 {
-	//^1C9A:09DB
-	CreatureAnimationFrame bp0e;
-	CreatureAnimationFrame *bp12 = &bp0e;
-	//^1C9A:09E8
+	CreatureAnimationFrame tAnimFrame;	// bp0e
+	CreatureAnimationFrame* pAnimFrame = &tAnimFrame; // bp12
 	Creature* xCreature = GET_ADDRESS_OF_RECORD(recordLink)->castToCreature();	// bp04
-	//^1C9A:09F7
 	sk1c9a02c3* xInfoData = GET_CREATURE_INFO_DATA(xCreature, QUERY_CREATURE_AI_SPEC_FROM_TYPE(xCreature->CreatureType()));	// bp08
-	//^1C9A:0A1A
 	GET_CREATURE_ANIMATION_FRAME(
 		xCreature->CreatureType(),
-		0x11,
+		CREATURE_ANIMSEQ_SPAWN,	// 0x11
 		&xInfoData->iAnimSeq,
-		&xInfoData->iAnimFrame,
-		&bp12,
+		&xInfoData->iAnimInfo,
+		&pAnimFrame,
 		xCreature->w12
 		);
 }
@@ -17221,7 +17346,7 @@ void SkWinCore::_38c8_0002()
 			UPDATE_RIGHT_PANEL(0);
 		}
 		//^38C8:002D
-		_1031_04f5();
+		CLEAR_TRY_PUSH_PULL_OBJECT();
 		FIRE_HIDE_MOUSE_CURSOR();
 		CHOOSE_HIGHLIGHT_ARROW_PANEL();
 		//^38C8:003C
@@ -21052,11 +21177,15 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 		// SPX: x18 GDAT2 Teleporter category
 		MARK_DYN_LOAD(0x18ffffff); // Mark: Teleporter, all, all, all
 	}
-	//glbMapDoorType[0] = dunMapLocalHeader->DoorType0();
-	//glbMapDoorType[1] = dunMapLocalHeader->DoorType1();
 	//^2676:072C
-	glbMapDoorType[0] = (dunMapLocalHeader->UseDoor0() != 0) ? dunMapLocalHeader->DoorType0() : 0xff;
-	glbMapDoorType[1] = (dunMapLocalHeader->UseDoor1() != 0) ? dunMapLocalHeader->DoorType1() : 0xff;
+	/// Original code checks for "use door" info from map header. If flag is not properly set, then no door will be displayed.
+	glbMapDoorType[0] = (dunMapLocalHeader->UseDoor0() != 0) ? dunMapLocalHeader->DoorType0() : 0xFF;
+	glbMapDoorType[1] = (dunMapLocalHeader->UseDoor1() != 0) ? dunMapLocalHeader->DoorType1() : 0xFF;
+	// We can always go for displaying the door, then no bad surprise
+	if (SkCodeParam::bUseFixedMode) {
+		glbMapDoorType[0] = dunMapLocalHeader->DoorType0();
+		glbMapDoorType[1] = dunMapLocalHeader->DoorType1();
+	}
 	
 	//^2676:076C
 	X16 bp2e;
@@ -22740,10 +22869,9 @@ Bit16u SkWinCore::_2fcf_0434(ObjectID recordLink, i16 xpos, i16 ypos, i16 xx, i1
 	Bit16u bp24; // teleporter scope
 	if (si == OBJECT_NULL) {
 		//^2FCF:0457
-		if (_4976_4ddc != 0) {
-			//^2FCF:045E
-			_4976_4ddc = 0;
-			_29ee_000f();
+		if (glbTryPushPullObject != 0) {
+			glbTryPushPullObject = 0;
+			DRAW_ARROW_PANEL();
 		}
 		//^2FCF:0469
 		glbPlayerPosX = xx;
@@ -23376,7 +23504,7 @@ Bit16u SkWinCore::CREATURE_1c9a_0958(ObjectID recordLink)
 {
 	Creature *xCreature = GET_ADDRESS_OF_RECORD(recordLink)->castToCreature();	//*bp04
 	sk1c9a02c3* xInfoData = GET_CREATURE_INFO_DATA(xCreature, QUERY_CREATURE_AI_SPEC_FROM_TYPE(xCreature->CreatureType())); // bp08
-	CreatureAnimationFrame* xAnim = CREATURE_4937_0036(xInfoData->iAnimSeq, &xInfoData->iAnimFrame);	// bp0c
+	CreatureAnimationFrame* xAnim = CREATURE_4937_0036(xInfoData->iAnimSeq, &xInfoData->iAnimInfo);	// bp0c
 	return (xAnim->w0 & 0x4000) >> 14;
 }
 
@@ -25816,7 +25944,7 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_0A()
 	ENTER(4);
 	U32 bp04 = 0;
 
-	iItemSize = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dt07, 0x0A);
+	iItemSize = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt07, 0x0A);
 	if (iItemSize <= 0) {
 		i16 hAnimFrameTabHandle = -1;
 		iItemSize = 1652;
@@ -25841,8 +25969,8 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_0A()
 	}
 	else {
 	// SPX: This points to a 1652 bytes file .. seems to have struct of 14 bytes => 118 records. creature/objects anim frame size info and such
-	tblCreatureFrameInfo14 = reinterpret_cast<U8 (*)[14]>(ALLOC_MEMORY_RAM(bp04 = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dt07, 0x0A), afUseUpper, 0x400));
-	LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dt07, 0x0A, reinterpret_cast<U8 *>(tblCreatureFrameInfo14));
+	tblCreatureFrameInfo14 = reinterpret_cast<U8 (*)[14]>(ALLOC_MEMORY_RAM(bp04 = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt07, 0x0A), afUseUpper, 0x400));
+	LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt07, 0x0A, reinterpret_cast<U8 *>(tblCreatureFrameInfo14));
 	}
 	//^32CB:0052
 	return;
@@ -25854,8 +25982,8 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_02()
 	//^0B36:020E
 	ENTER(6);
 	//^0B36:0214
-	U8 *bp04 = ALLOC_MEMORY_RAM(QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dt07, 0x2), afUseUpper, 0x400);
-	LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dt07, 0x2, bp04);
+	U8 *bp04 = ALLOC_MEMORY_RAM(QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt07, 0x2), afUseUpper, 0x400);
+	LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt07, 0x2, bp04);
 	X8 bp05 = *bp04++;
 	_4976_4bde = reinterpret_cast<sk4bde *>(ALLOC_MEMORY_RAM(bp05 * 9UL, afUseUpper, 0x400));
 	i16 si;
@@ -25899,7 +26027,7 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_00()
 	ENTER(8);
 	U8 *bp04 = NULL;
 
-	iItemSize = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dt06, 0x0);
+	iItemSize = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt06, 0x0);
 	if (iItemSize <= 0) {
 		i16 hCreatureTabHandle = -1;
 		iItemSize = 5092;
@@ -25917,7 +26045,7 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_00()
 		bp04 = ALLOC_MEMORY_RAM(
 			iItemSize,
 			afUseUpper, 0x400);
-		LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dt06, 0x0, bp04);
+		LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt06, 0x0, bp04);
 	}
 
 	X32 bp08 = READ_UI32(bp04,+0);	// Read first DWORD of data, which is length of the first part : 0xC24 = 3108 = 6*518
@@ -25933,6 +26061,36 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_00()
 	bp08 = READ_UI32(bp04,+0);	// @138C; 0x54 = 84 = 2*42
 	bp04 += 4;
 	tlbCreaturesActionsGroupOffsets = reinterpret_cast<U16 *>(bp04);		// This points to the third part
+
+	/*
+	/// DUMP Level 1 tlbCreaturesActionsGroupOffsets (from GDAT value 0F-xx-00-00
+	for (int i = 0; i < 42; i++)
+	{
+		U16 iCAGO = tlbCreaturesActionsGroupOffsets[i];
+		printf("CAGO %04X) OFFSET = %04X\n", i, iCAGO);
+	}
+
+	/// DUMP Level 2 tlbCreaturesActionsGroupSets / list of commands and start frame for each
+	for (i = 0; i < 471; i++)
+	{
+		CreatureCommandAnimation* cca = &(tlbCreaturesActionsGroupSets[i]);
+		CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
+		if (cca->ccmReference == 0xFFFF)
+			CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_RED, BLACK);
+		printf("CMDANIM %04X) CCM = %04X OFF = %04X (CCM: %s)\n", i, cca->ccmReference, cca->animSeqOffset, getCreatureCommandName(cca->ccmReference));
+		CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
+	}
+	/// DUMP Level 3 tlbCreaturesAnimationSequences -- frame/gfx/sfx information
+	for (i = 0; i < 518; i++)
+	{
+		CreatureAnimationFrame* cas = &(tlbCreaturesAnimationSequences[i]);
+		CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
+		if (cas->sound != 0xFF)
+			CHANGE_CONSOLE_COLOR(BRIGHT, CYAN, BLACK);
+		printf("C-FRAME %04X) %04X %04X %02X SND=%02X (%s)\n", i, cas->w0, cas->w2, cas->b4, cas->sound, getCreatureSoundName(cas->sound));
+		CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
+	}
+	*/
 
 	return;
 }
@@ -26624,14 +26782,14 @@ void SkWinCore::INIT()
 	LOAD_GDAT_INTERFACE_00_0A(); // game will fail if this item is not loaded, but it does not exist in PC-DOS version
 	U8 *bp04 = ALLOC_MEMORY_RAM(0x400, afUseLower, 1024);
 //DEBUG_DUMP_ULP();
-	LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dtPalIRGB, 0xFE, bp04);	// C01=I00=EFE=T009 palette IRGB (0x1, 0x0, dt09, 0xFE, bp04)
+	LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dtPalIRGB, 0xFE, bp04);	// C01=I00=EFE=T009 palette IRGB (0x1, 0x0, dt09, 0xFE, bp04)
 	// SPX: Beta GDAT contains palette in raw7 data; if dtPalIRGB is not found, we should then look for raw7.
-	//LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dtRaw7, 0xFE, bp04);
+	//LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dtRaw7, 0xFE, bp04); // test for beta
 	SET_RGB_PALETTE_FROM_DATA(bp04);
 	DEALLOC_LOWER_MEMORY(0x400);
 	LOAD_GDAT_INTERFACE_00_02();
 	//glbPaletteT16 = QUERY_GDAT_ENTRY_DATA_PTR(0x1, 0x0, dt0d, 0xfe);
-	glbPaletteT16 = QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dtPalette16, 0xFE);
+	glbPaletteT16 = QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dtPalette16, 0xFE);
 	_098d_1208();
 
 //printf("EXTENDED_LOAD_AI_DEFINITION\n");
@@ -28090,9 +28248,7 @@ _146e:
 //X16 SkWinCore::QUERY_DOOR_STRENGTH(X8 cls2)
 X16 SkWinCore::QUERY_DOOR_STRENGTH(X8 iDoorType)
 {
-	//^0CEE:32BA
 	ENTER(0);
-	//^0CEE:32BD
 	return QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorType, dtWordValue, GDAT_DOOR_STRENGTH);
 }
 
@@ -28226,10 +28382,7 @@ void SkWinCore::GAME_LOOP()
 		if (SkCodeParam::bDM2V5Mode)
 			strcpy(sExtraInfo, " V5-GFX");
 //		sprintf((char*)message, "RAM = %08d / EMS = %08d\n", glbFreeRAMMemPool, glbFreeEMSMemPool);
-		sprintf((char*)message, "SKWIN-9821 (%s) [%s]%s\n", strVersionNumber, __SKWIN_RELEASE_DATE__, sExtraInfo);
-#ifdef __DJGPP__
-		sprintf((char*)message, "SKULL-V4 (%s) [%s]%s\n", strVersionNumber, __SKWIN_RELEASE_DATE__, sExtraInfo);
-#endif // __DJGPP__
+		sprintf((char*)message, "%s (%s) [%s]%s\n", __SKWIN_PROGNAME__, strVersionNumber, __SKWIN_RELEASE_DATE__, sExtraInfo);
 		DISPLAY_HINT_TEXT(COLOR_YELLOW, message);
 	}
 	//^13AE:005C
@@ -28241,12 +28394,12 @@ void SkWinCore::GAME_LOOP()
 	X16 si;
 	while (true)
 	{
-		//printf("GAME_LOOP: Begin loop %d\n", iLoopCount++); getch();
 		U8 message[64];
 		//sprintf((char*)message, "GAME LOOP %08d\n", iLoopCount++);
 		//DISPLAY_HINT_TEXT(COLOR_YELLOW, message);
 		// SPX get speed from window menu
 		stdTickBalance = skwin.spfact*4;
+		//stdTickBalance = 1;
 		glbTickSpeed = stdTickBalance;
 		// SPX
 
@@ -28256,22 +28409,17 @@ void SkWinCore::GAME_LOOP()
 			goto _00a4;
 		while (true)
 		{
-			//printf("GAME_LOOP: MOVE_RECORD_TO\n"); getch();
-			
 			//^13AE:007F
 			LOAD_NEWMAP(U8(glbMapToLoad));
 			MOVE_RECORD_TO(OBJECT_NULL, -1, 0, glbPlayerPosX, glbPlayerPosY);
 			glbMapToLoad = 0xffff;
 			//^13AE:00A4
 _00a4:
-			//printf("GAME_LOOP: PROCEED_TIMERS\n"); getch();
 			PROCEED_TIMERS();
 			if (glbMapToLoad != 0xffff)
 				continue;
 			break;
 		}
-		//printf("GAME_LOOP: UPDATE_WEATHER\n"); getch();
-		//^13AE:00B0
 		UPDATE_WEATHER(0);
 		
 		SkD((DLV_DBG_RAIN, "Loop (Rain) >> lvl=%03d / strm=%03d / wet=%03d (r2:%d r3:%d mlt:%d) / tick=%d\n"
@@ -28287,13 +28435,13 @@ _00a4:
 				//^13AE:00C9
 				_38c8_0060();
 			//^13AE:00CE
-			//printf("GAME_LOOP: VIEWPORT\n"); getch();
 			if (glbChampionInventory == 0) {
 				//^13AE:00D5
 				if (glbDoLightCheck != 0)
 					//^13AE:00DC
 					CHECK_RECOMPUTE_LIGHT(glbPlayerPosX, glbPlayerPosY);
 				//^13AE:00EB
+				
 				if (glbIsPlayerMoving != 0)
 					//^13AE:00F2
 					DISPLAY_VIEWPORT(_4976_4c40, _4976_4c32, _4976_4c34);
@@ -28301,6 +28449,7 @@ _00a4:
 					//^13AE:0100
 					DISPLAY_VIEWPORT(glbPlayerDir, glbPlayerPosX, glbPlayerPosY);
 				//^13AE:0114
+				
 				CHANGE_VIEWPORT_TO_INVENTORY(1);
 				_4976_4bc8 = 0;
 			}
@@ -28732,7 +28881,7 @@ void SkWinCore::IBMIO_KBOARD_HANDLER() { //#DS=04BF
 	//^01B0:0478
 	//^01B0:0482
 	LOADDS(0x3083);
-	_01b0_00fc();
+	IBMIO_CHECK_KEYBOARD_INPUT();
 	if (glbDMode == 0) {
 		//^01B0:0499
 		// MessageBeep(-1);
@@ -28762,7 +28911,8 @@ void SkWinCore::_01b0_00ce(X16 xx)
 }
 
 //^01B0:00FC
-void SkWinCore::_01b0_00fc()
+// _01b0_00fc renamed IBMIO_CHECK_KEYBOARD_INPUT
+void SkWinCore::IBMIO_CHECK_KEYBOARD_INPUT()
 {
 	//^01B0:00FC
 	ENTER(6);
@@ -29825,8 +29975,8 @@ SkWinCore::SkWinCore()
 	zeroMem(&glbMousePosition, sizeof(glbMousePosition));
 	glbMousePosition.XPos = -1;
 	zeroMem(&_4976_4e9e, sizeof(_4976_4e9e));
-	zeroMem(_4976_4e6c, sizeof(_4976_4e6c));
-	_4976_4ddc = 0;
+	zeroMem(tlbUIClickEvents, sizeof(tlbUIClickEvents));
+	glbTryPushPullObject = 0;
 	_4976_5efa = NULL;
 	zeroMem(&_4976_5dae, sizeof(_4976_5dae));
 	_4976_5bf2 = 0;

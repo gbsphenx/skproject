@@ -1141,7 +1141,7 @@ void SkWinCore::INTERFACE_CHAMPION(Bit16u xx)
 		//^24A5:17C7
 		return;
 	//^24A5:17CA
-	if (_4976_4c3e != 0 || _4976_4ddc != 0 || _4976_4bfe != 0 || glbShowItemStats != 0)
+	if (_4976_4c3e != 0 || glbTryPushPullObject != 0 || _4976_4bfe != 0 || glbShowItemStats != 0)
 		//^24A5:17EF
 		return;
 	//^24A5:17F2
@@ -1194,7 +1194,7 @@ void SkWinCore::INTERFACE_CHAMPION(Bit16u xx)
 			//^24A5:189F
 			if (_4976_3d59 != 0)
 				//^24A5:18A6
-				_29ee_000f();
+				DRAW_ARROW_PANEL();
 			//^24A5:18AB
 			if (bp06 != 0)
 				//^24A5:18B1
@@ -1476,7 +1476,7 @@ _0d3a:
 	glbChampionBonesIndex = player;
 	//^2C1D:0DED
 	U8 bp008e[128];
-	DISPLAY_HINT_TEXT(glbChampionColor[player], QUERY_GDAT_TEXT(GDAT_CATEGORY_INTERFACE_GENERAL, 0x00, bp0d, bp008e));
+	DISPLAY_HINT_TEXT(glbChampionColor[player], QUERY_GDAT_TEXT(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, bp0d, bp008e));
 	//^2C1D:0E17
 	return;
 }
@@ -3776,7 +3776,10 @@ void SkWinCore::PROCESS_PLAYERS_DAMAGE()
 	//^2C1D:1782
 	ENTER(16);
 	//^2C1D:1788
-	Champion *champion = glbChampionSquad;
+	if (SkCodeParam::bChampionImmune)
+		return;
+
+	Champion* champion = glbChampionSquad;
 	for (U16 championIndex = 0; championIndex < glbChampionsCount; championIndex++, champion++) {
 		//^2C1D:1798
 		champion->bodyFlag = glbChampionsBodyFlags[championIndex];

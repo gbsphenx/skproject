@@ -95,8 +95,8 @@ void SkWinCore::_1031_098e() //#DS=4976
 	}
 	//^1031:0A47
 	_4976_4e62 = 0;
-	_4976_4e60 = 0;
-	_4976_4e5e = 0;
+	glbUIClickEventIndex = 0;
+	glbUIClickEventLast = 0;
 	_4976_4df8 = 0xffff;
 	_4976_4e44 = 0xffff;
 	_4976_4e66 = 0;
