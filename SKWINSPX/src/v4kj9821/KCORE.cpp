@@ -1125,18 +1125,14 @@ void SkWinCore::_0759_06db()
 //^0759:072C
 X16 SkWinCore::_0759_072c()
 {
-	//^0759:072C
 	ENTER(0);
-	//^0759:072F
-	return _01b0_051a() CALL_IBMIO;
+	return IBMIO_01b0_051a() CALL_IBMIO;
 }
 //^0759:071B
 void SkWinCore::_0759_071b()
 {
-	//^0759:071B
 	ENTER(0);
-	//^0759:071F
-	_01b0_04e4();
+	UI_READ_KEY_INPUT();
 }
 //^01B0:1ED2
 X16 SkWinCore::_01b0_1ed2()
@@ -6417,7 +6413,7 @@ _0fa6:
 						break;
 					}
 					//^1031:0FBA
-					MouseState bp0e = _4976_4e02[_4976_4ea6];
+					MouseState bp0e = tlbMouseStateRing[_4976_4ea6];
 					//^1031:0FD4
 					_4976_4e00--;
 					_4976_4ea6++;
@@ -6811,23 +6807,21 @@ void SkWinCore::LOAD_NEWMAP(U8 newmap)
 
 
 //^00EB:069A
-void SkWinCore::_00eb_069a(SRECT *prc, i16 yy)
+// _00eb_069a renamed VIDEO_MEM_MOVE
+void SkWinCore::VIDEO_MEM_MOVE(SRECT *prc, i16 yy)
 {
-	//^00EB:069A
 	ENTER(0);
-	//^00EB:069F
 	LOADDS(0x0C48);
 	i16 si = prc->y + yy;
-	while (prc->y +prc->cy -1 >= si) {
+	while (prc->y + prc->cy - 1 >= si) {
 		//^00EB:06B3
 		MOVE_MEMORY(
 			&pbVram[si * 320],
-			&pbVram[(si -yy) * 320],
-			prc->x +prc->cx -1 -prc->x +1
+			&pbVram[(si - yy) * 320],
+			prc->x + prc->cx - 1 -prc->x + 1
 			);
 		//^00EB:06F7
 	}
-	//^00EB:0708
 	return;
 }
 
@@ -6842,7 +6836,7 @@ void SkWinCore::SCROLLBOX_MESSAGE()
 	FIRE_HIDE_MOUSE_CURSOR();
 	SRECT bp08;
 	QUERY_EXPANDED_RECT(RECT_BOTTOM_MESSAGE_3_LINES, &bp08);
-	_00eb_069a(&bp08, _4976_0140) INDIRECT_CALL;
+	VIDEO_MEM_MOVE(&bp08, _4976_0140) INDIRECT_CALL;
 	bp08.y = bp08.y +bp08.cy -1 - _4976_0130 +1;
 	FIRE_BLIT_PICTURE(
 		_4976_5c08,
@@ -7020,13 +7014,11 @@ U16 SkWinCore::_2c1d_0e23(U16 xx)
 
 
 //^443C:08AB
-void SkWinCore::_443c_08ab(i16 *xx, i16 *yy, i16 *zz)
+// _443c_08ab renamed MOUSE_STATE_443c_08ab
+void SkWinCore::MOUSE_STATE_443c_08ab(i16 *xx, i16 *yy, i16 *zz)
 {
-	//^443C:08AB
 	ENTER(0);
-	//^443C:08AE
-	_01b0_0d39(xx, yy, zz, 0) INDIRECT_CALL;
-	//^443C:08CD
+	MOUSE_STATE_01b0_0d39(xx, yy, zz, 0) INDIRECT_CALL;
 	return;
 }
 
@@ -8010,7 +8002,7 @@ void SkWinCore::PLAYER_TESTING_WALL(U16 ww, U16 xx, U16 yy)
 		//^121E:00DA
 		_4976_4c3e = 1;
 		//^121E:00E0
-		_443c_08ab(&_4976_5da0, &_4976_5da2, &_4976_5dae.rc4.cy);
+		MOUSE_STATE_443c_08ab(&_4976_5da0, &_4976_5da2, &_4976_5dae.rc4.cy);
 		//^121E:00F4
 		if ((_4976_5dae.rc4.cy & 2) == 0) {
 			//^121E:00FC
@@ -8694,7 +8686,7 @@ void SkWinCore::_3929_0b20(U16 xx, U32 yy) { // TODO: Unr
 }
 
 //^1031:0D36
-void SkWinCore::_1031_0d36(U16 xx, U16 yy)
+void SkWinCore::_1031_0d36(U16 xx, U16 yy) // yy = keyboard key
 {
 	//^1031:0D36
 	ENTER(0);
@@ -8705,7 +8697,7 @@ void SkWinCore::_1031_0d36(U16 xx, U16 yy)
 	//^1031:0D49
 	if (_4976_4e00 < 7) {
 		//^1031:0D50
-		i16 si = _4976_19a5 +2;
+		i16 si = glbMouseStateRingIndex + 2;
 		//^1031:0D57
 		if (si > 10)
 			//^1031:0D5C
@@ -8715,12 +8707,9 @@ void SkWinCore::_1031_0d36(U16 xx, U16 yy)
 			//^1031:0D66
 			si = 10;
 		//^1031:0D69
-		_4976_19a5 = si;
-		//^1031:0D6E
-		_4976_4e02[_4976_19a5].MouseButton(xx);
-		//^1031:0D7C
-		_4976_4e02[_4976_19a5].MouseX(yy);
-		//^1031:0D8D
+		glbMouseStateRingIndex = si;
+		tlbMouseStateRing[glbMouseStateRingIndex].MouseButton(xx);
+		tlbMouseStateRing[glbMouseStateRingIndex].MouseX(yy);
 		_4976_4e00++;
 	}
 	//^1031:0D91
@@ -8833,7 +8822,7 @@ i16 SkWinCore::_2066_33e7()
 		//^2066:348D
 		while (_476d_05a9() != 0) {
 			//^2066:348F
-			_1031_0d36(32, _476d_050e());
+			_1031_0d36(32, SPECIAL_UI_KEY_TRANSFORMATION());
 			//^2066:349E
 		}
 		//^2066:34A7
@@ -12432,6 +12421,12 @@ void SkWinCore::MessageLoop(bool fBalanceWait, bool fShortWait) {
 #endif
 	skwin.cntMiceIn = 0;
 
+#if defined (__DJGPP__)
+	//printf("Calling poll ");
+	skwin.PollKeyboard();
+#endif
+
+
 	// key event notice
 	if (skwin.cntKeybIn != 0) {
 		(this->*_sys_getvect(0x09))();
@@ -12719,7 +12714,8 @@ void SkWinCore::_1031_0781(Bit16u xx)
 }
 
 //^4726:0383
-void SkWinCore::_4726_0383()
+// _4726_0383 renamed TICK_STEP_CHECK
+void SkWinCore::TICK_STEP_CHECK()
 {
 	//^4726:0383
 	ENTER(0);
@@ -12747,28 +12743,22 @@ void SkWinCore::_4726_0383()
 }
 
 //^01B0:051A
-Bit16u SkWinCore::_01b0_051a() //#DS=04BF
+Bit16u SkWinCore::IBMIO_01b0_051a() //#DS=04BF
 {
-	//^01B0:051A
 	ENTER(0);
-	//^01B0:051E
 	LOADDS(0x3083);
-	//^01B0:0524
 	if (glbDMode != 0 && _04bf_0284 != 0) {
-		//^01B0:0532
-		_4726_0383() INDIRECT_CALL;
+		TICK_STEP_CHECK() INDIRECT_CALL;
 	}
 	//^01B0:0536
-	return (_04bf_1886 != 0) ? 1 : 0;
+	return (glbUIKeyReadCount != 0) ? 1 : 0;
 }
 
 //^476D:05A9
 Bit16u SkWinCore::_476d_05a9()
 {
-	//^476D:05A9
 	ENTER(0);
-	//^476D:05AC
-	return _01b0_051a() CALL_IBMIO;
+	return IBMIO_01b0_051a() CALL_IBMIO;
 }
 
 //^476D:04E8
@@ -12782,41 +12772,43 @@ Bit16u SkWinCore::_476d_04af(Bit16u xx) { // TODO: Unr
 }
 
 //^01B0:04E4
-X16 SkWinCore::_01b0_04e4() //#DS=04BF
+// _01b0_04e4 renamed UI_READ_KEY_INPUT
+X16 SkWinCore::UI_READ_KEY_INPUT() //#DS=04BF
 {
 	//^01B0:04E4
 	ENTER(0);
 	//^01B0:04E8
 	LOADDS(0x3083);
-	while (_04bf_1886 == 0);
+	while (glbUIKeyReadCount == 0);
 	//^01B0:04F5
-	X16 si = _04bf_188e[_04bf_1864];
+	X16 si = tlbUIKeyInput[_04bf_1864];
 	_04bf_1864 = (_04bf_1864 +1) % 10;
-	_04bf_1886--;
+	glbUIKeyReadCount--;
 	return si;
 }
 
 //^476D:050E
-Bit16u SkWinCore::_476d_050e()
+// _476d_050e renamed SPECIAL_UI_KEY_TRANSFORMATION
+Bit16u SkWinCore::SPECIAL_UI_KEY_TRANSFORMATION()
 {
 	//^476D:050E
 	ENTER(0);
 	//^476D:0513
-	X16 si = _01b0_04e4() CALL_IBMIO;
+	X16 si = UI_READ_KEY_INPUT() CALL_IBMIO;
 	X16 di = si;
 	switch (di) {
-	case 0x1048://^0534
-		si = 0x4c; break;
-	case 0x1050://^0539
-		si = 0x50; break;
-	case 0x104B://^053E
-		si = 0x4b; break;
-	case 0x104D://^0543
-		si = 0x4d; break;
-	case 0x124B://^0548
-		si = 0x4f; break;
-	case 0x124D://^054D
-		si = 0x51; break;
+		case 0x1048://^0534
+			si = 0x4C; break;	// numpad 5 => forward
+		case 0x1050://^0539
+			si = 0x50; break;	// numpad 2 => backward
+		case 0x104B://^053E
+			si = 0x4B; break;	// numpad 4 => turn left
+		case 0x104D://^0543
+			si = 0x4D; break;	// numpad 6 => turn right
+		case 0x124B://^0548
+			si = 0x4F; break;	// numpad 1 => move left
+		case 0x124D://^054D
+			si = 0x51; break;	// numpad 3 => move right
 	}
 	//^476D:0550
 	return si;
@@ -13901,7 +13893,8 @@ SRECT *SkWinCore::UNION_RECT(SRECT *rc1, const SRECT *rc2, i16 *offx, i16 *offy)
 }
 
 //^01B0:0D39
-void SkWinCore::_01b0_0d39(i16 *xx, i16 *yy, i16 *zz, Bit16u ww) //#DS=04BF
+// _01b0_0d39 renamed MOUSE_STATE_01b0_0d39
+void SkWinCore::MOUSE_STATE_01b0_0d39(i16 *xx, i16 *yy, i16 *zz, Bit16u ww) //#DS=04BF
 {
 	//^01B0:0D39
 	ENTER(0);
@@ -14106,7 +14099,7 @@ void SkWinCore::CHANGE_VIEWPORT_TO_INVENTORY(Bit16u xx) //#DS=4976
 	if (glbPaletteIRGBLoaded == 0) {
 		//^44C8:1C12
 		i16 bp02, bp04, bp06;
-		//_01b0_0d39(&bp02, &bp04, &bp06, 1) CALL_IBMIO;
+		MOUSE_STATE_01b0_0d39(&bp02, &bp04, &bp06, 1) CALL_IBMIO;
 		//^44C8:1C2E
 		if (bp0e.x +bp0e.cx -1 < bp02 || bp0e.y +bp0e.cy -1 < bp04 || bp04 +bp06 < bp0e.y) {
 			//^44C8:1C51
@@ -15996,11 +15989,11 @@ void __DECLSPEC_NORETURN_ SkWinCore::RAISE_SYSERR(Bit16u syserr)
 		//^0CCD:0070
 		if (_4976_474a != 0) {
 			//^0CCD:0077
-			_476d_050e();
+			SPECIAL_UI_KEY_TRANSFORMATION();
 		}
 		else {
 			//^0CCD:007E
-			SLEEP_SEVERAL_TIME(0x012c);
+			SLEEP_SEVERAL_TIME(0x012C);
 		}
 		//^0CCD:0087
 		SK_PREPARE_EXIT();
@@ -17477,7 +17470,7 @@ Bit8u SkWinCore::_0aaf_0067(Bit8u cls2)
 			}
 		}
 		//^0AAF:0179
-		if (_4976_4dfc == 0x00ff && _476d_05a9() != 0 && _476d_050e() == 0x001c) {
+		if (_4976_4dfc == 0x00ff && _476d_05a9() != 0 && SPECIAL_UI_KEY_TRANSFORMATION() == 0x001C) {
 			//^0AAF:0194
 			_1031_0781(0x00db);
 		}
@@ -21419,7 +21412,7 @@ void SkWinCore::CHANCE_TABLE_OPERATION()
 	//^32CB:274A
 	i16 bp0a;
 	i16 bp0c;
-	_443c_08ab(&bp0a, &bp0c, &_4976_5dae.rc4.cy);
+	MOUSE_STATE_443c_08ab(&bp0a, &bp0c, &_4976_5dae.rc4.cy);
 	i16 bp02 = bp0a - _4976_00e8;
 	i16 di = bp0c - _4976_00ea;
 	if (bp02 < 0 || di < 0 || bp02 >= _4976_00f6 || glbScreenHeight - _4976_00ea <= di)
@@ -24847,7 +24840,7 @@ void SkWinCore::_4726_03b2()
 	_00eb_0bc4();
 	IBMIO_SELECT_PALETTE_SET(0);
 	_01b0_2b1b();
-	glbTickStepValue = _01b0_0e80(&SkWinCore::_4726_0383);
+	glbTickStepValue = _01b0_0e80(&SkWinCore::TICK_STEP_CHECK);
 	//^4726:0446
 	return;
 }
@@ -26433,7 +26426,7 @@ void SkWinCore::SHOW_MENU_SCREEN()
 		goto _0180;
 		//^2481:0171
 _0171:
-		_1031_0d36(0x20, _476d_050e());
+		_1031_0d36(0x20, SPECIAL_UI_KEY_TRANSFORMATION());
 _0180:
 		do {
 			MessageLoop(true); // main menu
@@ -28531,7 +28524,7 @@ _00a4:
 		if (false) {
 			//^13AE:01F7
 _01f7:
-			_1031_0d36(0x20, _476d_050e());
+			_1031_0d36(0x20, SPECIAL_UI_KEY_TRANSFORMATION());
 		}
 		MessageLoop(true); // in game
 		do {
@@ -28732,6 +28725,15 @@ void SkWinCore::IBMIO_PRINT_ERROR(const U8 *str) //#DS=04BF
 	__asm mov ah,0x00
 	__asm mov al,0x13
 	__asm int 0x10
+	// SPX : this would set DOS video mode x13
+	/*
+	{
+		union REGS regs;
+		regs.h.ah = 0x00;
+		regs.h.al = 0x13;  // Mode 0x13: 320x200, 256 colors
+		int86(0x10, &regs, &regs);
+	}*/
+
 	//^01B0:2C2C
 	U8 bp01;
 	while ((bp01 = *(str++)) != 0) {
@@ -28856,7 +28858,7 @@ void SkWinCore::INIT_KBOARD_HOOK() //#DS=04BF
 	//^01B0:0426
 	ENTER(0);
 	//^01B0:042B
-	_04bf_1886 = 0;
+	glbUIKeyReadCount = 0;
 	_04bf_1864 = 0;
 	_04bf_185a = 0;
 	_04bf_0e7e = 0;
@@ -28899,11 +28901,11 @@ void SkWinCore::_01b0_00ce(X16 xx)
 	//^01B0:00CE
 	ENTER(0);
 	//^01B0:00D1
-	if (_04bf_1886 < 10) {
+	if (glbUIKeyReadCount < 10) {
 		//^01B0:00DA
-		_04bf_188e[_04bf_185a] = xx;
+		tlbUIKeyInput[_04bf_185a] = xx;
 		_04bf_185a = (_04bf_185a +1) % 10;
-		_04bf_1886++;
+		glbUIKeyReadCount++;
 	}
 	//^01B0:00F9
 	//^01B0:00FA
@@ -29939,7 +29941,7 @@ SkWinCore::SkWinCore()
 	zeroMem(&_04bf_1852, sizeof(_04bf_1852));
 	_04bf_17a8 = 0;
 	glbMouseCursorVisible = 0;
-	_04bf_1886 = 0; //?
+	glbUIKeyReadCount = 0; //?
 	glbDMode = 0;
 	_04bf_0284 = 0;
 	_04bf_0280 = 0;
@@ -29953,7 +29955,7 @@ SkWinCore::SkWinCore()
 	sndSoundBufferSize = 0;
 	sndSoundBuffer = NULL;
 	_04bf_17e8 = 0;
-	_4976_19a5 = 10;
+	glbMouseStateRingIndex = 10;
 	glbCounterZero_0517 = 0;
 	glbSomeCounter_0519 = 0;
 	_01b0_13c6 = 0;
@@ -30022,7 +30024,7 @@ SkWinCore::SkWinCore()
 	zeroMem(_04bf_0e80, sizeof(_04bf_0e80));
 	_04bf_17a2 = 0;
 	_4976_5da4 = NULL;
-	zeroMem(_4976_4e02, sizeof(_4976_4e02));
+	zeroMem(tlbMouseStateRing, sizeof(tlbMouseStateRing));
 	zeroMem(_4976_4d1a, sizeof(_4976_4d1a));
 	glbSquadInterfaceMapGfxSet = -1;
 	glbMapGraphicsSet = -1;

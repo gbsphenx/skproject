@@ -111,7 +111,7 @@ protected:
 
 	X16	_01b0_3378;
 	X16	_4976_532c;
-	MouseState _4976_4e02[11];
+	MouseState tlbMouseStateRing[11];	// _4976_4e02
 	sk0e80 _04bf_0e80[4];
 	U8	_4976_5e72[18];
 	void	(SkWinCore::*_01b0_0453)();
@@ -204,13 +204,13 @@ protected:
 	Bit16u	glbMouseButtonState;		// (_04bf_17ee) mouse push state (latest); bit0=left, bit1=right
 	Bit16u	_04bf_1850;
 	SRECT	_04bf_1852;
-	i16		_04bf_185a;
+	i16		_04bf_185a;		// _04bf_185a key roundrobin index
 	i16 _04bf_185c;
 	i16	_04bf_185e;
 	i16 _04bf_1860;
 	X16 _04bf_1862;
-	X16		_04bf_1864;		// key read index (ringed buffer)
-	i16		_04bf_1886;		// key read avail count
+	X16		_04bf_1864;		// _04bf_1864 key read index (ringed buffer)
+	i16		glbUIKeyReadCount;		// _04bf_1886 / key read avail count
 	X16	_04bf_18a4;
 	X16	_04bf_18a6;
 	X16 _04bf_18a8;
@@ -281,7 +281,7 @@ protected:
 	i16		glbCurrentMapIndex;		// (_4976_0c5a) current map number (is not a player's map index)
 	U16		glbTargetTypeMoveObject;		// candidate target to move table // 0=Fwd, 1=FwdR, 2=BackR, 3=Back, 4=BackL, 5=FwdL, 6=Noop
 
-	i16	_4976_19a5;
+	i16		glbMouseStateRingIndex;			// _4976_19a5 mouse state ring index
 	Bit16u	_4976_19a7;
 	Bit32u	_4976_19a9;
 	Bit16u	_4976_19ad;
@@ -473,8 +473,8 @@ protected:
 	Bit16u	_4976_4e44;		// rectno?
 	Bit16u	_4976_4e46;
 	Bit16u	_4976_4e48;
-	Bit16u	_4976_4e4a;
-	Bit16u	_4976_4e4c;
+	Bit16u	glbMouseInfoX;	// _4976_4e4a
+	Bit16u	glbMouseInfoY;	// _4976_4e4c
 	MousePosition	glbMousePosition; // (_4976_4e4e)
 	Bit16u	_4976_4e5c;
 	Bit16u	glbUIClickEventLast;	// _4976_4e5e (ring 0 to 2) last index of click event
@@ -483,7 +483,7 @@ protected:
 	Bit16u	_4976_4e64;
 	Bit16u	_4976_4e66;
 	Bit16u	_4976_4e68;
-	Bit16u	_4976_4e6a;
+	Bit16u	glbMouseInfoButton;	// _4976_4e6a
 	MousePosition	tlbUIClickEvents[3];	// _4976_4e6c click event table
 	Bit8u	*_4976_4e96;
 	Bit16u	_4976_4e9a;
@@ -1345,7 +1345,7 @@ protected:
 	void _2405_00e7();
 	ObjectID REMOVE_OBJECT_FROM_HAND();
 	void DRAW_ITEM_IN_HAND(LeaderPossession *ref);
-	void _00eb_069a(SRECT *prc, i16 yy);
+	void VIDEO_MEM_MOVE(SRECT *prc, i16 yy);	// _00eb_069a
 	void SCROLLBOX_MESSAGE(); // _44c8_1c99
 	void _3929_07e1(U16 xx, U16 yy);
 	void _3929_0826();
@@ -1410,7 +1410,7 @@ protected:
 	void SET_SPELLING_CHAMPION(Bit16u iChampionNo);
 	void IBMIO_MOUSE_SET_CAPTURE();
 	void FIRE_MOUSE_SET_CAPTURE();
-	void _443c_08ab(i16 *xx, i16 *yy, i16 *zz);
+	void MOUSE_STATE_443c_08ab(i16 *xx, i16 *yy, i16 *zz);	// _443c_08ab
 
 	//--- NEW FUNCTIONS -------------------------------------
 	U16 QUERY_GDAT_POTION_SPELL_TYPE_FROM_RECORD(ObjectID rl);
@@ -1586,15 +1586,15 @@ protected:
 	Bit16u _476d_04ed(Bit16u xx);
 	sk0d9e *_1031_06b3(sk1891 *ref, X16 xx);
 	void _1031_0781(Bit16u xx);
-	void _4726_0383();
-	Bit16u _01b0_051a();
+	void TICK_STEP_CHECK();	// _4726_0383
+	Bit16u IBMIO_01b0_051a();	// _01b0_051a
 	Bit16u _476d_05a9();
 
 	Bit8u _476d_04e8(Bit16u xx); // TODO: Unr
 	Bit16u _476d_04af(Bit16u xx); // TODO: Unr
 
-	X16 _01b0_04e4();
-	Bit16u _476d_050e();
+	X16 UI_READ_KEY_INPUT(); // _01b0_04e4
+	Bit16u SPECIAL_UI_KEY_TRANSFORMATION();	// _476d_050e
 	void _1031_06a5();
 	Bit16u LOAD_NEW_DUNGEON();
 	Bit16u ORIGINAL__LOAD_NEW_DUNGEON();
@@ -1648,7 +1648,7 @@ protected:
 	SRECT *UNION_RECT(SRECT *rc1, const SRECT *rc2, i16 *offx, i16 *offy);
 	SRECT *QUERY_BLIT_RECT(Bit8u *buff, SRECT *rect, Bit16u rectno, i16 *yourcx, i16 *yourcy, i16 ww);
 	void DRAW_GAMELOAD_DIALOGUE_TO_SCREEN(Bit8u *buffsrc, Bit16u rectno, i16 colorkey, Bit8u localpal[16]);
-	void _01b0_0d39(i16 *xx, i16 *yy, i16 *zz, Bit16u ww);
+	void MOUSE_STATE_01b0_0d39(i16 *xx, i16 *yy, i16 *zz, Bit16u ww);	// _01b0_0d39
 	void MOVE_MEMORY(const void *buffSrc, void *buffDst, Bit16u size);
 	void MOVE_MEMORY_WITH_DELTA(Bit16u offSrc, Bit16u offDst, Bit16u size);
 	void COPY_MEMORY_WITH_DELTA_AND_TRANSPARENT(Bit16u offSrc, Bit16u offDst, Bit16u size, Bit8u colorkey);

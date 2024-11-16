@@ -526,11 +526,8 @@ void SkWinCore::IBMIO_MOUSE_SET_CAPTURE() //#DS=04BF
 //^443C:03F4
 void SkWinCore::FIRE_MOUSE_SET_CAPTURE()
 {
-	//^443C:03F4
 	ENTER(0);
-	//^443C:03F7
 	IBMIO_MOUSE_SET_CAPTURE() INDIRECT_CALL;
-	//^443C:03FF
 	return;
 }
 
@@ -547,7 +544,7 @@ void SkWinCore::CLICK_INVENTORY_EYE()
 	//^24A5:1755
 	glbShowItemStats = 1;
 	//^24A5:175B
-	_443c_08ab(&_4976_5da0, &_4976_5da2, &_4976_5dae.rc4.cy);
+	MOUSE_STATE_443c_08ab(&_4976_5da0, &_4976_5da2, &_4976_5dae.rc4.cy);
 	//^24A5:176F
 	if ((_4976_5dae.rc4.cy & 2) == 0) {
 		//^24A5:1777

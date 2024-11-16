@@ -20,7 +20,7 @@ void SkWinCore::_1031_0b7e() //#DS=4976
 		//^1031:0B88
 		_4976_4e9a = 0;
 		//^1031:0B8E
-		FIRE_QUEUE_MOUSE_EVENT(_4976_4e4a, _4976_4e4c, _4976_4e6a);
+		FIRE_QUEUE_MOUSE_EVENT(glbMouseInfoX, glbMouseInfoY, glbMouseInfoButton); // xx, yy, button
 	}
 	//^1031:0BA2
 	return;
@@ -36,62 +36,46 @@ void SkWinCore::_1031_098e() //#DS=4976
 	//^1031:0993
 	while (_476d_05a9() != 0)
 		//^1031:0995
-		_476d_050e();
+		SPECIAL_UI_KEY_TRANSFORMATION();
 	//^1031:09A3
 	_4976_19a7 = 1;
 	//^1031:09A9
-	i16 di = _4976_4ea6;
-	//^1031:09AD
-	i16 si = _4976_19a5 +1;
-	//^1031:09B3
-	if (si > 10) {
-		//^1031:09B8
-		si = 0;
+	i16 iRingIndex1 = _4976_4ea6;	// di
+	i16 iRingIndex2 = glbMouseStateRingIndex + 1;	// si
+	if (iRingIndex2 > 10) {
+		iRingIndex2 = 0;
 	}
 	//^1031:09BA
-	if (si != di) {
-		//^1031:09C1
-		si = di;
+	if (iRingIndex2 != iRingIndex1) {
+		iRingIndex2 = iRingIndex1;
 		_4976_4e00 = 0;
 
 		while (true) {
 			//^1031:09C9
 			if (false
-				|| _4976_4e02[si].MouseButton() == 0x0040
-				|| _4976_4e02[si].MouseButton() == 0x0060
-				|| _4976_4e02[si].MouseButton() == 0x0004
+				|| tlbMouseStateRing[iRingIndex2].MouseButton() == 0x0040
+				|| tlbMouseStateRing[iRingIndex2].MouseButton() == 0x0060
+				|| tlbMouseStateRing[iRingIndex2].MouseButton() == 0x0004
 			) {
 				//^1031:09F9
-				_4976_4e02[di] = _4976_4e02[si];
-				//^1031:0A19
-				di++;
-				//^1031:0A1C
-				if (di > 10)
-					//^1031:0A21
-					di = 0;
+				tlbMouseStateRing[iRingIndex1] = tlbMouseStateRing[iRingIndex2];
+				iRingIndex1++;
+				if (iRingIndex1 > 10)
+					iRingIndex1 = 0;
 				//^1031:0A23
 				_4976_4e00++;
 			}
-			//^1031:0A27
-			if (si == _4976_19a5)
-				//^1031:0A2B
+			if (iRingIndex2 == glbMouseStateRingIndex)
 				break;
-			//^1031:0A2D
-			si++;
-			//^1031:0A2E
-			if (si > 10)
-				//^1031:0A35
-				si = 0;
-			//^1031:0A37
+			iRingIndex2++;
+			if (iRingIndex2 > 10)
+				iRingIndex2 = 0;
 			continue;
 		}
-		//^1031:0A39
-		if (di-- == 0) {
-			//^1031:0A40
-			di = 10;
+		if (iRingIndex1-- == 0) {
+			iRingIndex1 = 10;
 		}
-		//^1031:0A43
-		_4976_19a5 = di;
+		glbMouseStateRingIndex = iRingIndex1;
 	}
 	//^1031:0A47
 	_4976_4e62 = 0;
@@ -127,9 +111,9 @@ void SkWinCore::FIRE_QUEUE_MOUSE_EVENT(Bit16u xx, Bit16u yy, Bit16u button)
 		//^1031:0BBB
 		_4976_4e9a = 1;
 		//^1031:0BC1
-		_4976_4e4a = xx;
-		_4976_4e4c = yy;
-		_4976_4e6a = di;
+		glbMouseInfoX = xx;
+		glbMouseInfoY = yy;
+		glbMouseInfoButton = di;
 		//^1031:0BD1
 		return;
 	}
@@ -138,11 +122,9 @@ void SkWinCore::FIRE_QUEUE_MOUSE_EVENT(Bit16u xx, Bit16u yy, Bit16u button)
 	//^1031:0BF2
 	_4976_19af = 0;
 	//^1031:0BF8
-	i16 si = _4976_19a5 +1;
-	//^1031:0BFE
-	if (si > 10) {
-		//^1031:0C03
-		si -= 11;
+	i16 iRingIndex = glbMouseStateRingIndex + 1;	// si
+	if (iRingIndex > 10) {
+		iRingIndex -= 11;
 	}
 	//^1031:0C06
 	if (_4976_4e00 >= cx) {
@@ -155,14 +137,10 @@ void SkWinCore::FIRE_QUEUE_MOUSE_EVENT(Bit16u xx, Bit16u yy, Bit16u button)
 	else {
 		//^1031:0C1A
 		_4976_4e00++;
-		//^1031:0C1E
-		_4976_19a5 = si;
-		//^1031:0C23
-		_4976_4e02[si].MouseButton(di);
-		//^1031:0C2E
-		_4976_4e02[si].MouseX(xx);
-		//^1031:0C3E
-		_4976_4e02[si].MouseY(yy);
+		glbMouseStateRingIndex = iRingIndex;
+		tlbMouseStateRing[iRingIndex].MouseButton(di);
+		tlbMouseStateRing[iRingIndex].MouseX(xx);
+		tlbMouseStateRing[iRingIndex].MouseY(yy);
 	}
 	//^1031:0C4E
 	_4976_19a7 = 0;

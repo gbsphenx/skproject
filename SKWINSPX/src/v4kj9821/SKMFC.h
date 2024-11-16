@@ -70,22 +70,6 @@ public:
 		return (BYTE)lang;
 	}
 
-/*
-	BYTE GetGDATSpecificPlatform() {
-		BYTE iSpecificPlatform = 0;
-		if (gdat_vers > 0)
-			iSpecificPlatform = 1;	// Is PC9821 as no other is handled by SkWin
-		return iSpecificPlatform;
-	}
-
-	BYTE GetGDATSpecificVersion() {
-		BYTE iSpecificVersion = 0;
-		iSpecificVersion = (BYTE) gdat_vers;	// Works from 0 to 4
-		if (gdat_vers == 5 || gdat_vers == 6)
-			iSpecificVersion = 5;
-		return iSpecificVersion;
-	}
-*/
 
 protected:
 	void processMinput(UINT nFlags, CPoint point);
