@@ -11,6 +11,11 @@ class SkWinCore;
 #include <SDL2/SDL.h>
 #endif // __LINUX__
 
+#ifndef __LINUX__
+typedef signed int SDL_Keycode;
+#endif
+
+
 class CSkWinSDL2 : public CSkWin
 {
 public:
@@ -42,6 +47,9 @@ public:
 	void VersionMessage();
 	void StartMessage();
 	void ExitMessage();
+
+	void processMinput(U8 button, bool pressed, int x, int y);
+	void processKinput(SDL_Keycode nChar, bool press);
 
 	void InitVideo();
 	void ResetVideo();

@@ -36,11 +36,12 @@
 #define DLV_CAI 0
 #define DLV_TWEET 0
 #define DLV_MOVE 0	// Player moves
-#define DLV_EUI 0	// Event from UI code
+#define DLV_EUI 1	// Event from UI code
 #define DLV_MOUSE 0	// Mouse
 #define DLV_CCM 0	// Creature command
 #define DLV_FSM 0	// Find special marker (for x teleport and void fall)
 #define DLV_XP	1	// Display info about XP gain
+#define DLV_DBG_INIT	1	// Display steps from the init
 #define DLV_DBG_GETPIC 0
 #define DLV_DBG_CELL 0
 #define DLV_DBG_EXTRACT 0

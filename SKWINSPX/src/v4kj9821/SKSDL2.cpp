@@ -19,6 +19,15 @@
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 200
 
+#define VRAM_SCREEN_WIDTH 320
+#define VRAM_SCREEN_HEIGHT 200
+
+#define SCREEN_SCALE 4
+#define SCREEN_RATIO_Y	1.2f
+
+#define SCREEN_WIDTH_FULL	(int)(SCREEN_WIDTH*SCREEN_SCALE)
+#define SCREEN_HEIGHT_FULL	(int)(SCREEN_HEIGHT*SCREEN_SCALE*SCREEN_RATIO_Y)
+
 
 CSkWinSDL2::CSkWinSDL2()
 {
@@ -51,8 +60,197 @@ void CSkWinSDL2::OnPaint()
 	;
 }
 
+/*
+
+typedef struct SDL_Keysym {
+    SDL_Scancode scancode; // Hardware-independent scancode
+    SDL_Keycode sym;       // Keycode representing the key
+    Uint16 mod;            // Current key modifiers (e.g., Shift, Ctrl)
+    Uint32 unused;         // Reserved for future use
+} SDL_Keysym;
+*/
+
 bool CSkWinSDL2::ML() {
+#if defined(__LINUX__) && defined(__SDL__)
+	while (true) {
+		SDL_Event event;
+		SDL_PumpEvents();
+		if (SDL_PollEvent(&event)) {
+			switch (event.type) {
+				case SDL_KEYDOWN:
+					processKinput(event.key.keysym.sym, true);
+					break;
+				case SDL_KEYUP:
+					processKinput(event.key.keysym.sym, false);
+					break;
+				case SDL_MOUSEMOTION:
+					processMinput(-1, false, event.motion.x, event.motion.y);
+					break;
+				case SDL_MOUSEBUTTONDOWN:
+					processMinput(event.button.button, true, event.button.x, event.button.y);
+					break;
+				case SDL_MOUSEBUTTONUP:
+					processMinput(event.button.button, false, event.button.x, event.button.y);
+					break;
+				case SDL_QUIT:
+					return false;
+				default:
+					break;
+			}
+		}
+		else {
+			//paint(pScreen);
+			//SDL_Flip(pScreen);
+			this->Sleep(1);
+			break;
+		}
+	}
+#endif
 	return true;
+}
+
+// -- * -- * --
+void CSkWinSDL2::processMinput(U8 button, bool pressed, int x, int y)
+{
+#if defined(__LINUX__) && defined(__SDL__)
+	x /= sxfact;
+	y /= sxfact;
+/*
+	if (pressed) {
+		switch (button) {
+			case SDL_BUTTON_LEFT: curMiceState |= SDL_BUTTON_LMASK; break;
+			case SDL_BUTTON_RIGHT: curMiceState |= SDL_BUTTON_RMASK; break;
+		}
+	}
+	else {
+		switch (button) {
+			case SDL_BUTTON_LEFT: curMiceState &= ~SDL_BUTTON_LMASK; break;
+			case SDL_BUTTON_RIGHT: curMiceState &= ~SDL_BUTTON_RMASK; break;
+		}
+	}
+
+	CSkMinput *p = allocMinput();
+	if (p != NULL) {
+		p->btn = 0
+			| (((curMiceState & SDL_BUTTON_LMASK) != 0) ? 1 : 0)
+			| (((curMiceState & SDL_BUTTON_RMASK) != 0) ? 2 : 0)
+			;
+		p->x = (U16)x;
+		p->y = (U16)y;
+	}
+	*/
+#endif
+}
+// -- * -- * --
+void CSkWinSDL2::processKinput(SDL_Keycode nChar, bool press)
+{
+#if defined(__LINUX__) && defined(__SDL__)
+	/*
+	if (press) {
+		if (nChar == SDLK_LCTRL) pressCtrl |= 1;
+		if (nChar == SDLK_RCTRL) pressCtrl |= 2;
+	}
+	else {
+		if (nChar == SDLK_LCTRL) pressCtrl &= ~1;
+		if (nChar == SDLK_RCTRL) pressCtrl &= ~2;
+	}
+*/
+	if (press && nChar == SDLK_F1) {
+		switch (sxfact) {
+			case 1: sxfact = 2; break;
+			case 2: sxfact = 3; break;
+			case 3: sxfact = 4; break;
+			default: sxfact = 1; break;
+		}
+		//CreateSurface();
+		return;
+	}
+	else if (press && nChar == SDLK_F2) {
+		// make slow
+		switch (spfact) {
+			case 0: case 1: case 2: case 3: case 4:
+				spfact++;
+				//UpdateTitle();
+				break;
+		}
+		return;
+	}
+	else if (press && nChar == SDLK_F3) {
+		// make fast
+		switch (spfact) {
+			case 1: case 2: case 3: case 4: case 5:
+				spfact--;
+				//UpdateTitle();
+				break;
+		}
+		return;
+	}
+
+	CSkKinput *p = allocKinput();
+	if (p != NULL) {
+		U8 v = 0;
+		switch (nChar) {
+		case SDLK_ESCAPE: v = 1; break;
+		case SDLK_1: v = 2; break;
+		case SDLK_2: v = 3; break;
+		case SDLK_3: v = 4; break;
+		case SDLK_4: v = 5; break;
+		case SDLK_5: v = 6; break;
+		case SDLK_6: v = 7; break;
+		case SDLK_7: v = 8; break;
+		case SDLK_8: v = 9; break;
+		case SDLK_9: v = 10; break;
+
+		case SDLK_BACKSPACE: v = 14; break;
+		case SDLK_TAB: v = 15; break;
+
+		case SDLK_RETURN: v = 28; break;
+
+		case SDLK_KP_7: v = 71; break;
+		case SDLK_KP_8: v = 72; break;
+		case SDLK_KP_9: v = 73; break;
+		case SDLK_KP_4: v = 75; break;
+		case SDLK_KP_5: v = 76; break;
+		case SDLK_KP_6: v = 77; break;
+		case SDLK_KP_1: v = 79; break;
+		case SDLK_KP_2: v = 80; break;
+		case SDLK_KP_3: v = 81; break;
+
+		case SDLK_q: v = 16; break;
+		case SDLK_w: v = 17; break;
+		case SDLK_e: v = 18; break;
+		case SDLK_r: v = 19; break;
+		case SDLK_t: v = 20; break;
+		case SDLK_y: v = 21; break;
+		case SDLK_u: v = 22; break;
+		case SDLK_i: v = 23; break;
+		case SDLK_o: v = 24; break;
+		case SDLK_p: v = 25; break;
+
+		case SDLK_a: v = 30; break;
+		case SDLK_s: v = 31; break;
+		case SDLK_d: v = 32; break;
+		case SDLK_f: v = 33; break;
+		case SDLK_g: v = 34; break;
+		case SDLK_h: v = 35; break;
+		case SDLK_j: v = 36; break;
+		case SDLK_k: v = 37; break;
+		case SDLK_l: v = 38; break;
+
+		case SDLK_z: v = 44; break;
+		case SDLK_x: v = 45; break;
+		case SDLK_c: v = 46; break;
+		case SDLK_v: v = 47; break;
+		case SDLK_b: v = 48; break;
+		case SDLK_n: v = 49; break;
+		case SDLK_m: v = 50; break;
+
+		case SDLK_SPACE: v = 57; break;
+		}
+		p->raw = (press) ? (v) : (v | 0x80);
+	}
+
+#endif
 }
 
 void CSkWinSDL2::ProcessArgs(int argc, char** argv)
@@ -216,46 +414,84 @@ void CSkWinSDL2::ShowMessage(const char *psz) {
 	;
 }
 
+#ifndef __LINUX__
+	#define SDL_SetRenderDrawColor(Z, R, G, B, A) ;
+	#define SDL_RenderClear(Z) ;
+	#define SDL_RenderDrawPoint(Z, X, Y) ;
+	#define SDL_RenderPresent(Z) ;
+#endif
+
+
 void CSkWinSDL2::UpdateRect(i16 x, i16 y, i16 cx, i16 cy)
 {
 	printf("CSkWinSDL2::UpdateRect\n");
-#if defined(__LINUX__) && defined (__SDL__)
     
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
-/*
-    // Set each pixel to a random color
-    for (int x = 0; x < 640; x++) {
-        for (int y = 0; y < 480; y++) {
-            // Generate random RGB values
-            Uint8 r = std::rand() % 256;
-            Uint8 g = std::rand() % 256;
-            Uint8 b = std::rand() % 256;
 
-            // Set the color and draw the pixel
-            SDL_SetRenderDrawColor(renderer, r, g, b, 255);
-            SDL_RenderDrawPoint(renderer, x, y);
-        }
-    }
-*/
 	//--- convert pixel screen to RGB
-	Uint8 r = 0;
-	Uint8 g = 0;
-	Uint8 b = 0;
+	U8 r = 0;
+	U8 g = 0;
+	U8 b = 0;
 	int iy = 0;
 	int ix = 0;
-    for (iy = 0; iy < SCREEN_HEIGHT; ++iy) {
-        for (ix = 0; ix < SCREEN_WIDTH; ++ix) {
+	/// SCALE 1-1
+	/*
+    for (iy = 0; iy < SCREEN_HEIGHT; iy++) {
+        for (ix = 0; ix < SCREEN_WIDTH; ix++) {
 			
 			U8 iPalID = vram[iy * SCREEN_WIDTH + ix];  // Copy pixel data
-			r = g = b = iPalID; // greyscale
+			r = g = b = iPalID*4; // greyscale
+			r = glbPaletteRGB[iPalID][0]*4;
+			g = glbPaletteRGB[iPalID][1]*4;
+			b = glbPaletteRGB[iPalID][2]*4;
 			SDL_SetRenderDrawColor(renderer, r, g, b, 255);
-			SDL_RenderDrawPoint(renderer, x, y);
+			SDL_RenderDrawPoint(renderer, ix, iy);
         }
+    }
+	*/
+	int vy = 0;	// vram y	(1-200)
+	int vx = 0;	// vram x	(1-320)
+
+	int lx = 0;
+	int ly = 0;
+
+	int rx = 0;	// render x (1-320*SCALE)
+	int ry = 0;	// render y (1-200*SCALE*RATIO)
+
+	ry = 0;
+
+	int iExtraPixelsY = (int)(SCREEN_HEIGHT*SCREEN_SCALE*SCREEN_RATIO_Y) - (int)(SCREEN_HEIGHT*SCREEN_SCALE);
+	int iExtraStep = (int)(((int)(SCREEN_HEIGHT*SCREEN_SCALE)) / iExtraPixelsY);
+	//printf("SCREEN %d * %d / EXTRA = %d\n", SCREEN_WIDTH_FULL, SCREEN_HEIGHT_FULL, iExtraStep);
+
+    for (vy = 0; vy < VRAM_SCREEN_HEIGHT; vy++) {
+		for (ly = 0; ly < SCREEN_SCALE; ly++) {
+			int iExtraLine = 0;
+			if ((ry%iExtraStep) == 0) {
+				iExtraLine = 1;
+			}
+			for (; iExtraLine >= 0; iExtraLine--) {
+				rx = 0;
+				for (vx = 0; vx < VRAM_SCREEN_WIDTH; vx++) {
+					U8 iPalID = vram[vy * VRAM_SCREEN_WIDTH + vx];  // Copy pixel data
+					r = g = b = iPalID*4; // greyscale
+					r = glbPaletteRGB[iPalID][0]*4;
+					g = glbPaletteRGB[iPalID][1]*4;
+					b = glbPaletteRGB[iPalID][2]*4;
+
+					for (lx = 0; lx < SCREEN_SCALE; lx++) {
+						SDL_SetRenderDrawColor(renderer, r, g, b, 255);
+						SDL_RenderDrawPoint(renderer, rx, ry);
+						rx++;
+					}
+				}
+				ry++;
+			}
+		}
     }
 
     SDL_RenderPresent(renderer);
-#endif // __LINUX__
 }
 
 bool CSkWinSDL2::IsAvail() 
@@ -293,7 +529,7 @@ void CSkWinSDL2::GetMousePosButtons(U16 *x, U16 *y, U16 *buttons)
 	if (iSDLButtons & SDL_BUTTON(SDL_BUTTON_MIDDLE))
 		*buttons += 4; // middle
 #endif // __LINUX__
-	SkD((DLV_MOUSE,"CSkWinSDL2::GetMousePosButtons: SDL M(%3d,%3d) Btn:(%2d)\n", iSDLMouseX, iSDLMouseY, iSDLButtons));
+	//SkD((DLV_MOUSE,"CSkWinSDL2::GetMousePosButtons: SDL M(%3d,%3d) Btn:(%2d)\n", iSDLMouseX, iSDLMouseY, iSDLButtons));
 }
 	
 
@@ -324,7 +560,7 @@ void CSkWinSDL2::InitVideo()
 
     window = SDL_CreateWindow("SKWin-9821-Linux", 
           SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-          640, 480, SDL_WINDOW_SHOWN);
+          SCREEN_WIDTH_FULL, SCREEN_HEIGHT_FULL, SDL_WINDOW_SHOWN);
     if (!window) {
         std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
         SDL_Quit();
