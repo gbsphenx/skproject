@@ -1803,6 +1803,22 @@ namespace DM2Internal {
 		U8 b4_0_2() const { return b4&7; }
 		U8 b4_3_4() const { return b4&7; }
 	};
+
+	// SPX: V5 Animation FC 00 00 data
+	struct CreatureAnimationFrameInfoFC_V5 {
+		U8 sound;
+		U8 seqnext;
+		U8 b2;
+		U8 b3;
+	};
+	// SPX: V5 Animation FD 00 00 data
+	struct CreatureAnimationFrameInfoFD_V5 {
+		U8 img[4];	// 4 images ID : back, left, front, right
+		U8 b4;
+		U8 iScaleGroup;
+		U8 b6;
+		U8 b7;
+	};
 	// 
 	struct sk04bf17ac { // 6 bytes
 		Bit16u w0, w2, w4;

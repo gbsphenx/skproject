@@ -2341,6 +2341,8 @@ void SkWinCore::GRAPHICS_DATA_OPEN()
 	sLocalGraphicsDatFileString = (Bit8u*) ptrGraphics;
 	sLocalGraphicsDatFileString2 = (Bit8u*) ptrGraphics2;
 
+	SkD((DLV_DBG_INIT, "GRAPHICS_DATA_OPEN\n"));
+
 	// default : ".Z020GRAPHICS.Z080.Z081.Z082.DAT"
 	if (SkCodeParam::bUseFixedMode && (ptrGraphics != NULL && ptrGraphics[0] == 0))
 	{
@@ -4730,21 +4732,6 @@ Bit16u SkWinCore::QUERY_ORNATE_ANIM_FRAME(Bit8u cls1, Bit8u cls2, Bit32u tick, B
 
 
 
-//^4937:000F
-i16 SkWinCore::CREATURE_SEQUENCE_4937_000f(Bit16u iAnimSeq, Bit16u* piAnimInfo)
-{
-	ENTER(0);
-	return tlbCreaturesAnimationSequences[CREATURE_4937_005c(iAnimSeq, piAnimInfo)].w0 & 0x03FF;
-}
-
-//^0CEE:2DF4
-Bit16u SkWinCore::CREATURE_0cee_2df4(ObjectID recordLink)
-{
-	//^0CEE:2DF4
-	ENTER(0);
-	//^0CEE:2DF7
-	return QUERY_CREATURE_AI_SPEC_FROM_RECORD(recordLink)->wc30;
-}
 
 //^48AE:011A
 Bit16u SkWinCore::_48ae_011a(ObjectID recordLink)
@@ -6109,7 +6096,7 @@ void SkWinCore::HANDLE_UI_EVENT_1031_111e(Bit16u xx)
 		bp05 = *(_4976_4e96++);
 		//^1031:1184
 		i16 si;
-		printf("HANDLEUI %04X => %04X\n", bp05, (bp05 & 0xff3f));
+		SkD((DLV_DBG_UI, "HANDLEUI %04X => %04X\n", bp05, (bp05 & 0xff3f)));
 		switch (bp05 & 0xff3f) {
 			case 0:
 				{
@@ -7274,6 +7261,24 @@ void SkWinCore::_44c8_20a4(U8 *src, U8 *dst, U8 *zz, SRECT *prc, U16 ss, U16 tt,
 	_44c8_1e43(src, dst, zz, prc, ss, tt, 0, 0, prc->cx, oo, pp, localpal);
 	//^44C8:20E3
 	return;
+}
+
+
+// SPX: Added to bypass the critical for load / used for experimental, not guaranteed
+Bit8u *SkWinCore::QUERY_GDAT_ENTRY_DATA_BUFF_FORCE(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4)
+{
+LOGX(("%40s: C%02d=I%02X=E%02X=T%03d to %08X", "QUERY_GDAT_ENTRY_DATA_BUFF_FORCE from ", cls1, cls2, cls4, cls3 ));
+	i16 si = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, cls3, cls4);
+	if (si == -1) {
+		return NULL;
+	}
+	if (glbShelfMemoryTable[si].Absent()) {
+		Bit16u bp02;
+		return QUERY_GDAT_DYN_BUFF(si, &bp02, 0);
+	}
+	else {
+		return REALIZE_GRAPHICS_DATA_MEMORY(glbShelfMemoryTable[si]);
+	}
 }
 
 
@@ -12423,7 +12428,7 @@ void SkWinCore::MessageLoop(bool fBalanceWait, bool fShortWait) {
 
 #if defined (__DJGPP__)
 	//printf("Calling poll ");
-	skwin.PollKeyboard();
+	//skwin.PollKeyboard();
 #endif
 
 
@@ -15028,76 +15033,7 @@ Bit16u SkWinCore::_RAND() //#DS=4976
 	//^0CD5:00FD
 }
 
-//^4937:00CC
-// SPX: This function uses creature animation/sequence information related to command
-// _4937_00cc renamed GET_CREATURE_ANIMATION_FRAME
-Bit16u SkWinCore::GET_CREATURE_ANIMATION_FRAME(Bit8u iCreatureType, Bit16u command, Bit16u *iAnimSeq, Bit16u *iAnimInfo, CreatureAnimationFrame **animframe, Bit16u vv)
-{
-	//^4937:00CC
-	SkD((DLV_DBG_SED2, "DBG: GET_CREATURE_ANIMATION_FRAME %02X ccm:%04X %04X %04X %04X \n", (Bitu)iCreatureType, (Bitu)command, (Bitu)*iAnimSeq, (Bitu)*iAnimInfo, (Bitu)vv));
-	if (tlbCreaturesActionsGroupOffsets == NULL || tlbCreaturesActionsGroupSets == NULL || tlbCreaturesAnimationSequences == NULL) {
-		*iAnimInfo = 0xFFFF;
-		*iAnimSeq = 0;
-		return 1;
-	}
-	*iAnimInfo = 0xFFFF;	// pw0a
-	*iAnimSeq = 0;	// pw08
-	
 
-
-	CreatureCommandAnimation *bp04 = &tlbCreaturesActionsGroupSets[tlbCreaturesActionsGroupOffsets[QUERY_GDAT_CREATURE_WORD_VALUE(iCreatureType, CREATURE_STAT_00)]];
-	//^4937:00FD
-	while (bp04->ccmReference != 0xffff && bp04->ccmReference != command) {
-		bp04++;
-	}
-	//^4937:0114
-	Bit16u di = bp04->animSeqOffset;
-	*iAnimSeq = di;	// Is the base anim offset
-	//^4937:0123
-	if (QUERY_CREATURE_AI_SPEC_FROM_TYPE(iCreatureType)->IsStaticObject() != 0) {
-		//^4937:0138
-		Bit16u si = 0;
-		CreatureAnimationFrame *bp08 = &tlbCreaturesAnimationSequences[di];
-		//^4937:0151
-		do {
-			si++;
-		} while((bp08++)->w2_0_3() != 0); // count the number of frame within the sequence offset
-		//^4937:0161
-		if (vv != 0) {
-			//^4937:0167
-			si |= 0x8000 | ((vv & 0x003f) << 6);
-		}
-		else {
-			//^4937:0179
-			si |= 0x9000;
-		}
-		//^4937:017D
-		*iAnimInfo = si;	// would be the number of frames within animation
-		return 1;
-	}
-	//^4937:0188
-	*iAnimInfo = 0xffff;
-	//^4937:0190
-	return _4937_01a9(di, iAnimInfo, animframe);
-}
-
-//^1C9A:09DB
-// SPX: _1c9a_09db renamed CREATURE_SET_ANIM_FRAME
-void SkWinCore::CREATURE_SET_ANIM_FRAME(ObjectID recordLink)
-{
-	CreatureAnimationFrame tAnimFrame;	// bp0e
-	CreatureAnimationFrame* pAnimFrame = &tAnimFrame; // bp12
-	Creature* xCreature = GET_ADDRESS_OF_RECORD(recordLink)->castToCreature();	// bp04
-	sk1c9a02c3* xInfoData = GET_CREATURE_INFO_DATA(xCreature, QUERY_CREATURE_AI_SPEC_FROM_TYPE(xCreature->CreatureType()));	// bp08
-	GET_CREATURE_ANIMATION_FRAME(
-		xCreature->CreatureType(),
-		CREATURE_ANIMSEQ_SPAWN,	// 0x11
-		&xInfoData->iAnimSeq,
-		&xInfoData->iAnimInfo,
-		&pAnimFrame,
-		xCreature->w12
-		);
-}
 
 
 //^476D:007A
@@ -26384,6 +26320,7 @@ void SkWinCore::SHOW_MENU_SCREEN()
 	ENTER(0);
 
 	REQUEST_PLAY_MUSIC(100);	// SPX: title music
+	SkD((DLV_DBG_INIT, "SHOW_MENU_SCREEN\n"));
 
 	//^2481:0080
 	glbImageCreditScreen = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_TITLE, 0x0, 0x1);		// Credit screen (tombstone)
@@ -26767,11 +26704,11 @@ void SkWinCore::INIT()
 	_4976_474c = 1;
 	_476d_018a();
 	_2636_03d4();
-//printf("READ_GRAPHICS_STRUCTURE\n");
+	SkD((DLV_DBG_INIT, "READ_GRAPHICS_STRUCTURE\n"));
 	READ_GRAPHICS_STRUCTURE();
-//printf("_482b_0004\n");
+	SkD((DLV_DBG_INIT, "_482b_0004\n"));
 	_482b_0004();
-//printf("LOAD_GDAT_INTERFACE_00_0A\n");
+	SkD((DLV_DBG_INIT, "LOAD_GDAT_INTERFACE_00_0A\n"));
 	LOAD_GDAT_INTERFACE_00_0A(); // game will fail if this item is not loaded, but it does not exist in PC-DOS version
 	U8 *bp04 = ALLOC_MEMORY_RAM(0x400, afUseLower, 1024);
 //DEBUG_DUMP_ULP();
@@ -26785,7 +26722,7 @@ void SkWinCore::INIT()
 	glbPaletteT16 = QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dtPalette16, 0xFE);
 	_098d_1208();
 
-//printf("EXTENDED_LOAD_AI_DEFINITION\n");
+	SkD((DLV_DBG_INIT, "EXTENDED_LOAD_AI_DEFINITION\n"));
 	// SPX: Added extended load here (requires the GDAT to be initialized, but must be before dungeon loading)
 	EXTENDED_LOAD_AI_DEFINITION();
 	// SPX: Read compatibility mode value (none = standard DM2)
@@ -26803,7 +26740,7 @@ void SkWinCore::INIT()
 		skwin.SndSetFrequency(6000);
 
 	
-//printf("LOAD_GDAT_INTERFACE_00_00\n");
+	SkD((DLV_DBG_INIT, "LOAD_GDAT_INTERFACE_00_00\n"));
 	LOAD_GDAT_INTERFACE_00_00();
 	_38c8_00c8();
 	_3929_0e16();
@@ -26817,29 +26754,30 @@ void SkWinCore::INIT()
 	glbSomeCreatureTable = ALLOC_MEMORY_RAM(si, afUseUpper, 1024);
 	FILL_STR(glbSomeCreatureTable, si, 0xff, 1);
 	//^38C8:05C1
+	SkD((DLV_DBG_INIT, "while (SHOW_MENU_SCREEN()/GAME_LOAD())\n"));
 	while (SHOW_MENU_SCREEN(), GAME_LOAD() != 1) {
 		//^38C8:05C3
 		GRAPHICS_DATA_OPEN();
 	}
 	//^38C8:05D7
-	//printf("INIT:GRAPHICS_DATA_OPEN\n"); getch();
+	SkD((DLV_DBG_INIT, "INIT:GRAPHICS_DATA_OPEN\n"));
 	GRAPHICS_DATA_OPEN();
-	//printf("INIT:__LOAD_CREATURE_FROM_DUNGEON\n"); getch();
+	SkD((DLV_DBG_INIT, "INIT:__LOAD_CREATURE_FROM_DUNGEON\n"));
 	__LOAD_CREATURE_FROM_DUNGEON();
-	//printf("INIT:ALLOC_CPX_SETUP\n"); getch();
+	SkD((DLV_DBG_INIT, "INIT:ALLOC_CPX_SETUP\n"));
 	ALLOC_CPX_SETUP(_4976_4736);
-	//printf("INIT:__INIT_GAME_38c8_03ad\n"); getch();
+	SkD((DLV_DBG_INIT, "INIT:__INIT_GAME_38c8_03ad\n"));
 	__INIT_GAME_38c8_03ad();
-	//printf("INIT:GRAPHICS_DATA_CLOSE\n"); getch();
+	SkD((DLV_DBG_INIT, "INIT:GRAPHICS_DATA_CLOSE\n"));
 	GRAPHICS_DATA_CLOSE();
 	if (glbSpecialScreen != 0) {
 		//^38C8:05FC
 		MOVE_RECORD_TO(OBJECT_NULL, -1, 0, glbPlayerPosX, glbPlayerPosY);
 	}
 	//^38C8:0612
-	//printf("INIT:FIRE_SHOW_MOUSE_CURSOR\n"); getch();
+	SkD((DLV_DBG_INIT, "INIT:FIRE_SHOW_MOUSE_CURSOR\n"));
 	FIRE_SHOW_MOUSE_CURSOR();
-	//printf("INIT:_1031_098e\n"); getch();
+	SkD((DLV_DBG_INIT, "INIT:_1031_098e\n"));
 	_1031_098e();
 	//^38C8:061C
 	return;
@@ -28366,7 +28304,8 @@ void SkWinCore::_2759_12e6()
 void SkWinCore::GAME_LOOP()
 {
 	int iLoopCount = 0;
-	//printf("Entering GAME_LOOP\n"); getch();
+	SkD((DLV_DBG_INIT, "GAME_LOOP\n"));
+
 	SkCodeParam::bUseIngameDebug = true;
 	if (SkCodeParam::bUseIngameDebug)
 	{
@@ -28375,8 +28314,9 @@ void SkWinCore::GAME_LOOP()
 		if (SkCodeParam::bDM2V5Mode)
 			strcpy(sExtraInfo, " V5-GFX");
 //		sprintf((char*)message, "RAM = %08d / EMS = %08d\n", glbFreeRAMMemPool, glbFreeEMSMemPool);
-		sprintf((char*)message, "%s (%s) [%s]%s\n", __SKWIN_PROGNAME__, strVersionNumber, __SKWIN_RELEASE_DATE__, sExtraInfo);
+		sprintf((char*)message, "%s (%s) [%s] <%s>%s\n", __SKWIN_PROGNAME__, strVersionNumber, __SKWIN_RELEASE_DATE__, __SKWIN_SYSTEM__, sExtraInfo);
 		DISPLAY_HINT_TEXT(COLOR_YELLOW, message);
+		SkD((DLV_DBG_INIT, "%s\n", message));
 	}
 	//^13AE:005C
 	ENTER(0);
@@ -28388,7 +28328,8 @@ void SkWinCore::GAME_LOOP()
 	while (true)
 	{
 		U8 message[64];
-		//sprintf((char*)message, "GAME LOOP %08d\n", iLoopCount++);
+		sprintf((char*)message, "GAME LOOP %08d\n", iLoopCount++);
+		SkD((DLV_DBG_INIT, "%s\n", message));
 		//DISPLAY_HINT_TEXT(COLOR_YELLOW, message);
 		// SPX get speed from window menu
 		stdTickBalance = skwin.spfact*4;

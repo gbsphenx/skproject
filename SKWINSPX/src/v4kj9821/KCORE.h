@@ -512,7 +512,8 @@ protected:
 	AIDefinition	*glbAIDef;	// (_4976_4eca)
 	CreatureInfoData	*glbCurrentThinkingCreatureData;	// (_4976_4ece)
 	CreatureAnimationFrame	*glbCreatureAnimationFrame;		// (_4976_4ed2)
-	sk1c9a02c3 *_4976_4ed6;
+	sk1c9a02c3* glbCreatureAnimSeqInfo;	// (_4976_4ed6)
+	CreatureAnimationFrameInfoFC_V5* glbCreatureAnimSeqInfoV5; // SPX: Added
 	Timer	glbCreatureTimer;		// (_4976_4eda) might be a timer for creature?
 	i8		_4976_4ee4;
 	X8		_4976_4ee5;		// selector of next xact?
@@ -878,6 +879,14 @@ protected:
 public:
 	SkWinCore();
 
+// SPX: Special new V5
+	U8 GET_CREATURE_ANIMATION_IMAGE_ID_V5(U8 iCreatureType, U16 iAnimSeq, U16 iAnimInfo, U16 iFaceDirImg);
+	CreatureCommandAnimation* GET_CREATURE_COMMAND_ANIMATION_V5(Bit8u iCreatureType, Bit16u command);
+	CreatureAnimationFrameInfoFC_V5* GET_ANIM_SEQUENCE_INFO_V5(U8 iCreatureType, U16 iAnimSeqOffset, U16 iCurrentFrameInfo);
+	void PREPARE_CREATURE_ANIMATION_INFO_V5(U8 iCreatureType, U16 iAnimOffset, U16* iAnimInfo);
+	Bit16u CREATURE_4937_01a9_V5(U8 iCreatureType, Bit16u iAnimOffset, Bit16u *pAnimFrame, CreatureAnimationFrame **rref);
+	U16 CREATURE_GET_ANIMATION_OFFSET_POS_V5(U8 iCreatureType, U16 iFrameID);
+	
 // SPX: New procedures here
 	void LUA_CALL_SCRIPT(U8 iScriptEvent, i16 iPosMap, i16 iPosX, i16 iPosY, i16 iDir);
 	const X8* GET_DATA_FOLDER_ZNAME(i16 predefinedGameID);
@@ -1105,7 +1114,7 @@ protected:
 	//void _2066_1ea3(Bit16u xx, Bit16u yy, Bit16u zz);		// An interesting one about changing bits on tile (void/pit)
 	void SET_TILE_ATTRIBUTE_02(Bit16u xx, Bit16u yy, Bit16u map); // _2066_1ea3
 	sk1c9a02c3* GET_CREATURE_INFO_DATA(Creature *xCreature, AIDefinition *xAIDef); // _1c9a_02c3
-	Bit16u _4937_01a9(Bit16u xx, Bit16u *yy, CreatureAnimationFrame **rref);
+	Bit16u CREATURE_4937_01a9(Bit16u xx, Bit16u *yy, CreatureAnimationFrame **rref);	// _4937_01a9
 	void GRAPHICS_DATA_OPEN();
 		void ORIGINAL__GRAPHICS_DATA_OPEN();
 	i16 LOCATE_OTHER_LEVEL(Bit16u curmap, i16 zDelta, i16 *xx, i16 *yy, Bit8u **ss);
@@ -1460,6 +1469,7 @@ protected:
 	void _44c8_20a4(U8 *src, U8 *dst, U8 *zz, SRECT *prc, U16 ss, U16 tt, U16 oo, i16 pp, U8 *localpal);
 	void _32cb_0c7d(ExtendedPicture *ref, U16 xx, U16 yy);
 	Bit8u *QUERY_GDAT_ENTRY_DATA_BUFF(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4);
+	Bit8u *QUERY_GDAT_ENTRY_DATA_BUFF_FORCE(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4);	// SPX: added, bypass the critical for load
 	U8 QUERY_ITEMDB_FROM_DISTINCTIVE_ITEMTYPE(U16 actuatorData);
 	ObjectID ALLOC_NEW_DBITEM_DEEPLY(U16 actuatorData);
 	U16 IS_DISTINCTIVE_ITEM_ON_ACTUATOR(Actuator *ref, U16 disit, U16 onTile);

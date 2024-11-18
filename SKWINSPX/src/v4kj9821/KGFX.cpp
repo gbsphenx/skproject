@@ -807,6 +807,13 @@ void SkWinCore::QUERY_CREATURE_PICST(U16 xx, i16 iDistToPlayer, Creature *xCreat
 	U16 iMirrorFlag = tblCreatureFrameInfo14[iFrameID][iFaceDirImg + 10];	// bp08 / _4976_5a98 table has 4+8 bytes, 4 first points to address of item 0653 loaded into mem
 	U8 iImageID = tblCreatureFrameInfo14[iFrameID][iFaceDirImg + 2]; // bp0c, standard front is x12
 
+	if (SkCodeParam::bDM2V5Mode) {
+		iMirrorFlag = 0;
+		if (iFrameID == (i16)0xFFFF)
+			iFrameID = 0;
+		iImageID = GET_CREATURE_ANIMATION_IMAGE_ID_V5(iCreatureType, xInfoData->iAnimSeq, iFrameID, iFaceDirImg);
+	}
+
 	CHANGE_CONSOLE_COLOR(BRIGHT, ((rl.DBIndex()+1)%8)+8, BLACK);
 	SkD((DLV_DBG_SED2, "Creature Type %d => %04X F:%04X => Table Frame = %d (C: %02X %02X) => IMG = %02X\n", 
 		iCreatureType, xInfoData->iAnimSeq, xInfoData->iAnimInfo, iFrameID, xCreature->iAnimSeq, xCreature->iAnimFrame, iImageID));
@@ -855,24 +862,30 @@ void SkWinCore::QUERY_CREATURE_PICST(U16 xx, i16 iDistToPlayer, Creature *xCreat
 		}
 	}
 	//^32CB:2A81
-	i16 iImageScale = tlbDistanceStretch[RCJ(5,iDistToPlayer)]; // bp10
+	i16 iImageScaleFromDist = tlbDistanceStretch[RCJ(5,iDistToPlayer)]; // bp10
+	i16 iImageScale = iImageScaleFromDist;
 	//^32CB:2A8D
 	i16 iFrameID2 = (xInfo != NULL && xInfo->Command == ccmDestroy) ? xInfo->w14 : iFrameID;	// bp14
 	//^32CB:2AAB
-	U16 bp12 = tblCreatureFrameInfo14[iFrameID2][0];
+	U16 iOffsetPosition = tblCreatureFrameInfo14[iFrameID2][0]; // bp12	-- Standard is 0x0C = 12 = centered
+	if (SkCodeParam::bDM2V5Mode)
+		iOffsetPosition = CREATURE_GET_ANIMATION_OFFSET_POS_V5(iCreatureType, iFrameID2);
 	//^32CB:2AC1
 	if (xx == 3 && _4976_5aa2 != 0) {
 		//^32CB:2ACE
-		bp12 = _4976_41d0[RCJ(7,glbTargetTypeMoveObject)];
+		iOffsetPosition = _4976_41d0[RCJ(7,glbTargetTypeMoveObject)];
 		iImageScale = _4976_41d7[RCJ(7,glbTargetTypeMoveObject)];
 		iFaceDirImg = 0;
 	}
 	else {
 		//^32CB:2AE9
-		iImageScale = CALC_STRETCHED_SIZE(tblCreatureFrameInfo14[iFrameID][iFaceDirImg + 6], iImageScale);	// table read from item 653 containing sequence/frame size/scale info
+		i16 iLocalScale = tblCreatureFrameInfo14[iFrameID][iFaceDirImg + 6]; // V4
+		if (SkCodeParam::bDM2V5Mode)
+			iLocalScale = 0x40;
+		iImageScale = CALC_STRETCHED_SIZE(iLocalScale, iImageScaleFromDist);	// table read from item 653 containing sequence/frame size/scale info
 	}
 	//^32CB:2B0D
-	U16 bp0e = QUERY_CREATURE_BLIT_RECTI(xx, bp12, iFaceDirImg) | 0x8000;
+	U16 bp0e = QUERY_CREATURE_BLIT_RECTI(xx, iOffsetPosition, iFaceDirImg) | 0x8000;
 	//^32CB:2B24
 	i16 bp18 = 0;
 	i16 bp16 = 0;

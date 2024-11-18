@@ -3562,7 +3562,7 @@ void SkWinCore::MAIN_LOOP() //#DS=4976
 			//^1031:1E8A
 			break;
 		//^1031:1E8C
-		printf("Check input %08X = %08X\n", glbUIClickEventIndex, glbUIClickEventLast);
+		SkD((DLV_DBG_UI, "Check input %08X = %08X\n", glbUIClickEventIndex, glbUIClickEventLast));
 		Bit16u iUIClickNext = glbUIClickEventIndex++; // si
 		//^1031:1E94
 		if (glbUIClickEventIndex > 2)
@@ -3694,7 +3694,7 @@ i16 SkWinCore::SELECT_LOAD_GAME()
 
 		//^2066:32FD
 		while (_476d_05a9() != 0) {
-			_1031_0d36(0x20, _476d_050e());
+			_1031_0d36(0x20, SPECIAL_UI_KEY_TRANSFORMATION());
 		}
 		//^2066:3317
 		MAIN_LOOP();
@@ -4205,7 +4205,7 @@ U8 *SkWinCore::PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timer
 	glbCurrentThinkingCreatureData = xCreatureInfo;
 	glbAIDef = QUERY_CREATURE_AI_SPEC_FROM_TYPE(xCreature->CreatureType());
 	//^13E4:00DC
-	_4976_4ed6 = GET_CREATURE_INFO_DATA(xCreature, glbAIDef);
+	glbCreatureAnimSeqInfo = GET_CREATURE_INFO_DATA(xCreature, glbAIDef);
 	glbSomeMap_4976_4ee7 = U8(bp0e);
 	glbCreatureTimer.SetMap(bp0e);
 	glbCreatureTimer.SetTick(glbGameTick);
