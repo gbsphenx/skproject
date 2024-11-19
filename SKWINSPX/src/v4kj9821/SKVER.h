@@ -3,7 +3,7 @@
 
 //------------------------------------------------------------------------------
 
-// Use simplest audio routines for Win98
+// Alternate
 #define UseAltic 1
 
 //------------------------------------------------------------------------------
@@ -13,13 +13,55 @@
 
 // Activate this for preparing public release version
 //#define __SKWIN_PUBLIC_VERSION__	1
-#define __SKWIN_RELEASE_DATE__ "2024-11-10"
+#define __SKWIN_RELEASE_DATE__ "2024-11-17"
 
-#ifdef __DJGPP__
-	#define __SKWIN_PROGNAME__ "SKULL-V4"
+// There are 3 different define possible at project level
+// SK9821V4	-> 9821 + SKULL V4
+// SKDOSV5	-> PC-DOS + SKULL V5
+// SKWINSPX	-> WIN-SPX + SKULL V6
+
+// BASE PROGNAME SKWIN VS. SKULL
+#if defined (__DJGPP__)
+	#define __SKWIN_BASEPROGNAME__ "SKULL"
 #else
-	#define __SKWIN_PROGNAME__ "SKWIN-9821"
+	#define __SKWIN_BASEPROGNAME__ "SKWIN"
 #endif // __DJGPP__
+
+// PROG MAJOR VERSION
+#if defined (SK9821V4)
+	#define __SKULL_SUBVER__	"-V4"
+	#define __SKWIN_SUBVER__	"-9821"
+#elif defined (SKDOSV5)
+	#define __SKULL_SUBVER__	"-V5"
+	#define __SKWIN_SUBVER__	"-DOS"
+#elif defined (SKWINSPX)
+	#define __SKULL_SUBVER__	"-V6"
+	#define __SKWIN_SUBVER__	"-SPX"
+#endif // SUBVER
+
+// INTERNAL PROGNAME
+#if defined (__DJGPP__)
+	#define __SKWIN_PROGNAME__ __SKWIN_BASEPROGNAME__ "" __SKULL_SUBVER__
+#elif defined (__MINGW__)
+	#define TOSTRING(x) #x
+	#define __SKWIN_PROGNAME__ TOSTRING(__SKWIN_BASEPROGNAME__) "" TOSTRING(__SKWIN_SUBVER__)
+#else
+	#define __SKWIN_PROGNAME__ __SKWIN_BASEPROGNAME__ "" __SKWIN_SUBVER__
+#endif
+
+// COMPILATION TARGET
+#if defined (__DJGPP__)
+	#define __SKWIN_SYSTEM__ "DOS"
+#elif defined (__MINGW__)
+	#define __SKWIN_SYSTEM__ "MINGW32"
+#elif defined (__LINUX__) && (defined(__x86_64__) || defined(__amd64__))
+	#define __SKWIN_SYSTEM__ "LINUX64"
+#elif defined (__LINUX__)
+	#define __SKWIN_SYSTEM__ "LINUX"
+#else
+	#define __SKWIN_SYSTEM__ "WIN32"
+#endif
+
 
 //------------------------------------------------------------------------------
 

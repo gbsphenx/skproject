@@ -574,7 +574,7 @@ void SkWinCore::PERFORM_TURN_SQUAD(Bit16u xx)
 		//^12B4:023C
 		return;
 	//^12B4:014F
-	_4976_4e5c = 1;
+	glbRefreshViewport = 1;
 	//^12B4:0155
 	RESET_SQUAD_DIR();
 	//^12B4:0159
@@ -2786,7 +2786,7 @@ _22ca:
 			TAKE_OBJECT(bp34, 1);
 		}
 		//^2FCF:23A3
-		_4976_4e5c = bp26;
+		glbRefreshViewport = bp26;
 		//^2FCF:23A9
 		return;
 	}
@@ -3409,7 +3409,7 @@ U16 SkWinCore::PERFORM_MOVE(X16 xx)
 	CALC_VECTOR_W_DIR(bp0e, _4976_19b2[RCJ(4,di)], _4976_19b6[RCJ(4,di)], &playerDestPosX, &playerDestPosY);
 	//^12B4:0505
 	bp0a = GET_TILE_VALUE(playerDestPosX, playerDestPosY);
-	_4976_4e5c = 1;
+	glbRefreshViewport = 1;
 	champion = glbChampionSquad;
 	//^12B4:0525
 	for (si = 0; si < glbChampionsCount; champion++, si++) {
@@ -3534,7 +3534,7 @@ _0768:
 
 	//^12B4:0864
 	_1031_098e();
-	_4976_4e5c = 0;
+	glbRefreshViewport = 0;
 	return 0;
 }
 
@@ -3546,9 +3546,9 @@ void SkWinCore::MAIN_LOOP() //#DS=4976
 	//^1031:1E6A
 	ENTER(0);
 	//^1031:1E6E
-	if (_4976_4dfe != 0)
+	if (glbEndCounter != 0)
 		//^1031:1E75
-		_4976_4dfe--;
+		glbEndCounter--;
 	//^1031:1E79
 	_4976_4e48 = 0;
 
@@ -3579,7 +3579,7 @@ void SkWinCore::MAIN_LOOP() //#DS=4976
 			glbUIClickEventIndex = iUIClickNext;
 		}
 		//^1031:1EC9
-	} while (_4976_4e5c == 0);
+	} while (glbRefreshViewport == 0);
 	//^1031:1ED0
 	return;
 }
@@ -4060,50 +4060,50 @@ void SkWinCore::ATTACK_CREATURE(ObjectID rl, i16 xx, i16 yy, Bit16u ss, i16 tt, 
 	if (bp14 != 0)
 		ss &= 0xdfff;
 	//^13E4:0459
-	Creature *bp04 = GET_ADDRESS_OF_RECORD4(rl);
-	AIDefinition *bp0c = QUERY_CREATURE_AI_SPEC_FROM_TYPE(bp04->CreatureType());
-	U16 bp10 = bp0c->IsStaticObject();
-	if (bp04->b5_0_7() == 0xff) {
+	Creature* xCreature = GET_ADDRESS_OF_RECORD4(rl); // bp04
+	AIDefinition* xAIDef = QUERY_CREATURE_AI_SPEC_FROM_TYPE(xCreature->CreatureType()); // bp0c
+	U16 bp10 = xAIDef->IsStaticObject();
+	if (xCreature->InternalID() == 0xFF) {
 		if (bp10 == 0)
 			return;
 		ALLOC_CAII_TO_CREATURE(rl, xx, yy);
 	}
 	//^13E4:04AC
-	CreatureInfoData *bp08 = &glbTabCreaturesInfo[bp04->b5_0_7()];
-	bp08->w20 += quantity;
-	quantity = bp08->w20;
+	CreatureInfoData* xCreatureData = &glbTabCreaturesInfo[xCreature->InternalID()];	// bp08
+	xCreatureData->w20 += quantity;
+	quantity = xCreatureData->w20;
 	//^13E4:04DB
 	U16 si;
 	U16 bp0e;
 	if (bp10 == 0 && tt > 0) {
 		//^13E4:04ED
-		if ((bp04->iAnimFrame & 4) == 0) {
-			if (quantity <= 0x1e && (quantity <= 4 || RAND02() != 0) && (((quantity * U32(0x64)) / bp0c->BaseHP) > 15)) {
+		if ((xCreature->iAnimFrame & 4) == 0) {
+			if (quantity <= 0x1E && (quantity <= 4 || RAND02() != 0) && (((quantity * U32(0x64)) / xAIDef->BaseHP) > 15)) {
 				//^13E4:0537
-				bp04->iAnimFrame |= 4;
+				xCreature->iAnimFrame |= 4;
 				bp12 = 1;
 			}
 		}
 		//^13E4:0545
 		if (bp12 != 0) {
 			//^13E4:054E
-			if ((tblAIStats01[QUERY_GDAT_CREATURE_WORD_VALUE(bp04->CreatureType(), 1)] & 0x80) == 0 && RAND01() != 0) {
+			if ((tblAIStats01[QUERY_GDAT_CREATURE_WORD_VALUE(xCreature->CreatureType(), 1)] & 0x80) == 0 && RAND01() != 0) {
 				//^13E4:057A
 				si = CALC_VECTOR_DIR(xx, yy, glbPlayerPosX, glbPlayerPosY);
-				if ((bp04->iAnimFrame & 8) != 0 && RAND02() != 0)
+				if ((xCreature->iAnimFrame & 8) != 0 && RAND02() != 0)
 					goto _05bd;
-				if ((bp04->b15 & 3) != si && RAND02() == 0) {
+				if ((xCreature->b15 & 3) != si && RAND02() == 0) {
 					//^13E4:05BD
 _05bd:
 					si = (si +2) & 3;
 				}
 				//^13E4:05C6
-				if (bp04->b15_0_1() == ((si +2) & 3)) {
+				if (xCreature->b15_0_1() == ((si +2) & 3)) {
 					si = (RAND01() != 0) ? 7 : 6;
 				}
 				//^13E4:05F1
-				else if (bp04->b15_0_1() != si) {
-					si = (bp04->b15_0_1() == ((si -1) & 3)) ? 7 : 6;
+				else if (xCreature->b15_0_1() != si) {
+					si = (xCreature->b15_0_1() == ((si -1) & 3)) ? 7 : 6;
 				}
 				//^13E4:061A
 				else if (RAND02() == 0) {
@@ -4126,10 +4126,10 @@ _05bd:
 			bp0e = ss & 0x8000;
 			ss = 1 << (ss & 0xff);
 			if (bp0e != 0) {
-				bp04->iAnimFrame &= ~ss;
+				xCreature->iAnimFrame &= ~ss;
 			}
 			else {
-				bp04->iAnimFrame |= ss;
+				xCreature->iAnimFrame |= ss;
 			}
 		}
 	}
@@ -4139,7 +4139,7 @@ _05bd:
 		di = 1;
 	}
 	//^13E4:06B1
-	else if (di != 0 && ((bp0e == 0 && ((ss & 0x40) != 0)) || bp14 != 0) && (_4976_37a6[RCJ(86,bp08->Command)] & 0x10) == 0) {
+	else if (di != 0 && ((bp0e == 0 && ((ss & 0x40) != 0)) || bp14 != 0) && (tlbCreatureCommandsFlags[RCJ(MAX_CREATURE_COMMANDS,xCreatureData->Command)] & 0x10) == 0) {
 		//^13E4:06DE
 		di = 1;
 	}
@@ -4148,7 +4148,7 @@ _05bd:
 		di = 0;
 	}
 	//^13E4:06E7
-	if (bp08->Command != ccmDestroy && (di != 0 || bp04->hp1 <= quantity)) {
+	if (xCreatureData->Command != ccmDestroy && (di != 0 || xCreature->hp1 <= quantity)) {
 		//^13E4:0701
 		RELEASE_CREATURE_TIMER(rl);
 		QUEUE_THINK_CREATURE(xx, yy);
@@ -4184,13 +4184,13 @@ U8 *SkWinCore::PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timer
 	glbCurrentThinkingCreatureID = rl;
 	//^13E4:0073
 	Creature *xCreature = glbCurrentThinkingCreatureRec = GET_ADDRESS_OF_RECORD4(rl); // bp08
-	CreatureInfoData *xCreatureInfo = (xCreature->b5_0_7() != 0xff) ? &glbTabCreaturesInfo[xCreature->b5_0_7()] : NULL; // bp0c
+	CreatureInfoData *xCreatureInfo = (xCreature->InternalID() != 0xFF) ? &glbTabCreaturesInfo[xCreature->InternalID()] : NULL; // bp0c
 #ifndef __DJGPP__
 	if (xCreatureInfo != NULL)	// SPX : NULL should not happen
 		SkD((DLV_DBG_CAI, "DBG: CreatureIndex:%d, CreatureType:%02X, 4eceIndex:%u, XX=%02X, YY=%02X\n"
 			, (Bitu)rl.DBIndex()
 			, (Bitu)xCreature->CreatureType()
-			, (Bitu)xCreature->b5_0_7()
+			, (Bitu)xCreature->InternalID()
 			, (Bitu)(U8)xCreatureInfo->x
 			, (Bitu)(U8)xCreatureInfo->y
 		));
@@ -4198,7 +4198,7 @@ U8 *SkWinCore::PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timer
 		SkD((DLV_DBG_CAI, "DBG: CreatureIndex:%d, CreatureType:%02X, 4eceIndex:%u, XX=NULL, YY=NULL\n"
 			, (Bitu)rl.DBIndex()
 			, (Bitu)xCreature->CreatureType()
-			, (Bitu)xCreature->b5_0_7()
+			, (Bitu)xCreature->InternalID()
 		));
 #endif // __DJGPP__
 	//^13E4:00BA
@@ -4222,7 +4222,7 @@ U8 *SkWinCore::PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timer
 		if (timerType == tty22) {
 			_4976_4ee8 = 0;
 			_4976_4eea = 0;
-			_4976_4ee4 = (xCreatureInfo->Command == -1) ? 0 : xCreatureInfo->Command;
+			glbCreatureCommandThinking = (xCreatureInfo->Command == -1) ? 0 : xCreatureInfo->Command;
 			if (xCreatureInfo != NULL) {
 				//^13E4:017D
 				ZERO_MEMORY(&xCreatureInfo->w24, 10);

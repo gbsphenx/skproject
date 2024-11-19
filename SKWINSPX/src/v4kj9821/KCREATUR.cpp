@@ -79,7 +79,7 @@ sk1c9a02c3 *SkWinCore::GET_CREATURE_INFO_DATA(Creature *xCreature, AIDefinition 
 	if (xAIDef->IsStaticObject() != 0) {
 		return reinterpret_cast<sk1c9a02c3 *>(PTR_PADD(xCreature,+8));
 	}
-	return reinterpret_cast<sk1c9a02c3 *>(PTR_PADD(&glbTabCreaturesInfo[xCreature->b5_0_7()],+8));
+	return reinterpret_cast<sk1c9a02c3 *>(PTR_PADD(&glbTabCreaturesInfo[xCreature->InternalID()],+8));
 }
 
 Bit16u SkWinCore::CREATURE_4937_01a9_V5(U8 iCreatureType, Bit16u iAnimOffset, Bit16u *pAnimFrame, CreatureAnimationFrame **rref)
@@ -318,27 +318,18 @@ ObjectID SkWinCore::CREATE_MINION(U16 creatureType, U16 healthMultiplier_1to31_b
 void SkWinCore::QUEUE_THINK_CREATURE(U16 xx, U16 yy)
 {
 	// force call THINK_CREATURE by timer system.
-
-	//^1C9A:0CF7
 	ENTER(14);
-	//^1C9A:0CFC
-	ObjectID si = GET_CREATURE_AT(xx, yy);
-	//^1C9A:0D0A
-	Creature *bp04 = GET_ADDRESS_OF_RECORD4(si);
-	//^1C9A:0D17
-	if (glbTabCreaturesInfo[bp04->b5_0_7()].TimerIndex() != 0xffff) {
-		//^1C9A:0D32
-		RELEASE_CREATURE_TIMER(si);
+	ObjectID rlCreature = GET_CREATURE_AT(xx, yy); // si
+	Creature* xCreature = GET_ADDRESS_OF_RECORD4(rlCreature); // bp04
+	if (glbTabCreaturesInfo[xCreature->InternalID()].TimerIndex() != 0xFFFF) {
+		RELEASE_CREATURE_TIMER(rlCreature);
 	}
-	//^1C9A:0D39
+
 	Timer bp0e;
 	bp0e.SetMap(glbCurrentMapIndex);
 	bp0e.SetTick(glbGameTick +1);
-	//^1C9A:0D5C
-	bp0e.TimerType((bp04->iAnimSeq == 0xffff) ? tty21 : tty22);
-	//^1C9A:0D6F
-	bp0e.actor = bp04->CreatureType();
-	//^1C9A:0D7C
+	bp0e.TimerType((xCreature->iAnimSeq == 0xFFFF) ? tty21 : tty22);
+	bp0e.actor = xCreature->CreatureType();
 	bp0e.XcoordB(U8(xx));
 	bp0e.YcoordB(U8(yy));
 
@@ -346,15 +337,13 @@ void SkWinCore::QUEUE_THINK_CREATURE(U16 xx, U16 yy)
 	bp0e.Value2(0);
 	bp0e.ActionType(0);
 #endif
-	//^1C9A:0D85
-	glbTabCreaturesInfo[bp04->b5_0_7()].TimerIndex(QUEUE_TIMER(&bp0e));
-	//^1C9A:0DAD
+	glbTabCreaturesInfo[xCreature->InternalID()].TimerIndex(QUEUE_TIMER(&bp0e));
 	return;
 }
 
 //^13E4:0360
 // Set new creature command
-void SkWinCore::_13e4_0360(ObjectID rlCreature, U16 xx, U16 yy, U8 ss, U16 tt)
+void SkWinCore::_13e4_0360(ObjectID rlCreature, U16 xx, U16 yy, U8 ss, U16 tt) // ss = newcommand, tt = 1 for destroy
 {
 	//^13E4:0360
 	ENTER(6);
@@ -370,13 +359,13 @@ void SkWinCore::_13e4_0360(ObjectID rlCreature, U16 xx, U16 yy, U8 ss, U16 tt)
 			return;
 	}
 	//^13E4:0381
-	U8 bp01 = GET_ADDRESS_OF_RECORD4(si)->b5_0_7();
+	U8 iGlbCreatureIndex = GET_ADDRESS_OF_RECORD4(si)->InternalID(); // bp01 index within the global table for creatures ?
 	//^13E4:0393
-	if (bp01 == 0xff)
+	if (iGlbCreatureIndex == 0xFF)
 		//^13E4:0395
 		return;
 	//^13E4:0397
-	CreatureInfoData *bp06 = &glbTabCreaturesInfo[bp01];
+	CreatureInfoData *bp06 = &glbTabCreaturesInfo[iGlbCreatureIndex];
 	//^13E4:03B1
 	if (bp06->Command2 == ccmDestroy || bp06->Command == ccmDestroy)
 		//^13E4:03C0
@@ -389,17 +378,13 @@ void SkWinCore::_13e4_0360(ObjectID rlCreature, U16 xx, U16 yy, U8 ss, U16 tt)
 		return;
 	//^13E4:03D2
 #if UseAltic
-	if ((_4976_37a6[RCJ(86, max(bp06->Command, 0))] & 0x10) != 0) {
-		//^13E4:03E0
+	if ((tlbCreatureCommandsFlags[RCJ(MAX_CREATURE_COMMANDS, max(bp06->Command, 0))] & 0x10) != 0) {
 		bp06->b33 = 1;
-		//^13E4:03E8
 		return;
 	}
 #else
-	if ((_4976_37a6[RCJ(86,bp06->Command)] & 0x10) != 0) {	// bp06->b26 = command
-		//^13E4:03E0
+	if ((tlbCreatureCommandsFlags[RCJ(MAX_CREATURE_COMMANDS,bp06->Command)] & 0x10) != 0) {	// bp06->b26 = command
 		bp06->b33 = 1;
-		//^13E4:03E8
 		return;
 	}
 #endif
@@ -1003,7 +988,7 @@ _1df6:
 				//bp08 = ccm1C;	// force for test
 			}
 			//^19F0:1F7C
-			else if ((_4976_37a6[RCJ(86,_4976_4ee4)] & 2) != 0 && aa != 6 && bp16 == 0) {
+			else if ((tlbCreatureCommandsFlags[RCJ(86,glbCreatureCommandThinking)] & 2) != 0 && aa != 6 && bp16 == 0) {
 				bp08 = ccmNeutral;
 			}
 			//^19F0:1F9A
@@ -1519,12 +1504,12 @@ void SkWinCore::ALLOC_CAII_TO_CREATURE(ObjectID rl, i16 xx, i16 yy)
 	ENTER(14);
 	//^1C9A:0E1A
 	X16 si = 0;
-	Creature *bp08 = GET_ADDRESS_OF_RECORD4(rl);
-	if (bp08->b5 != 0xff)
+	Creature* xCreature = GET_ADDRESS_OF_RECORD4(rl); // bp08
+	if (xCreature->iID != 0xFF)
 		return;
 	//^1C9A:0E38
-	si = bp08->b15_2_2();
-	bp08->b15_2_2(1);
+	si = xCreature->b15_2_2();
+	xCreature->b15_2_2(1);
 	CreatureInfoData *bp04;
 	U16 bp0e;
 	do {
@@ -1543,11 +1528,11 @@ void SkWinCore::ALLOC_CAII_TO_CREATURE(ObjectID rl, i16 xx, i16 yy)
 	} while (true);
 	//^1C9A:0EA0
 _0ea0:
-	bp08->b15_2_2(U8(si));
+	xCreature->b15_2_2(U8(si));
 	_4976_1a68++;
 	ZERO_MEMORY(bp04, sizeof(CreatureInfoData));
 	bp04->CreatureIndex(rl.DBIndex());
-	bp08->b5 = U8(bp0e);
+	xCreature->iID = U8(bp0e);
 	bp04->TimerIndex(0xffff);
 	bp04->Command = ccmInv;
 	U8 *bp0c = PREPARE_LOCAL_CREATURE_VAR(rl, xx, yy, 0x22);
@@ -1565,7 +1550,7 @@ _0ea0:
 	//^1C9A:0F78
 	QUEUE_THINK_CREATURE(xx, yy);
 	//^1C9A:0F84
-	bp04->Command = (bp08->iAnimSeq == 0xFFFF) ? ccmSpawn : ccmNeutral;
+	bp04->Command = (xCreature->iAnimSeq == 0xFFFF) ? ccmSpawn : ccmNeutral;
 	//^1C9A:0F9B
 	if (glbAIDef->IsStaticObject() == 0) {
 		glbCurrentThinkingCreatureRec->iAnimFrame |= 0x8000;
@@ -1607,12 +1592,12 @@ void SkWinCore::_12b4_0d75(i16 xx, i16 yy, i16 ss, i16 tt)
 			else {
 				//^12B4:0E2C
 				_1c9a_0247(bp12);
-				U8 bp13 = GET_ADDRESS_OF_RECORD4(bp12)->b5_0_7();
+				U8 bp13 = GET_ADDRESS_OF_RECORD4(bp12)->InternalID();
 				if (bp13 != 0xff) {
 					//^12B4:0E4D
 					CreatureInfoData *bp18 = &glbTabCreaturesInfo[bp13];
 					si = bp18->Command;
-					if (si != -1 && si != ccmDestroy && (_4976_37a6[RCJ(86,si)] & 4) != 0) {
+					if (si != -1 && si != ccmDestroy && (tlbCreatureCommandsFlags[RCJ(MAX_CREATURE_COMMANDS,si)] & 4) != 0) {
 						RELEASE_CREATURE_TIMER(bp12);
 						QUEUE_THINK_CREATURE(xx, yy);
 					}
@@ -1703,7 +1688,8 @@ void SkWinCore::PREPARE_CREATURE_ANIMATION_INFO_V5(U8 iCreatureType, U16 iAnimOf
 Bit16u SkWinCore::GET_CREATURE_ANIMATION_FRAME(Bit8u iCreatureType, Bit16u command, Bit16u *iAnimSeq, Bit16u *iAnimInfo, CreatureAnimationFrame **animframe, Bit16u vv)
 {
 	//^4937:00CC
-	SkD((DLV_DBG_SED2, "DBG: GET_CREATURE_ANIMATION_FRAME %02X ccm:%04X %04X %04X %04X \n", (Bitu)iCreatureType, (Bitu)command, (Bitu)*iAnimSeq, (Bitu)*iAnimInfo, (Bitu)vv));
+	SkD((DLV_DBG_SED2, "DBG: GET_CREATURE_ANIMATION_FRAME %02X ccm:%04X (%s) %04X %04X %04X \n", (Bitu)iCreatureType, (Bitu)command, getCreatureCommandName((Bitu)command), (Bitu)*iAnimSeq, (Bitu)*iAnimInfo, (Bitu)vv));
+	// Note: at this point, iAnimSeq holds the previous animation (ended) that is going to be replaced
 	if (tlbCreaturesActionsGroupOffsets == NULL || tlbCreaturesActionsGroupSets == NULL || tlbCreaturesAnimationSequences == NULL) {
 		*iAnimInfo = 0xFFFF;
 		*iAnimSeq = 0;
@@ -1841,7 +1827,7 @@ U16 SkWinCore::QUERY_CREATURE_5x5_POS(Creature *ref, U16 dir)
 	//^32CB:0054
 	ENTER(4);
 	//^32CB:0058
-	if (ref->b5_0_7() == 0xff)
+	if (ref->InternalID() == 0xFF)
 		return 12;
 	sk1c9a02c3* xAnimInfo = GET_CREATURE_INFO_DATA(ref, QUERY_CREATURE_AI_SPEC_FROM_TYPE(ref->CreatureType()));	// bp04
 	i16 _5x5 = tblCreatureFrameInfo14[CREATURE_SEQUENCE_4937_000f(xAnimInfo->iAnimSeq, &xAnimInfo->iAnimInfo)][0];
@@ -1850,13 +1836,13 @@ U16 SkWinCore::QUERY_CREATURE_5x5_POS(Creature *ref, U16 dir)
 
 
 //^1C9A:08BD
-U16 SkWinCore::_1c9a_08bd(Creature *ref)
+U16 SkWinCore::_1c9a_08bd(Creature* xCreature)
 {
 	//^1C9A:08BD
 	ENTER(4);
 	//^1C9A:08C3
 	X16 si = 0;
-	X16 di = ref->b5_0_7();
+	X16 di = xCreature->InternalID();
 	if (di != 255) {
         CreatureInfoData *bp04 = &glbTabCreaturesInfo[di];
 		if (bp04->Command == ccmJump) {
@@ -2089,25 +2075,16 @@ void SkWinCore::SET_MINION_RECENT_OPEN_DOOR_LOCATION(ObjectID recordLink, i16 xp
 //^1C9A:0DB0
 void SkWinCore::RELEASE_CREATURE_TIMER(ObjectID recordLink)
 {
-	//^1C9A:0DB0
-	//^1C9A:0DB5
 	if (recordLink.DBType() == dbCreature) {
-		//^1C9A:0DC3
-		Bit8u bp01 = GET_ADDRESS_OF_RECORD(recordLink)->castToCreature()->b5_0_7();
-		//^1C9A:0DD7
-		if (bp01 != 0xff) {
-			//^1C9A:0DDD
-			i16 si = glbTabCreaturesInfo[bp01].TimerIndex();
-			//^1C9A:0DF0
-			if (si >= 0) {
-				//^1C9A:0DF4
-				DELETE_TIMER(si);
-				//^1C9A:0DFB
-				glbTabCreaturesInfo[bp01].TimerIndex(0xffff);
+		Bit8u iGlbCreatureIndex = GET_ADDRESS_OF_RECORD(recordLink)->castToCreature()->InternalID(); // bp01
+		if (iGlbCreatureIndex != 0xff) {
+			i16 iTimerIndex = glbTabCreaturesInfo[iGlbCreatureIndex].TimerIndex();	// si
+			if (iTimerIndex >= 0) {
+				DELETE_TIMER(iTimerIndex);
+				glbTabCreaturesInfo[iGlbCreatureIndex].TimerIndex(0xFFFF);
 			}
 		}
 	}
-	//^1C9A:0E11
 	return;
 }
 
@@ -2140,7 +2117,7 @@ void SkWinCore::_1c9a_0fcb(Bit16u xx)
 		//^1C9A:1022
 		_4976_1a68--;
 		//^1C9A:1026
-		bp08->b5_0_7(0xff);
+		bp08->SetInternalID(0xFF);
 		bp04->CreatureIndex(-1);
 	}
 	//^1C9A:1036
@@ -2227,12 +2204,12 @@ X16 SkWinCore::WOUND_CREATURE(i16 damage)
 	// If the creature has max defense, then take no damage
 	if (xLocalAIDef->ArmorClass == AI_DEF_ARMOR_MAX)
 		return bDiesFromDamage;
-	X16 si = 0;	// SPX : added default value to 0
+	X16 iAIStatsFlag = 0;	// SPX : added default value to 0
 	if (xLocalAIDef->IsStaticObject() == 0) {
 		//^1C9A:1882
-		X16 bp0a = QUERY_GDAT_CREATURE_WORD_VALUE(xLocalCreature->CreatureType(), 1);
-		si = tblAIStats01[bp0a];
-		if ((si & 4) == 0) {
+		X16 iAIStatsIndex = QUERY_GDAT_CREATURE_WORD_VALUE(xLocalCreature->CreatureType(), 1);	// bp0a
+		iAIStatsFlag = tblAIStats01[iAIStatsIndex];	// si
+		if ((iAIStatsFlag & 4) == 0) {	// minions
 			//^1C9A:18A5
 			X16 iCurrentMap = glbCurrentMapIndex; // bp0c
 			if (SkCodeParam::bUsePowerDebug) // SPX: issue here after gameload where some creature get their triggermap beyond the number of maps (then fail)
@@ -2263,14 +2240,14 @@ X16 SkWinCore::WOUND_CREATURE(i16 damage)
 	//^1C9A:190E
 	//xLocalCreature->HP1(1);
 	if (xLocalAIDef->IsStaticObject() == 0) {
-		if ((si & 0x800) != 0) {
+		if ((iAIStatsFlag & 0x800) != 0) {	// Dragoth only
 			//^1C9A:1927
 			if (_1c9a_17c7(glbCreatureTimer.XcoordB(), glbCreatureTimer.YcoordB(), glbSomeMap_4976_4ee7) == 0)
 				return bDiesFromDamage;
 		}
 		//^1C9A:1944
-		if ((si & 0x800) != 0)
-			_4976_4dfe = 0x18;
+		if ((iAIStatsFlag & 0x800) != 0)
+			glbEndCounter = 0x18;
 		//^1C9A:1950
 		_13e4_0360(glbCurrentThinkingCreatureID, glbCreatureTimer.XcoordB(), glbCreatureTimer.YcoordB(), ccmDestroy, 1); // 0x13
 	}
@@ -5086,44 +5063,44 @@ X16 SkWinCore::CREATURE_CAST_SPELL()
 	if (glbCurrentThinkingCreatureRec->b15_0_1() == bp04->b27 || AIdef->w0_2_2() != 0) {
 		//^1887:0A07
 		//i16 bp0a = (AIdef->AttackStrength >> 2) +1;
-		i16 bp0a = (AIdef->GetShootStrength()) +1;
-		bp0a = bp0a +RAND16(bp0a);
-		bp0a = bp0a +RAND16(bp0a);
+		i16 iShootStrength = (AIdef->GetShootStrength()) +1;	// bp0a
+		iShootStrength = iShootStrength + RAND16(iShootStrength);
+		iShootStrength = iShootStrength + RAND16(iShootStrength);
 		switch (bp04->ItemToThrow) {
-			case -121://^0A52
-			case -119://^0A52
-			case -118://^0A52
+			case -121://^0A52	// x87	poison cloud ?
+			case -119://^0A52	// x89  push ?
+			case -118://^0A52	// x8A	pull ?
 				//^1887:0A52
-				bp0a <<= 3;
+				iShootStrength <<= 3;
 				break;
-			case -122://^0A58
+			case -122://^0A58	// x86	poison bolt ?
 				//^1887:0A58
-				bp0a <<= 2;
+				iShootStrength <<= 2;
 				break;
-			case -120://^0A5C
+			case -120://^0A5C	// x88	???
 				break;
 		}
 		//^1887:0A5C
-		bp0a = BETWEEN_VALUE(4, bp0a, 255);
-		X16 bp0c;
-		if (bp0a <= 8) {
+		iShootStrength = BETWEEN_VALUE(4, iShootStrength, 255);
+		X16 bp0c = 0;
+		if (iShootStrength <= 8) {
 			//^1887:0A75
 			bp0c = 1;
 		}
-		else if (bp0a <= 0x10) {
+		else if (iShootStrength <= 0x10) {
 			//^1887:0A82
 			bp0c = 2;
 		}
-		else if (bp0a <= 0x20) {
+		else if (iShootStrength <= 0x20) {
 			//^1887:0A8F
-			bp0c = RAND01() +3;
+			bp0c = RAND01() + 3;
 		}
 		else {
 			//^1887:0A99
-			bp0c = RAND02() +7;
+			bp0c = RAND02() + 7;
 		}
 		//^1887:0AA4
-		SHOOT_ITEM(ObjectID::Raw(bp04->ItemToThrow), glbCreatureTimerGetX, glbCreatureTimerGetY, bp04->b28, bp04->b27, bp0a, AIdef->Defense, bp0c);
+		SHOOT_ITEM(ObjectID::Raw(bp04->ItemToThrow), glbCreatureTimerGetX, glbCreatureTimerGetY, bp04->b28, bp04->b27, iShootStrength, AIdef->Defense, bp0c);
 
 		SkD((DLV_TWEET, "Tweet: %s (a#%3d, x:%d, y:%d, map:%d) has thrown %s by cast! \n"
 			, static_cast<LPCSTR>(getRecordNameOf(glbCurrentThinkingCreatureID))
@@ -5134,7 +5111,7 @@ X16 SkWinCore::CREATURE_CAST_SPELL()
 			, static_cast<LPCSTR>(getRecordNameOf(ObjectID::Raw(bp04->ItemToThrow)))
 			));
 
-		if (AIdef->b9_4_4() != 0 && WOUND_CREATURE((bp0a >> 1) +RAND01()) != 0) {
+		if (AIdef->bConsumeHP() != 0 && WOUND_CREATURE((iShootStrength >> 1) + RAND01()) != 0) {
 			//^1887:0AFF
 			return _4976_4ee6 = 1;
 		}
@@ -5501,7 +5478,7 @@ X16 SkWinCore::CREATURE_USES_LADDER_HOLE()
 		//^1887:05A3
 		return 1;
 	//^1887:0396
-	if ((_4976_37a6[RCJ(86,bp04->Command)] & 4) == 0)
+	if ((tlbCreatureCommandsFlags[RCJ(MAX_CREATURE_COMMANDS,bp04->Command)] & 4) == 0)
 		//^1887:03A7
 		//^1887:05A3
 		return 1;
@@ -5699,8 +5676,8 @@ U16 SkWinCore::PROCEED_CCM()
 		//^1887:155D
 		si = CREATURE_WALK_NOW();
 		break;
-	case ccm03://^1563 // track you?
-	case ccm04://^1563
+	case ccm03://^1563 // track you?	// turn left and move
+	case ccm04://^1563					// turn right ? and move
 		//^1887:1563
 		si = CREATURE_CCM03();
 		break;
@@ -5708,8 +5685,8 @@ U16 SkWinCore::PROCEED_CCM()
 		//^1887:1569
 		si = CREATURE_JUMPS();
 		break;
-	case ccm06://^156F
-	case ccm07://^156F
+	case ccm06://^156F					// simply turn left
+	case ccm07://^156F					// turn right ?
 		//^1887:156F
 		CREATURE_CCM06();
 		break;
@@ -5829,7 +5806,7 @@ U16 SkWinCore::PROCEED_CCM()
 	}
 	else {
 		//^1887:15E0
-		if ((_4976_37a6[RCJ(86,glbCurrentThinkingCreatureData->Command)] & 3) != 0) {
+		if ((tlbCreatureCommandsFlags[RCJ(MAX_CREATURE_COMMANDS,glbCurrentThinkingCreatureData->Command)] & 3) != 0) {
 			//^1887:15F2
 			glbCurrentThinkingCreatureData->b4 = U8(glbGameTick);
 		}
@@ -5922,7 +5899,7 @@ void SkWinCore::CREATURE_THINK_0982()
 				goto _0a6a;
 			}
 			//^13E4:0A0F
-			if ((_4976_37a6[RCJ(86,xCreatureInfo->Command)] & 4) != 0) {
+			if ((tlbCreatureCommandsFlags[RCJ(MAX_CREATURE_COMMANDS,xCreatureInfo->Command)] & 4) != 0) {
 				//^13E4:0A20
 				_4976_514e.b1 = 0;
 				_4976_514e.b3 = 0xff;
@@ -6188,7 +6165,7 @@ void SkWinCore::THINK_CREATURE(X8 xx, X8 yy, X16 timerType)
 		//^13E4:0E6E
 		if (bp08->TimerIndex() == 0xffff) {
 			//^13E4:0E78
-			_1c9a_0fcb(glbCurrentThinkingCreatureRec->b5);
+			_1c9a_0fcb(glbCurrentThinkingCreatureRec->iID);
 		}
 	}
 	//^13E4:0E89
@@ -6324,7 +6301,7 @@ void SkWinCore::ANIMATE_CREATURE(X16 xx, X16 yy, X16 ww)
 	if (si == OBJECT_NULL)
 		return;
 	//^13E4:091A
-	if ((QUERY_CREATURE_AI_SPEC_FLAGS(si)&1) != 0 && GET_ADDRESS_OF_RECORD4(si)->b5_0_7() == 0xff) {
+	if ((QUERY_CREATURE_AI_SPEC_FLAGS(si)&1) != 0 && GET_ADDRESS_OF_RECORD4(si)->InternalID() == 0xFF) {
 		//^13E4:0938
 		ALLOC_CAII_TO_CREATURE(si, xx, di);
 	}
@@ -6396,7 +6373,7 @@ ObjectID SkWinCore::ALLOC_NEW_CREATURE(U16 creaturetype, U16 healthMultiplier_1t
 	xCreature->SetPossessionObject(OBJECT_END_MARKER);
 	xCreature->b15 = 0xFB;
 	xCreature->b15_0_1(dir);
-	xCreature->b5_0_7(0xFF);
+	xCreature->SetInternalID(0xFF);
 	if (bp0c != 0) {
 		//^1C9A:12C3
 		APPEND_RECORD_TO(bp0a, &xCreature->possession, -1, 0);
@@ -6435,7 +6412,7 @@ i16 SkWinCore::CREATURE_GET_COLORKEY(U8 cls2)
 
 
 //^121E:0222
-U16 SkWinCore::CREATURE_121e_0222(U16 xx, U16 yy, U16 ww)
+U16 SkWinCore::CREATURE_121e_0222(U16 xx, U16 yy, U16 ww) // put item on object like table
 {
 	ENTER(12);
 	Creature* xCreature = NULL;	// bp0c
@@ -6496,7 +6473,7 @@ U16 SkWinCore::CREATURE_121e_0222(U16 xx, U16 yy, U16 ww)
 			));
 	}
 	//^121E:0344
-	_4976_4e5c = 1;
+	glbRefreshViewport = 1;
 	//^121E:034A
 	return 1;
 }

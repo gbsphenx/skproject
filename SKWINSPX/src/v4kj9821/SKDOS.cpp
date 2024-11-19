@@ -224,12 +224,11 @@ void CSkWinDOS::ShowMessage(const char *psz) {
 
 void CSkWinDOS::UpdateRect(i16 x, i16 y, i16 cx, i16 cy)
 {
-//    unsigned char* video_mem = (unsigned char*)0xA0000;
     unsigned char *video_mem = (unsigned char *)0xA0000 + __djgpp_conventional_base;
 	int ix = 0;
 	int iy = 0;
-    for (iy = 0; iy < SCREEN_HEIGHT; ++iy) {
-        for (ix = 0; ix < SCREEN_WIDTH; ++ix) {
+    for (iy = 0; iy < SCREEN_HEIGHT; iy++) {
+        for (ix = 0; ix < SCREEN_WIDTH; ix++) {
             video_mem[iy * SCREEN_WIDTH + ix] = vram[iy * SCREEN_WIDTH + ix];  // Copy pixel data
 			//video_mem[iy * SCREEN_WIDTH + ix] = rand()%256; // random static (video test)
         }
@@ -252,6 +251,123 @@ void CSkWinDOS::Sleep(U32 millisecs)
 	usleep(millisecs); // * 1000
 #endif
 }
+
+#define KEYBOARD_INT 0x16
+
+void CSkWinDOS::PollKeyboard()
+{
+#ifdef __DJGPP__
+    union REGS regs;
+    static unsigned char lastScanCode = 0;
+    static int isKeyPressed = 0;
+
+    // Call BIOS interrupt to check keyboard status
+    regs.h.ah = 0x01;
+    int86(0x16, &regs, &regs);
+
+	isKeyPressed = regs.x.cflag & 1;
+
+    regs.h.ah = 0x00; // current key
+    int86(0x16, &regs, &regs);
+
+    unsigned char scanCode = regs.h.ch; // High byte contains the scan code
+    unsigned char asciiCode = regs.h.cl; // Low byte contains the ASCII code
+	unsigned char ah = regs.h.ah; // Low byte contains the ASCII code
+	unsigned char al = regs.h.al; // Low byte contains the ASCII code
+	//printf("Scan = %02X %02X %02X %02X, pressed = %d\n", scanCode, asciiCode, ah, al, isKeyPressed);
+	scanCode = ah;
+    if (scanCode != 0) // A key is being pressed
+    {
+        if (!isKeyPressed || scanCode != lastScanCode)
+        {
+       //     printf("Key pressed: ASCII=0x%02X, ScanCode=0x%02X\n", asciiCode, scanCode);
+        }
+        isKeyPressed = 1;
+        lastScanCode = scanCode;
+
+		processKinput(scanCode, false);
+    }
+    else if (isKeyPressed) // No key is being pressed now
+    {
+        //printf("Key released: ScanCode=0x%02X\n", lastScanCode);
+        isKeyPressed = 0;
+        lastScanCode = 0;
+    }
+#endif // __DJGPP__
+
+
+}
+
+void CSkWinDOS::processKinput(unsigned char nChar, bool press)
+{
+	CSkKinput *p = allocKinput();
+	//printf("Kinput p = %08x\n", (void*)p);
+	if (p != NULL) {
+		unsigned char v = 0;
+		switch (nChar) {
+		case DK_ESCAPE: v = 1; break;
+		case DK_1: v = 2; break;
+		case DK_2: v = 3; break;
+		case DK_3: v = 4; break;
+		case DK_4: v = 5; break;
+		case DK_5: v = 6; break;
+		case DK_6: v = 7; break;
+		case DK_7: v = 8; break;
+		case DK_8: v = 9; break;
+		case DK_9: v = 10; break;
+		case DK_0: v = 11; break;
+
+		case DK_BACKSPACE: v = 14; break;
+		case DK_TAB: v = 15; break;
+
+		case DK_ENTER: v = 28; break;
+
+		case DK_NUMPAD_7: v = 71; break;
+		case DK_NUMPAD_8: v = 72; break;
+		case DK_NUMPAD_9: v = 73; break;
+		case DK_NUMPAD_4: v = 75; break;
+		case DK_NUMPAD_5: v = 76; break;
+		case DK_NUMPAD_6: v = 77; break;
+		case DK_NUMPAD_1: v = 79; break;
+		case DK_NUMPAD_2: v = 80; break;
+		case DK_NUMPAD_3: v = 81; break;
+
+		case DK_Q: v = 16; break;
+		case DK_W: v = 17; break;
+		case DK_E: v = 18; break;
+		case DK_R: v = 19; break;
+		case DK_T: v = 20; break;
+		case DK_Y: v = 21; break;
+		case DK_U: v = 22; break;
+		case DK_I: v = 23; break;
+		case DK_O: v = 24; break;
+		case DK_P: v = 25; break;
+
+		case DK_A: v = 30; break;
+		case DK_S: v = 31; break;
+		case DK_D: v = 32; break;
+		case DK_F: v = 33; break;
+		case DK_G: v = 34; break;
+		case DK_H: v = 35; break;
+		case DK_J: v = 36; break;
+		case DK_K: v = 37; break;
+		case DK_L: v = 38; break;
+
+		case DK_Z: v = 44; break;
+		case DK_X: v = 45; break;
+		case DK_C: v = 46; break;
+		case DK_V: v = 47; break;
+		case DK_B: v = 48; break;
+		case DK_N: v = 49; break;
+		case DK_M: v = 50; break;
+
+		case DK_SPACE: v = 57; break;
+		}
+		p->raw = (press) ? (v) : (v | 0x80);
+	}
+}
+
+
 
 void CSkWinDOS::GetMousePosButtons(U16 *x, U16 *y, U16 *buttons) 
 {

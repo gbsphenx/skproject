@@ -2917,7 +2917,7 @@ Bit16u SkWinCore::MOVE_RECORD_TO(ObjectID rlWhatYouMove, i16 xposFrom, i16 yposF
 			//^2FCF:1009
 			if (bp0a == dbCreature && xposTo < -1) {
 				//^2FCF:1015
-				Bit16u bp06 = bp04->castToCreature()->b5_0_7();
+				Bit16u bp06 = bp04->castToCreature()->InternalID();
 				//^2FCF:1021
 				if (bp06 != 255) {
 					//^2FCF:1026
@@ -3030,7 +3030,7 @@ _11a3:
 		//^2FCF:11AC
 		CHANGE_CURRENT_MAP_TO(di);
 		//^2FCF:11B3
-		Bit16u bp06 = bp04->castToCreature()->b5_0_7();
+		Bit16u bp06 = bp04->castToCreature()->InternalID();
 		//^2FCF:11BF
 		if (di == glbMap_4c28 && xposTo == glbSomePosX_4c2e && yposTo == glbSomePosY_4c30) {
 			//^2FCF:11E0

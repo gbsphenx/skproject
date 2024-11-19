@@ -610,7 +610,7 @@ namespace DMEncyclopaedia {
 		ObjectID w0; // Next object ID.
 		ObjectID possession; // w2 Next possession object ID. Although not recommended, it is possible to
 		U8 b4; // Creature type. Her
-		U8 b5; // Position of each c // where &sk4ebe[b5]
+		U8 iID; // Ingame-Internal Creature Index (was in DM1 Position of each c) // where &sk4ebe[b5]
 		U16 hp1; // w6 Hit points of creature 1
 		U16 iAnimSeq; // w8 Hit points of creature 2 // sk1c9a02c3::w0		--> DM2 anim sequence
 		U16 iAnimFrame; // w10 Hit points of creature 3 // sk1c9a02c3::w2		--> DM2 anim frame (within sequence)
@@ -664,8 +664,8 @@ namespace DMEncyclopaedia {
 			b15 &= 0xfb;
 			b15 |= val << 2;
 		};
-		Bit8u b5_0_7() const { return b5; } // xx of _4976_4ebe[xx]. -1 if not yet alloced.
-		void b5_0_7(Bit8u val) { b5 = val; }
+		Bit8u InternalID() const { return iID; } // (b5_0_7) xx of _4976_4ebe[xx]. -1 if not yet alloced.
+		void SetInternalID(Bit8u val) { iID = val; } // b5_0_7
 		Bit8u b15_0_1() const { return (b15 & 3); } // creature dir?
 		void b15_0_1(Bit16u val) {
 			val &= 3;
@@ -1725,7 +1725,7 @@ namespace DM2Internal {
 		
 		U8 CanActivatePitTeleport() const { return (b9x>>6)&1; }	// (b9_6_6) 0x40 : would be pit ghost : operate pit and/or teleporter
 		U8 b9_5_5() const { return (b9x>>5)&1; }	// 0x20	// only "void door" and spiked wall
-		U8 b9_4_4() const { return (b9x>>4)&1; }	// 0x10	// attacks, scouts and guard minions (not all types)
+		U8 bConsumeHP() const { return (b9x>>4)&1; }	// 0x10	// (b9_4_4) attacks, scouts and guard minions (not all types) -> depleting HP from casting spells
 
 		U8 GetShootStrength() const { return (AttackStrength >> 2); }	// b6_2_7() : attack strength / 4, used for shooting strength
 		U16 w16_4_7() const { return (w16 >> 4)&15; } // anti confuse factor. 15=confuse disabled.
@@ -1795,13 +1795,13 @@ namespace DM2Internal {
 		U8 b4;		// @4
 		X8 sound;		// @5 // b5 / cls4 of effect sound
 
-		U16 w2_9_9() const { return (w2 >> 9)&1; }
-		U16 w2_8_8() const { return (w2 >> 8)&1; }
-		U16 w2_a_f() const { return (w2 >>10)&0x3f; }
-		U16 w2_0_3() const { return (w2)&0xf; }
-		U16 w2_4_7() const { return (w2>>4)&0xf; }
-		U8 b4_0_2() const { return b4&7; }
-		U8 b4_3_4() const { return b4&7; }
+		U16 w2_9_9() const { return (w2 >> 9)&1; }		// .... ...X .... ....	this would check end of sequence if set to 1
+		U16 w2_8_8() const { return (w2 >> 8)&1; }		// .... .... X... ....
+		U16 w2_a_f() const { return (w2 >>10)&0x3f; }	// XXXX XXX. .... ....
+		U16 w2_0_3() const { return (w2)&0xf; }			// .... .... .... XXXX
+		U16 w2_4_7() const { return (w2>>4)&0xf; }		// .... .... XXXX ....
+		U8 b4_0_2() const { return b4&7; }				// .... .XXX
+		U8 b4_3_4() const { return (b4>>3)&3; }				// ...X X... /// was { return b4&7; }, which seems wrong against func name
 	};
 
 	// SPX: V5 Animation FC 00 00 data
@@ -3047,6 +3047,8 @@ namespace DM2Internal {
 		ccm55 = 0x55,	// Cast reflector (Dragoth) ? No, will either transform to ccmCastSpell1 or ccmCastSpell2
 		ccmInv = -1,	// Idle
 	};
+#define MAX_CREATURE_COMMANDS	86
+	// prog check ccm is < 86, because using static info ccm table _4976_37a6
 	// Cloud(missile) type
 	enum {
 		missileFireball		= 0,

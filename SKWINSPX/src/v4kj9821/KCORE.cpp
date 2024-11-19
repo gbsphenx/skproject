@@ -6171,7 +6171,7 @@ _1201:
 					//^1031:122C
 					if (HANDLE_UI_EVENT(&glbMousePosition) != 0) {
 						//^1031:123B
-						if (_4976_4e5c == 0)
+						if (glbRefreshViewport == 0)
 							//^1031:1242
 							break;
 						//^1031:1245
@@ -6706,31 +6706,21 @@ void SkWinCore::FILL_CAII_CUR_MAP()
 					//^1C9A:3AC4
 					if (si.DBType() == dbCreature) {
 						//^1C9A:3AD1
-						Creature *bp0c = GET_ADDRESS_OF_RECORD4(si);
-						//^1C9A:3AE2
-						if (bp0c->b5 != 0xff)
-							//^1C9A:3AE7
+						Creature* xCreature = GET_ADDRESS_OF_RECORD4(si); // bp0c
+						if (xCreature->iID != 0xFF)
 							break;
-						//^1C9A:3AE9
-						if (QUERY_CREATURE_AI_SPEC_FROM_TYPE(bp0c->CreatureType())->IsStaticObject() == 0) {
-							//^1C9A:3B02
+						if (QUERY_CREATURE_AI_SPEC_FROM_TYPE(xCreature->CreatureType())->IsStaticObject() == 0) {
 							ALLOC_CAII_TO_CREATURE(si, bp0e, di);
 							//^1C9A:3B0E
 							break;
 						}
-						//^1C9A:3B10
-						U16 bp10 = bp0c->iAnimFrame;
-						//^1C9A:3B1A
+						U16 bp10 = xCreature->iAnimFrame;
 						CREATURE_SET_ANIM_FRAME(si);
-						//^1C9A:3B20
-						bp0c->iAnimFrame |= bp10 & 0x6000;
-						//^1C9A:3B2D
+						xCreature->iAnimFrame |= bp10 & 0x6000;
 						if ((bp10 & 0x803f) == 0x8001) {
-							//^1C9A:3B38
-							bp0c->iAnimFrame &= 0xffc0;
-							bp0c->iAnimFrame |= 0x8001;
+							xCreature->iAnimFrame &= 0xffc0;
+							xCreature->iAnimFrame |= 0x8001;
 						}
-						//^1C9A:3B44
 						break;
 					}
 					//^1C9A:3B46
@@ -7935,7 +7925,7 @@ void SkWinCore::_121e_013a(U16 xx, U16 yy, U16 zz)
 		TAKE_OBJECT(bp02, 1);
 	}
 	//^121E:0218
-	_4976_4e5c = 1;
+	glbRefreshViewport = 1;
 	//^121E:021E
 	return;
 }
@@ -8027,7 +8017,7 @@ void SkWinCore::PLAYER_TESTING_WALL(U16 ww, U16 xx, U16 yy)
 		QUEUE_NOISE_GEN2(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, SOUND_STD_DEFAULT, 0xfe, xx, yy, 0, 140, 200);
 	}
 	//^121E:0132
-	_4976_4e5c = 1;
+	glbRefreshViewport = 1;
 	//^121E:0138
 	return;
 }
@@ -8077,7 +8067,7 @@ U16 SkWinCore::_121e_0351(U16 xx, U16 yy)
 	//^121E:039E
 	if (si != 0)
 		//^121E:03A2
-		_4976_4e5c = 1;
+		glbRefreshViewport = 1;
 	//^121E:03A8
 	return si;
 }
@@ -8157,7 +8147,7 @@ void SkWinCore::RESUME_FROM_WAKE()
 	//^2C1D:14BA
 	ENTER(0);
 	//^2C1D:14BD
-	_4976_4e5c = 1; // SPX some move flag (viewport refresh?)
+	glbRefreshViewport = 1; // SPX some move flag (viewport refresh?)
 	glbIsPlayerSleeping = 0;
 	//glbTickSpeed = 12;	// SPX holds tick balance?? 12 was an old value
 	glbTickSpeed = stdTickBalance;
@@ -9015,7 +9005,7 @@ void SkWinCore::RESET_CAII()
 	}
 	Creature *xCreature = reinterpret_cast<Creature *>(static_cast<U8 *>(glbDBObjectData[4]));
 	for (iCreatureIndex = dunHeader->nRecords[dbCreature]; iCreatureIndex-- != 0; xCreature++) {
-		xCreature->b5 = 0xFF;
+		xCreature->iID = 0xFF;
 	}
 	FILL_ORPHAN_CAII();
 	return;
@@ -11451,7 +11441,7 @@ _1f19:
 
 						case 10:
 							//^1C9A:2964
-							if (bp16 != glbCreatureMap || (_4976_37a6[RCJ(86,_4976_4ee4)] & 3) != 0)
+							if (bp16 != glbCreatureMap || (tlbCreatureCommandsFlags[RCJ(MAX_CREATURE_COMMANDS,glbCreatureCommandThinking)] & 3) != 0)
 								//^1C9A:2982
 								break;
 							//^1C9A:2985
@@ -25991,12 +25981,14 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_00()
 	bp04 += 4;
 	tlbCreaturesActionsGroupOffsets = reinterpret_cast<U16 *>(bp04);		// This points to the third part
 
-	/*
+	
 	/// DUMP Level 1 tlbCreaturesActionsGroupOffsets (from GDAT value 0F-xx-00-00
+	FILE* fp = NULL;
+	fp = fopen("anim.txt", "wt+");
 	for (int i = 0; i < 42; i++)
 	{
 		U16 iCAGO = tlbCreaturesActionsGroupOffsets[i];
-		printf("CAGO %04X) OFFSET = %04X\n", i, iCAGO);
+		fprintf(fp, "CAGO %04X) OFFSET = %04X\n", i, iCAGO);
 	}
 
 	/// DUMP Level 2 tlbCreaturesActionsGroupSets / list of commands and start frame for each
@@ -26006,7 +25998,7 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_00()
 		CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
 		if (cca->ccmReference == 0xFFFF)
 			CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_RED, BLACK);
-		printf("CMDANIM %04X) CCM = %04X OFF = %04X (CCM: %s)\n", i, cca->ccmReference, cca->animSeqOffset, getCreatureCommandName(cca->ccmReference));
+		fprintf(fp, "CMDANIM %04X) CCM = %04X OFF = %04X (CCM: %s)\n", i, cca->ccmReference, cca->animSeqOffset, getCreatureCommandName(cca->ccmReference));
 		CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
 	}
 	/// DUMP Level 3 tlbCreaturesAnimationSequences -- frame/gfx/sfx information
@@ -26016,10 +26008,11 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_00()
 		CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
 		if (cas->sound != 0xFF)
 			CHANGE_CONSOLE_COLOR(BRIGHT, CYAN, BLACK);
-		printf("C-FRAME %04X) %04X %04X %02X SND=%02X (%s)\n", i, cas->w0, cas->w2, cas->b4, cas->sound, getCreatureSoundName(cas->sound));
+		fprintf(fp, "C-FRAME %04X) %04X %04X %02X SND=%02X (%s)\n", i, cas->w0, cas->w2, cas->b4, cas->sound, getCreatureSoundName(cas->sound));
 		CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
 	}
-	*/
+	fclose(fp);
+	
 
 	return;
 }
@@ -29904,7 +29897,7 @@ SkWinCore::SkWinCore()
 	_04bf_179e = NULL;
 	_4976_4ea6 = 0;
 	_4976_4e00 = 0;
-	_4976_4dfe = 0;
+	glbEndCounter = 0;
 	_4976_4e46 = 0;
 	glbAbsoluteTickCounter = 0;
 	_4976_19a9 = -1;

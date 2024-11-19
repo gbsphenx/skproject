@@ -460,13 +460,16 @@ const Bit8u * const strDungeon = (const Bit8u *)
 
 
 // SPX: _4976_01e0 renamed strVersionNumber
-#if (DM2_EXTENDED_MODE == 1)
-const Bit8u * const strVersionNumber = (const Bit8u *) "V4.2";	// SPX: 4.2 because PC-9821 GDAT is 4.1 and above the last DM1/CSB version 3.6
-#else
-const Bit8u * const strVersionNumber = (const Bit8u *)
-	"V1.0";
+#if defined (SK9821V4)
+	const Bit8u * const strVersionNumber = (const Bit8u *) "V4.2";	// SPX: 4.2 because the last PC-9821 GDAT is 4.1 and above the last DM1/CSB version 3.6
+#elif defined (SKDOSV5)
+	const Bit8u * const strVersionNumber = (const Bit8u *) "V5.4";	// SPX: 5.4 because the last PC-DOS GDAT is 5.2
+#elif defined (SKWINSPX)
+	const Bit8u * const strVersionNumber = (const Bit8u *) "V6.0";	// SPX: 6.0 because it is above 5.x
+#endif
+//const Bit8u * const strVersionNumber = (const Bit8u *)	"V1.0"; // original value
 	//"\x56\x31\x2E\x30\x00";                                            // V1.0.
-#endif // DM2_EXTENDED_MODE
+
 
 // SPX: _4976_4024 renamed strSlash
 const Bit8u * const strSlash = (const Bit8u *)"/";
@@ -1121,7 +1124,7 @@ AIDefinition dAITable[MAXAI];
 
 
 //{{SKVAL1
-U16 _04bf_188e[10];
+U16 tlbUIKeyInput[10];	// _04bf_188e
 
 // "Rr" ... 変数項の占有メモリ領域を確認し，RCJを付与済み
 // "Rr`" ... "Rr"中，RCJを部分的に施した
@@ -1244,7 +1247,7 @@ sk3b74	_4976_3b74[55]; //Rp
 sk0cea	_4976_0ce0[19]; //Rp
 U16		_4976_49d4[5][2]; //Rp
 U8		_4976_3fce[30]; //Rp
-U8		_4976_37a6[86]; //Rr	for holding 86 creature command info ?
+U8		tlbCreatureCommandsFlags[MAX_CREATURE_COMMANDS]; //Rr	(_4976_37a6[86]) for holding 86 creature command info ?
 U8	_04bf_02be[128]; //Rp // rawkey to ascii
 U8	_04bf_033e[128]; //Rp // rawkey+shift to ascii
 U8	_4976_00dc[8]; //Rr
@@ -1414,6 +1417,8 @@ tileTypeIndex UtilConvertU16ToTile(i16 u16tileType)
 // For debug purpose, added this special pointer check
 bool	CheckSafePointer(void* p)
 {
+#ifndef __LINUX__
+	// These checks work for Win32 MSVC6, not for LINUX-64
 	if (p == NULL ||
 		p <  (void*)0x00010000 ||	// low pages
 		p == (void*)0xCCCCCCCC ||	// bypass uninitialized memory
@@ -1456,10 +1461,14 @@ bool	CheckSafePointer(void* p)
 				sprintf(strMemMessage, "unallocated memory space");
 			else if (p >= (void*) 0x7FFF0000)
 				sprintf(strMemMessage, "protected area + system space");
-			SkD((DLV_BUGHERE, "Bad pointer adress @%p (%s)\n", p, strMemMessage));
+			SkD((DLV_BUGHERE, "Bad pointer address @%p (%s)\n", p, strMemMessage));
 		}
 		return false;
 	}
+#else
+	if (p == NULL)
+		return false;
+#endif
 	return true;
 }
 

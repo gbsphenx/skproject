@@ -1145,7 +1145,7 @@ void SkWinCore::INTERFACE_CHAMPION(Bit16u xx)
 		//^24A5:17EF
 		return;
 	//^24A5:17F2
-	_4976_4e5c = 1;
+	glbRefreshViewport = 1;
 	//^24A5:17F8
 	U16 si = glbChampionInventory;
 	//^24A5:17FC
@@ -1726,7 +1726,7 @@ U16 SkWinCore::CAST_SPELL_PLAYER(U16 player, SpellDefinition *ref, U16 power)
 						if (true
 							&& bp1e->w0 != OBJECT_NULL 
 							&& bp1e->CreatureType() == CREATURE_GOOD_U_HAUL_MINION
-							&& (bp0a = bp1e->b5) != 0x00ff
+							&& (bp0a = bp1e->iID) != 0x00FF
 							&& glbTabCreaturesInfo[bp0a].Command != ccmDestroy	// 0x13
 						) {
 							//^2759:2470

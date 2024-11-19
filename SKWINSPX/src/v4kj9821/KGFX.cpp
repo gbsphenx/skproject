@@ -945,13 +945,11 @@ U16 SkWinCore::_32cb_01b6(U16 xx, U16 yy, U16 ss, U16 tt, U16 *ww)
 
 	Creature* xCreature = GET_ADDRESS_OF_RECORD4(rlCreature); // bp04
 	CreatureInfoData* xCreatureInfoData; // bp08
-	if (xCreature->b5 == 255) {
-		//^32CB:01EC
+	if (xCreature->iID == 0xFF) {
 		xCreatureInfoData = NULL;
 	}
 	else {
-		//^32CB:01F8
-		xCreatureInfoData = &glbTabCreaturesInfo[xCreature->b5];
+		xCreatureInfoData = &glbTabCreaturesInfo[xCreature->iID];
 	}
 	//^32CB:0216
 	QUERY_CREATURE_PICST(3, glbTabYAxisDistance[3], xCreature, xCreatureInfoData, rlCreature);

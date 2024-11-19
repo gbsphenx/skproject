@@ -5541,6 +5541,8 @@ void SkWinCore::DRAW_DUNGEON_GRAPHIC(U8 cls1, U8 cls2, U8 cls4, X16 rectno, i16 
 	// SPX : special fix DM1
 	if (SkCodeParam::bDM1Mode && rectno == 754) // roof door slit D1
 		bp013a.w30 -= 3;
+	if (SkCodeParam::bDM2V5Mode && cls1 == GDAT_CATEGORY_GRAPHICSSET && cls4 == GDAT_GFXSET_DOOR_FRAME_FRONT_D1)
+		bp013a.w30 += 3;
 	//^32CB:07EB
 	DRAW_PICST(QUERY_PICST_IT(&bp013a));
 	//^32CB:0801
@@ -5650,11 +5652,11 @@ void SkWinCore::SUMMARY_DRAW_CREATURE(ObjectID rl, i16 cellPos, U32 ss)
 			continue;
 		Creature* xCreature = GET_ADDRESS_OF_RECORD4(rObject);
 		CreatureInfoData* xInfo = NULL;
-		if (xCreature->b5_0_7() == 0xFF) {
+		if (xCreature->InternalID() == 0xFF) {
 			xInfo = NULL; // 0
 		}
 		else {
-			xInfo = &glbTabCreaturesInfo[xCreature->b5_0_7()];
+			xInfo = &glbTabCreaturesInfo[xCreature->InternalID()];
 		}
 		AIDefinition *xAIDef = QUERY_CREATURE_AI_SPEC_FROM_TYPE(xCreature->CreatureType());
 		QUERY_CREATURE_PICST(iCellPos, iDistToPlayer, xCreature, xInfo, rObject);
@@ -5751,10 +5753,24 @@ void SkWinCore::DRAW_DOOR_FRAMES(i16 iViewportCell, X16 iDoorFrameDisplayFlags)	
 					glbTempPicture.w28 -= 2;
 					glbTempPicture.w30 += 4;
 				}
-				//else { // DM2 V5 adjustment
-				//	glbTempPicture.w28 -= 10;
-				//	glbTempPicture.w30 += 5;
-				//}
+				else if (SkCodeParam::bDM2V5Mode) { // DM2 V5 adjustment
+					if (iDoorFrameGfx == 0x0B || iDoorFrameGfx == 0x0C)	{ // Distance 3
+						glbTempPicture.w28 -= 4;
+						glbTempPicture.w30 += 4;
+					}
+					else if (iDoorFrameGfx == 0x09 || iDoorFrameGfx == 0x0A)	{ // Distance 2
+						glbTempPicture.w28 -= 5;
+						glbTempPicture.w30 += 6;
+					}
+					else if (iDoorFrameGfx == 0x07 || iDoorFrameGfx == 0x08)	{ // Distance 1
+						glbTempPicture.w28 -= 10;
+						glbTempPicture.w30 += 5;
+					}
+					else if (iDoorFrameGfx == 0xD3 || iDoorFrameGfx == 0xD4)	{ // Distance 0
+						glbTempPicture.w28 -= 13;
+						glbTempPicture.w30 -= 3;
+					}
+				}
 				DRAW_TEMP_PICST();
 			}
 		}
@@ -5771,10 +5787,24 @@ void SkWinCore::DRAW_DOOR_FRAMES(i16 iViewportCell, X16 iDoorFrameDisplayFlags)	
 					glbTempPicture.w28 += 2;
 					glbTempPicture.w30 += 4;
 				}
-				//else { // DM2 V5 adjustment
-				//	glbTempPicture.w28 += 10;
-				//	glbTempPicture.w30 += 5;
-				//}
+				else if (SkCodeParam::bDM2V5Mode) { // DM2 V5 adjustment
+					if (iDoorFrameGfx == 0x0B || iDoorFrameGfx == 0x0C)	{ // Distance 3
+						glbTempPicture.w28 += 4;
+						glbTempPicture.w30 += 4;
+					}
+					else if (iDoorFrameGfx == 0x09 || iDoorFrameGfx == 0x0A)	{ // Distance 2
+						glbTempPicture.w28 += 5;
+						glbTempPicture.w30 += 6;
+					}
+					else if (iDoorFrameGfx == 0x07 || iDoorFrameGfx == 0x08)	{ // Distance 1
+						glbTempPicture.w28 += 10;
+						glbTempPicture.w30 += 5;
+					}
+					else if (iDoorFrameGfx == 0xD3 || iDoorFrameGfx == 0xD4)	{ // Distance 0
+						glbTempPicture.w28 += 13;
+						glbTempPicture.w30 -= 3;
+					}
+				}
 				DRAW_TEMP_PICST();
 				//^32CB:485F
 				if (door->Button() != 0) {
@@ -5823,7 +5853,7 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 	//^32CB:490B
 	if (yy != 0) {
 		//^32CB:4911
-		DRAW_DOOR_FRAMES(iCellPos, yy);
+		DRAW_DOOR_FRAMES(iCellPos, yy);	// Note, D0 door side (gfx 0x06) displayed on the same tile is not drawn here
 	}
 	//^32CB:491D
 	if (aa != 0) {
@@ -5834,6 +5864,7 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 	//^32CB:4937
 	U16 iDoorState = tblCellTilesRoom[iCellPos].xsrd.w6[0];	// U16 bp06
 	X16 iStretchDual;	// X16 si
+	
 	if (iDoorState != 0) {	// 0 = open. 1 - 3 = intermediate state. 4 = closed. 5 = destroyed
 		//^32CB:4955
 		ObjectID bp0c = tblCellTilesRoom[iCellPos].xsrd.w6[1];
@@ -7023,7 +7054,7 @@ _51d7:
 				//^32CB:523B
 				DRAW_PIT_TILE(si);
 				goto _52b1;
-			case 16://^5243	// seeing door frame slot in front from door tile
+			case 16://^5243	// seeing door frame slot in front from door tile ==> SPX: it seems to be something else
 				//^32CB:5243
 				if (si == 3) {
 					//^32CB:5248
@@ -7032,7 +7063,7 @@ _51d7:
 						//^32CB:5279
 						QUERY_TEMP_PICST(
 							glbGeneralFlipGraphics, 0x2b, 0x2b, 0, 0, 2, QUERY_CREATURE_BLIT_RECTI(3, 2, 0), 0xffff, 
-							glbSceneColorKey, -1, GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, 6
+							glbSceneColorKey, -1, GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, 0x06
 							);
 						DRAW_TEMP_PICST();
 					}
@@ -7187,11 +7218,11 @@ void SkWinCore::DRAW_PLAYER_TILE()
 			DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet
 //					, (si != 0) ? 0x39 : 0x4D
 				, (si != 0) ? GDAT_GFXSET_STAIRS_RAMP_UP_S0_L : GDAT_GFXSET_STAIRS_RAMP_DOWN_S0_L
-				, (si != 0) ? 0x32b : 0x338, glbSceneColorKey, 0);
+				, (si != 0) ? 0x32B : 0x338, glbSceneColorKey, 0);
 			DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet
 //					, (si != 0) ? 0x3a : 0x4e
 				, (si != 0) ? GDAT_GFXSET_STAIRS_RAMP_UP_S0_R : GDAT_GFXSET_STAIRS_RAMP_DOWN_S0_R
-				, (si != 0) ? 0x32c : 0x339, glbSceneColorKey, 0);
+				, (si != 0) ? 0x32C : 0x339, glbSceneColorKey, 0);
 			break;
 		case 0x02://^542E
 			//^32CB:542E

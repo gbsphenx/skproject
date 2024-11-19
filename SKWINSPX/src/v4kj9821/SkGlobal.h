@@ -457,7 +457,7 @@ extern const U8 _4976_3d7d[];
 
 //{{SKVAL1
 
-extern U16 _04bf_188e[10];
+extern U16 tlbUIKeyInput[10];
 
 // "Rr" ... 変数項の占有メモリ領域を確認し，RCJを付与済み
 // "Rr`" ... "Rr"中，RCJを部分的に施した
@@ -580,7 +580,7 @@ extern sk3b74	_4976_3b74[55]; //Rp
 extern sk0cea	_4976_0ce0[19]; //Rp
 extern U16		_4976_49d4[5][2]; //Rp
 extern U8		_4976_3fce[30]; //Rp
-extern U8		_4976_37a6[86]; //Rr
+extern U8		tlbCreatureCommandsFlags[86]; //Rr
 extern U8	_04bf_02be[128]; //Rp // rawkey to ascii
 extern U8	_04bf_033e[128]; //Rp // rawkey+shift to ascii
 extern U8	_4976_00dc[8]; //Rr

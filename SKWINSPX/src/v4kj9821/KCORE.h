@@ -468,7 +468,7 @@ protected:
 	Bit16u	_4976_4df8;		// rectno?
 	i16		glbUIEventCode;		// (_4976_4dfa) SPX: sort of timer for credits screen?
 	Bit16u	_4976_4dfc;
-	Bit16u	_4976_4dfe;
+	Bit16u	glbEndCounter;		// _4976_4dfe
 	i16	_4976_4e00;
 	Bit16u	_4976_4e44;		// rectno?
 	Bit16u	_4976_4e46;
@@ -476,7 +476,7 @@ protected:
 	Bit16u	glbMouseInfoX;	// _4976_4e4a
 	Bit16u	glbMouseInfoY;	// _4976_4e4c
 	MousePosition	glbMousePosition; // (_4976_4e4e)
-	Bit16u	_4976_4e5c;
+	Bit16u	glbRefreshViewport;				// _4976_4e5c (tells to refresh viewport ?)
 	Bit16u	glbUIClickEventLast;	// _4976_4e5e (ring 0 to 2) last index of click event
 	Bit16u	glbUIClickEventIndex;	// _4976_4e60 (ring 0 to 2) processed index of click event
 	i16		_4976_4e62;
@@ -515,7 +515,7 @@ protected:
 	sk1c9a02c3* glbCreatureAnimSeqInfo;	// (_4976_4ed6)
 	CreatureAnimationFrameInfoFC_V5* glbCreatureAnimSeqInfoV5; // SPX: Added
 	Timer	glbCreatureTimer;		// (_4976_4eda) might be a timer for creature?
-	i8		_4976_4ee4;
+	i8		glbCreatureCommandThinking;		// _4976_4ee4, related to command
 	X8		_4976_4ee5;		// selector of next xact?
 	X8		_4976_4ee6;		// creature move block?
 	U8		glbSomeMap_4976_4ee7;		// _4976_4ee7 some map?

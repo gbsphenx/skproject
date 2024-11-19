@@ -1,0 +1,1009 @@
+CHANGE LOG for MODIFICATIONS:
+=============================
+
+
+DME.H
+-----
+sk03a2		renamed		AIDefinition
+
+
+sk3d79		renamed		ItemStatBarPos
+
+sk3e22		renamed		SpellDefinition
+sk3e22->w6_4_9		renamed		SpellDefinition->SpellCastIndex
+
+sk4e02		renamed		MouseState
+sk4e4e		renamed		MousePosition
+
+sk53b4		renamed		Champion
+sk57c8		renamed		LeaderPossession
+sk57e4		renamed		GlobalEffects
+sk5a80		renamed		CellTileDetail
+sk5c20		renamed		Timer
+sk5c2a		renamed		DistantEnvironment
+sk5cb6		renamed		GDATEntries
+sk5efe		renamed		SoundStructure
+sk5f0e		renamed		SoundEntryInfo
+sk5fda		renamed		CreatureCommandAnimation
+sk5fde		renamed		CreatureAnimationFrame
+skxxx6		renamed		ExtendedTileInfo
+
+
+
+Creature.HP4_0_4	renamed		SetTriggerXPos
+Creature.HP4_5_9	renamed		SetTriggerYPos
+Creature.HP4_A_F	renamed		SetTriggerMap
+
+
+SkGlobal.cpp (GLOBAL VARIABLES / TABLES)
+----------------------------------------
+
+_4976_4116	renamed	glbTabXAxisDistance
+
+
+A.CPP / SkWinCore.cpp (VARIABLES/TABLES)
+----------------------------------------
+
+
+_01b0_13cc		renamed		glbSoundFreq_13cc
+_01b0_13ce		renamed		glbSoundFreq_13ce
+
+_01b0_13d2		renamed		sndSoundToPlayBuffer
+_01b0_13d6		renamed		sndLockSoundBuffer
+
+_01b0_14df		renamed		sndSoundToPlayBufferSize
+
+_01b0_4896		renamed		glbFreqComparator
+
+_04bf_00fc		renamed		glbUpdatePalette
+_04bf_00fd		renamed		glbMouseCursorVisible
+
+
+
+_04bf_027e		renamed		glbZMode
+_04bf_0282		renamed		glbDMode
+_04bf_0286		renamed		glbPType
+_04bf_0288		renamed		glbSoundBlasterBasePort
+_04bf_028a		renamed		glbSoundCardType
+_04bf_028c		renamed		sndSoundInBuffer
+_04bf_028e		renamed		sndSoundBufferSize
+_04bf_0290		renamed		sndSoundBuffer
+_04bf_0294		renamed		sysSomeSemaphore
+
+_04bf_03be		renamed		glbMouseXPos
+_04bf_03c0		renamed		glbMouseYPos
+_04bf_03c2		renamed		glbMousePreviousXPos
+_04bf_03c4		renamed		glbMousePreviousYPos
+
+_04bf_050d		renamed		glbDecreasing120
+
+_04bf_0517		renamed		glbCounterZero_0517
+_04bf_0519		renamed		glbSomeCounter_0519
+
+_04bf_0661		renamed		strPC286Required
+
+_04bf_09f0		renamed		glbPaletteRGB
+
+_04bf_0e52		renamed		sysMousePositionCaptured
+
+_04bf_17a6		renamed		sndSoundPlaybackFrequency
+_04bf_17ee		renamed		glbMouseButtonState
+
+_04bf_1886		renamed		glbUIKeyReadCount
+_04bf_188e		renamed		tlbUIKeyInput
+
+_4976_00f0		renamed		glbScreenWidth;
+_4976_00f2		renamed		glbScreenHeight;
+
+_4976_0128		renamed		glbPanelStatsYDelta
+
+_4976_0144		renamed		glbMagicMapWidth
+_4976_0146		renamed		glbMagicMapHeight
+_4976_0148		renamed		glbMagicMapInterlineX
+_4976_014a		renamed		glbMagicMapInterlineY
+
+_4976_01ba		renamed		glbGameHasEnded
+
+_4976_01e0		renamed		strVersionNumber
+
+_4976_01e6		renamed		strSystemErrorTable
+_4976_01f2		renamed		strSystemError
+_4976_0205		renamed		strSystemErrorF
+_4976_0218		renamed		strSystemErrorG
+
+_4976_022e		renamed		glbTickStepReached
+
+_4976_0230		renamed		glbMapToLoad
+_4976_0232		renamed		glbXAxisDelta
+_4976_023a		renamed		glbYAxisDelta
+
+_4976_0242		renamed		glbItemSizePerDB
+_4976_0252		renamed		tblDefaultNbItemAllocationPerDB
+
+_4976_3d34(16)	renamed		tLightLevel2
+_4976_3d44(6)	renamed		tLightLevelTable
+
+_4976_0c5a		renamed		glbCurrentMapIndex
+_4976_0c5c		renamed		glbTargetTypeMoveObject
+
+_4976_0c8a		renamed		glbActivationItemRangePerDB
+
+_4976_0caa		renamed		glbGDAT2CatPerDB
+
+_4976_18b9		renamed		tlbUIEventTable
+_4976_19a5		renamed		glbMouseStateRingIndex
+_4976_19ba		renamed		glbTableToMove
+
+_4976_19bc		renamed		ptrDungeonFilename
+_4976_19c4		renamed		ptrDungenB
+_4976_19d0		renamed		ptrSKSave_dat
+_4976_19d4		renamed		ptrSKSave_bak
+_4976_19c0		renamed		ptrDungeon_ftl
+_4976_19c8		renamed		ptrGraphics
+_4976_19cc		renamed		ptrGraphics2
+
+
+
+
+_4976_19d8		renamed		strDungeon
+_4976_19ee		renamed		strDungeon_ftl
+_4976_1a04		renamed		strDungenB
+_4976_1a1a		renamed		strGraphics
+_4976_1a2c		renamed		strGraphics2
+_4976_1a3e		renamed		strSKSave_dat
+_4976_1a53		renamed		strSKSave_bak
+
+_4976_3752		renamed		tblAIStats01
+_4976_38f0		renamed		glbPreviousPrecompLight
+_4976_38f2		renamed		glbPreviousLightModifier
+
+_4976_394e		renamed		glbDataFileHandle
+
+_4976_3954		renamed		glbMinionsAssocCount
+
+_4976_3b54		renamed		glbByte01
+
+_4976_3d2e		renamed		glbInventorySubpanel
+_4976_3d32		renamed		glbObjectForContainer
+
+_4976_3d44		renamed		tLightLevelTable	(holds 6 levels)
+_4976_3d4a		renamed		tSkillLevelNameGDAT2Entry (15 values)
+
+_4976_3d79		renamed		glbItemStatBarPos
+
+_4976_3d82		renamed		glbLangageLetterIndex
+
+_4976_3da4		renamed		strZT_EndOfString	
+_4976_3da5		renamed		strZT_F
+_4976_3da7		renamed		strZT_G
+_4976_3da9		renamed		strZT_strData1
+_4976_3db4		renamed		strZT_strData2
+_4976_3dbf		renamed		strZT_strData3
+_4976_3dca		renamed		strZT_strData4
+_4976_3dd0		renamed		strZT_strData5
+_4976_3ddc		renamed		glbRightPanelType
+_4976_3d84		renamed		strZxxxTable		(holds 8 pointers - 8 previous pointers)
+
+_4976_3e00		renamed		RuneManaPower
+_4976_3e18		renamed		RunePowerMultiplicator
+
+_4976_3f32		renamed		ItemCommandsTable
+_4976_3f6a		renamed		glbPreviousRightPanelType
+_4976_3fc6		renamed		glbChampionLeader
+_4976_3fec		renamed		glbChampionColor
+
+_4976_4024		renamed		strSlash
+
+_4976_4144[23]	renamed		tlbDoorSideFramesReorder
+_4976_4189		renamed		tlbDistanceStretch
+_4976_41fe		renamed		tlbRainScene
+_4976_4214		renamed		glbMistyMap
+_4976_4216		renamed		glbSceneColorKey
+_4976_4218		renamed		glbMapGraphicsSet
+
+_4976_42a2[16]	renamed		tlbGraphicsFlip
+_4976_42b2[16]	renamed		tlbGraphicsPitHidden
+_4976_42c2[16]	renamed		tlbGraphicsPitNormal
+_4976_4270[9]	renamed		tlbGraphicsPitRoof
+
+_4976_435a[6]	renamed		tlbPullPushArrow
+_4976_434e[6]	renamed		tlbPullPushArrowRectno
+_4976_4360[6]	renamed		tlbPullPushObjectMoveDirs
+_4976_4366[6]	renamed		tlbPullPushPlayerMoveDirs
+
+_4976_439a[25]	renamed		tlbDisplayOrderLeft;
+_4976_43b3[25]	renamed		tlbDisplayOrderRight;
+_4976_43cc[25]	renamed		tlbDisplayOrderCenter;
+
+_4976_44f3[28]	renamed		tlbGraphicsDoorSideFrames
+_4976_450f[14]	renamed		tlbGraphicsDoorRoofSlits
+_4976_451d[14]	renamed		tlbRectnoDoorRoofSlits
+
+_4976_456e[32]	renamed		tlbGraphicsStairsFront1
+_4976_458e[32]	renamed		tlbGraphicsStairsFront2
+
+_4976_45ee[9*2]	renamed		tlbGraphicsStairsSide
+
+_4976_4e5c		renamed		glbRefreshViewport
+_4976_4e5e		renamed		glbUIClickEventLast
+_4976_4e60		renamed		glbUIClickEventIndex
+_4976_4e6c		renamed		tlbUIClickEvents
+
+_4976_4724[] = {"mv"};	renamed		EnvCM_MV
+_4976_4727[] = {"xl"};	renamed		EnvCM_XLocation
+_4976_472a[] = {"yl"};	renamed		EnvCM_YLocation
+_4976_472d[] = {"fd"};	renamed		EnvCM_FD
+_4976_4730[] = {"cd"};	renamed		EnvCM_CD2
+_4976_4733[] = {"fw"};	renamed		EnvCM_FW2
+_4976_475a		renamed		strEndLine
+_4976_477c[128]	renamed		tlbRainRelated
+_4976_47fe		renamed		glbThunderJustCast
+_4976_4800[] = {"cd"};	renamed		EnvCM_CD
+_4976_4803[] = {"fw"};	renamed		EnvCM_FW
+
+_4976_480b		renamed		glbGDATVersion
+
+_4976_4988[]	renamed		strDirLetter
+_4976_498b[]	renamed		strDirLetter2
+_4976_4996		renamed		ptrDirLetter
+_4976_499a		renamed		ptrDirLetter2
+_4976_49ba		renamed		glbRandomSeed
+
+_4976_4a02		renamed		glbMiscItemsLoaded
+
+_4976_4b7c		renamed		glbPoisonAttackDamage
+
+_4976_4bec		renamed		glbGameTick
+
+_4976_4bda		renamed		glbPaletteT16
+
+_4976_4be8		renamed		glbIsPlayerSleeping
+_4976_4bea		renamed		glbIsPlayerMoving
+
+_4976_4bf0		renamed		glbTickSpeed
+_4976_4bf2		renamed		glbPlayerLastMove
+_4976_4bf4		renamed		glbPlayerMap
+_4976_4bf6		renamed		glbPlayerDir
+_4976_4bf8		renamed		glbRecalcLightIndicator
+_4976_4bfa		renamed		glbPlayerPosX
+_4976_4bfc		renamed		glbNextChampionNumber
+_4976_4c06		renamed		glbPlayerPosY
+_4976_4c0e		renamed		glbIntermediateTickCounter
+_4976_4c14		renamed		glbPlayerThrowCounter
+
+_4976_4c20		renamed		glbAbsoluteTickCounter
+_4976_4c24		renamed		glbSpecialScreen
+_4976_4c28		renamed		glbMap_4c28
+_4976_4c2a		renamed		glbPlayerDefeated
+_4976_4c2e		renamed		glbSomePosX_4c2e
+_4976_4c30		renamed		glbSomePosY_4c30
+_4976_4c36		renamed		glbLightLevel
+_4976_4c3c		renamed		glbChampionsCount
+_4976_4c3a		renamed		glbShowMousePointer
+_4976_4c38		renamed		glbShowItemStats
+
+_4976_4c56		renamed		glbCreaturesMaxCount
+_4976_4c58		renamed		glbSomeCreatureTable
+_4976_4c60[16]	renamed		glbMapDoorOrnatesList
+
+_4976_4c76		renamed		glbCountMoneyItems
+_4976_4c78		renamed		glbCurrentTileMap
+_4976_4c7c		renamed		dunMapTilesObjectIndexPerColumn
+_4976_4c80		renamed		glbMoneyItemsValueTable
+_4976_4c94		renamed		glbMoneyItemsIDTable
+_4976_4ca8		renamed		glbMapTileValue
+_4976_4cac		renamed		glbMapCreaturesTypeNumber
+_4976_4cb0		renamed		?
+_4976_4cb4		renamed		glbCount
+_4976_4cb6		renamed		glbMapDoorType
+_4976_4cb8		renamed		glbDoLightCheck
+_4976_4cca		renamed		glbDBObjectData
+_4976_4d0e		renamed		dunHeader
+_4976_4d0a		renamed		dunMapLocalHeader
+_4976_4d12		renamed		dunTextData
+_4976_4d16		renamed		dunGroundStacks
+_4976_4db6		renamed		dunMapData
+_4976_4dba		renamed		dunMapsHeaders
+
+_4976_4dd2		renamed		glbCurrentMapWidth
+_4976_4dd4		renamed		glbCurrentMapHeight
+_4976_4dd6		renamed		dunMapColumnsSumArray
+_4976_4ddc		renamed		glbTryPushPullObject
+_4976_4dfa		renamed		glbUIEventCode
+
+_4976_4e02		renamed		tlbMouseStateRing
+
+_4976_4e4a		renamed		glbMouseInfoX
+_4976_4e4c		renamed		glbMouseInfoY
+_4976_4e4e		renamed		glbMousePosition
+_4976_4e6a		renamed		glbMouseInfoButton
+_4976_4eb4		renamed		glbHighlightArrowPanel
+_4976_4eb8		renamed		glbTargetPosXTest
+_4976_4eba		renamed		glbTargetPosYTest
+
+_4976_4ebe		renamed		glbTabCreaturesInfo
+_4976_4ec2		renamed		glbCreaturesCount
+_4976_4ec4		renamed		glbCurrentThinkingCreatureID
+_4976_4ec6		renamed		glbCurrentThinkingCreatureRec
+_4976_4eca		renamed		glbAIDef;
+_4976_4ece		renamed		glbCurrentThinkingCreatureData
+_4976_4ed2		renamed		glbCreatureAnimationFrame
+_4976_4ed6		renamed		glbCreatureAnimSeqInfo
+_4976_4eda		renamed		glbCreatureTimer
+_4976_4ee0		renamed		glbCreatureTimerGetX
+_4976_4ee1		renamed		glbCreatureTimerGetY
+_4976_4ee7		renamed		glbSomeMap_4976_4ee7
+_4976_4eee		renamed		glbAIAttacksSpells
+
+_4976_4f84		renamed		glbCreatureWalkPath
+
+_4976_515c		renamed		glbMemWalkPath
+
+_4976_5212		renamed		glbCreatureTempTargetX
+_4976_5214		renamed		glbCreatureTempTargetY
+
+_4976_5216		renamed		glbCreatureSomeX
+_4976_5218		renamed 	glbCreatureSomeY
+_4976_521a		renamed		glbCreatureSomeZMap
+
+_4976_5232		renamed		glbCreatureMap
+_4976_5234		renamed		glbCreatureDir
+_4976_5236		renamed		glbCreaturePosX
+_4976_5238		renamed		glbCreaturePosY
+_4976_525e		renamed		glbMinionsObjectIDTable
+
+_4976_52d6		renamed		glbLightModifier
+
+_4976_52ae		renamed		glbImageCreditScreen
+_4976_52af		renamed		glbChampionTable
+_4976_52b2		renamed		glbImageMenuScreen
+_4976_52be		renamed		glbChampionInventory
+_4976_52c4		renamed		glbCurrentContainerItems
+_4976_52d4		renamed		glbPrecomputedLight
+_4976_52de		renamed		glbTextEntryEncoded
+_4976_52e6		renamed		glbChampionBonesIndex
+_4976_52e8		renamed		glbItemWeightKg
+_4976_52dc		renamed		glbItemWeightDg
+
+_4976_5302		renamed		glbStrBufferActionName
+_4976_531e		renamed		glbSomeChampionIndex
+_4976_5324		renamed		glbSelectedHand_2
+_4976_532e		renamed		glbWeaponShooterNum
+_4976_5330		renamed		glbChampionHandCoolingDown
+_4976_5340		renamed		glbChampionAttackDamage
+_4976_5342		renamed		glbChampionAlive
+_4976_534a		renamed		glbWeaponMissileHand
+_4976_534c		renamed		glbObjectID_4976_534c
+_4976_534e		renamed		glbItemGDATEntry
+_4976_534f		renamed		glbItemGDATCategory
+_4976_5350		renamed		glbItemGDATIndex
+_4976_5352		renamed		glbSomeChampionPanelFlag
+_4976_5354		renamed		glbSelectedHandAction
+_4976_5356		renamed		glbMagicalMapFlags
+_4976_5358[3]	renamed		glbItemSelected
+_4976_5366		renamed		glbChampionIndex
+_4976_5368		renamed		glbChampionItemInUse
+_4976_536e		renamed		glbChampionEngagingHandCommand
+_4976_53ae		renamed		glbHoldedContainerType
+_4976_53b4		renamed		glbChampionSquad (starts at glbChampionTable[1])
+
+
+
+_4976_57c8		renamed		glbLeaderHandPossession		(CSBWin :~ objectInHand)
+_4976_57e0		renamed		glbLeaderItemFlags
+_4976_57e2		renamed		glbLeaderItemWeight
+_4976_57e4		renamed		glbGlobalSpellEffects
+_4976_57ea		renamed		glbChampionsPendingDamage
+_4976_57f4		renamed		glbChampionsBodyFlags
+_4976_57fc		renamed		glbStrBufferNumber
+
+_4976_5802		renamed		glbLastChampionInventory
+_4976_580a		renamed		glbChampionMajorSkillsLevel
+
+_4976_5a7a		renamed		glbSceneFlags
+_4976_5a92		renamed		glbGeneralFlipGraphics
+_4976_5a98		renamed		tblCreatureFrameInfo14
+
+_4976_5c02		renamed		tlbTimerTickRemoveHintMessage
+_4976_5c0c		renamed		glbTimerTickRemoveHintMessageIndex
+
+_4976_5c14		renamed		glbTimersActiveCount
+_4976_5c16		renamed		glbTimersMaximumCount
+_4976_5c18		renamed		glbTimerIndexNextAvailable
+_4976_5c1a		renamed		glbTimerNextEntries
+_4976_5c1e		renamed		glbTimersCount
+_4976_5c20		renamed		glbTimersTable
+
+_4976_5c5c		renamed		glbRainHasThunderImage
+_4976_5c5d		renamed		glbRainFlagSomething
+_4976_5c5e		renamed		glbRainStrength
+_4976_5c5f		renamed		glbRainRelated3
+_4976_5c60		renamed		glbRainLevelForSky
+_4976_5c61		renamed		glbRainLevelForGround
+_4976_5c62		renamed		glbRainRelated2
+_4976_5c63		renamed		glbRainAmbientLightModifier
+_4976_5c64		renamed		glbRainMultiplicator
+_4976_5c66		renamed		glbRainStormController
+_4976_5c68		renamed		glbRainSomeLightMod
+_4976_5c6a		renamed		glbRainDirection
+_4976_5c6b		renamed		glbRainHasRainFall
+_4976_5c6c		renamed		glbRainHasCloudSky
+_4976_5c6e		renamed		glbRainSpecialNextTick
+_4976_5c72		renamed		glbRainThunderRandom
+_4976_5c74		renamed		glbRainHasWetGround
+_4976_5c76		renamed		glbRainSceneType
+
+_4976_5c94		renamed		glbFileHandleGraphics1
+_4976_5c96		renamed		glbFileHandleGraphics2
+
+_4976_5c98		renamed		glbShelfMemoryTable (shelf_memory *_4976_5c98;)
+_4976_5ca4		renamed		tlbMementsPointers
+_4976_5cb6		renamed		glbGDatEntries
+
+
+_4976_5d2e		renamed		glbGDatNumberOfData
+_4976_5d30		renamed		glbFreeRAMMemPool
+_4976_5d74		renamed		glbNumberOfMements
+_4976_5d8c		renamed		glbFreeEMSMemPool
+
+_4976_5e68		renamed		glbPaletteIRGBLoaded
+_4976_5eaa		renamed		glbTickStepValue
+_4976_5eba		renamed		glbDriveNumber
+
+_4976_5f0e		renamed		glbSoundList
+_4976_5f12		renamed		glbIngameGlobVarBytes
+_4976_5f52		renamed		glbIngameGlobVarFlags
+_4976_5f5a		renamed		glbIngameGlobVarWords
+
+_4976_5fda		renamed		tlbCreaturesActionsGroupSets
+_4976_5fde		renamed		tlbCreaturesAnimationSequences
+_4976_5fe2		renamed		tlbCreaturesActionsGroupOffsets
+
+A.CPP / SkWinCore.cpp (FUNCTIONS)
+---------------------------------
+
+^00EB:0008					IBMIO_LOAD_4TO8BPP_PAL
+^00EB:0037					IBMIO_BLIT_ROW_4TO8BPP
+_00eb_070c
+
+_00eb_04bc
+
+_00eb_05c7
+_00eb_069a		renamed		VIDEO_MEM_MOVE
+_00eb_0bc4
+
+_01b0_00fc		renamed		IBMIO_CHECK_KEYBOARD_INPUT
+_01b0_0d39		renamed		MOUSE_STATE_01b0_0d39
+
+_01b0_04e4		renamed		UI_READ_KEY_INPUT
+_01b0_051a		renamed		IBMIO_01b0_051a
+
+_01b0_1997		renamed		BLEND_TO_SNDBUFF_TANDY
+_01b0_1a6d		renamed		BLEND_TO_SNDBUFF_GENERAL
+_01b0_1ba1		renamed		BLEND_TO_SNDBUFF_SNDCARD_4
+_01b0_1be8		renamed		_RELOAD_SOUND_BUFFER
+_01b0_1ed2
+_01b0_2c48		renamed		IBMIO_MAIN
+
+^069A:0000					ANIM_BOOTSTRAP_SWOOSH
+^069A:0000					ANIM_BOOTSTRAP_TITLE
+
+^069A:035B					ANIM_TOUPPER
+_069a_03fc		unimplemented
+^069A:040D					ANIM_farcoreleft
+^069A:048C					ANIM_STRCPY
+^069A:05FE					ANIM_farfree
+^069A:06EE					ANIM_farmalloc
+
+^0759:000C					ANIM_FILE_OPEN
+^0759:0021					ANIM_FILE_CLOSE
+^0759:002D					ANIM_READ_HUGE_FILE
+_0759_009f		unimplemented -> unneeded
+_0759_00bb		unimplemented -> unneeded
+^0759:00D6					ANIM_GET_FILE_SIZE
+_0759_0114		renamed		IS_NEGATIVE
+_0759_0126
+^0759:013B					ANIM_SETPIXEL_SEQ_4BPP
+^0759:016C					ANIM_FILL_SEQ_4BPP
+^0759:01BE					ANIM_BLIT_TO_MEMORY_ROW_4TO4BPP
+_0759_02c6
+_0759_0310
+^0759:0330					ANIM_DECODE_IMG1
+
+_0759_065f
+_0759_0688
+_0759_06a1
+_0759_06b5
+_0759_06c2
+_0759_06db
+_0759_071b
+_0759_072c
+_0759_0739		unimplemented
+_0759_0792		unimplemented
+_0759_07f2		unimplemented
+_0759_0855		unimplemented
+_0759_0869		unimplemented
+_0759_08e7
+
+_075f_0af9		renamed		MISSILE_HIT_075f_0af9
+^075F:11BA					STEP_MISSILE
+^075F:1C74					CREATURE_ATTACKS_PLAYER
+
+_0aaf_02f8		renamed		_0aaf_02f8_DIALOG_BOX
+
+_0b36_020e		renamed		LOAD_GDAT_INTERFACE_00_02
+
+_0b36_105b		renamed		DRAW_GRAY_OVERLAY
+_0b36_1446		renamed		_0b36_1446_BLIT_PICTURE
+_0b36_1757		renamed		DRAW_TRANSPARENT_STATIC_PIC
+
+_0cee_06dc		renamed		_0cee_06dc_GET_TILE_DIRECTION
+_0cee_17e7		renamed		GET_RANDOM_ORNAMENT_INDEX
+_0cee_1815		renamed		GET_RANDOM_ORNAMENT_ORDINAL
+_0cee_185a		renamed		SET_SQUARE_ASPECT_RANDOM_WALL_ORNAMENT_ORDINALS
+_0cee_1dbe		renamed		SUMMARIZE_STONE_ROOM
+^0CEE:25E5					QUERY_GDAT_DBSPEC_WORD_VALUE
+^0CEE:26E5					IS_CONTAINER_MONEYBOX
+^0CEE:2821					ADD_COIN_TO_WALLET
+_0cee_2e35		renamed		CREATURE_GET_COLORKEY
+^0CEE:29EC					ADD_ITEM_CHARGE
+^0CEE:2ACC					QUERY_ITEM_VALUE
+_0cee_2df4		renamed		CREATURE_0cee_2df4
+_0cee_2e1e		renamed		GET_CREATURE_WEIGHT
+_0cee_317f		renamed		IS_OBJECT_ALCOVE
+_0cee_319e		renamed		_0cee_319e_ALCOVE_GET_GDAT_X13
+_0cee_3202		renamed		IS_REBIRTH_ALTAR
+_0cee_328c		renamed		GET_DOOR_STAT_0X10
+
+
+
+_101b_0001		renamed		END_GAME
+
+_1031_0000		renamed		RETURN_1
+_1031_0008		renamed		IS_GAME_ENDED
+
+_1031_04f5		renamed		CLEAR_TRY_PUSH_PULL_OBJECT
+
+_1031_0d9e		renamed		TRANSMIT_UI_EVENT
+
+
+
+_1031_0f3a		renamed		IBMIO_USER_INPUT_CHECK
+
+_1031_156f		renamed		ADJUST_UI_EVENT
+_1031_16fd		renamed		CLICK_MAGICAL_MAP_AT
+_1031_16a0		renamed		SELECT_CHAMPION_LEADER
+
+_1031_1907		renamed		DRAW_WAKE_UP_TEXT
+_1031_1e6a		renamed		MAIN_LOOP
+
+_121e_0003		renamed		CLICK_WALL
+_121e_00be		renamed		PLAYER_TESTING_WALL
+_121e_0222		renamed		CREATURE_121e_0222
+
+_12b4_0092		renamed		CHOOSE_HIGHLIGHT_ARROW_PANEL
+_12b4_0141		renamed		PERFORM_TURN_SQUAD
+
+_12b4_0300		renamed		PERFORM_MOVE
+
+_13ae_02a3		renamed		FIRE_MAIN
+_13e4_071b
+_13e4_0806
+_13e4_08ff		renamed		ANIMATE_CREATURE
+_13e4_0982		renamed		CREATURE_THINK_0982
+^13E4:0CF2					THINK_CREATURE
+_13e4_01a3
+
+
+^14CD:0009					SELECT_CREATURE_37FC
+_14cd_0067
+_14cd_0276
+_14cd_0389		renamed		CREATURE_THINK_0389
+_14cd_0457
+_14cd_0550
+_14cd_062e
+_14cd_0684
+
+_14cd_0802		renamed		CREATURE_THINK_FLUSH_POSITION
+^14CD:0815					DECIDE_NEXT_XACT
+_14cd_08f5		renamed		CREATURE_THINK_08F5
+
+_14cd_09e2		renamed		CREATURE_THINK_09E2
+_14cd_0f0a
+_14cd_0f3c
+_14cd_102e
+_14cd_10d2
+_14cd_1316		renamed		CREATURE_THINK_1316
+
+_14cd_14cd		unimplemented -> unneeded, misplaced?
+
+_14cd_18cc
+_14cd_18f2
+_14cd_19a4
+_14cd_19c2
+_14cd_1a3c
+_14cd_1a5a
+_14cd_1a78
+_14cd_1b74
+_14cd_1b90
+_14cd_1bac
+_14cd_1c27
+_14cd_1c45
+_14cd_1c63
+_14cd_1c8d
+_14cd_1cec
+_14cd_1d42
+_14cd_1d6c
+_14cd_1e36
+_14cd_1e52
+_14cd_1e6e		untested
+_14cd_1eec
+_14cd_1f8b
+_14cd_1fa7
+^14CD:1FF3					PROCEED_XACT
+
+_14cd_2162					PROCEED_XACT_75
+_14cd_221a					PROCEED_XACT_79
+_14cd_226d					PROCEED_XACT_56
+_14cd_22a3					PROCEED_XACT_57
+_14cd_232b					PROCEED_XACT_59_76
+_14cd_2398					PROCEED_XACT_69
+_14cd_240e					PROCEED_XACT_64
+_14cd_248d					PROCEED_XACT_70
+_14cd_25b8					PROCEED_XACT_63
+^14CD:2B9A					FIND_TILE_ACTUATOR
+_14cd_2c23
+_14cd_2e6e					PROCEED_XACT_65
+_14cd_2662
+_14cd_274f					PROCEED_XACT_66
+_14cd_2807		renamed		_14cd_2807_CREATURE
+_14cd_2886		renamed		_14cd_2886_CREATURE
+_14cd_28d2					PROCEED_XACT_67
+_14cd_2c23					PROCEED_XACT_62
+_14cd_2f07					PROCEED_XACT_68
+_14cd_3087					PROCEED_XACT_71
+_14cd_3139					PROCEED_XACT_73
+_14cd_32a4					PROCEED_XACT_74
+_14cd_33e1					PROCEED_XACT_77
+_14cd_3474					PROCEED_XACT_78
+_14cd_34d3					PROCEED_XACT_80
+_14cd_3535		untested	PROCEED_XACT_81
+_14cd_3582					EXCHANGE_MONEYBOX
+_14cd_36b3					PROCEED_XACT_82
+_14cd_38c2		untested	PROCEED_XACT_83
+_14cd_3919					PROCEED_XACT_84
+_14cd_3a0b		untested	PROCEED_XACT_85
+_14cd_3abf					PROCEED_XACT_86
+_14cd_3aee					PROCEED_XACT_72_87_88
+_14cd_3b0b		untested	PROCEED_XACT_89
+_14cd_3b4c					PROCEED_XACT_90
+_14cd_3b69					PROCEED_XACT_91
+
+^1887:000C					OPERATE_PIT_TELE_TILE
+^1887:00F8					CREATURE_WALK_NOW
+_1887_0205					CREATURE_CCM03
+_1887_0239					CREATURE_JUMPS
+_1887_034e		untested	CREATURE_USES_LADDER_HOLE
+_1887_05aa					CREATURE_CCM06
+^1887:05F3					CREATURE_ATTACKS_PARTY
+_1887_09ab					CREATURE_CCM27
+_1887_0b1b		untested	CREATURE_CCM0A
+_1887_0c75					CREATURE_CCM0B
+_1887_0ce1					CREATURE_CCM0C
+_1887_0e19					CREATURE_TAKES_ITEM
+_1887_0eca					CREATURE_CCM0F  renamed CREATURE_SHOOT_ITEM
+_1887_0d33					CREATURE_PUTS_DOWN_ITEM
+_1887_0df7		renamed		CREATURE_KILL_ON_TIMER_POSITION		//CREATURE_CCM13
+_1887_0f80					CREATURE_ROTATES_TARGET_CREATURE
+^1887:0FB9					PLACE_MERCHANDISE
+_1887_10db					TAKE_MERCHANDISE
+_1887_1191		untested	CREATURE_ACTIVATES_WALL
+_1887_126d		renamed		CREATURE_TRANSFORM (CREATURE_CCM3B)
+_1887_141c					CREATURE_EXPLODE_OR_SUMMON
+^1887:150C					PROCEED_CCM
+
+_19f0_0081		renamed		IS_TILE_WALL
+
+_1c9a_02f6		renamed		CHECK_RECOMPUTE_LIGHT
+_1c9a_02c3		renamed		GET_CREATURE_INFO_DATA
+_1c9a_0551		renamed		COMPUTE_POWER_4_WITHIN
+
+_1c9a_0732
+_1c9a_078b
+_1c9a_09db		renamed		CREATURE_SET_ANIM_FRAME
+_1c9a_0a48		renamed		CREATURE_SOMETHING_1c9a_0a48
+
+_1c9a_166f		renamed		CREATURE_ATTACKS_CREATURE
+_1c9a_17c7		untested
+^1C9A:184C					WOUND_CREATURE
+_1c9a_198e		renamed		APPLY_CREATURE_POISON_RESISTANCE
+
+_1c9a_37be		renamed		__SET_CURRENT_THINKING_CREATURE_WALK_PATH
+_1c9a_381c		renamed		CREATURE_THINK_381c
+_1c9a_38a8
+
+_1c9a_3c30		renamed		__LOAD_CREATURE_FROM_DUNGEON
+
+_2066_0b44		renamed		_2066_0b44_WRITE_TIMERS
+_2066_197c		renamed		READ_SKSAVE_TIMER_3C_3D
+_2066_1ea3		renamed		SET_TILE_ATTRIBUTE_02
+_2066_2b6c		renamed		PROCEED_GLOBAL_EFFECT_TIMERS
+_2066_3697		renamed		__OPEN_DIALOG_PANEL
+
+_2405_005e		renamed		GET_ITEM_NAME
+
+_24a5_105b		renamed		DRAW_CRYOCELL_LEVER
+
+_2c1d_09d9
+
+_2c1d_0f67		renamed		USE_LUCK_ATTRIBUTE
+
+_2c1d_111e		renamed		USE_DEXTERITY_ATTRIBUTE
+_2c1d_11bf		renamed		COMPUTE_PLAYER_ATTACK_OR_THROW_STRENGTH
+
+_2c1d_1fd1		renamed		GET_CHAMPION_SPECIAL_FORCE
+_2c1d_201d		renamed		GET_PARTY_SPECIAL_FORCE
+
+_2405_00c9		renamed		DISPLAY_TAKEN_ITEM_NAME
+_2405_014a		renamed		GET_ITEM_ICON_ANIM_FRAME
+_2405_02e8		renamed		DRAW_ITEM_ICON
+_2405_04f4		renamed		DRAW_ITEM_IN_HAND
+_2405_05b4		renamed		DRAW_ITEM_ON_WOOD_PANEL
+
+_24a5_036a		renamed		ADD_BACKGROUND_LIGHT_FROM_TILE
+
+_24a5_069b		renamed		BURN_PLAYER_LIGHTING_ITEMS
+
+_24a5_0930		renamed		PUT_OBJECT_INTO_CONTAINER
+_24a5_0990		renamed		__CHECK_ROOM_FOR_CONTAINER
+_24a5_0a06		renamed		MONEY_BOX_SURVEY
+_24a5_0ad2		renamed		DRAW_CONTAINER_SURVEY
+
+_24a5_0b0f		renamed		DRAW_ITEM_STATS_BAR
+
+_24a5_0e82		renamed		DRAW_POWER_STAT_BAR
+_24a5_0fb8		renamed		DRAW_FOOD_WATER_POISON_PANEL
+
+_24a5_1532		renamed		DRAW_SKILL_PANEL
+
+_24a5_174d		renamed		CLICK_INVENTORY_EYE
+_24a5_1798		renamed		INTERFACE_CHAMPION
+
+
+
+_2759_02d6		renamed		IS_ITEM_HAND_ACTIVABLE
+_2759_04c0		renamed		FIND_POUCH_OR_SCABBARD_POSSESSION_POS
+_2759_0541		renamed		DISPLAY_RIGHT_PANEL_SQUAD_HANDS
+_2759_0589		renamed		ACTIVATE_ACTION_HAND
+_2759_0602		renamed		SET_SPELLING_CHAMPION
+_2759_0644		renamed		UPDATE_RIGHT_PANEL
+_2759_0f39		renamed		ADJUST_HAND_COOLDOWN
+_2759_1204		renamed		PROCEED_COMMAND_SLOT
+_2759_13f5		renamed		CLICK_MAGICAL_MAP_RUNE
+_2759_15d0		renamed		PROCEED_LIGHT
+_2759_222e		renamed		CAST_SPELL_PLAYER
+
+_29ee_000f		renamed		DRAW_ARROW_PANEL
+_29ee_026c		renamed		DRAW_HAND_ACTION_ICONS
+
+_29ee_058d		renamed		DRAW_SQUAD_SPELL_AND_LEADER_ICON
+_29ee_093e		renamed		DRAW_SPELL_TO_BE_CAST
+_29ee_09d5		renamed		DRAW_SPELL_PANEL
+_29ee_0b4a		renamed		PROCEED_SPELL_FAILURE
+
+_29ee_21d8		renamed		DRAW_CONTAINER_PANEL
+
+_2c1d_0009		renamed		PROCEED_ENCHANTMENT_SELF
+_2c1d_0186		renamed		CALL_ENCHANTMENT_SELF
+_2c1d_0300		renamed		BOOST_ATTRIBUTE
+_2c1d_038b		renamed		RETRIEVE_ITEM_BONUS
+
+_2c1d_03e7		renamed		PROCESS_ITEM_BONUS
+_2c1d_0889		renamed		CLICK_ITEM_SLOT
+
+_2c1d_14ba		renamed		RESUME_FROM_WAKE
+
+_2c1d_1b0f		renamed		PROCESS_POISON
+
+_2c1d_1bb5		renamed		CURE_POISON
+_2c1d_1cf3		renamed		SHOOT_CHAMPION_MISSILE
+_2c1d_1d64		renamed		CAST_CHAMPION_MISSILE_SPELL
+
+_2c1d_210a		renamed		UPDATE_CHAMPIONS_STATS
+
+
+_2e62_05d4		renamed		DRAW_EYE_MOUTH_COLORED_RECTANGLE
+_2e62_061d		renamed		DRAW_CHAMPION_PICTURE
+_2e62_064a		renamed		DRAW_CHARSHEET_OPTION_ICON
+_2e62_0cd8		renamed		SET_PARTY_HERO_FLAG
+
+_2e62_0d82		renamed		GLOBAL_UPDATE_UNKNOW1
+
+
+_2f3f_0343		renamed		SELECT_CHAMPION
+_2f3f_04ea		renamed		_2f3f_04ea_CHAMPION
+_2f3f_06fe		renamed		BRING_CHAMPION_TO_LIFE
+_2f3f_0789		renamed		INIT_CHAMPIONS
+
+_2fcf_0cdf		renamed		TRY_PUSH_OBJECT_TO
+_2fcf_01c5		renamed		SET_TIMER_3C_OR_3D
+_2fcf_2444		renamed		PLACE_OR_REMOVE_OBJECT_IN_ROOM			(CSBWin:Code11f52.cpp/PlaceOrRemoveObjectInRoom)
+_2fcf_2da7		renamed		SEARCH_DUNGEON_FOR_SPECIAL_MARKER
+
+_32cb_0008		renamed		LOAD_GDAT_INTERFACE_00_0A
+^32CB:00BF		renamed		IS_MAP_INSIDE
+_32cb_00f1		renamed		_32cb_00f1_DRAW_PICTURE
+_32cb_0287		renamed		_32cb_0287_DRAW_W_ORNATE
+_32cb_09a7		renamed		QUERY_MULTILAYERS_PIC
+_32cb_0b11		renamed		DRAW_RAIN
+_32cb_0f82		renamed		_32cb_0f82_SHOP_GLASS
+
+_32cb_1f3e		renamed		DRAW_EXTERNAL_TILE
+
+_32cb_2367		renamed		DRAW_PIT_ROOF
+_32cb_245a		renamed		DRAW_PIT_TILE
+_32cb_24fb		renamed		DRAW_TELEPORTER_TILE
+
+_32cb_3143		renamed		DRAW_FLYING_ITEM		
+_32cb_347f		renamed		MAKE_PUT_DOWN_ITEM_CLICKABLE_ZONE
+_32cb_3672		renamed		DRAW_ITEM
+
+_32cb_3991		renamed		DRAW_PUT_DOWN_ITEM
+_32cb_3b9d		renamed		DRAW_STATIC_OBJECT	(non creature)
+_32cb_3e08		renamed		DRAW_ITEMS_WITHIN_OBJECT (like on table)
+
+_32cb_4715		renamed		DRAW_DOOR_FRAMES
+_32cb_4905		renamed		DRAW_DOOR
+
+_32cb_4cdf		renamed		DRAW_DOOR_TILE
+_32cb_4e1c		renamed		DRAW_STAIRS_FRONT
+_32cb_4ecc		renamed		DRAW_STAIRS_SIDE
+
+_32cb_50fe		renamed		DRAW_WALL_TILE
+
+_32cb_5146		renamed		DRAW_DUNGEON_TILES
+
+_32cb_5340		renamed		DRAW_PLAYER_TILE
+
+_32cb_5598		renamed		ENVIRONMENT_SET_DISTANT_ELEMENT
+_32cb_56bc		renamed		ENVIRONMENT_DRAW_DISTANT_ELEMENT
+_32cb_5824		renamed		ENVIRONMENT_DISPLAY_ELEMENTS
+
+_32cb_59ca		renamed		SET_GRAPHICS_FLIP_FROM_POSITION
+
+_32cb_5d0d		renamed		DISPLAY_VIEWPORT
+
+_38c8_03ad		renamed		__INIT_GAME_38c8_03ad
+
+_38c8_04aa
+
+_3929_04e2		renamed		_3929_04e2_DRAW_TEXT_STRINGS
+_3929_0914		renamed		_3929_0914_HINT_TEXT
+_3929_0929		renamed		DRAW_HINT_TEXT
+_3929_09fb		renamed		DISPLAY_HINT_TEXT
+_3929_0b5a		renamed		DISPLAY_HINT_NEW_LINE
+
+_3a15_008e		renamed		__SORT_TIMERS
+
+_3a15_0447		renamed		GET_TIMER_NEW_INDEX
+
+_3a15_061a		renamed		DELETE_TIMER
+_3a15_072f		renamed		GET_AND_DELETE_NEXT_TIMER
+_3a15_0763		renamed		IS_TIMER_TO_PROCEED
+
+_3a15_0d10		renamed		PROCESS_TIMER_DESTROY_DOOR
+
+
+_3a15_0d5c		hinted		'Change creature facing direction'
+_3a15_15d8		renamed		ACTIVATE_INVERSE_FLAG
+_3a15_1650		renamed		ACTIVATE_TEST_FLAG
+
+
+^3A15:2CA8					ADVANCE_TILES_TIME
+
+_3a15_2feb		renamed		PROCESS_TIMER_3D
+
+_3a15_303f		renamed		PROCESS_TIMER_0C
+_3a15_306c		renamed		PROCESS_TIMER_RESURRECTION
+_3a15_316c		renamed		PROCESS_TIMER_LIGHT
+_3a15_320c		renamed		PROCESS_TIMER_0E			
+_3a15_374b		renamed		PROCESS_TIMER_RELEASE_DOOR_BUTTON
+_3a15_3766		renamed		PROCESS_TIMER_59
+
+_3df7_000a		renamed		SET_TIMER_WEATHER
+_3df7_014d		renamed		UPDATE_WEATHER
+
+_3df7_075f		renamed		RETRIEVE_ENVIRONMENT_CMD_CD_FW
+
+^3E74:2162		replaced by	LANG_FILTER
+_3e74_5788
+
+_443c_0662		renamed		CHAMPION_SQUAD_RECOMPUTE_POSITION
+_443c_08ab		renamed		MOUSE_STATE_443c_08ab
+
+_44c8_1baf
+_44c8_1be8		renamed		CHANGE_VIEWPORT_TO_INVENTORY
+_44c8_1c99		renamed		SCROLLBOX_MESSAGE
+
+_4726_0383		renamed		TICK_STEP_CHECK
+_476d_050e		renamed		SPECIAL_UI_KEY_TRANSFORMATION
+
+^47E1:0089					ZERO_MEMORY
+_47eb_014f		renamed		PLAY_SOUND
+
+_482b_04e9		renamed		PROCESS_SOUND (TIMER x15)
+
+^48AE:0281					QUERY_CREATURES_ITEM_MASK
+_48ae_05ae		renamed		_48ae_05ae_CREATURE
+_48ae_0767		renamed		_48ae_0767_MONEY_VALUE
+
+_4937_0036		renamed		CREATURE_4937_0036
+_4937_005c		renamed		CREATURE_4937_005c
+_4937_00cc		renamed		GET_CREATURE_ANIMATION_FRAME
+
+_4937_01a9		renamed		CREATURE_4937_01a9
+
+_4937_028a		renamed		CREATURE_4937_028a
+_4937_0320		renamed		LOAD_GDAT_INTERFACE_00_00
+
+
+SUPPOSITIONS:
+-------------
+
+_1c9a_02f6		caller of _1c9a_1bd8, which seems to serve background light
+_1c9a_1bd8		is a big function that call tiles drawing and light additing?
+
+
+
+
+
+
+_0b36_0c52		prepare champion panel for drawing (in viewport)
+
+_32cb_24fb		something to display teleporter?
+
+_32cb_5a8f
+
+_4976_03a2		is the table which stores the AIDefinition
+
+
+_2c1d_1d64		should be	CAST_MISSILE_SPELL
+
+_075f_0af9		about		MISSILE_HITTING_OBSTACLE
+
+_2481_007d		renamed SHOW_MENU_SCREEN
+
+MISSING/UNIMPLEMENTED:
+----------------------
+_3a15_0d5c		^3A15:0D5C
+
+
+
+------------------------------------------------------------------
+--	CUSTOM  FEATURES
+------------------------------------------------------------------
+
+Modified behaviour (conditioned to prior preprocessor instruction)
+------------------------------------------------------------------
+
+PLAYER_CONSUME_OBJECT	moved some defaults var, added custom GDAT2 behaviour for potions
+
+
+Functions added (to be used with the "extended mode")
+----------------------------------------------------
+QUERY_GDAT_POTION_SPELL_TYPE_FROM_RECORD
+QUERY_GDAT_POTION_BEHAVIOUR_FROM_RECORD
+QUERY_GDAT_WATER_VALUE_FROM_RECORD
+QUERY_GDAT_DOOR_IS_MIRRORED
+
+Special mode conditioned by
+bUseDM2ExtendedMode
+
+General ingame debuging text:
+if (bUseIngameDebug)
+{
+	U8 message[32];
+	sprintf((char*)message, "xxx %d\n", variable);
+	DISPLAY_HINT_TEXT(11, message);
+}
+

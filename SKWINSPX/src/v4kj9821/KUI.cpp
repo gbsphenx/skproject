@@ -691,7 +691,7 @@ void SkWinCore::CLICK_VWPT(i16 xx, i16 yy)
 							//^121E:05AD
 							bp04->w2_b_b(1);
 							//^121E:05B5
-							_4976_4e5c = 1;
+							glbRefreshViewport = 1;
 						}
 						//^121E:05BB
 						continue;
@@ -1047,10 +1047,10 @@ Bit16u SkWinCore::HANDLE_UI_EVENT(MousePosition *ref)
 	}
 	//^1031:19AA
 	Bit16u di;
-	if (_4976_4dfe != 0) {
+	if (glbEndCounter != 0) {
 		//^1031:19B1
 _19b1:
-		_4976_4e5c = 1;
+		glbRefreshViewport = 1;
 		//^1031:19B7
         di = 0;
 		//^1031:19B9
@@ -1060,7 +1060,7 @@ _19b1:
 	//^1031:19BC
 	di = 1;
 	//^1031:19BF
-	_4976_4e5c = 0;
+	glbRefreshViewport = 0;
 	//^1031:19C5
 	i16 bp02;
 	if (si == UI_EVENTCODE_RELEASE_MOUSE_BUTTON) {	// 0xE3
@@ -1183,7 +1183,7 @@ _1ab8:
 	//^1031:1B53
 	else if (si == UI_EVENTCODE_VALIDATE_SPELL) {
 		//^1031:1B58
-		_4976_4e5c = TRY_CAST_SPELL();
+		glbRefreshViewport = TRY_CAST_SPELL();
 		//^1031:1B5D
 		//^1031:1BA9
 	}
@@ -1207,7 +1207,7 @@ _1ab8:
 	//else if (si >= 0x71 && si <= 0x73) {
 	else if (si >= UI_EVENTCODE_HAND_ACTION_1 && si <= UI_EVENTCODE_HAND_ACTION_3) {
 		//^1031:1B9D
-		_4976_4e5c = PROCEED_COMMAND_SLOT(si -UI_EVENTCODE_HAND_ACTION_1);
+		glbRefreshViewport = PROCEED_COMMAND_SLOT(si -UI_EVENTCODE_HAND_ACTION_1);
 	}
 	//^1031:1BAF
 	//else if (si >= 0x74 && si <= 0x7b) {
@@ -1414,7 +1414,7 @@ _1ab8:
 	//if (glbUIEventCode >= 0xa5 && glbUIEventCode <= 0xc6)
 	if (glbUIEventCode >= UI_EVENTCODE_0A5 && glbUIEventCode <= UI_EVENTCODE_0C6)
 		//^1031:1E5E
-		_4976_4e5c = 1;
+		glbRefreshViewport = 1;
 	//^1031:1E66
 	return di;
 }
