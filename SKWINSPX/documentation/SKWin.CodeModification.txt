@@ -153,7 +153,46 @@ _4976_1a2c		renamed		strGraphics2
 _4976_1a3e		renamed		strSKSave_dat
 _4976_1a53		renamed		strSKSave_bak
 
+
+
+_4976_2115		renamed		tblAIRef01Rocky
+_4976_22d7		renamed		tblAIRef02GenericEnemy
+_4976_1def		renamed		tblAIRef03Bat
+_4976_2ce2		renamed		tblAIRef04Vortex
+_4976_1e6c		renamed		tblAIRef05Glop
+_4976_2d51		renamed		tblAIRef06Giggler
+_4976_2320		renamed		tblAIRef07AllyScoutMinion
+_4976_22ff		renamed		tblAIRef08AllyAttackMinion
+_4976_2395		renamed		tblAIRef09AllyCarryMinion
+_4976_23f5		renamed		tblAIRef10AllyFetchMinion
+_4976_2350		renamed		tblAIRef11AllyGuardMinion
+_4976_2440		renamed		tblAIRef12AllyUHaulMinion
+_4976_2add		renamed		tblAIRef13Merchant
+_4976_1f91		renamed		tblAIRef15ThornDemon
+_4976_2c68		renamed		tblAIRef17MerchantGuard
+_4976_2d83		renamed		tblAIRef18SpikedWall
+_4976_2dff		renamed		tblAIRef19TreeGorgon
+_4976_2e30		renamed		tblAIRef22VoidDoor
+_4976_2fa8		renamed		tblAIRef24Axeman
+_4976_2ff7		renamed		tblAIRef26FlameOrb
+_4976_30a4		renamed		tblAIRef28Vegmouth
+_4976_32e8		renamed		tblAIRef29Wolf
+_4976_33c1		renamed		tblAIRef30DruTan
+_4976_33f5		renamed		tblAIRef31PitGhost
+_4976_3416		renamed		tblAIRef32DoorGhost
+_4976_344c		renamed		tblAIRef33Dragoth
+_4976_34f5		renamed		tblAIRef34DarkVexirk
+_4976_3577		renamed		tblAIRef35VexirkKing
+_4976_227d		renamed		tblAIRef36ArcherGuard
+_4976_2503		renamed		tblAIRef37EvilAttackMinion
+_4976_3628		renamed		tblAIRef39CaveIn
+_4976_3666		renamed		tblAIRef40FlyingChest
+
 _4976_3752		renamed		tblAIStats01
+_4976_37a6		renamed		tlbCreatureCommandsFlags
+
+_4976_37fc		renamed		tblAIStatsRef0FXX01
+
 _4976_38f0		renamed		glbPreviousPrecompLight
 _4976_38f2		renamed		glbPreviousLightModifier
 
@@ -267,9 +306,13 @@ _4976_4bf6		renamed		glbPlayerDir
 _4976_4bf8		renamed		glbRecalcLightIndicator
 _4976_4bfa		renamed		glbPlayerPosX
 _4976_4bfc		renamed		glbNextChampionNumber
+_4976_4c04		renamed		glbSomePosX_4976_4c04
 _4976_4c06		renamed		glbPlayerPosY
 _4976_4c0e		renamed		glbIntermediateTickCounter
+_4976_4c10		renamed		glbDir_4976_4c10
+_4976_4c12		renamed		glbMap_4976_4c12
 _4976_4c14		renamed		glbPlayerThrowCounter
+_4976_4c1e		renamed		glbSomePosY_4976_4c1e
 
 _4976_4c20		renamed		glbAbsoluteTickCounter
 _4976_4c24		renamed		glbSpecialScreen
@@ -310,7 +353,7 @@ _4976_4dd4		renamed		glbCurrentMapHeight
 _4976_4dd6		renamed		dunMapColumnsSumArray
 _4976_4ddc		renamed		glbTryPushPullObject
 _4976_4dfa		renamed		glbUIEventCode
-
+_4976_4dfe		renamed		glbEndCounter
 _4976_4e02		renamed		tlbMouseStateRing
 
 _4976_4e4a		renamed		glbMouseInfoX
@@ -332,8 +375,10 @@ _4976_4ed6		renamed		glbCreatureAnimSeqInfo
 _4976_4eda		renamed		glbCreatureTimer
 _4976_4ee0		renamed		glbCreatureTimerGetX
 _4976_4ee1		renamed		glbCreatureTimerGetY
+_4976_4ee4		renamed		glbCreatureCommandThinking
 _4976_4ee7		renamed		glbSomeMap_4976_4ee7
 _4976_4eee		renamed		glbAIAttacksSpells
+_4976_4efa		renamed		glbCreatureAIStatIndex
 
 _4976_4f84		renamed		glbCreatureWalkPath
 
@@ -587,6 +632,7 @@ _12b4_0141		renamed		PERFORM_TURN_SQUAD
 _12b4_0300		renamed		PERFORM_MOVE
 
 _13ae_02a3		renamed		FIRE_MAIN
+_13e4_0360		renamed		CREATURE_SET_NEW_COMMAND
 _13e4_071b
 _13e4_0806
 _13e4_08ff		renamed		ANIMATE_CREATURE
@@ -710,8 +756,9 @@ _1c9a_0551		renamed		COMPUTE_POWER_4_WITHIN
 
 _1c9a_0732
 _1c9a_078b
+_1c9a_08bd		renamed		CREATURE_IS_JUMPING
 _1c9a_09db		renamed		CREATURE_SET_ANIM_FRAME
-_1c9a_0a48		renamed		CREATURE_SOMETHING_1c9a_0a48
+_1c9a_0a48		renamed		CREATURE_GET_NEXT_THINK_GAMETICK
 
 _1c9a_166f		renamed		CREATURE_ATTACKS_CREATURE
 _1c9a_17c7		untested
@@ -941,7 +988,7 @@ _4937_0036		renamed		CREATURE_4937_0036
 _4937_005c		renamed		CREATURE_4937_005c
 _4937_00cc		renamed		GET_CREATURE_ANIMATION_FRAME
 
-_4937_01a9		renamed		CREATURE_4937_01a9
+_4937_01a9		renamed		CREATURE_STEP_ANIMATION
 
 _4937_028a		renamed		CREATURE_4937_028a
 _4937_0320		renamed		LOAD_GDAT_INTERFACE_00_00

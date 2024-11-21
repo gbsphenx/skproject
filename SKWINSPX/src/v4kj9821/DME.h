@@ -1744,7 +1744,7 @@ namespace DM2Internal {
 		Bit16u w2_;		// @2 // timerid
 		X8 b4;			// @4
 		X8 b5_;			// @5
-		X8 b6_;			// @6
+		X8 b6_;			// @6	// spx: compared to 1/4 of gametick ????
 		U8 b7;			// @7	// spx: can this be related to target champion ?? (high speculation)
 		X8 b8_;			// @8 // const base index. _4976_5fde[w8 + w10] // sk1c9a02c3::w0
 		X8 b9_;			// @9 //
@@ -1764,7 +1764,7 @@ namespace DM2Internal {
 		U8 b28;			// @28
 		i8 b29;			// @29	// next direction ??
 		i8 ItemToThrow;			// @30	// b30	ItemToThrow or CreatureToSummon
-		i8 b31;			// @31
+		i8 b31;			// @31	// 1 or 2 while jumping ?
 		i8 b32;			// @32
 		U8 b33;			// @33	// result of proceed_ccm ?
 
@@ -1801,7 +1801,7 @@ namespace DM2Internal {
 		U16 w2_0_3() const { return (w2)&0xf; }			// .... .... .... XXXX
 		U16 w2_4_7() const { return (w2>>4)&0xf; }		// .... .... XXXX ....
 		U8 b4_0_2() const { return b4&7; }				// .... .XXX
-		U8 b4_3_4() const { return (b4>>3)&3; }				// ...X X... /// was { return b4&7; }, which seems wrong against func name
+		U8 b4_3_4() const { return (b4>>3)&3; }				// ...X X... /// was { return b4&7; }, which seems wrong against func name, I changed it
 	};
 
 	// SPX: V5 Animation FC 00 00 data
@@ -3044,7 +3044,7 @@ namespace DM2Internal {
 		ccm42 = 0x42,	// Hello 1 (rocky) ?
 		ccm52 = 0x52,	// Hello 2 (rocky) ?
 		
-		ccm55 = 0x55,	// Cast reflector (Dragoth) ? No, will either transform to ccmCastSpell1 or ccmCastSpell2
+		ccmCastSpell1or2 = 0x55,	// Cast reflector (Dragoth) ? No, will either transform to ccmCastSpell1 or ccmCastSpell2
 		ccmInv = -1,	// Idle
 	};
 #define MAX_CREATURE_COMMANDS	86

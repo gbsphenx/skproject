@@ -567,8 +567,8 @@ CString SkWinCore::getCreatureCommandName(U8 ccm)
 	if (ccm == ccm03)			return "TURN LEFT + MOVE ? x03";	// right also ????
 	if (ccm == ccm04)			return "TURN RIGHT + MOVE x04";
 	if (ccm == ccmJump)			return "JUMP";
-	if (ccm == ccm06)			return "x06";
-	if (ccm == ccm07)			return "x07";
+	if (ccm == ccm06)			return "TURN LEFT ? x06";
+	if (ccm == ccm07)			return "TURN RIGHT ? x07";
 	if (ccm == ccmMeleeAttack)	return "MELEE ATTACK";
 	if (ccm == ccm09)			return "WALK x09";
 	if (ccm == ccmSteal)		return "STEAL";
@@ -643,9 +643,9 @@ CString SkWinCore::getCreatureCommandName(U8 ccm)
 
 //		ccm42 = 0x42,	// Hello 1 (rocky) ?
 //		ccm52 = 0x52,	// Hello 2 (rocky) ?
-	if (ccm == ccm52)			return "ROCKY HELLO 2 ? x52";
-	if (ccm == ccm55)			return "REFLECTOR ? x55";
-	if (ccm == ccmInv)			return "IDLE";	
+	if (ccm == ccm52)				return "ROCKY HELLO 2 ? x52";
+	if (ccm == ccmCastSpell1or2)	return "SPELL 1 OR 2 ? x55";
+	if (ccm == ccmInv)				return "IDLE";	
 
 	if (text[0] != 0)
 		return (LPCSTR)text;
@@ -9451,7 +9451,7 @@ U16 SkWinCore::_19f0_0891(i16 zz, X16 xx, X16 yy, i16 ss, X16 tt, X16 ww)
 						//^19F0:0A08
 						if (bp04 <= 1 || _19f0_0207(xx, yy, di, tt, &SkWinCore::_19f0_00b8) != 0) {
 							//^19F0:0A2C
-							if ((tblAIStats01[_4976_4efa] & 0x200) != 0) {
+							if ((tblAIStats01[glbCreatureAIStatIndex] & 0x200) != 0) {
 								//^19F0:0A3A
 								_19f0_045a(di, tt);
 								//^19F0:0A48
@@ -11947,18 +11947,15 @@ _35ba:
 //^1C9A:0648
 void SkWinCore::_1c9a_0648(U16 mapno)
 {
-	//^1C9A:0648
 	ENTER(0);
-	//^1C9A:064C
-	U16 si = mapno;
-	if (glbCurrentMapIndex != si) {
-		CHANGE_CURRENT_MAP_TO(si);
-		if (si == _4976_4c12) {
-			//^1C9A:0662
-			glbCreatureDir = _4976_4c10;
-			glbCreaturePosX = _4976_4c04;
-			glbCreaturePosY = _4976_4c1e;
-			glbCreatureMap = _4976_4c12;
+	U16 iMapNo = mapno; // si
+	if (glbCurrentMapIndex != iMapNo) {
+		CHANGE_CURRENT_MAP_TO(iMapNo);
+		if (iMapNo == glbMap_4976_4c12) {
+			glbCreatureDir = glbDir_4976_4c10;
+			glbCreaturePosX = glbSomePosX_4976_4c04;
+			glbCreaturePosY = glbSomePosY_4976_4c1e;
+			glbCreatureMap = glbMap_4976_4c12;
 		}
 		else {
 			glbCreatureDir = glbPlayerDir;
@@ -11967,7 +11964,6 @@ void SkWinCore::_1c9a_0648(U16 mapno)
 			glbCreatureMap = glbPlayerMap;
 		}
 	}
-	//^1C9A:0691
 	return;
 }
 
@@ -12825,17 +12821,17 @@ void SkWinCore::_2fcf_0b8b(Bit16u xx, Bit16u yy, Bit16u zz)
 	//^2FCF:0B8B
 	ENTER(6);
 	//^2FCF:0B91
-	_4976_4c12 = 0xffff;
+	glbMap_4976_4c12 = 0xffff;
 	//^2FCF:0B97
 	TELE_inf bp06;
 	_4976_4c08 = GET_TELEPORTER_DETAIL(&bp06, Bit8u(xx), Bit8u(yy));
 	//^2FCF:0BAD
 	if (_4976_4c08 != 0) {
 		//^2FCF:0BB1
-		_4976_4c12 = bp06.target_z();
-		_4976_4c04 = bp06.target_x_pos();
-		_4976_4c1e = bp06.target_y_pos();
-		_4976_4c10 = (glbPlayerDir + (bp06.cross_scene_test_of_teleporter_target() - bp06.cross_scene_test())) & 3;
+		glbMap_4976_4c12 = bp06.target_z();
+		glbSomePosX_4976_4c04 = bp06.target_x_pos();
+		glbSomePosY_4976_4c1e = bp06.target_y_pos();
+		glbDir_4976_4c10 = (glbPlayerDir + (bp06.cross_scene_test_of_teleporter_target() - bp06.cross_scene_test())) & 3;
 	}
 	else {
 		//^2FCF:0BE6
@@ -12843,17 +12839,17 @@ void SkWinCore::_2fcf_0b8b(Bit16u xx, Bit16u yy, Bit16u zz)
 			//^2FCF:0BEA
 			if (GET_TELEPORTER_DETAIL(&bp06, xx + glbXAxisDelta[si], yy + glbYAxisDelta[si]) != 0) {
 				//^2FCF:0C13
-				_4976_4c12 = bp06.target_z();
+				glbMap_4976_4c12 = bp06.target_z();
 				//^2FCF:0C1B
 				Bit16u di = bp06.cross_scene_test_of_teleporter_target() +6 -bp06.cross_scene_test();
 				//^2FCF:0C2C
 				si = (si +di +2) & 3;
 				//^2FCF:0C37
-				_4976_4c04 = bp06.target_x_pos() + glbXAxisDelta[si];
+				glbSomePosX_4976_4c04 = bp06.target_x_pos() + glbXAxisDelta[si];
 				//^2FCF:0C47
-				_4976_4c1e = bp06.target_y_pos() + glbYAxisDelta[si];
+				glbSomePosY_4976_4c1e = bp06.target_y_pos() + glbYAxisDelta[si];
 				//^2FCF:0C57
-				_4976_4c10 = (glbPlayerDir + di) & 3;
+				glbDir_4976_4c10 = (glbPlayerDir + di) & 3;
 				//^2FCF:0C62
 				break;
 			}
@@ -22365,7 +22361,7 @@ _2484:
 						glbCurrentThinkingCreatureData->b29 = (glbCurrentThinkingCreatureData->b29 +1) & 3;
 					}
 					//^19F0:25D4
-					if ((tblAIStats01[_4976_4efa] & 0x1000) != 0 && glbCurrentThinkingCreatureData->b29 != glbCurrentThinkingCreatureRec->b15_0_1()) {
+					if ((tblAIStats01[glbCreatureAIStatIndex] & 0x1000) != 0 && glbCurrentThinkingCreatureData->b29 != glbCurrentThinkingCreatureRec->b15_0_1()) {
 						//^19F0:25FB
 						_19f0_0559(glbCurrentThinkingCreatureData->b29);
 						return 1;
@@ -22758,7 +22754,7 @@ void SkWinCore::ROTATE_SQUAD(Bit16u dir)
 		//^2C1D:0232
 		if (_4976_4c08 != 0) {
 			//^2C1D:0239
-			_4976_4c2c = _4976_4c10 = (_4976_4c10 + dx) & 3;
+			_4976_4c2c = glbDir_4976_4c10 = (glbDir_4976_4c10 + dx) & 3;
 		}
 		else {
 			//^2C1D:0246
@@ -24206,7 +24202,7 @@ ObjectID SkWinCore::RECYCLE_A_RECORD_FROM_THE_WORLD(Bit16u itemdb, Bit8u itemtyp
 	//^0CEE:0EDA
 	Bit16u bp1a = glbCurrentMapIndex;
 	//^0CEE:0EE0
-	Bit16u di = (_4976_4c08 != 0) ? _4976_4c12 : 0xffff;
+	Bit16u di = (_4976_4c08 != 0) ? glbMap_4976_4c12 : 0xffff;
 	//^0CEE:0EF1
 	Bit16u bp26 = 0;
 	//^0CEE:0EF6
@@ -25983,9 +25979,11 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_00()
 
 	
 	/// DUMP Level 1 tlbCreaturesActionsGroupOffsets (from GDAT value 0F-xx-00-00
+	/*
 	FILE* fp = NULL;
 	fp = fopen("anim.txt", "wt+");
-	for (int i = 0; i < 42; i++)
+	int i = 0;
+	for (i = 0; i < 42; i++)
 	{
 		U16 iCAGO = tlbCreaturesActionsGroupOffsets[i];
 		fprintf(fp, "CAGO %04X) OFFSET = %04X\n", i, iCAGO);
@@ -26012,6 +26010,7 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_00()
 		CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
 	}
 	fclose(fp);
+	*/
 	
 
 	return;
@@ -26778,144 +26777,6 @@ void SkWinCore::INIT()
 
 
 
-
-
-//^14CD:062E
-// returns a type of tile ?
-X8 SkWinCore::_14cd_062e()
-{
-	//^14CD:062E
-	ENTER(2);
-	//^14CD:0632
-	U8 cl = 0;
-	i8 bp01 = glbCurrentThinkingCreatureData->x;
-	i8 bp02 = glbCurrentThinkingCreatureData->y;
-	if (glbCurrentThinkingCreatureData->x != -1) {
-		if (((cl = (_4976_3672[RCJ(56,bp01)][bp02].b5() & 0xe0)) & 0x60) == 0x40) {
-			if (glbSomeMap_4976_4ee7 != glbCreatureMap) {
-				cl = 0;
-			}
-		}
-	}
-	//^14CD:0680
-	return cl;
-}
-
-//^14CD:0067
-i16 SkWinCore::SELECT_CREATURE_4EFE(const sk4efe *ref)
-{
-	// _4976_37fc[xx][yy], select yy.
-
-	//^14CD:0067
-	ENTER(16);
-	//^14CD:006D
-	CreatureInfoData* xCreatureInfo = glbCurrentThinkingCreatureData; // bp04
-	Creature* xCreature = glbCurrentThinkingCreatureRec; // bp08
-	X16 si = xCreature->iAnimFrame;
-	X16 bp0e = RAND();
-	if (glbSomeMap_4976_4ee7 == glbCreatureMap) {
-		si &= 0x7fff;
-	}
-	//^14CD:00A7
-	else if ((bp0e & (xCreatureInfo->x != xactrNeedReset) ? 0x70 : 0x30) == 0) {
-		//^14CD:00BE
-		si |= 0x8000;
-		si &= 0xbfff;
-	}
-	//^14CD:00C6
-	if ((si & 0x8000) == 0) {
-		if ((bp0e & (((si & 8) != 0) ? 0x380 : 0xf80)) == 0)
-			si ^= 0x4000;
-	}
-	//^14CD:00E3
-	if ((bp0e / (0x10 - glbAIDef->w22_4_7())) == 0)
-		si &= 0xffdf;
-	//^14CD:0105
-	if ((tblAIStats01[_4976_4efa] & 0x400) != 0)
-		si |= 0x2000;
-	else if ((bp0e & 0x38) == 0)
-		si &= 0xdfff;
-	//^14CD:0124
-	if ((bp0e & 0x3000) == 0)
-		si &= 0xffef;
-	if ((bp0e & 0x3) == 0)
-		si &= 0xffbf;
-	if ((bp0e & 0x8008) == 0)
-		si &= 0xefff;
-	//^14CD:0145
-	X16 di = 2;
-	if ((tblAIStats01[_4976_4efa] & 2) == 0) {
-		//^14CD:0156
-		di = di * ((((glbCurrentThinkingCreatureID.DBIndex() & 3) +1) << 1) -1);
-	}
-	//^14CD:0168
-	if (RAND16(di) == 0) {
-		//^14CD:0173
-		if (U32((xCreature->hp1 * 100) / i16(max_value(1, glbAIDef->BaseHP))) < 0x19)
-			si |= 8;
-		else	
-			si &= 0xfff7;
-	}
-	//^14CD:01B6
-	xCreature->iAnimFrame = si;
-	X16 bp10 = 0xffff;
-	di = 0xffff;
-	X16 bp0c = 0;
-	X16 bp0a;
-	for (; (bp0a = ref->w0) != 0; bp0c++, ref++) {
-		//^14CD:01CC
-		if ((bp0a & 0xc000) == 0xc000) {
-			if (GET_GLOB_VAR(bp0a & 0x3fff) == 0)
-				continue;
-			break;
-		}
-		//^14CD:01EA
-		if (bp10 == 0xffff && (bp0a & si) != 0) {
-			//^14CD:01F5
-			bp10 = bp0c;
-		}
-		//^14CD:01FB
-		if (di == 0xffff && (bp0a & si) == bp0a)
-			di = bp0c;
-		//^14CD:020D
-		if (bp0a == si)
-			break;
-		//^14CD:0212
-	}
-	//^14CD:0226
-	if (bp0a == 0 && (di != 0xffff || bp10 != 0xffff)) {
-		bp0c = (di == 0xffff) ? bp10 : di;
-	}
-	//^14CD:0246
-	if (xCreatureInfo->b22 != bp0c) {
-		_4976_514e.b1 = 0;
-		xCreatureInfo->x = xactrNeedReset;
-		xCreatureInfo->y = 0;
-		_4976_514e.b3 = 0xff;
-	}
-	//^14CD:0267
-	return xCreatureInfo->b22 = U8(bp0c);
-}
-
-//^14CD:0009
-void SkWinCore::SELECT_CREATURE_37FC()
-{
-	//^14CD:0009
-	ENTER(0);
-	//^14CD:000C
-	if (_4976_4efa == 0xffff) {
-		//^14CD:0013
-		_4976_4efa = QUERY_GDAT_CREATURE_WORD_VALUE(glbCurrentThinkingCreatureRec->CreatureType(), 1);
-	}
-	_4976_4efc = SELECT_CREATURE_4EFE(_4976_37fc[RCJ(CREATURE_AI_TAB_SIZE,_4976_4efa)]);
-	_4976_4efe = &_4976_37fc[RCJ(CREATURE_AI_TAB_SIZE,_4976_4efa)][_4976_4efc];
-	//^14CD:0065
-	SkD((DLV_CAI, "CAI: (i) a#%03d 37fc[%2d,%3d] \n"
-		, (Bitu)glbCurrentThinkingCreatureData->CreatureIndex(), (Bitu)_4976_4efa, (Bitu)_4976_4efc
-		));
-
-	return;
-}
 
 
 
@@ -29923,12 +29784,12 @@ SkWinCore::SkWinCore()
 	_4976_47fc = 1;
 	_4976_4762 = -1;
 	_4976_4c08 = 0;
-	_4976_4c12 = 0;
+	glbMap_4976_4c12 = 0;
 	glbCurrentMapIndex = -1;
-	_4976_4c04 = 0;
-	_4976_4c1e = 0;
-	_4976_4c12 = 0;
-	_4976_4c10 = 0;
+	glbSomePosX_4976_4c04 = 0;
+	glbSomePosY_4976_4c1e = 0;
+//	glbMap_4976_4c12 = 0;
+	glbDir_4976_4c10 = 0;
 	_4976_0118 = 0x11;
 	_4976_011a = 0x11;
 	glbChampionsCount = 0;

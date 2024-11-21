@@ -398,18 +398,18 @@ protected:
 	Bit16u	_4976_4bfe;
 	Bit16u	_4976_4c00;
 	Bit16u	_4976_4c02;
-	Bit16u	_4976_4c04;
+	Bit16u	glbSomePosX_4976_4c04;	// (4976_4c04)
 	i16		glbPlayerPosY;	// (_4976_4c06) current player y-axis (row)
 	Bit16u	_4976_4c08;
 	U16		_4976_4c0a;
 	Bit16u	_4976_4c0c;
 	X16		glbIntermediateTickCounter;	// (_4976_4c0e)
-	Bit16u	_4976_4c10;
-	Bit16u	_4976_4c12;
+	Bit16u	glbDir_4976_4c10;				// (_4976_4c10) some dir
+	Bit16u	glbMap_4976_4c12;				// (_4976_4c12) map for someone
 	Bit16u	glbPlayerThrowCounter;	// (_4976_4c14) Spx: I don't get the real usage of this .. seems quite useless ...
 	Bit8u	*_4976_4c16;	// off-screen viewport? (224x136) =0xE0008006
 	Bit32u	_4976_4c1a;		// game tick?
-	Bit16u	_4976_4c1e;
+	Bit16u	glbSomePosY_4976_4c1e;		// (_4976_4c1e)
 	Bit32u	glbAbsoluteTickCounter;			// (_4976_4c20)
 	i16	glbSpecialScreen;		// (_4976_4c24) Spx: some sort of flag telling if we are in MAIN screen, CREDITS or INGAME ?
 	Bit16u	_4976_4c26;
@@ -528,7 +528,7 @@ protected:
 	X16		_4976_4ef4;
 	X16		_4976_4ef6;
 	X16		_4976_4ef8;
-	X16		_4976_4efa;		// temp creature's word val (0F-xx-01)
+	X16		glbCreatureAIStatIndex;		// (_4976_4efa) temp creature's word val (0F-xx-01)
 	X16		_4976_4efc;		// 2nd param of _4976_37fc
 	const sk4efe	*_4976_4efe;
 	X8		_4976_4f02;		// 1=need zeromem _4976_4f04
@@ -554,7 +554,7 @@ protected:
 	X16		glbCreatureSomeX; // (_4976_5216) x?
 	X16		glbCreatureSomeY; // (_4976_5218) y?
 	X16		glbCreatureSomeZMap; // (_4976_521a) z?
-	X16		_4976_521c; // tilevalue
+	X16		_4976_521c; // (_4976_521c) tilevalue
 	ObjectID	_4976_521e;	// first record on tile (glbCreatureSomeX, glbCreatureSomeY)
 	ObjectID	_4976_5220;	// first creature record or xxx.
 	ObjectID	_4976_5222;	// creature record
@@ -884,7 +884,7 @@ public:
 	CreatureCommandAnimation* GET_CREATURE_COMMAND_ANIMATION_V5(Bit8u iCreatureType, Bit16u command);
 	CreatureAnimationFrameInfoFC_V5* GET_ANIM_SEQUENCE_INFO_V5(U8 iCreatureType, U16 iAnimSeqOffset, U16 iCurrentFrameInfo);
 	void PREPARE_CREATURE_ANIMATION_INFO_V5(U8 iCreatureType, U16 iAnimOffset, U16* iAnimInfo);
-	Bit16u CREATURE_4937_01a9_V5(U8 iCreatureType, Bit16u iAnimOffset, Bit16u *pAnimFrame, CreatureAnimationFrame **rref);
+	Bit16u CREATURE_STEP_ANIMATION_V5(U8 iCreatureType, Bit16u iAnimOffset, Bit16u *pAnimFrame, CreatureAnimationFrame **rref);
 	U16 CREATURE_GET_ANIMATION_OFFSET_POS_V5(U8 iCreatureType, U16 iFrameID);
 	
 // SPX: New procedures here
@@ -1114,7 +1114,7 @@ protected:
 	//void _2066_1ea3(Bit16u xx, Bit16u yy, Bit16u zz);		// An interesting one about changing bits on tile (void/pit)
 	void SET_TILE_ATTRIBUTE_02(Bit16u xx, Bit16u yy, Bit16u map); // _2066_1ea3
 	sk1c9a02c3* GET_CREATURE_INFO_DATA(Creature *xCreature, AIDefinition *xAIDef); // _1c9a_02c3
-	Bit16u CREATURE_4937_01a9(Bit16u xx, Bit16u *yy, CreatureAnimationFrame **rref);	// _4937_01a9
+	Bit16u CREATURE_STEP_ANIMATION(Bit16u xx, Bit16u *yy, CreatureAnimationFrame **rref);	// _4937_01a9
 	void GRAPHICS_DATA_OPEN();
 		void ORIGINAL__GRAPHICS_DATA_OPEN();
 	i16 LOCATE_OTHER_LEVEL(Bit16u curmap, i16 zDelta, i16 *xx, i16 *yy, Bit8u **ss);
@@ -1408,7 +1408,7 @@ protected:
 	U16 _2c1d_1de2(U16 xx, i16 yy, U16 zz);
 	U16 SET_DESTINATION_OF_MINION_MAP(ObjectID rlContainer, i16 xx, i16 yy, U16 zz);
 	void QUEUE_THINK_CREATURE(U16 xx, U16 yy);
-	void _13e4_0360(ObjectID rlCreature, U16 xx, U16 yy, U8 ss, U16 tt);
+	void CREATURE_SET_NEW_COMMAND(ObjectID rlCreature, U16 xx, U16 yy, U8 iCommand, U16 tt);	// _13e4_0360
 	void RELEASE_MINION(ObjectID rlCreature);
 	void TRANSFER_PLAYER(i16 xx, i16 yy, U16 zz, U16 dir);
 	i16 SEARCH_DUNGEON_FOR_SPECIAL_MARKER(U16 ss, U16 tt, U16 uu, i16 *xx, i16 *yy);
@@ -1826,7 +1826,7 @@ protected:
 	void ATTACK_CREATURE(ObjectID rl, i16 xx, i16 yy, Bit16u ss, i16 tt, Bit16u quantity);
 	U8 *PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timerType);
 	void CREATURE_THINK_FLUSH_POSITION(); // _14cd_0802
-	X32 CREATURE_SOMETHING_1c9a_0a48();
+	X32 CREATURE_GET_NEXT_THINK_GAMETICK();
 	void UNPREPARE_LOCAL_CREATURE_VAR(U8 *ww);
 	void ALLOC_CAII_TO_CREATURE(ObjectID rl, i16 xx, i16 yy);
 	X16 _0cee_319e_ALCOVE_GET_GDAT_X13(ObjectID rl); // _0cee_319e
@@ -1845,7 +1845,7 @@ protected:
 	U16 QUERY_CREATURE_5x5_POS(Creature *ref, U16 dir);
 	void _098d_000f(i16 xx, i16 yy, U16 ww, U16 *x2, U16 *y2);
 	void DRAW_ARROW_PANEL(); // _29ee_000f renamed DRAW_ARROW_PANEL
-	U16 _1c9a_08bd(Creature *ref);
+	U16 CREATURE_IS_JUMPING(Creature *ref);	// _1c9a_08bd renamed CREATURE_IS_JUMPING
 
 	U16 IS_CREATURE_FLOATING(ObjectID rl);
 	Bit16u IS_OBJECT_FLOATING(ObjectID rl);

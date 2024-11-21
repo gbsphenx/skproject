@@ -2687,9 +2687,9 @@ void SkWinCore::DELETE_CREATURE_RECORD(i16 xpos, i16 ypos, Bit16u dropMode, Bit1
 	//^1C9A:15A7
 	if (xAIStats->IsStaticObject() == 0) {
 		//^1C9A:15B4
-		Bit16u bp10 = QUERY_GDAT_CREATURE_WORD_VALUE(xCreature->CreatureType(), CREATURE_STAT_01);	// 0x01
+		Bit16u iAIStatIndex = QUERY_GDAT_CREATURE_WORD_VALUE(xCreature->CreatureType(), CREATURE_STAT_AI_SEQ_01);	// bp10	// 0x01
 		//^1C9A:15C8
-		Bit16u di = tblAIStats01[bp10];
+		Bit16u di = tblAIStats01[iAIStatIndex];
 		//^1C9A:15D0
 		if ((di & 0x0004) == 0) {
 			//^1C9A:15D6

@@ -782,11 +782,14 @@ skxxxh _4976_3621[] = {
 skxxxh _4976_365f[] = {
 	{  54,  0,_4976_3651,  0 }, // _4976_365f
 };
-sk4efe _4976_1d73[] = {
+
+//------------------------------------------------------------------------------
+
+sk4efe tblAIRef00Undefined[] = {	// _4976_1d73
 	{ 0x8000, _4976_1d65 }, // _4976_1d73
 	{ 0x0000, _4976_1ce7 }, // _4976_1d79
 };
-sk4efe _4976_2115[] = {
+sk4efe tblAIRef01Rocky[] = {	// _4976_2115
 	{ 0x8000, _4976_20eb }, // _4976_2115
 	{ 0x0008, _4976_1d03 }, // _4976_211b
 	{ 0x0040, _4976_1d03 }, // _4976_2121
@@ -795,11 +798,11 @@ sk4efe _4976_2115[] = {
 	{ 0x4000, _4976_20ac }, // _4976_2133
 	{ 0x0000, _4976_207b }, // _4976_2139
 };
-sk4efe _4976_22d7[] = {
+sk4efe tblAIRef02GenericEnemy[] = {	// _4976_22d7
 	{ 0x8000, _4976_1d65 }, // _4976_22d7
 	{ 0x0000, _4976_22bb }, // _4976_22dd
 };
-sk4efe _4976_1def[] = {
+sk4efe tblAIRef03Bat[] = {	// _4976_1def
 	{ 0x8000, _4976_1d65 }, // _4976_1def
 	{ 0x0020, _4976_1d03 }, // _4976_1df5
 	{ 0x4008, _4976_1d18 }, // _4976_1dfb
@@ -809,10 +812,10 @@ sk4efe _4976_1def[] = {
 	{ 0x4000, _4976_1dd3 }, // _4976_1e13
 	{ 0x0000, _4976_1dd3 }, // _4976_1e19
 };
-sk4efe _4976_2ce2[] = {
+sk4efe tblAIRef04Vortex[] = { // _4976_2ce2
 	{ 0x0000, _4976_2ccd }, // _4976_2ce2
 };
-sk4efe _4976_1e6c[] = {
+sk4efe tblAIRef05Glop[] = {	// _4976_1e6c
 	{ 0x8004, _4976_1d57 }, // _4976_1e6c
 	{ 0x8000, _4976_1d65 }, // _4976_1e72
 	{ 0x0020, _4976_1d03 }, // _4976_1e78
@@ -822,7 +825,7 @@ sk4efe _4976_1e6c[] = {
 	{ 0x0004, _4976_1ce7 }, // _4976_1e90
 	{ 0x0000, _4976_1e49 }, // _4976_1e96
 };
-sk4efe _4976_2d51[] = {
+sk4efe tblAIRef06Giggler[] = {	// _4976_2d51
 	{ 0x8000, _4976_1d65 }, // _4976_2d51
 	{ 0x0020, _4976_1d03 }, // _4976_2d57
 	{ 0x0008, _4976_1d03 }, // _4976_2d5d
@@ -830,29 +833,29 @@ sk4efe _4976_2d51[] = {
 	{ 0x4000, _4976_2d35 }, // _4976_2d69
 	{ 0x0000, _4976_2d20 }, // _4976_2d6f
 };
-sk4efe _4976_2320[] = {
+sk4efe tblAIRef07AllyScoutMinion[] = {	// _4976_2320
 	{ 0x0000, _4976_2319 }, // _4976_2320
 };
-sk4efe _4976_22ff[] = {
+sk4efe tblAIRef08AllyAttackMinion[] = {	// _4976_22ff
 	{ 0x0010, _4976_1d49 }, // _4976_22ff
 	{ 0x0000, _4976_22f1 }, // _4976_2305
 };
-sk4efe _4976_2395[] = {
+sk4efe tblAIRef09AllyCarryMinion[] = {	// _4976_2395
 	{ 0x0010, _4976_1d49 }, // _4976_2395
 	{ 0x0000, _4976_2387 }, // _4976_239b
 };
-sk4efe _4976_23f5[] = {
+sk4efe tblAIRef10AllyFetchMinion[] = {	// _4976_23f5
 	{ 0x0010, _4976_1d49 }, // _4976_23f5
 	{ 0x0000, _4976_23e7 }, // _4976_23fb
 };
-sk4efe _4976_2350[] = {
+sk4efe tblAIRef11AllyGuardMinion[] = {	// _4976_2350
 	{ 0x0000, _4976_2342 }, // _4976_2350
 };
-sk4efe _4976_2440[] = {
+sk4efe tblAIRef12AllyUHaulMinion[] = {	// _4976_2440
 	{ 0x0010, _4976_1d49 }, // _4976_2440
 	{ 0x0000, _4976_2432 }, // _4976_2446
 };
-sk4efe _4976_2add[] = {
+sk4efe tblAIRef13Merchant[] = {	// _4976_2add
 	{ 0x8400, _4976_2ac1 }, // _4976_2add
 	{ 0x8200, _4976_2a82 }, // _4976_2ae3
 	{ 0x8000, _4976_1d6c }, // _4976_2ae9
@@ -865,13 +868,13 @@ sk4efe _4976_2add[] = {
 	{ 0x0200, _4976_2a51 }, // _4976_2b13
 	{ 0x0000, _4976_2a20 }, // _4976_2b19
 };
-sk4efe _4976_2226[] = {
+sk4efe tblAIRef14[] = {	// _4976_2226
 	{ 0x8000, _4976_1d65 }, // _4976_2226
 	{ 0x0008, _4976_1d03 }, // _4976_222c
 	{ 0x0040, _4976_1d03 }, // _4976_2232
 	{ 0x0000, _4976_21e7 }, // _4976_2238
 };
-sk4efe _4976_1f91[] = {
+sk4efe tblAIRef15ThornDemon[] = {	// _4976_1f91
 	{ 0x8100, _4976_1f83 }, // _4976_1f91
 	{ 0x8000, _4976_1d65 }, // _4976_1f97
 	{ 0x0020, _4976_1d03 }, // _4976_1f9d
@@ -884,7 +887,7 @@ sk4efe _4976_1f91[] = {
 	{ 0x4000, _4976_1f6e }, // _4976_1fc7
 	{ 0x0000, _4976_1f52 }, // _4976_1fcd
 };
-sk4efe _4976_2c68[] = {
+sk4efe tblAIRef17MerchantGuard[] = {	// _4976_2c68
 	{ 0x8004, _4976_2c1b }, // _4976_2c68
 	{ 0x8000, _4976_2c30 }, // _4976_2c6e
 	{ 0x4008, _4976_2bdc }, // _4976_2c74
@@ -897,11 +900,11 @@ sk4efe _4976_2c68[] = {
 	{ 0x4000, _4976_2bb9 }, // _4976_2c9e
 	{ 0x0000, _4976_2bb9 }, // _4976_2ca4
 };
-sk4efe _4976_2d83[] = {
+sk4efe tblAIRef18SpikedWall[] = {	// _4976_2d83
 	{ 0x0100, _4976_2d7c }, // _4976_2d83
 	{ 0x0000, _4976_2d75 }, // _4976_2d89
 };
-sk4efe _4976_2dff[] = {
+sk4efe tblAIRef19TreeGorgon[] = {	// _4976_2dff
 	{ 0x8004, _4976_1d57 }, // _4976_2dff
 	{ 0x8000, _4976_1d6c }, // _4976_2e05
 	{ 0x0008, _4976_1d03 }, // _4976_2e0b
@@ -910,7 +913,7 @@ sk4efe _4976_2dff[] = {
 	{ 0x0004, _4976_2dea }, // _4976_2e1d
 	{ 0x0000, _4976_2dd5 }, // _4976_2e23
 };
-sk4efe _4976_24b5[] = {
+sk4efe tblAIRef20SarDesMinion[] = {	// _4976_24b5
 	{ 0x0010, _4976_1d49 }, // _4976_24b5
 	{ 0x0020, _4976_1d03 }, // _4976_24bb
 	{ 0x0008, _4976_1d03 }, // _4976_24c1
@@ -918,10 +921,10 @@ sk4efe _4976_24b5[] = {
 	{ 0x0004, _4976_2468 }, // _4976_24cd
 	{ 0x0000, _4976_2492 }, // _4976_24d3
 };
-sk4efe _4976_2e30[] = {
+sk4efe tblAIRef22VoidDoor[] = {	// _4976_2e30
 	{ 0x0000, _4976_2e29 }, // _4976_2e30
 };
-sk4efe _4976_2f08[] = {
+sk4efe tblAIRef23Thief[] = {	// _4976_2f08
 	{ 0x8004, _4976_1d57 }, // _4976_2f08
 	{ 0x8000, _4976_1d65 }, // _4976_2f0e
 	{ 0x0020, _4976_1d03 }, // _4976_2f14
@@ -931,21 +934,21 @@ sk4efe _4976_2f08[] = {
 	{ 0x0004, _4976_1ce7 }, // _4976_2f2c
 	{ 0x0000, _4976_2ea6 }, // _4976_2f32
 };
-sk4efe _4976_2fa8[] = {
+sk4efe tblAIRef24Axeman[] = {	// _4976_2fa8
 	{ 0x8000, _4976_1d65 }, // _4976_2fa8
 	{ 0x4008, _4976_2f7e }, // _4976_2fae
 	{ 0x0008, _4976_1d03 }, // _4976_2fb4
 	{ 0x0040, _4976_2f7e }, // _4976_2fba
 	{ 0x0000, _4976_2f7e }, // _4976_2fc0
 };
-sk4efe _4976_255f[] = {
+sk4efe tblAIRef25EvilGuardMinion[] = {	// _4976_255f
 	{ 0x0000, _4976_2551 }, // _4976_255f
 };
-sk4efe _4976_2ff7[] = {
+sk4efe tblAIRef26FlameOrb[] = {	// _4976_2ff7
 	{ 0x8000, _4976_1d65 }, // _4976_2ff7
 	{ 0x0000, _4976_2fe2 }, // _4976_2ffd
 };
-sk4efe _4976_30a4[] = {
+sk4efe tblAIRef28Vegmouth[] = { // _4976_30a4
 	{ 0x8100, _4976_306c }, // _4976_30a4
 	{ 0x8000, _4976_1d65 }, // _4976_30aa
 	{ 0x0020, _4976_1d03 }, // _4976_30b0
@@ -955,7 +958,7 @@ sk4efe _4976_30a4[] = {
 	{ 0x0004, _4976_307a }, // _4976_30c8
 	{ 0x0000, _4976_3088 }, // _4976_30ce
 };
-sk4efe _4976_32e8[] = {
+sk4efe tblAIRef29Wolf[] = {	// _4976_32e8
 	{ 0x8100, _4976_3239 }, // _4976_32e8
 	{ 0x8000, _4976_1d65 }, // _4976_32ee
 	{ 0x0020, _4976_1d03 }, // _4976_32f4
@@ -971,21 +974,21 @@ sk4efe _4976_32e8[] = {
 	{ 0x4000, _4976_3278 }, // _4976_3330
 	{ 0x0000, _4976_3278 }, // _4976_3336
 };
-sk4efe _4976_33c1[] = {
+sk4efe tblAIRef30DruTan[] = {	// _4976_33c1
 	{ 0x8000, _4976_1d65 }, // _4976_33c1
 	{ 0x0008, _4976_3374 }, // _4976_33c7
 	{ 0x0040, _4976_3374 }, // _4976_33cd
 	{ 0x0000, _4976_3397 }, // _4976_33d3
 };
-sk4efe _4976_33f5[] = {
+sk4efe tblAIRef31PitGhost[] = {	// _4976_33f5
 	{ 0x8000, _4976_1d65 }, // _4976_33f5
 	{ 0x0000, _4976_33e7 }, // _4976_33fb
 };
-sk4efe _4976_3416[] = {
+sk4efe tblAIRef32DoorGhost[] = {	// _4976_3416
 	{ 0x8000, _4976_1d65 }, // _4976_3416
 	{ 0x0000, _4976_3401 }, // _4976_341c
 };
-sk4efe _4976_344c[] = {
+sk4efe tblAIRef33Dragoth[] = {	// _4976_344c
 	{ 0x8000, _4976_1d34 }, // _4976_344c
 	{ 0x4008, _4976_1d03 }, // _4976_3452
 	{ 0x0008, _4976_3430 }, // _4976_3458
@@ -993,7 +996,7 @@ sk4efe _4976_344c[] = {
 	{ 0x4000, _4976_3430 }, // _4976_3464
 	{ 0x0000, _4976_3430 }, // _4976_346a
 };
-sk4efe _4976_34f5[] = {
+sk4efe tblAIRef34DarkVexirk[] = {	// _4976_34f5
 	{ 0x8004, _4976_1d57 }, // _4976_34f5
 	{ 0x8000, _4976_1d65 }, // _4976_34fb
 	{ 0x0020, _4976_1d03 }, // _4976_3501
@@ -1005,7 +1008,7 @@ sk4efe _4976_34f5[] = {
 	{ 0x4000, _4976_1d03 }, // _4976_3525
 	{ 0x0000, _4976_34a8 }, // _4976_352b
 };
-sk4efe _4976_3577[] = {
+sk4efe tblAIRef35VexirkKing[] = {	// _4976_3577
 	{ 0x8004, _4976_1d57 }, // _4976_3577
 	{ 0x8000, _4976_1d65 }, // _4976_357d
 	{ 0x0020, _4976_1d03 }, // _4976_3583
@@ -1018,7 +1021,7 @@ sk4efe _4976_3577[] = {
 	{ 0x4000, _4976_355b }, // _4976_35ad
 	{ 0x0000, _4976_355b }, // _4976_35b3
 };
-sk4efe _4976_227d[] = {
+sk4efe tblAIRef36ArcherGuard[] = {	// _4976_227d
 	{ 0x8004, _4976_1d57 }, // _4976_227d
 	{ 0x8000, _4976_1d65 }, // _4976_2283
 	{ 0x0008, _4976_1d03 }, // _4976_2289
@@ -1028,7 +1031,7 @@ sk4efe _4976_227d[] = {
 	{ 0xC021, _4976_21e7 }, // _4976_22a1
 	{ 0x0000, _4976_225a }, // _4976_22a7
 };
-sk4efe _4976_2503[] = {
+sk4efe tblAIRef37EvilAttackMinion[] = {	// _4976_2503
 	{ 0x0010, _4976_1d49 }, // _4976_2503
 	{ 0x0020, _4976_1d03 }, // _4976_2509
 	{ 0x0008, _4976_24d9 }, // _4976_250f
@@ -1036,90 +1039,85 @@ sk4efe _4976_2503[] = {
 	{ 0x0004, _4976_24d9 }, // _4976_251b
 	{ 0x0000, _4976_24d9 }, // _4976_2521
 };
-sk4efe _4976_35e3[] = {
+sk4efe tblAIRef38[] = {	// _4976_35e3
 	{ 0x0000, _4976_35d5 }, // _4976_35e3
 };
-sk4efe _4976_3628[] = {
+sk4efe tblAIRef39CaveIn[] = {	// _4976_3628
 	{ 0x0000, _4976_3621 }, // _4976_3628
 };
-sk4efe _4976_3666[] = {
+sk4efe tblAIRef40FlyingChest[] = {	// _4976_3666
 	{ 0x8000, _4976_1d6c }, // _4976_3666
 	{ 0x0000, _4976_365f }, // _4976_366c
 };
-/*
-#if DM2_EXTENDED_MODE == 1
-	#define CREATURE_AI_TAB_SIZE	64
-#else
-	#define CREATURE_AI_TAB_SIZE	42
-#endif // DM2_EXTENDED_MODE
-*/
 
-sk4efe *_4976_37fc[CREATURE_AI_TAB_SIZE] = { // by wordval 0F-xx-01
-	_4976_1d73,//  0 
-	_4976_2115,//  1 ^ROCKY 
-	_4976_22d7,//  2 ^TIGER STRIPED WORM ^SPECTRE ^MUMMY ^SKELETON ^GHOST 
-	_4976_1def,//  3 ^TOWER BAT ^CAVERN BAT 
-	_4976_2ce2,//  4 ^VORTEX 
-	_4976_1e6c,//  5 ^GLOP 
-	_4976_2d51,//  6 ^GIGGLER 
-	_4976_2320,//  7 ^SCOUT MINION 
-	_4976_22ff,//  8 ^ATTACK MINION 
-	_4976_2395,//  9 ^CARRY MINION 
-	_4976_23f5,// 10 ^FETCH MINION 
-	_4976_2350,// 11 ^GUARD MINION 
-	_4976_2440,// 12 ^U-HAUL MINION 
-	_4976_2add,// 13 ^MERCHANT ^BAD MERCHANT ^MAGIC MERCHANT 
-	_4976_2226,// 14 
-	_4976_1f91,// 15 ^THORN DEMON 
-	_4976_1d73,// 16 
-	_4976_2c68,// 17 ^MERCHANT GUARD 
-	_4976_2d83,// 18 ^SPIKED WALL 
-	_4976_2dff,// 19 ^TREE GORGON 
-	_4976_24b5,// 20 ^SARDES MINION ^EVIL SCOUT MINION 
-	_4976_1d73,// 21 
-	_4976_2e30,// 22 ^VOID DOOR 
-	_4976_2f08,// 23 ^THICKET THEIF ^AXEMAN THIEF 
-	_4976_2fa8,// 24 ^AXEMAN 
-	_4976_255f,// 25 ^EVIL GUARD MINION 
-	_4976_2ff7,// 26 ^FLAME ORB 
-	_4976_1d73,// 27 
-	_4976_30a4,// 28 ^DIGGER WORM 
-	_4976_32e8,// 29 ^WOLF 
-	_4976_33c1,// 30 ^DRU TAN 
-	_4976_33f5,// 31 ^PIT GHOST 
-	_4976_3416,// 32 ^DOOR GHOST 
-	_4976_344c,// 33 ^DRAGOTH 
-	_4976_34f5,// 34 ^DARK VEXIRK 
-	_4976_3577,// 35 ^VEXIRK KING 
-	_4976_227d,// 36 ^ARCHER-GUARD 
-	_4976_2503,// 37 ^EVIL ATTACK MINION 
-	_4976_35e3,// 38 
-	_4976_3628,// 39 ^CAVE IN 
-	_4976_3666,// 40 ^CHEST 
-	_4976_2503,// 41 ^DRAGOTH ATTACK MINION 
+//------------------------------------------------------------------------------
+
+sk4efe* tblAIStatsRef0FXX01[CREATURE_AI_TAB_SIZE] = { // (_4976_37fc) by wordval 0F-xx-01
+	tblAIRef00Undefined,		//  0 
+	tblAIRef01Rocky,		//  1 ^ROCKY 
+	tblAIRef02GenericEnemy,	//  2 ^TIGER STRIPED WORM ^SPECTRE ^MUMMY ^SKELETON ^GHOST 
+	tblAIRef03Bat,			//  3 ^TOWER BAT ^CAVERN BAT 
+	tblAIRef04Vortex,		//  4 ^VORTEX 
+	tblAIRef05Glop,			//  5 ^GLOP 
+	tblAIRef06Giggler,		//  6 ^GIGGLER 
+	tblAIRef07AllyScoutMinion,	//  7 ^SCOUT MINION 
+	tblAIRef08AllyAttackMinion,	//  8 ^ATTACK MINION 
+	tblAIRef09AllyCarryMinion,	//  9 ^CARRY MINION 
+	tblAIRef10AllyFetchMinion,	// 10 ^FETCH MINION 
+	tblAIRef11AllyGuardMinion,	// 11 ^GUARD MINION 
+	tblAIRef12AllyUHaulMinion,	// 12 ^U-HAUL MINION 
+	tblAIRef13Merchant,		// 13 ^MERCHANT ^BAD MERCHANT ^MAGIC MERCHANT 
+	tblAIRef14,				// 14 
+	tblAIRef15ThornDemon,	// 15 ^THORN DEMON 
+	tblAIRef00Undefined,				// 16 
+	tblAIRef17MerchantGuard,// 17 ^MERCHANT GUARD 
+	tblAIRef18SpikedWall,	// 18 ^SPIKED WALL 
+	tblAIRef19TreeGorgon,	// 19 ^TREE GORGON 
+	tblAIRef20SarDesMinion,	// 20 ^SARDES MINION ^EVIL SCOUT MINION 
+	tblAIRef00Undefined,				// 21 
+	tblAIRef22VoidDoor,		// 22 ^VOID DOOR 
+	tblAIRef23Thief,		// 23 ^THICKET THEIF ^AXEMAN THIEF 
+	tblAIRef24Axeman,		// 24 ^AXEMAN 
+	tblAIRef25EvilGuardMinion,		// 25 ^EVIL GUARD MINION 
+	tblAIRef26FlameOrb,		// 26 ^FLAME ORB 
+	tblAIRef00Undefined,				// 27 
+	tblAIRef28Vegmouth,		// 28 ^DIGGER WORM 
+	tblAIRef29Wolf,			// 29 ^WOLF 
+	tblAIRef30DruTan,		// 30 ^DRU TAN 
+	tblAIRef31PitGhost,		// 31 ^PIT GHOST 
+	tblAIRef32DoorGhost,	// 32 ^DOOR GHOST 
+	tblAIRef33Dragoth,		// 33 ^DRAGOTH 
+	tblAIRef34DarkVexirk,	// 34 ^DARK VEXIRK 
+	tblAIRef35VexirkKing,	// 35 ^VEXIRK KING 
+	tblAIRef36ArcherGuard,	// 36 ^ARCHER-GUARD 
+	tblAIRef37EvilAttackMinion,			// 37 ^EVIL ATTACK MINION 
+	tblAIRef38,				// 38 
+	tblAIRef39CaveIn,		// 39 ^CAVE IN 
+	tblAIRef40FlyingChest,	// 40 ^CHEST 
+	tblAIRef37EvilAttackMinion,	// 41 ^DRAGOTH ATTACK MINION 
 #if DM2_EXTENDED_MODE == 1
-	_4976_1d73, // 42, added for compatibility with PCDOS GDAT2
-	_4976_1d73,
-	_4976_1d73,
-	_4976_1d73,
-	_4976_1d73,
-	_4976_1d73,
-	_4976_1d73,
-	_4976_1d73,
-	_4976_1d73,	// 50
-	_4976_1d73,
-	_4976_1d73,
-	_4976_1d73,
-	_4976_1d73,
-	_4976_1d73,
-	_4976_1d73,
-	_4976_1d73,
-	_4976_1d73,
-	_4976_1d73,
-	_4976_1d73,	// 60
-	_4976_1d73,
-	_4976_1d73,
-	_4976_1d73,
+	tblAIRef00Undefined,			// 42, added for compatibility with PCDOS GDAT2
+	tblAIRef00Undefined,
+	tblAIRef00Undefined,
+	tblAIRef00Undefined,
+	tblAIRef00Undefined,
+	tblAIRef00Undefined,
+	tblAIRef00Undefined,
+	tblAIRef00Undefined,
+	tblAIRef00Undefined,	// 50
+	tblAIRef00Undefined,
+	tblAIRef00Undefined,
+	tblAIRef00Undefined,
+	tblAIRef00Undefined,
+	tblAIRef00Undefined,
+	tblAIRef00Undefined,
+	tblAIRef00Undefined,
+	tblAIRef00Undefined,
+	tblAIRef00Undefined,
+	tblAIRef00Undefined,	// 60
+	tblAIRef00Undefined,
+	tblAIRef00Undefined,
+	tblAIRef00Undefined,
 #endif
 };
 //}}SK37FC_DEF

@@ -1143,7 +1143,7 @@ extern sk4efe _4976_3666[];
 	#define CREATURE_AI_TAB_SIZE	42
 #endif // DM2_EXTENDED_MODE
 
-extern sk4efe *_4976_37fc[CREATURE_AI_TAB_SIZE];
+extern sk4efe* tblAIStatsRef0FXX01[CREATURE_AI_TAB_SIZE]; // tblAIStatsRef0FXX01
 //}}SK37FC_DEF
 
 

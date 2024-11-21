@@ -282,12 +282,12 @@ void SkWinCore::CHANGE_CURRENT_MAP_TO(Bit16u new_map)
 	//^0CEE:008E
 	if (_4976_4c08 != 0) {
 		//^0CEE:0095
-		if (si == _4976_4c12) {
+		if (si == glbMap_4976_4c12) {
 			//^0CEE:009B
-			glbSomePosX_4c2e = _4976_4c04;
-			glbSomePosY_4c30 = _4976_4c1e; 
-			glbMap_4c28 = _4976_4c12;
-			_4976_4c2c = _4976_4c10;
+			glbSomePosX_4c2e = glbSomePosX_4976_4c04;
+			glbSomePosY_4c30 = glbSomePosY_4976_4c1e; 
+			glbMap_4c28 = glbMap_4976_4c12;
+			_4976_4c2c = glbDir_4976_4c10;
 
 			return;
 		}
@@ -3399,7 +3399,7 @@ U16 SkWinCore::PERFORM_MOVE(X16 xx)
 	di = xx -3;
 	//^12B4:04BC
 	if (_4976_4c08 != 0 && di == 2) {
-		CHANGE_CURRENT_MAP_TO(_4976_4c12);
+		CHANGE_CURRENT_MAP_TO(glbMap_4976_4c12);
 	}
 	//^12B4:04D2
 	playerDestPosX = glbSomePosX_4c2e;
@@ -4073,7 +4073,7 @@ void SkWinCore::ATTACK_CREATURE(ObjectID rl, i16 xx, i16 yy, Bit16u ss, i16 tt, 
 	xCreatureData->w20 += quantity;
 	quantity = xCreatureData->w20;
 	//^13E4:04DB
-	U16 si;
+	U16 si;	// si , new command
 	U16 bp0e;
 	if (bp10 == 0 && tt > 0) {
 		//^13E4:04ED
@@ -4115,7 +4115,7 @@ _05bd:
 				}
 				//^13E4:063B
 				if (si != 0xffff) {
-					_13e4_0360(rl, xx, yy, U8(si), 0);
+					CREATURE_SET_NEW_COMMAND(rl, xx, yy, U8(si), 0);
 				}
 			}
 		}
@@ -4216,7 +4216,7 @@ U8 *SkWinCore::PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timer
 	glbCreatureTimer.YcoordB(U8(yy));
 	glbCreatureAnimationFrame = NULL;
 	_4976_4ee6 = 0;
-	_4976_4efa = 0xffff;
+	glbCreatureAIStatIndex = 0xffff;
 	//^13E4:014B
 	if (xCreatureInfo == NULL && SkCodeParam::bDebugBypassNullPointers == false) {
 		if (timerType == tty22) {
