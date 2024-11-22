@@ -527,10 +527,10 @@ protected:
 	X16		_4976_4ef2;
 	X16		_4976_4ef4;
 	X16		_4976_4ef6;
-	X16		_4976_4ef8;
+	X16		glbCreatureStat07;					// (_4976_4ef8) temp creature's word val (0F-xx-07)
 	X16		glbCreatureAIStatIndex;		// (_4976_4efa) temp creature's word val (0F-xx-01)
-	X16		_4976_4efc;		// 2nd param of _4976_37fc
-	const sk4efe	*_4976_4efe;
+	X16		glbCreatureAIRefCount;		// (_4976_4efc) 2nd param of _4976_37fc
+	const sk4efe* glbCreatureAIRefLev1Ptr;		// (_4976_4efe)
 	X8		_4976_4f02;		// 1=need zeromem _4976_4f04
 	i8		_4976_4f03;
 	sk4f04	_4976_4f04[4];	// 128 bytes
@@ -555,9 +555,9 @@ protected:
 	X16		glbCreatureSomeY; // (_4976_5218) y?
 	X16		glbCreatureSomeZMap; // (_4976_521a) z?
 	X16		_4976_521c; // (_4976_521c) tilevalue
-	ObjectID	_4976_521e;	// first record on tile (glbCreatureSomeX, glbCreatureSomeY)
-	ObjectID	_4976_5220;	// first creature record or xxx.
-	ObjectID	_4976_5222;	// creature record
+	ObjectID	glbCreatureSomeFirstObjectOnTile;	// (_4976_521e) first record on tile (glbCreatureSomeX, glbCreatureSomeY)
+	ObjectID	glbCreatureSomeObjectFromTile;	// (_4976_5220) first creature record or xxx.
+	ObjectID	_4976_5222;	// (_4976_5222) creature record
 	X8		_4976_5224;
 	U8		_4976_5225;	// teleporter existence for find walk path.
 	TELE_inf	_4976_5226;
@@ -1554,8 +1554,8 @@ protected:
 	X16 _19f0_0547(ObjectID rl, X16 xx);
 	U16 _19f0_01d6(i16 xx, i16 yy);
 	i16 _19f0_05e8(X16 aa, DistMapTile (*bb)[1][32], Ax3 *cc, i16 xx, i16 yy, i16 zz, X16 ww);
-	i16 _1c9a_1b16(X16 xx, X16 yy);
-	i16 _1c9a_1a48(X16 xx, X16 yy);
+	i16 CREATURE_1c9a_1b16(X16 xx, X16 yy);	// _1c9a_1b16
+	i16 CREATURE_CHECK__1c9a_1a48(X16 xx, X16 yy);	// _1c9a_1a48
 	X16 IS_TILE_WALL(i16 xx, i16 yy); // _19f0_0081
 	X16 _19f0_1511(ObjectID rl);
 	X16 CALC_CLOUD_DAMAGE(ObjectID rlCloud, ObjectID rlTarget);
@@ -2100,7 +2100,7 @@ protected:
 	X16 WOUND_CREATURE(i16 damage);
 	X8 _14cd_062e();
 	i16 SELECT_CREATURE_4EFE(const sk4efe *ref);
-	void SELECT_CREATURE_37FC();
+	void SELECT_CREATURE_COUNT_AI_REFTAB();
 	void __SET_CURRENT_THINKING_CREATURE_WALK_PATH();
 	i16 CREATURE_THINK_381c(); // _1c9a_381c
 	U8 *_3e74_5788(U16 xx, i32 yy);
@@ -2153,7 +2153,7 @@ protected:
 	X8 PROCEED_XACT_63();
 	X8 PROCEED_XACT_64();
 	X8 PROCEED_XACT_65();
-	X16 _14cd_2662(i8 dir);
+	X16 CREATURE_CHECK_HANDLE_ITEM_AHEAD(i8 dir);	// _14cd_2662
 	X8 PROCEED_XACT_66();
 	U16 _14cd_2807_CREATURE(ObjectID *ref, skxxxi *pv); // _14cd_2807
 	i16 _14cd_2886_CREATURE(ObjectID *ref, X16 xx, i8 dir, X16 ss, X16 tt, X16 ww); // _14cd_2886

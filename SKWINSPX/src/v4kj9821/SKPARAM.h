@@ -9,6 +9,7 @@ public:
 
 	static bool bUseBigEnd;				// tell to read data files in big-end mode, specially for Amiga and Sega-CD
 	static bool bNoAudio;				// some debug flag to disable audio
+	static bool bNoMusic;
 	static bool bChampionImmune;		// if activated, champions do not take any damage
 
 	//--- Specific game setup

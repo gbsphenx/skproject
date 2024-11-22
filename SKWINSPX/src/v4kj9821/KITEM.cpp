@@ -86,7 +86,7 @@ i16 SkWinCore::RETRIEVE_ITEM_BONUS(ObjectID x1, Bit8u x2, Bit16u x3, i16 iBonusD
 	//^2C1D:03A8
 	if ((iBonusValue & 0x4000) != 0) {
 		//^2C1D:03AF
-		switch (iBonusDir) {	// iBonusDir == 0xFFFF or -1 means we want to get negative value of this bonus, certainly to remove it from champion
+		switch ((X16)iBonusDir) {	// iBonusDir == 0xFFFF or -1 means we want to get negative value of this bonus, certainly to remove it from champion
 			case 0xFFFE: // may come from event/timer ?
 			case 0x0002:
 			case 0x0003:

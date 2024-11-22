@@ -2375,7 +2375,7 @@ namespace DM2Internal {
 		i16 b10;		// @10
 		i16 b11;		// @11
 		i16 b12;		// @12
-		i16 b13;		// @13
+		i16 b13;		// @13	// 0 = end of table
 
 		U8 b6_0_f() const { return U8(w6); }
 	};
@@ -2392,7 +2392,7 @@ namespace DM2Internal {
 		i8 b10;		// @10
 		i8 b11;		// @11
 		i8 b12;		// @12
-		X8 b13;		// @13
+		X8 b13;		// @13	// 0 = end of table
 
 		U8 b6_0_f() const { return U8(w6); }
 	};
@@ -2829,7 +2829,7 @@ namespace DM2Internal {
 		i8 b0;			// @0
 		i8 b1;			// @1 // if positive pass on 100.0/b1 percent. if negative skip on 100.0/b1 percent.
 		sk1bf9 *pv2;	// @2
-		X8 b6;			// @6
+		X8 b6;			// @6	// 0 = end of table
 	};
 	// 
 	struct sk4efe { // 6 bytes

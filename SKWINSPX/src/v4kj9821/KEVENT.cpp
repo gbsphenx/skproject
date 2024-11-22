@@ -888,7 +888,7 @@ Bit16u SkWinCore::QUEUE_TIMER(Timer *ref)
 	ATLASSERT(ref->TimerType() != 0xcc);
 
 	//ATLASSERT(ref->GetMap() != 0 || ref->TimerType() != tty1E);
-	//printf("Timers : AC:%d / C:%d / MX:%d\n", glbTimersActiveCount, glbTimersCount, glbTimersMaximumCount);
+	SkD((DLV_DBG_TIMER, "Timers : Active:%d / Cnt:%d / MaxCnt:%d\n", glbTimersActiveCount, glbTimersCount, glbTimersMaximumCount));
 
 	//^3A15:0696
 	if (ref->TimerType() == 0) {
@@ -2589,7 +2589,7 @@ void SkWinCore::PROCESS_SOUND(U8 xx)
 	ENTER(0);
 	//^482B:04ED
 	X16 si = xx;
-	if (glbSoundList[si].b5 == glbMap_4c28 || glbSoundList[si].b5 == _4976_4c12) {
+	if (glbSoundList[si].b5 == glbMap_4c28 || glbSoundList[si].b5 == glbMap_4976_4c12) {
 		//^482B:0523
 		QUEUE_NOISE_GEN1(
 			glbSoundList[si].category,

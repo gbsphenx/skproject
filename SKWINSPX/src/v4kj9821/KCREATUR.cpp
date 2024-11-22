@@ -179,16 +179,16 @@ _0253:
 }
 
 //^14CD:0009
-void SkWinCore::SELECT_CREATURE_37FC()
+void SkWinCore::SELECT_CREATURE_COUNT_AI_REFTAB()
 {
 	ENTER(0);
 	if (glbCreatureAIStatIndex == 0xFFFF) {
 		glbCreatureAIStatIndex = QUERY_GDAT_CREATURE_WORD_VALUE(glbCurrentThinkingCreatureRec->CreatureType(), CREATURE_STAT_AI_SEQ_01);
 	}
-	_4976_4efc = SELECT_CREATURE_4EFE(tblAIStatsRef0FXX01[RCJ(CREATURE_AI_TAB_SIZE,glbCreatureAIStatIndex)]);
-	_4976_4efe = &tblAIStatsRef0FXX01[RCJ(CREATURE_AI_TAB_SIZE,glbCreatureAIStatIndex)][_4976_4efc];
+	glbCreatureAIRefCount = SELECT_CREATURE_4EFE(tblAIStatsRef0FXX01[RCJ(CREATURE_AI_TAB_SIZE,glbCreatureAIStatIndex)]);
+	glbCreatureAIRefLev1Ptr = &tblAIStatsRef0FXX01[RCJ(CREATURE_AI_TAB_SIZE,glbCreatureAIStatIndex)][glbCreatureAIRefCount];
 	SkD((DLV_CAI, "CAI: (i) a#%03d 37fc[%2d,%3d] \n"
-		, (Bitu)glbCurrentThinkingCreatureData->CreatureIndex(), (Bitu)glbCreatureAIStatIndex, (Bitu)_4976_4efc
+		, (Bitu)glbCurrentThinkingCreatureData->CreatureIndex(), (Bitu)glbCreatureAIStatIndex, (Bitu)glbCreatureAIRefCount
 		));
 
 	return;
@@ -217,6 +217,7 @@ X8 SkWinCore::_14cd_062e()
 }
 
 //^14CD:0067
+// Counting the number of ref within the selected sk4efe struct
 i16 SkWinCore::SELECT_CREATURE_4EFE(const sk4efe *ref)
 {
 	// _4976_37fc[xx][yy], select yy.
@@ -760,7 +761,7 @@ _1811:
 		//^19F0:187A
 		_19f0_045a(xx3, yy2);
 		i16 bp2a;
-		if (_4976_4ef8 == 0 || ww == 6 || (bp2a = _1c9a_1a48(1, _4976_4ef8)) == -1 || (bp2a & (1 << ((ww +2) & 3))) == 0) {
+		if (glbCreatureStat07 == 0 || ww == 6 || (bp2a = CREATURE_CHECK__1c9a_1a48(1, glbCreatureStat07)) == -1 || (bp2a & (1 << ((ww +2) & 3))) == 0) {
 			//^19F0:18BC
 			if ((aa == 4 || aa == 5) && (glbAIDef->ArmorClass == AI_DEF_ARMOR_MAX))
 				//^19F0:18D3
@@ -806,12 +807,10 @@ _1811:
 						goto _1a94;
 					if (bp06 == 4)
 						goto _19f9;
-					//^19F0:195B
-					if (_4976_521e == OBJECT_NULL) {
-						//^19F0:1962
-						_4976_521e = GET_TILE_RECORD_LINK(xx3, yy2);
+					if (glbCreatureSomeFirstObjectOnTile == OBJECT_NULL) {
+						glbCreatureSomeFirstObjectOnTile = GET_TILE_RECORD_LINK(xx3, yy2);
 					}
-					door = GET_ADDRESS_OF_RECORD0(_4976_521e);
+					door = GET_ADDRESS_OF_RECORD0(glbCreatureSomeFirstObjectOnTile);
 					if (bp1e != 0) {
 						//^19F0:1986
 						if (door->DoorBit10() != 0) {
@@ -854,11 +853,11 @@ _19f9:
 						break;
 					}
 					//^19F0:1A47
-					if (_4976_521e == OBJECT_NULL) {
-						_4976_521e = GET_TILE_RECORD_LINK(xx3, yy2);
+					if (glbCreatureSomeFirstObjectOnTile == OBJECT_NULL) {
+						glbCreatureSomeFirstObjectOnTile = GET_TILE_RECORD_LINK(xx3, yy2);
 					}
-					bp06 = GET_ADDRESS_OF_RECORD1(_4976_521e)->Scope();
-					if (bp06 == 1 || bp06 == 3) {
+					bp06 = GET_ADDRESS_OF_RECORD1(glbCreatureSomeFirstObjectOnTile)->Scope();
+					if (bp06 == TELEPORTER_SCOPE_CREATURE || bp06 == TELEPORTER_SCOPE_ANYTHING) {	// (bp06 == 1 || bp06 == 3) // scope == creature or anything
 						//^19F0:1A83
 						si = 0x400;
 						break;
@@ -1122,6 +1121,114 @@ _1ff2:
 	return bp1a;
 }
 
+
+
+//^1C9A:1A48
+// Works with the 0F-xx-07 word value of creature, but yy is not used at all ??
+// _1c9a_1a48 renamed CREATURE_CHECK__1c9a_1a48
+// This function has been seen called at 2 places like this (1, glbCreatureStat07)
+i16 SkWinCore::CREATURE_CHECK__1c9a_1a48(X16 xx, X16 yy)
+{
+	ENTER(8);
+	X16 iValChecker = (xx == 1) ? 2 : -1;	// bp08
+
+	ObjectID rlObject = glbCreatureSomeFirstObjectOnTile;	// si
+	if (rlObject == OBJECT_NULL) {
+		glbCreatureSomeFirstObjectOnTile = GET_TILE_RECORD_LINK(glbCreatureSomeX, glbCreatureSomeY);
+		rlObject = glbCreatureSomeFirstObjectOnTile;
+	}
+	X16 iDBType; // bp06
+	for (; rlObject != OBJECT_END_MARKER && (iDBType = rlObject.DBType()) <= dbActuator; rlObject = GET_NEXT_RECORD_LINK(rlObject)) {
+		if (iDBType == dbText) {
+			Text* xTextActuator = GET_ADDRESS_OF_RECORD2(rlObject); // bp04
+			if (xTextActuator->TextMode() == 2) {
+				if (true
+					&& ((xTextActuator->w2_c_f() == xx) || (xTextActuator->w2_c_f() == iValChecker && xTextActuator->TextVisibility() != 0))
+					&& (iValChecker & (1 << xTextActuator->w2_8_b())) != 0
+				) {
+					return xTextActuator->w2_3_7();
+				}
+			}
+		}
+	}
+	return -1;
+}
+
+//^19F0:04BF
+ObjectID SkWinCore::_19f0_04bf()
+{
+	ENTER(0);
+	ObjectID rlObject = glbCreatureSomeObjectFromTile;	// si
+	if (rlObject == OBJECT_NULL) {
+		rlObject = glbCreatureSomeFirstObjectOnTile;
+		if (rlObject == OBJECT_NULL) {
+			glbCreatureSomeFirstObjectOnTile = GET_TILE_RECORD_LINK(glbCreatureSomeX, glbCreatureSomeY);
+		}
+		for (rlObject = glbCreatureSomeFirstObjectOnTile; rlObject != OBJECT_END_MARKER && rlObject.DBType() <= dbActuator; rlObject = GET_NEXT_RECORD_LINK(rlObject));
+		glbCreatureSomeObjectFromTile = rlObject;
+	}
+	return rlObject;
+}
+
+//^19F0:0559
+U16 SkWinCore::_19f0_0559(X16 xx)
+{
+	//^19F0:0559
+	SkD((DLV_DBG_SED3, "DBG: _19f0_0559 %04X \n", (Bitu)xx));
+	ENTER(4);
+	//^19F0:055E
+	X16 si = xx;
+	X16 bp04 = glbCurrentThinkingCreatureRec->b15 & 3;
+	X16 bp02;
+	//^19F0:056F
+	if (((si +2) & 3) == bp04) {
+		if (RAND01() != 0)
+			goto _059e;
+		bp02 = 0xffff;
+	}
+	//^19F0:058E
+	else if (bp04 != si) {
+		if (((si -1) & 3) == bp04)
+			//^19F0:059E
+_059e:
+			bp02 = 1;
+		else
+			bp02 = 0xffff;
+	}
+	else {
+		//^19F0:05A7
+		glbCurrentThinkingCreatureData->Command = ccmNeutral;
+		_4976_4ee5 = xactrYes;
+		//^19F0:05B5
+		return 0;
+	}
+	//^19F0:05B9
+	glbCurrentThinkingCreatureData->b29 = (U8(bp04) +U8(bp02)) & 3;
+	glbCurrentThinkingCreatureData->Command = (bp02 == 0xffff) ? ccm06 : ccm07;
+	_4976_4ee5 = xactrAgain;
+	//^19F0:05E2
+	return 1;
+}
+
+//^19F0:045A
+void SkWinCore::_19f0_045a(i16 xx, i16 yy)
+{
+	//^19F0:045A
+	ENTER(0);
+	//^19F0:045D
+	if (xx == glbCreatureSomeX && yy == glbCreatureSomeY && glbCurrentMapIndex == glbCreatureSomeZMap)
+		//^19F0:0476
+		return;
+	//^19F0:0478
+	glbCreatureSomeZMap = glbCurrentMapIndex;
+	_4976_521c = GET_TILE_VALUE(glbCreatureSomeX = xx, glbCreatureSomeY = yy);
+	//^19F0:0498
+	_4976_5222 = glbCreatureSomeObjectFromTile = glbCreatureSomeFirstObjectOnTile = ((_4976_521c & 0x10) != 0) ? OBJECT_NULL : OBJECT_END_MARKER;
+	_4976_5224 = _4976_5225 = 0;
+	_4976_522c = 0xff;
+	//^19F0:04BD
+	return;
+}
 
 //^1C9A:0006
 X16 SkWinCore::CREATURE_CAN_HANDLE_IT(ObjectID rlTarget, U16 flags)
@@ -2681,13 +2788,38 @@ _1470:
 			_19f0_045a(glbCreatureTimerGetX, glbCreatureTimerGetY);
 			if ((_4976_521c & 0x10) == 0)
 				break;
-			if (_1c9a_1b16(yy, xCreature->iAnimSeq) != 0)
+			if (CREATURE_1c9a_1b16(yy, xCreature->iAnimSeq) != 0)
 				break;
 			goto _1470;
 	}
 	//^14CD:1891
 	return (bp0c != 0) ? !bp0a : bp0a;
 }
+
+
+//^1C9A:1B16
+// _1c9a_1b16 renamed CREATURE_1c9a_1b16 // check against animation frame ?? (yy)
+i16 SkWinCore::CREATURE_1c9a_1b16(X16 xx, X16 yy)
+{
+	ENTER(6);
+	ObjectID rlObject = glbCreatureSomeFirstObjectOnTile;	// si
+	if (rlObject == OBJECT_NULL) {
+		glbCreatureSomeFirstObjectOnTile = GET_TILE_RECORD_LINK(glbCreatureSomeX, glbCreatureSomeY);
+		rlObject = glbCreatureSomeFirstObjectOnTile;
+	}
+	X16 iDBType;	// bp06
+	for (; rlObject != OBJECT_END_MARKER && (iDBType = rlObject.DBType()) <= dbActuator; rlObject = GET_NEXT_RECORD_LINK(rlObject)) {
+		if (iDBType == dbText) {
+			Text* xTextActuator = GET_ADDRESS_OF_RECORD2(rlObject); // bp04
+			if (xTextActuator->TextMode() == 2 && xTextActuator->w2_c_f() == xx && xTextActuator->w2_8_b() == yy) {
+				return xTextActuator->w2_3_7();  // TODO: Complex text use
+			}
+		}
+	}
+	return -1;
+}
+
+
 
 
 //^14CD:0389
@@ -2741,7 +2873,7 @@ i8 SkWinCore::SELECT_CREATURE_3672()
 		_4976_5162 = _14cd_062e();
 		i8 bp09 = xCreatureInfo->x;
 		i8 bp0d = xCreatureInfo->y;
-		_14cd_0550(_4976_4efe->pv2, bp09, bp0d, si);
+		_14cd_0550(glbCreatureAIRefLev1Ptr->pv2, bp09, bp0d, si);
 		if (si != 0)
 			_14cd_0457();
 		if (_4976_4fd8->b18() != 0) {
@@ -3092,43 +3224,33 @@ X8 SkWinCore::PROCEED_XACT_65()
 
 
 //^14CD:2662
-X16 SkWinCore::_14cd_2662(i8 dir)
+// _14cd_2662 renamed CREATURE_CHECK_HANDLE_ITEM_AHEAD
+X16 SkWinCore::CREATURE_CHECK_HANDLE_ITEM_AHEAD(i8 dir)
 {
-	//^14CD:2662
 	ENTER(6);
-	//^14CD:2668
-	ObjectID si = OBJECT_END_MARKER;
-	X16 bp04 = glbCreatureTimerGetX;
-	X16 bp06 = glbCreatureTimerGetY;
+	ObjectID rlObject = OBJECT_END_MARKER; // si
+	X16 iPosX = glbCreatureTimerGetX;	// bp04
+	X16 iPosY = glbCreatureTimerGetY;	// bp06
 	if (dir != -1) {
-		//^14CD:2681
 		dir = (glbCurrentThinkingCreatureRec->b15_0_1() +dir +2)&3;
 	}
-	//^14CD:2696
-	bp04 += glbXAxisDelta[glbCurrentThinkingCreatureRec->b15_0_1()];
-	bp06 += glbYAxisDelta[glbCurrentThinkingCreatureRec->b15_0_1()];
-	ObjectID bp02 = GET_CREATURE_AT(bp04, bp06);
-	if (bp02 != OBJECT_NULL) {
-		//^14CD:26D5
-		for (si = GET_ADDRESS_OF_RECORD4(bp02)->GetPossessionObject(); si != OBJECT_END_MARKER; si = GET_NEXT_RECORD_LINK(si)) {
-			//^14CD:26E8
-			i16 di = si.DBType();
-			if ((di <= dbCreature || di >= dbMissile) && di != dbContainer)
+	iPosX += glbXAxisDelta[glbCurrentThinkingCreatureRec->b15_0_1()];
+	iPosY += glbYAxisDelta[glbCurrentThinkingCreatureRec->b15_0_1()];
+	ObjectID rlCreature = GET_CREATURE_AT(iPosX, iPosY); // bp02
+	if (rlCreature != OBJECT_NULL) {
+		for (rlObject = GET_ADDRESS_OF_RECORD4(rlCreature)->GetPossessionObject(); rlObject != OBJECT_END_MARKER; rlObject = GET_NEXT_RECORD_LINK(rlObject)) {
+			i16 iDBType = rlObject.DBType(); // di
+			if ((iDBType <= dbCreature || iDBType >= dbMissile) && iDBType != dbContainer)
 				continue;
-			//^14CD:2701
-			if (dir != -1 && si.Dir() != dir)
+			if (dir != -1 && rlObject.Dir() != dir)
 				continue;
-			//^14CD:2715
-			if (CREATURE_CAN_HANDLE_IT(si, 16) != 0)
+			if (CREATURE_CAN_HANDLE_IT(rlObject, 16) != 0)
 				continue;
-			//^14CD:2723
-			if (CREATURE_CAN_HANDLE_IT(si, 7) == 0)
+			if (CREATURE_CAN_HANDLE_IT(rlObject, 7) == 0)
 				break;
-			//^14CD:2731
 		}
 	}
-	//^14CD:273F
-	return (si != OBJECT_END_MARKER) ? 1 : 0;
+	return (rlObject != OBJECT_END_MARKER) ? 1 : 0;
 }
 
 //^14CD:274F
@@ -3139,7 +3261,7 @@ X8 SkWinCore::PROCEED_XACT_66()
 	ENTER(2);
 	//^14CD:2754
 	X8 bp01;
-	if (_14cd_2662(2) != 0) {
+	if (CREATURE_CHECK_HANDLE_ITEM_AHEAD(2) != 0) {
 		//^14CD:275F
 		bp01 = xactrAgain;
 		if (glbCurrentThinkingCreatureData->w14-- <= 5) {
@@ -3230,7 +3352,7 @@ X8 SkWinCore::PROCEED_XACT_67()
 	CreatureInfoData *bp04 = glbCurrentThinkingCreatureData;
 	X8 bp0f = xactrNo;
 	X16 bp0c = glbCurrentThinkingCreatureRec->b15_0_1();
-	if (_14cd_2662(2) != 0) {
+	if (CREATURE_CHECK_HANDLE_ITEM_AHEAD(2) != 0) {
 		//^14CD:2902
 		if (--bp04->w14 <= 6) {
 			//^14CD:2912
@@ -3355,7 +3477,7 @@ X8 SkWinCore::PROCEED_XACT_68()
 	//^14CD:2F0D
 	X8 bp0d = xactrNo;
 	X16 bp06 = glbCurrentThinkingCreatureRec->b15_0_1();
-	if (_14cd_2662((_4976_4ee8 +2)&3) != 0) {
+	if (CREATURE_CHECK_HANDLE_ITEM_AHEAD((_4976_4ee8 +2)&3) != 0) {
 		//^14CD:2F30
 		bp0d = xactrNo;
 		glbCurrentThinkingCreatureData->Command = ccm1F;
@@ -4449,7 +4571,7 @@ void SkWinCore::CREATURE_THINK_09E2()
 	//^14CD:09E8
 	CreatureInfoData *xCreatureInfo = glbCurrentThinkingCreatureData;	// bp08
 	Creature *xCreature = glbCurrentThinkingCreatureRec;	// bp0c
-	SELECT_CREATURE_37FC();
+	SELECT_CREATURE_COUNT_AI_REFTAB();
 	X16 bp14 = tblAIStats01[glbCreatureAIStatIndex];
 	if ((bp14 & 0x40) != 0) {
 		_4976_5163 = 0;
@@ -4461,14 +4583,14 @@ void SkWinCore::CREATURE_THINK_09E2()
 		_4976_5163 = 5;
 	}
 	//^14CD:0A2F
-	if (_4976_4efe->pv2 == _4976_1d6c) {
+	if (glbCreatureAIRefLev1Ptr->pv2 == _4976_1d6c) {
 		//^14CD:0A43
 	_0a43:
 		xCreatureInfo->Command = ccmNeutral;
 		return;
 	}
 	//^14CD:0A4E
-	if (_4976_4efe->pv2 == _4976_1d65) {
+	if (glbCreatureAIRefLev1Ptr->pv2 == _4976_1d65) {
 		i8 bp0e = RAND() & 7;
 		if (bp0e > 3) {
 			//^14CD:0A76
@@ -4662,7 +4784,8 @@ void SkWinCore::_13e4_01a3()
 	_4976_520e = NULL;
 	_4976_520c = 4;
 	_4976_5162 = 0;
-	_4976_4ef8 = QUERY_GDAT_CREATURE_WORD_VALUE(bp08->CreatureType(), 7);
+	glbCreatureStat07 = QUERY_GDAT_CREATURE_WORD_VALUE(bp08->CreatureType(), CREATURE_STAT_7);	// Some creatures have this set
+	// Generally creatures have this = 2, some minions = 1, and Dragoth = x10
 	i16 si = (i8)((U8)glbGameTick - glbCurrentThinkingCreatureData->b4);
 	if (si < 0)
 		si += 0x100;

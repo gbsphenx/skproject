@@ -28,7 +28,11 @@ using namespace kkBitBlt;
 #ifdef _USE_SDL
 #include <SkSDL.h>
 #endif // _USE_SDL
-#if defined(__DJGPP__) || defined(__MINGW__) || defined(__LINUX__)
+
+#if defined(__LINUX__)
+#include <SKSDL2.h>
+#include <stdlib.h>
+#elif defined(__DJGPP__) || defined(__MINGW__)
 #include <SkDOS.h>
 #include <stdlib.h> // rand note: putting stdlib here and not right after stdafx prevents a bunch of conflicts with min/max macros
 #endif // __DJGPP__
@@ -869,7 +873,7 @@ void SkWinCore::REQUEST_PLAY_MUSIC(int iMusicNumber)
 	if (iNextRequestedMusic == iCurrentWavMusic)
 		return;
 
-	if (SkCodeParam::bNoAudio == true)
+	if (SkCodeParam::bNoAudio == true || SkCodeParam::bNoMusic == true)
 		return;
 
 #if defined(_USE_MFC80) || defined(_USE_MFC60)

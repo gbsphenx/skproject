@@ -3,7 +3,8 @@
 
 bool SkCodeParam::bUseBigEnd = false;	// Default is little-end
 
-bool SkCodeParam::bNoAudio = true;
+bool SkCodeParam::bNoAudio = false;
+bool SkCodeParam::bNoMusic = true;
 bool SkCodeParam::bChampionImmune = true;
 
 bool SkCodeParam::bDM1Mode = false;

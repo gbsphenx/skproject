@@ -737,9 +737,10 @@ enum SkillLevel {
 #define CREATURE_DRAGOTH_ATTACK_MINION	0x4C
 
 #define CREATURE_STAT_00				0x00
-#define CREATURE_STAT_01				0x01	// Goes to a table ?
+#define CREATURE_STAT_AI_SEQ_01			0x01	// Goes to a table related to more AI info ?
 #define CREATURE_STAT_AI				0x05
 #define CREATURE_STAT_6					0x06	// Seeing this used by SARDES Minion; would it be that creature does not attack ???
+#define CREATURE_STAT_7					0x07	// Use for a few creatures like Dragoth, Giggler, Thorn Demon, Glop, Rocky ...
 #define CREATURE_STAT_DROP_FIRST		0x0A
 #define CREATURE_STAT_DROP_LAST			0x14
 
@@ -1428,6 +1429,16 @@ typedef enum
 #define TILE_FLAG_NO_HAZE				8	// teleporter
 
 #define TILE_FLAG_FLOOR_RANDOM			11
+
+
+//------------------------------------------------------------------------------
+//	TELEPORTER
+//------------------------------------------------------------------------------
+
+#define TELEPORTER_SCOPE_ITEM				0
+#define TELEPORTER_SCOPE_CREATURE			1
+#define TELEPORTER_SCOPE_PARTY_ITEM			2
+#define TELEPORTER_SCOPE_ANYTHING			3
 
 //------------------------------------------------------------------------------
 //	INTERFACE RECTANGLES

@@ -329,7 +329,7 @@ SkWinMIDI_MIDI_LOOP(void* parameters)
 		sprintf(sDataRootFolder, xWinMIDI->sRootFolder);
 	}
 
-	if (SkCodeParam::bNoAudio == true)
+	if (SkCodeParam::bNoAudio == true || SkCodeParam::bNoMusic == true)
 		SkCodeParam::bMIDIMusicEnabled = false;
 
 	//printf("%d> Requesting music %02x (%02d)\n", iThreadCounter, iHexNum, iHexNum);

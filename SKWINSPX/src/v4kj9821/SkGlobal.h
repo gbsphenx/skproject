@@ -32,15 +32,18 @@ using namespace DM2Internal;
 #if defined(_USE_MFC80) || defined(_USE_MFC60)
 extern CSkWinMFC skwin;
 #endif
+
 #ifdef _USE_SDL
 extern CSkWinSDL skwin;
 #endif
+
 #if defined(__DJGPP__) || defined(__MINGW__)
-#include <SkDOS.h>
+#include <SKDOS.H>
 extern CSkWinDOS skwin;
 #endif
+
 #if defined(__LINUX__)
-#include <SkSDL2.h>
+#include <SKSDL2.H>
 extern CSkWinSDL2 skwin;
 #endif
 

@@ -330,7 +330,7 @@ sk1bf9 _4976_35e9[] = {
 sk1bf9 _4976_3651[] = {
 	{    5,   0, 0x0000,   1, 0x0000,  8,  6,  1,  1, 18,  0 }, // _4976_3651
 };
-skxxxh _4976_1d65[] = {
+skxxxh _4976_1d65[] = {	// _4976_1d65, may go to ccm 02
 	{   0,  0,_4976_1bcf,  0 }, // _4976_1d65
 };
 skxxxh _4976_1ce7[] = {
@@ -455,7 +455,7 @@ skxxxh _4976_2a82[] = {
 	{   1,  0,_4976_294e,  1 }, // _4976_2a9e
 	{  33,  0,_4976_2978,  0 }, // _4976_2aa5
 };
-skxxxh _4976_1d6c[] = {
+skxxxh _4976_1d6c[] = {	// goes to ccm neutral
 	{  17,  0,_4976_1ccb,  0 }, // _4976_1d6c
 };
 skxxxh _4976_2acf[] = {
@@ -1095,7 +1095,7 @@ sk4efe* tblAIStatsRef0FXX01[CREATURE_AI_TAB_SIZE] = { // (_4976_37fc) by wordval
 	tblAIRef39CaveIn,		// 39 ^CAVE IN 
 	tblAIRef40FlyingChest,	// 40 ^CHEST 
 	tblAIRef37EvilAttackMinion,	// 41 ^DRAGOTH ATTACK MINION 
-#if DM2_EXTENDED_MODE == 1
+#if XDM2_EXTENDED_AI_TABSIZE == 1
 	tblAIRef00Undefined,			// 42, added for compatibility with PCDOS GDAT2
 	tblAIRef00Undefined,
 	tblAIRef00Undefined,

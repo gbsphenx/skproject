@@ -358,7 +358,7 @@ void SkWinCore::QUEUE_NOISE_GEN1(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u xx, B
 {
 	//^482B:018B
 	//^482B:0191
-	if (tickDelta > 0 && glbCurrentMapIndex != glbMap_4c28 && glbCurrentMapIndex != _4976_4c12) {
+	if (tickDelta > 0 && glbCurrentMapIndex != glbMap_4c28 && glbCurrentMapIndex != glbMap_4976_4c12) {
 		//^482B:01A6
 		return;
 	}

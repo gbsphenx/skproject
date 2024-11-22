@@ -46,7 +46,7 @@
 #define DLV_DBG_GETPIC 0
 #define DLV_DBG_CELL 0
 #define DLV_DBG_EXTRACT 0
-#define DLV_DBG_TIMER 0
+#define DLV_DBG_TIMER 1
 #define DLV_DBG_CAI 0
 #define DLV_DBG_RAND 0
 #define DLV_DBG_CEL2 0
