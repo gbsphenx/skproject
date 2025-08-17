@@ -14,3 +14,12 @@
 bin
 obj
 **/packages/*/*
+/SKWINSPX/MinGW
+/SKWINSPX/SDL2-2.0.8
+/SKWINSPX/SDL2-devel-2.30.9-VC
+/SKWINSPX/sdl-devel
+/SKWINSPX/lua
+/SKWINSPX/allegro-5.0.10
+/SKWINSPX/allegro-5.0.9
+/SKWINSPX/allegro
+/SKWINSPX/al
