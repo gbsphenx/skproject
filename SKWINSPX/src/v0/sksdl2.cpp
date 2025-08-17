@@ -109,7 +109,9 @@ UINT SkRendererSDL::Init(SkVRAM* xVRAM)
 
 UINT SkRendererSDL::ResizeWindow()
 {
+#if !defined (__NO_SDL__)
 	SDL_SetWindowSize(sdlWindow, iScreenWidth*SkCodeParam::iVideoScale, iScreenHeight*SkCodeParam::iVideoScale);
+#endif // not __NO_SDL__
 	return 0;
 }
 

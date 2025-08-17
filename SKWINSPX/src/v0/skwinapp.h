@@ -80,6 +80,7 @@ public:
 	void MemInfo();
 
 	UINT runWindowTest();
+	UINT runSplashTitle();
 
 	UINT setRenderer(eRendererType iRenderer);
 

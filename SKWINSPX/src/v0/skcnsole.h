@@ -96,4 +96,6 @@
 
 #endif
 
+void CHANGE_CONSOLE_COLOR(int attr, int fg, int bg);
+
 #endif // _SKCONSOLE_H_

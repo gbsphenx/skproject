@@ -15,7 +15,7 @@
 
 //------------------------------------------------------------------------------
 
-#ifndef __LINUX__
+#if !defined(__DJGPP__) && !defined(__MINGW__) && !defined(__LINUX__)
 
 extern "C"
 {
@@ -64,7 +64,7 @@ bool SkWinLua_RunFunctionFromScript(SkWinCore* xSkCore, const char* sScriptFilen
 	return false;
 }
 
-#else
+#else // LUA code
 
 //------------------------------------------------------------------------------
 

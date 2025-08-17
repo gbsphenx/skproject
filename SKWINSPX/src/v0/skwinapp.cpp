@@ -577,6 +577,15 @@ UINT SkWinApp::runWindowTest()
 	return 0;
 }
 
+UINT SkWinApp::runSplashTitle()
+{
+	if (SkCodeParam::bRenderingEngineMFC || SkCodeParam::bRenderingEngineSDL || SkCodeParam::bRenderingEngineDOS)
+	{
+		setVideoTestTitle();
+	}
+	return 0;
+}
+
 bool SkWinApp::skwin_IsAvail()
 {
 	return (xVRAM != NULL ? true : false);

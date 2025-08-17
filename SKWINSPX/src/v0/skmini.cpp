@@ -136,7 +136,7 @@ int main(int argc, char* argv[])
 	else if (SkCodeParam::bRenderingEngineMFC)
 		skWinApplication.setRenderer(GFX_RENDERER_MFC);
 
-	skWinApplication.runTest();
+	skWinApplication.runWindowTest();
 /*
 	// screen testing
 	if (SkCodeParam::bRenderingEngineMFC || SkCodeParam::bRenderingEngineSDL || SkCodeParam::bRenderingEngineDOS)
