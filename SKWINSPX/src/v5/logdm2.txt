@@ -1,0 +1,505 @@
+DM2_COMPLETE_ALLOCATION: BPEOF = 200d0040 changed by vptr
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 1024, wmask: 0280, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 128, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 128, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 41096, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 20548, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 20548, wmask: 0400, wtype = 0
+ALLOC MEM RAM: BPEOF = 200caffc just changed.
+DM2_DEALLOC_LOBIGPOOL: BPEOF = 200d0040 changed / amount 20548
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 112652, wmask: 0400, wtype = 2
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 18, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 14, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 13112, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 30, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 38, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 40, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 26, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 42, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 42, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 32, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 28, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 28, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 28, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 40, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 40, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 28, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 40, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 44, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 26, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 36, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 36, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 28, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 34, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 34, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 24, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 28, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 34, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 26, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 40, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 30, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 24, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 30, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 28, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 24, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 24, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 24, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 36, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 36, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 46, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 34, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 44, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 22, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 22, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 26, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 48, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 32, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 54, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 24, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 32, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 26, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 28, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 38, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 34, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 24, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 30, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 26, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 30, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12134, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 13984, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 14, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12088, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 14, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 14, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 14, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 14, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 14360, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 14, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 26, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 14, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 14, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 16, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 11952, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 14, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 14, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 14, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 14, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 14, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 14, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 14, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 14, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 13376, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 14, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 34, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 46, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 8, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 14, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 10, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 6, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 76, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 78, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 928, wmask: 0400, wtype = 2
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 56, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 522, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 48184, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 15010, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 5004, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 1564, wmask: 0400, wtype = 0
+ALLOC MEM RAM: BPEOF = 200cfa24 just changed.
+DM2_DEALLOC_LOBIGPOOL: BPEOF = 200d0040 changed / amount 1564
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 9664, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 5474, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 240, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 112, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 72, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 40832, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 1024, wmask: 0400, wtype = 2
+============================
+ULP #Items = 00026>> 
+u_lp #0000: 180c5ab8 || x32 = 80000000 (np) -> len = 00000 (0000) || i8* = 80000000  || Data = 
+u_lp #0001: 180c5abc || x32 = 180c0a64      -> len = 00000 (0000) || i8* = 180C0A64  || Data = 
+u_lp #0002: 180c5ac0 || x32 = 80000049 (np) -> len = 00000 (0000) || i8* = 80000049  || Data = 
+u_lp #0003: 180c5ac4 || x32 = 180ba01e      -> len = 00000 (0000) || i8* = 180BA01E  || Data = 
+u_lp #0004: 180c5ac8 || x32 = 180b38cc      -> len = 00000 (0000) || i8* = 180B38CC  || Data = 
+u_lp #0005: 180c5acc || x32 = 80000007 (np) -> len = 00000 (0000) || i8* = 80000007  || Data = 
+u_lp #0006: 180c5ad0 || x32 = 8000000a (np) -> len = 00000 (0000) || i8* = 8000000A  || Data = 
+u_lp #0007: 180c5ad4 || x32 = 80000008 (np) -> len = 00000 (0000) || i8* = 80000008  || Data = 
+u_lp #0008: 180c5ad8 || x32 = 80000017 (np) -> len = 00000 (0000) || i8* = 80000017  || Data = 
+u_lp #0009: 180c5adc || x32 = 8000001e (np) -> len = 00000 (0000) || i8* = 8000001E  || Data = 
+u_lp #0010: 180c5ae0 || x32 = 80000024 (np) -> len = 00000 (0000) || i8* = 80000024  || Data = 
+u_lp #0011: 180c5ae4 || x32 = 180b0062      -> len = 00000 (0000) || i8* = 180B0062  || Data = 
+u_lp #0012: 180c5ae8 || x32 = 80000023 (np) -> len = 00000 (0000) || i8* = 80000023  || Data = 
+u_lp #0013: 180c5aec || x32 = 180a9892      -> len = 00000 (0000) || i8* = 180A9892  || Data = 
+u_lp #0014: 180c5af0 || x32 = 180a98e0      -> len = 00000 (0000) || i8* = 180A98E0  || Data = 
+u_lp #0015: 180c5af4 || x32 = 180bd712      -> len = 00000 (0000) || i8* = 180BD712  || Data = 
+u_lp #0016: 180c5af8 || x32 = 8000001c (np) -> len = 00000 (0000) || i8* = 8000001C  || Data = 
+u_lp #0017: 180c5afc || x32 = 80000023 (np) -> len = 00000 (0000) || i8* = 80000023  || Data = 
+u_lp #0018: 180c5b00 || x32 = 80000026 (np) -> len = 00000 (0000) || i8* = 80000026  || Data = 
+u_lp #0019: 180c5b04 || x32 = 80000016 (np) -> len = 00000 (0000) || i8* = 80000016  || Data = 
+u_lp #0020: 180c5b08 || x32 = 80000025 (np) -> len = 00000 (0000) || i8* = 80000025  || Data = 
+u_lp #0021: 180c5b0c || x32 = 80000025 (np) -> len = 00000 (0000) || i8* = 80000025  || Data = 
+u_lp #0022: 180c5b10 || x32 = 8000001e (np) -> len = 00000 (0000) || i8* = 8000001E  || Data = 
+u_lp #0023: 180c5b14 || x32 = 80000019 (np) -> len = 00000 (0000) || i8* = 80000019  || Data = 
+u_lp #0024: 180c5b18 || x32 = 80000018 (np) -> len = 00000 (0000) || i8* = 80000018  || Data = 
+u_lp #0025: 180c5b1c || x32 = 80000024 (np) -> len = 00000 (0000) || i8* = 80000024  || Data = 
+============================
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 1042, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 144, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 17588, wmask: 0400, wtype = 2
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 142, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 362, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 544, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 78, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 94, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 220, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 322, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 160, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 832, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 104, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 130, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 216, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 104, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 22, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 58, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 2312, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 730, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 28, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 22, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 22, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 22, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 28, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 28, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 22, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 212, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 112, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 412, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 212, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 2312, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 36, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 2246, wmask: 0008, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 768, wmask: 0400, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 134, wmask: 0008, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0200, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0200, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0200, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0200, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0200, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0200, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0200, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0200, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0200, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0200, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0200, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0200, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0200, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0200, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0200, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0200, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0200, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 12, wmask: 0200, wtype = 1
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 264, wmask: 0400, wtype = 1
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+_DEBUG_SHOW_BIGPOOL (DM2_SHOW_MENU_SCREEN): BPEOF = 200d0040
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 22504, wmask: 0400, wtype = 0
+ALLOC MEM RAM: BPEOF = 200ca858 just changed.
+ALLOC MEM RAM: BPEOF = 200ca858 / amount 64014, wmask: 0008, wtype = 2
+DM2_DEALLOC_LOBIGPOOL: BPEOF = 200d0040 changed / amount 22504
+ALLOC MEM RAM: BPEOF = 200d0040 / amount 38480, wmask: 0400, wtype = 0
+ALLOC MEM RAM: BPEOF = 200c69f0 just changed.
+ALLOC MEM RAM: BPEOF = 200c69f0 / amount 64014, wmask: 0008, wtype = 2
+DM2_DEALLOC_LOBIGPOOL: BPEOF = 200d0040 changed / amount 38480
+_DEBUG_SHOW_BIGPOOL (BEFORE PART 2): BPEOF = 200d0040
+_DEBUG_SHOW_BIGPOOL (BEFORE DATA CLOSE): BPEOF = 200d0040
+_DEBUG_SHOW_BIGPOOL (AFTER DATA CLOSE): BPEOF = 200d0040
+DM2_1031_0541:[000]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[001]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[002]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[003]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[004]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[005]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[006]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[007]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[008]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[009]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[010]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[011]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[012]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[013]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[014]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[015]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[016]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[017]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[018]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[019]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[020]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[021]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[022]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[023]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[024]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[025]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[026]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[027]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[028]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[029]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[030]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[031]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[032]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[033]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[034]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[035]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[036]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[037]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[038]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[039]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[040]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[041]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[042]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[043]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[044]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[045]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[046]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[047]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[048]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[049]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[050]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[051]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[052]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[053]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[054]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[055]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[056]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[057]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[058]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[059]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[060]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[061]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+DM2_1031_0541:[062]
+_DEBUG_SHOW_BIGPOOL: BPEOF = 200d0040
+_DEBUG_SHOW_BIGPOOL (BEFORE LOOP): BPEOF = 200d0040
+_DEBUG_SHOW_BIGPOOL (BEFORE SHOW_MOUSE): BPEOF = 200d0040
