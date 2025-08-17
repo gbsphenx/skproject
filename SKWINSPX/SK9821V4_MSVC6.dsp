@@ -43,7 +43,8 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /I "./src/v4kj9821" /I "./src/v6spxmex" /I "./al/include" /I "." /I "./lua/include" /D "SK9821V4" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USE_MFC60" /D "_AFXDLL" /FR /Yu"StdAfx.h" /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /I "./src/v0" /I "./src/v4" /I "./src/v6" /I "./al/include" /I "." /I "./lua/include" /I "./SDL2-2.0.8/include" /D "SK9821V4" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USE_MFC60" /D "_AFXDLL" /D "SDL_MAIN_HANDLED" /FR /FD /c
+# SUBTRACT CPP /YX /Yc /Yu
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
@@ -53,7 +54,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 allegro_primitives.lib allegro.lib allegro_audio.lib alleg.lib allegro_acodec.lib lua5.1.lib lua51.lib /nologo /subsystem:console /machine:I386 /out:"build/Sk9821V4_MSVC6_Release/skwin9821.exe" /libpath:"./al/libs/Win32" /libpath:"./allegro/lib" /libpath:"./allegro-5.0.9/allegro5/lib" /libpath:"./lua/lib"
+# ADD LINK32 allegro_primitives.lib allegro.lib allegro_audio.lib alleg.lib allegro_acodec.lib lua5.1.lib lua51.lib SDL2.lib /nologo /subsystem:console /machine:I386 /out:"build/Sk9821V4_MSVC6_Release/skwinv4.exe" /libpath:"./al/libs/Win32" /libpath:"./allegro/lib" /libpath:"./allegro-5.0.9/allegro5/lib" /libpath:"./lua/lib" /libpath:"./SDL2-2.0.8/lib/x86"
 # SUBTRACT LINK32 /pdb:none
 
 !ELSEIF  "$(CFG)" == "SK9821V4 - Win32 Debug"
@@ -70,7 +71,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "./src/v4kj9821" /I "./src/v6spxmex" /I "./al/include" /I "." /I "./lua/include" /D "SK9821V4" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USE_MFC60" /D "_AFXDLL" /FR /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "./src/v0" /I "./src/v4" /I "./src/v6" /I "./al/include" /I "." /I "./lua/include" /I "./SDL2-2.0.8/include" /D "SK9821V4" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USE_MFC60" /D "_AFXDLL" /D "SDL_MAIN_HANDLED" /D "__SDL__" /FR /FD /GZ /c
 # SUBTRACT CPP /YX /Yc /Yu
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
@@ -81,7 +82,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 allegro_primitives.lib allegro.lib allegro_audio.lib alleg.lib allegro_acodec.lib lua5.1.lib lua51.lib /nologo /subsystem:console /debug /machine:I386 /out:"build/Sk9821V4_MSVC6_Debug/skwin9821debug.exe" /pdbtype:sept /libpath:"./al/libs/Win32" /libpath:"./allegro/lib" /libpath:"./allegro-5.0.9/allegro5/lib" /libpath:"./lua/lib"
+# ADD LINK32 allegro_primitives.lib allegro.lib allegro_audio.lib alleg.lib allegro_acodec.lib lua5.1.lib lua51.lib SDL2.lib /nologo /subsystem:console /debug /machine:I386 /out:"build/Sk9821V4_MSVC6_Debug/skwinv4debug.exe" /pdbtype:sept /libpath:"./al/libs/Win32" /libpath:"./allegro/lib" /libpath:"./allegro-5.0.9/allegro5/lib" /libpath:"./lua/lib" /libpath:"./SDL2-2.0.8/lib/x86"
 # SUBTRACT LINK32 /pdb:none
 
 !ENDIF 
@@ -93,84 +94,104 @@ LINK32=link.exe
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
-# Begin Group "SK9821V4_BASE"
+# Begin Group "BASE_V4"
 
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\KCHMPION.cpp
+SOURCE=.\src\v4\dme.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\KCORE.cpp
+SOURCE=.\src\v4\skchamp.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\KCORE.h
+SOURCE=.\src\v4\skcore.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\KCOREDUN.cpp
+SOURCE=.\src\v4\skcore.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\KCREATUR.cpp
+SOURCE=.\src\v4\skcorev4.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\KDUNG.cpp
+SOURCE=.\src\v4\skeditdn.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\KENVIRON.cpp
+SOURCE=.\src\v4\skcrture.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\KEVENT.cpp
+SOURCE=.\src\v4\skdungn.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\KFILESET.cpp
+SOURCE=.\src\v4\skbkgrnd.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\KGAME.cpp
+SOURCE=.\src\v4\skevent.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\KGDAT.cpp
+SOURCE=.\src\v4\skibmio.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\KGFX.cpp
+SOURCE=.\src\v4\skdevui.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\KGUIDRW.cpp
+SOURCE=.\src\v4\skaudio.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\KITEM.cpp
+SOURCE=.\src\v4\skdoor.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\KMOUSE.cpp
+SOURCE=.\src\v4\skgameui.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\KSFX.cpp
+SOURCE=.\src\v4\skgame.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\KTEXT.cpp
+SOURCE=.\src\v4\skgdat.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\KUI.cpp
+SOURCE=.\src\v4\skbltgfx.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\KWEATHER.cpp
+SOURCE=.\src\v4\skguidrw.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\v4\skitem.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\v4\sktext.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\v4\skuievnt.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\v4\skweathr.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\v0\winatl.h
 # End Source File
 # End Group
 # Begin Group "WINDOW"
@@ -178,23 +199,107 @@ SOURCE=.\src\v4kj9821\KWEATHER.cpp
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\AboutDlg.cpp
+SOURCE=.\src\v4\SkWin.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\SKDOS.cpp
+SOURCE=.\src\v4\SKWIN4.rc
+# End Source File
+# End Group
+# Begin Group "BASE_V0"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\src\v0\skcnsole.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\SkMFC.cpp
+SOURCE=.\src\v0\skdebug.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\SkWin.cpp
+SOURCE=.\src\v0\skdos.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\SKWIN4.rc
+SOURCE=.\src\v0\skdos.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\v0\skfile.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\v0\skglobal.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\v4\sklua.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\v0\skmfc.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\v0\skmidi.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\v0\skmidi.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\v0\skparam.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\v0\skparam.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\skprobe\skprobe.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\v0\skrender.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\v0\sksdl2.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\v0\sktypes.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\v0\skver.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\v0\skvram.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\v0\skvram.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\v0\skwinapp.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\v0\skwinapp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\v0\skwinmfc.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\v0\skwinmfc.h
 # End Source File
 # End Group
 # Begin Group "AUDIO"
@@ -202,60 +307,44 @@ SOURCE=.\src\v4kj9821\SKWIN4.rc
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\SBlast.cpp
+SOURCE=.\src\v4\sksound.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\SkMIDI.cpp
+SOURCE=.\src\v4\SBlast.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\SkMIDI.h
+SOURCE=.\src\v6\XSFXSDL.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\v6\XSFXSDL.h
 # End Source File
 # End Group
-# Begin Group "SKSPXV6_COMMON"
+# Begin Group "BASE_V6"
 
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\src\v6spxmex\XCOREDM1.cpp
+SOURCE=.\src\v6\XCOREDM1.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v6spxmex\XCOREENH.cpp
+SOURCE=.\src\v6\XCOREENH.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v6spxmex\XCORELOG.cpp
+SOURCE=.\src\v6\XCORELOG.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v6spxmex\XDEFINES.h
+SOURCE=.\src\v6\xstartup.cpp
 # End Source File
 # End Group
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\DME.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\src\v4kj9821\skdebug.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\src\v4kj9821\SkGlobal.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\src\v4kj9821\SkLUA.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\src\v4kj9821\SKPARAM.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\src\v4kj9821\StdAfx.cpp
+SOURCE=.\src\v4\StdAfx.cpp
 # ADD CPP /Yc"StdAfx.h"
 # End Source File
 # End Group
@@ -264,83 +353,71 @@ SOURCE=.\src\v4kj9821\StdAfx.cpp
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\AboutDlg.h
+SOURCE=.\src\v4\AboutDlg.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\DME.h
+SOURCE=.\src\v4\DME.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\KAITABLE.h
+SOURCE=.\src\v4\KAITABLE.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\KFILESET.h
+SOURCE=.\src\v4\KSK3672.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\KSK3672.h
+SOURCE=.\src\v4\KSK37FC.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\KSK37FC.h
+SOURCE=.\src\v4\KSKVAL1.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\KSKVAL1.h
+SOURCE=.\src\v4\KSKVAL2.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\KSKVAL2.h
+SOURCE=.\src\v4\MemVuff.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\MemVuff.h
+SOURCE=.\src\v4\resource.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\resource.h
+SOURCE=.\src\v4\SBlast.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\SBlast.h
+SOURCE=.\src\v0\skdebug.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\skdebug.h
+SOURCE=.\src\v0\skfile.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\SKDOS.h
+SOURCE=.\src\v0\skglobal.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\SkGlobal.h
+SOURCE=.\src\v4\sklua.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\SkLUA.h
+SOURCE=.\src\skprobe\skprobe.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\SkMFC.h
+SOURCE=.\src\v4\SkWin.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\SkParam.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\src\v4kj9821\SKVER.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\src\v4kj9821\SkWin.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\src\v4kj9821\StdAfx.h
+SOURCE=.\src\v4\StdAfx.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"
@@ -348,11 +425,11 @@ SOURCE=.\src\v4kj9821\StdAfx.h
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\cursor1.cur
+SOURCE=.\src\v4\cursor1.cur
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4kj9821\pointer.cur
+SOURCE=.\src\v4\pointer.cur
 # End Source File
 # End Group
 # End Target

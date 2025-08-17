@@ -1,0 +1,794 @@
+********************
+SKWIN-V0 <LINUX64>
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+--------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+********************
+SKWIN-V0 <LINUX64>
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+--------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+********************
+SKWIN-V0 <LINUX64>
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+--------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+********************
+SKWIN-V0 <LINUX64>
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+--------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+********************
+SKWIN-V0 <LINUX64>
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+--------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+********************
+SKWIN-V0 <LINUX64>
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+--------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+********************
+SKWIN-V0 <LINUX64>
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+--------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+********************
+SKWIN-V0 <LINUX64>
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+--------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+********************
+SKWIN-V0 <LINUX64>
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+--------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+********************
+SKWIN-V0 <LINUX64>
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+--------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+********************
+SKWIN-V0 <LINUX64>
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+--------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+********************
+SKWIN-V0 <LINUX64>
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+--------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+********************
+SKWIN-V0 <LINUX64>
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+--------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+********************
+SKWIN-V0 <LINUX64>
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+--------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+********************
+SKWIN-V0 <LINUX64>
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+--------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+********************
+SKWIN-V0 <LINUX64>
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+--------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+********************
+SKWIN-V0 <LINUX64>
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+--------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SKWIN-V0 <LINUX64>
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SKWIN-V0 <LINUX64>
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SKWIN-V0 <LINUX64>
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SKWIN-V0 <LINUX64>
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SKWIN-V0 <LINUX64>
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SKWIN-V0 <LINUX64>
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SKWIN-V0 <LINUX64>
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SKWIN-V0 <LINUX64>
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SKWIN-V0 <LINUX64>
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SKWIN-V0 <LINUX64>
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SKWIN-V0 <LINUX64>
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SKWIN-V0 <LINUX64>
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SKWIN-V0 <LINUX64>
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SKWIN-V0 <LINUX64>
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SKWIN-V0 <LINUX64>
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SKWIN-V0 <LINUX64>
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SKWIN-V0 <LINUX64>
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SKWIN-V0 <LINUX64>
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SKWIN-V0 <LINUX64>
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SKWIN-V0 <LINUX64>
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SKWIN-V0 <LINUX64>
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SKWIN-V0 <LINUX64>
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SKWIN-V0 <LINUX64>
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SKWIN-V0 <LINUX64>
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SKWIN-V0 <LINUX64>
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SKWIN-V0 <LINUX64>
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SKWIN-V0 <LINUX64>
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
+****************************************
+SKWIN-V0 <LINUX64>
+SYS: Ubuntu 24.04.1 LTS - Intel(R) N95 (1689.600) - RAM: 8GiB
+CPU: GenuineIntel - Intel(R) N95 @1689.600 MHz [x4] x86_64 (32-bit, 64-bit)
+----------------------------------------
+Basic sizes
+char -> 1	short-> 2	int  -> 4	longint-> 8
+U8   -> 1	X8   -> 1	i8   -> 1
+U16  -> 2	X16  -> 2	i16  -> 2
+U32  -> 4	X32  -> 4	i32  -> 4
+----------------------------------------
+MAX CRAM = 655360
+MAX CEMS = 33554432
+MAX VRAM = 65536
+Dungeon File Header = 44
+Map Definition = 16
+Champion struct. = 261
