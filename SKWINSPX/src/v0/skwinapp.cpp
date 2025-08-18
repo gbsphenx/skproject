@@ -557,7 +557,7 @@ UINT SkWinApp::runWindowTest()
 	// screen testing
 	if (SkCodeParam::bRenderingEngineMFC || SkCodeParam::bRenderingEngineSDL || SkCodeParam::bRenderingEngineDOS)
 	{
-		printf("Next test for full window/screen.\n");
+		printf("Next test for window/screen.\n");
 		printf("Press enter to continue ...\n");
 		scanf("%c", &cKeyboardInput);
 

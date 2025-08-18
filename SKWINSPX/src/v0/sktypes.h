@@ -115,6 +115,8 @@ typedef unsigned int	UINT;
 
 #if !defined(WIN32) && !defined (_WINDOWS) && !defined(_USE_MFC80) && !defined(_USE_MFC60)
 typedef uint32_t	UINT;	// generic unsigned int for RC, index & loops
+#elif defined (__MINGW__)
+typedef uint32_t	UINT;
 #endif // Win MSVC6 UINT is (unsigned int)
 
 //------------------------------------------------------------------------------
