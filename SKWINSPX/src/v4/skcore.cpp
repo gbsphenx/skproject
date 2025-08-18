@@ -23875,6 +23875,7 @@ UINT SkWinCore::INIT()
 	U16 iSpecialItem = 0;
 	//^38C8:04AA
 	SkD((SkCodeParam::bEngineNoDisplay||DLV_DBG_INIT, "INITIALIZATION\n"));
+	SkD((DLV_DBG_DOS, "INITIALIZATION\n"));
 	
 	ENTER(4);
 	//^38C8:04AF

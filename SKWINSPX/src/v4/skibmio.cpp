@@ -29,6 +29,7 @@ using namespace kkBitBlt;
 // FIRE_BOOTSTRAP calls FIRE_MAIN
 int SkWinCore::FIRE_BOOTSTRAP() //#DS=089C
 {
+	SkD((DLV_DBG_DOS, "FIRE_BOOTSTRAP\n"));
 	//^069A:0000
 	// 4F75:0FE8  F8 0F 75 4F/04 10 75 4F/08 10 75 4F/00 00 00 00  ÅEuO..uO..uO....
 	// 4F75:0FF8  43 3A 5C 46 49 52 45 2E 45 58 45 00 2B 70 6D 00  C:\FIRE.EXE.+pm.
@@ -44,6 +45,7 @@ i16 SkWinCore::FIRE_MAIN(i16 argc, const char **argv, char **env) //#DS=4976
 {
 	UINT rc = 0;
 	ENTER(0);
+	SkD((DLV_DBG_DOS, "FIRE_MAIN\n"));
 #if UseAltic
 	;
 #else
@@ -97,6 +99,7 @@ i16 SkWinCore::FIRE_MAIN(i16 argc, const char **argv, char **env) //#DS=4976
 i16 SkWinCore::IBMIO_EXEC(const U8 *exe, const U8 *arg)
 {
 	SkD((DLV_FYI, "EXEC: %s %s\n", exe, arg));
+	SkD((DLV_DBG_DOS, "IBMIO_EXEC: %s %s\n", exe, arg));
 	if (strcasecmp(reinterpret_cast<const char *>(exe), "FIRE.exe") == 0) {
 		return FIRE_BOOTSTRAP();
 	}
@@ -952,7 +955,7 @@ i16 SkWinCore::IBMIO_UNINIT_VID()
 i16 SkWinCore::IBMIO_MAIN(i16 argc, const char **argv, char **env) //#DS=04BF
 {
 	// IBMIO_main
-
+	SkD((DLV_DBG_DOS, "IBMIO_MAIN\n"));
 	//^01B0:2C48
 	ENTER(172);
 	//^01B0:2C4E
@@ -1178,7 +1181,7 @@ _2e85:
 //^0088:0000
 UINT SkWinCore::IBMIO_BOOTSTRAP()
 {
-	printf("IBMIO_BOOTSTRAP\n");
+	SkD((DLV_DBG_DOS, "IBMIO_BOOTSTRAP\n"));
 	//^0088:0000
 	// 065B:01DA  EE 01 5B 06/FB 01 5B 06/04 02 5B 06/08 02 5B 06  ÅE[.ÅE[...[...[.
 	// 065B:01EA  00 00 00 00 43 3A 5C 49 42 4D 49 4F 2E 45 58 45  ....C:\IBMIO.EXE

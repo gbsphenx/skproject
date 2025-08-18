@@ -67,6 +67,12 @@
 #define DLV_DBG_SND			0
 #define DLV_USE_LOGX		1
 
+#ifdef __DJGPP__
+#define DLV_DBG_DOS			1
+#else
+#define DLV_DBG_DOS			0
+#endif // __DJGPP__
+
 #ifndef __DJGPP__	// won't allow these debugs for DOS version
 	#ifdef _SKPROBE_
 	#undef DLV_DBG_INIT

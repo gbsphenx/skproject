@@ -12,10 +12,20 @@ c_allegro alg;
 
 //ALLEGRO_COLOR mypal[256];
 
-void* thread_func(ALLEGRO_THREAD* thr, void* vparg);
-#ifdef THIRDTHREAD
-void* thread_func2(ALLEGRO_THREAD* thr, void* vparg);
-#endif
+#ifndef __SK_NO_ALLEGRO__
+
+	void* thread_func(ALLEGRO_THREAD* thr, void* vparg);
+	#ifdef THIRDTHREAD
+	void* thread_func2(ALLEGRO_THREAD* thr, void* vparg);
+	#endif
+
+#else
+
+	void* thread_func(ALLEGRO_THREAD* thr, void* vparg) { return NULL; }
+	void* thread_func2(ALLEGRO_THREAD* thr, void* vparg) { return NULL; }
+
+#endif // __SK_NO_ALLEGRO__
+
 
 //------------------------------------------------------------------------------
 

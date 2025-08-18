@@ -4,11 +4,14 @@
 
 // SPX note : this "non" allegro step allows to check compilation of overall code without allegro dependence.
 #ifndef __SK_NO_ALLEGRO__
+
   #include <allegro5/allegro5.h>
   #include <allegro5/allegro_audio.h>
   #include <allegro5/allegro_acodec.h>
   #include <allegro5/allegro_direct3d.h>
+
 #else
+
 #include <stdlib.h>
 	#define ALLEGRO_MUTEX unsigned int
 	#define ALLEGRO_COND unsigned int
