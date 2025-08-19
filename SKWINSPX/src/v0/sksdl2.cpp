@@ -129,21 +129,6 @@ UINT SkRendererSDL::SetVGAPaletteRGB(X8 *xVGAPalette)
 	return 0;
 }
 
-void Y_LOG_HEXA(X8* pData, UINT iNbBytes)
-{
-	X8* pX = (X8*) pData;
-
-	if (SkCodeParam::bRenderingEngineDOS)
-		return;
-
-	printf("PX:%16X | ", pX);
-	for (UINT i = 0; i < iNbBytes; i++) {
-		printf("%02X ", (X8) *pX);
-		pX++;
-	}
-	printf("\n");
-}
-
 UINT SkRendererSDL::ConvertVRAMToRGB()
 {
 #if !defined (__NO_SDL__)
@@ -152,20 +137,13 @@ UINT SkRendererSDL::ConvertVRAMToRGB()
 		xVRAMData = xVRAM->GET_VIDEO_ARRAY();
 		SetVGAPaletteRGB(xVRAM->GET_PALETTE());
 	}
-	//printf("xVRAM = %08X GetVRAM = %08X GetPal = %08X\n", xVRAM, xVRAM->GET_VIDEO_ARRAY(), xVRAM->GET_PALETTE());
-	//Y_LOG_HEXA(xVRAM->GET_PALETTE(), 32);
 
     for (UINT i = 0; i < iScreenWidth * iScreenHeight; i++) {
         SDL_Color c = sdlPalette[xVRAMData[i]];
 
 		xRGBBuffer[i] = (c.r << 24) | (c.g << 16) | (c.b << 8) | c.a;
     }
-	//printf("Texture = %08X, RGBBuffer = %08X, Palette = %08X\n", sdlTexture, xRGBBuffer, sdlPalette);
 	SDL_UpdateTexture(sdlTexture, NULL, xRGBBuffer, iScreenWidth * sizeof(uint32_t));
-
-	//if (SDL_UpdateTexture(sdlTexture, NULL, xRGBBuffer, WIDTH * sizeof(uint32_t)) != 0) {
-	//	printf("SDL_UpdateTexture failed: %s\n", SDL_GetError());
-	//}
 
 #endif // not __NO_SDL__
 	return 0;
@@ -177,7 +155,7 @@ UINT SkRendererSDL::Render()
 #if !defined (__NO_SDL__)
 	ConvertVRAMToRGB();
 	//SDL_Rect src = { 0, 0, 160, 100 };   // from texture
-	SDL_Rect dst = { 0, 0, iScreenWidth, iScreenHeight }; // to screen
+	SDL_Rect dst = { 0, 0, (int)iScreenWidth, (int)iScreenHeight }; // to screen
 	SDL_SetRenderDrawColor(sdlRenderer, 0, 128, 0, 255);
     SDL_RenderClear(sdlRenderer);
 	SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);

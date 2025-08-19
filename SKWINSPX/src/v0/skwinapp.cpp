@@ -131,9 +131,9 @@ UINT SkWinApp::setRenderer(eRendererType iRenderer)
 
 void SkWinApp::MemInfo()
 {
-	printf("Allocated CRAM = %d KiB (%08X)\n", iSizeCRAM/1024, xSKCRAM);
-	printf("Allocated CEMS = %d MiB (%08X)\n", iSizeCEMS/1024/1024, xSKCEMS);
-	printf("Allocated VRAM = %d KiB (%08X)\n", iSizeVRAM/1024, xSKVRAM);
+	printf("Allocated CRAM = %d KiB (%p)\n", iSizeCRAM/1024, xSKCRAM);
+	printf("Allocated CEMS = %d MiB (%p)\n", iSizeCEMS/1024/1024, xSKCEMS);
+	printf("Allocated VRAM = %d KiB (%p)\n", iSizeVRAM/1024, xSKVRAM);
 }
 
 void SkWinApp::ProcessArgs(int argc, char** argv)
@@ -419,9 +419,9 @@ void X_LOG_HEXA(X8* pData, UINT iNbBytes)
 	if (SkCodeParam::bRenderingEngineDOS)
 		return;
 
-	printf("PX:%16X | ", pX);
+	printf("PX:%p | ", pX);
 	for (UINT i = 0; i < iNbBytes; i++) {
-		printf("%02X ", (X8) *pX);
+		printf("%02X ", (UINT) *pX);
 		pX++;
 	}
 	printf("\n");

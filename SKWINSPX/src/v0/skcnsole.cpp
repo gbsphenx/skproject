@@ -13,7 +13,7 @@ void CHANGE_CONSOLE_COLOR(int attr, int fg, int bg)
 	/* Command is the control command to the terminal */
 #if (defined __LINUX__  || __CYGWIN__)
 	{
-		char command[13];
+		char command[48];
 		//--- This is C magic!
 		fflush(stdout);
 		sprintf(command, "%c[%d;%d;%dm", 0x1B, attr, fg + 30, bg + 40);
