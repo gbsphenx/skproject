@@ -1545,23 +1545,16 @@ void SkWinCore::GRAPHICS_DATA_OPEN()
 		sLocalGraphicsDatFileString = (X8*) skWinApp->sCustomGraphicsDatFilename;
 	}
 
-	//^3E74:2598
-	//^3E74:259B
 	if ((_4976_5d10++) == 0) {
-		//^3E74:25A6
 		glbFileHandleGraphics1 = FILE_OPEN(FORMAT_SKSTR(sLocalGraphicsDatFileString, NULL));
-		//^3E74:25C6
 		if (glbFileHandleGraphics1 < 0) {
-			//^3E74:25CD
+			printf("GDAT1: Searching for file %s\n", FORMAT_SKSTR(sLocalGraphicsDatFileString, NULL));
 			RAISE_SYSERR(SYSTEM_ERROR__MISSING_GRAPHICS);	// SYS ERROR 41
 		}
-		//^3E74:25D5
 		if (_4976_5c9c != 0 && _4976_5ca8 == 0) {
-			//^3E74:25E3
 			glbFileHandleGraphics2 = FILE_OPEN(FORMAT_SKSTR(sLocalGraphicsDatFileString2, NULL));
-			//^3E74:2603
 			if (glbFileHandleGraphics2 < 0) {
-				//^3E74:260A
+				printf("GDAT2: Searching for file %s\n", FORMAT_SKSTR(sLocalGraphicsDatFileString, NULL));
 				RAISE_SYSERR(SYSTEM_ERROR__MISSING_GRAPHICS_2);	// SYS ERROR 31
 			}
 		}
@@ -14943,7 +14936,7 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 					}
 				case 0x0008:	// .Z008
 					{
-#if defined (__LINUX__)
+#if defined (__LINUX__) || defined (__MINGW__)	// for Linux and MinGW we don't want to suffix by C:\ (or C:) and fail on the relative filepath
 						continue;
 #else
 						//^2636:01C3
@@ -18327,7 +18320,7 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 			SkD((DLV_DBG_INIT, "LOAD_LOCALLEVEL_DYN: TILE (%02X) pT(%8X)\n", bp2a, *pTile));
 			if ((bp2a & 0x10) != 0) {
 				ObjectID xObjID = (ObjectID) *pObjRef; pObjRef++;	// di
-				SkD((DLV_DBG_INIT, "LOAD_LOCALLEVEL_DYN: OBJECT (%02X) pObj(%8X)\n", xObjID, pObjRef));
+				SkD((DLV_DBG_INIT, "LOAD_LOCALLEVEL_DYN: OBJECT (%02X) pObj(%p)\n", *((U16*)(&xObjID)), pObjRef)); // mark
 				do {
 					Actuator* xActuator = NULL;	// bp0c
 					Text* xText = NULL;	// bp20
@@ -18336,7 +18329,7 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 							if (_4976_5bee[0] != 0)
 								break;
 							xActuator = GET_ADDRESS_OF_ACTU(xObjID);
-							SkD((DLV_DBG_INIT, "LOAD_LOCALLEVEL_DYN: Actuator (%04d) %8x\n", xObjID, xActuator));
+							SkD((DLV_DBG_INIT, "LOAD_LOCALLEVEL_DYN: Actuator (%04d) %8p\n", *((U16*)(&xObjID)), xActuator)); // mark
 							switch (xActuator->ActuatorType()) {
 								case ACTUATOR_TYPE_CREATURE_GENERATOR: // 0x2E: Creature generator
 									if (U8(bp2a >> 5) != ttWall)
