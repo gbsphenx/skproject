@@ -178,7 +178,7 @@ X16 SkWinCore::EXTENDED_LOAD_AI_DEFINITION(void)
 	{
 		U16 value = 0;
 		U8 category = GDAT_CATEGORY_CREATURE_AI;
-		Bit8u text[128] = {0};
+		U8 text[128] = {0};
 
 		// Do the default init -- until all data is put into GDAT.
 		//memcpy(dAITable, _4976_03a2, 62 * 36);
@@ -1149,7 +1149,7 @@ U16 SkWinCore::QUERY_CREATURES_ITEM_MASK(U8 cls2, U8 cls4, U8 itemflags[64], U16
 	//^48AE:0287
 	ZERO_MEMORY(itemflags, 64);
 	//^48AE:0299
-	Bit8u bp008e[128];
+	U8 bp008e[128];
 	U8 *bp04 = QUERY_GDAT_TEXT(GDAT_CATEGORY_CREATURES, cls2, cls4 +0x10, bp008e);
 	//^48AE:02BB
 	if (*bp04 == 0)
@@ -1291,7 +1291,7 @@ void SkWinCore::APPEND_RECORD_TO(ObjectID recordLink_whatYouAppend, ObjectID *re
 		//^0CEE:0B3E
 		if (di >= 0) {
 			//^0CEE:0B45
-			Bit8u *bp08 = &glbCurrentTileMap[di][ypos_newParent];
+			U8 *bp08 = &glbCurrentTileMap[di][ypos_newParent];
 			// SPX: problem with crashes here
 			if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(bp08))
 				return;
@@ -1524,11 +1524,11 @@ void SkWinCore::SET_TILE_ATTRIBUTE_02(Bit16u xx, Bit16u yy, Bit16u map)
 // Original method is still here labelled as ORIGINAL__GRAPHICS_DATA_OPEN
 void SkWinCore::GRAPHICS_DATA_OPEN()
 {
-	Bit8u * sLocalGraphicsDatFileString = NULL;
-	Bit8u * sLocalGraphicsDatFileString2 = NULL;
+	U8 * sLocalGraphicsDatFileString = NULL;
+	U8 * sLocalGraphicsDatFileString2 = NULL;
 
-	sLocalGraphicsDatFileString = (Bit8u*) ptrGraphics;
-	sLocalGraphicsDatFileString2 = (Bit8u*) ptrGraphics2;
+	sLocalGraphicsDatFileString = (U8*) ptrGraphics;
+	sLocalGraphicsDatFileString2 = (U8*) ptrGraphics2;
 
 	//SkD((DLV_DBG_INIT, "GRAPHICS_DATA_OPEN\n"));
 
@@ -1536,7 +1536,7 @@ void SkWinCore::GRAPHICS_DATA_OPEN()
 	if (SkCodeParam::bUseFixedMode && (ptrGraphics != NULL && ptrGraphics[0] == 0))
 	{
 		//strcpy(ptrGraphics, ".Z020GRAPHICS.Z080.Z081.Z082.DAT");
-		sLocalGraphicsDatFileString = (Bit8u*) strGraphics;
+		sLocalGraphicsDatFileString = (U8*) strGraphics;
 	}
 
 
@@ -2786,7 +2786,7 @@ _2da5:
 }
 
 //^3E74:5708
-Bit8u *SkWinCore::ALLOC_CPXHEAP_MEM(Bit16u index, Bit32u buffSize)
+U8 *SkWinCore::ALLOC_CPXHEAP_MEM(Bit16u index, Bit32u buffSize)
 {
 	//^3E74:5708
 	//^3E74:570D
@@ -2812,7 +2812,7 @@ Bit8u *SkWinCore::ALLOC_CPXHEAP_MEM(Bit16u index, Bit32u buffSize)
 	SkD((DLV_CPX,"DBG: CPX Alloc Ci#%02d Mi#%02d (%5u) = %p\n", index, si, 0U +buffSize, bp04));
 
 	//^3E74:5773
-	return reinterpret_cast<Bit8u *>(&bp04[1]); // +18 bytes
+	return reinterpret_cast<U8 *>(&bp04[1]); // +18 bytes
 }
 
 //^3E74:585A
@@ -2833,7 +2833,7 @@ void SkWinCore::_3e74_585a(Bit16u xx, Bit16u yy)
 }
 
 //^44C8:1D26
-void SkWinCore::FILL_ENTIRE_PICT(Bit8u *buff, Bit16u fill)
+void SkWinCore::FILL_ENTIRE_PICT(U8 *buff, Bit16u fill)
 {
 	//^44C8:1D26
 	ENTER(8);
@@ -2850,13 +2850,13 @@ void SkWinCore::FILL_ENTIRE_PICT(Bit8u *buff, Bit16u fill)
 
 
 //^3E74:57B5
-Bit8u *SkWinCore::ALLOC_NEW_PICT(Bit16u index, Bit16u width, Bit16u height, Bit16u bpp)
+U8 *SkWinCore::ALLOC_NEW_PICT(Bit16u index, Bit16u width, Bit16u height, Bit16u bpp)
 {
 	//^3E74:57B5
 	//^3E74:57BA
 	Bit16u si = width;
 	//^3E74:57BD
-	Bit8u *bp04 = ALLOC_CPXHEAP_MEM(
+	U8 *bp04 = ALLOC_CPXHEAP_MEM(
 		index,
 		Bit32u((bpp == 4) ? (((si +1) & 0xfffe) >> 1) : (si & 0xffff)) * height
 		);
@@ -3034,7 +3034,7 @@ SRECT *SkWinCore::OFFSET_RECT(const sk3f6c *refOrg, const SRECT *prcSrc, SRECT *
 }
 
 //^0B36:0FFE
-void SkWinCore::FILL_RECT_SUMMARY(sk3f6c *ref, SRECT *rc, Bit8u fill)
+void SkWinCore::FILL_RECT_SUMMARY(sk3f6c *ref, SRECT *rc, U8 fill)
 {
 	//^0B36:0FFE
 	ENTER(8);
@@ -3043,7 +3043,7 @@ void SkWinCore::FILL_RECT_SUMMARY(sk3f6c *ref, SRECT *rc, Bit8u fill)
 		//^0B36:100A
 		SRECT bp08;
 		FIRE_FILL_RECT_ANY(
-			reinterpret_cast<Bit8u *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(ref->w0)),
+			reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(ref->w0)),
 			OFFSET_RECT(ref, rc, &bp08),
 			fill,
 			ref->rc2.cx,
@@ -3119,7 +3119,7 @@ i16 SkWinCore::BETWEEN_VALUE(i16 minv, i16 newv, i16 maxv)
 
 
 //^3E74:506B
-Bit8u *SkWinCore::QUERY_GDAT_ENTRY_DATA_PTR(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4)
+U8 *SkWinCore::QUERY_GDAT_ENTRY_DATA_PTR(U8 cls1, U8 cls2, U8 cls3, U8 cls4)
 {
 LOGX(("%40s: C%02d=I%02X=E%02X=T%03d", "QUERY_GDAT_ENTRY_DATA_PTR for ", cls1, cls2, cls4, cls3 ));
 	//^3E74:506B
@@ -3140,7 +3140,7 @@ LOGX(("%40s: C%02d=I%02X=E%02X=T%03d", "QUERY_GDAT_ENTRY_DATA_PTR for ", cls1, c
 	}
 #endif
 	//^3E74:50D1
-	Bit8u *bp04;
+	U8 *bp04;
 	Bit16u bp06;
 	if (glbShelfMemoryTable[si].Absent() && IS_CLS1_CRITICAL_FOR_LOAD(cls1) != 0) {
 		//^3E74:50FB
@@ -3159,12 +3159,12 @@ LOGX(("%40s: C%02d=I%02X=E%02X=T%03d", "QUERY_GDAT_ENTRY_DATA_PTR for ", cls1, c
 
 //^2405:014A
 // SPX: _2405_014a renamed GET_ITEM_ICON_ANIM_FRAME
-Bit8u SkWinCore::GET_ITEM_ICON_ANIM_FRAME(ObjectID recordLink, i16 xx, i16 yy)
+U8 SkWinCore::GET_ITEM_ICON_ANIM_FRAME(ObjectID recordLink, i16 xx, i16 yy)
 {
 	//^2405:014A
 	ENTER(8);
 	//^2405:0150
-	Bit8u bp01 = 0x18;	// base image is 0x18
+	U8 bp01 = 0x18;	// base image is 0x18
 	//^2405:0154
 	if (yy != 0) {
 		//^2405:015D
@@ -3196,7 +3196,7 @@ Bit8u SkWinCore::GET_ITEM_ICON_ANIM_FRAME(ObjectID recordLink, i16 xx, i16 yy)
 				if (di != 0) {
 					//^2405:01DC
 					Bit32u bp08 = glbGameTick;
-					Bit8u nFramesPerAnim = (si & 0x00E0) >> 5; // SPX added
+					U8 nFramesPerAnim = (si & 0x00E0) >> 5; // SPX added
 					//^2405:01E9
 					switch ((si & 0x1f00) >> 8) {	// get anim type
 						case 5:	// not sure ?
@@ -3207,12 +3207,12 @@ Bit8u SkWinCore::GET_ITEM_ICON_ANIM_FRAME(ObjectID recordLink, i16 xx, i16 yy)
 						case 0:	// always animated (i.e. potion)
 							//^2405:020E
 _020e:
-							bp01 = bp01 + Bit8u(bp08 % di);
+							bp01 = bp01 + U8(bp08 % di);
 							//^2405:0224
 							break;
 						case 1: // random frame among remaining possible frames
 							//^2405:0227
-							bp01 = bp01 + Bit8u(RAND16(di));
+							bp01 = bp01 + U8(RAND16(di));
 							//^2405:0224
 							break;
 						case 2:	// compass mode : choose from depending on direction
@@ -3236,7 +3236,7 @@ _020e:
 							if (nFramesPerAnim == 0)
 								break;
 							bp08 += recordLink.DBIndex();
-							bp01 = bp01 + Bit8u(bp08 % nFramesPerAnim); // SPX added
+							bp01 = bp01 + U8(bp08 % nFramesPerAnim); // SPX added
 							goto _027d;
 						case 4:
 							//^2405:027D
@@ -3269,7 +3269,7 @@ _02d3:
 
 
 //^1031:023B
-Bit8u *SkWinCore::_1031_023b(sk1891 *xx)
+U8 *SkWinCore::_1031_023b(sk1891 *xx)
 {
 	//^1031:023B
 	ENTER(0);
@@ -3457,22 +3457,22 @@ void SkWinCore::_1031_0667() //#DS=4976
 }
 
 //^2759:0009
-Bit8u *SkWinCore::QUERY_CMDSTR_NAME(Bit8u cls1, Bit8u cls2, Bit8u cls4)
+U8 *SkWinCore::QUERY_CMDSTR_NAME(U8 cls1, U8 cls2, U8 cls4)
 {
 	// returns cmdStr name such as "CHOP", "THRUST", "MELEE", and so on.
 
 	//^2759:0009
 	ENTER(134);
 	//^2759:000E
-	Bit8u bp0086[128];
-	Bit8u *bp04 = QUERY_GDAT_TEXT(cls1, cls2, cls4, bp0086);
+	U8 bp0086[128];
+	U8 *bp04 = QUERY_GDAT_TEXT(cls1, cls2, cls4, bp0086);
 	//^2759:0032
 	if (*bp04 == 0) {
 		//^2759:0038
 		return NULL;
 	}
 	//^2759:003E
-	Bit8u bp05;
+	U8 bp05;
 	Bit16u si;
 	for (si = 0; (bp05 = *(bp04++)) != ':' && bp05 != 0; si++) {
 		//^2759:0042
@@ -3598,7 +3598,7 @@ void SkWinCore::CALC_VECTOR_W_DIR(i16 dir, i16 xx, i16 yy, i16 *ss, i16 *tt)
 }
 
 //^0CEE:1962
-Bit16u SkWinCore::QUERY_ORNATE_ANIM_FRAME(Bit8u cls1, Bit8u cls2, Bit32u tick, Bit32u delta)
+Bit16u SkWinCore::QUERY_ORNATE_ANIM_FRAME(U8 cls1, U8 cls2, Bit32u tick, Bit32u delta)
 {
 	//0CEE:1962
 	ENTER(136);
@@ -3610,8 +3610,8 @@ Bit16u SkWinCore::QUERY_ORNATE_ANIM_FRAME(Bit8u cls1, Bit8u cls2, Bit32u tick, B
 	//^0CEE:1973
 	Bit16u di = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, dtWordValue, 0x0d);
 	//^0CEE:1989
-	Bit8u *bp04;
-	Bit8u bp0088[128];
+	U8 *bp04;
+	U8 bp0088[128];
 	if (di == 0) {
 		//^0CEE:198D
 		bp04 = QUERY_GDAT_TEXT(cls1, cls2, dt0d, bp0088);
@@ -3669,9 +3669,9 @@ Bit16u SkWinCore::_48ae_011a(ObjectID recordLink)
 	//^48AE:011A
 	ENTER(2);
 	//^48AE:011F
-	Bit8u bp01 = QUERY_CLS1_FROM_RECORD(recordLink);
+	U8 bp01 = QUERY_CLS1_FROM_RECORD(recordLink);
 	//^48AE:012B
-	Bit8u bp02 = QUERY_CLS2_FROM_RECORD(recordLink);
+	U8 bp02 = QUERY_CLS2_FROM_RECORD(recordLink);
 	//^48AE:0137
 	if (QUERY_GDAT_ENTRY_IF_LOADABLE(bp01, bp02, dtImage, 0x08) != 0) {
 		//^48AE:014C
@@ -3761,7 +3761,7 @@ void SkWinCore::_29ee_1946(ObjectID recordLink, i16 xx, i16 yy, i16 zz, i16 dir,
 			CHANGE_CURRENT_MAP_TO(bp20);
 			//^29EE:1A87
 			TELE_inf bp3a;
-			if (GET_TELEPORTER_DETAIL(&bp3a, (Bit8u)bp1c, (Bit8u)bp1e) != 0) {
+			if (GET_TELEPORTER_DETAIL(&bp3a, (U8)bp1c, (U8)bp1e) != 0) {
 				//^29EE:1A9E
 				bp22 = bp3a.target_x_pos();
 				bp24 = bp3a.target_x_pos();
@@ -3810,7 +3810,7 @@ void SkWinCore::_29ee_1946(ObjectID recordLink, i16 xx, i16 yy, i16 zz, i16 dir,
 			//^29EE:1B59
 			i16 di = LOCATE_OTHER_LEVEL(zz, 0, &bp32, &bp34, NULL);
 			//^29EE:1B76
-			Bit8u bp2b;
+			U8 bp2b;
 			if (di < 0) {
 				//^29EE:1B7A
 				di = zz;
@@ -4060,7 +4060,7 @@ void SkWinCore::UPDATE_RIGHT_PANEL(Bit16u xx)
 			}
 		}
 		//^2759:07D8
-		Bit8u bp1c[4];
+		U8 bp1c[4];
 		if (glbChampionIndex >= 0) {
 			//^2759:07E2
 			Bit16u bp06;
@@ -4070,7 +4070,7 @@ void SkWinCore::UPDATE_RIGHT_PANEL(Bit16u xx)
 				//^2759:07FB
 				bp1c[bp06] = 0;
 				//^2759:0807
-				Bit8u bp07 = (bp04->playerDir() +4 - glbPlayerDir) & 3;
+				U8 bp07 = (bp04->playerDir() +4 - glbPlayerDir) & 3;
 				//^2759:0819
 				i8 bp08 = (bp04->playerPos() +4 - glbPlayerDir) & 3;
 				//^2759:0828
@@ -4166,7 +4166,7 @@ void SkWinCore::UPDATE_RIGHT_PANEL(Bit16u xx)
 						bp10 = 1;
 					}
 					//^2759:09DC
-					Bit8u bp17 = (champion->handCooldown[si] != 0) ? 1 : 0;
+					U8 bp17 = (champion->handCooldown[si] != 0) ? 1 : 0;
 					//^2759:09F0
 					if (glbChampionHandCoolingDown[bp06][si] != bp17) {
 						//^2759:0A03
@@ -4202,7 +4202,7 @@ void SkWinCore::UPDATE_RIGHT_PANEL(Bit16u xx)
 					bp0e = 1;
 				}
 				//^2759:0ABA
-				Bit8u bp17 = (champion->herob44 != 0) ? 1 : 0;
+				U8 bp17 = (champion->herob44 != 0) ? 1 : 0;
 				//^2759:0ACE
 				if (glbChampionHandCoolingDown[bp06][2] != bp17) {
 					//^2759:0AE1
@@ -4512,7 +4512,7 @@ void SkWinCore::_1031_027e(sk1891 *ref)
 	//^1031:027E
 	ENTER(8);
 	//^1031:0282
-	Bit8u *bp08 = _1031_023b(ref);
+	U8 *bp08 = _1031_023b(ref);
 
 	do {
 		//^1031:0294
@@ -4656,7 +4656,7 @@ Bit16u SkWinCore::_1031_030a(sk1891 *ref, Bit16u xx, Bit16u yy, Bit16u zz)
 	Bit16u di = yy;
 	Bit16u si = 0;
 	//^1031:0315
-	Bit8u *bp08 = _1031_023b(ref);
+	U8 *bp08 = _1031_023b(ref);
 
 	do {
 		//^1031:0327
@@ -4754,7 +4754,7 @@ Bit16u SkWinCore::_1031_03f2(sk1891 *ref, Bit16u xx)
 	//^1031:03F8
 	Bit16u si = 0;
 	//^1031:03FA
-	Bit8u *bp08 = _1031_023b(ref);
+	U8 *bp08 = _1031_023b(ref);
 
 	do {
 		//^1031:040C
@@ -5664,7 +5664,7 @@ void SkWinCore::_44c8_20a4(U8 *src, U8 *dst, U8 *zz, SRECT *prc, U16 ss, U16 tt,
 
 
 // SPX: Added to bypass the critical for load / used for experimental, not guaranteed
-Bit8u *SkWinCore::QUERY_GDAT_ENTRY_DATA_BUFF_FORCE(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4)
+U8 *SkWinCore::QUERY_GDAT_ENTRY_DATA_BUFF_FORCE(U8 cls1, U8 cls2, U8 cls3, U8 cls4)
 {
 LOGX(("%40s: C%02d=I%02X=E%02X=T%03d to %08X", "QUERY_GDAT_ENTRY_DATA_BUFF_FORCE from ", cls1, cls2, cls4, cls3 ));
 	i16 si = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, cls3, cls4);
@@ -5682,7 +5682,7 @@ LOGX(("%40s: C%02d=I%02X=E%02X=T%03d to %08X", "QUERY_GDAT_ENTRY_DATA_BUFF_FORCE
 
 
 //^3E74:5163
-Bit8u *SkWinCore::QUERY_GDAT_ENTRY_DATA_BUFF(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4)
+U8 *SkWinCore::QUERY_GDAT_ENTRY_DATA_BUFF(U8 cls1, U8 cls2, U8 cls3, U8 cls4)
 {
 LOGX(("%40s: C%02d=I%02X=E%02X=T%03d to %08X", "QUERY_GDAT_ENTRY_DATA_BUFF from ", cls1, cls2, cls4, cls3 ));
 	//^3E74:5163
@@ -6606,15 +6606,15 @@ U8 SkWinCore::SUPPRESS_WRITER(const void *pvData, const void *pvMask, U16 cbData
 	// [bp+0E] -> xx
 	// [bp+10] -> yy
 
-	const Bit8u *data = (const Bit8u *)pvData;
-	const Bit8u *mask = (const Bit8u *)pvMask;
+	const U8 *data = (const U8 *)pvData;
+	const U8 *mask = (const U8 *)pvMask;
 
 	s_testSKSave.Write(pvData, pvMask, cbData, repeat);
 
 	//^2066:000F
 	Bit32u bp0a = 0;
-	Bit8u bp04 = _4976_5254; // queued nibble
-	Bit8u bp05 = _4976_524e; // current bit position
+	U8 bp04 = _4976_5254; // queued nibble
+	U8 bp05 = _4976_524e; // current bit position
 	Bit32u bp0e = 0;
 	//^2066:0034
 	while (!(bp0e >= repeat)) {
@@ -6623,9 +6623,9 @@ U8 SkWinCore::SUPPRESS_WRITER(const void *pvData, const void *pvMask, U16 cbData
 		//^2066:0039
 		while (!(si >= cbData)) {
 			//^2066:003C
-			Bit8u data_nibble = *data; // [bp-03]
+			U8 data_nibble = *data; // [bp-03]
 			data++;
-			Bit8u mask_nibble = *mask; // [bp-02]
+			U8 mask_nibble = *mask; // [bp-02]
 			mask++;
 			//^2066:0054
 			if (mask_nibble != 0) {
@@ -6648,7 +6648,7 @@ U8 SkWinCore::SUPPRESS_WRITER(const void *pvData, const void *pvMask, U16 cbData
 						//^2066:009C
 						if (bp05 == 8) {
 							//^2066:00A0
-							Bit8u bp0f = bp04;
+							U8 bp0f = bp04;
 							if (FILE_WRITE(glbDataFileHandle, 1, &bp0f) == 0)
 								return 1;
 							//^2066:00C4
@@ -6678,17 +6678,17 @@ U8 SkWinCore::SUPPRESS_WRITER(const void *pvData, const void *pvMask, U16 cbData
 }
 
 //^2066:0123
-Bit8u SkWinCore::WRITE_1BIT(Bit8u nibble)
+U8 SkWinCore::WRITE_1BIT(U8 nibble)
 {
 	//^2066:0123
-	Bit8u data = nibble;
-	static const Bit8u mask = 0x01;
+	U8 data = nibble;
+	static const U8 mask = 0x01;
 
 	return SUPPRESS_WRITER(&data, &mask, 1, 1);
 }
 
 //^2066:06E8
-Bit8u SkWinCore::WRITE_RECORD_CHECKCODE(ObjectID recordLink, Bit8u writeDir, Bit8u writeFollowing)
+U8 SkWinCore::WRITE_RECORD_CHECKCODE(ObjectID recordLink, U8 writeDir, U8 writeFollowing)
 {
 	// writeDir=(write-direction-in-record-link)
 	// yy=(write-subsequent-records)
@@ -6698,19 +6698,19 @@ Bit8u SkWinCore::WRITE_RECORD_CHECKCODE(ObjectID recordLink, Bit8u writeDir, Bit
 	//^2066:0AE6
 	while (recordLink != OBJECT_END_MARKER && recordLink != OBJECT_NULL) {
 		//^2066:06F4
-		Bit8u db = recordLink.DBType();
+		U8 db = recordLink.DBType();
 		if (db > dbActuator) {
 			//^2066:0704
 			if (WRITE_1BIT(1)) // write#more-record=true
 				return 1;
-			Bit8u data = db;
-			Bit8u mask = 0x0F;
+			U8 data = db;
+			U8 mask = 0x0F;
 			if (SUPPRESS_WRITER(&data, &mask, 1, 1)) // write#dbtype
 				return 1;
 			//^2066:073A
 			if (writeDir != 0 && db != dbCreature) {
-				Bit8u data = recordLink.Dir();
-				Bit8u mask = 0x03;
+				U8 data = recordLink.Dir();
+				U8 mask = 0x03;
 				if (SUPPRESS_WRITER(&data, &mask, 1, 1))
 					return 1;
 			}
@@ -6769,8 +6769,8 @@ Bit8u SkWinCore::WRITE_RECORD_CHECKCODE(ObjectID recordLink, Bit8u writeDir, Bit
 						Creature *bp04 = record->castToCreature();
 
 						//^2066:085B
-						Bit8u data = bp04->CreatureType();
-						Bit8u mask = 0x7F;
+						U8 data = bp04->CreatureType();
+						U8 mask = 0x7F;
 						if (SUPPRESS_WRITER(&data, &mask, 1, 1))
 							return 1;
 						//^2066:0887
@@ -6798,8 +6798,8 @@ Bit8u SkWinCore::WRITE_RECORD_CHECKCODE(ObjectID recordLink, Bit8u writeDir, Bit
 						Container *bp04 = record->castToContainer();
 
 						//^2066:08B4
-						Bit8u data = bp04->ContainerType();
-						Bit8u mask = 0x03;
+						U8 data = bp04->ContainerType();
+						U8 mask = 0x03;
 						if (SUPPRESS_WRITER(&data, &mask, 1, 1))
 							return 1;
 						//^2066:08E5
@@ -6846,7 +6846,7 @@ Bit8u SkWinCore::WRITE_RECORD_CHECKCODE(ObjectID recordLink, Bit8u writeDir, Bit
 						//^2066:0963
 						_4976_3b57 = 0x0001;
 
-						Bit8u res = WRITE_RECORD_CHECKCODE(
+						U8 res = WRITE_RECORD_CHECKCODE(
 							bp04->GetPossessionObject(),
 							recordMask != _4976_3ab7,
 							1
@@ -6869,7 +6869,7 @@ Bit8u SkWinCore::WRITE_RECORD_CHECKCODE(ObjectID recordLink, Bit8u writeDir, Bit
 							//^2066:09AD
 							Bit16u bp18 = (bp10 == OBJECT_NULL || bp10 == OBJECT_END_MARKER) ? 0 : 1;
 							//^2066:09C3
-							if (WRITE_1BIT((Bit8u)bp18))
+							if (WRITE_1BIT((U8)bp18))
 								return 1;
 							//^2066:09D2
 							if (!(bp18 != 0))
@@ -6907,7 +6907,7 @@ Bit8u SkWinCore::WRITE_RECORD_CHECKCODE(ObjectID recordLink, Bit8u writeDir, Bit
 						}
 						//^2066:0A3A  
 						_4976_3b55 = 0x0001;
-						Bit8u res = WRITE_RECORD_CHECKCODE(
+						U8 res = WRITE_RECORD_CHECKCODE(
 							bp04->GetMissileObject(),
 							0,
 							0
@@ -7000,12 +7000,12 @@ U16 SkWinCore::SUPPRESS_FLUSH()
 	// TODO: VERIFY ME
 
 	//^2066:0147
-	Bit8u bp01 = _4976_524e;
+	U8 bp01 = _4976_524e;
 	//^2066:0151
 	if (bp01 == 0)
 		return 0;
-	Bit8u bp02 = 8 - bp01;
-	Bit8u bp03 = _4976_5254;
+	U8 bp02 = 8 - bp01;
+	U8 bp03 = _4976_5254;
 	//^2066:0163
 	while (bp02-- != 0) {
 		//^2066:0165
@@ -7013,7 +7013,7 @@ U16 SkWinCore::SUPPRESS_FLUSH()
 		//^2066:017B
 	}
 	//^2066:0185
-	Bit8u bp04 = bp03;
+	U8 bp04 = bp03;
 	//^2066:018B
 	if (FILE_WRITE(glbDataFileHandle, 1, &bp04) == 0)
 		return 1;
@@ -10954,7 +10954,7 @@ Bit16u SkWinCore::_476d_05a9()
 }
 
 //^476D:04E8
-Bit8u SkWinCore::_476d_04e8(Bit16u xx) { // TODO: Unr
+U8 SkWinCore::_476d_04e8(Bit16u xx) { // TODO: Unr
 	Unr(); return 0;
 }
 
@@ -10984,7 +10984,7 @@ void SkWinCore::_2fcf_0b8b(Bit16u xx, Bit16u yy, Bit16u zz)
 	glbMap_4976_4c12 = 0xffff;
 	//^2FCF:0B97
 	TELE_inf bp06;
-	_4976_4c08 = GET_TELEPORTER_DETAIL(&bp06, Bit8u(xx), Bit8u(yy));
+	_4976_4c08 = GET_TELEPORTER_DETAIL(&bp06, U8(xx), U8(yy));
 	//^2FCF:0BAD
 	if (_4976_4c08 != 0) {
 		//^2FCF:0BB1
@@ -11128,7 +11128,7 @@ void SkWinCore::__restorezero() {
 }
 
 //^069A:00EA
-void __DECLSPEC_NORETURN_ SkWinCore::__terminate(Bit8u errorLevel)
+void __DECLSPEC_NORETURN_ SkWinCore::__terminate(U8 errorLevel)
 {
 	ATLASSERT(false);
 //		//^069A:00EA
@@ -11197,10 +11197,10 @@ void SkWinCore::SK_PREPARE_EXIT()
 
 
 //^3929:000F
-Bit16u SkWinCore::QUERY_MBCS_PRESENCE(const Bit8u *str)
+Bit16u SkWinCore::QUERY_MBCS_PRESENCE(const U8 *str)
 {
 	//^3929:000F
-	Bit8u dl;
+	U8 dl;
 	while ((dl = *str++) != 0) {
 		//^3929:0014
 		if ((dl & 0x80) != 0)
@@ -11251,7 +11251,7 @@ skxxxf *SkWinCore::QUERY_CHAR_METRICS(U8 cls2, U8 yy, U8 chr, U8 *tableIdxOut)
 }
 
 //^3929:03DC
-Bit16u SkWinCore::QUERY_STR_METRICS(const Bit8u *buff, i16 *xx, i16 *yy)
+Bit16u SkWinCore::QUERY_STR_METRICS(const U8 *buff, i16 *xx, i16 *yy)
 {
 	//^3929:03DC
 	//^3929:03E2
@@ -11265,13 +11265,13 @@ Bit16u SkWinCore::QUERY_STR_METRICS(const Bit8u *buff, i16 *xx, i16 *yy)
 	if (QUERY_MBCS_PRESENCE(buff) != 0) {
 		//^3929:0402
 		si = - _4976_0132;
-		Bit8u bp05 = 1;
+		U8 bp05 = 1;
 		di = 0;
 		//^3929:040F
-		Bit8u bp07;
+		U8 bp07;
 		for (; *buff != 0; ) {
 			//^3929:0412
-			Bit8u bp06 = *(buff++);
+			U8 bp06 = *(buff++);
 			//^3929:041E
 			if (bp06 >= 0xf0) {
 				//^3929:0422
@@ -11293,7 +11293,7 @@ Bit16u SkWinCore::QUERY_STR_METRICS(const Bit8u *buff, i16 *xx, i16 *yy)
 				bp06 = 0;
 			}
 			//^3929:0456
-			Bit8u bp08;
+			U8 bp08;
 			skxxxf *bp04 = QUERY_CHAR_METRICS(bp05, bp06, bp07, &bp08);
 			//^3929:0474
 			if (bp04 != NULL) {
@@ -11331,8 +11331,8 @@ Bit16u SkWinCore::QUERY_STR_METRICS(const Bit8u *buff, i16 *xx, i16 *yy)
 
 
 //^
-//inline Bit16u SkWinCore::QUERY_STR_METRICS(Bit8u *buff, Bit16u *xx, Bit16u *yy)
-Bit16u SkWinCore::QUERY_STR_METRICS_U16(Bit8u *buff, Bit16u *xx, Bit16u *yy)
+//inline Bit16u SkWinCore::QUERY_STR_METRICS(U8 *buff, Bit16u *xx, Bit16u *yy)
+Bit16u SkWinCore::QUERY_STR_METRICS_U16(U8 *buff, Bit16u *xx, Bit16u *yy)
 {
 	return QUERY_STR_METRICS(buff, reinterpret_cast<i16 *>(xx), reinterpret_cast<i16 *>(yy));
 }
@@ -11520,7 +11520,7 @@ void SkWinCore::DEALLOC_LOWER_MEMORY(Bit32u size) //#DS=4976?
 }
 
 //^3E74:5AB7
-Bit16u SkWinCore::QUERY_GDAT_ENTRY_DATA_LENGTH(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4)
+Bit16u SkWinCore::QUERY_GDAT_ENTRY_DATA_LENGTH(U8 cls1, U8 cls2, U8 cls3, U8 cls4)
 {
 LOGX(("%40s: C%02d=I%02X=E%02X=T%03d = %08X (%06d)", "QUERY_GDAT_ENTRY_DATA_LENGTH of ", cls1, cls2, cls4, cls3, QUERY_GDAT_RAW_DATA_LENGTH(QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, cls3, cls4)), QUERY_GDAT_RAW_DATA_LENGTH(QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, cls3, cls4)) ));
 
@@ -11531,14 +11531,14 @@ LOGX(("%40s: C%02d=I%02X=E%02X=T%03d = %08X (%06d)", "QUERY_GDAT_ENTRY_DATA_LENG
 }
 
 //^098D:1185
-void SkWinCore::LOAD_RECTS_AND_COMPRESS(Bit8u cls1, Bit8u cls2, Bit8u cls4) //#DS=4976?
+void SkWinCore::LOAD_RECTS_AND_COMPRESS(U8 cls1, U8 cls2, U8 cls4) //#DS=4976?
 {
 	// TODO: 本ズレ函数
 	//^098D:1185
 	//^098D:1189
 	Bit32u bp08 = QUERY_GDAT_ENTRY_DATA_LENGTH(cls1, cls2, dt04, cls4);
 	//^098D:11A2
-	Bit8u *bp04 = ALLOC_MEMORY_RAM(bp08, afUseLower, 1024);
+	U8 *bp04 = ALLOC_MEMORY_RAM(bp08, afUseLower, 1024);
 	//^098D:11C0
 	LOAD_GDAT_ENTRY_DATA_TO(cls1, cls2, dt04, cls4, bp04);
 	//^098D:11DC
@@ -11548,7 +11548,7 @@ void SkWinCore::LOAD_RECTS_AND_COMPRESS(Bit8u cls1, Bit8u cls2, Bit8u cls4) //#D
 }
 
 //^3E74:51E4
-void SkWinCore::LOAD_GDAT_ENTRY_DATA_TO(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4, Bit8u *where) //#DS=4976?
+void SkWinCore::LOAD_GDAT_ENTRY_DATA_TO(U8 cls1, U8 cls2, U8 cls3, U8 cls4, U8 *where) //#DS=4976?
 {
 //LOGX(("%40s: C%02d=I%02X=E%02X=T%03d to %08X", "LOAD_GDAT_ENTRY_DATA_TO of ", cls1, cls2, cls4, cls3, where ));
 	// TODO: 本ズレ函数
@@ -11562,7 +11562,7 @@ void SkWinCore::LOAD_GDAT_ENTRY_DATA_TO(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8
 }
 
 //^098D:116D
-Bit8u *SkWinCore::ALLOC_UPPER_MEMORY(U32 size)
+U8 *SkWinCore::ALLOC_UPPER_MEMORY(U32 size)
 {
 	// TODO: 本ズレ函数
 	//^098D:116D
@@ -11571,10 +11571,10 @@ Bit8u *SkWinCore::ALLOC_UPPER_MEMORY(U32 size)
 }
 
 //^098D:0E78
-void SkWinCore::COMPRESS_RECTS(i16 *data, Bit32u size, RectTable *zz, Bit8u *(SkWinCore::*allocFunc)(Bit32u size))
+void SkWinCore::COMPRESS_RECTS(i16 *data, Bit32u size, RectTable *zz, U8 *(SkWinCore::*allocFunc)(Bit32u size))
 {
-#define	PTR_ADVANCE(PTR,DELTA) *((Bit8u **)&(PTR)) += (DELTA);
-#define	WRITE_BYTE(PTR,VAL) **(Bit8u **)&(PTR) = (VAL);
+#define	PTR_ADVANCE(PTR,DELTA) *((U8 **)&(PTR)) += (DELTA);
+#define	WRITE_BYTE(PTR,VAL) **(U8 **)&(PTR) = (VAL);
 #define	WRITE_WORD(PTR,VAL) **(Bit16u **)&(PTR) = (VAL);
 
 	// TODO: 本ズレ函数
@@ -11604,7 +11604,7 @@ void SkWinCore::COMPRESS_RECTS(i16 *data, Bit32u size, RectTable *zz, Bit8u *(Sk
 		//^098D:0EF3
 		i16 *bp16 = data;
 		//^098D:0EFF
-		Bit8u bp17 = 0x1f;
+		U8 bp17 = 0x1f;
 		//^098D:0F03
 		Bit16u bp1a = data[0];
 		//^098D:0F0C
@@ -11674,11 +11674,11 @@ void SkWinCore::COMPRESS_RECTS(i16 *data, Bit32u size, RectTable *zz, Bit8u *(Sk
 		//^098D:100D
 		bp04->w6 = bp0c;
 		//^098D:1014
-		bp04->b8 = (Bit8u)bp17;
+		bp04->b8 = (U8)bp17;
 		//^098D:101B
-		bp04->b9 = (Bit8u)bp1a;
+		bp04->b9 = (U8)bp1a;
 		SkD((DLV_RCT, "RCT: COMPRESS_RECTS (%p,(%d,%d,%d,%d))\n"
-			, (RectTable*)bp04->pb0, (Bit16u)bp04->w4, (Bit16u)bp04->w6, (Bit8u)bp04->b8, (Bit8u)bp04->b9));
+			, (RectTable*)bp04->pb0, (Bit16u)bp04->w4, (Bit16u)bp04->w6, (U8)bp04->b8, (U8)bp04->b9));
 		//^098D:1022
 		bp04++;
 		//^098D:1026
@@ -11695,11 +11695,11 @@ void SkWinCore::COMPRESS_RECTS(i16 *data, Bit32u size, RectTable *zz, Bit8u *(Sk
 			//^098D:104F
 			if ((bp17 & 4) != 0) {
 				//^098D:1055
-				WRITE_BYTE(bp04,(Bit8u)*data); data++;
+				WRITE_BYTE(bp04,(U8)*data); data++;
 				//^098D:1065
 				PTR_ADVANCE(bp04,+1);
 				//^098D:1072
-				WRITE_BYTE(bp04,(Bit8u)*data); data++;
+				WRITE_BYTE(bp04,(U8)*data); data++;
 				//^098D:1082
 				PTR_ADVANCE(bp04,+1);
 			}
@@ -11726,11 +11726,11 @@ void SkWinCore::COMPRESS_RECTS(i16 *data, Bit32u size, RectTable *zz, Bit8u *(Sk
 			//^098D:10E3
 			if ((bp17 & 24) != 0) {
 				//^098D:10E9
-				WRITE_BYTE(bp04,(Bit8u)*data); data++;
+				WRITE_BYTE(bp04,(U8)*data); data++;
 				//^098D:10F9
 				PTR_ADVANCE(bp04,+1);
 				//^098D:1106
-				WRITE_BYTE(bp04,(Bit8u)*data); data++;
+				WRITE_BYTE(bp04,(U8)*data); data++;
 				//^098D:1116
 				PTR_ADVANCE(bp04,+1);
 			}
@@ -11790,7 +11790,7 @@ SRECT *SkWinCore::QUERY_RECT(RectTable *entry, Bit16u rectno) //#DS=4976?
 		//^098D:034D
 		sk4b84 *bp04 = &_4976_4b84[_4976_0198];
 		//^098D:035C
-		Bit8u bp05 = entry->b8;
+		U8 bp05 = entry->b8;
 
 		// bp05 combinations:
 		// 0x00		@prefix @entry (x=RW, y=RW)
@@ -11973,7 +11973,7 @@ SRECT *SkWinCore::UNION_RECT(SRECT *rc1, const SRECT *rc2, i16 *offx, i16 *offy)
 
 
 //^00EB:0845
-void SkWinCore::_00eb_0845(Bit8u *buff, SRECT *rc, Bit16u ww) //#DS=04BF
+void SkWinCore::_00eb_0845(U8 *buff, SRECT *rc, Bit16u ww) //#DS=04BF
 {
 	//^00EB:0845
 	//^00EB:084B
@@ -12057,7 +12057,7 @@ void SkWinCore::_00eb_0845(Bit8u *buff, SRECT *rc, Bit16u ww) //#DS=04BF
 					(bp04 - _04bf_09e0.y) * (_04bf_0e80[_04bf_1938].b2) + bp10.x,
 					bp06,
 					bp10.cx,
-					(Bit8u)_04bf_079c
+					(U8)_04bf_079c
 					);
 				//^00EB:0B25
 				_04bf_0cf0 = _04bf_0cf4;
@@ -12087,7 +12087,7 @@ void SkWinCore::_00eb_0845(Bit8u *buff, SRECT *rc, Bit16u ww) //#DS=04BF
 		//^00EB:08B3
 		if (bp12 != 0) {
 			//^00EB:08B9
-			_04bf_0e34 = (Bit8u *)__vram;
+			_04bf_0e34 = (U8 *)__vram;
 			_04bf_0cf0 = buff;
 			//^00EB:08D2
 			Bit16u di = 0;
@@ -12213,8 +12213,8 @@ Bit16u SkWinCore::min_value(i16 v1, i16 v2) {
 
 
 //^3E74:178C
-//RawEntry *SkWinCore::QUERY_GDAT_ENTRYPTR(Bit8u cls1, Bit16u cls2, Bit8u cls3, Bit16u cls4)
-RawEntry *SkWinCore::QUERY_GDAT_ENTRYPTR(Bit8u iCategory, Bit16u iItem, Bit8u iType, Bit16u iEntry)
+//RawEntry *SkWinCore::QUERY_GDAT_ENTRYPTR(U8 cls1, Bit16u cls2, U8 cls3, Bit16u cls4)
+RawEntry *SkWinCore::QUERY_GDAT_ENTRYPTR(U8 iCategory, Bit16u iItem, U8 iType, Bit16u iEntry)
 {
 	// cls1 - main category	-> iCategory
 	// cls2 - sub category	-> iItem
@@ -12290,8 +12290,8 @@ RawEntry *SkWinCore::QUERY_GDAT_ENTRYPTR(Bit8u iCategory, Bit16u iItem, Bit8u iT
 }
 
 //^3E74:1CF3
-//Bit16u SkWinCore::QUERY_GDAT_ENTRY_IF_LOADABLE(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4)
-Bit16u SkWinCore::QUERY_GDAT_ENTRY_IF_LOADABLE(Bit8u iCategory, Bit8u iItemIndex, Bit8u iDataType, Bit8u iEntryNumber)
+//Bit16u SkWinCore::QUERY_GDAT_ENTRY_IF_LOADABLE(U8 cls1, U8 cls2, U8 cls3, U8 cls4)
+Bit16u SkWinCore::QUERY_GDAT_ENTRY_IF_LOADABLE(U8 iCategory, U8 iItemIndex, U8 iDataType, U8 iEntryNumber)
 {
 LOGX(("%40s: C%02d=I%02X=E%02X=T%03d to %08X", "QUERY_GDAT_ENTRY_IF_LOADABLE", iCategory, iItemIndex, iEntryNumber, iDataType ));
 	//^3E74:1CF3
@@ -12315,7 +12315,7 @@ LOGX(("%40s: C%02d=I%02X=E%02X=T%03d to %08X", "QUERY_GDAT_ENTRY_IF_LOADABLE", i
 }
 
 //^0B36:000A
-Bit16u SkWinCore::CALC_IMAGE_BYTE_LENGTH(Bit8u *buff)
+Bit16u SkWinCore::CALC_IMAGE_BYTE_LENGTH(U8 *buff)
 {
 	//^0B36:000A
 	//^0B36:000D
@@ -12403,7 +12403,7 @@ void SkWinCore::_0aaf_01db(Bit16u rectno, Bit16u yy)
 			//^0AAF:01F0
 			return;
 		//^0AAF:01F3
-		Bit8u *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(_4976_4bd5, _4976_4bd6, _4976_4bd4);
+		U8 *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(_4976_4bd5, _4976_4bd6, _4976_4bd4);
 		//^0AAF:020D
 		SRECT bp10;
 		CALC_CENTERED_RECT_IN_RECT(&bp10, &_4976_4e9e, READ_UI16(bp04,-4), READ_UI16(bp04,-2));
@@ -12418,7 +12418,7 @@ void SkWinCore::_0aaf_01db(Bit16u rectno, Bit16u yy)
 			bp10.y -= bp14;
 		}
 		//^0AAF:0252
-		Bit8u *bp08;
+		U8 *bp08;
 		if (_4976_5d76 != 0) {
 			//^0AAF:0259
 			bp08 = QUERY_GDAT_IMAGE_LOCALPAL(_4976_4bd5, _4976_4bd6, _4976_4bd4);
@@ -12434,7 +12434,7 @@ void SkWinCore::_0aaf_01db(Bit16u rectno, Bit16u yy)
 	}
 	else {
 		//^0AAF:02B7
-		Bit8u si = (yy != 0) ? (glbPaletteT16[COLOR_BLACK]) : (glbPaletteT16[COLOR_DARK_GRAY]);
+		U8 si = (yy != 0) ? (glbPaletteT16[COLOR_BLACK]) : (glbPaletteT16[COLOR_DARK_GRAY]);
 		//^0AAF:02D2
 		SRECT bp10;
 		FIRE_FILL_BACKBUFF_RECT(QUERY_EXPANDED_RECT(rectno, &bp10), si);
@@ -12448,19 +12448,19 @@ void SkWinCore::_0aaf_01db(Bit16u rectno, Bit16u yy)
 //^0AAF:02F8
 // _0aaf_02f8 renamed _0aaf_02f8_DIALOG_BOX
 // Dialog box for new game
-Bit8u SkWinCore::_0aaf_02f8_DIALOG_BOX(Bit8u xx, Bit8u yy) //#DS=4976
+U8 SkWinCore::_0aaf_02f8_DIALOG_BOX(U8 xx, U8 yy) //#DS=4976
 {
 	Bit16u si;
 	skxxx1 bp04e4[2];
-	Bit8u bp04d4[128];
-	Bit8u bp0454[128];
-	Bit8u bp03d4[0x14][40];
-	Bit8u *bp00b4[0x14];
-	Bit8u bp64[60];
+	U8 bp04d4[128];
+	U8 bp0454[128];
+	U8 bp03d4[0x14][40];
+	U8 *bp00b4[0x14];
+	U8 bp64[60];
 	Bit16u bp28[2];
 	skxxx1 *bp24;
 	SRECT bp20;
-	Bit8u bp17;
+	U8 bp17;
 	Bit16u bp16;
 	Bit16u bp14;
 	Bit16u bp12;
@@ -12468,8 +12468,8 @@ Bit8u SkWinCore::_0aaf_02f8_DIALOG_BOX(Bit8u xx, Bit8u yy) //#DS=4976
 	Bit16u bp0e;
 	Bit16u bp0c;
 	Bit16u bp0a;
-	Bit8u *bp08;
-	Bit8u *bp04;
+	U8 *bp08;
+	U8 *bp04;
 
 	//^0AAF:02F8
 	//^0AAF:02FE
@@ -12847,7 +12847,7 @@ void SkWinCore::EMS_MAP_BANK_TO_MEMORY() { // TODO: Unr
 }
 
 //^4726:0107
-Bit8u *SkWinCore::EMS_MAP_BANK_TO_MEMORY(shelf_memory info, Bit16u physPage0to3) { // TODO: Unr
+U8 *SkWinCore::EMS_MAP_BANK_TO_MEMORY(shelf_memory info, Bit16u physPage0to3) { // TODO: Unr
 #if UseAltic
 	return REALIZE_GRAPHICS_DATA_MEMORY(info);
 #else
@@ -12856,7 +12856,7 @@ Bit8u *SkWinCore::EMS_MAP_BANK_TO_MEMORY(shelf_memory info, Bit16u physPage0to3)
 }
 
 //^3E74:0683
-Bit8u *SkWinCore::FIND_FREE_POOL(U32 size, Bit16u poolno)
+U8 *SkWinCore::FIND_FREE_POOL(U32 size, Bit16u poolno)
 {
 	//^3E74:0683
 	Bit16u si = poolno;
@@ -12865,7 +12865,7 @@ Bit8u *SkWinCore::FIND_FREE_POOL(U32 size, Bit16u poolno)
 	//^3E74:0699
 	sk5d00 *bp04 = _4976_5d00;
 	//^3E74:06A6
-	Bit8u *bp08 = 0;
+	U8 *bp08 = 0;
 	i32 bp10 = 0x7fffffff;
 	//^3E74:06BA
 	while (bp04 != NULL) {
@@ -12880,7 +12880,7 @@ Bit8u *SkWinCore::FIND_FREE_POOL(U32 size, Bit16u poolno)
 		) {
 			//^3E74:0711
 			bp10 = bp0c;
-			bp08 = (Bit8u *)bp04;
+			bp08 = (U8 *)bp04;
 		}
 		//^3E74:0729
 		bp04 = bp04->pv0;
@@ -12934,7 +12934,7 @@ tiamat SkWinCore::ALLOC_MEMORY_(U32 size, Bit16u flags, Bit16u poolno)
 	//^3E74:08B9
 	if (si == 1) {
 		//^3E74:08BE
-		Bit8u *bp08 = FIND_FREE_POOL(size, di);
+		U8 *bp08 = FIND_FREE_POOL(size, di);
 		//^3E74:08D2
 		if (bp08 != NULL) {
 			//^3E74:08DD
@@ -13033,12 +13033,12 @@ _09f7:
 }
 
 //^3E74:0B96
-Bit8u *SkWinCore::ALLOC_PICT_BUFF(Bit16u srccx, Bit16u srccy, Bit16u flags, Bit16u bpp)
+U8 *SkWinCore::ALLOC_PICT_BUFF(Bit16u srccx, Bit16u srccy, Bit16u flags, Bit16u bpp)
 {
 	//^3E74:0B96
 	Bit16u si = srccx;
 	//^3E74:SkWinCore::0B9E
-	Bit8u *bp04 = ALLOC_MEMORY_RAM((((bpp == 4) ? (((si +1) & 0xfffe) >> 1) : (si & 0xffff)) * srccy) +6, flags, 8) +6;
+	U8 *bp04 = ALLOC_MEMORY_RAM((((bpp == 4) ? (((si +1) & 0xfffe) >> 1) : (si & 0xffff)) * srccy) +6, flags, 8) +6;
 	//^3E74:0BD2
 	bp04 = bp04;
 	//^3E74:0BE1
@@ -13088,7 +13088,7 @@ U16 SkWinCore::QUERY_GDAT_ENTRY_DATA_INDEX(U8 iCategory, U16 iItem, U8 iType, U1
 }
 
 //^3E74:01A5
-Bit8u *SkWinCore::REALIZE_GRAPHICS_DATA_MEMORY(shelf_memory info) {
+U8 *SkWinCore::REALIZE_GRAPHICS_DATA_MEMORY(shelf_memory info) {
 	//U32 iMemVal = info.val & 0x00FFFFFF;	// SPX: replaced info.val by this iMemVal with mask. ==> NOTE This does not work. Need to understand more this
 	U32 iMemVal = info.val;
 	// Original code would just take full value, which can be 0x80****** and break the limit.
@@ -13145,7 +13145,7 @@ Bit16u SkWinCore::QUERY_GDAT_RAW_DATA_LENGTH(Bit16u index)
 }
 
 //^3E74:1586
-Bit16u SkWinCore::IS_CLS1_CRITICAL_FOR_LOAD(Bit8u cls1)
+Bit16u SkWinCore::IS_CLS1_CRITICAL_FOR_LOAD(U8 cls1)
 {
 	//^3E74:1586
 	switch (cls1) {
@@ -13220,19 +13220,19 @@ void __DECLSPEC_NORETURN_ SkWinCore::RAISE_SYSERR(Bit16u syserr)
 	// kkdf2: 1001 = no player startup data in graphics.dat
 
 	// SYSTEM ERROR .Z000.
-	static const Bit8u * const strSystemError = (const Bit8u *) 
+	static const U8 * const strSystemError = (const U8 *) 
 		"\x53\x59\x53\x54\x45\x4D\x20\x45\x52\x52\x4F\x52\x20\x2E\x5A\x30\x30\x30\x00";
 	// SYSTEM ERROR .Z000.
-	static const Bit8u * const strSystemErrorF = (const Bit8u *) 
+	static const U8 * const strSystemErrorF = (const U8 *) 
 		"\x53\x59\x53\x54\x45\x4D\x20\x45\x52\x52\x4F\x52\x20\x2E\x5A\x30\x30\x30\x00";
 	// SYSTEM ERROR .Z000.
-	static const Bit8u * const strSystemErrorG = (const Bit8u *) 
+	static const U8 * const strSystemErrorG = (const U8 *) 
 		"\x53\x59\x53\x54\x45\x4D\x20\x45\x52\x52\x4F\x52\x20\x2E\x5A\x30\x30\x30\x00";
 	
 	// 4976:01E6  F2 01 76 49 05 02 76 49 18 02 76 49
 
 	// SPX : _4976_01e6	renamed strSystemErrorTable
-	static const Bit8u *strSystemErrorTable[] = {
+	static const U8 *strSystemErrorTable[] = {
 		strSystemError,
 		strSystemErrorF,
 		strSystemErrorG,
@@ -13246,7 +13246,7 @@ void __DECLSPEC_NORETURN_ SkWinCore::RAISE_SYSERR(Bit16u syserr)
 		FIRE_SELECT_PALETTE_SET(1);
 	}
 	//^0CCD:0023
-	Bit8u bp80[128];
+	U8 bp80[128];
 	ATLASSERT(glbLangageLetterIndex < 3U);
 	FORMAT_SKSTR(strSystemErrorTable[glbLangageLetterIndex], bp80);
 
@@ -13400,7 +13400,7 @@ void SkWinCore::LOAD_GDAT_RAW_DATA(Bit16u index, shelf_memory ps)
 }
 
 //^3E74:0213
-shelf_memory SkWinCore::CONVERT_PHYS_TO_SHELF_FORM(Bit8u *buff)
+shelf_memory SkWinCore::CONVERT_PHYS_TO_SHELF_FORM(U8 *buff)
 {
 	U32ptr p1 = buff - xCRAM;
 	//if (p1 < sizeof(cram)) {
@@ -13419,18 +13419,18 @@ shelf_memory SkWinCore::CONVERT_PHYS_TO_SHELF_FORM(Bit8u *buff)
 	throw int();
 
 //		//^3E74:0213
-//		Bit8u *bp04 = buff;
+//		U8 *bp04 = buff;
 //
 //		DOSIMPL(); // TODO: WRONG conversion. Fix me
 //
 //#pragma warning( push )
 //#pragma warning( disable : 4311 4312 )
-//		return (Bit8u *)((((Bit32u)bp04 & 0xffff0000) >> 12) + ((Bit16u)bp04 & 0xffff));
+//		return (U8 *)((((Bit32u)bp04 & 0xffff0000) >> 12) + ((Bit16u)bp04 & 0xffff));
 //#pragma warning( pop )
 }
 
 //^3E74:15A9
-Bit8u *SkWinCore::QUERY_GDAT_DYN_BUFF(Bit16u index, Bit16u *yy, Bit16u allocUpper)
+U8 *SkWinCore::QUERY_GDAT_DYN_BUFF(Bit16u index, Bit16u *yy, Bit16u allocUpper)
 {
 	//^3E74:15A9
 	Bit16u si = index;
@@ -13439,7 +13439,7 @@ Bit8u *SkWinCore::QUERY_GDAT_DYN_BUFF(Bit16u index, Bit16u *yy, Bit16u allocUppe
 	if (_4976_5d76 == 0) {
 		//^3E74:15BF
 		i32 bp08;
-		Bit8u *bp04 = ALLOC_MEMORY_RAM(
+		U8 *bp04 = ALLOC_MEMORY_RAM(
 			bp08 = (QUERY_GDAT_RAW_DATA_LENGTH(si) +6),
 			(di != 0) ? afDefault : afUseLower,
 			1024
@@ -13461,10 +13461,10 @@ Bit8u *SkWinCore::QUERY_GDAT_DYN_BUFF(Bit16u index, Bit16u *yy, Bit16u allocUppe
 	}
 	else {
 		//^3E74:165B
-		Bit8u *bp04;
+		U8 *bp04;
 		if (ADD_CACHE_HASH(si + 0xfffe0000, yy) != 0) {
 			//^3E74:1679
-			bp04 = reinterpret_cast<Bit8u *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(*yy));
+			bp04 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(*yy));
 			//^3E74:168B
 			if (di == 0)
 				return bp04;
@@ -13496,7 +13496,7 @@ Bit8u *SkWinCore::QUERY_GDAT_DYN_BUFF(Bit16u index, Bit16u *yy, Bit16u allocUppe
 }
 
 //^3E74:521A
-Bit8u *SkWinCore::QUERY_GDAT_IMAGE_LOCALPAL(Bit8u cls1, Bit8u cls2, Bit8u cls4)
+U8 *SkWinCore::QUERY_GDAT_IMAGE_LOCALPAL(U8 cls1, U8 cls2, U8 cls4)
 {
 	//^3E74:521A
 	Bit16u si = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, dtImage, cls4);
@@ -13531,7 +13531,7 @@ Bit8u *SkWinCore::QUERY_GDAT_IMAGE_LOCALPAL(Bit8u cls1, Bit8u cls2, Bit8u cls4)
 		//^3E74:52D4
 		PTR_PADA(bp04, QUERY_GDAT_RAW_DATA_LENGTH(si) - 16);
 		//^3E74:52EB
-		return reinterpret_cast<Bit8u *>(bp04);
+		return reinterpret_cast<U8 *>(bp04);
 	}
 _5276:
 	//^3E74:5276
@@ -14146,7 +14146,7 @@ void SkWinCore::DECODE_IMG3_UNDERLAY_LOCAL(IMG3 *xx, U8 *yy)
 }
 
 //^3E74:4B48
-Bit8u *SkWinCore::EXTRACT_GDAT_IMAGE(Bit16u index, i16 allocUpper)
+U8 *SkWinCore::EXTRACT_GDAT_IMAGE(Bit16u index, i16 allocUpper)
 {
 	SkD((DLV_DBG_GETPIC,"DBG: EXTRACT_GDAT_IMAGE(%4u,%u)\n", (Bitu)index, (Bitu)allocUpper));
 
@@ -14185,7 +14185,7 @@ Bit8u *SkWinCore::EXTRACT_GDAT_IMAGE(Bit16u index, i16 allocUpper)
 			//^3E74:4BBD
 			if (bp04->w4 == di) {
 				//^3E74:4BD6
-				return (Bit8u *)&bp04[1]; // +14 bytes
+				return (U8 *)&bp04[1]; // +14 bytes
 			}
 			//^3E74:4BEB
 			bp04 = bp04->pv0;
@@ -14194,7 +14194,7 @@ Bit8u *SkWinCore::EXTRACT_GDAT_IMAGE(Bit16u index, i16 allocUpper)
 	}
 	//^3E74:4C0C
 	Bit16u bp1e = 0;
-	Bit8u *bp1a;
+	U8 *bp1a;
 	Bit16u bp1c;
 	if (_4976_5d78 != 0) {
 		//^3E74:4C18
@@ -14227,14 +14227,14 @@ Bit8u *SkWinCore::EXTRACT_GDAT_IMAGE(Bit16u index, i16 allocUpper)
 		if (bp16 < 0) {
 			//^3E74:4CBD
 			//^3E74:4CC7
-			Bit8u *bp04 = _3e74_0245(di, allocUpper);
+			U8 *bp04 = _3e74_0245(di, allocUpper);
 			//^3E74:4FB4
 			return bp04;
 		}
 		else {
 			//^3E74:4CD0
 			//^3E74:4CC7
-			Bit8u *bp04 = PTR_PADD(bp08,+10);
+			U8 *bp04 = PTR_PADD(bp08,+10);
 			//^3E74:4FB4
 			return bp04;
 		}
@@ -14427,7 +14427,7 @@ void SkWinCore::DUMP_5CA4() {
 }
 
 //^3E74:4FBE
-Bit8u* SkWinCore::QUERY_GDAT_IMAGE_ENTRY_BUFF(Bit8u cls1, Bit8u cls2, Bit8u cls4)
+U8* SkWinCore::QUERY_GDAT_IMAGE_ENTRY_BUFF(U8 cls1, U8 cls2, U8 cls4)
 {
 	SkD((DLV_DBG_GETPIC,"DBG: QUERY_GDAT_IMAGE_ENTRY_BUFF(%02X,%02X,%02X)\n", (Bitu)cls1, (Bitu)cls2, (Bitu)cls4));
 	DUMP_5CA4();
@@ -14437,7 +14437,7 @@ Bit8u* SkWinCore::QUERY_GDAT_IMAGE_ENTRY_BUFF(Bit8u cls1, Bit8u cls2, Bit8u cls4
 
 	//^3E74:4FBE
 	Bit16u iCriticalLoad = 0;
-	Bit8u* xImageBuffer = NULL;
+	U8* xImageBuffer = NULL;
 
 	if (glbGameTick != _4976_5d2a) {
 		_3e74_44ad();
@@ -14470,7 +14470,7 @@ Bit8u* SkWinCore::QUERY_GDAT_IMAGE_ENTRY_BUFF(Bit8u cls1, Bit8u cls2, Bit8u cls4
 
 
 //^2E62:0004
-Bit8u *SkWinCore::QUERY_GDAT_SQUAD_ICON(Bit8u *dstImage, Bit8u colorno, Bit8u localpal[16])
+U8 *SkWinCore::QUERY_GDAT_SQUAD_ICON(U8 *dstImage, U8 colorno, U8 localpal[16])
 {
 	//^2E62:0004
 	Bit16u si = (((glbChampionSquad[colorno].playerDir() + 4 - glbPlayerDir) & 3) + ((glbGlobalSpellEffects.Invisibility != 0) ? 4 : 0)) * _4976_0118;
@@ -14539,11 +14539,11 @@ void SkWinCore::CHANGE_PLAYER_POS(Bit16u squadPos)
 		_4976_495c.cx = _4976_0118;
 		_4976_495c.cy = _4976_011a;
 		//^443C:04FC
-		Bit8u *bp08 = ALLOC_PICT_BUFF(_4976_0118, _4976_011a, afDefault, 4);
-		Bit8u *bp0c = ALLOC_PICT_BUFF(_4976_0118, _4976_011a, afDefault, 8);
+		U8 *bp08 = ALLOC_PICT_BUFF(_4976_0118, _4976_011a, afDefault, 4);
+		U8 *bp0c = ALLOC_PICT_BUFF(_4976_0118, _4976_011a, afDefault, 8);
 		//^443C:0530
-		Bit8u bp1c[16];
-		QUERY_GDAT_SQUAD_ICON(bp08, (Bit8u)si, bp1c);
+		U8 bp1c[16];
+		QUERY_GDAT_SQUAD_ICON(bp08, (U8)si, bp1c);
 		//^443C:0544
 		FILL_ENTIRE_PICT(bp0c, 0x000c);
 		//^443C:0554
@@ -14586,17 +14586,17 @@ void SkWinCore::CHANGE_PLAYER_POS(Bit16u squadPos)
 		//^443C:060C
 		if (di != 0) {
 			//^443C:0610
-			glbChampionSquad[bp04].playerDir((Bit8u)glbPlayerDir);
+			glbChampionSquad[bp04].playerDir((U8)glbPlayerDir);
 		}
 		//^443C:061F
 		if (bp02 != squadPos) {
 			//^443C:0627
 			if (si >= 0) {
 				//^443C:062B
-				glbChampionSquad[si].playerPos((Bit8u)bp02);
+				glbChampionSquad[si].playerPos((U8)bp02);
 			}
 			//^443C:0642
-			glbChampionSquad[bp04].playerPos((Bit8u)(squadPos + glbPlayerDir));
+			glbChampionSquad[bp04].playerPos((U8)(squadPos + glbPlayerDir));
 		}
 	}
 	//^443C:065A
@@ -14630,18 +14630,18 @@ void SkWinCore::_38c8_0002()
 }
 
 //^2636:02F8
-Bit8u *SkWinCore::QUERY_GDAT_TEXT(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u *buff)
+U8 *SkWinCore::QUERY_GDAT_TEXT(U8 cls1, U8 cls2, U8 cls4, U8 *buff)
 {
 	//^2636:02F8
 	*buff = 0;
 	Bit16u di = 0;
 	Bit16u si = 0;
 	//^2636:030B
-	Bit8u *bp0e = QUERY_GDAT_ENTRY_DATA_BUFF(cls1, cls2, dtText, cls4);
+	U8 *bp0e = QUERY_GDAT_ENTRY_DATA_BUFF(cls1, cls2, dtText, cls4);
 	//^2636:0327
 	if (bp0e != NULL) {
 		//^2636:0348
-		Bit8u *bp0a = ALLOC_MEMORY_RAM(
+		U8 *bp0a = ALLOC_MEMORY_RAM(
 			di = si = QUERY_GDAT_ENTRY_DATA_LENGTH(cls1, cls2, dtText, cls4),
 			0,
 			1024
@@ -14651,8 +14651,8 @@ Bit8u *SkWinCore::QUERY_GDAT_TEXT(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u *buf
 		//^2636:0377
 		if (glbTextEntryEncoded != 0) {
 			//^2636:037E
-			Bit8u *bp04 = bp0a;
-			Bit8u bp05 = 0;
+			U8 *bp04 = bp0a;
+			U8 bp05 = 0;
 			//^2636:038E
 			while (di-- != 0) {
 				//^2636:0390
@@ -14673,7 +14673,7 @@ Bit8u *SkWinCore::QUERY_GDAT_TEXT(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u *buf
 }
 
 //^0AAF:0067
-Bit8u SkWinCore::_0aaf_0067(Bit8u cls2)
+U8 SkWinCore::_0aaf_0067(U8 cls2)
 {
 	//^0AAF:0067
 	Bit16u di = 0;
@@ -14683,22 +14683,22 @@ Bit8u SkWinCore::_0aaf_0067(Bit8u cls2)
 	Bit16u bp38[21];
 	ZERO_MEMORY(&bp38[1], 2*20);
 	//^0AAF:0088
-	Bit8u bp5e[38];
-	for (Bit8u bp0d = 0; bp0d < 0x14; bp0d++) {
+	U8 bp5e[38];
+	for (U8 bp0d = 0; bp0d < 0x14; bp0d++) {
 		//^0AAF:008F
-		if (*QUERY_GDAT_TEXT(0x1a, cls2, bp0d, (Bit8u *)bp5e) != 0) {
+		if (*QUERY_GDAT_TEXT(0x1a, cls2, bp0d, (U8 *)bp5e) != 0) {
 			//^0AAF:00B0
 			Bit16u bp0a = QUERY_GDAT_ENTRY_DATA_INDEX(0x1a, cls2, dtWordValue, bp0d);
 			//^0AAF:00C7
-			Bit8u *bp04 = (Bit8u *)&bp38[1 + di];
-			*bp04 = (Bit8u)bp0a;
+			U8 *bp04 = (U8 *)&bp38[1 + di];
+			*bp04 = (U8)bp0a;
 			//^0AAF:00E2
 			if (*bp04 == 0) {
 				//^0AAF:00E6
 				*bp04 = bp0d;
 			}
 			//^0AAF:00EF
-			bp04[1] = (Bit8u)(bp0a >> 8);
+			bp04[1] = (U8)(bp0a >> 8);
 			//^0AAF:00FC
 			if (bp04[1] != 0) {
 				//^0AAF:0100
@@ -14752,7 +14752,7 @@ Bit8u SkWinCore::_0aaf_0067(Bit8u cls2)
 	} while (_4976_4dfc == 0x00ff);
 
 	//^0AAF:01A5
-	Bit8u bp0c = (Bit8u)bp38[_4976_4dfc];
+	U8 bp0c = (U8)bp38[_4976_4dfc];
 	//^0AAF:01B8
 	while ((bp06--) != 0) {
 		//^0AAF:01BA
@@ -14772,7 +14772,7 @@ Bit16u SkWinCore::_2066_03e0(Bit16u xx)
 {
 	//^2066:03E0
 	Bit16u di = xx;
-	Bit8u bp01 = 0;
+	U8 bp01 = 0;
 	//^2066:03ED
 	if (_4976_499e != 0) {
 		//^2066:03F4
@@ -14814,11 +14814,11 @@ void SkWinCore::SUPPRESS_INIT()
 
 //^2636:000C
 //SPX: This serves for Z000 variable replacement
-Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
+U8 *SkWinCore::FORMAT_SKSTR(const U8 *format, U8 *output)
 {
 	//^2636:000C
-	Bit8u *bp04;
-	Bit8u *bp08;
+	U8 *bp04;
+	U8 *bp08;
 	if (output != NULL) {
 		//^2636:001A
 		bp04 = bp08 = output;
@@ -14835,10 +14835,10 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 		}
 		//^2636:005F
 	}
-	Bit8u bp11;
+	U8 bp11;
 	while ((bp11 = *format) != 0) {
 		//^2636:0062
-		Bit8u bp0116[128];
+		U8 bp0116[128];
 		if ((bp11 == '.' && format[1] == 'Z') || bp11 == 0x01) {
 			i16 si;
 			//^2636:007B
@@ -14864,9 +14864,9 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 			}
 			//^2636:00BF
 			*bp04 = 0;
-			Bit8u bp0096[128];
-			Bit8u *bp0c = bp0096;
-			Bit8u bp12 = 1;
+			U8 bp0096[128];
+			U8 *bp0c = bp0096;
+			U8 bp12 = 1;
 			switch (si) {
 				case 0x0000:	// .Z000
 					{
@@ -14888,8 +14888,8 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 				case 0x0002:	// .Z002
 					{
 						//^2636:0149
-						Bit8u bp13 = 0xFE;
-						Bit8u bp14 = 0x00;
+						U8 bp13 = 0xFE;
+						U8 bp14 = 0x00;
 						//^2636:0161
 						// SPX: would be 01/FE/00 = SKULLKEEP ?
 						QUERY_GDAT_TEXT(bp12, bp13, bp14, bp0c);
@@ -14899,7 +14899,7 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 					{
 						//^2636:01AF
 						//^2636:0244
-						const Bit8u *bp0c = _4976_498e;
+						const U8 *bp0c = _4976_498e;
 						//^2636:024A
 						FORMAT_SKSTR(bp0c, bp0116);
 						//^2636:025D
@@ -14912,7 +14912,7 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 					{
 						//^B9 01
 						//^2636:0244
-						const Bit8u *bp0c = _4976_4992;
+						const U8 *bp0c = _4976_4992;
 						//^2636:024A
 						FORMAT_SKSTR(bp0c, bp0116);
 						//^2636:025D
@@ -14931,7 +14931,7 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 						if (glbChampionBonesIndex == 0xFFFF)
 							break;
 						//^2636:0188
-						bp0c = (Bit8u *)&glbChampionSquad[glbChampionBonesIndex];
+						bp0c = (U8 *)&glbChampionSquad[glbChampionBonesIndex];
 						break;
 					}
 				case 0x0008:	// .Z008
@@ -14939,17 +14939,12 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 #if defined (__LINUX__) || defined (__MINGW__)	// for Linux and MinGW we don't want to suffix by C:\ (or C:) and fail on the relative filepath
 						continue;
 #else
-						//^2636:01C3
-						//^2636:0244
-						const Bit8u *bp0c = ptrDirLetter;
-						//^2636:024A
+						const U8 *bp0c = ptrDirLetter;
 						FORMAT_SKSTR(bp0c, bp0116);
-						//^2636:025D
 						SK_STRCAT(bp08, bp0116);
 #if defined (__DJGPP__) || defined(__MINGW__)
-						SK_STRCAT(bp08, (const Bit8u *) "\\");
+						SK_STRCAT(bp08, (const U8 *) "\\");
 #endif
-						//^2636:0271
 						bp04 = bp08 +SK_STRLEN(bp08);
 						continue;
 #endif
@@ -14958,7 +14953,7 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 					{
 						//^2636:01CC
 						//^2636:0244
-						const Bit8u *bp0c = ptrDirLetter2;
+						const U8 *bp0c = ptrDirLetter2;
 						//^2636:024A
 						FORMAT_SKSTR(bp0c, bp0116);
 						//^2636:025D
@@ -15008,7 +15003,7 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 						if (_4976_52f4 == 1) {
 							//^2636:01AF
 							//^2636:0244
-							const Bit8u *bp0c = _4976_498e;
+							const U8 *bp0c = _4976_498e;
 							//^2636:024A
 							FORMAT_SKSTR(bp0c, bp0116);
 							//^2636:025D
@@ -15021,7 +15016,7 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 							//^2636:01AD
 							//^2636:01B9
 							//^2636:0244
-							const Bit8u *bp0c = _4976_4992;
+							const U8 *bp0c = _4976_4992;
 							//^2636:024A
 							FORMAT_SKSTR(bp0c, bp0116);
 							//^2636:025D
@@ -15038,8 +15033,8 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 					{
 						//^2636:0153
 						bp12 = 7;
-						Bit8u bp13 = 0;
-						Bit8u bp14 = U8(_4976_52e4);
+						U8 bp13 = 0;
+						U8 bp14 = U8(_4976_52e4);
 						//^2636:0161
 						QUERY_GDAT_TEXT(bp12, bp13, bp14, bp0c);
 						break;
@@ -15052,7 +15047,7 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 					{
 						//^DC 01
 						//^2636:0244
-						const Bit8u *bp0c = strZxxxTable[3];	// ".Z008DATA\"
+						const U8 *bp0c = strZxxxTable[3];	// ".Z008DATA\"
 												
 						// SPX: the game folder (which is DATA by default) is changed from dungeon menu (need a restart)
 						// Standard ".Z008DATA"
@@ -15093,7 +15088,7 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 						if (_4976_49a0 == 0) {
 							//^2636:0209
 							//^2636:0244
-							const Bit8u *bp0c = strZxxxTable[6];
+							const U8 *bp0c = strZxxxTable[6];
 							//^2636:024A
 							FORMAT_SKSTR(bp0c, bp0116);
 							//^2636:025D
@@ -15105,7 +15100,7 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 						else {
 							//^2636:0200
 							//^2636:0244
-							const Bit8u *bp0c = strZxxxTable[5];
+							const U8 *bp0c = strZxxxTable[5];
 							// SPX: the game folder (which is DATA by default) is changed from dungeon menu (need a restart)
 							// Standard ".Z008DATA"
 							bp0c = GET_DATA_FOLDER_ZNAME();
@@ -15139,7 +15134,7 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 				case 0x0017:	// .Z023 : Savegame number
 					{
 						//^2636:0218
-						Bit8u bp16[] = {glbSKSaveDigitAlpha, 0};
+						U8 bp16[] = {glbSKSaveDigitAlpha, 0};
 						//^2636:0222
 						SK_STRCPY(bp0096, bp16);
 						break;
@@ -15149,7 +15144,7 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 						//^2636:0235
 						//^2636:0244
 						ATLASSERT(glbLangageLetterIndex < 8U);
-						const Bit8u *bp0c = strZxxxTable[glbLangageLetterIndex];
+						const U8 *bp0c = strZxxxTable[glbLangageLetterIndex];
 						//^2636:024A
 						FORMAT_SKSTR(bp0c, bp0116);
 						//^2636:025D
@@ -15170,7 +15165,7 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 						if (_4976_5c9c != 0) {
 							//^2636:01E5
 							//^2636:0244
-							const Bit8u *bp0c = strZxxxTable[7];	// ".Z009DATA\"
+							const U8 *bp0c = strZxxxTable[7];	// ".Z009DATA\"
 							//^2636:024A
 							FORMAT_SKSTR(bp0c, bp0116);
 							//^2636:025D
@@ -15182,7 +15177,7 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 						else {
 							//^2636:01DC
 							//^2636:0244
-							const Bit8u *bp0c = strZxxxTable[3];	// ".Z008DATA\"
+							const U8 *bp0c = strZxxxTable[3];	// ".Z008DATA\"
 							//^2636:024A
 							FORMAT_SKSTR(bp0c, bp0116);
 							//^2636:025D
@@ -15196,7 +15191,7 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 					{
 						//^2636:01E5
 						//^2636:0244
-						const Bit8u *bp0c = strZxxxTable[7];	// ".Z009DATA\"
+						const U8 *bp0c = strZxxxTable[7];	// ".Z009DATA\"
 						//^2636:024A
 						FORMAT_SKSTR(bp0c, bp0116);
 						//^2636:025D
@@ -15208,8 +15203,8 @@ Bit8u *SkWinCore::FORMAT_SKSTR(const Bit8u *format, Bit8u *output)
 				case 0x001B:	// .Z027
 					{
 						//^2636:01EE
-						Bit8u bp13 = 0xFE;
-						Bit8u bp14 = 0x06;
+						U8 bp13 = 0xFE;
+						U8 bp14 = 0x06;
 						//^2636:0161
 						QUERY_GDAT_TEXT(bp12, bp13, bp14, bp0c);
 						break;
@@ -15312,7 +15307,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	Bit16u bp04 = 0;
 	Bit16u si = 0;
 	i16 di;
-	Bit8u bp01 = 0;
+	U8 bp01 = 0;
 
 #ifdef __SK_EXTENDED_SKWIN_V6__
 	int iReadExtendedGame = 0;
@@ -15324,7 +15319,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 
 	SkD((DLV_DBG_GAME_LOAD, "Read 8 first bytes (Random seed) ...\n"));
 	//SPX: Read the first 8 bytes of the dungeon.dat
-	Bit8u bp26[8];
+	U8 bp26[8];
 	SkD((DLV_DBG_GAME_LOAD, "Dungeon Read iHandle = %d\n", glbDataFileHandle));
 	if (FILE_READ(glbDataFileHandle, 8, bp26) == 0)
 		return 0;
@@ -15547,14 +15542,14 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 		// SPX: 0x400 = 32*32 tiles / bp10 = #maps / _4976_4cb4 = #cols for all maps
 		glbMapTileValue = reinterpret_cast<U8 ***>(ALLOC_MEMORY_RAM((_4976_4cb4 + nMaps) * sizeof(void *), afUseUpper, 0x400));
 		//^2066:298A
-		Bit8u ***bp08 = &glbMapTileValue[nMaps];
+		U8 ***bp08 = &glbMapTileValue[nMaps];
 		//^2066:299C
 		for (di = 0; di < nMaps; di++) {
 			//^2066:29A1
 			// MARK SPX
 			glbMapTileValue[di] = reinterpret_cast<U8 **>(bp08);
 			//^2066:29B9
-			Bit8u *bp0c = &dunMapData[dunMapsHeaders[di].w0];
+			U8 *bp0c = &dunMapData[dunMapsHeaders[di].w0];
 			*bp08 = reinterpret_cast<U8 **>(bp0c);
 			bp08++;
 			//^2066:29E2
@@ -15614,7 +15609,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 			//^2066:2AF2
 			if (dunMapsHeaders[bp1e].Level() == bp12) {
 				//^2066:2B0A
-				*bp18 = (Bit8u)bp1e;
+				*bp18 = (U8)bp1e;
 				bp18++;
 				bp14++;
 			}
@@ -15624,7 +15619,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 		*bp18 = 0xff;
 		bp18++;
 		bp14++;
-		*bp1c = (Bit8u)bp14;
+		*bp1c = (U8)bp14;
 		//^2066:2B3A
 	}
 	SkD((DLV_DBG_GAME_LOAD, "Assert 1 : %08x - %08x <= %d + %d => [%d]\n", bp1c, _4976_4cb0, MAXDEPTH, 1U, (bp1c - _4976_4cb0)));
@@ -15682,21 +15677,21 @@ void SkWinCore::CHECK_TILE_RECORDS() {
 //^2066:01C3
 int SkWinCore::SUPPRESS_READER(void *_data, const void *_mask, Bit16u buffSize, Bit32u repeat, Bit16u fill)
 {
-	Bit8u *data = reinterpret_cast<Bit8u *>(_data);
-	const Bit8u *mask = reinterpret_cast<const Bit8u *>(_mask);
+	U8 *data = reinterpret_cast<U8 *>(_data);
+	const U8 *mask = reinterpret_cast<const U8 *>(_mask);
 
 	//^2066:01C3
 	Bit32u bp0a = 0;
-	Bit8u bp04 = _4976_5254;
-	Bit8u bp05 = _4976_524e;
+	U8 bp04 = _4976_5254;
+	U8 bp05 = _4976_524e;
 	//^2066:01E8
 	for (Bit32u bp0e = 0; bp0e < repeat; ) {
 		//^2066:01EB
 		for (Bit16u si = 0; si < buffSize; si++) {
 			//^2066:01F0
-			Bit8u bp03 = (fill != 0) ? 0 : (*data);
+			U8 bp03 = (fill != 0) ? 0 : (*data);
 			//^2066:0205
-			Bit8u bp02 = *mask;
+			U8 bp02 = *mask;
 			mask++;
 			//^2066:0211
 			if (bp02 != 0) {
@@ -15707,7 +15702,7 @@ int SkWinCore::SUPPRESS_READER(void *_data, const void *_mask, Bit16u buffSize, 
 						//^2066:0232
 						if (bp05 == 0) {
 							//^2066:0238
-							Bit8u bp0f;
+							U8 bp0f;
 							if (FILE_READ(glbDataFileHandle, 1, &bp0f) == 0)
 								return 1;
 							//^2066:0257
@@ -15760,7 +15755,7 @@ int SkWinCore::SUPPRESS_READER(void *_data, const void *_mask, Bit16u buffSize, 
 int SkWinCore::READ_1BIT(Bit16u *pw)
 {
 	//^2066:030D
-	Bit8u bp01;
+	U8 bp01;
 	//^2066:0312
 	Bit16u si = SUPPRESS_READER(&bp01, glbByte01, 1, 1, 1);
 	*pw = bp01;
@@ -15786,8 +15781,8 @@ int SkWinCore::READ_RECORD_CHECKCODE(i16 xpos, i16 ypos, ObjectID *recordLinkPtr
 		if (bp0e == 0)
 			break;
 		//^2066:15CB
-		Bit8u bp0c = 0x0f;
-		Bit8u bp0b;
+		U8 bp0c = 0x0f;
+		U8 bp0b;
 		//^2066:15CF
 		if (SUPPRESS_READER(&bp0b, &bp0c, 1, 1, 1) != 0) // read#dbtype
 			return 1;
@@ -16168,14 +16163,14 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 	for (bp16 = 0; dunHeader->nMaps > bp16; bp16++) {
 		//^2066:1C2D
 		CHANGE_CURRENT_MAP_TO(bp16);
-		Bit8u *bp04 = *glbCurrentTileMap;
+		U8 *bp04 = *glbCurrentTileMap;
 		for (Bit16u bp0e = 0; bp0e < glbCurrentMapWidth; bp0e++) {
 			//^2066:1C4F
 			for (Bit16u bp10 = 0; bp10 < glbCurrentMapHeight; bp10++) {
 				//^2066:1C57
-				Bit8u bp13 = *bp04;
+				U8 bp13 = *bp04;
 				Bit16u bp24 = 0;
-				Bit8u bp1b;
+				U8 bp1b;
 				switch (bp13 >> 5) {
 					case ttWall:
 					case ttFloor:
@@ -16193,7 +16188,7 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 						{
 							//^2066:1C8C
 							TELE_inf bp2a;
-							if (GET_TELEPORTER_DETAIL(&bp2a, (Bit8u)bp0e, (Bit8u)bp10) != 0) {
+							if (GET_TELEPORTER_DETAIL(&bp2a, (U8)bp0e, (U8)bp10) != 0) {
 								//^2066:1CA3
 								bp1b = 0x00;
 								if (bp2a.target_z() < bp16) {
@@ -16305,7 +16300,7 @@ i16 SkWinCore::GAME_LOAD()
 	//^2066:2D9C
 	Bit16u bp04 = 0;
 	Bit16u si = 0;
-	Bit8u bp01 = 0;
+	U8 bp01 = 0;
 	Bit16u bp08;
 	Bit16u bp06;
 	//^2066:2DAD
@@ -16511,7 +16506,7 @@ _2e5b:
 			_4976_4c00 = t1.w30;
 			glbPlayerThrowCounter = t1.wPlayerThrowCounter;
 			_4976_4c0c = t1.w34;
-			glbRainFlagSomething = (Bit8u)t1.wRainFlagSomething;
+			glbRainFlagSomething = (U8)t1.wRainFlagSomething;
 			glbRainAmbientLightModifier = t1.bRainAmbientLightModifier;
 			glbRainDirection = t1.bRainDirection;	// rain dir.
 			glbRainStrength = t1.bRainStrength;	// rain str.
@@ -16715,7 +16710,7 @@ _31b8:		// we jump there from loading a dungeon from new game
 			_4976_4c00 = t1.w30;
 			glbPlayerThrowCounter = t1.wPlayerThrowCounter;
 			_4976_4c0c = t1.w34;
-			glbRainFlagSomething = (Bit8u)t1.wRainFlagSomething;
+			glbRainFlagSomething = (U8)t1.wRainFlagSomething;
 			glbRainAmbientLightModifier = t1.bRainAmbientLightModifier;
 			glbRainDirection = t1.bRainDirection;	// rain dir.
 			glbRainStrength = t1.bRainStrength;	// rain str.
@@ -16797,7 +16792,7 @@ _3262:
 }
 
 //^0CEE:3035
-Bit8u SkWinCore::QUERY_CLS2_OF_TEXT_RECORD(ObjectID recordLink)
+U8 SkWinCore::QUERY_CLS2_OF_TEXT_RECORD(ObjectID recordLink)
 {
 	//^0CEE:3035
 	Text *bp04 = GET_ADDRESS_OF_RECORD2(recordLink);
@@ -16811,7 +16806,7 @@ Bit8u SkWinCore::QUERY_CLS2_OF_TEXT_RECORD(ObjectID recordLink)
 			case 0x0005: // 0x05 - ?
 			case 0x000D: // 0x0d - 2-state switch
 				//^0CEE:3080
-				return Bit8u(bp04->OrnateIndex());
+				return U8(bp04->OrnateIndex());
 		}
 	}
 	//^0CEE:3091
@@ -16819,7 +16814,7 @@ Bit8u SkWinCore::QUERY_CLS2_OF_TEXT_RECORD(ObjectID recordLink)
 }
 
 //^0CEE:241B
-Bit8u SkWinCore::QUERY_CLS2_FROM_RECORD(ObjectID recordLink)
+U8 SkWinCore::QUERY_CLS2_FROM_RECORD(ObjectID recordLink)
 {
 	//^0CEE:241B
 	if (recordLink != OBJECT_NULL) {
@@ -16831,7 +16826,7 @@ Bit8u SkWinCore::QUERY_CLS2_FROM_RECORD(ObjectID recordLink)
 		}
 		else {
 			//^0CEE:243E
-			return ((Bit8u)recordLink.w) - 0x80;
+			return ((U8)recordLink.w) - 0x80;
 		}
 		//^0CEE:2446
 		switch (recordLink.DBType()) {
@@ -16877,7 +16872,7 @@ Bit8u SkWinCore::QUERY_CLS2_FROM_RECORD(ObjectID recordLink)
 				break;
 			case dbMissile:		//14
 				//^0CEE:24BE
-				return (Bit8u)QUERY_CLS2_FROM_RECORD(bp04->castToMissile()->GetMissileObject());
+				return (U8)QUERY_CLS2_FROM_RECORD(bp04->castToMissile()->GetMissileObject());
 			case dbCloud:		//15
 				//^0CEE:24CB
 				return bp04->castToCloud()->CloudType();
@@ -16890,7 +16885,7 @@ Bit8u SkWinCore::QUERY_CLS2_FROM_RECORD(ObjectID recordLink)
 
 
 //^0CEE:23DE
-Bit8u SkWinCore::QUERY_CLS1_FROM_RECORD(ObjectID recordLink)
+U8 SkWinCore::QUERY_CLS1_FROM_RECORD(ObjectID recordLink)
 {
 	//^0CEE:23DE
 	ObjectID di = recordLink;
@@ -16910,7 +16905,7 @@ Bit8u SkWinCore::QUERY_CLS1_FROM_RECORD(ObjectID recordLink)
 }
 
 //^3E74:0756
-tiamat SkWinCore::_3e74_0756(Bit8u *xx, i32 size) { // TODO: Unr
+tiamat SkWinCore::_3e74_0756(U8 *xx, i32 size) { // TODO: Unr
 	Unr(); return tiamat::zero();
 }
 
@@ -19384,7 +19379,7 @@ _1741:
 
 
 //^47EB:0048
-Bit8u *SkWinCore::_47eb_0048(shelf_memory info, Bit16u physPage0to3)
+U8 *SkWinCore::_47eb_0048(shelf_memory info, Bit16u physPage0to3)
 {
 #if UseAltic
 	return REALIZE_GRAPHICS_DATA_MEMORY(info);
@@ -19729,7 +19724,7 @@ _2484:
 }
 
 //^0CEE:0184
-ObjectID *SkWinCore::OVERSEE_RECORD(ObjectID *ref, Bit8u dir, ObjectID **recordMatched, U16 (SkWinCore::*pfnFinder)(ObjectID *ref, void *pvUser), void *pvUser, Bit16u alsoCreaturePossessions, Bit16u alsoContainedObjects)
+ObjectID *SkWinCore::OVERSEE_RECORD(ObjectID *ref, U8 dir, ObjectID **recordMatched, U16 (SkWinCore::*pfnFinder)(ObjectID *ref, void *pvUser), void *pvUser, Bit16u alsoCreaturePossessions, Bit16u alsoContainedObjects)
 {
 	//^0CEE:0184
 	ENTER(8);
@@ -19929,10 +19924,10 @@ void SkWinCore::INVOKE_MESSAGE(i16 xpos, i16 ypos, Bit16u dir, Bit16u actionType
 	}
 	// And no other else ? what happens if = 0 ?
 	//^2FCF:15CD
-	bp0a.Xcoord((Bit8u)xpos);
-	bp0a.Ycoord((Bit8u)ypos);
-	bp0a.Value2((Bit8u)dir);
-	bp0a.ActionType((Bit8u)actionType);
+	bp0a.Xcoord((U8)xpos);
+	bp0a.Ycoord((U8)ypos);
+	bp0a.Value2((U8)dir);
+	bp0a.ActionType((U8)actionType);
 	//^2FCF:15E5
 	QUEUE_TIMER(&bp0a);
 }
@@ -19982,7 +19977,7 @@ ObjectID *SkWinCore::_1c9a_06bd(ObjectID recordLink, Bit16u ss, Bit16u dir)
 		ObjectID *bp0c;
 		bp04 = OVERSEE_RECORD(
 			&creature->possession,
-			(Bit8u)dir,
+			(U8)dir,
 			&bp0c,
 			&SkWinCore::_1c9a_0694,
 			&ss,
@@ -20088,9 +20083,9 @@ void SkWinCore::ROTATE_SQUAD(Bit16u dir)
 		//^2C1D:0203
 		for (Bit16u si=0; si < glbChampionsCount; bp04++, si++) {
 			//^2C1D:0207
-			bp04->playerPos(bp04->playerPos() + (Bit8u)dx);
+			bp04->playerPos(bp04->playerPos() + (U8)dx);
 			//^2C1D:0216
-			bp04->playerDir(bp04->playerDir() + (Bit8u)dx);
+			bp04->playerDir(bp04->playerDir() + (U8)dx);
 			//^2C1D:0222
 		}
 		//^2C1D:022E
@@ -20174,7 +20169,7 @@ Bit16u SkWinCore::_2fcf_0434(ObjectID recordLink, i16 xpos, i16 ypos, i16 xx, i1
 				//^2FCF:0549
 				break;
 			//^2FCF:054C
-			Teleporter *bp04 = GET_ADDRESS_OF_TILE_RECORD((Bit8u)xx, (Bit8u)yy)->castToTeleporter();
+			Teleporter *bp04 = GET_ADDRESS_OF_TILE_RECORD((U8)xx, (U8)yy)->castToTeleporter();
 			//^2FCF:055F
 			if (bp04->Scope() == scopeCreatures && bp1e != dbCreature)
 				//^2FCF:0577
@@ -20915,7 +20910,7 @@ Bit16u SkWinCore::MISSILE_HIT_075f_0af9(i16 u16tileType, i16 xpos, i16 ypos, Bit
 				//^075F:0C4A
 				i16 bp12 = glbCurrentTileMap[xpos][ypos] & 0x07;
 				//^075F:0C66
-				Door *door = GET_ADDRESS_OF_TILE_RECORD((Bit8u)xpos, (Bit8u)ypos)->castToDoor();	//*bp1a
+				Door *door = GET_ADDRESS_OF_TILE_RECORD((U8)xpos, (U8)ypos)->castToDoor();	//*bp1a
 				//^075F:0C79
 				if (bp12 != 5 && (si == OBJECT_EFFECT_ZO_SPELL || si == OBJECT_EFFECT_ZO_2)) {	// (si == oFF84 || si == oFF8D
 					//^075F:0C89
@@ -21242,7 +21237,7 @@ void SkWinCore::_2fcf_0234(i16 xposFrom, i16 yposFrom, i16 xposTo, i16 yposTo)
 	//^2FCF:023A
 	Bit16u bp04 = 0;
 	//^2FCF:023F
-	Bit8u bp10[4];
+	U8 bp10[4];
 	ZERO_MEMORY(&bp10, 4);
 	//^2FCF:0250
 	Bit16u bp02;
@@ -21255,7 +21250,7 @@ void SkWinCore::_2fcf_0234(i16 xposFrom, i16 yposFrom, i16 xposTo, i16 yposTo)
 		//^2FCF:0274
 	}
 	//^2FCF:027D
-	Bit8u bp0c[4];
+	U8 bp0c[4];
 	if (xposTo >= 0 && CALC_SQUARE_DISTANCE(xposFrom, yposFrom, xposTo, yposTo) == 1) {
 		//^2FCF:02A2
 		bp02 = CALC_VECTOR_DIR(xposFrom, yposFrom, xposTo, yposTo);
@@ -21362,7 +21357,7 @@ void SkWinCore::LOAD_LOCALLEVEL_GRAPHICS_TABLE(Bit16u curmap) //#DS=4976?
 	//^0CEE:00D3
 	CHANGE_CURRENT_MAP_TO(glbPlayerMap = curmap);
 	//^0CEE:00DF
-	Bit8u *bp04 = (glbMapCreaturesTypeNumber = &glbCurrentTileMap[glbCurrentMapWidth -1][glbCurrentMapHeight]);
+	U8 *bp04 = (glbMapCreaturesTypeNumber = &glbCurrentTileMap[glbCurrentMapWidth -1][glbCurrentMapHeight]);
 	//^0CEE:0107
 	Bit16u si = dunMapLocalHeader->WallGraphics();
 	//^0CEE:0114
@@ -21492,7 +21487,7 @@ void SkWinCore::DELETE_MISSILE_RECORD(ObjectID rlMissile, ObjectID *prlDropTo, i
 }
 
 //^0CEE:0EC8
-ObjectID SkWinCore::RECYCLE_A_RECORD_FROM_THE_WORLD(Bit16u itemdb, Bit8u itemtype)
+ObjectID SkWinCore::RECYCLE_A_RECORD_FROM_THE_WORLD(Bit16u itemdb, U8 itemtype)
 {
 	SkD((DLV_DBM, "DBM: RECYCLE_A_RECORD_FROM_THE_WORLD(%04X,%3u)\n"
 		, (Bitu)itemdb, (Bitu)itemtype));
@@ -21567,7 +21562,7 @@ ObjectID SkWinCore::RECYCLE_A_RECORD_FROM_THE_WORLD(Bit16u itemdb, Bit8u itemtyp
 		//^0CEE:0FA0
 		Bit16u bp16 = dunMapsHeaders[bp0e].RawRow();
 		//^0CEE:0FB9
-		Bit8u *bp04 = *glbMapTileValue[bp0e];
+		U8 *bp04 = *glbMapTileValue[bp0e];
 		//^0CEE:0FD5
 		OID_T *bp0c = &dunGroundStacks[dunMapTilesObjectIndexPerColumn[dunMapColumnsSumArray[bp0e]]]; // Bit16u *bp0c
 		//^0CEE:1000
@@ -21577,7 +21572,7 @@ ObjectID SkWinCore::RECYCLE_A_RECORD_FROM_THE_WORLD(Bit16u itemdb, Bit8u itemtyp
 				//^0CEE:1010
 				if ((*(bp04++) & 0x10) != 0) {
 					//^0CEE:1024
-					Bit8u bp27 = 0xff;
+					U8 bp27 = 0xff;
 					//^0CEE:1028
 					ObjectID si = *(bp0c++);
 					//^0CEE:1032
@@ -21792,7 +21787,7 @@ ObjectID SkWinCore::RECYCLE_A_RECORD_FROM_THE_WORLD(Bit16u itemdb, Bit8u itemtyp
 							//^0CEE:12B0
 							CHANGE_CURRENT_MAP_TO(bp1a);
 							//^0CEE:12B8
-							_4976_4c42[itemdb] = (Bit8u)bp0e;
+							_4976_4c42[itemdb] = (U8)bp0e;
 							//^0CEE:12C2v
 							return si.GetAsNorth();
 						}
@@ -21847,7 +21842,7 @@ _1324:
 			//^0CEE:1364
 			if (bp26 != 0) {
 				//^0CEE:136A
-				_4976_4c42[itemdb] = (Bit8u)bp0e;
+				_4976_4c42[itemdb] = (U8)bp0e;
 				//^0CEE:1374
 				//^0CEE:0ED4
 				return OBJECT_NULL;
@@ -21916,7 +21911,7 @@ ObjectID SkWinCore::ALLOC_NEW_RECORD(Bit16u db)
 	//^0CEE:143D
 	Bit16u bp06 = bp08;
 	Bit16u bp0a = glbItemSizePerDB[si];
-	Bit8u *bp04 = glbDBObjectData[si];
+	U8 *bp04 = glbDBObjectData[si];
 
 	while (true) {
 		//^0CEE:145F
@@ -21941,7 +21936,7 @@ ObjectID SkWinCore::ALLOC_NEW_RECORD(Bit16u db)
 					return OBJECT_NULL;
 				}
 				//^0CEE:14A0
-				bp04 = reinterpret_cast<Bit8u *>(GET_ADDRESS_OF_RECORD(di));
+				bp04 = reinterpret_cast<U8 *>(GET_ADDRESS_OF_RECORD(di));
 			}
 		}
 		//^0CEE:14AC
@@ -22892,7 +22887,7 @@ LOGX(("ULP >> "));
 		//shelf_memory();
 		if (p != NULL && (void*) p < (void*) 0x70000000)	// assume else it is not valid
 		{
-			Bit8u* xDataPointer = NULL;
+			U8* xDataPointer = NULL;
 			unsigned int iLength = 0;
 			iLength = QUERY_GDAT_RAW_DATA_LENGTH(iItemNumber);
 			iLength= iLength & 0x7FFFFFFF;
@@ -23093,7 +23088,7 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_0A()
 		iItemSize = 1652;
 		SkCodeParam::bDM2V5Mode = true;
 		// Then, we do a hardfile read to make up for missing item, not pretty but working
-		hAnimFrameTabHandle = FILE_OPEN((const U8*)"bin/v4kj9821/0653ctbl.bin");
+		hAnimFrameTabHandle = FILE_OPEN((const U8*)"bin/v4/0653ctbl.bin");
 		tblCreatureFrameInfo14 = reinterpret_cast<U8 (*)[14]>(ALLOC_MEMORY_RAM(iItemSize,	afUseUpper, 0x400));
 		FILE_READ(hAnimFrameTabHandle, iItemSize, tblCreatureFrameInfo14);
 		FILE_CLOSE(hAnimFrameTabHandle);
@@ -23179,7 +23174,7 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_00()
 		tlbCreaturesActionsGroupSets = NULL;
 		tlbCreaturesActionsGroupOffsets = NULL;
 		// Then, we do a hardfile read to make up for missing item, not pretty but working
-		hCreatureTabHandle = FILE_OPEN((const U8*)"bin/v4kj9821/0652ctbl.bin");
+		hCreatureTabHandle = FILE_OPEN((const U8*)"bin/v4/0652ctbl.bin");
 		bp04 = ALLOC_MEMORY_RAM(iItemSize,	afUseUpper, 0x400);
 		FILE_READ(hCreatureTabHandle, iItemSize, bp04);
 		FILE_CLOSE(hCreatureTabHandle);
@@ -25421,14 +25416,14 @@ _00a4:
 		SkD((DLV_SYS,"SYS: Tick increased to %u ------------------------------\n", (Bitu)glbGameTick));
 		SkD((DLV_DBG_SEED,"DBG: t %08X Seed %08X \n", (Bitu)glbGameTick, (Bitu)glbRandomSeed));
 		SkD((DLV_DBG_SED3,"DBG: v %02X,%02X,%02X,%02X,%02X,%02X,%02X,%02X \n"
-			, (Bitu)(Bit8u)glbTabCreaturesInfo[1].Command
-			, (Bitu)(Bit8u)glbTabCreaturesInfo[1].b27
-			, (Bitu)(Bit8u)glbTabCreaturesInfo[1].b28
-			, (Bitu)(Bit8u)glbTabCreaturesInfo[1].b29
-			, (Bitu)(Bit8u)glbTabCreaturesInfo[1].ItemToThrow
-			, (Bitu)(Bit8u)glbTabCreaturesInfo[1].b31
-			, (Bitu)(Bit8u)glbTabCreaturesInfo[1].b32
-			, (Bitu)(Bit8u)glbTabCreaturesInfo[1].b33
+			, (Bitu)(U8)glbTabCreaturesInfo[1].Command
+			, (Bitu)(U8)glbTabCreaturesInfo[1].b27
+			, (Bitu)(U8)glbTabCreaturesInfo[1].b28
+			, (Bitu)(U8)glbTabCreaturesInfo[1].b29
+			, (Bitu)(U8)glbTabCreaturesInfo[1].ItemToThrow
+			, (Bitu)(U8)glbTabCreaturesInfo[1].b31
+			, (Bitu)(U8)glbTabCreaturesInfo[1].b32
+			, (Bitu)(U8)glbTabCreaturesInfo[1].b33
 			));
 		if ((X16(glbGameTick) & 0x1ff) == 0)	// every 511 tick, burn lighting items
 			//^13AE:01BB
