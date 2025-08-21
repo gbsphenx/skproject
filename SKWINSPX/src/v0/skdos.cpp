@@ -6,13 +6,12 @@
 
 #include <skdos.h>
 #include <skver.h>
+#include <sktypes.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-
-#include <sktypes.h>
 
 //..............................................................................
 

@@ -11,12 +11,13 @@
 #include <skver.h>
 #include <skmfc.h>
 #include <skwinmfc.h>
+#include <skparam.h>
+
 #include <skmfcres.h>
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <skparam.h>
 
 //------------------------------------------------------------------------------
 

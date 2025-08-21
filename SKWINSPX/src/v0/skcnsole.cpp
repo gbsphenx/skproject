@@ -1,5 +1,7 @@
 //------------------------------------------------------------------------------
+#ifndef __LINUX__
 #include <stdafx.h>	// Required for MVC6 compilation
+#endif // __LINUX__
 
 #include <skcnsole.h>
 #include <stdio.h>

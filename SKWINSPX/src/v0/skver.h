@@ -83,17 +83,25 @@
 // COMPILATION TARGET
 #if defined (__DJGPP__)
 	#define __SKWIN_SYSTEM__ "DOS"
-	#define __NO_MFC__
+	#ifndef __NO_MFC__
+		#define __NO_MFC__
+	#endif // __NO_MFC__
 	#define __NO_SDL__
 #elif defined (__MINGW__)
 	#define __SKWIN_SYSTEM__ "MINGW32"
-	#define __NO_MFC__
+	#ifndef __NO_MFC__
+		#define __NO_MFC__
+	#endif // __NO_MFC__
 #elif defined (__LINUX__) && (defined(__x86_64__) || defined(__amd64__))
 	#define __SKWIN_SYSTEM__ "LINUX64"
-	#define __NO_MFC__
+	#ifndef __NO_MFC__
+		#define __NO_MFC__
+	#endif // __NO_MFC__
 #elif defined (__LINUX__)
 	#define __SKWIN_SYSTEM__ "LINUX"
-	#define __NO_MFC__
+	#ifndef __NO_MFC__
+		#define __NO_MFC__
+	#endif // __NO_MFC__
 #else
 	#define __SKWIN_SYSTEM__ "WIN32"
 #endif

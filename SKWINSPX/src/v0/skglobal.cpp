@@ -2,7 +2,9 @@
 // SK-GLOBAL:
 //	Main global variables used within DM2
 //------------------------------------------------------------------------------
+#ifndef __LINUX__
 #include <stdafx.h>
+#endif // __LINUX__
 
 #include <skglobal.h>
 #include <skdebug.h>

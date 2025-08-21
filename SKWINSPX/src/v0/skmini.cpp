@@ -25,10 +25,10 @@
 #include <time.h>
 
 #include <sktypes.h>
-
 #include <skver.h>
-#include <skglobal.h>
 #include <skparam.h>
+
+#include <skglobal.h>
 
 #include <skwinapp.h>
 #include <skdos.h>
@@ -137,27 +137,6 @@ int main(int argc, char* argv[])
 		skWinApplication.setRenderer(GFX_RENDERER_MFC);
 
 	skWinApplication.runWindowTest();
-/*
-	// screen testing
-	if (SkCodeParam::bRenderingEngineMFC || SkCodeParam::bRenderingEngineSDL || SkCodeParam::bRenderingEngineDOS)
-	{
-		printf("Next test for full window/screen.\n");
-		printf("Press enter to continue ...\n");
-		scanf("%c", &cKeyboardInput);
-
-		skWinApplication.setVideoMode();	// also init
-		//skWinApplication.setVideoTestGradient();
-		skWinApplication.setVideoTestStatic(10);
-		printf("Next test for title image display.\n");
-		printf("Press enter to continue ...\n");
-		scanf("%c", &cKeyboardInput);
-
-		skWinApplication.setVideoTestTitle();
-		printf("Press enter to continue ...\n");
-		scanf("%c", &cKeyboardInput);
-
-		skWinApplication.resetVideoMode();
-	}*/
 
 	printf("Test complete.\n");
 

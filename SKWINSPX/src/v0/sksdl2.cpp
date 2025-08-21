@@ -1,7 +1,15 @@
 //------------------------------------------------------------------------------
 
-#include <sksdl2.h>
 #include <skver.h>
+
+#include <sktypes.h>
+
+#include <skparam.h>
+#include <skvram.h>
+
+#include <skwinapp.h>
+
+#include <sksdl2.h>
 
 #if defined (__NO_SDL__)
 #elif defined (__LINUX__)
@@ -16,12 +24,7 @@
 #include <string.h>
 #include <time.h>
 
-#include <sktypes.h>
 
-#include <skparam.h>
-#include <skvram.h>
-
-#include <skwinapp.h>
 
 //..............................................................................
 
@@ -69,7 +72,7 @@ UINT SkRendererSDL::Init(SkVRAM* xVRAM)
     sdlWindow = SDL_CreateWindow(sSDLWindowName,
                                   SDL_WINDOWPOS_CENTERED,
                                   SDL_WINDOWPOS_CENTERED,
-                                  iScreenWidth*SkCodeParam::iVideoScale, iScreenHeight*SkCodeParam::iVideoScale,
+                                  iScreenWidth*SkCodeParam::iVideoScale, iScreenHeight*(SkCodeParam::iVideoScale*SkCodeParam::fVideoYScale),
                                   SDL_WINDOW_SHOWN);
     if (!sdlWindow) {
         printf("SDL_CreateWindow Error: %s\n", SDL_GetError());
@@ -110,7 +113,7 @@ UINT SkRendererSDL::Init(SkVRAM* xVRAM)
 UINT SkRendererSDL::ResizeWindow()
 {
 #if !defined (__NO_SDL__)
-	SDL_SetWindowSize(sdlWindow, iScreenWidth*SkCodeParam::iVideoScale, iScreenHeight*SkCodeParam::iVideoScale);
+	SDL_SetWindowSize(sdlWindow, iScreenWidth*SkCodeParam::iVideoScale, iScreenHeight*SkCodeParam::iVideoScale*SkCodeParam::fVideoYScale);
 #endif // not __NO_SDL__
 	return 0;
 }

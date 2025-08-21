@@ -5,7 +5,7 @@
 #include <skvram.h>
 #include <skrender.h>
 
-class SkWinCore;
+//class SkWinCore;
 
 #include <skwinmfc.h>
 

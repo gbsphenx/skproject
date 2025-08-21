@@ -1,5 +1,5 @@
 #include <skparam.h>
-#include <stdio.h>
+//#include <stdio.h>
 
 #ifdef __LINUX__
 bool SkCodeParam::bCompilation64bits = true;
@@ -30,7 +30,7 @@ bool SkCodeParam::bUseBigEnd = false;	// Default is little-end
 
 bool SkCodeParam::bNoAudio = false;
 bool SkCodeParam::bNoMusic = false;
-bool SkCodeParam::bChampionImmune = true;
+bool SkCodeParam::bChampionImmune = false;
 
 bool SkCodeParam::bUseAudioSDL = false;
 
@@ -87,7 +87,9 @@ bool SkCodeParam::bForceSaveGameReadOK = true;
 
 float SkCodeParam::fDebugRainSpeed = 1;
 short int SkCodeParam::iTickSpeedFactor = 3;
+
 UINT SkCodeParam::iVideoScale = 3;
+float SkCodeParam::fVideoYScale = 1.20f;
 
 bool SkCodeParam::bUseExtendedSound = false;
 

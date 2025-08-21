@@ -1,10 +1,12 @@
+#ifndef __LINUX__
 #include <stdafx.h>
+#endif // __LINUX__
 #include <skfile.h>
+#include <skdebug.h>
+
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
-
-#include <skdebug.h>
 
 #if defined(__LINUX__)
 	#include <unistd.h>

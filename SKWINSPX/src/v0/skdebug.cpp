@@ -1,12 +1,13 @@
+#include <skver.h>
+#include <skdebug.h>
+
 //#include <stdafx.h>
 #if (_MSC_VER >= 1200)
 	#include <winatl.h>
 #endif
 
-#include <skver.h>
 #include <stdio.h>
 #include <stdarg.h> // va_start, etc ...
-#include <skdebug.h>
 
 //--- SkwinDEBUG ---------------------------------------------------------------
 

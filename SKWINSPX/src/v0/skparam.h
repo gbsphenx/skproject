@@ -99,6 +99,7 @@ public:
 
 	static short int iTickSpeedFactor;	// replaces skwin.spfact
 	static UINT iVideoScale;
+	static float fVideoYScale;
 
 	//--- Very specific for debugging
 	static bool bDebugNoImageDecodingAssert;

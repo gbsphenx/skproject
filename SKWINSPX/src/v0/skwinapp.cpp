@@ -6,10 +6,6 @@
 
 #include <sktypes.h>
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-
 #include <skvram.h>
 #include <skdebug.h>
 
@@ -22,6 +18,10 @@
 
 #include <dme.h>
 
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+
 
 //#if !defined (SKDOSV5) && ((_MSC_VER >= 1200) || defined (_USE_MFC80) || defined (_USE_MFC60))
 #if (_MSC_VER >= 1200) || defined (_USE_MFC80) || defined (_USE_MFC60)
@@ -29,7 +29,12 @@
 #elif defined (__LINUX__)
 	#include <unistd.h> // sleep
 #elif defined (__MINGW__)
-	#include <windows.h> // sleep
+	//#include <process.h> // _sleep
+	//#include <windows.h> // sleep
+	#ifdef _WIN32
+	extern "C" __declspec(dllimport) void __stdcall Sleep(unsigned long ms);	// do this to avoid importing the whole <windows.h> for that
+	extern "C" __declspec(dllimport) unsigned long __stdcall GetTickCount(void);
+	#endif
 #elif defined (__DJGPP__)
 	#include <dos.h>	// delay (sleep)
 #endif
@@ -337,9 +342,11 @@ UINT SkWinApp::setVideoMode()
 	else if (iVideoRenderer == GFX_RENDERER_DOS) {
 		xSkWinRenderer = (SkRendererGeneric*) new SkRendererDOS();
 	}
+#ifndef __NO_MFC__
 	else if (iVideoRenderer == GFX_RENDERER_MFC) {
 		xSkWinRenderer = (SkRendererGeneric*) new SkRendererMFC();
 	}
+#endif // __NO_MFC__
 	if (xSkWinRenderer != NULL)
 		xSkWinRenderer->Init(xVRAM);
 	else
@@ -509,6 +516,7 @@ void SkWinApp::skwin_Sleep(U32 millisecs)
 	Sleep(millisecs);
 #elif defined(__MINGW__)
 	Sleep(millisecs);
+	//_sleep(millisecs);
 #elif defined (__LINUX__)
 	usleep(millisecs*1000);
 #elif defined (__DJGPP__)
@@ -636,6 +644,8 @@ bool SkWinApp::skwin_ML() {
 #endif // __SDL__
 	//SkD((DLV_MOUSE,"Ended SDL_PumpEvents\n"));
 	}
+	else
+		this->skwin_Sleep(1);
 
 	return skwin_IsAvail();
 }
@@ -753,6 +763,14 @@ void SkWinApp::processKinput(U32 nChar, bool press)
 		//printf("New scale : %d\n", SkCodeParam::iVideoScale);
 		xSkWinRenderer->ResizeWindow();
 		return;
+	}
+	else if (press && nChar == SDLK_F4) {
+		if (SkCodeParam::fVideoYScale != 1)
+			SkCodeParam::fVideoYScale = 1.0f;
+		else
+			SkCodeParam::fVideoYScale = 1.20f;
+		xSkWinRenderer->ResizeWindow();
+		xSkWinRenderer->Render();
 	}
 	else if (press && nChar == SDLK_F2) {
 		// make slow

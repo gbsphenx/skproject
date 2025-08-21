@@ -6,8 +6,8 @@
 #ifndef _SKCODE_RENDERER_H_
 #define _SKCODE_RENDERER_H_
 
-#include <skvram.h>
 #include <sktypes.h>
+#include <skvram.h>
 
 //..............................................................................
 //------------------------------------------------------------------------------
