@@ -340,17 +340,17 @@ e_cursoridx c_Tmouse::T1_queue_event(i16 x, i16 y, i16 b)
   entry.b = b;
 
   e_cursoridx cidx;
-printf("T1_queue_event %d,%d B=%2X\n", x, y, b);
+	printf("MOUSE : %d %d => BUTTON : %d\n", x, y, b);
   if (entry.b >= 0x20)	// not clicked
     cidx = T1_queue_0x20(entry.x, entry.y);
   else
   {
-	  printf("CLICK!\n");
+	  //printf("CLICK!\n");
     eventqueue.QUEUE_EVENT(entry.x, entry.y, entry.b);
     cidx = NOCURSOR;
   }
   // entry.x = cidx; // TODO: what? values are 0-3, -1
-	skWinApplication->skwin_Sleep(250);
+	//skWinApplication->skwin_Sleep(250);
   return cidx;
 }
 
