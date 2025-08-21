@@ -6484,7 +6484,7 @@ void SkWinCore::_38c8_0060()
 	//^38C8:0064
 	if (_4976_5bec != 0 && glbGameHasEnded == 0) {
 		//^38C8:0072
-		if (glbIsPlayerSleeping != 0) {
+		if (cd.pi.glbIsPlayerSleeping != 0) {
 			//^38C8:0079
 			DRAW_WAKE_UP_TEXT();
 			//^38C8:007E
@@ -6550,7 +6550,7 @@ void SkWinCore::RESUME_FROM_WAKE()
 	ENTER(0);
 	//^2C1D:14BD
 	glbRefreshViewport = 1; // SPX some move flag (viewport refresh?)
-	glbIsPlayerSleeping = 0;
+	cd.pi.glbIsPlayerSleeping = 0;
 	//glbTickSpeed = 12;	// SPX holds tick balance?? 12 was an old value
 	glbTickSpeed = stdTickBalance;
 	INIT_BACKBUFF();
@@ -12133,8 +12133,8 @@ void SkWinCore::CHANGE_VIEWPORT_TO_INVENTORY(Bit16u xx) //#DS=4976
 {
 	//^44C8:1BE8
 	//^44C8:1BEE
-	Bit16u di = glbIsPlayerMoving;
-	glbIsPlayerMoving = 0;
+	Bit16u di = cd.pi.glbIsPlayerMoving;
+	cd.pi.glbIsPlayerMoving = 0;
 	//^44C8:1BF8
 	SRECT bp0e;
 	// SPX: add value init for rect
@@ -12144,7 +12144,7 @@ void SkWinCore::CHANGE_VIEWPORT_TO_INVENTORY(Bit16u xx) //#DS=4976
 	bp0e.cy = 0;
 	QUERY_EXPANDED_RECT(7, &bp0e);
 	//^44C8:1C07
-	glbIsPlayerMoving = di;
+	cd.pi.glbIsPlayerMoving = di;
 	//^44C8:1C0B
 	Bit16u si;
 	if (glbPaletteIRGBLoaded == 0) {
@@ -12163,7 +12163,7 @@ void SkWinCore::CHANGE_VIEWPORT_TO_INVENTORY(Bit16u xx) //#DS=4976
 		}
 	}
 	//^44C8:1C5D
-	_00eb_0845(_4976_4c16, &bp0e, (glbIsPlayerMoving != 0) ? 0x8008 : 0x0008) CALL_IBMIO;
+	_00eb_0845(_4976_4c16, &bp0e, (cd.pi.glbIsPlayerMoving != 0) ? 0x8008 : 0x0008) CALL_IBMIO;
 	//^44C8:1C85
 	if (glbPaletteIRGBLoaded == 0 && si != 0) {
 		//^44C8:1C90
@@ -20132,7 +20132,7 @@ Bit16u SkWinCore::_2fcf_0434(ObjectID recordLink, i16 xpos, i16 ypos, i16 xx, i1
 		glbPlayerPosY = yy;
 		bp24 = 2;
 		//^2FCF:047A
-		bp26 = (glbChampionInventory == 0 && glbIsPlayerSleeping == 0) ? 1 : 0;
+		bp26 = (glbChampionInventory == 0 && cd.pi.glbIsPlayerSleeping == 0) ? 1 : 0;
 		bp1e = 0xffff;
 		bp28 = 0;
 	}
@@ -20325,7 +20325,7 @@ Bit16u SkWinCore::_2fcf_0434(ObjectID recordLink, i16 xpos, i16 ypos, i16 xx, i1
 					Champion *bp08;
 					if (_4976_5824 != 0) {
 						//^2FCF:0926
-						bp26 = (_4976_5bee[0] != 0 && glbChampionInventory == 0 && glbIsPlayerSleeping == 0) ? 1 : 0;
+						bp26 = (_4976_5bee[0] != 0 && glbChampionInventory == 0 && cd.pi.glbIsPlayerSleeping == 0) ? 1 : 0;
 						//^2FCF:0945
 						bp08 = glbChampionSquad;
 						//^2FCF:094D
@@ -25357,7 +25357,7 @@ _00a4:
 			, glbGameTick
 			));
 
-		if (glbIsPlayerSleeping == 0) {
+		if (cd.pi.glbIsPlayerSleeping == 0) {
 			//^13AE:00C2
 			if (cd.pi.glbNextChampionNumber == 0)
 				//^13AE:00C9
@@ -25370,7 +25370,7 @@ _00a4:
 					CHECK_RECOMPUTE_LIGHT(glbPlayerPosX, glbPlayerPosY);
 				//^13AE:00EB
 				
-				if (glbIsPlayerMoving != 0)
+				if (cd.pi.glbIsPlayerMoving != 0)
 					//^13AE:00F2
 					DISPLAY_VIEWPORT(_4976_4c40, _4976_4c32, _4976_4c34);
 				else
@@ -25382,15 +25382,15 @@ _00a4:
 				_4976_4bc8 = 0;
 			}
 			//^13AE:0122
-			if (glbIsPlayerMoving != 0) {
+			if (cd.pi.glbIsPlayerMoving != 0) {
 				//^13AE:0129
-				if (glbIsPlayerMoving == 1) {
+				if (cd.pi.glbIsPlayerMoving == 1) {
 					//^13AE:0130
 					//printf("Pending PERFORM MOVE\n");
 					PERFORM_MOVE(glbPlayerLastMove);
 				}
 				//^13AE:013A
-				glbIsPlayerMoving--;
+				cd.pi.glbIsPlayerMoving--;
 			}
 			//^13AE:013E
 			_4976_4e64 = 0;
@@ -25413,7 +25413,7 @@ _00a4:
 			//^13AE:0174
 			glbGlobalSpellEffects.AuraOfSpeed--;
 		/// SPX: glbGameTick is a general tick counter : each 16 or 64 then do update
-		if ((X16(glbGameTick) & ((glbIsPlayerSleeping != 0) ? 15 : 0x3f)) == 0)
+		if ((X16(glbGameTick) & ((cd.pi.glbIsPlayerSleeping != 0) ? 15 : 0x3f)) == 0)
 			UPDATE_CHAMPIONS_STATS();
 		//^13AE:0192
 		GLOBAL_UPDATE_UNKNOW1();
@@ -25781,7 +25781,7 @@ SkWinCore::SkWinCore()
 	zeroMem(&_4976_495c, sizeof(_4976_495c));
 	zeroMem(_4976_4df6, sizeof(_4976_4df6));
 	zeroMem(&glbLeaderHandPossession, sizeof(glbLeaderHandPossession));
-	zeroMem(glbChampionsPendingDamage, sizeof(glbChampionsPendingDamage));
+	zeroMem(cd.pi.glbChampionsPendingDamage, sizeof(cd.pi.glbChampionsPendingDamage));
 	_4976_4942.x = 2; _4976_4942.y = 2; _4976_4942.cx = 16; _4976_4942.cy = 16;
 	_4976_494a.x = 0; _4976_494a.y = 0; _4976_494a.cx = 16; _4976_494a.cy = 16;
 	_4976_0ce0[0].pv6(NULL);

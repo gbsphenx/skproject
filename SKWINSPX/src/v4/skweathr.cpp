@@ -254,7 +254,7 @@ void SkWinCore::UPDATE_WEATHER(U16 aa)	// aa = 1 when called from timer, aa = 0 
 					}
 					//^3DF7:05E8
 					CREATE_CLOUD(OBJECT_EFFECT_THUNDER, glbRainStormController, di, si, 255);
-					if (glbChampionInventory == 0 && glbIsPlayerSleeping == 0)
+					if (glbChampionInventory == 0 && cd.pi.glbIsPlayerSleeping == 0)
 						break;
 					//^3DF7:0609
 					if (bp18 != 0)

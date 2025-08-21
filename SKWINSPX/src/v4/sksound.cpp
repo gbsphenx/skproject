@@ -350,7 +350,7 @@ void SkWinCore::QUEUE_NOISE_GEN1(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u xx, B
 		return;
 	}
 	//^482B:01D0
-	if (glbIsPlayerSleeping != 0) {
+	if (cd.pi.glbIsPlayerSleeping != 0) {
 		//^482B:01D7
 		yy >>= 1;
 	}

@@ -338,7 +338,7 @@ void SkWinCore::_32cb_0804(U8 *localpal, i16 cls4, U16 colorkey1, i16 colorkey2,
 	U16 di = palentcnt;
 	//^32CB:080C
 	i16 si;
-	if (glbIsPlayerMoving != 0) {
+	if (cd.pi.glbIsPlayerMoving != 0) {
 		//^32CB:0813
 		if (cls4 < 0) {
 			//^32CB:0819
@@ -1526,7 +1526,7 @@ SRECT *SkWinCore::QUERY_BLIT_RECT(Bit8u *buff, SRECT *rect, Bit16u rectno, i16 *
 		COPY_MEMORY(&_4976_4bca, &spRect1, sizeof(SRECT));
 	}
 	//^098D:0ADE
-	if (_4976_4bc8 != 0 && glbIsPlayerMoving != 0 && bp24 == 3) {
+	if (_4976_4bc8 != 0 && cd.pi.glbIsPlayerMoving != 0 && bp24 == 3) {
 		//^098D:0AF2
 		if (UNION_RECT(&spRect1, &_4976_00fe, yourcx, yourcy) == NULL) {
 			//^098D:05AA

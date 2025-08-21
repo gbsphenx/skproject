@@ -81,6 +81,7 @@ typedef struct {
 	i16	glbPlayerPosX;	// (_4976_4bfa) current player x-axis (column)
 	U16	glbNextChampionNumber;		// (_4976_4bfc) Related to champions count ?
 	U16	glbChampionsCount;				// (_4976_4c3c) player count
+	U16	glbChampionsPendingDamage[MAX_CHAMPIONS];	// (_4976_57ea) amount of damage for players
 
 } SKCodePlayerInfo;
 

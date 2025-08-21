@@ -3180,7 +3180,7 @@ void SkWinCore::__INIT_GAME_38c8_03ad()
 	_4976_4bfe = 0;
 	_4976_4c3e = 0;
 	glbTryPushPullObject = 0;
-	glbIsPlayerSleeping = 0;
+	cd.pi.glbIsPlayerSleeping = 0;
 	_4976_5bec = 0;
 	//^38C8:03D5
 	//printf("38c8_03ad:ZERO_MEMORY\n"); getch();
@@ -3362,23 +3362,23 @@ U16 SkWinCore::PERFORM_MOVE(X16 xx)
 	X16 di = 0;
 	SkD((DLV_MOVE, "Move: delay:%d, glbIsPlayerMoving:%d, move:%d, DSM:%d, _4976_4c08:%d, iIsStairs:%d\n"
 		, bp26
-		, glbIsPlayerMoving
+		, cd.pi.glbIsPlayerMoving
 		, xx
 		, SkCodeParam::bEnableDoubleStepMove
 		, _4976_4c08
 		, iIsStairs));
 
 #if UseAltic
-	if (bp26 > 1 && glbIsPlayerMoving == 0 &&
+	if (bp26 > 1 && cd.pi.glbIsPlayerMoving == 0 &&
 			((xx == 3 && SkCodeParam::bEnableDoubleStepMove) 
 			|| ((xx == 5 && SkCodeParam::bEnableDoubleStepMove) && _4976_4c08 == 0 && iIsStairs == 0)
 			|| glbTableToMove != OBJECT_NULL)
 		) {
-#else
-	if (bp26 > 1 && glbIsPlayerMoving == 0 && (xx == 3 || (xx == 5 && _4976_4c08 == 0 && iIsStairs == 0) || glbTableToMove != OBJECT_NULL)) {
+#else // isn't the same ??
+	if (bp26 > 1 && cd.pi.glbIsPlayerMoving == 0 && (xx == 3 || (xx == 5 && _4976_4c08 == 0 && iIsStairs == 0) || glbTableToMove != OBJECT_NULL)) {
 #endif
 		//^12B4:0394
-		glbIsPlayerMoving = bp26 >> 1;
+		cd.pi.glbIsPlayerMoving = bp26 >> 1;
 		_4976_4c32 = glbPlayerPosX;
 		_4976_4c34 = glbPlayerPosY;
 		_4976_4c40 = glbPlayerDir;

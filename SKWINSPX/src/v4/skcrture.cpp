@@ -1680,7 +1680,7 @@ X32 SkWinCore::CREATURE_GET_NEXT_THINK_GAMETICK()
 	if (glbCurrentThinkingCreatureData->Command == ccmDestroy && glbGlobalSpellEffects.FreezeCounter != 0 && glbAIDef->w0_c_c() == 0) {
 		iDeltaTicks = 3 * iDeltaTicks;
 	}
-	else if (glbIsPlayerSleeping != 0) {
+	else if (cd.pi.glbIsPlayerSleeping != 0) {
 		iDeltaTicks <<= 1;
 		if (glbCurrentMapIndex != glbPlayerMap && glbCurrentMapIndex != glbMap_4976_4c12)
 			iDeltaTicks <<= 1;
@@ -4998,7 +4998,7 @@ i16 SkWinCore::CREATURE_ATTACKS_PLAYER(Creature *ref, U16 player)
 	}
 	//^075F:1D4A
 	if (false
-		|| glbIsPlayerSleeping != 0
+		|| cd.pi.glbIsPlayerSleeping != 0
 		|| bp0c == 255
 		|| ((USE_DEXTERITY_ATTRIBUTE(player) < U16((RAND()&0x1f) +bp0c +bp0e +di -0x10) || RAND02() == 0) && USE_LUCK_ATTRIBUTE(champion, 0x3c) == 0)
 	) {
@@ -5060,7 +5060,7 @@ i16 SkWinCore::CREATURE_ATTACKS_PLAYER(Creature *ref, U16 player)
 			// => it would be possible to have several oof sounds using a random
 			QUEUE_NOISE_GEN2(GDAT_CATEGORY_CHAMPIONS, champion->HeroType(), SOUND_CHAMPION_GETHIT, 0xfe, glbPlayerPosX, glbPlayerPosY, 2, 0x69, 0xc8);
 			di = AIdef->PoisonDamage;
-			if (di != 0 && RAND01() != 0 && (di = _2c1d_0f2a(champion, abVit, di)) > 0) {
+			if (di != 0 && RAND01() != 0 && (di = USE_ABILITY_ATTRIBUTE(champion, abVit, di)) > 0) {
 				//^075F:1F16
 				PROCESS_POISON(player, di);
 			}
@@ -5081,7 +5081,7 @@ i16 SkWinCore::CREATURE_ATTACKS_PLAYER(Creature *ref, U16 player)
 	//^075F:1F21
 _1f21:
 	// SPX: damage(?) is done to champions so that they are forced to wake
-	if (glbIsPlayerSleeping != 0)
+	if (cd.pi.glbIsPlayerSleeping != 0)
 		RESUME_FROM_WAKE();
 	//^075F:1F2D
 	return si;
@@ -5408,11 +5408,11 @@ X16 SkWinCore::CREATURE_STEAL_FROM_CHAMPION()
 			));
 
 			//^1887:0C2A
-			if (glbIsPlayerSleeping != 0) {
+			if (cd.pi.glbIsPlayerSleeping != 0) {
 				//^1887:0C31
-				glbIsPlayerSleeping = 0;
+				cd.pi.glbIsPlayerSleeping = 0;
 				di = (((RAND() & 15) + QUERY_PLAYER_SKILL_LV(bp08, 1, 1)) > 7) ? 1 : 0;
-				glbIsPlayerSleeping = 1;
+				cd.pi.glbIsPlayerSleeping = 1;
 				if (di != 0) {
 					//^1887:0C6A
 					RESUME_FROM_WAKE();

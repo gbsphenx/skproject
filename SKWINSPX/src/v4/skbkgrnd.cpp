@@ -65,7 +65,7 @@ void SkWinCore::ENVIRONMENT_DRAW_DISTANT_ELEMENT(DistantEnvironment *ref, X16 di
 	X16 bp06 = ref->b9;
 	X16 di = ref->w4;
 	X16 si = ref->w6;
-	if (glbIsPlayerMoving != 0)
+	if (cd.pi.glbIsPlayerMoving != 0)
 	{
 		//^32CB:5785
 		di = CALC_STRETCHED_SIZE(di, 0x34);

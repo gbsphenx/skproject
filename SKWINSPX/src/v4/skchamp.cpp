@@ -635,7 +635,7 @@ Bit16u SkWinCore::QUERY_PLAYER_SKILL_LV(i16 player, Bit16u skill, Bit16u yy)
 	//^2C1D:0A4D
 	U16 di = skill;
 	//^2C1D:0A50
-	if (glbIsPlayerSleeping != 0) {
+	if (cd.pi.glbIsPlayerSleeping != 0) {
 		//^2C1D:0A57
 		return 1;
 	}
@@ -1181,7 +1181,7 @@ void SkWinCore::INTERFACE_CHAMPION(Bit16u xx)
 			//^24A5:1875
 		}
 		//^24A5:187E
-		if (glbIsPlayerSleeping != 0) {
+		if (cd.pi.glbIsPlayerSleeping != 0) {
 			//^24A5:1885
 			if (bp06 != 0) {
 				//^24A5:188E
@@ -2001,44 +2001,7 @@ _26fe:
 
 
 
-//^2C1D:0F67
-// SPX: _2c1d_0f67 renamed USE_LUCK_ATTRIBUTE
-U16 SkWinCore::USE_LUCK_ATTRIBUTE(Champion *ref, U16 xx)
-{
-	U8 message[256];
-	U8 player = 0;
-	//^2C1D:0F67
-	ENTER(0);
-	//^2C1D:0F6B
-	U16 si = xx;
-	
-	//--- Debug / Display
-	memset(message, 0, 256);
-	U8 consolePlayerColorsTab[4] = { LIGHT_GREEN, LIGHT_YELLOW, LIGHT_RED, CYAN };
-	U8 consolePlayerColor = 0;
-	
-//	sprintf((char*)message, "USE_LUCK_ATTRIBUTE(%7s, %02d)\n", ref->firstName, xx);
-//	DISPLAY_HINT_TEXT(glbChampionColor[0], message);
 
-	consolePlayerColor = consolePlayerColorsTab[player];
-	sprintf((char*)message, "USE_LUCK_ATTRIBUTE(%7s, %02d)\n", ref->firstName, xx);
-	CHANGE_CONSOLE_COLOR(BRIGHT, consolePlayerColor, BLACK);
-	SkD((DLV_XP, "%s", message));
-	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
-
-
-	//^2C1D:0F6E
-	if (RAND01() != 0 && RAND16(100) > si) {
-		//^2C1D:0F83
-		return 1;
-	}
-	//^2C1D:0F88
-	si = (RAND16(GET_PLAYER_ABILITY(ref, ATTRIBUTE_LUCK, 0) << 1) > si) ? 1 : 0;
-	//^2C1D:0FAF
-	ref->attributes[ATTRIBUTE_LUCK][ATTRIBUTE_CURRENT] = U8(BETWEEN_VALUE(10, ref->attributes[ATTRIBUTE_LUCK][ATTRIBUTE_CURRENT] +((si != 0) ? -2 : 2), min_value(220, GET_PLAYER_ABILITY(ref, 0, 1))));
-	//^2C1D:0FF9
-	return si;
-}
 
 //^075F:1F33
 U16 SkWinCore::CALC_PLAYER_ATTACK_DAMAGE(Champion *ref, U16 player, ObjectID rlEnemy, U16 xx, U16 yy, U16 valPb, U16 valDM, U16 valSk, U16 valAt)
@@ -3328,22 +3291,12 @@ X16 SkWinCore::_2c1d_135d(i16 play, U16 ww)
 		si = si -(RAND02() +8);
 	}
 	//^2C1D:149C
-	if (glbIsPlayerSleeping != 0)
+	if (cd.pi.glbIsPlayerSleeping != 0)
 		si >>= 1;
 	return BETWEEN_VALUE(0, si >> 1, 0x64);
 }
 
 
-//^2C1D:0F2A
-i16 SkWinCore::_2c1d_0f2a(Champion *ref, X16 ability, i16 tt)
-{
-	//^2C1D:0F2A
-	ENTER(0);
-	//^2C1D:0F2E
-	i16 si = ATTRIBUTE_VALUE_THRESHOLD - GET_PLAYER_ABILITY(ref, ability, 0);	// 170 - Get_player_ab()
-	//^2C1D:0F47
-	return (si < 0x10) ? (tt >> 3) : (_0cd5_0176(tt, 7, si));
-}
 
 //^2C1D:18AA
 Bit16u SkWinCore::WOUND_PLAYER(i16 play, i16 quantity, Bit16u ss, Bit16u tt)
@@ -3422,13 +3375,13 @@ Bit16u SkWinCore::WOUND_PLAYER(i16 play, i16 quantity, Bit16u ss, Bit16u tt)
 			goto _1a91;
 		case 5://^1A20
 			//^2C1D:1A20
-			si = _2c1d_0f2a(champion, abAntiMagic, si);
+			si = USE_ABILITY_ATTRIBUTE(champion, abAntiMagic, si);
 			if (champion->enchantmentAura == ENCHANTMENT_SPELL_SHIELD)	// == 1
 				si -= champion->enchantmentPower;
 			goto _1a91;
 		case 1://^1A44
 			//^2C1D:1A44
-			si = _2c1d_0f2a(champion, abAntiFire, si);
+			si = USE_ABILITY_ATTRIBUTE(champion, abAntiFire, si);
 			if (champion->enchantmentAura == ENCHANTMENT_FIRE_SHIELD)	// == 0
 				si -= champion->enchantmentPower;
 			break;
@@ -3451,7 +3404,7 @@ Bit16u SkWinCore::WOUND_PLAYER(i16 play, i16 quantity, Bit16u ss, Bit16u tt)
 _1a91:
 		if (si <= 0)
 			return 0;
-		bp06 = _2c1d_0f2a(champion, abVit, (RAND() & 0x7f) +10);
+		bp06 = USE_ABILITY_ATTRIBUTE(champion, abVit, (RAND() & 0x7f) +10);
 		if (bp06 < si) {
 			do {
 				//^2C1D:1AB7
@@ -3462,11 +3415,11 @@ _1a91:
 			} while (bp06 != 0);
 		}
 		//^2C1D:1AE1
-		if (glbIsPlayerSleeping != 0)
+		if (cd.pi.glbIsPlayerSleeping != 0)
 			RESUME_FROM_WAKE();
 	}
 	//^2C1D:1AEC
-	glbChampionsPendingDamage[play] += si;
+	cd.pi.glbChampionsPendingDamage[play] += si;
 	return si;
 }
 
@@ -3767,9 +3720,7 @@ void SkWinCore::PROCESS_PLAYERS_DAMAGE()
 {
 	// CSBwinSimilarity: TAG016e54,DisplayCharacterDamage
 
-	//^2C1D:1782
 	ENTER(16);
-	//^2C1D:1788
 	if (SkCodeParam::bChampionImmune)
 		return;
 
@@ -3778,11 +3729,11 @@ void SkWinCore::PROCESS_PLAYERS_DAMAGE()
 		//^2C1D:1798
 		champion->bodyFlag = glbChampionsBodyFlags[championIndex];
 		glbChampionsBodyFlags[championIndex] = 0;
-		X16 di = glbChampionsPendingDamage[championIndex];
+		X16 di = cd.pi.glbChampionsPendingDamage[championIndex];
 		if (di == 0)
 			continue;
 		//^2C1D:17C5
-		glbChampionsPendingDamage[championIndex] = 0;
+		cd.pi.glbChampionsPendingDamage[championIndex] = 0;
 		i16 si = champion->curHP();
 		if (si == 0)
 			continue;
@@ -3810,7 +3761,7 @@ void SkWinCore::PROCESS_PLAYERS_DAMAGE()
 		else {
 			//^2C1D:1852
 			glbTimersTable[si].SetMap(glbPlayerMap);
-			glbTimersTable[si].SetTick(glbGameTick +5);
+			glbTimersTable[si].SetTick(glbGameTick + 5);
 			_3a15_05f7(si);
 		}
 		//^2C1D:1892
@@ -3847,7 +3798,7 @@ void SkWinCore::UPDATE_CHAMPIONS_STATS()
 				//^2C1D:21A4
 				X16 si = champion->maxMP() / 40;
 				si++;
-				if (glbIsPlayerSleeping != 0)
+				if (cd.pi.glbIsPlayerSleeping != 0)
 					si <<= 1;
 				//^2C1D:21BD
 				ADJUST_STAMINA(bp0e, si * max_value(7, 0x10 -bp0a));
@@ -3874,7 +3825,7 @@ void SkWinCore::UPDATE_CHAMPIONS_STATS()
 				di++;
 		}
 		//^2C1D:225B
-		if (glbIsPlayerSleeping != 0)
+		if (cd.pi.glbIsPlayerSleeping != 0)
 			di <<= 1;
 		//^2C1D:2264
 		do {
@@ -3920,14 +3871,14 @@ void SkWinCore::UPDATE_CHAMPIONS_STATS()
 		if (champion->curHP() < champion->maxHP() && champion->curStamina() >= (champion->maxStamina() >> 2) && GET_PLAYER_ABILITY(champion, abVit, 0) > glbChampionTable[0].enchantmentPower) {
 			//^2C1D:2384
 			di = (champion->maxHP() >> 7) +1;
-			if (glbIsPlayerSleeping != 0)
+			if (cd.pi.glbIsPlayerSleeping != 0)
 				di <<= 1;
 			//^2C1D:239A
 			// SPX : This is the regeneration function
 			champion->curHP(champion->curHP() +min_value(di, champion->maxHP() -champion->curHP()));
 		}
 		//^2C1D:23B5
-		if ((glbGameTick & ((glbIsPlayerSleeping != 0) ? 0x3f : 0xff)) == 0) {
+		if ((glbGameTick & ((cd.pi.glbIsPlayerSleeping != 0) ? 0x3f : 0xff)) == 0) {
 			//^2C1D:23CA
 			for (si = ATTRIBUTE_FIRST; si <= ATTRIBUTE_LAST; si++) {	// (si = 0; si <= 6; si++)
 				//^2C1D:23CE
@@ -4081,26 +4032,46 @@ U16 SkWinCore::_2c1d_09d9()
 	return si;
 }
 
+//..............................................................................
+
+//^2C1D:0F67
+// SPX: _2c1d_0f67 renamed USE_LUCK_ATTRIBUTE
+U16 SkWinCore::USE_LUCK_ATTRIBUTE(Champion* xChampion, U16 xx)
+{
+	ENTER(0);
+	U16 iLuckVal = xx; // si
+
+	if (RAND01() != 0 && RAND16(100) > iLuckVal) {
+		return 1;
+	}
+	iLuckVal = (RAND16(GET_PLAYER_ABILITY(xChampion, ATTRIBUTE_LUCK, 0) << 1) > iLuckVal) ? 1 : 0;
+	xChampion->attributes[ATTRIBUTE_LUCK][ATTRIBUTE_CURRENT] = 
+		U8(BETWEEN_VALUE(10, xChampion->attributes[ATTRIBUTE_LUCK][ATTRIBUTE_CURRENT] + ((iLuckVal != 0) ? -2 : 2), min_value(220, GET_PLAYER_ABILITY(xChampion, abLuck, 1))));
+	return iLuckVal;
+}
+
 //^2C1D:111E
 // SPX: _2c1d_111e renamed USE_DEXTERITY_ATTRIBUTE
-U16 SkWinCore::USE_DEXTERITY_ATTRIBUTE(U16 player)
+U16 SkWinCore::USE_DEXTERITY_ATTRIBUTE(U16 iHeroIndex)
 {
-	//^2C1D:111E
 	ENTER(4);
-	//^2C1D:1123
-	Champion *champion = &glbChampionSquad[player];
-	//^2C1D:1134
-	i16 si = (RAND() & 7) + GET_PLAYER_ABILITY(champion, abDex, 0);
-	//^2C1D:1153
-	si -= (GET_PLAYER_WEIGHT(player) * i32(si >> 1)) / MAX_LOAD(champion);
-	//^2C1D:1182
-	si = max_value(2, si);
-	//^2C1D:118E
-	if (glbIsPlayerSleeping != 0)
-		//^2C1D:1195
-		si >>= 1;
-	//^2C1D:1197
-	return BETWEEN_VALUE((RAND() & 7) +1, (si >> 1), 100 - (RAND() & 7));
+	Champion* xChampion = &glbChampionSquad[iHeroIndex];
+	i16 iDexterityVal = (RAND() & 7) + GET_PLAYER_ABILITY(xChampion, abDex, 0); // si
+	iDexterityVal -= (GET_PLAYER_WEIGHT(iHeroIndex) * i32(iDexterityVal >> 1)) / MAX_LOAD(xChampion);
+	iDexterityVal = max_value(2, iDexterityVal);
+	if (cd.pi.glbIsPlayerSleeping != 0)
+		iDexterityVal >>= 1;
+	return BETWEEN_VALUE((RAND() & 7) + 1, (iDexterityVal >> 1), 100 - (RAND() & 7));
+}
+
+//^2C1D:0F2A
+// _2c1d_0f2a renamed USE_ABILITY_ATTRIBUTE
+i16 SkWinCore::USE_ABILITY_ATTRIBUTE(Champion* xChampion, X16 iAbility, i16 tt)
+{
+	ENTER(0);
+	i16 iAbilityVal = ATTRIBUTE_VALUE_THRESHOLD - GET_PLAYER_ABILITY(xChampion, iAbility, 0);	// 170 - Get_player_ab()
+	return (iAbilityVal < 0x10) ? (tt >> 3) : (_0cd5_0176(tt, 7, iAbilityVal));
 }
 
 
+//..............................................................................

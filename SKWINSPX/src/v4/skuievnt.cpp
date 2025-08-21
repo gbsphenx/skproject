@@ -1072,7 +1072,7 @@ Bit16u SkWinCore::HANDLE_UI_EVENT(MousePosition *ref)
 			goto _19b1;
 	}
 	//^1031:1994
-	if (glbIsPlayerMoving != 0) {
+	if (cd.pi.glbIsPlayerMoving != 0) {
 		//^1031:199B
 		//if (si == 0x01 || si == 0x02 || si == 0x03)
 		if (si == UI_EVENTCODE_TURN_LEFT || si == UI_EVENTCODE_TURN_RIGHT || si == UI_EVENTCODE_MOVE_FORWARD)
@@ -1358,13 +1358,13 @@ _1ab8:
 				//^1031:1D58
 				_38c8_0002();
 				//^1031:1D5D
-				glbIsPlayerSleeping = 1;
+				cd.pi.glbIsPlayerSleeping = 1;
 				//^1031:1D63
-				if (glbIsPlayerMoving != 0) {
+				if (cd.pi.glbIsPlayerMoving != 0) {
 					//^1031:1D6A
 					PERFORM_MOVE(glbPlayerLastMove);
 					//^1031:1D74
-					glbIsPlayerMoving = 0;
+					cd.pi.glbIsPlayerMoving = 0;
 				}
 				//^1031:1D7A
 				DRAW_WAKE_UP_TEXT();

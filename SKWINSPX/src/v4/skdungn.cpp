@@ -1686,7 +1686,7 @@ void SkWinCore::_32cb_4185_TILE_ROOM(i16 xx, i16 yy, i16 cellPos, i16 dir)
 	tblCellTilesRoom[cellPos].posy = U8(bp08);
 	//^32CB:41EB
 	SUMMARIZE_STONE_ROOM(&tblCellTilesRoom[cellPos].xsrd, dir, bp06, bp08);
-	if (glbIsPlayerMoving != 0 && cellPos == 0) {
+	if (cd.pi.glbIsPlayerMoving != 0 && cellPos == 0) {
 #if defined (XDMX_EXTENDED_FEATURES)
 		tblCellTilesRoom->xsrd.interwalls[0] = 0;
 		tblCellTilesRoom->xsrd.interwalls[1] = 0;

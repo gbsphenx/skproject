@@ -482,7 +482,7 @@ void SkWinCore::DRAW_HAND_ACTION_ICONS(Bit16u playerIndex, Bit16u possessionInde
 			FREE_PICT_MEMENT(&bp30);
 		}
 		//^29EE:036C
-		if (champion->handCooldown[possessionIndex] != 0 || glbIsPlayerSleeping != 0) {
+		if (champion->handCooldown[possessionIndex] != 0 || cd.pi.glbIsPlayerSleeping != 0) {
 			//^29EE:0380
 			DRAW_GRAY_OVERLAY(&_4976_3f6c, &bp10, 0);
 		}
@@ -548,7 +548,7 @@ void SkWinCore::DRAW_SQUAD_SPELL_AND_LEADER_ICON(Bit16u player, Bit16u yy)
 			4
 			);
 		//^29EE:066F
-		if (glbIsPlayerSleeping != 0 || glbChampionSquad[player].herob44 != 0) {
+		if (cd.pi.glbIsPlayerSleeping != 0 || glbChampionSquad[player].herob44 != 0) {
 			//^29EE:0687
 			bp0144.rc36.x += _4976_3f6c.rc2.x;
 			bp0144.rc36.y += _4976_3f6c.rc2.y;
@@ -567,7 +567,7 @@ void SkWinCore::DRAW_SQUAD_SPELL_AND_LEADER_ICON(Bit16u player, Bit16u yy)
 			4
 			);
 		//^29EE:06E6
-		if (glbIsPlayerSleeping != 0) {
+		if (cd.pi.glbIsPlayerSleeping != 0) {
 			//^29EE:06ED
 			bp0144.rc36.x = _4976_3f6c.rc2.x;
 			bp0144.rc36.y = _4976_3f6c.rc2.y;
@@ -765,7 +765,7 @@ void SkWinCore::DRAW_SQUAD_POS_INTERFACE()
 	//^29EE:0556
 	FREE_PICT_BUFF(bp04);
 	//^29EE:0563
-	if (glbIsPlayerSleeping != 0) {
+	if (cd.pi.glbIsPlayerSleeping != 0) {
 		//^29EE:056A
 		DRAW_GRAY_OVERLAY(
 			&_4976_3f6c, 
@@ -5598,7 +5598,7 @@ void SkWinCore::DRAW_DUNGEON_GRAPHIC(U8 cls1, U8 cls2, U8 cls4, X16 rectno, i16 
 	bp013a.rectNo = si;
 	bp013a.pb44 = _4976_4c16;
 	bp013a.mirrorFlip = mirrorflip;
-	if (glbIsPlayerMoving != 0) {
+	if (cd.pi.glbIsPlayerMoving != 0) {
 		if (si == 700) {
 			bp013a.w34 += _4976_00fa;
 		}
@@ -5714,7 +5714,7 @@ void SkWinCore::SUMMARY_DRAW_CREATURE(ObjectID rl, i16 cellPos, U32 ss)
 	if (SkCodeParam::bDebugGFXNoCreatures)
 		return;	
 
-	if (glbIsPlayerMoving != 0 && iCellPos == 0)
+	if (cd.pi.glbIsPlayerMoving != 0 && iCellPos == 0)
 		return;
 
 	i16 iDistToPlayer = glbTabYAxisDistance[RCJ(23,iCellPos)];
@@ -6977,7 +6977,7 @@ void SkWinCore::DRAW_WALL(i16 iViewportCell)	// i16 xx
 				i16 iRectNo = QUERY_CREATURE_BLIT_RECTI(3, 11, 0);	// That gets currently the best result for positionning 'see through wall' mask
 
 				QUERY_TEMP_PICST(bFlip, bp20, bp22, 0, 0, 
-					(glbIsPlayerMoving != 0) ? -iYDist : 0, 
+					(cd.pi.glbIsPlayerMoving != 0) ? -iYDist : 0, 
 					iRectNo,
 					-1, iColorkey2, iColorkey1,
 					GDAT_CATEGORY_GRAPHICSSET, iWallSetIndex, GDAT_GFXSET_SEE_THRU
@@ -7001,14 +7001,14 @@ void SkWinCore::DRAW_WALL(i16 iViewportCell)	// i16 xx
 		}
 		else
 		{
-			QUERY_TEMP_PICST(bFlip, 0x40, 0x40, 0, 0, (glbIsPlayerMoving != 0) ? -iYDist : 0, iViewportCell +0x2be, 0xffff, iColorkey1, -1, GDAT_CATEGORY_GRAPHICSSET, iMapGfx, bp01);
+			QUERY_TEMP_PICST(bFlip, 0x40, 0x40, 0, 0, (cd.pi.glbIsPlayerMoving != 0) ? -iYDist : 0, iViewportCell +0x2be, 0xffff, iColorkey1, -1, GDAT_CATEGORY_GRAPHICSSET, iMapGfx, bp01);
 			DRAW_TEMP_PICST(); // draw wall
 		}
 
 	}
 #else // end XDM1_EXTENDED_SEETHRUWALLS
 	//^32CB:50B6
-	QUERY_TEMP_PICST(bFlip, 0x40, 0x40, 0, 0, (glbIsPlayerMoving != 0) ? -iYDist : 0, iViewportCell +0x2be, 0xffff, iColorkey1, -1, GDAT_CATEGORY_GRAPHICSSET, iMapGfx, bp01);
+	QUERY_TEMP_PICST(bFlip, 0x40, 0x40, 0, 0, (cd.pi.glbIsPlayerMoving != 0) ? -iYDist : 0, iViewportCell +0x2be, 0xffff, iColorkey1, -1, GDAT_CATEGORY_GRAPHICSSET, iMapGfx, bp01);
 	DRAW_TEMP_PICST(); // draw wall
 #endif
 	_098d_0c45();

@@ -1027,7 +1027,7 @@ X16 SkWinCore::_1c9a_17c7(U8 xx, U8 yy, U8 zz)
 	U16 si = yy;
 	if (true
 		&& glbCreatureMap == zz 
-		&& glbIsPlayerSleeping == 0 
+		&& cd.pi.glbIsPlayerSleeping == 0 
 		&& glbChampionInventory == 0 
 		&& ABS16(glbCreaturePosX -di) != ABS16(glbCreaturePosY -si)
 		&& CALC_VECTOR_DIR(glbCreaturePosX, glbCreaturePosY, di, si) == glbCreatureDir

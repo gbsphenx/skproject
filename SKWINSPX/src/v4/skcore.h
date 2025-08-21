@@ -390,8 +390,8 @@ protected:
 	sk4bde	*_4976_4bde;
 	sk4be2	*_4976_4be2;
 	U16	_4976_4be6;
-	U16	glbIsPlayerSleeping; // (_4976_4be8) 1 if sleep?
-	U16	glbIsPlayerMoving; // (_4976_4bea) 0 if you stay, not 0 if stepping forward/backward
+	//U16	glbIsPlayerSleeping; // (_4976_4be8) 1 if sleep?
+	//U16	glbIsPlayerMoving; // (_4976_4bea) 0 if you stay, not 0 if stepping forward/backward
 	Bit32u	glbGameTick;	// (_4976_4bec) current game tick
 	U16	glbTickSpeed;	// (_4976_4bf0) 0 is the fastest (no wait between game tick), 15 is slow
 	U16	glbPlayerLastMove;		// (_4976_4bf2) Last effective move (see PERFORM_MOVE)
@@ -661,7 +661,7 @@ protected:
 	U16		glbLeaderItemFlags;	// (_4976_57e0) item flags (wordvalue 00)
 	U16		glbLeaderItemWeight;	// (_4976_57e2) weight of holding item by leader
 	GlobalEffects	glbGlobalSpellEffects; // (_4976_57e4) structure holding freeze counter?
-	X16		glbChampionsPendingDamage[MAX_CHAMPIONS];	// (_4976_57ea) amount of damage for players
+	//X16		glbChampionsPendingDamage[MAX_CHAMPIONS];	// (_4976_57ea) amount of damage for players
 	U16		_4976_57f2;
 	X16		glbChampionsBodyFlags[MAX_CHAMPIONS];	// (_4976_57f4) SPX: flags for damage ??
 	U8		glbStrBufferNumber[5];	// (_4976_57fc) temp str to store damage number
@@ -1919,7 +1919,7 @@ protected:
 	X16 _2c1d_132c(i16 ss, U16 tt);
 	X16 _2c1d_135d(i16 play, U16 ww);
 	i16 _0cd5_0176(U16 val, U16 rshift, U16 multiplier);
-	i16 _2c1d_0f2a(Champion *ref, X16 ability, i16 tt);
+	i16 USE_ABILITY_ATTRIBUTE(Champion *ref, X16 ability, i16 tt); // _2c1d_0f2a renamed USE_ABILITY_ATTRIBUTE
 
 	U16 WOUND_PLAYER(i16 play, i16 quantity, U16 ss, U16 tt);
 	void _075f_0182(ObjectID rl, X16 xx, X16 yy);
