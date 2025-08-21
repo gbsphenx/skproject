@@ -3967,7 +3967,7 @@ void SkWinCore::UPDATE_RIGHT_PANEL(Bit16u xx)
 	Bit16u bp0e = 0;
 	Bit16u bp12 = 0;
 	//^2759:065E
-	if (glbNextChampionNumber == 0) {
+	if (cd.pi.glbNextChampionNumber == 0) {
 		//^2759:0668
 		if (glbChampionsCount == 0) {
 			//^2759:066F
@@ -22439,11 +22439,15 @@ U32 SkWinCore::GET_FILE_SIZE(i16 handle) {
 //^3E74:0004
 U16 SkWinCore::SWAPW(U16 xx)
 {
-	//^3E74:0004
 	ENTER(0);
-	//^3E74:0007
 	return (xx << 8) + (xx >> 8);
 }
+
+U32 SkWinCore::SWAP32(U32 xx)
+{
+	return ((xx & 0xFF000000)>>24) + ((xx & 0x00FF0000)>>8) + ((xx & 0x0000FF00)<<8) + ((xx & 0x000000FF)<<24);
+}
+
 //^3E74:16ED
 U32 SkWinCore::QUERY_GDAT_ENTRY_VALUE(U16 entryIndex, U16 entryPos)
 {
@@ -23163,42 +23167,50 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_00()
 	// SPX: I changed to get size of item first then check it if zero, because this item does not exist in PC-DOS version
 	i32 iItemSize = 0;
 	ENTER(8);
-	U8 *bp04 = NULL;
+	X8* pDataTable = NULL;	// bp04
+	bool bSwap32 = false;	// SPX: addition of U32 swap when reading some special gdat
 
 	iItemSize = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt06, 0x0);
 	if (iItemSize <= 0) {
 		i16 hCreatureTabHandle = -1;
 		iItemSize = 5092;
-		SkCodeParam::bDM2V5Mode = true;
+		SkCodeParam::bDM2V5Mode = false;
 		tlbCreaturesAnimationSequences = NULL;
 		tlbCreaturesActionsGroupSets = NULL;
 		tlbCreaturesActionsGroupOffsets = NULL;
 		// Then, we do a hardfile read to make up for missing item, not pretty but working
 		hCreatureTabHandle = FILE_OPEN((const U8*)"bin/v4/0652ctbl.bin");
-		bp04 = ALLOC_MEMORY_RAM(iItemSize,	afUseUpper, 0x400);
-		FILE_READ(hCreatureTabHandle, iItemSize, bp04);
+		pDataTable = ALLOC_MEMORY_RAM(iItemSize,	afUseUpper, 0x400);
+		FILE_READ(hCreatureTabHandle, iItemSize, pDataTable);
 		FILE_CLOSE(hCreatureTabHandle);
 	}
 	else {
-		bp04 = ALLOC_MEMORY_RAM(
+		pDataTable = ALLOC_MEMORY_RAM(
 			iItemSize,
 			afUseUpper, 0x400);
-		LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt06, 0x0, bp04);
+		LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt06, 0x0, pDataTable);
 	}
 
-	X32 bp08 = READ_UI32(bp04,+0);	// Read first DWORD of data, which is length of the first part : 0xC24 = 3108 = 6*518
-	bp04 += 4;
-	tlbCreaturesAnimationSequences = reinterpret_cast<CreatureAnimationFrame *>(bp04);	// This points to the first part
-	bp04 += bp08;
+	// First sequence : 16 80 F1 02 0A FF .. 18 00 F1 0e 01 FF .. 1A ..
+	X32 iTableSize = READ_UI32(pDataTable,+0);	// b08 Read first DWORD of data, which is length of the first part : 0xC24 = 3108 = 6*518
+	if (iTableSize > 0x10000) {	// then it is probably inverted
+		iTableSize = SWAP32(iTableSize);
+		bSwap32 = true;
+	}
+	pDataTable += 4;
+	tlbCreaturesAnimationSequences = reinterpret_cast<CreatureAnimationFrame *>(pDataTable);	// This points to the first part
+	pDataTable += iTableSize;
 
-	bp08 = READ_UI32(bp04,+0);	// @0C28; 0x760 = 1888 = 4*472				@0xC2C + 0x760 = @138C
-	bp04 += 4;
-	tlbCreaturesActionsGroupSets = reinterpret_cast<CreatureCommandAnimation *>(bp04);	// This points to the second part
-	bp04 += bp08;
+	iTableSize = READ_UI32(pDataTable,+0);	// @0C28; 0x760 = 1888 = 4*472				@0xC2C + 0x760 = @138C
+	if (bSwap32) iTableSize = SWAP32(iTableSize);
+	pDataTable += 4;
+	tlbCreaturesActionsGroupSets = reinterpret_cast<CreatureCommandAnimation *>(pDataTable);	// This points to the second part
+	pDataTable += iTableSize;
 
-	bp08 = READ_UI32(bp04,+0);	// @138C; 0x54 = 84 = 2*42
-	bp04 += 4;
-	tlbCreaturesActionsGroupOffsets = reinterpret_cast<U16 *>(bp04);		// This points to the third part
+	iTableSize = READ_UI32(pDataTable,+0);	// @138C; 0x54 = 84 = 2*42
+	if (bSwap32) iTableSize = SWAP32(iTableSize);
+	pDataTable += 4;
+	tlbCreaturesActionsGroupOffsets = reinterpret_cast<U16 *>(pDataTable);		// This points to the third part
 
 	
 	/// DUMP Level 1 tlbCreaturesActionsGroupOffsets (from GDAT value 0F-xx-00-00
@@ -25347,7 +25359,7 @@ _00a4:
 
 		if (glbIsPlayerSleeping == 0) {
 			//^13AE:00C2
-			if (glbNextChampionNumber == 0)
+			if (cd.pi.glbNextChampionNumber == 0)
 				//^13AE:00C9
 				_38c8_0060();
 			//^13AE:00CE

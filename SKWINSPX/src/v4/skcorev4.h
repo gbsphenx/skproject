@@ -70,17 +70,32 @@ typedef struct {
 
 } SKCoreSoundCard;
 
+typedef struct {
+
+	U16	glbIsPlayerSleeping; // (_4976_4be8) 1 if sleep?
+	U16	glbIsPlayerMoving; // (_4976_4bea) 0 if you stay, not 0 if stepping forward/backward
+	U16	glbPlayerLastMove;		// (_4976_4bf2) Last effective move (see PERFORM_MOVE)
+	U16	glbPlayerMap;	// (_4976_4bf4) current player map #
+	U16	glbPlayerDir;	// (_4976_4bf6) current player dir (0,1,2,3=N,E,S,W)
+	U16	glbPlayerSpecialStairsDir;	// SPX: added this for special behaviour going stairs for BW
+	i16	glbPlayerPosX;	// (_4976_4bfa) current player x-axis (column)
+	U16	glbNextChampionNumber;		// (_4976_4bfc) Related to champions count ?
+
+} SKCodePlayerInfo;
+
 //..............................................................................
 //------------------------------------------------------------------------------
 
 typedef struct {
 
-	SKCoreGameGeneral gg;
-	SKCoreGameState	gs;
 	SKCoreMenuOption mo;
 
 	SKCoreSoundCard sc;
 	SKCoreMouseKeyboard mk;
+
+	SKCoreGameGeneral gg;
+	SKCoreGameState	gs;
+	SKCodePlayerInfo pi;
 
 } SKCoreData;
 

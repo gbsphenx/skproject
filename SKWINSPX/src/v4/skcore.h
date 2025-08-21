@@ -400,7 +400,7 @@ protected:
 	U16	glbPlayerSpecialStairsDir;	// SPX: added this for special behaviour going stairs for BW
 	U16	glbRecalcLightIndicator;	// (_4976_4bf8)
 	i16		glbPlayerPosX;	// (_4976_4bfa) current player x-axis (column)
-	U16	glbNextChampionNumber;		// (_4976_4bfc) Related to champions count ?
+//	U16	glbNextChampionNumber;		// (_4976_4bfc) Related to champions count ?
 	U16	_4976_4bfe;
 	U16	_4976_4c00;
 	U16	_4976_4c02;
@@ -2137,6 +2137,7 @@ protected:
 	U32 GET_FILE_POS_6(i16 handle);
 	U32 GET_FILE_SIZE(i16 handle);
 	U16 SWAPW(U16 xx);
+	U32 SWAP32(U32 xx);	// SPX: addition for convenience and read LE gdat item
 	U32 QUERY_GDAT_ENTRY_VALUE(U16 entryIndex, U16 entryPos);
 	void LOAD_GDAT_ENTRIES();
 	X16 _3e74_2162(U16 xx);	// RETURNS 1!!

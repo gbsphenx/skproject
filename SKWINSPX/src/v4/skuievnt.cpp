@@ -379,7 +379,7 @@ void SkWinCore::CLICK_ITEM_SLOT(Bit16u xx)
 	// SPX: xx < 8 => item slot for champions hand (2*4)
 	if (xx < 8) {
 		//^2C1D:089F
-		if (glbNextChampionNumber != 0)
+		if (cd.pi.glbNextChampionNumber != 0)
 			//^2C1D:08A6
 			return;
 		//^2C1D:08A9
@@ -1186,7 +1186,7 @@ _1ab8:
 	//else if (si >= 0x07 && si <= 0x0b) {
 	else if (si >= UI_EVENTCODE_VIEW_CHAMPION_1 && si <= UI_EVENTCODE_RETURN_VIEWPORT) {
 		//^1031:1AF9
-		if (glbNextChampionNumber != 0 && si <= UI_EVENTCODE_RETURN_VIEWPORT) {
+		if (cd.pi.glbNextChampionNumber != 0 && si <= UI_EVENTCODE_RETURN_VIEWPORT) {
 			//^1031:1B05
 			//^1031:1DDE
 			_2f3f_04ea_CHAMPION(glbPlayerPosX, glbPlayerPosY, glbPlayerDir, glbPlayerMap, 0xa1);
@@ -1197,7 +1197,7 @@ _1ab8:
 			//^1031:1B13
 			if (bp02 == 4 || bp02 < glbChampionsCount) {
 				//^1031:1B21
-				if (glbNextChampionNumber == 0) {
+				if (cd.pi.glbNextChampionNumber == 0) {
 					//^1031:1B2B
 					INTERFACE_CHAMPION(bp02);
 					// SPX TODO: This is switch viewport/champion view?
@@ -1343,7 +1343,7 @@ _1ab8:
 		//if (si == 0x91) {
 		if (si == UI_EVENTCODE_SLEEP) {
 			//^1031:1D2E
-			if (glbNextChampionNumber == 0) {
+			if (cd.pi.glbNextChampionNumber == 0) {
 				//^1031:1D38
 				_4976_3d59 = 0;
 				//^1031:1D3E
@@ -1388,7 +1388,7 @@ _1ab8:
 		//else if (si == 0x8c) {
 		else if (si == UI_EVENTCODE_DISK_OP) {
 			//^1031:1DAE
-			if (glbChampionsCount > 0 && glbNextChampionNumber == 0) {
+			if (glbChampionsCount > 0 && cd.pi.glbNextChampionNumber == 0) {
 				//^1031:1DC2
 				_4976_4e62--;
 				//^1031:1DC6

@@ -3443,7 +3443,7 @@ U16 SkWinCore::_2e62_03b5(Bit16u player, Bit16u itemNo, Bit16u yy)
 	U16 si;
 	if (player +1 != glbChampionInventory) {
 		//^2E62:03D5
-		if (itemNo > INVENTORY_HAND_LAST || player +1 == glbNextChampionNumber)
+		if (itemNo > INVENTORY_HAND_LAST || player +1 == cd.pi.glbNextChampionNumber)
 			//^2E62:03E5
 			//^2E62:056C
 			return 0;
@@ -3786,7 +3786,7 @@ void SkWinCore::REFRESH_PLAYER_STAT_DISP(i16 player)
 		bp14 = _4976_581a ^ _4976_5804;
 	}
 	if (bp14 != 0) {
-		if (glbNextChampionNumber == 0) {
+		if (cd.pi.glbNextChampionNumber == 0) {
 			if ((bp14 & 1) != 0) {
 				DRAW_CHARSHEET_OPTION_ICON(GDAT_INTERFACE_CHARNAME_BAR, 0x0267, 0x0001);	// 0x0013: char name bar
 			}
@@ -3955,7 +3955,7 @@ void SkWinCore::REFRESH_PLAYER_STAT_DISP(i16 player)
 				}
 				else {
 					//^2E62:09BA
-					if (glbNextChampionNumber != 0) {
+					if (cd.pi.glbNextChampionNumber != 0) {
 						//^2E62:09C1
 						if (_4976_4bfe == 0) {
 							//^2E62:09CA
@@ -4010,9 +4010,9 @@ _0a25:
 		Bit8u bp00a4[128];
 		if ((si & 0x0400) != 0) {
 			//^2E62:0A7B
-			di = glbPaletteT16[(player == glbChampionLeader && glbNextChampionNumber == 0) ? COLOR_ORANGE : COLOR_WHITE];
+			di = glbPaletteT16[(player == glbChampionLeader && cd.pi.glbNextChampionNumber == 0) ? COLOR_ORANGE : COLOR_WHITE];
 			if (SkCodeParam::bDM1Mode)
-				di = glbPaletteT16[(player == glbChampionLeader && glbNextChampionNumber == 0) ? COLOR_YELLOW : COLOR_ORANGE];
+				di = glbPaletteT16[(player == glbChampionLeader && cd.pi.glbNextChampionNumber == 0) ? COLOR_YELLOW : COLOR_ORANGE];
 			//^2E62:0AA0
 			if (bp08 != 0) {
 				//^2E62:0AA9
@@ -4025,7 +4025,7 @@ _0a25:
 				}
 				//^2E62:0AEF
 				SK_STRCAT(bp00a4, &champion->firstName[8]);
-				DRAW_LOCAL_TEXT(553, di, (glbNextChampionNumber != 0) ? glbPaletteT16[COLOR_DARK_GRAY] : 0x4000, bp00a4);
+				DRAW_LOCAL_TEXT(553, di, (cd.pi.glbNextChampionNumber != 0) ? glbPaletteT16[COLOR_DARK_GRAY] : 0x4000, bp00a4);
 			}
 			else {
 				//^2E62:0B37

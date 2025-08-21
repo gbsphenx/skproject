@@ -945,7 +945,7 @@ void SkWinCore::SELECT_CHAMPION_LEADER(Bit16u xx)
 		//^1031:16E0
 		return;
 	//^1031:16E2
-	if (si +1 == glbNextChampionNumber)
+	if (si + 1 == cd.pi.glbNextChampionNumber)
 		//^1031:16E9
 		return;
 	//^1031:16EB
@@ -996,7 +996,7 @@ void SkWinCore::_2f3f_04ea_CHAMPION(Bit16u xx, Bit16u yy, Bit16u dir, Bit16u zz,
 	//^2F3F:04EA
 	ENTER(142);
 	//^2F3F:04F0
-	U16 si = glbNextChampionNumber -1;
+	U16 si = cd.pi.glbNextChampionNumber - 1;
 	//^2F3F:04F6
 	Champion *bp04 = &glbChampionSquad[si];
 	//^2F3F:0504
@@ -1016,11 +1016,11 @@ void SkWinCore::_2f3f_04ea_CHAMPION(Bit16u xx, Bit16u yy, Bit16u dir, Bit16u zz,
 			//^2F3F:0539
 			SELECT_CHAMPION_LEADER(0xffff);
 		//^2F3F:0541
-		if (glbNextChampionNumber >= glbChampionsCount)
+		if (cd.pi.glbNextChampionNumber >= glbChampionsCount)
 			//^2F3F:054A
 			glbChampionsCount--;
 		//^2F3F:054E
-		glbNextChampionNumber = 0;
+		cd.pi.glbNextChampionNumber = 0;
 		//^2F3F:0554
 		bp04->curHP(0);
 		//^2F3F:055D
@@ -1053,7 +1053,7 @@ void SkWinCore::_2f3f_04ea_CHAMPION(Bit16u xx, Bit16u yy, Bit16u dir, Bit16u zz,
 			//^2F3F:05EA
 			ADD_ITEM_TO_PLAYER(si, bp0e);
 		//^2F3F:05F4
-		glbNextChampionNumber = 0;
+		cd.pi.glbNextChampionNumber = 0;
 		//^2F3F:05FA
 		xx += glbXAxisDelta[dir];
 		//^2F3F:0606
@@ -1172,7 +1172,7 @@ void SkWinCore::INTERFACE_CHAMPION(Bit16u xx)
 		//^24A5:1826
 		Champion *bp04 = &glbChampionSquad[si -1];
 		//^24A5:1837
-		if (bp04->curHP() != 0 && glbNextChampionNumber == 0) {
+		if (bp04->curHP() != 0 && cd.pi.glbNextChampionNumber == 0) {
 			//^24A5:1848
 			bp04->heroFlag |= CHAMPION_FLAG_4000;	// 0x4000
 			//^24A5:184E
@@ -2452,7 +2452,7 @@ void SkWinCore::PLAYER_CONSUME_OBJECT(U16 player, ObjectID rlConsume, i16 posses
 		possess = -1;
 	}
 	//^24A5:116F
-	if (glbNextChampionNumber != 0)
+	if (cd.pi.glbNextChampionNumber != 0)
 		//^24A5:1176
 		return;
 	//^24A5:1179
@@ -3003,7 +3003,7 @@ X16 SkWinCore::SELECT_CHAMPION(U16 xx, U16 yy, U16 dir, U16 mm)
 		UPDATE_RIGHT_PANEL(0);
 	}
 	//^2F3F:041F
-	glbNextChampionNumber = iChampionNumber + 1;
+	cd.pi.glbNextChampionNumber = iChampionNumber + 1;
 	glbChampionsCount++;
 	if (iChampionNumber == 0)	// First champion, then select it as leader
 		//^2F3F:042D
@@ -3258,7 +3258,7 @@ void SkWinCore::PROCESS_POISON(i16 player, Bit16u yy) {
 		//^2C1D:1B1D
 		return;
 	//^2C1D:1B20
-	if (player +1 == glbNextChampionNumber)
+	if (player + 1 == cd.pi.glbNextChampionNumber)
 		//^2C1D:1B2A  
 		return;
 	//^2C1D:1B2D
@@ -3360,7 +3360,7 @@ Bit16u SkWinCore::WOUND_PLAYER(i16 play, i16 quantity, Bit16u ss, Bit16u tt)
 	i16 si = quantity;
 	if (play == -1)
 		return 0;
-	if (play +1 == glbNextChampionNumber)
+	if (play + 1 == cd.pi.glbNextChampionNumber)
 		return 0;
 	if (_4976_4c26 != 0)
 		return 0;
@@ -3842,7 +3842,7 @@ void SkWinCore::UPDATE_CHAMPIONS_STATS()
 	U16 bp0a;
 	for (; bp0e < glbChampionsCount; bp0e++, champion++) {
 		//^2C1D:213D
-		if (champion->curHP() == 0 || bp0e +1 == glbNextChampionNumber)
+		if (champion->curHP() == 0 || bp0e + 1 == cd.pi.glbNextChampionNumber)
 			continue;
 		if (champion->curMP() < champion->maxMP()) {
 			//^2C1D:2164
@@ -3984,7 +3984,7 @@ void SkWinCore::BURN_PLAYER_LIGHTING_ITEMS()
 	//^24A5:06A1
 	X16 bRecomputeLight = 0;
 	X16 iLocalChampionCount = glbChampionsCount;
-	if (glbNextChampionNumber != 0)
+	if (cd.pi.glbNextChampionNumber != 0)
 		--iLocalChampionCount;
 	Champion *xChampion = glbChampionSquad;	//*bp04
 	for (; iLocalChampionCount-- != 0; xChampion++) {
