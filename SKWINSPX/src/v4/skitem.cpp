@@ -215,7 +215,7 @@ U8 *SkWinCore::GET_ITEM_NAME(ObjectID recordLink)
 		//^2405:009A
 		i16 si = bp06->Who();
 		//^2405:00A9
-		if (si >= 0 && si < glbChampionsCount) {
+		if (si >= 0 && si < cd.pi.glbChampionsCount) {
 			//^2405:00B3
 			glbChampionBonesIndex = si;
 		}

@@ -265,7 +265,7 @@ _4976_4c34 = 0;
 glbLightLevel = 0x0;	// 0 = full light
 glbShowItemStats = 0x0;
 glbShowMousePointer = 0x0;
-glbChampionsCount = 0x0;
+cd.pi.glbChampionsCount = 0x0;
 _4976_4c3e = 0x0;
 _4976_4c40 = 0x0;
 cd.gg.glbCreaturesMaxCount = 0x0;

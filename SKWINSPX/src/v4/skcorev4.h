@@ -80,6 +80,7 @@ typedef struct {
 	U16	glbPlayerSpecialStairsDir;	// SPX: added this for special behaviour going stairs for BW
 	i16	glbPlayerPosX;	// (_4976_4bfa) current player x-axis (column)
 	U16	glbNextChampionNumber;		// (_4976_4bfc) Related to champions count ?
+	U16	glbChampionsCount;				// (_4976_4c3c) player count
 
 } SKCodePlayerInfo;
 

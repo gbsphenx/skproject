@@ -1012,14 +1012,10 @@ void SkWinCore::_2f3f_04ea_CHAMPION(Bit16u xx, Bit16u yy, Bit16u dir, Bit16u zz,
 		//^2F3F:052D
 		FIRE_HIDE_MOUSE_CURSOR();
 		//^2F3F:0532
-        if (glbChampionsCount == 1)
-			//^2F3F:0539
+        if (cd.pi.glbChampionsCount == 1)
 			SELECT_CHAMPION_LEADER(0xffff);
-		//^2F3F:0541
-		if (cd.pi.glbNextChampionNumber >= glbChampionsCount)
-			//^2F3F:054A
-			glbChampionsCount--;
-		//^2F3F:054E
+		if (cd.pi.glbNextChampionNumber >= cd.pi.glbChampionsCount)
+			cd.pi.glbChampionsCount--;
 		cd.pi.glbNextChampionNumber = 0;
 		//^2F3F:0554
 		bp04->curHP(0);
@@ -1099,7 +1095,7 @@ void SkWinCore::_2f3f_04ea_CHAMPION(Bit16u xx, Bit16u yy, Bit16u dir, Bit16u zz,
 			}
 		} // fixed mode
 		//^2F3F:0693
-		if (glbChampionsCount == 1) {
+		if (cd.pi.glbChampionsCount == 1) {
 			//^2F3F:069A
 			_4976_4b80 = glbGameTick;
 		}
@@ -2050,7 +2046,7 @@ U16 SkWinCore::CALC_PLAYER_ATTACK_DAMAGE(Champion *ref, U16 player, ObjectID rlE
 	//^075F:1F33
 	ENTER(16);
 	//^075F:1F39
-	if (player >= glbChampionsCount)
+	if (player >= cd.pi.glbChampionsCount)
 		//^075F:1F42
 		return 0;
 	//^075F:1F47
@@ -2728,7 +2724,7 @@ void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 	//^2F3F:009A
 	ENTER(148);
 	//^2F3F:00A0
-	Champion *champion = &glbChampionSquad[player = glbChampionsCount];	//*bp04
+	Champion *champion = &glbChampionSquad[player = cd.pi.glbChampionsCount];	//*bp04
 	champion->HeroType(U8(heroType));
 	champion->handCommand[1] = champion->handCommand[0] = 0xff;
 	champion->timerIndex = TIMER_NONE;
@@ -2966,7 +2962,7 @@ X16 SkWinCore::SELECT_CHAMPION(U16 xx, U16 yy, U16 dir, U16 mm)
 	ENTER(10);
 	//^2F3F:0349
 	U16 iChampionNumber = 0;	// di
-	if (glbLeaderHandPossession.object != OBJECT_NULL || (iChampionNumber = glbChampionsCount) >= MAX_CHAMPIONS)
+	if (glbLeaderHandPossession.object != OBJECT_NULL || (iChampionNumber = cd.pi.glbChampionsCount) >= MAX_CHAMPIONS)
 		//^2F3F:035A
 		return 0;
 	//^2F3F:035F
@@ -3004,7 +3000,7 @@ X16 SkWinCore::SELECT_CHAMPION(U16 xx, U16 yy, U16 dir, U16 mm)
 	}
 	//^2F3F:041F
 	cd.pi.glbNextChampionNumber = iChampionNumber + 1;
-	glbChampionsCount++;
+	cd.pi.glbChampionsCount++;
 	if (iChampionNumber == 0)	// First champion, then select it as leader
 		//^2F3F:042D
 		SELECT_CHAMPION_LEADER(0);
@@ -3045,7 +3041,7 @@ void SkWinCore::SET_PARTY_HERO_FLAG(U16 flagvalue)
 	//^2E62:0CD8
 	ENTER(0);
 	//^2E62:0CDC
-	for (U16 si = 0; si < glbChampionsCount; si++) {
+	for (U16 si = 0; si < cd.pi.glbChampionsCount; si++) {
 		//^2E62:0CE0
 		glbChampionSquad[si].heroFlag |= flagvalue;
 	}
@@ -3084,7 +3080,7 @@ void SkWinCore::SEARCH_STARTER_CHAMPION() // _2f3f_0789
 		Champion *champion = glbChampionSquad;	//*bp04
 		//^2F3F:07CF
 		U16 si;
-		for (si = 0; si < glbChampionsCount; si++, champion++) {
+		for (si = 0; si < cd.pi.glbChampionsCount; si++, champion++) {
 			//^2F3F:07D36
 			champion->heroFlag &= 1023;	// 0x3FF
 			//^2F3F:07DC
@@ -3230,7 +3226,7 @@ Bit16u SkWinCore::GET_PARTY_SPECIAL_FORCE()
 	//^2C1D:2022
 	U16 di = 0;
 	U16 si = 0;
-	for (; si < glbChampionsCount; si++) {
+	for (; si < cd.pi.glbChampionsCount; si++) {
 		di += GET_CHAMPION_SPECIAL_FORCE(si);
 	}
 	//^2C1D:2037
@@ -3753,8 +3749,8 @@ void SkWinCore::CHAMPION_DEFEATED(X16 player)
 #endif
 	//^2C1D:1739
 	X16 si;
-	for (si = 0; si < glbChampionsCount && glbChampionSquad[si].curHP() == 0; si++);
-	if (si == glbChampionsCount) {
+	for (si = 0; si < cd.pi.glbChampionsCount && glbChampionSquad[si].curHP() == 0; si++);
+	if (si == cd.pi.glbChampionsCount) {
 		glbPlayerDefeated = 1;
 		_1031_098e();
 	}
@@ -3778,7 +3774,7 @@ void SkWinCore::PROCESS_PLAYERS_DAMAGE()
 		return;
 
 	Champion* champion = glbChampionSquad;
-	for (U16 championIndex = 0; championIndex < glbChampionsCount; championIndex++, champion++) {
+	for (U16 championIndex = 0; championIndex < cd.pi.glbChampionsCount; championIndex++, champion++) {
 		//^2C1D:1798
 		champion->bodyFlag = glbChampionsBodyFlags[championIndex];
 		glbChampionsBodyFlags[championIndex] = 0;
@@ -3829,7 +3825,7 @@ void SkWinCore::UPDATE_CHAMPIONS_STATS()
 	//^2C1D:210A
 	ENTER(14);
 	//^2C1D:2110
-	if (glbChampionsCount == 0)
+	if (cd.pi.glbChampionsCount == 0)
 		return;
 	//^2C1D:211A
 	glbChampionTable[0].enchantmentPower += 0x38;
@@ -3840,7 +3836,7 @@ void SkWinCore::UPDATE_CHAMPIONS_STATS()
 	Champion *champion = glbChampionSquad;
 	X16 bp0c;
 	U16 bp0a;
-	for (; bp0e < glbChampionsCount; bp0e++, champion++) {
+	for (; bp0e < cd.pi.glbChampionsCount; bp0e++, champion++) {
 		//^2C1D:213D
 		if (champion->curHP() == 0 || bp0e + 1 == cd.pi.glbNextChampionNumber)
 			continue;
@@ -3983,7 +3979,7 @@ void SkWinCore::BURN_PLAYER_LIGHTING_ITEMS()
 	ENTER(8);
 	//^24A5:06A1
 	X16 bRecomputeLight = 0;
-	X16 iLocalChampionCount = glbChampionsCount;
+	X16 iLocalChampionCount = cd.pi.glbChampionsCount;
 	if (cd.pi.glbNextChampionNumber != 0)
 		--iLocalChampionCount;
 	Champion *xChampion = glbChampionSquad;	//*bp04
@@ -4020,7 +4016,7 @@ void SkWinCore::RESET_SQUAD_DIR()
 	//^12B4:011E
 	ENTER(0);
 	//^12B4:0122
-	for (U16 si = 0; si < glbChampionsCount; si++) {
+	for (U16 si = 0; si < cd.pi.glbChampionsCount; si++) {
 		//^12B4:0126
 		glbChampionSquad[si].playerDir(U8(glbPlayerDir));
 	}
@@ -4063,7 +4059,7 @@ U16 SkWinCore::_2c1d_09d9()
 	//^2C1D:09DF
 	X32 bp04 = 0;
 	U16 di;
-	for (di = 0; di < glbChampionsCount; di++) {
+	for (di = 0; di < cd.pi.glbChampionsCount; di++) {
 		//^2C1D:09ED
 		U16 si;
 		for (si = 0; si < SKILL_MAJOR_COUNT; si++) {	// (si = 0; si <= 3; si++) 

@@ -385,7 +385,7 @@ void SkWinCore::CLICK_ITEM_SLOT(Bit16u xx)
 		//^2C1D:08A9
 		di = xx >> 1;
 		//^2C1D:08B0
-		if (di >= glbChampionsCount)
+		if (di >= cd.pi.glbChampionsCount)
 			//^2C1D:08B6
 			return;
 		//^2C1D:08B9
@@ -1195,7 +1195,7 @@ _1ab8:
 			//^1031:1B0B
 			Bit16u bp02 = si -UI_EVENTCODE_VIEW_CHAMPION_1;
 			//^1031:1B13
-			if (bp02 == 4 || bp02 < glbChampionsCount) {
+			if (bp02 == 4 || bp02 < cd.pi.glbChampionsCount) {
 				//^1031:1B21
 				if (cd.pi.glbNextChampionNumber == 0) {
 					//^1031:1B2B
@@ -1388,7 +1388,7 @@ _1ab8:
 		//else if (si == 0x8c) {
 		else if (si == UI_EVENTCODE_DISK_OP) {
 			//^1031:1DAE
-			if (glbChampionsCount > 0 && cd.pi.glbNextChampionNumber == 0) {
+			if (cd.pi.glbChampionsCount > 0 && cd.pi.glbNextChampionNumber == 0) {
 				//^1031:1DC2
 				_4976_4e62--;
 				//^1031:1DC6

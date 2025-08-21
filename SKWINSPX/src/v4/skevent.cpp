@@ -105,7 +105,7 @@ void SkWinCore::PROCEED_GLOBAL_EFFECT_TIMERS()
 			case ttyEnchantment:		// x48
 				{
 					//^2066:2BD1
-					for (i16 bp06 = 0; bp06 < glbChampionsCount; bp06++) {
+					for (i16 bp06 = 0; bp06 < cd.pi.glbChampionsCount; bp06++) {
 						//^2066:2BD8
 						if ((si & (1 << bp06)) == 0)
 							continue;
@@ -128,7 +128,7 @@ void SkWinCore::PROCEED_GLOBAL_EFFECT_TIMERS()
 		//^2066:2C70
 	}
 	//^2066:2C7E
-	for (Bit16u si=0; si < glbChampionsCount; si++) {
+	for (Bit16u si=0; si < cd.pi.glbChampionsCount; si++) {
 		//^2066:2C82
 		CALC_PLAYER_WEIGHT(si);
 		//^2066:2C89
@@ -319,7 +319,7 @@ void SkWinCore::PROCEED_ENCHANTMENT_SELF(U16 mask, U16 yy, U16 zz, U16 tick)
 	if (bp08 != 0)
 		zz >>= 2;
 	//^2C1D:0101
-	for (bp06 = 0; bp06 < glbChampionsCount; bp06++) {
+	for (bp06 = 0; bp06 < cd.pi.glbChampionsCount; bp06++) {
 		//^2C1D:0108
 		if ((mask & (1 << bp06)) != 0) {
 			glbChampionSquad[bp06].enchantmentAura = U8(yy);
@@ -2418,7 +2418,7 @@ void SkWinCore::STEP_DOOR(Timer *ref)
 		if (glbCurrentMapIndex == glbMap_4c28 && di == glbSomePosX_4c2e && si == glbSomePosY_4c30 && iOpenCloseState != 0) {
 			//^3A15:08AF
 			bp1a = 1;
-			if (glbChampionsCount > 0) {
+			if (cd.pi.glbChampionsCount > 0) {
 				//^3A15:08BB
 				*xTileValue &= 0xF8;
 				X16 bp12 = ATTACK_PARTY(bp14, ((8 |bp0e) != 0) ? 4 : 3, 2);
@@ -3118,7 +3118,7 @@ void SkWinCore::PROCEED_TIMERS()
 				glbChampionTable[glbChampionInventory].heroFlag |= CHAMPION_FLAG_4000;	// 0x4000
 				break;
 			case ttyEnchantment://^3C31		(0x48 / 72)
-				for (iChampionIndex = 0; iChampionIndex < glbChampionsCount; iChampionIndex++) {
+				for (iChampionIndex = 0; iChampionIndex < cd.pi.glbChampionsCount; iChampionIndex++) {
 					if (((1 << iChampionIndex) & timer.actor) != 0 && glbChampionSquad[iChampionIndex].curHP() != 0) {
 						glbChampionSquad[iChampionIndex].enchantmentPower -= xCurrentTimer->value; 
 					}

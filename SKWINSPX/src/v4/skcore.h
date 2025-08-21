@@ -429,7 +429,7 @@ protected:
 	U16	glbLightLevel; // light level2? // SPX: _4976_4c36 renamed glbLightLevel
 	U16	glbShowItemStats;		// (_4976_4c38)
 	U16		glbShowMousePointer;	// (_4976_4c3a) ShowCursor16572
-	U16	glbChampionsCount;				// (_4976_4c3c) player count
+	//U16	glbChampionsCount;				// (_4976_4c3c) player count
 	U16	_4976_4c3e;
 	U16		_4976_4c40;	// dir?
 	U8		_4976_4c42[16];

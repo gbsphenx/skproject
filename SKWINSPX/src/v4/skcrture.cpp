@@ -4965,7 +4965,7 @@ i16 SkWinCore::CREATURE_ATTACKS_PLAYER(Creature *ref, U16 player)
 	ENTER(16);
 	//^075F:1C7A
 	Champion *champion;	//*bp04
-    if (player >= glbChampionsCount || (champion = &glbChampionSquad[player])->curHP() == 0)
+    if (player >= cd.pi.glbChampionsCount || (champion = &glbChampionSquad[player])->curHP() == 0)
 		return 0;
 	//^075F:1CA3
 	i16 si = 0;
@@ -5166,7 +5166,7 @@ X16 SkWinCore::CREATURE_ATTACKS_PARTY()
 		i16 di = 0;
 		i16 bp1c = 0;
 		i8 bp26[4];
-		for (; bp1c < glbChampionsCount; bp1c++) {
+		for (; bp1c < cd.pi.glbChampionsCount; bp1c++) {
 			//^1887:0706
 			if (glbChampionSquad[bp1c].curHP() != 0) {
 				bp26[di++] = U8(bp1c);
@@ -5179,7 +5179,7 @@ X16 SkWinCore::CREATURE_ATTACKS_PARTY()
 		//^1887:0731
 		X16 bp18;
 		if (bp0c->w0_3_3() != 0) {
-			bp18 = (bp20 != 0) ? (RAND16(di) +1) : glbChampionsCount;
+			bp18 = (bp20 != 0) ? (RAND16(di) +1) : cd.pi.glbChampionsCount;
 		}
 		else {
 			//^1887:0756
@@ -5197,7 +5197,7 @@ X16 SkWinCore::CREATURE_ATTACKS_PARTY()
 		}
 		//^1887:07A6
 		X16 bp16 = bp08->b28;
-		bp18 = min_value(bp18, glbChampionsCount);
+		bp18 = min_value(bp18, cd.pi.glbChampionsCount);
 		//^1887:07C3
 		// SPX: bp18 is either
 		for (; bp18-- != 0; ) {

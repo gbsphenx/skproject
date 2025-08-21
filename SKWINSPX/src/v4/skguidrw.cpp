@@ -697,7 +697,7 @@ void SkWinCore::DRAW_SQUAD_POS_INTERFACE()
 	Bit8u *bp04 = ALLOC_PICT_BUFF(_4976_0118, _4976_011a, afDefault, 4);
 	//^29EE:03D6
 	SRECT bp14;
-	for (Bit16u si = 0; si < glbChampionsCount; si++) {
+	for (Bit16u si = 0; si < cd.pi.glbChampionsCount; si++) {
 		//^29EE:03DB
 		Bit16u bp06 = (glbChampionSquad[si].playerPos() +4 - glbPlayerDir) & 3;
 		//^29EE:03F7
@@ -1362,7 +1362,7 @@ _10b7:
 	//^29EE:10D2
 	if ((flags & 0x0010) != 0) {
 		//^29EE:10DC
-		for (bp0a = 0; bp0a < glbChampionsCount; bp0a++) {
+		for (bp0a = 0; bp0a < cd.pi.glbChampionsCount; bp0a++) {
 			//^29EE:10E4
 			if (glbChampionSquad[bp0a].curHP() != 0) {
 				//^29EE:10F8
@@ -4142,7 +4142,7 @@ void SkWinCore::_2e62_0cfa(U16 xx)
 	//^2E62:0CFA
 	ENTER(4);
 	//^2E62:0CFF
-	for (U16 si = 0; si < glbChampionsCount; si++) {
+	for (U16 si = 0; si < cd.pi.glbChampionsCount; si++) {
 		//^2E62:0D03
 		if (si +1 != glbChampionInventory) {
 			//^2E62:0D0C

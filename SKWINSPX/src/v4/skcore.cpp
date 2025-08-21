@@ -3969,7 +3969,7 @@ void SkWinCore::UPDATE_RIGHT_PANEL(Bit16u xx)
 	//^2759:065E
 	if (cd.pi.glbNextChampionNumber == 0) {
 		//^2759:0668
-		if (glbChampionsCount == 0) {
+		if (cd.pi.glbChampionsCount == 0) {
 			//^2759:066F
 			if (_4976_531c != 0 || glbSomeChampionPanelFlag != 0) {
 				//^2759:067D
@@ -3985,7 +3985,7 @@ void SkWinCore::UPDATE_RIGHT_PANEL(Bit16u xx)
 		//^2759:0696
 		if (xx != 0) {
 			//^2759:069F
-			for (Bit16u bp06=0; bp06 < glbChampionsCount; bp06++) {
+			for (Bit16u bp06=0; bp06 < cd.pi.glbChampionsCount; bp06++) {
 				//^2759:06A6
 				// SPX: ??BUG?? The b42 is table of 2 elements only; shouldn't it be si < 2 ??
 				for (Bit16u si=0; si <= 2; si++) {
@@ -4006,7 +4006,7 @@ void SkWinCore::UPDATE_RIGHT_PANEL(Bit16u xx)
 			//^2759:06FC
 			if (glbRightPanelType == RIGHT_PANEL_MAGIC_MAP) {	// 3
 				//^2759:0703
-				ATLASSERT(glbChampionIndex < glbChampionsCount +1);
+				ATLASSERT(glbChampionIndex < cd.pi.glbChampionsCount + 1);
 				Champion *champion = &glbChampionTable[glbChampionIndex];	//*bp04
 				//^2759:0714
 				if ((glbMagicalMapFlags & 0x0200) != 0) {
@@ -4064,7 +4064,7 @@ void SkWinCore::UPDATE_RIGHT_PANEL(Bit16u xx)
 		if (glbChampionIndex >= 0) {
 			//^2759:07E2
 			Bit16u bp06;
-			for (bp06=0; bp06 < glbChampionsCount; bp06++) {
+			for (bp06=0; bp06 < cd.pi.glbChampionsCount; bp06++) {
 				//^2759:07EA
 				Champion *bp04 = &glbChampionSquad[bp06];
 				//^2759:07FB
@@ -4129,7 +4129,7 @@ void SkWinCore::UPDATE_RIGHT_PANEL(Bit16u xx)
 				glbPreviousRightPanelType = 0xffff;
 			}
 			//^2759:090E
-			for (Bit16u bp06=0; bp06 < glbChampionsCount; bp06++) {
+			for (Bit16u bp06=0; bp06 < cd.pi.glbChampionsCount; bp06++) {
 				//^2759:0916
 				Champion *champion = &glbChampionSquad[bp06];
 				//^2759:0927
@@ -5489,7 +5489,7 @@ _0b01:
 	if (_12b4_099e(bp08) == 0) {
 		//^12B4:0B52
 		U16 bp02;
-		for (bp02 = 0; bp02 < glbChampionsCount; bp02++) {
+		for (bp02 = 0; bp02 < cd.pi.glbChampionsCount; bp02++) {
 			//^12B4:0B59
 			if (glbChampionSquad[bp02].curHP() != 0) {
 				//^12B4:0B6D
@@ -6385,7 +6385,7 @@ void SkWinCore::PLAYER_TESTING_WALL(U16 ww, U16 xx, U16 yy)
 	//^121E:00BE
 	ENTER(0);
 	//^121E:00C1
-	if (glbChampionsCount == 0)
+	if (cd.pi.glbChampionsCount == 0)
 		//^121E:00C6
 		return;
 	//^121E:00C8
@@ -7604,7 +7604,7 @@ i16 SkWinCore::_2c1d_028c(i16 xx, i16 yy, X16 ww)
 	//^2C1D:028C
 	ENTER(4);
 	//^2C1D:0292
-	if (glbChampionsCount != 0) {
+	if (cd.pi.glbChampionsCount != 0) {
 		//^2C1D:0299
 		if (ABS16(xx - glbSomePosX_4c2e) + ABS16(yy - glbSomePosY_4c30) <= 1) {
 			//^2C1D:02BE
@@ -10416,7 +10416,7 @@ _1045:
 	//^2066:125A
 	sGameVar.dwGameTick = glbGameTick;
 	sGameVar.dwRandomSeed = glbRandomSeed;
-	sGameVar.wChampionsCount = glbChampionsCount;
+	sGameVar.wChampionsCount = cd.pi.glbChampionsCount;
 	sGameVar.wPlayerPosX = glbPlayerPosX;
 	sGameVar.wPlayerPosY = glbPlayerPosY;
 	sGameVar.wPlayerDir = glbPlayerDir;
@@ -10462,9 +10462,9 @@ _1045:
 	//^2066:1371
 	if (SUPPRESS_WRITER(glbIngameGlobVarWords, _4976_3956, 2, 64) != 0)
 		goto _14fa;
-	DEBUG_HELP_WRITER("Champion Squad", glbChampionSquad, 261, glbChampionsCount);
+	DEBUG_HELP_WRITER("Champion Squad", glbChampionSquad, 261, cd.pi.glbChampionsCount);
 	//^2066:138D
-	if (SUPPRESS_WRITER(glbChampionSquad, _4976_3992, 261, glbChampionsCount) != 0)
+	if (SUPPRESS_WRITER(glbChampionSquad, _4976_3992, 261, cd.pi.glbChampionsCount) != 0)
 		goto _14fa;
 	DEBUG_HELP_WRITER("Global Spell Effects", &glbGlobalSpellEffects, 6, 1);
 	//^2066:13AC
@@ -10485,7 +10485,7 @@ _1045:
 	//^2066:1456
 	_4976_5258 = 0;
 	//^2066:1462
-	for (bp0e = 0; bp0e < glbChampionsCount; bp0e++) {
+	for (bp0e = 0; bp0e < cd.pi.glbChampionsCount; bp0e++) {
 		//^2066:1469
 		ObjectID *bp04 = glbChampionSquad[bp0e].inventory;
 		//^2066:147A
@@ -10821,7 +10821,7 @@ X16 SkWinCore::_12b4_099e(ObjectID rl)
 		return 0;
 	X16 bp08 = 0;
 	U16 si;
-	for (si = 0; si < glbChampionsCount; si++) {
+	for (si = 0; si < cd.pi.glbChampionsCount; si++) {
 		//^12B4:09C3
 		Champion *bp04 = &glbChampionSquad[si];
 		if (bp04->curHP() != 0) {
@@ -10846,7 +10846,7 @@ X16 SkWinCore::_12b4_099e(ObjectID rl)
 		//^12B4:0A39
 	}
 	//^12B4:0A40
-	for (si = 0; si < glbChampionsCount; si++) {
+	for (si = 0; si < cd.pi.glbChampionsCount; si++) {
 		//^12B4:0A44
 		if (glbChampionSquad[si].curHP() != 0) {
 			//^12B4:0A54
@@ -16031,7 +16031,7 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 	//^2066:19E7
 	SkD((DLV_DBG_GAME_LOAD, "Reset champions inventory ... \n"));
 	Bit16u si;
-	for (si=0; si < glbChampionsCount; si++) {
+	for (si = 0; si < cd.pi.glbChampionsCount; si++) {
 		//^2066:19F1
 		ObjectID *bp08 = &glbChampionSquad[si].inventory[0];
 		//^2066:1A01
@@ -16104,7 +16104,7 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 	//^2066:1B40
 	glbMinionsAssocCount = 0;
 	//^2066:1B46
-	for (si = 0; si < glbChampionsCount; si++) {
+	for (si = 0; si < cd.pi.glbChampionsCount; si++) {
 		//^2066:1B4A
 		ObjectID *bp08 = &glbChampionSquad[si].inventory[0];
 		//^2066:1B5A
@@ -16124,7 +16124,7 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 		goto _1e7e;
 	}
 	//^2066:1BA6
-	for (si = 0; si < glbChampionsCount; si++) {
+	for (si = 0; si < cd.pi.glbChampionsCount; si++) {
 		//^2066:1BAA
 		ObjectID *bp08 = &glbChampionSquad[si].inventory[0];
 		//^2066:1BBA
@@ -16450,7 +16450,7 @@ _2e5b:
 	}
 	//^2066:2F7A
 	_4976_5bf6 = 0;
-	glbChampionsCount = 0;
+	cd.pi.glbChampionsCount = 0;
 	//SPX: changed 0xFFFF to oFFFF
 	glbLeaderHandPossession.object = OBJECT_NULL; // 0xFFFF
 	//^2066:2F8C
@@ -16494,7 +16494,7 @@ _2e5b:
 			//^2066:2FF5
 			glbGameTick = _4976_4c1a = t1.dwGameTick;	// game tick
 			glbRandomSeed = t1.dwRandomSeed;	// random seed
-			glbChampionsCount = t1.wChampionsCount;	// player cnt
+			cd.pi.glbChampionsCount = t1.wChampionsCount;	// player cnt
 			glbPlayerPosX = t1.wPlayerPosX;	// column
 			glbPlayerPosY = t1.wPlayerPosY;	// row
 			glbPlayerDir = t1.wPlayerDir;	// dir
@@ -16529,7 +16529,7 @@ _2e5b:
 			if (SUPPRESS_READER(glbIngameGlobVarWords, _4976_3956, 2, 64, 1) != 0)
 				break;
 			//^2066:310F
-			if (SUPPRESS_READER(glbChampionSquad, _4976_3992, 261, glbChampionsCount, 1) != 0) // player ents
+			if (SUPPRESS_READER(glbChampionSquad, _4976_3992, 261, cd.pi.glbChampionsCount, 1) != 0) // player ents
 				break;
 			//^2066:3130
 			if (SUPPRESS_READER(&glbGlobalSpellEffects, _4976_3a97, 6, 1, 1) != 0)
@@ -16668,7 +16668,7 @@ _31b8:		// we jump there from loading a dungeon from new game
 
 			glbGameTick = _4976_4c1a = 1;	// game tick
 			glbRandomSeed = 63;	// random seed
-			glbChampionsCount = 4;	// player cnt
+			cd.pi.glbChampionsCount = 4;	// player cnt
 			glbPlayerPosX = 4;	// column
 			glbPlayerPosY = 4;	// row
 			glbPlayerDir = 0;	// dir
@@ -18401,7 +18401,7 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 	U16 bp02;
 	if (_4976_5bee[0] == 0) {
 		//^2676:0655
-		for (bp02 = 0; bp02 < glbChampionsCount; bp02++) {
+		for (bp02 = 0; bp02 < cd.pi.glbChampionsCount; bp02++) {
 			//^2676:065D
 			MARK_DYN_LOAD(0x16000100 + (glbChampionSquad[bp02].HeroType() << 16)); // Mark: Champions, xxx, image, 0x00(wake)
 			//^2676:067E
@@ -18414,7 +18414,7 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 		}
 	}
 	//^2676:06E8
-	if (_4976_5bee[0] != 0 || (_4976_5c8a != 0 && glbChampionsCount != 4)) {
+	if (_4976_5bee[0] != 0 || (_4976_5c8a != 0 && cd.pi.glbChampionsCount != 4)) {
 		//^2676:06FD
 		// SPX: x16 GDAT2 Champion category
 		MARK_DYN_LOAD(0x16ffffff); // Mark: Champions, all, all, all
@@ -19337,7 +19337,7 @@ Bit16u SkWinCore::_2fcf_16ff(ObjectID rl)
 	ObjectID di;
 	U16 si = 0; // uninited val
 	ObjectID *bp08;
-	for (; bp0a < glbChampionsCount; bp0a++, champion++) {
+	for (; bp0a < cd.pi.glbChampionsCount; bp0a++, champion++) {
 		//^2FCF:1719
 		if (champion->curHP() == 0)
 			continue;
@@ -20081,7 +20081,7 @@ void SkWinCore::ROTATE_SQUAD(Bit16u dir)
 		//^2C1D:01FB
 		Champion *bp04 = glbChampionSquad;
 		//^2C1D:0203
-		for (Bit16u si=0; si < glbChampionsCount; bp04++, si++) {
+		for (Bit16u si=0; si < cd.pi.glbChampionsCount; bp04++, si++) {
 			//^2C1D:0207
 			bp04->playerPos(bp04->playerPos() + (U8)dx);
 			//^2C1D:0216
@@ -20320,7 +20320,7 @@ Bit16u SkWinCore::_2fcf_0434(ObjectID recordLink, i16 xpos, i16 ypos, i16 xx, i1
 				glbPlayerPosX = xx;
 				glbPlayerPosY = yy;
 				//^2FCF:0915
-				if (glbChampionsCount > 0) {
+				if (cd.pi.glbChampionsCount > 0) {
 					//^2FCF:091F
 					Champion *bp08;
 					if (_4976_5824 != 0) {
@@ -20329,7 +20329,7 @@ Bit16u SkWinCore::_2fcf_0434(ObjectID recordLink, i16 xpos, i16 ypos, i16 xx, i1
 						//^2FCF:0945
 						bp08 = glbChampionSquad;
 						//^2FCF:094D
-						for (bp18=0; bp18 < glbChampionsCount; bp08++, bp18++) {
+						for (bp18=0; bp18 < cd.pi.glbChampionsCount; bp08++, bp18++) {
 							//^2FCF:0954
 							if (bp08->curHP() != 0) {
 								//^2FCF:095E
@@ -20345,7 +20345,7 @@ Bit16u SkWinCore::_2fcf_0434(ObjectID recordLink, i16 xpos, i16 ypos, i16 xx, i1
 						//^2FCF:09A1
 						bp08 = glbChampionSquad;
 						//^2FCF:09A9
-						for (bp18 = 0; (bp18 < glbChampionsCount); bp08++, bp18++) {
+						for (bp18 = 0; (bp18 < cd.pi.glbChampionsCount); bp08++, bp18++) {
 							//^2FCF:09B0
 							if (bp08->curHP() != 0) {
 								//^2FCF:09BA
@@ -25246,7 +25246,7 @@ void SkWinCore::_2759_12e6()
 	//^2759:12EC
 	i16 bp0a = -1;
 	U16 si = 0;
-	for (; si < glbChampionsCount; si++) {
+	for (; si < cd.pi.glbChampionsCount; si++) {
 		//^2759:12F6
 		i16 di = 0;
 		for (; di <= 1; di++) {
@@ -25746,7 +25746,7 @@ SkWinCore::SkWinCore()
 	glbDir_4976_4c10 = 0;
 	_4976_0118 = 0x11;
 	_4976_011a = 0x11;
-	glbChampionsCount = 0;
+	cd.pi.glbChampionsCount = 0;
 	_4976_0124 = 1;
 	_4976_00f4 = 0x7700;
 	glbFreeRAMMemPool = 0;

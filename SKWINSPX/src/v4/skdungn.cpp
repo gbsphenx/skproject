@@ -2136,7 +2136,7 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(i16 xpos, i16 ypos, ObjectID reco
 			//^2FCF:2730
 			i16 bp2e = ADD_ITEM_CHARGE(recordLink, 0);
 			//^2FCF:273F
-			if (bp2e < 0 || bp2e >= glbChampionsCount)
+			if (bp2e < 0 || bp2e >= cd.pi.glbChampionsCount)
 				//^2FCF:274E
 				break;
 			//^2FCF:2751
@@ -2215,7 +2215,7 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(i16 xpos, i16 ypos, ObjectID reco
 							//^2FCF:284D
 							continue;
 						//^2FCF:2850
-						if (glbChampionsCount == 0)
+						if (cd.pi.glbChampionsCount == 0)
 							//^2FCF:2857
 							continue;
 						//^2FCF:285A
@@ -2540,14 +2540,14 @@ _29a8:
 							//^2FCF:2B6A
 							continue;
 						//^2FCF:2B6D
-						if (glbChampionsCount == 0)
+						if (cd.pi.glbChampionsCount == 0)
 							//^2FCF:2B74
 							continue;
 						//^2FCF:2B77
 						Bit16u bp32 = 0;
 						Bit16u bp30 = 0;
 						//^2FCF:2B81
-						for (; bp30 < glbChampionsCount; bp30++) {
+						for (; bp30 < cd.pi.glbChampionsCount; bp30++) {
 							//^2FCF:2B83
 							if (glbChampionSquad[bp30].curHP() != 0) {
 								//^2FCF:2B94
@@ -2623,7 +2623,7 @@ _29a8:
 					continue;
 				}
 				//^2FCF:2ABF
-				if (glbChampionsCount == 0) {
+				if (cd.pi.glbChampionsCount == 0) {
 					//^2FCF:2AC6
 					continue;
 				}

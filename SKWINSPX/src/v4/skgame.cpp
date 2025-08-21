@@ -442,7 +442,7 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 		//^24A5:01AB
 		Bit16u si;
 		// Pass through all items in hands
-		for (si=0; si < glbChampionsCount; si++) {
+		for (si=0; si < cd.pi.glbChampionsCount; si++) {
 			//^24A5:01AF
 			for (Bit16u bp04=0; bp04 <= 1; bp04++) {
 				//^24A5:01B6
@@ -3263,7 +3263,7 @@ void SkWinCore::END_GAME(U16 xx)
 	//^101B:000A
 	if (xx != 0 && _4976_4c26 == 0) {
 		//^101B:0017
-		U8 bp01 = (glbChampionsCount > 0) ? glbChampionSquad[0].HeroType() : 0xfe;
+		U8 bp01 = (cd.pi.glbChampionsCount > 0) ? glbChampionSquad[0].HeroType() : 0xfe;
 		//^101B:002A
 		// SPX: Sound when dying
 		QUEUE_NOISE_GEN2(GDAT_CATEGORY_CHAMPIONS, bp01, SOUND_CHAMPION_SCREAM, 0xfe, glbPlayerPosX, glbPlayerPosY, 0, 255, 255);
@@ -3346,7 +3346,7 @@ U16 SkWinCore::PERFORM_MOVE(X16 xx)
 	//^12B4:0338
 	U16 iChampionIndex = 0;	/// si
 	SkD((DLV_MOVE, "------------------------------------------------\n"));
-	for (iChampionIndex = 0; iChampionIndex < glbChampionsCount; xChampion++, iChampionIndex++) {
+	for (iChampionIndex = 0; iChampionIndex < cd.pi.glbChampionsCount; xChampion++, iChampionIndex++) {
 		//^12B4:033C
 		if (xChampion->curHP() != 0) {
 			bp26 = max_value(bp26, CALC_PLAYER_WALK_DELAY(iChampionIndex));
@@ -3444,7 +3444,7 @@ U16 SkWinCore::PERFORM_MOVE(X16 xx)
 	glbRefreshViewport = 1;
 	xChampion = glbChampionSquad;
 	//^12B4:0525
-	for (iChampionIndex = 0; iChampionIndex < glbChampionsCount; xChampion++, iChampionIndex++) {
+	for (iChampionIndex = 0; iChampionIndex < cd.pi.glbChampionsCount; xChampion++, iChampionIndex++) {
 		if (xChampion->curHP() != 0) {
 			ADJUST_STAMINA(iChampionIndex, ((GET_PLAYER_WEIGHT(iChampionIndex) * 3) / MAX_LOAD(xChampion)) +1);
 		}
@@ -3489,7 +3489,7 @@ _05c2:
 		break;
 	case 4://^05D0	// blocked by some creature
 		//^12B4:05D0
-		if (glbChampionsCount == 0)
+		if (cd.pi.glbChampionsCount == 0)
 			break;
 		//^12B4:05DA
 		bp12 = QUERY_CREATURE_AI_SPEC_FLAGS(bp14) & 1;
@@ -3551,7 +3551,7 @@ _0768:
 		return 1;
 	case 3://^0779	// tile is blocked
 		//^12B4:0779
-		if (glbChampionsCount == 0)
+		if (cd.pi.glbChampionsCount == 0)
 			break;
 		_12b4_023f(playerDestPosX, playerDestPosY, &bp16, &bp18, bp0e, di);
 		//^12B4:079E
@@ -3667,7 +3667,7 @@ Bit16u SkWinCore::LOAD_NEW_DUNGEON()
 	}
 	//^2066:2D74
 	_4976_5bf6 = 0;
-	glbChampionsCount = 0;
+	cd.pi.glbChampionsCount = 0;
 	glbLeaderHandPossession.object = OBJECT_NULL;
 	_4976_524a = 0;
 	return READ_DUNGEON_STRUCTURE(1);
@@ -3698,7 +3698,7 @@ Bit16u SkWinCore::ORIGINAL__LOAD_NEW_DUNGEON()
 	}
 	//^2066:2D74
 	_4976_5bf6 = 0;
-	glbChampionsCount = 0;
+	cd.pi.glbChampionsCount = 0;
 	glbLeaderHandPossession.object = OBJECT_NULL;
 	_4976_524a = 0;
 	return READ_DUNGEON_STRUCTURE(1);
@@ -3991,18 +3991,12 @@ _23de:
 //^2C1D:0250
 i16 SkWinCore::GET_PLAYER_AT_POSITION(Bit16u position)
 {
-	//^2C1D:0250
-	Champion *bp04 = glbChampionSquad;
-	//^2C1D:025D
-	for (Bit16u si=0; si<glbChampionsCount; si++, bp04++) {
-		//^2C1D:0261
-		if (bp04->playerPos() == position && bp04->curHP() != 0) {
-			//^2C1D:0276
-			return si;
+	Champion* xChampion = glbChampionSquad; // bp04
+	for (U16 iChampionIndex = 0; iChampionIndex < cd.pi.glbChampionsCount; iChampionIndex++, xChampion++) {
+		if (xChampion->playerPos() == position && xChampion->curHP() != 0) {
+			return iChampionIndex;
 		}
-		//^2C1D:027A
 	}
-	//^2C1D:0286
 	return -1;
 }
 
@@ -4057,9 +4051,9 @@ X16 SkWinCore::ATTACK_PARTY(Bit16u quantity, Bit16u yy, Bit16u zz)
 	di -= bp04;
 	bp04 <<= 1;
 	U16 bp02;
-	for (bp02 = 0; bp02 < glbChampionsCount; bp02++) {
+	for (bp02 = 0; bp02 < cd.pi.glbChampionsCount; bp02++) {
 		//^2C1D:1C34
-		if (WOUND_PLAYER(bp02, max_value(1, di +RAND16(bp04)), yy, zz) != 0) {
+		if (WOUND_PLAYER(bp02, max_value(1, di + RAND16(bp04)), yy, zz) != 0) {
 			//^2C1D:1C60
 			si |= 1 << bp02;
 		}
