@@ -103,6 +103,18 @@ SOURCE=.\src\v4\dme.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\src\v4\skaudio.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\v4\skbkgrnd.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\v4\skbltgfx.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\v4\skchamp.cpp
 # End Source File
 # Begin Source File
@@ -119,27 +131,7 @@ SOURCE=.\src\v4\skcorev4.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4\skeditdn.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\src\v4\skcrture.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\src\v4\skdungn.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\src\v4\skbkgrnd.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\src\v4\skevent.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\src\v4\skibmio.cpp
 # End Source File
 # Begin Source File
 
@@ -147,15 +139,19 @@ SOURCE=.\src\v4\skdevui.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4\skaudio.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\src\v4\skdoor.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4\skgameui.cpp
+SOURCE=.\src\v4\skdungn.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\v4\skeditdn.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\v4\skevent.cpp
 # End Source File
 # Begin Source File
 
@@ -163,15 +159,19 @@ SOURCE=.\src\v4\skgame.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\src\v4\skgameui.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\v4\skgdat.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4\skbltgfx.cpp
+SOURCE=.\src\v4\skguidrw.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4\skguidrw.cpp
+SOURCE=.\src\v4\skibmio.cpp
 # End Source File
 # Begin Source File
 
@@ -197,10 +197,6 @@ SOURCE=.\src\v0\winatl.h
 # Begin Group "WINDOW"
 
 # PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\src\v4\SkWin.cpp
-# End Source File
 # Begin Source File
 
 SOURCE=.\src\v4\SKWIN4.rc
@@ -307,11 +303,11 @@ SOURCE=.\src\v0\skwinmfc.h
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\src\v4\sksound.cpp
+SOURCE=.\src\v4\SBlast.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\src\v4\SBlast.cpp
+SOURCE=.\src\v4\sksound.cpp
 # End Source File
 # Begin Source File
 
