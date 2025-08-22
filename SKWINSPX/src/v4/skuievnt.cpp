@@ -404,7 +404,7 @@ void SkWinCore::CLICK_ITEM_SLOT(Bit16u xx)
 		// SPX: translate to have the inventory position
 		si = xx -8;
 		//^2C1D:08E8
-		di = ((si >= INVENTORY_MAX_SLOT) ? glbChampionIndex : glbChampionInventory) -1;
+		di = ((si >= INVENTORY_MAX_SLOT) ? cd.pi.glbChampionIndex : glbChampionInventory) -1;
 	}
 	//^2C1D:08F8
 	ObjectID bp02 = glbLeaderHandPossession.object;
@@ -478,7 +478,7 @@ void SkWinCore::CLICK_MONEYBOX(Bit16u xx)
 	if (glbRightPanelType != RIGHT_PANEL_MONEY_BOX)	// 4
 		return;
 	//^2759:28E8
-	X16 bp02 = glbChampionIndex -1;
+	X16 bp02 = cd.pi.glbChampionIndex -1;
 	ObjectID si = glbChampionSquad[bp02].Possess(glbSelectedHandAction);
 	ObjectID di;
 	if (glbLeaderHandPossession.object != OBJECT_NULL) {
@@ -697,7 +697,7 @@ void SkWinCore::CLICK_VWPT(i16 xx, i16 yy)
 							//^121E:05AD
 							xDoor->w2_b_b(1);
 							//^121E:05B5
-							glbRefreshViewport = 1;
+							cd.gg.glbRefreshViewport = 1;
 						}
 #ifdef XDMX_EXTENDED_FEATURES
 						HANDLE_KEY_ON_DOOR_BUTTON(xDoor, rlHandPossession, bp16, bp18);
@@ -899,7 +899,7 @@ void SkWinCore::CLICK_VWPT(i16 xx, i16 yy)
 					//^121E:090D
 					return;
 				//^121E:090F
-				if (_098d_02a2(_0cee_2e09(bp10) +si, xx, di) != 0) {
+				if (_098d_02a2(QUERY_CREATURE_AI_W32_FROM_RECORD(bp10) +si, xx, di) != 0) {
 					//^121E:092B
 					if (CREATURE_121e_0222(bp0c, bp0e, si +6) != 0)
 						//^121E:0940
@@ -910,7 +910,7 @@ void SkWinCore::CLICK_VWPT(i16 xx, i16 yy)
 		}
 	}
 	//^121E:0951
-	_121e_0351(xx, di);
+	_121e_0351_THROW_LEFT_OR_RIGHT(xx, di);
 	//^121E:095D
 	return;
 }
@@ -924,7 +924,7 @@ void SkWinCore::CLICK_MAGICAL_MAP_AT(Bit16u ww, i16 xx, i16 yy)
 	//^1031:1703
 	i16 di = yy;
 	//^1031:1709
-	ObjectID bp0c = glbChampionTable[glbChampionIndex].Possess(glbSelectedHandAction);
+	ObjectID bp0c = glbChampionTable[cd.pi.glbChampionIndex].Possess(glbSelectedHandAction);
 	//^1031:171F
 	Container *bp04 = GET_ADDRESS_OF_RECORD9(bp0c);
 	//^1031:172E
@@ -1030,7 +1030,7 @@ void SkWinCore::CLICK_MAGICAL_MAP_RUNE(Bit16u rune)
 		goto _1445;
 	}
 	//^2759:141E
-	champion = &glbChampionTable[glbChampionIndex];
+	champion = &glbChampionTable[cd.pi.glbChampionIndex];
 	//^2759:142F
 	if (champion->curMP() >= si) {
 		//^2759:1438
@@ -1084,7 +1084,7 @@ Bit16u SkWinCore::HANDLE_UI_EVENT(MousePosition *ref)
 	if (glbEndCounter != 0) {
 		//^1031:19B1
 _19b1:
-		glbRefreshViewport = 1;
+		cd.gg.glbRefreshViewport = 1;
 		//^1031:19B7
         di = 0;
 		//^1031:19B9
@@ -1094,7 +1094,7 @@ _19b1:
 	//^1031:19BC
 	di = 1;
 	//^1031:19BF
-	glbRefreshViewport = 0;
+	cd.gg.glbRefreshViewport = 0;
 	//^1031:19C5
 	i16 bp02;
 	if (si == UI_EVENTCODE_RELEASE_MOUSE_BUTTON) {	// 0xE3
@@ -1170,7 +1170,7 @@ _19b1:
 		//^1031:1A85
 		bp02 = (si == UI_EVENTCODE_CHAMPION_TURN_LEFT) ? -1 : 1;
 		//^1031:1A95
-		glbChampionTable[glbChampionIndex].playerDir((glbChampionTable[glbChampionIndex].playerDir() +bp02) & 3);
+		glbChampionTable[cd.pi.glbChampionIndex].playerDir((glbChampionTable[cd.pi.glbChampionIndex].playerDir() + bp02) & 3);
 		//^1031:1AB8
 _1ab8:
 		UPDATE_RIGHT_PANEL(0);
@@ -1217,7 +1217,7 @@ _1ab8:
 	//^1031:1B53
 	else if (si == UI_EVENTCODE_VALIDATE_SPELL) {
 		//^1031:1B58
-		glbRefreshViewport = TRY_CAST_SPELL();
+		cd.gg.glbRefreshViewport = TRY_CAST_SPELL();
 		//^1031:1B5D
 		//^1031:1BA9
 	}
@@ -1241,7 +1241,7 @@ _1ab8:
 	//else if (si >= 0x71 && si <= 0x73) {
 	else if (si >= UI_EVENTCODE_HAND_ACTION_1 && si <= UI_EVENTCODE_HAND_ACTION_3) {
 		//^1031:1B9D
-		glbRefreshViewport = PROCEED_COMMAND_SLOT(si -UI_EVENTCODE_HAND_ACTION_1);
+		cd.gg.glbRefreshViewport = PROCEED_COMMAND_SLOT(si -UI_EVENTCODE_HAND_ACTION_1);
 	}
 	//^1031:1BAF
 	//else if (si >= 0x74 && si <= 0x7b) {
@@ -1361,9 +1361,7 @@ _1ab8:
 				cd.pi.glbIsPlayerSleeping = 1;
 				//^1031:1D63
 				if (cd.pi.glbIsPlayerMoving != 0) {
-					//^1031:1D6A
-					PERFORM_MOVE(glbPlayerLastMove);
-					//^1031:1D74
+					PERFORM_MOVE(cd.pi.glbPlayerLastMove);
 					cd.pi.glbIsPlayerMoving = 0;
 				}
 				//^1031:1D7A
@@ -1448,7 +1446,7 @@ _1ab8:
 	//if (glbUIEventCode >= 0xa5 && glbUIEventCode <= 0xc6)
 	if (glbUIEventCode >= UI_EVENTCODE_0A5 && glbUIEventCode <= UI_EVENTCODE_0C6)
 		//^1031:1E5E
-		glbRefreshViewport = 1;
+		cd.gg.glbRefreshViewport = 1;
 	//^1031:1E66
 	return di;
 }

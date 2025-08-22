@@ -43,7 +43,7 @@ U16 SkWinCore::IS_ITEM_FIT_FOR_EQUIP(ObjectID recordLink, i16 inventorySlot, U16
 			if ((iFlagsValue & ITEM_EQUIP_FLAG_CONTAINER_2) != 0) {	// 0x8000
 				return 0;
 			}
-			if (IS_ITEM_FIT_FOR_EQUIP(_4976_3de2[(glbChampionIndex << 1) + (glbSelectedHandAction)], INVENTORY_SCABBARD_1, 0x0000) != 0) {	// 0x000c
+			if (IS_ITEM_FIT_FOR_EQUIP(_4976_3de2[(cd.pi.glbChampionIndex << 1) + (glbSelectedHandAction)], INVENTORY_SCABBARD_1, 0x0000) != 0) {	// 0x000c
 				return iFlagsValue & ITEM_EQUIP_FLAG_SCABBARD;	// 0x0040
 			}
 		}

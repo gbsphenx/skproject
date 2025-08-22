@@ -193,7 +193,7 @@ _1201:
 					//^1031:122C
 					if (HANDLE_UI_EVENT(&glbMousePosition) != 0) {
 						//^1031:123B
-						if (glbRefreshViewport == 0)
+						if (cd.gg.glbRefreshViewport == 0)
 							//^1031:1242
 							break;
 						//^1031:1245
@@ -249,9 +249,9 @@ _1201:
 			case 9:
 				{
 					//^1031:133E
-					if (glbChampionIndex > 0) {
+					if (cd.pi.glbChampionIndex > 0) {
 						//^1031:1345
-						si = glbChampionIndex -1;
+						si = cd.pi.glbChampionIndex - 1;
 					}
 					//^1031:134D
 					//else if (glbMousePosition.event >= 0x74 && glbMousePosition.event <= 0x7b) {
@@ -290,7 +290,7 @@ _1201:
 						QUERY_GDAT_IMAGE_LOCALPAL(0x01, 0x05, 0x08)
 						);
 					//^1031:13EE
-					_4976_4df6[0] = (glbChampionTable[glbChampionIndex].runesCount * 6) +U8(glbMousePosition.event) -5;
+					_4976_4df6[0] = (glbChampionTable[cd.pi.glbChampionIndex].runesCount * 6) +U8(glbMousePosition.event) -5;
 					//^1031:140C
 					i16 bp0a;
 					i16 bp0c;

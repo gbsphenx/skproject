@@ -278,7 +278,7 @@ protected:
 	U16	glbMagicMapInterlineY;		// =1
 	RectTable	glbRectNoTable;	// (_4976_0194) starting mem for rectno info
 	U16	_4976_0198;		// current ring buffer index
-	U16	glbGameHasEnded;		// (_4976_01ba)
+	//U16	glbGameHasEnded;		// (_4976_01ba)
 	U16	_4976_022c;		// 1 if modal dialog working
 	X16		glbTickStepReached;		// (_4976_022e) 1 if system interval timer reached
 	U16	glbMapToLoad;		// (_4976_0230) non 0xffff if you need load map. change the player's current map.
@@ -394,7 +394,7 @@ protected:
 	//U16	glbIsPlayerMoving; // (_4976_4bea) 0 if you stay, not 0 if stepping forward/backward
 	Bit32u	glbGameTick;	// (_4976_4bec) current game tick
 	U16	glbTickSpeed;	// (_4976_4bf0) 0 is the fastest (no wait between game tick), 15 is slow
-	U16	glbPlayerLastMove;		// (_4976_4bf2) Last effective move (see PERFORM_MOVE)
+	//U16	glbPlayerLastMove;		// (_4976_4bf2) Last effective move (see PERFORM_MOVE)
 	U16	glbPlayerMap;	// (_4976_4bf4) current player map #
 	U16	glbPlayerDir;	// (_4976_4bf6) current player dir (0,1,2,3=N,E,S,W)
 	U16	glbPlayerSpecialStairsDir;	// SPX: added this for special behaviour going stairs for BW
@@ -482,7 +482,7 @@ protected:
 	U16	glbMouseInfoX;	// _4976_4e4a
 	U16	glbMouseInfoY;	// _4976_4e4c
 	MousePosition	glbMousePosition; // (_4976_4e4e)
-	U16	glbRefreshViewport;				// _4976_4e5c (tells to refresh viewport ?)
+	//U16	glbRefreshViewport;				// _4976_4e5c (tells to refresh viewport ?)
 	U16	glbUIClickEventLast;	// _4976_4e5e (ring 0 to 2) last index of click event
 	U16	glbUIClickEventIndex;	// _4976_4e60 (ring 0 to 2) processed index of click event
 	i16		_4976_4e62;
@@ -644,7 +644,7 @@ protected:
 	sk5358	glbItemSelected[3];	// (_4976_5358)
 	i8	_4976_5364;
 	i8	_4976_5365;
-	i16	glbChampionIndex;	// (_4976_5366) SPX: Used as a champion cursor in the MAX_CHAMPIONS+1 champions table.
+	//i16	glbChampionIndex;	// (_4976_5366) SPX: Used as a champion cursor in the MAX_CHAMPIONS+1 champions table.
 	ObjectID	glbChampionItemInUse;	// (_4976_5368)
 	i16	_4976_536a;	// a x1?
 	i16	_4976_536c;	// a y1?
@@ -1480,7 +1480,7 @@ protected:
 	i16 STAMINA_ADJUSTED_ATTR(Champion *ref, i16 quantity);
 	U16 COMPUTE_PLAYER_ATTACK_OR_THROW_STRENGTH(U16 xx, U16 yy, i16 zz);
 	U16 _2c1d_0e23(U16 xx);
-	U16 _2c1d_1de2(U16 xx, i16 yy, U16 zz);
+	U16 _2c1d_1de2_CHAMPION_SHOOT(U16 xx, i16 yy, U16 zz); // _2c1d_1de2
 	U16 SET_DESTINATION_OF_MINION_MAP(ObjectID rlContainer, i16 xx, i16 yy, U16 zz);
 	void QUEUE_THINK_CREATURE(U16 xx, U16 yy);
 	void CREATURE_SET_NEW_COMMAND(ObjectID rlCreature, U16 xx, U16 yy, U8 iCommand, U16 tt);	// _13e4_0360
@@ -1579,9 +1579,9 @@ protected:
 	void QUERY_CREATURE_PICST(U16 xx, i16 dist, Creature *vv, CreatureInfoData *ww, ObjectID rl);
 	U16 _32cb_01b6(U16 xx, U16 yy, U16 ss, U16 tt, U16 *ww);
 	U16 CREATURE_121e_0222(U16 xx, U16 yy, U16 ww);	// _121e_0222
-	U16 _0cee_2e09(ObjectID rl);
-	U16 _2c1d_1fb1(U16 dir);
-	U16 _121e_0351(U16 xx, U16 yy);
+	U16 QUERY_CREATURE_AI_W32_FROM_RECORD(ObjectID rl); // _0cee_2e09
+	U16 _2c1d_1fb1_CHAMPION_LEADER_SHOOT_DIR(U16 dir); // _2c1d_1fb1
+	U16 _121e_0351_THROW_LEFT_OR_RIGHT(U16 xx, U16 yy); // _121e_0351
 	void CLICK_VWPT(i16 xx, i16 yy);
 	void CLICK_MAGICAL_MAP_AT(U16 ww, i16 xx, i16 yy);
 	void CLICK_MAGICAL_MAP_RUNE(U16 rune);
@@ -1591,7 +1591,7 @@ protected:
 	void FILE_DELETE(const U8 *curf);
 	U16 FILE_WRITE(i16 handle, U32 buffSize, const void *buff);
 	i16 FILE_CREATE(const U8 *newf);
-	U16 _2066_036e(void *buff, U16 buffSize);
+	U16 FILE_WRITE_DATA_BUFFER(void* xDataBuffer, U16 iBufferSize); // _2066_036e
 	U16 SKSAVE_WRITE(void *buff, U16 buffSize);
 	U8 SUPPRESS_WRITER(const void *pvData, const void *pvMask, U16 cbData, U32 repeat);
 	Bit8u WRITE_1BIT(Bit8u nibble);

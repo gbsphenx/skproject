@@ -1557,6 +1557,15 @@ AIDefinition* SkWinCore::QUERY_CREATURE_AI_SPEC_FROM_RECORD(ObjectID rlCreature)
 	return QUERY_CREATURE_AI_SPEC_FROM_TYPE(GET_ADDRESS_OF_RECORD(rlCreature)->castToCreature()->CreatureType());
 }
 
+//^0CEE:2E09
+// _0cee_2e09 renamed QUERY_CREATURE_AI_W32_FROM_RECORD
+U16 SkWinCore::QUERY_CREATURE_AI_W32_FROM_RECORD(ObjectID rl)
+{
+	ENTER(0);
+	return QUERY_CREATURE_AI_SPEC_FROM_RECORD(rl)->w32;
+}
+
+
 
 //^14CD:0802
 // SPX: _14cd_0802 renamed CREATURE_THINK_FLUSH_POSITION
@@ -6714,7 +6723,7 @@ U16 SkWinCore::CREATURE_121e_0222(U16 xx, U16 yy, U16 ww) // put item on object 
 			));
 	}
 	//^121E:0344
-	glbRefreshViewport = 1;
+	cd.gg.glbRefreshViewport = 1;
 	//^121E:034A
 	return 1;
 }

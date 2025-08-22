@@ -552,7 +552,7 @@ Bit16u SkWinCore::RETURN_1(sk1891 *ref)
 Bit16u SkWinCore::IS_GAME_ENDED(sk1891 *ref)
 {
 	ENTER(0);
-	return (ref->b1 == glbGameHasEnded) ? 1 : 0;
+	return (ref->b1 == cd.gg.glbGameHasEnded) ? 1 : 0;
 }
 
 //^1031:0023
@@ -578,7 +578,7 @@ void SkWinCore::PERFORM_TURN_SQUAD(Bit16u xx)
 		//^12B4:023C
 		return;
 	//^12B4:014F
-	glbRefreshViewport = 1;
+	cd.gg.glbRefreshViewport = 1;
 	//^12B4:0155
 	RESET_SQUAD_DIR();
 	//^12B4:0159
@@ -915,7 +915,7 @@ Bit16u SkWinCore::TRY_CAST_SPELL()
 	//^2759:274D
 	ENTER(10);
 	//^2759:2753
-	U16 bp0a = glbChampionIndex -1;
+	U16 bp0a = cd.pi.glbChampionIndex - 1;
 	//^2759:275A
 	Champion *bp04 = &glbChampionSquad[bp0a];
 	//^2759:2768
@@ -952,7 +952,7 @@ void SkWinCore::REMOVE_RUNE_FROM_TAIL()
 	//^2759:289C
 	ENTER(4);
 	//^2759:28A0
-	Champion *champion = &glbChampionTable[glbChampionIndex];	//*bp04
+	Champion *champion = &glbChampionTable[cd.pi.glbChampionIndex];	//*bp04
 	//^2759:28B1
 	champion->RuneCnt(champion->RuneCnt() -1);
 	//^2759:28BE
@@ -971,7 +971,7 @@ void SkWinCore::REMOVE_RUNE_FROM_TAIL()
 void SkWinCore::ADD_RUNE_TO_TAIL(Bit16u symbol_0to5)
 {
 	ENTER(6);
-	Champion *champion = &glbChampionTable[glbChampionIndex];	//*bp04
+	Champion *champion = &glbChampionTable[cd.pi.glbChampionIndex];	//*bp04
 	U16 iRuneCount = champion->RuneCnt();
 	U16 iManaCost = RuneManaPower[iRuneCount * 6 +symbol_0to5];
 	if (SkCodeParam::bDebugInfiniteSpells)
@@ -992,7 +992,7 @@ void SkWinCore::ADD_RUNE_TO_TAIL(Bit16u symbol_0to5)
 	UPDATE_RIGHT_PANEL(0);
 	_1031_0667();
 	if (iUpdateStats != 0) {
-		REFRESH_PLAYER_STAT_DISP(glbChampionIndex -1);
+		REFRESH_PLAYER_STAT_DISP(cd.pi.glbChampionIndex -1);
 	}
 	return;
 }
@@ -1670,7 +1670,7 @@ _1d6a:
 
 		case CmThrow: // 42
 			//^2759:1DC1
-			bp0e = _2c1d_1de2(
+			bp0e = _2c1d_1de2_CHAMPION_SHOOT(
 				di,
 				bp34,
 				(champion->playerPos() != ((glbPlayerDir +1) & 3))
@@ -1905,9 +1905,9 @@ Bit16u SkWinCore::PROCEED_COMMAND_SLOT(i16 cmdSlot)
 	//^2759:120A
 	U16 bp06 = 0;
 	//^2759:120F
-	if (glbChampionIndex != 0) {
+	if (cd.pi.glbChampionIndex != 0) {
 		//^2759:1219
-		U16 di = glbChampionIndex -1;
+		U16 di = cd.pi.glbChampionIndex - 1;
 		//^2759:121F
 		Champion *champion = &glbChampionSquad[di];	//*bp04
 		//^2759:122D
@@ -1981,7 +1981,7 @@ void SkWinCore::ACTIVATE_ACTION_HAND(Bit16u xx, Bit16u yy)
 	//^2759:05CD
 	glbSelectedHandAction = glbSelectedHand_2 = di;
 	//^2759:05D5
-	glbChampionIndex = glbSomeChampionIndex = si +1;
+	cd.pi.glbChampionIndex = glbSomeChampionIndex = si +1;
 	//^2759:05DE
 	glbSomeChampionPanelFlag = 1;
 	glbMagicalMapFlags = 0;
@@ -2009,7 +2009,7 @@ void SkWinCore::SET_SPELLING_CHAMPION(Bit16u iChampionNo)	// Bit16u xx
 	//^2759:0616
 	glbSelectedHandAction = glbSelectedHand_2 = 2;
 	//^2759:061F
-	glbChampionIndex = glbSomeChampionIndex = iChampionNo +1;
+	cd.pi.glbChampionIndex = glbSomeChampionIndex = iChampionNo +1;
 	//^2759:0629
 	glbSomeChampionPanelFlag = 1;
 	glbMagicalMapFlags = 0;
@@ -2816,7 +2816,7 @@ _22ca:
 			TAKE_OBJECT(bp34, 1);
 		}
 		//^2FCF:23A3
-		glbRefreshViewport = bp26;
+		cd.gg.glbRefreshViewport = bp26;
 		//^2FCF:23A9
 		return;
 	}
@@ -3188,7 +3188,7 @@ void SkWinCore::__INIT_GAME_38c8_03ad()
 	//^38C8:03E5
 	ZERO_MEMORY(glbChampionEngagingHandCommand, sizeof(glbChampionEngagingHandCommand));
 	//^38C8:03F5
-	glbChampionIndex = 0;
+	cd.pi.glbChampionIndex = 0;
 	_4976_5dbc = 0;
 	//^38C8:0401
 	//printf("38c8_03ad:RESET_CAII\n"); getch();
@@ -3232,7 +3232,7 @@ void SkWinCore::__INIT_GAME_38c8_03ad()
 		//^38C8:0472
 		WAIT_SCREEN_REFRESH();
 		//^38C8:0477
-		glbGameHasEnded = 0;
+		cd.gg.glbGameHasEnded = 0;
 	}
 	//^38C8:047D
 	//printf("38c8_03ad:FIRE_FILL_SCREEN_RECT\n"); getch();
@@ -3273,7 +3273,7 @@ void SkWinCore::END_GAME(U16 xx)
 	//^101B:0057
 	_2066_03e0(0);
 	//^101B:005F
-	glbGameHasEnded = 1;
+	cd.gg.glbGameHasEnded = 1;
 #if DM2_EXTENDED_MODE == 1
 	glbXAmbientSoundActivated = 0;	// reinit that variable to get ambient sound again with a restart
 #endif
@@ -3382,7 +3382,7 @@ U16 SkWinCore::PERFORM_MOVE(X16 xx)
 		_4976_4c32 = glbPlayerPosX;
 		_4976_4c34 = glbPlayerPosY;
 		_4976_4c40 = glbPlayerDir;
-		glbPlayerLastMove = xx;
+		cd.pi.glbPlayerLastMove = xx;
 		if (xx != 3) {
 			CALC_VECTOR_W_DIR(glbPlayerDir, -1, 0, &_4976_4c32, &_4976_4c34);
 		}
@@ -3441,7 +3441,7 @@ U16 SkWinCore::PERFORM_MOVE(X16 xx)
 	CALC_VECTOR_W_DIR(bp0e, _4976_19b2[RCJ(4,di)], _4976_19b6[RCJ(4,di)], &playerDestPosX, &playerDestPosY);
 	//^12B4:0505
 	iDestTile = GET_TILE_VALUE(playerDestPosX, playerDestPosY);	// bp0a
-	glbRefreshViewport = 1;
+	cd.gg.glbRefreshViewport = 1;
 	xChampion = glbChampionSquad;
 	//^12B4:0525
 	for (iChampionIndex = 0; iChampionIndex < cd.pi.glbChampionsCount; xChampion++, iChampionIndex++) {
@@ -3580,7 +3580,7 @@ _0768:
 
 	//^12B4:0864
 	_1031_098e();
-	glbRefreshViewport = 0;
+	cd.gg.glbRefreshViewport = 0;
 	return 0;
 }
 
@@ -3612,7 +3612,7 @@ void SkWinCore::MAIN_LOOP() //#DS=4976
 		else {
 			glbUIClickEventIndex = iUIClickNext;
 		}
-	} while (glbRefreshViewport == 0);
+	} while (cd.gg.glbRefreshViewport == 0);
 	return;
 }
 

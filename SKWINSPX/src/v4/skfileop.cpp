@@ -27,26 +27,22 @@ i16 SkWinCore::FILE_CREATE(const U8 *newf)
 }
 
 //^2066:036E
-Bit16u SkWinCore::_2066_036e(void *buff, Bit16u buffSize)
+// _2066_036e renamed FILE_WRITE_DATA_BUFFER
+Bit16u SkWinCore::FILE_WRITE_DATA_BUFFER(void* xDataBuffer, U16 iBufferSize)
 {
-	//^2066:036E
-	Bit32u bp04 = buffSize;
+	U32 iDataSize = iBufferSize; // bp04
 
-	//^2066:037D
-	if (bp04 != 0) {
-		//^2066:0386
-		return FILE_WRITE(glbDataFileHandle, bp04, buff);
+	if (iDataSize != 0) {
+		return FILE_WRITE(glbDataFileHandle, iDataSize, xDataBuffer);
 	}
 	return 1;
 }
 
 //^2066:03C0
-U16 SkWinCore::SKSAVE_WRITE(void *buff, U16 buffSize)
+U16 SkWinCore::SKSAVE_WRITE(void* xDataBuffer, U16 iBufferSize)
 {
-	//^2066:03C0
-	if (_2066_036e(buff, buffSize) == 0)
+	if (FILE_WRITE_DATA_BUFFER(xDataBuffer, iBufferSize) == 0)
 		return 0;
-	//^2066:03DB
 	return 1;
 }
 //^2066:000F

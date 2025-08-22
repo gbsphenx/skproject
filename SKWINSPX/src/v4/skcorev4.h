@@ -18,10 +18,14 @@ typedef struct {
 
 //..............................................................................
 
+// cd.gg.
 typedef struct {
 
 	U8	glbCreaturesMaxCount;	// (_4976_4c56) Nb of different types of creatures within GDAT
 	U8*	glbSomeCreatureTable;	// (_4976_4c58) 3 values per creature type
+
+	U16	glbRefreshViewport;		// _4976_4e5c (tells to refresh viewport ?)
+	U16	glbGameHasEnded;		// (_4976_01ba)
 
 } SKCoreGameGeneral;
 
@@ -70,6 +74,7 @@ typedef struct {
 
 } SKCoreSoundCard;
 
+// cd.pi.
 typedef struct {
 
 	U16	glbIsPlayerSleeping; // (_4976_4be8) 1 if sleep?
@@ -82,6 +87,7 @@ typedef struct {
 	U16	glbNextChampionNumber;		// (_4976_4bfc) Related to champions count ?
 	U16	glbChampionsCount;				// (_4976_4c3c) player count
 	U16	glbChampionsPendingDamage[MAX_CHAMPIONS];	// (_4976_57ea) amount of damage for players
+	i16	glbChampionIndex;	// (_4976_5366) SPX: Used as a champion cursor in the MAX_CHAMPIONS+1 champions table.
 
 } SKCodePlayerInfo;
 

@@ -1309,8 +1309,8 @@ void SkWinCore::FIRE_BLIT_PICTURE(
 	//^44C8:1101
 	ENTER(0);
 	//^44C8:1106
-	Bit16u di = srcPitch;
-	Bit16u si = colorkey;
+	U16 di = srcPitch;
+	U16 si = colorkey;
 	//^44C8:110C
 	if (dst == NULL) {
 		//^44C8:1114
@@ -1492,7 +1492,7 @@ void SkWinCore::IBMIO_UPDATE_PALETTE_SET()
 	IBMIO_WAIT_VSYNC();
 	//^00EB:0466
 	outportb(0x03c8, 0);
-	Bit16u si = 0;
+	U16 si = 0;
 	//^00EB:0470
 	for (; si < 256; si++) {
 		//^00EB:0472
@@ -1527,7 +1527,7 @@ void SkWinCore::IBMIO_SELECT_PALETTE_SET(Bit8u number) //#DS=04BF
 		IBMIO_WAIT_VSYNC();
 		//^00EB:0668
 		//outportb(0x03c8, 0);
-		Bit16u si = 0;
+		U16 si = 0;
 		/*
 		for (; si < 256; si++) {
 			//^00EB:0674
@@ -1557,7 +1557,7 @@ void SkWinCore::FIRE_SELECT_PALETTE_SET(Bit8u number)
 }
 
 //^00EB:0353
-void SkWinCore::IBMIO_FILL_SCREEN_LINE(Bit16u offDst, Bit16u fill, Bit16u size) //#DS=04BF?
+void SkWinCore::IBMIO_FILL_SCREEN_LINE(U16 offDst, U16 fill, U16 size) //#DS=04BF?
 {
 	//^00EB:0353
 	//^00EB:0357
@@ -1567,7 +1567,7 @@ void SkWinCore::IBMIO_FILL_SCREEN_LINE(Bit16u offDst, Bit16u fill, Bit16u size) 
 }
 
 //^00EB:0383
-void SkWinCore::IBMIO_FILL_RECT_SCREEN(SRECT *rc, Bit16u fill) //#DS=04BF
+void SkWinCore::IBMIO_FILL_RECT_SCREEN(SRECT *rc, U16 fill) //#DS=04BF
 {
 	//^00EB:0383
 	//^00EB:0389
@@ -1575,8 +1575,8 @@ void SkWinCore::IBMIO_FILL_RECT_SCREEN(SRECT *rc, Bit16u fill) //#DS=04BF
 	//^00EB:038E
 	_04bf_0e34 = pbVram;
 	//^00EB:039A
-	Bit16u di = rc->y * 320 + rc->x;
-	Bit16u si = 0;
+	U16 di = rc->y * 320 + rc->x;
+	U16 si = 0;
     //^00EB:03AD
 	for (; rc->cy > si; di += 320, si++) {
 		//^00EB:03AF
@@ -1593,15 +1593,15 @@ void SkWinCore::IBMIO_FILL_RECT_SCREEN(SRECT *rc, Bit16u fill) //#DS=04BF
 }
 
 //^44C8:1233
-void SkWinCore::FIRE_FILL_4BPP_PICT_LINE(Bit16u offDst, Bit16u fill, Bit16u size)
+void SkWinCore::FIRE_FILL_4BPP_PICT_LINE(U16 offDst, U16 fill, U16 size)
 {
 	ATLASSERT(size != 0);
 
 	//^44C8:1233
 	//^44C8:1237
 	Bit8u *di = _4976_5e6a;
-	Bit16u bx = offDst;
-	Bit16u cx = size;
+	U16 bx = offDst;
+	U16 cx = size;
 	U8 ah = Bit8u(fill);
 	U8 al;
 	//^44C8:1245
@@ -1656,7 +1656,7 @@ void SkWinCore::FIRE_FILL_4BPP_PICT_LINE(Bit16u offDst, Bit16u fill, Bit16u size
 }
 
 //^44C8:1A1E
-void SkWinCore::FIRE_FILL_RECT_4BPP_PICT(Bit8u *buff, SRECT *rc, Bit16u fill, Bit16u width)
+void SkWinCore::FIRE_FILL_RECT_4BPP_PICT(Bit8u *buff, SRECT *rc, U16 fill, U16 width)
 {
 	//^44C8:1A1E
 	//^44C8:1A23
@@ -1664,8 +1664,8 @@ void SkWinCore::FIRE_FILL_RECT_4BPP_PICT(Bit8u *buff, SRECT *rc, Bit16u fill, Bi
 	//^44C8:1A30
 	width = (width + 1) & 0xfffe;
 	//^44C8:1A3A
-	Bit16u di = rc->y * width + rc->x;
-	Bit16u si = 0;
+	U16 di = rc->y * width + rc->x;
+	U16 si = 0;
 	//^44C8:1A4B
 	for (; rc->cy > si; di += width, si++) {
 		//^44C8:1A4D
@@ -1677,12 +1677,12 @@ void SkWinCore::FIRE_FILL_RECT_4BPP_PICT(Bit8u *buff, SRECT *rc, Bit16u fill, Bi
 }
 
 //^44C8:127E
-void SkWinCore::FIRE_FILL_8BPP_PICT_LINE(Bit16u offDst, Bit16u fill, Bit16u size)
+void SkWinCore::FIRE_FILL_8BPP_PICT_LINE(U16 offDst, U16 fill, U16 size)
 {
 	//^44C8:127E
 	//^44C8:1282
 	Bit8u *di = _4976_5e6a + offDst;
-	Bit16u cx = size;
+	U16 cx = size;
 	Bit8u al = Bit8u(fill);
 	//^44C8:1292
 	U16 dx = cx;
@@ -1714,14 +1714,14 @@ void SkWinCore::FIRE_FILL_8BPP_PICT_LINE(Bit16u offDst, Bit16u fill, Bit16u size
 }
 
 //^44C8:19D5
-void SkWinCore::FIRE_FILL_RECT_8BPP_PICT(Bit8u *buff, SRECT *rc, Bit16u fill, Bit16u width)
+void SkWinCore::FIRE_FILL_RECT_8BPP_PICT(Bit8u *buff, SRECT *rc, U16 fill, U16 width)
 {
 	//^44C8:19D5
 	//^44C8:19DA
 	_4976_5e6a = buff;
 	//^44C8:19E7
-	Bit16u di = rc->y * width + rc->x;
-	Bit16u si = 0;
+	U16 di = rc->y * width + rc->x;
+	U16 si = 0;
 	//^44C8:19F8
 	for (; rc->cy > si; di += width, si++) {
 		//^44C8:19FA
@@ -1733,58 +1733,41 @@ void SkWinCore::FIRE_FILL_RECT_8BPP_PICT(Bit8u *buff, SRECT *rc, Bit16u fill, Bi
 }
 
 //^44C8:1A71
-void SkWinCore::FIRE_FILL_RECT_ANY(Bit8u *buff, SRECT *rc, Bit16u fill, Bit16u width, Bit16u bpp)
+void SkWinCore::FIRE_FILL_RECT_ANY(Bit8u *buff, SRECT* rc, U16 fill, U16 width, U16 bpp)
 {
-	//^44C8:1A71
-	//^44C8:1A75
-	Bit16u si = fill;
-	//^44C8:1A78
+	U16 si = fill;
 	if (buff == NULL) {
-		//^44C8:1A80
 		IBMIO_FILL_RECT_SCREEN(rc, si) CALL_IBMIO;
 	}
-	//^44C8:1A94
 	else if (bpp == 4) {
-		//^44C8:1A9A
 		FIRE_FILL_RECT_4BPP_PICT(buff, rc, si, width);
 	}
 	else {
-		//^44C8:1AB0
 		FIRE_FILL_RECT_8BPP_PICT(buff, rc, si, width);
 	}
-	//^44C8:1AC7
 	return;
 }
 
 //^44C8:1DAF
-void SkWinCore::FIRE_FILL_SCREEN_RECT(Bit16u rectno, Bit8u fill)
+void SkWinCore::FIRE_FILL_SCREEN_RECT(U16 iRectNo, U8 fill)
 {
-	//^44C8:1DAF
-	//^44C8:1DB3
-	SRECT bp08;
-	SRECT *prc = QUERY_EXPANDED_RECT(rectno, &bp08);
+	SRECT bp08; // bp08
+	SRECT *prc = QUERY_EXPANDED_RECT(iRectNo, &bp08);
 	FIRE_FILL_RECT_ANY(NULL, prc, fill, bp08.cx, 8);
 }
 
 //^0AAF:0000
-void SkWinCore::FIRE_FADE_SCREEN(Bit16u fadeOutIfTrue) //#DS=4976
+void SkWinCore::FIRE_FADE_SCREEN(U16 fadeOutIfTrue) //#DS=4976
 {
-	//^0AAF:0000
-	//^0AAF:0003
-	if (glbGameHasEnded != 0) {
-		//^0AAF:000A
+	if (cd.gg.glbGameHasEnded != 0) {
 		if (fadeOutIfTrue != 0) {
-			//^0AAF:0010
 			FIRE_SELECT_PALETTE_SET(0);
-			//^0AAF:0018
 			FIRE_FILL_SCREEN_RECT(2, 0);
 		}
 		else {
-			//^0AAF:0025
 			FIRE_SELECT_PALETTE_SET(1);
 		}
 	}
-	//^0AAF:002D
 	return;
 }
 

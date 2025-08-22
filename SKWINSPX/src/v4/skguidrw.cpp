@@ -278,7 +278,7 @@ void SkWinCore::DISPLAY_RIGHT_PANEL_SQUAD_HANDS()
 	//^2759:0541
 	ENTER(2);
 	//^2759:0545
-	i16 bp02 = glbChampionIndex;
+	i16 bp02 = cd.pi.glbChampionIndex;
 	//^2759:054B
 	if (bp02 != 0) {
 		//^2759:054F
@@ -287,7 +287,7 @@ void SkWinCore::DISPLAY_RIGHT_PANEL_SQUAD_HANDS()
 			glbSomeChampionPanelFlag = 0;
 
 		//^2759:0563
-		glbChampionIndex = 0;
+		cd.pi.glbChampionIndex = 0;
 		glbRightPanelType = RIGHT_PANEL_SQUAD_HANDS;
 		glbMagicalMapFlags = 0;
 		if (glbObjectForContainer != OBJECT_NULL) {
@@ -863,9 +863,9 @@ void SkWinCore::DRAW_PLAYER_NAME_AT_CMDSLOT()
 	DRAW_NAME_STR(
 		&_4976_3f6c, 
 		61, 
-		(glbChampionIndex -1 == glbChampionLeader) ? glbPaletteT16[COLOR_ORANGE] : glbPaletteT16[COLOR_WHITE], 
+		(cd.pi.glbChampionIndex - 1 == glbChampionLeader) ? glbPaletteT16[COLOR_ORANGE] : glbPaletteT16[COLOR_WHITE], 
 		glbPaletteT16[COLOR_DARKEST_GRAY] | 0x4000, 
-		glbChampionTable[glbChampionIndex].firstName
+		glbChampionTable[cd.pi.glbChampionIndex].firstName
 		);
 	// SPX: This (9 : 15) controls the color of the char name in the cast spell panel.
 	// However, 9 is dark brown for leader, and that was wrong. Leader is to be orange. Non-leader is white
@@ -898,7 +898,7 @@ void SkWinCore::DRAW_SPELL_TO_BE_CAST(Bit16u xx)
 		DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_SPELLMENU, 0x09, &_4976_3f6c, 252, -1);
 	}
 	//^29EE:0968
-	Champion *champion = &glbChampionTable[glbChampionIndex];
+	Champion *champion = &glbChampionTable[cd.pi.glbChampionIndex];
 	//^29EE:0979
 	Bit8u bp08[2];
     bp08[1] = 0;
@@ -926,7 +926,7 @@ void SkWinCore::DRAW_SPELL_PANEL()
 	//^29EE:09D5
 	ENTER(10);
 	//^29EE:09DA
-	Champion *champion = &glbChampionTable[glbChampionIndex];
+	Champion *champion = &glbChampionTable[cd.pi.glbChampionIndex];
 	//^29EE:09EB
 	Bit16u bp06 = champion->runesCount;
 	//^29EE:09F7
@@ -1056,7 +1056,7 @@ void SkWinCore::_29ee_1d03(Bit16u xx)
 	//^29EE:1D0B
 	_29ee_00a3(0);
 	//^29EE:1D12
-	if (glbChampionIndex > 0 && (glbMagicalMapFlags & 0x0800) != 0) {
+	if (cd.pi.glbChampionIndex > 0 && (glbMagicalMapFlags & 0x0800) != 0) {
 		//^29EE:1D24
 		si ^= glbMagicalMapFlags;
 		si &= 15;
@@ -1920,7 +1920,7 @@ void SkWinCore::DRAW_PLAYER_ATTACK_DIR()
 		//^29EE:0824
 		Bit8u bp015a[16];
 		Bit16u di;
-		QUERY_GDAT_SQUAD_ICON(bp04, Bit8u(di = glbChampionIndex -1), bp015a);
+		QUERY_GDAT_SQUAD_ICON(bp04, Bit8u(di = cd.pi.glbChampionIndex - 1), bp015a);
 		//^29EE:083F
 		DRAW_ICON_PICT_BUFF(bp04, &_4976_3f6c, &bp10, bp06, bp08, 12, 0, bp015a);
 		//^29EE:0866
@@ -3459,7 +3459,7 @@ U16 SkWinCore::_2e62_03b5(Bit16u player, Bit16u itemNo, Bit16u yy)
 	//^2E62:040F
 	if (itemNo <= INVENTORY_HAND_LAST) {	// <= 1
 		//^2E62:0415
-		if (player +1 == glbChampionIndex && itemNo == glbSelectedHandAction)
+		if (player +1 == cd.pi.glbChampionIndex && itemNo == glbSelectedHandAction)
 			//^2E62:0428
 			bp04 = 1;
 		//^2E62:042D

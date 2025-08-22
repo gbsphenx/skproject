@@ -21,12 +21,12 @@
 
 
 //^2C1D:2076
-void SkWinCore::CALC_PLAYER_WEIGHT(Bit16u player)
+void SkWinCore::CALC_PLAYER_WEIGHT(U16 player)
 {
 	// updates player's weight. w253 doesn't contain weight of leader's hand possession.
 
 	//^2C1D:2076
-	Bit16u di=0;
+	U16 di=0;
 	i16 si=0;
 	//^2C1D:207F
 	//for (; si < 30; si++) {
@@ -40,7 +40,7 @@ void SkWinCore::CALC_PLAYER_WEIGHT(Bit16u player)
 		//^2C1D:20B3
 		if (IS_CONTAINER_CHEST(_4976_3de6[RCJ(4,player)][RCJ(2,glbSelectedHandAction)]) != 0) {
 			//^2C1D:20E3
-			for (Bit16u si = 0; si < 8; si++) {
+			for (U16 si = 0; si < 8; si++) {
 				//^2C1D:20D2
 				di += QUERY_ITEM_WEIGHT(glbCurrentContainerItems[si]);
 				//^2C1D:20E2
@@ -56,7 +56,7 @@ void SkWinCore::CALC_PLAYER_WEIGHT(Bit16u player)
 
 //^2C1D:0300
 // SPX: _2c1d_0300 replaced by BOOST_ATTRIBUTE, called when consuming potion or special item
-void SkWinCore::BOOST_ATTRIBUTE(Champion *ref, Bit16u xx, Bit16u yy)
+void SkWinCore::BOOST_ATTRIBUTE(Champion *ref, U16 xx, U16 yy)
 {
 	//^2C1D:0300
 	ENTER(4);
@@ -100,7 +100,7 @@ void SkWinCore::PROCESS_ITEM_BONUS(i16 player, ObjectID recordLink, i16 inventor
 	//^2C1D:0404
 	if (inventorySlot < INVENTORY_MAX_SLOT) {	// (possess < 30)
 		//^2C1D:040D
-		Bit16u bp06 = QUERY_GDAT_DBSPEC_WORD_VALUE(di, GDAT_ITEM_STATS_GEN_FLAGS);
+		U16 bp06 = QUERY_GDAT_DBSPEC_WORD_VALUE(di, GDAT_ITEM_STATS_GEN_FLAGS);
 		//^2C1D:041A
 		// SPX: 00/00/00 => flags, 0x0010 = item providing light, so must recompute light
 		if (si != 0 && (bp06 & ITEM_FLAG_PRODUCE_LIGHT) != 0) {
@@ -112,8 +112,8 @@ void SkWinCore::PROCESS_ITEM_BONUS(i16 player, ObjectID recordLink, i16 inventor
 			//^2C1D:0434
 			Champion *champion = &glbChampionSquad[player]; //*bp04 
 			//^2C1D:0445
-			Bit16u bp0a = IS_ITEM_FIT_FOR_EQUIP(di, inventorySlot, 1);
-			Bit16u bp0c = 0;
+			U16 bp0a = IS_ITEM_FIT_FOR_EQUIP(di, inventorySlot, 1);
+			U16 bp0c = 0;
 			//^2C1D:045B
 			if (si != 0 && si != 3 && si != -2) {
 				//^2C1D:0472
@@ -132,7 +132,7 @@ void SkWinCore::PROCESS_ITEM_BONUS(i16 player, ObjectID recordLink, i16 inventor
 								iChampionManaMax = 0;
 								iBonusModifier = 0; // prevent bad stuff for curMP;
 							}
-							champion->manaMax = (Bit16u) iChampionManaMax;
+							champion->manaMax = (U16) iChampionManaMax;
 						}
 						else
 							//^2C1D:0491
@@ -150,7 +150,7 @@ void SkWinCore::PROCESS_ITEM_BONUS(i16 player, ObjectID recordLink, i16 inventor
 				}
 				//^2C1D:04CA
 				// SPX: Bonus 0x15 => 0x1B check for boosting attributes (x15 luck to x1B antifire)
-				for (Bit16u attributeIndex = 0; attributeIndex < ATTRIBUTE_COUNT; attributeIndex++) {
+				for (U16 attributeIndex = 0; attributeIndex < ATTRIBUTE_COUNT; attributeIndex++) {
 					//^2C1D:04D1
 					iBonusModifier = RETRIEVE_ITEM_BONUS(di, attributeIndex + GDAT_ITEM_BONUS_ATTRIBUTE_FIRST, bp0a, si);
 					//^2C1D:04E6
@@ -172,7 +172,7 @@ void SkWinCore::PROCESS_ITEM_BONUS(i16 player, ObjectID recordLink, i16 inventor
 			}
 			//^2C1D:0532
 			// SPX: Bonus 0x1E => 0x31 , 20 values = 4*5 skills
-			for (Bit16u skillIndex = 0; skillIndex < SKILL_COUNT; skillIndex++) {
+			for (U16 skillIndex = 0; skillIndex < SKILL_COUNT; skillIndex++) {
 				//^2C1D:0539
 				iBonusModifier = RETRIEVE_ITEM_BONUS(di, skillIndex + GDAT_ITEM_BONUS_SKILL_FIRST, bp0a, si);
 				//^2C1D:054E
@@ -238,14 +238,14 @@ void SkWinCore::PROCESS_ITEM_BONUS(i16 player, ObjectID recordLink, i16 inventor
 }
 
 //^2C1D:07A3
-ObjectID SkWinCore::REMOVE_POSSESSION(Bit16u player, Bit16u possess)
+ObjectID SkWinCore::REMOVE_POSSESSION(U16 player, U16 possess)
 {
 	// CSBwinSimilarity: TAG015a66,RemovePossession
 
 	//^2C1D:07A3
 	ENTER(4);
 	//^2C1D:07A9
-	Bit16u si = possess;
+	U16 si = possess;
 	//^2C1D:07AC
 	Champion *bp04 = &glbChampionSquad[player];
 	//^2C1D:07BD
@@ -269,7 +269,7 @@ ObjectID SkWinCore::REMOVE_POSSESSION(Bit16u player, Bit16u possess)
 	}
 	//^2C1D:0804
 	if (true
-		&& glbChampionIndex -1 == player
+		&& cd.pi.glbChampionIndex -1 == player
 		&& si <= 1
 		&& si == glbSelectedHandAction
 	) {
@@ -283,13 +283,13 @@ ObjectID SkWinCore::REMOVE_POSSESSION(Bit16u player, Bit16u possess)
 }
 
 //^2C1D:0831
-void SkWinCore::EQUIP_ITEM_TO_INVENTORY(Bit16u player, ObjectID rl, Bit16u inventorySlot)
+void SkWinCore::EQUIP_ITEM_TO_INVENTORY(U16 player, ObjectID rl, U16 inventorySlot)
 {
 	//^2C1D:0831
 	ENTER(4);
 	//^2C1D:0837
 	ObjectID si = rl;
-	Bit16u di = inventorySlot;
+	U16 di = inventorySlot;
 	//^2C1D:083D
 	if (si != OBJECT_NULL) {
 		//^2C1D:0842
@@ -314,7 +314,7 @@ void SkWinCore::EQUIP_ITEM_TO_INVENTORY(Bit16u player, ObjectID rl, Bit16u inven
 
 //^2759:0E93
 // TODO: related hand activation ?
-Bit16u SkWinCore::_2759_0e93(Bit16u player, ObjectID rl, i16 hand)
+U16 SkWinCore::_2759_0e93(U16 player, ObjectID rl, i16 hand)
 {
 	//^2759:0E93
 	ENTER(2);
@@ -337,7 +337,7 @@ Bit16u SkWinCore::_2759_0e93(Bit16u player, ObjectID rl, i16 hand)
 			}
 		}
 		//^2759:0EF9
-		di = glbChampionIndex;
+		di = cd.pi.glbChampionIndex;
 		if (di != 0) {
 			if (glbSelectedHandAction == 0 || glbSelectedHandAction == 1) {
 				//^2759:0F10
@@ -351,7 +351,7 @@ Bit16u SkWinCore::_2759_0e93(Bit16u player, ObjectID rl, i16 hand)
 }
 
 //^2759:0FB0
-void SkWinCore::LOAD_PROJECTILE_TO_HAND(Bit16u player, i16 hand)
+void SkWinCore::LOAD_PROJECTILE_TO_HAND(U16 player, i16 hand)
 {
 	//^2759:0FB0
 	ENTER(14);
@@ -368,7 +368,7 @@ void SkWinCore::LOAD_PROJECTILE_TO_HAND(Bit16u player, i16 hand)
 	//^2759:0FF1
 	i16 bp0a = hand;
 	//^2759:0FF7
-	Bit16u bp0c = champion->handCommand[hand];
+	U16 bp0c = champion->handCommand[hand];
 	//^2759:1003
 	champion->handCommand[hand] = 0xff;
 	//^2759:100E
@@ -381,7 +381,7 @@ void SkWinCore::LOAD_PROJECTILE_TO_HAND(Bit16u player, i16 hand)
 			//^2759:1034
 			return;
 		//^2759:1037
-		Bit16u di = INVENTORY_SCABBARD_1;	// 12
+		U16 di = INVENTORY_SCABBARD_1;	// 12
 		//^2759:103C
 		if (IS_MISSILE_VALID_TO_LAUNCHER(player, bp0a, champion->Possess(di)) != 0) {
 			//^2759:1059
@@ -439,7 +439,7 @@ _1059:
 		//^2759:1124
 		return;
 	//^2759:1127
-	Bit16u di = INVENTORY_SCABBARD_1;
+	U16 di = INVENTORY_SCABBARD_1;
 	ObjectID si;
 	if (_2759_0e93(player, champion->Possess(di), bp0c) != 0) {
 		//^2759:1149
@@ -493,13 +493,13 @@ _1156:
 
 
 //^2759:01FE
-Bit16u SkWinCore::_2759_01fe(Bit16u player, ObjectID recordLink, Bit16u cmdNum)
+U16 SkWinCore::_2759_01fe(U16 player, ObjectID recordLink, U16 cmdNum)
 {
 	//^2759:01FE
     ENTER(8);
 	//^2759:0204
 	ObjectID di = recordLink;
-	Bit16u si = cmdNum;
+	U16 si = cmdNum;
 	//^2759:020A
 	if (di == OBJECT_NULL) {
 		//^2759:020F
@@ -512,7 +512,7 @@ Bit16u SkWinCore::_2759_01fe(Bit16u player, ObjectID recordLink, Bit16u cmdNum)
 		//^2759:0231
 		if (bp04->ContainerType() == 1) {
 			//^2759:0245
-			Bit16u bp08 = bp04->b5_5_7();
+			U16 bp08 = bp04->b5_5_7();
 			//^2759:0252
 			if (false
 				|| bp08 == 1 // 1 - SCOUT MAP?
@@ -628,7 +628,7 @@ i16 SkWinCore::FIND_POUCH_OR_SCABBARD_POSSESSION_POS(i16 player, i16 yy)	// yy =
 //^2C1D:0A47
 // SPX: 1 seems to be the minimal skill returned, which correspond to none ...
 // Hence, NEOPHYTE would return 2 and ARCHMASTER 16
-Bit16u SkWinCore::QUERY_PLAYER_SKILL_LV(i16 player, Bit16u skill, Bit16u yy)
+U16 SkWinCore::QUERY_PLAYER_SKILL_LV(i16 player, U16 skill, U16 yy)
 {
 	//^2C1D:0A47
 	ENTER(8);
@@ -651,7 +651,7 @@ Bit16u SkWinCore::QUERY_PLAYER_SKILL_LV(i16 player, Bit16u skill, Bit16u yy)
 		bp08 >>= 1;
 	}
 	//^2C1D:0AE2
-	Bit16u si = 1;	// Minimum level is 1 and equal to NONE.
+	U16 si = 1;	// Minimum level is 1 and equal to NONE.
 	//^2C1D:0AE5
 	while (bp08 >= SKILL_EXPERIENCE_BASE_LEVEL) {	// (bp08 >= 512)
 		//^2C1D:0AE7
@@ -670,7 +670,7 @@ Bit16u SkWinCore::QUERY_PLAYER_SKILL_LV(i16 player, Bit16u skill, Bit16u yy)
 //^2759:02D6
 // SPX: Returns 0 if current item is not hand activable => then it will have no icon in action hand.
 // SPX: _2759_02d6 renamed IS_ITEM_HAND_ACTIVABLE
-Bit16u SkWinCore::IS_ITEM_HAND_ACTIVABLE(Bit16u player, ObjectID recordLink, i16 yy)
+U16 SkWinCore::IS_ITEM_HAND_ACTIVABLE(U16 player, ObjectID recordLink, i16 yy)
 {
 	//^2759:02D6
 	ENTER(14);
@@ -706,13 +706,13 @@ Bit16u SkWinCore::IS_ITEM_HAND_ACTIVABLE(Bit16u player, ObjectID recordLink, i16
 			//^2759:0353
 			continue;
 		//^2759:0356
-		Bit16u bp0a = QUERY_CMDSTR_ENTRY(iCategory, iItemIndex, iEntryNumber, CnCM);	// CnCM = Command
+		U16 bp0a = QUERY_CMDSTR_ENTRY(iCategory, iItemIndex, iEntryNumber, CnCM);	// CnCM = Command
 		//^2759:036E
 		if (bp0a == 0)
 			//^2759:0372
 			continue;
 		//^2759:0375
-		Bit16u bp0e = QUERY_CMDSTR_ENTRY(iCategory, iItemIndex, iEntryNumber, CnWH);	// CnWH = where (pouch or scabbard?)
+		U16 bp0e = QUERY_CMDSTR_ENTRY(iCategory, iItemIndex, iEntryNumber, CnWH);	// CnWH = where (pouch or scabbard?)
 		//^2759:038D
 		if (bp0e != 0 && bp0e -1 != yy)
 			//^2759:0399
@@ -761,9 +761,9 @@ Bit16u SkWinCore::IS_ITEM_HAND_ACTIVABLE(Bit16u player, ObjectID recordLink, i16
 		}
 		//^2759:0425
 _0425:
-		Bit16u bp08 = QUERY_CMDSTR_ENTRY(iCategory, iItemIndex, iEntryNumber, CnSK);
+		U16 bp08 = QUERY_CMDSTR_ENTRY(iCategory, iItemIndex, iEntryNumber, CnSK);
 		//^2759:043D
-		Bit16u bp06 = QUERY_CMDSTR_ENTRY(iCategory, iItemIndex, iEntryNumber, CnLV);
+		U16 bp06 = QUERY_CMDSTR_ENTRY(iCategory, iItemIndex, iEntryNumber, CnLV);
 		//^2759:0455
 		if (QUERY_PLAYER_SKILL_LV(player, bp08, 1) >= bp06) {
 			//^2759:046A
@@ -797,7 +797,7 @@ _0425:
 
 //^1031:007B
 // _1031_007b renamed _1031_007b
-Bit16u SkWinCore::_1031_007b_PFN12_04(sk1891 *ref)
+U16 SkWinCore::_1031_007b_PFN12_04(sk1891 *ref)
 {
 	ENTER(0);
 	return (glbChampionSquad[ref->b1].curHP() != 0) ? 1 : 0;
@@ -805,7 +805,7 @@ Bit16u SkWinCore::_1031_007b_PFN12_04(sk1891 *ref)
 
 //^1031:009E
 // _1031_009e renamed _1031_009e_PFN12_05
-Bit16u SkWinCore::_1031_009e_PFN12_05(sk1891 *ref)
+U16 SkWinCore::_1031_009e_PFN12_05(sk1891 *ref)
 {
 	//^1031:009E
 	ENTER(0);
@@ -816,26 +816,26 @@ Bit16u SkWinCore::_1031_009e_PFN12_05(sk1891 *ref)
 
 //^1031:012D
 // _1031_012d renamed _1031_012d_PFN12_08
-Bit16u SkWinCore::_1031_012d_PFN12_08(sk1891 *ref)
+U16 SkWinCore::_1031_012d_PFN12_08(sk1891 *ref)
 {
 	ENTER(0);
-	return (glbChampionIndex != 0 && ref->b1 == _4976_53a4) ? 1 : 0;
+	return (cd.pi.glbChampionIndex != 0 && ref->b1 == _4976_53a4) ? 1 : 0;
 }
 
 //^1031:014F
 // _1031_014f renamed _1031_014f_PFN12_09
-Bit16u SkWinCore::_1031_014f_PFN12_09(sk1891 *ref)
+U16 SkWinCore::_1031_014f_PFN12_09(sk1891 *ref)
 {
 	ENTER(0);
-	return (glbChampionIndex != 0 && (ref->b1 & (1 << glbChampionTable[glbChampionIndex].runesCount)) != 0) ? 1 : 0;
+	return (cd.pi.glbChampionIndex != 0 && (ref->b1 & (1 << glbChampionTable[cd.pi.glbChampionIndex].runesCount)) != 0) ? 1 : 0;
 }
 
 //^1031:0184
 // _1031_0184 renamed _1031_0184_PFN12_10
-Bit16u SkWinCore::_1031_0184_PFN12_10(sk1891 *ref)
+U16 SkWinCore::_1031_0184_PFN12_10(sk1891 *ref)
 {
 	ENTER(0);
-	return (glbChampionIndex != 0) 
+	return (cd.pi.glbChampionIndex != 0) 
 		? (((glbMagicalMapFlags & 0x8000) != 0) 
 			? ((ref->b1 == _4976_53a4) 
 				? 1 
@@ -882,7 +882,7 @@ U16 SkWinCore::GET_PLAYER_ABILITY(Champion *ref, U16 parm7, U16 getMax)
 
 
 //^2C1D:0654
-void SkWinCore::PUT_ITEM_TO_PLAYER(Bit16u championIndex)
+void SkWinCore::PUT_ITEM_TO_PLAYER(U16 championIndex)
 {
 	// click player panel to store leader's holding item into your back pack.
 
@@ -919,7 +919,7 @@ void SkWinCore::PUT_ITEM_TO_PLAYER(Bit16u championIndex)
 
 //^1031:16A0
 // SPX: _1031_16a0 renamed SELECT_CHAMPION_LEADER
-void SkWinCore::SELECT_CHAMPION_LEADER(Bit16u xx)
+void SkWinCore::SELECT_CHAMPION_LEADER(U16 xx)
 {
 	//^1031:16A0
 	ENTER(0);
@@ -991,7 +991,7 @@ void SkWinCore::ADD_ITEM_TO_PLAYER(U16 player, ObjectID rl)
 
 //^2F3F:04EA
 // SPX: _2f3f_04ea renamed _2f3f_04ea_CHAMPION
-void SkWinCore::_2f3f_04ea_CHAMPION(Bit16u xx, Bit16u yy, Bit16u dir, Bit16u zz, Bit16u ee)
+void SkWinCore::_2f3f_04ea_CHAMPION(U16 xx, U16 yy, U16 dir, U16 zz, U16 ee)
 {
 	//^2F3F:04EA
 	ENTER(142);
@@ -1128,7 +1128,7 @@ void SkWinCore::_2f3f_04ea_CHAMPION(Bit16u xx, Bit16u yy, Bit16u dir, Bit16u zz,
 
 //^24A5:1798
 // SPX: _24a5_1798 renamed INTERFACE_CHAMPION (not sure of what's inside)
-void SkWinCore::INTERFACE_CHAMPION(Bit16u xx)
+void SkWinCore::INTERFACE_CHAMPION(U16 xx)
 {
 	//^24A5:1798
 	ENTER(8);
@@ -1147,7 +1147,7 @@ void SkWinCore::INTERFACE_CHAMPION(Bit16u xx)
 		//^24A5:17EF
 		return;
 	//^24A5:17F2
-	glbRefreshViewport = 1;
+	cd.gg.glbRefreshViewport = 1;
 	//^24A5:17F8
 	U16 si = glbChampionInventory;
 	//^24A5:17FC
@@ -2224,7 +2224,8 @@ i16 SkWinCore::STAMINA_ADJUSTED_ATTR(Champion *ref, i16 quantity)
 
 //^2C1D:1DE2
 //SPX: About shooting?
-U16 SkWinCore::_2c1d_1de2(U16 xx, i16 yy, U16 zz)
+// _2c1d_1de2 renamed _2c1d_1de2_CHAMPION_SHOOT
+U16 SkWinCore::_2c1d_1de2_CHAMPION_SHOOT(U16 xx, i16 yy, U16 zz)
 {
 	//^2C1D:1DE2
 	ENTER(16);
@@ -3182,7 +3183,7 @@ X16 SkWinCore::GET_CHAMPION_SPECIAL_FORCE(U16 player)
 
 //^2C1D:201D
 // SPX: _2c1d_201d renamed GET_PARTY_SPECIAL_FORCE
-Bit16u SkWinCore::GET_PARTY_SPECIAL_FORCE()
+U16 SkWinCore::GET_PARTY_SPECIAL_FORCE()
 {
 	//^2C1D:201D
 	ENTER(0);
@@ -3201,7 +3202,7 @@ Bit16u SkWinCore::GET_PARTY_SPECIAL_FORCE()
 
 //^2C1D:1B0F
 // SPX: _2c1d_1b0f renamed PROCESS_POISON
-void SkWinCore::PROCESS_POISON(i16 player, Bit16u yy) {
+void SkWinCore::PROCESS_POISON(i16 player, U16 yy) {
 	
 	if (SkCodeParam::bUseIngameDebug)
 	{
@@ -3299,7 +3300,7 @@ X16 SkWinCore::_2c1d_135d(i16 play, U16 ww)
 
 
 //^2C1D:18AA
-Bit16u SkWinCore::WOUND_PLAYER(i16 play, i16 quantity, Bit16u ss, Bit16u tt)
+U16 SkWinCore::WOUND_PLAYER(i16 play, i16 quantity, U16 ss, U16 tt)
 {
 	// CSBwinSimilarity: TAG017068,DamageCharacter
 
@@ -3425,7 +3426,7 @@ _1a91:
 
 
 //^2C1D:1C7C
-void SkWinCore::ADJUST_STAMINA(Bit16u player, i16 drain)
+void SkWinCore::ADJUST_STAMINA(U16 player, i16 drain)
 {
 	// CSBwinSimilarity: TAG01742a,AdjustStamina
 
@@ -3457,7 +3458,7 @@ void SkWinCore::ADJUST_STAMINA(Bit16u player, i16 drain)
 	return;
 }
 //^2C1D:203D
-Bit16u SkWinCore::GET_PLAYER_WEIGHT(Bit16u player)
+U16 SkWinCore::GET_PLAYER_WEIGHT(U16 player)
 {
 	// Returns player's weight. Also include weight of leader's hand item.
 
@@ -3475,7 +3476,7 @@ Bit16u SkWinCore::GET_PLAYER_WEIGHT(Bit16u player)
 	return si;
 }
 //^2C1D:0FFC
-Bit16u SkWinCore::MAX_LOAD(Champion *ref)
+U16 SkWinCore::MAX_LOAD(Champion *ref)
 {
 	// CSBwinSimilarity: TAG016508,MaxLoad
 
@@ -3558,8 +3559,8 @@ void SkWinCore::BRING_CHAMPION_TO_LIFE(X16 xx) { // TODO: Unr
 //	{
 //	// SPX: Code added from TAG014676 in CSBWin!!!
 //		i16 player = xx;
-//		Bit16u hpmax;
-//		Bit16u hpnew;
+//		U16 hpmax;
+//		U16 hpnew;
 //	  //dReg D0, D7;
 //	  //CHARDESC *pcA3;
 //		Champion *champion;
@@ -3636,7 +3637,7 @@ void SkWinCore::CHAMPION_DEFEATED(X16 player)
 	}
 #endif
 
-	if (glbChampionIndex -1 == di)
+	if (cd.pi.glbChampionIndex -1 == di)
 		//^2C1D:15DB
 		DISPLAY_RIGHT_PANEL_SQUAD_HANDS();
 	//^2C1D:15E0
@@ -4031,6 +4032,48 @@ U16 SkWinCore::_2c1d_09d9()
 	//^2C1D:0A41
 	return si;
 }
+
+
+
+//^2C1D:1FB1
+// _2c1d_1fb1 renamed _2c1d_1fb1_CHAMPION_LEADER_SHOOT_DIR
+U16 SkWinCore::_2c1d_1fb1_CHAMPION_LEADER_SHOOT_DIR(U16 dir)
+{
+	ENTER(0);
+	if (glbChampionLeader == -1)
+		return 0;
+	return _2c1d_1de2_CHAMPION_SHOOT(glbChampionLeader, -1, dir);
+}
+
+//^121E:0351
+// _121e_0351 renamed _121e_0351_THROW_LEFT_OR_RIGHT
+U16 SkWinCore::_121e_0351_THROW_LEFT_OR_RIGHT(U16 xx, U16 yy)
+{
+	//^121E:0351
+	ENTER(0);
+	//^121E:0356
+	U16 si = 0;
+	//^121E:0358
+	U16 di = (_4976_4dda == 17) ? 768 : 765; // rectangles ??
+	//^121E:0367
+	if (_098d_02a2(di, xx, yy) != 0) {
+		//^121E:037A
+		si = _2c1d_1fb1_CHAMPION_LEADER_SHOOT_DIR(0); // throw by left hand
+	}
+	//^121E:037E
+	else if (_098d_02a2(di +1, xx, yy) != 0) {
+		//^121E:0394
+		si = _2c1d_1fb1_CHAMPION_LEADER_SHOOT_DIR(1); // throw by right hand
+	}
+	//^121E:039E
+	if (si != 0)
+		//^121E:03A2
+		cd.gg.glbRefreshViewport = 1;
+	//^121E:03A8
+	return si;
+}
+
+
 
 //..............................................................................
 
