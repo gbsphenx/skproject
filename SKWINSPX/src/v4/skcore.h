@@ -1602,7 +1602,7 @@ protected:
 	U16 SUPPRESS_FLUSH();
 	void _2066_046d(); // TODO: Unr
 
-	void _2066_38d9();
+	void READ_SAVEGAMES_FILENAMES(); // _2066_38d9
 	void __OPEN_DIALOG_PANEL(U8 cls2, U16 yy);
 	void _2066_33c4(U8 *str, U16 yy);
 	void _2066_398a(i16 xx);

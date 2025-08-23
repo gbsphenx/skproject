@@ -478,42 +478,38 @@ void SkWinCore::_2066_046d() { // TODO: Unr
 
 //^2066:38D9
 //SPX : Read the 10 savegame names
-void SkWinCore::_2066_38d9()
+// _2066_38d9 renamed READ_SAVEGAMES_FILENAMES
+void SkWinCore::READ_SAVEGAMES_FILENAMES()
 {
-	//^2066:38D9
 	ENTER(2);
-	//^2066:38DE
-	for (i16 bp02 = 0; bp02 < 10; bp02++) {
-		//^2066:38E6
-		glbSKSaveDigitAlpha = bp02 +0x30;
-		//^2066:38EE
-		i16 si = OPEN_FILE(FORMAT_SKSTR(ptrSKSave_dat, NULL));
-		//^2066:390D
-		if (si >= 0) {
-			//^2066:3911
-			READ_FILE(si, 42, &_4976_5250[bp02]);
-			//^2066:3931
-			CLOSE_FILE(si);
-			//^2066:3938
+	U16 iFileIndex = 0;
+	for (iFileIndex = 0; iFileIndex < 10; iFileIndex++) {	// bp02
+		glbSKSaveDigitAlpha = iFileIndex + 0x30;
+		i16 iFileHandle = OPEN_FILE(FORMAT_SKSTR(ptrSKSave_dat, NULL));	// si
+		if (iFileHandle >= 0) {
+			READ_FILE(iFileHandle, 42, &_4976_5250[iFileIndex]);	// read first 42 to get savegame name
 
-			// SPX : native DM1 savegames don't have the same format
-			if (_4976_5250[bp02].wTimerFlag != 1)
+			// SPX : We also check for DM1 native savegames, which don't have the same format
+			if (_4976_5250[iFileIndex].wTimerFlag != 1)	// not a DM2 savegame
 			{
-				sprintf((char*)_4976_5250[bp02].sSavegameName, "SKSAVE%d.DAT (NOT DM2 NATIVE)", bp02);
+				X8 xDungeonDatBeginning[16];
+				// Check if PC DM savegame, we would find x6300 at 0x2C00
+				SEEK_FILE(iFileHandle, 0x2C00);
+				READ_FILE(iFileHandle, 16, &xDungeonDatBeginning);
+				if ((*(U16*)(&xDungeonDatBeginning)) == 0x0063)
+					sprintf((char*)_4976_5250[iFileIndex].sSavegameName, "SKSAVE%d.DAT (DM1 NATIVE SAVEGAME)", iFileIndex);
+				else
+					sprintf((char*)_4976_5250[iFileIndex].sSavegameName, "SKSAVE%d.DAT (NOT DM2 NATIVE)", iFileIndex);
 			}
+			CLOSE_FILE(iFileHandle);
 		}
 		else {
-			//^2066:393A
 			_4976_3b5f[0] = glbSKSaveDigitAlpha;
-			//^2066:3940
-			SK_STRCPY(_4976_5250[bp02].sSavegameName, _4976_3b5f);
-			//^2066:3961
-			_4976_5250[bp02].w38 = 0xBEEF;
-			_4976_5250[bp02].w40 = 0xDEAD;
+			SK_STRCPY(_4976_5250[iFileIndex].sSavegameName, _4976_3b5f);
+			_4976_5250[iFileIndex].w38 = 0xBEEF;
+			_4976_5250[iFileIndex].w40 = 0xDEAD;
 		}
-		//^2066:397B
 	}
-	//^2066:3987
 	return;
 }
 

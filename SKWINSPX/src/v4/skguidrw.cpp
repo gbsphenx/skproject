@@ -5390,13 +5390,13 @@ void SkWinCore::__OPEN_DIALOG_PANEL(U8 cls2, U16 yy)
 	FIRE_FADE_SCREEN(1);
 	// RESUME SCREEN with list of savegame, version number, LOAD and CANCEL button
 	//^2066:3773
-	DRAW_VP_RC_STR(0x1c2, glbPaletteT16[iTextVersionColor], strVersionNumber); // _4976_3b6f replaced by strVersionNumber
+	DRAW_VP_RC_STR(0x1C2, glbPaletteT16[iTextVersionColor], strVersionNumber); // _4976_3b6f replaced by strVersionNumber
 	//^2066:378D
-	DRAW_VP_RC_STR(0x1d2, glbPaletteT16[iTextButtonColor], bp18);	// (COLOR_ORANGE) LOAD text
+	DRAW_VP_RC_STR(0x1D2, glbPaletteT16[iTextButtonColor], bp18);	// (COLOR_ORANGE) LOAD text
 	//^2066:37A9
-	DRAW_VP_RC_STR(0x1d3, glbPaletteT16[iTextButtonColor], bp14);	// (COLOR_ORANGE) CANCEL text
+	DRAW_VP_RC_STR(0x1D3, glbPaletteT16[iTextButtonColor], bp14);	// (COLOR_ORANGE) CANCEL text
 	//^2066:37C5
-	_2066_38d9();
+	READ_SAVEGAMES_FILENAMES();
 	//^2066:37CA
 	_4976_4bd2 = yy;
 	//^2066:37D0

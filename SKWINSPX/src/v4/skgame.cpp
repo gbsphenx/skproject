@@ -55,19 +55,19 @@ void SkWinCore::LUA_CALL_SCRIPT(U8 iScriptEvent, i16 iPosMap, i16 iPosX, i16 iPo
 
 
 //^0CEE:29EC
-Bit16u SkWinCore::ADD_ITEM_CHARGE(ObjectID recordLink, i16 delta)
+U16 SkWinCore::ADD_ITEM_CHARGE(ObjectID recordLink, i16 delta)
 {
 	//^0CEE:29EC
-	Bit16u si = 0;
+	U16 si = 0;
 	//^0CEE:29F4
 	if (recordLink == OBJECT_NULL)
 		return si;
 	//^0CEE:29FD
 	GenericRecord *bp04 = (GenericRecord *)GET_ADDRESS_OF_RECORD(recordLink);
 	//^0CEE:2A0B
-	Bit16u bp06 = recordLink.DBType();
+	U16 bp06 = recordLink.DBType();
 	//^0CEE:2A17
-	Bit16u di;
+	U16 di;
 	switch (bp06) {
 		case dbWeapon:
 			//^0CEE:2A29
@@ -115,14 +115,14 @@ Bit16u SkWinCore::ADD_ITEM_CHARGE(ObjectID recordLink, i16 delta)
 }
 
 //^0CEE:26E5
-Bit16u SkWinCore::IS_CONTAINER_MONEYBOX(ObjectID recordLink)
+U16 SkWinCore::IS_CONTAINER_MONEYBOX(ObjectID recordLink)
 {
 	//^0CEE:26E5
 	if (recordLink.DBType() == dbContainer) {
 		//^0CEE:26F9
 		if (GET_ADDRESS_OF_RECORD9(recordLink)->ContainerType() == 0) {
 			//^0CEE:2710
-			if (QUERY_GDAT_ENTRY_DATA_INDEX(0x14, QUERY_CLS2_FROM_RECORD(recordLink), 0x0005, 0x0040) != (Bit16u)-1) {
+			if (QUERY_GDAT_ENTRY_DATA_INDEX(0x14, QUERY_CLS2_FROM_RECORD(recordLink), 0x0005, 0x0040) != (U16)-1) {
 				// Exists possible item list? (e.g. "J26-28 J8 J56 J6<00>")
 				return 1;
 			}
@@ -133,7 +133,7 @@ Bit16u SkWinCore::IS_CONTAINER_MONEYBOX(ObjectID recordLink)
 }
 
 //^0CEE:25E5
-Bit16u SkWinCore::QUERY_GDAT_DBSPEC_WORD_VALUE(ObjectID rl, Bit8u cls4)
+U16 SkWinCore::QUERY_GDAT_DBSPEC_WORD_VALUE(ObjectID rl, Bit8u cls4)
 {
 	//^0CEE:25E5
 	ObjectID si = rl;
@@ -188,7 +188,7 @@ i32 SkWinCore::QUERY_ITEM_VALUE(ObjectID recordLink, Bit8u cls4)
 		//^0CEE:2BEF
 		if (bp04->ContainerType() == 0) {
 			//^0CEE:2C02
-			Bit16u di = IS_CONTAINER_MONEYBOX(si);
+			U16 di = IS_CONTAINER_MONEYBOX(si);
 			ObjectID si = bp04->GetContainedObject();
 			i32 bp0c = 0;
 			//^0CEE:2C1B
@@ -232,7 +232,7 @@ i32 SkWinCore::QUERY_ITEM_WEIGHT(ObjectID recordLink)
 }
 
 //^0CEE:2734
-Bit16u SkWinCore::IS_CONTAINER_CHEST(ObjectID recordLink)
+U16 SkWinCore::IS_CONTAINER_CHEST(ObjectID recordLink)
 {
 	//^0CEE:2734
 	ObjectID si = recordLink;
@@ -259,7 +259,7 @@ Bit16u SkWinCore::IS_CONTAINER_CHEST(ObjectID recordLink)
 
 
 //^0CEE:0002
-void SkWinCore::CHANGE_CURRENT_MAP_TO(Bit16u new_map)
+void SkWinCore::CHANGE_CURRENT_MAP_TO(U16 new_map)
 {
 	// CSBWin:CSBCode.cpp/LoadLevel (TAG00a9d4)
 	//SkD((DLV_DBG_INIT, "CHANGE_CURRENT_MAP_TO => %02d\n", new_map));
@@ -300,7 +300,7 @@ void SkWinCore::CHANGE_CURRENT_MAP_TO(Bit16u new_map)
 
 
 //^0CEE:0510
-i16 SkWinCore::LOCATE_OTHER_LEVEL(Bit16u curmap, i16 zDelta, i16 *xx, i16 *yy, Bit8u **ss)
+i16 SkWinCore::LOCATE_OTHER_LEVEL(U16 curmap, i16 zDelta, i16 *xx, i16 *yy, Bit8u **ss)
 {
 	//^0CEE:0510
 	//^0CEE:0516
@@ -326,7 +326,7 @@ i16 SkWinCore::LOCATE_OTHER_LEVEL(Bit16u curmap, i16 zDelta, i16 *xx, i16 *yy, B
 	//^0CEE:0560
 	if (bp16 >= 0 && bp16 < MAXDEPTH) {
 		//^0CEE:0572
-		Bit16u bp14 = _4976_4cb0[bp16];
+		U16 bp14 = _4976_4cb0[bp16];
 		//^0CEE:0581
 		if (bp14 != 0xffff) {
 			//^0CEE:0589
@@ -360,11 +360,11 @@ i16 SkWinCore::LOCATE_OTHER_LEVEL(Bit16u curmap, i16 zDelta, i16 *xx, i16 *yy, B
 								di = bp0a - di;
 								si = bp0c - si;
 								//^0CEE:0631
-								Bit16u bp12 = glbCurrentMapIndex;
+								U16 bp12 = glbCurrentMapIndex;
 								//^0CEE:0637
 								CHANGE_CURRENT_MAP_TO(bp0e);
 								//^0CEE:063F
-								Bit16u bp10 = GET_TILE_VALUE(di, si) >> 5;
+								U16 bp10 = GET_TILE_VALUE(di, si) >> 5;
 								//^0CEE:0651
 								if (bp10 == ttTeleporter) {
 									//^0CEE:0656
@@ -428,10 +428,10 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 	}
 	else {
 		//^24A5:0166
-		Bit16u itemLightBonus[9];		// (bp1c) SPX: light bonus for holded item (1) + items in hand (2*4)
+		U16 itemLightBonus[9];		// (bp1c) SPX: light bonus for holded item (1) + items in hand (2*4)
 		ZERO_MEMORY(itemLightBonus, 9);
 		//^24A5:0177
-		Bit16u bonusIndex = 0;	// bp06
+		U16 bonusIndex = 0;	// bp06
 		//^24A5:017C
 		// Give light bonus for item currently in hand (if any)
 		if ((QUERY_GDAT_DBSPEC_WORD_VALUE(glbLeaderHandPossession.object, GDAT_ITEM_STATS_GEN_FLAGS) & ITEM_FLAG_PRODUCE_LIGHT) != 0) {
@@ -440,13 +440,13 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 			bonusIndex++;
 		}
 		//^24A5:01AB
-		Bit16u si;
+		U16 si;
 		// Pass through all items in hands
 		for (si=0; si < cd.pi.glbChampionsCount; si++) {
 			//^24A5:01AF
-			for (Bit16u bp04=0; bp04 <= 1; bp04++) {
+			for (U16 bp04=0; bp04 <= 1; bp04++) {
 				//^24A5:01B6
-				Bit16u bp08;
+				U16 bp08;
 				if ((QUERY_GDAT_DBSPEC_WORD_VALUE(bp08 = glbChampionSquad[si].Possess(bp04), GDAT_ITEM_STATS_GEN_FLAGS) & ITEM_FLAG_PRODUCE_LIGHT) != 0) {
 					//^24A5:01DC
 					itemLightBonus[bonusIndex] = ADD_ITEM_CHARGE(bp08, 0);
@@ -464,7 +464,7 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 			//^24A5:020C
 			if (itemLightBonus[si] > itemLightBonus[si +1]) {
 				//^24A5:0226
-				Bit16u bp04 = itemLightBonus[si];
+				U16 bp04 = itemLightBonus[si];
 				//^24A5:0235
 				itemLightBonus[si] = itemLightBonus[si +1];
 				//^24A5:024D
@@ -473,8 +473,8 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 			//^24A5:025C
 		}
 		//^24A5:0265
-		Bit16u bp02 = 6;
-		//Bit16u di;
+		U16 bp02 = 6;
+		//U16 di;
 		i16 di = 0;	// SPX (2016-11-02) replacing unsigned by signed to hold negative light (with use of darkness) and hit minimum threshold
 		// SPX: This is strange ... does that mean that each new value to add is decreased by its position on the light bonus table?
 		for (di=0, si=0; si < bonusIndex; si++) {
@@ -541,7 +541,7 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 //^1031:0000
 // SPX: returns 1 ?? that's all ?
 // SPX: _1031_0000 renamed RETURN_1
-Bit16u SkWinCore::RETURN_1(sk1891 *ref)
+U16 SkWinCore::RETURN_1(sk1891 *ref)
 {
 	ENTER(0);
 	return 1;
@@ -549,7 +549,7 @@ Bit16u SkWinCore::RETURN_1(sk1891 *ref)
 
 //^1031:0008
 // SPX: _1031_0008 renamed IS_GAME_ENDED
-Bit16u SkWinCore::IS_GAME_ENDED(sk1891 *ref)
+U16 SkWinCore::IS_GAME_ENDED(sk1891 *ref)
 {
 	ENTER(0);
 	return (ref->b1 == cd.gg.glbGameHasEnded) ? 1 : 0;
@@ -557,7 +557,7 @@ Bit16u SkWinCore::IS_GAME_ENDED(sk1891 *ref)
 
 //^1031:0023
 // _1031_0023
-Bit16u SkWinCore::_1031_0023_PFN12_02(sk1891 *ref)
+U16 SkWinCore::_1031_0023_PFN12_02(sk1891 *ref)
 {
 	ENTER(0);
 	return (ref->b1 == _4976_4bd2) ? 1 : 0;
@@ -568,7 +568,7 @@ Bit16u SkWinCore::_1031_0023_PFN12_02(sk1891 *ref)
 
 //^12B4:0141
 // SPX: _12b4_0141 renamed PERFORM_TURN_SQUAD
-void SkWinCore::PERFORM_TURN_SQUAD(Bit16u xx)
+void SkWinCore::PERFORM_TURN_SQUAD(U16 xx)
 {
 	//^12B4:0141
 	ENTER(6);
@@ -910,7 +910,7 @@ _0baa:
 
 
 //^2759:274D
-Bit16u SkWinCore::TRY_CAST_SPELL()
+U16 SkWinCore::TRY_CAST_SPELL()
 {
 	//^2759:274D
 	ENTER(10);
@@ -968,7 +968,7 @@ void SkWinCore::REMOVE_RUNE_FROM_TAIL()
 }
 
 //^2759:27DF
-void SkWinCore::ADD_RUNE_TO_TAIL(Bit16u symbol_0to5)
+void SkWinCore::ADD_RUNE_TO_TAIL(U16 symbol_0to5)
 {
 	ENTER(6);
 	Champion *champion = &glbChampionTable[cd.pi.glbChampionIndex];	//*bp04
@@ -1894,7 +1894,7 @@ _CreateMinion:
 
 //^2759:1204
 // SPX: _2759_1204 renamed PROCEED_COMMAND_SLOT
-Bit16u SkWinCore::PROCEED_COMMAND_SLOT(i16 cmdSlot)
+U16 SkWinCore::PROCEED_COMMAND_SLOT(i16 cmdSlot)
 {
 	//^2759:1204
 	ENTER(6);
@@ -1961,7 +1961,7 @@ Bit16u SkWinCore::PROCEED_COMMAND_SLOT(i16 cmdSlot)
 
 //^2759:0589
 // SPX: _2759_0589 renamed ACTIVATE_ACTION_HAND
-void SkWinCore::ACTIVATE_ACTION_HAND(Bit16u xx, Bit16u yy)
+void SkWinCore::ACTIVATE_ACTION_HAND(U16 xx, U16 yy)
 {
 	//^2759:0589
 	ENTER(4);
@@ -1998,7 +1998,7 @@ void SkWinCore::ACTIVATE_ACTION_HAND(Bit16u xx, Bit16u yy)
 //^2759:0602
 //SPX: _2759_0602 renamed SET_SPELLING_CHAMPION
 // Called when a champion is selected to spell runes
-void SkWinCore::SET_SPELLING_CHAMPION(Bit16u iChampionNo)	// Bit16u xx
+void SkWinCore::SET_SPELLING_CHAMPION(U16 iChampionNo)	// U16 xx
 {
 	//^2759:0602
 	ENTER(0);
@@ -2844,24 +2844,24 @@ U16 SkWinCore::STORE_EXTRA_DUNGEON_DATA()
 	_4976_5258 = 0;
 	if (_2066_0b44_WRITE_TIMERS() != 0)
 		return 0;
-	Bit16u bp10 = glbCurrentMapIndex;
-	Bit16u currentMap = 0;
+	U16 bp10 = glbCurrentMapIndex;
+	U16 currentMap = 0;
 	//^2066:0BBB
 	while (currentMap < dunHeader->nMaps) {
 		CHANGE_CURRENT_MAP_TO(currentMap);
 		Bit8u *bp04 = *glbCurrentTileMap;
-		OID_T *bp08 = &dunGroundStacks[*_4976_4c52];	// Bit16u *bp08
-		Bit16u xpos = 0; // word [bp-0C]
+		OID_T *bp08 = &dunGroundStacks[*_4976_4c52];	// U16 *bp08
+		U16 xpos = 0; // word [bp-0C]
         //^2066:0BF4
 		while (!(xpos >= glbCurrentMapWidth)) {
 			//^2066:0BF7
-			Bit16u ypos = 0; // di
+			U16 ypos = 0; // di
 			//^2066:0BF9
 			while (!(ypos >= glbCurrentMapHeight)) {
 				Bit8u tileValue = *bp04; // [bp-0D]
 				//^2066:0BFC
 				bp04++;
-				Bit16u skipSaveRecord = 0; // word [bp-18]
+				U16 skipSaveRecord = 0; // word [bp-18]
 				Bit8u bp0e;
 				TELE_inf bp16;
 				switch (tileValue >> 5) {
@@ -2906,7 +2906,7 @@ U16 SkWinCore::STORE_EXTRA_DUNGEON_DATA()
 						return 0;
 				}
 				//^2066:0C88
-				Bit16u tileRecord; // [bp-0A]
+				U16 tileRecord; // [bp-0A]
 				if ((tileValue & 0x10) != 0) {
 					//^2066:0C8E
 					tileRecord = *bp08;
@@ -3617,7 +3617,7 @@ void SkWinCore::MAIN_LOOP() //#DS=4976
 }
 
 //^476D:04ED
-Bit16u SkWinCore::_476d_04ed_DOES_NOTHING(Bit16u xx)
+U16 SkWinCore::_476d_04ed_DOES_NOTHING(U16 xx)
 {
 	ENTER(0);
 	return 0;
@@ -3626,7 +3626,7 @@ Bit16u SkWinCore::_476d_04ed_DOES_NOTHING(Bit16u xx)
 
 
 //^2066:2CA8
-Bit16u SkWinCore::LOAD_NEW_DUNGEON() 
+U16 SkWinCore::LOAD_NEW_DUNGEON() 
 {
 	//^2066:2CA8
 	ENTER(6);
@@ -3675,7 +3675,7 @@ Bit16u SkWinCore::LOAD_NEW_DUNGEON()
 
 //^2066:2CA8
 // SPX: original LOAD_NEW_DUNGEON
-Bit16u SkWinCore::ORIGINAL__LOAD_NEW_DUNGEON() 
+U16 SkWinCore::ORIGINAL__LOAD_NEW_DUNGEON() 
 {
 	//^2066:2CA8
 	ENTER(6);
@@ -3782,7 +3782,7 @@ void SkWinCore::ARRANGE_DUNGEON()
 		X8 *bp04 = *glbMapTileValue[iMapIndex];
 		SkD((DLV_DBG_GAME_LOAD, "MAP %d/%d (C=%d, R=%d) TMAP=%08x\n", iMapIndex, dunHeader->nMaps, bp2e, bp30, bp04));
 		//^2066:2001
-		OID_T *bp1c = &dunGroundStacks[dunMapTilesObjectIndexPerColumn[dunMapColumnsSumArray[iMapIndex]]]; // Bit16u *bp1c
+		OID_T *bp1c = &dunGroundStacks[dunMapTilesObjectIndexPerColumn[dunMapColumnsSumArray[iMapIndex]]]; // U16 *bp1c
 		//^2066:202B
 		for (U16 bp2a=0; bp2a <= bp2e; bp2a++) {
 			//^2066:2033
@@ -3823,9 +3823,9 @@ void SkWinCore::ARRANGE_DUNGEON()
 									if (bp10->DestinationMap() != iMapIndex)
 										break;
 									//^2066:2362
-									Bit16u bp3c = 0;
+									U16 bp3c = 0;
 									//^2066:2367
-									Bit16u bp32 = _2066_1f37(bp26, bp0c->DestinationMap(), &bp3c);
+									U16 bp32 = _2066_1f37(bp26, bp0c->DestinationMap(), &bp3c);
 									//^2066:2384
 									bp32 |= _2066_1f37(di, iMapIndex, &bp3c);
 									//^2066:2395
@@ -3852,7 +3852,7 @@ void SkWinCore::ARRANGE_DUNGEON()
 										case 0x07: // Ladder disabled
 											{
 												//^2066:20B4
-												Bit16u bp34 = di.Dir();
+												U16 bp34 = di.Dir();
 												//^2066:20BC
 												SET_TILE_ATTRIBUTE_02(bp2a + glbXAxisDelta[bp34], bp2c + glbYAxisDelta[bp34], iMapIndex);
 												break;
@@ -3871,7 +3871,7 @@ void SkWinCore::ARRANGE_DUNGEON()
 									//^2066:20EB
 									Actuator *bp08 = GET_ADDRESS_OF_RECORD(di)->castToActuator();
 									//^2066:20F8
-									Bit16u bp3e = bp08->ActuatorType();
+									U16 bp3e = bp08->ActuatorType();
 									//^2066:2105
 									switch (bp3e) {
 										case ACTUATOR_TYPE_SIMPLE_LADDER: // 0x1C unused in retail ver.
@@ -3933,7 +3933,7 @@ void SkWinCore::ARRANGE_DUNGEON()
 									if (bp14->b14_7_7() != 0)
 										break;
 									//^2066:2263
-									Bit16u bp28 = bp14->possession;
+									U16 bp28 = bp14->possession;
 									//^2066:226A
 									if (bp28 == 0xfffe)
 										break;
@@ -3989,7 +3989,7 @@ _23de:
 }
 
 //^2C1D:0250
-i16 SkWinCore::GET_PLAYER_AT_POSITION(Bit16u position)
+i16 SkWinCore::GET_PLAYER_AT_POSITION(U16 position)
 {
 	Champion* xChampion = glbChampionSquad; // bp04
 	for (U16 iChampionIndex = 0; iChampionIndex < cd.pi.glbChampionsCount; iChampionIndex++, xChampion++) {
@@ -4003,7 +4003,7 @@ i16 SkWinCore::GET_PLAYER_AT_POSITION(Bit16u position)
 
 //^2FCF:0CDF
 // SPX: _2fcf_0cdf renamed TRY_PUSH_OBJECT_TO
-Bit16u SkWinCore::TRY_PUSH_OBJECT_TO(ObjectID rl, i16 xpos, i16 ypos, i16 *xx, i16 *yy)
+U16 SkWinCore::TRY_PUSH_OBJECT_TO(ObjectID rl, i16 xpos, i16 ypos, i16 *xx, i16 *yy)
 {
 	//^2FCF:0CDF
 	ENTER(12);
@@ -4037,7 +4037,7 @@ Bit16u SkWinCore::TRY_PUSH_OBJECT_TO(ObjectID rl, i16 xpos, i16 ypos, i16 *xx, i
 }
 
 //^2C1D:1C0C
-X16 SkWinCore::ATTACK_PARTY(Bit16u quantity, Bit16u yy, Bit16u zz)
+X16 SkWinCore::ATTACK_PARTY(U16 quantity, U16 yy, U16 zz)
 {
 	//^2C1D:1C0C
 	ENTER(4);
@@ -4067,7 +4067,7 @@ X16 SkWinCore::ATTACK_PARTY(Bit16u quantity, Bit16u yy, Bit16u zz)
 
 
 //^13E4:0401
-void SkWinCore::ATTACK_CREATURE(ObjectID rl, i16 xx, i16 yy, Bit16u ss, i16 tt, Bit16u quantity)
+void SkWinCore::ATTACK_CREATURE(ObjectID rl, i16 xx, i16 yy, U16 ss, i16 tt, U16 quantity)
 {
 	// quantity=0 to warn the creature. e.g. hazard notice of incoming missile.
 

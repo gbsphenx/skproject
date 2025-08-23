@@ -1255,7 +1255,7 @@ void SkWinCore::IBMIO_BLIT_TO_SCREEN_8TO8BPP(
 	}
 #elif UseAltic
 	if (dst == vram) {
-		if (skWinApp->skwin_IsAvail() != NULL)  {
+		if (skWinApp->skwin_IsAvail() != false)  {
 			//skwin.UpdateRect(prc->x, prc->y, prc->cx, prc->cy);
 			skWinApp->renderScreen(vram, prc->x, prc->y, prc->cx, prc->cy);
 		//MessageLoop();
