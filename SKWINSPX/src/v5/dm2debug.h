@@ -1,7 +1,6 @@
 #ifndef DM2DEBUG_H
 #define DM2DEBUG_H
 
-#include <stdlib.h>	// SPX: just for exit, else not needed.
 
 #ifndef C_GDATFILE_H
 	#include <types.h>

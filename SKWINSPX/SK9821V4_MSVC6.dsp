@@ -155,6 +155,10 @@ SOURCE=.\src\v4\skevent.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\src\v4\skfileop.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\v4\skgame.cpp
 # End Source File
 # Begin Source File

@@ -58,5 +58,9 @@ UINT SkRendererGeneric::ResizeWindow()
 	return 0;
 }
 
+UINT SkRendererGeneric::StartAudioSample(const char* sSampleName)
+{
+	return 0;
+}
 
 //------------------------------------------------------------------------------

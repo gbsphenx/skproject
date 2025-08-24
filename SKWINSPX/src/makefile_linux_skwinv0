@@ -7,7 +7,7 @@ SKWIN_EXE = skwinv0-linux
 SKWIN_BUILD_FOLDER = ../build/SKWinV0_Linux_Release
 CC = g++
 CFLAGS = -g -W -Wall -O3
-CPPFLAGS = -D__LINUX__ -I.. -Iv0 -Iv4 -Iv5 -Iv6 -I$(LUALIB_PATH)/include
+CPPFLAGS = -D__LINUX__ -D__NO_MFC__ -I.. -Iv0 -Iv4 -Iv5 -Iv6
 CPPFLAGS  += $(shell pkg-config --cflags sdl2)
 LIBS = -L.. -L$(LUALIB_LIB)
 LDFLAGS += $(shell pkg-config --libs sdl2)
@@ -16,10 +16,10 @@ OBJ = $(SKWIN_0_OBJ)
 OBJ_STATIC = $(LUALIB_OBJ) $(SDLLIB_OBJ)
 
 #LUA
-LUALIB_PATH = ../lua
-LUALIB_H = $(LUALIB_PATH)/include/*.h
-LUALIB_LIB = $(LUALIB_PATH)/lib
-LUALIB_OBJ = $(LUALIB_LIB)/lua5.1.lib
+#LUALIB_PATH = ../lua
+#LUALIB_H = $(LUALIB_PATH)/include/*.h
+#LUALIB_LIB = $(LUALIB_PATH)/lib
+#LUALIB_OBJ = $(LUALIB_LIB)/lua5.1.lib
 
 #SKWIN MINI
 SKWIN_0_PATH = v0

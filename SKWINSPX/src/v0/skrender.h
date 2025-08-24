@@ -31,6 +31,7 @@ public:
 
 	virtual UINT ResizeWindow();	// depending on screen scale
 
+	virtual UINT StartAudioSample(const char* sSampleName);
 };
 
 //------------------------------------------------------------------------------

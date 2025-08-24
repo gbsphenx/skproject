@@ -84,6 +84,8 @@ public:
 
 	UINT setRenderer(eRendererType iRenderer);
 
+	UINT startAudioTest();
+
 	UINT setVideoMode();
 	UINT setVideoMode(UINT iSpecificMode);
 	UINT setVideoTestStatic(UINT iFrames);

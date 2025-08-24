@@ -72,7 +72,7 @@ UINT SkRendererSDL::Init(SkVRAM* xVRAM)
     sdlWindow = SDL_CreateWindow(sSDLWindowName,
                                   SDL_WINDOWPOS_CENTERED,
                                   SDL_WINDOWPOS_CENTERED,
-                                  iScreenWidth*SkCodeParam::iVideoScale, iScreenHeight*(SkCodeParam::iVideoScale*SkCodeParam::fVideoYScale),
+                                  iScreenWidth*SkCodeParam::iVideoScale, (int)(iScreenHeight*(SkCodeParam::iVideoScale*SkCodeParam::fVideoYScale)),
                                   SDL_WINDOW_SHOWN);
     if (!sdlWindow) {
         printf("SDL_CreateWindow Error: %s\n", SDL_GetError());
@@ -113,7 +113,7 @@ UINT SkRendererSDL::Init(SkVRAM* xVRAM)
 UINT SkRendererSDL::ResizeWindow()
 {
 #if !defined (__NO_SDL__)
-	SDL_SetWindowSize(sdlWindow, iScreenWidth*SkCodeParam::iVideoScale, iScreenHeight*SkCodeParam::iVideoScale*SkCodeParam::fVideoYScale);
+	SDL_SetWindowSize(sdlWindow, iScreenWidth*SkCodeParam::iVideoScale, (int)(iScreenHeight*SkCodeParam::iVideoScale*SkCodeParam::fVideoYScale));
 #endif // not __NO_SDL__
 	return 0;
 }
@@ -175,8 +175,46 @@ UINT SkRendererSDL::Close()
 	SDL_DestroyTexture(sdlTexture);
     SDL_DestroyRenderer(sdlRenderer);
     SDL_DestroyWindow(sdlWindow);
+
+	if (sdlAudio != NULL)
+		SDL_CloseAudioDevice(sdlAudio);
+
     SDL_Quit();
 #endif // not __NO_SDL__
 	return 0;
 }
 
+
+
+UINT SkRendererSDL::StartAudioSample(const char* sSampleName)
+{
+#if !defined (__NO_SDL__)
+	printf("Sample %s\n", sSampleName);
+
+	SDL_AudioSpec xWavSample;
+    X8* xWavData;
+    U32 iWavLength;
+
+    // Load the WAV
+    if (SDL_LoadWAV(sSampleName, &xWavSample, &xWavData, &iWavLength) == NULL) {
+        printf("Could not open %s: %s\n", sSampleName, SDL_GetError());
+        SDL_Quit();
+        return 1;
+    }	
+
+    xWavSample.callback = NULL;
+    xWavSample.userdata = NULL;
+
+    sdlAudio = SDL_OpenAudioDevice(NULL, 0, &xWavSample, NULL, 0);
+    if (sdlAudio == NULL) {
+        printf("SDL_OpenAudioDevice error: %s\n", SDL_GetError());
+        SDL_FreeWAV(xWavData);
+		return 1;
+    }
+
+    SDL_QueueAudio(sdlAudio, xWavData, iWavLength);
+    SDL_PauseAudioDevice(sdlAudio, 0);
+
+#endif // not __NO_SDL__
+	return 0;
+}

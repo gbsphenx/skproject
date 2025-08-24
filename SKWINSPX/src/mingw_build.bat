@@ -63,15 +63,21 @@ ECHO MinGW version:
 mingw32-c++.exe --version
 
 ::------------------------------------------------------------------------------
-mingw32-make -f makefile_mingw_skwinv0 clean
-mingw32-make -f makefile_mingw_skwinv0 skwinv0-mingw
-::mingw32-make -f makefile_mingw_skwin9821 clean
-::mingw32-make -f makefile_mingw_skwin9821 skwinv4_mingw
-::mingw32-make -f makefile_mingw_skwindos clean
-::mingw32-make -f makefile_mingw_skwindos skwinv5_mingw
-::mingw32-make -f makefile_mingw_skwinspx clean
-::mingw32-make -f makefile_mingw_skwinspx skwinv6_mingw
-COPY %FOLDER_BUILD_V0%\skwinv0-mingw.exe ..\skgame\skwinv0-mingw.exe
-::COPY ..\build\Sk9821V4_MinGW_Release\skwinv4_mingw.exe ..\skgame\skwinv4_mingw.exe
-::COPY ..\build\SkDOSV5_MinGW_Release\skwinv5_mingw.exe ..\skgame\skwinv5_mingw.exe
-::COPY ..\build\SkWinSPX_MinGW_Release\skwinv6_mingw.exe ..\skgame\skwinv6_mingw.exe
+SET SKGAME_FOLDER=..\skgame
+SET TARGET_V0=skwinv0-mingw
+SET TARGET_V4=skwinv4-mingw
+SET TARGET_V5=skwinv5-mingw
+SET TARGET_V6=skwinv6-mingw
+
+::mingw32-make -f makefile_mingw_skwinv0 clean
+mingw32-make -f makefile_mingw_skwinv0 %TARGET_V0%
+::mingw32-make -f makefile_mingw_skwinv4 clean
+mingw32-make -f makefile_mingw_skwinv4 %TARGET_V4%
+::mingw32-make -f makefile_mingw_skwinv5 clean
+::mingw32-make -f makefile_mingw_skwinv5 %TARGET_V5%
+::mingw32-make -f makefile_mingw_skwinv6 clean
+::mingw32-make -f makefile_mingw_skwinv6 %TARGET_V6%
+COPY %FOLDER_BUILD_V0%\%TARGET_V0%.exe %SKGAME_FOLDER%\%TARGET_V0%.exe
+COPY %FOLDER_BUILD_V4%\%TARGET_V4%.exe %SKGAME_FOLDER%\%TARGET_V4%.exe
+COPY %FOLDER_BUILD_V5%\%TARGET_V5%.exe %SKGAME_FOLDER%\%TARGET_V5%.exe
+COPY %FOLDER_BUILD_V6%\%TARGET_V6%.exe %SKGAME_FOLDER%\%TARGET_V6%.exe

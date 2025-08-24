@@ -390,6 +390,19 @@ UINT SkWinApp::setVideoTestGradient()
 	return 0;
 }
 
+
+UINT SkWinApp::startAudioTest()
+{
+#if !defined (__NO_SDL__)
+	if (iVideoRenderer == GFX_RENDERER_SDL) {
+	printf("Start Audio Test\n");
+		xSkWinRenderer->StartAudioSample("DATADM2/64.wav");
+	}
+#endif
+	return 0;
+}
+
+
 UINT SkWinApp::setVideoTestTitle()
 {
 	if (xVRAM != NULL)
@@ -576,6 +589,7 @@ UINT SkWinApp::runWindowTest()
 		printf("Press enter to continue ...\n");
 		scanf("%c", &cKeyboardInput);
 
+		startAudioTest();
 		setVideoTestTitle();
 		printf("Press enter to continue ...\n");
 		scanf("%c", &cKeyboardInput);

@@ -20,6 +20,7 @@
 	typedef void SDL_Renderer;
 	typedef void SDL_Texture;
 	typedef X8 SDL_Color;
+	typedef U32 SDL_Color;
 #endif // __NO_SDL__
 
 //..............................................................................
@@ -42,6 +43,8 @@ private:
 	SDL_Texture* sdlTexture;
 	SDL_Color sdlPalette[256];
 
+	SDL_AudioDeviceID sdlAudio;
+
 	uint32_t* xRGBBuffer;
 
 public:
@@ -53,6 +56,8 @@ public:
 	UINT SetVGAPaletteRGB(X8 *xVGAPalette);
 	UINT Render();
 	UINT Close();
+
+	UINT StartAudioSample(const char* sSampleName);
 
 private:
 	UINT ConvertVRAMToRGB();

@@ -811,7 +811,7 @@ void DM2_IBMIO_USER_INPUT_CHECK(void)
   static bool semaphore = false;
   c_evententry mentry; // Note: was struct s_3words
 
-	printf("DM2_IBMIO_USER_INPUT_CHECK\n");
+	//printf("DM2_IBMIO_USER_INPUT_CHECK\n");
 
   if (close_win)
     throw(THROW_CLOSEWIN);

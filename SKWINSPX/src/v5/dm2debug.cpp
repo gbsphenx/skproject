@@ -25,6 +25,9 @@
 #include <dm2debug.h>
 #include <dosvideo.h>
 
+#include <stdlib.h>	// SPX: just for exit, else not needed.
+
+
 #ifdef NO_TRACE
 	#define NO_LOG_RETURN	return;
 #else

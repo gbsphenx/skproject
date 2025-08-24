@@ -1,5 +1,7 @@
 #!/bin/bash
 source ./xenvv0.sh
+echo "Removing object files..."
+rm -f ../build/SKWinV0_Linux_Release/*.o
 ## base v0
 ./xcomp.sh skmini
 ./xcomp.sh skparam
