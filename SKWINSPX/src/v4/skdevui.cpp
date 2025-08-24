@@ -287,7 +287,7 @@ X16 SkWinCore::_443c_00f8_MOUSE(X16 xx, X16 yy)
 		for (; bp04 != NULL; ) {
 			//^443C:0160
 			SRECT *bp08 = &bp04->pv6()->rc4;
-			printf("SRECT = %08X\n", bp08);
+			//printf("SRECT = %08X\n", bp08);
 			X16 bp0e = 0;
 			if (bp08->x > xx) {
 				//^443C:0184

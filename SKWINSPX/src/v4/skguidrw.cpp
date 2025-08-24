@@ -22,7 +22,7 @@
 
 
 //^0B36:131A
-void SkWinCore::DRAW_SIMPLE_STR(sk3f6c *ref, Bit16u rectno, Bit16u clr1, Bit16u clr2, Bit8u *str)
+void SkWinCore::DRAW_SIMPLE_STR(sk3f6c *ref, U16 rectno, U16 clr1, U16 clr2, U8 *str)
 {
 	// you can draw:
 	// e.g. spell symbols, represented as "<<"," ","","ž",")-","‡™".
@@ -44,7 +44,7 @@ void SkWinCore::DRAW_SIMPLE_STR(sk3f6c *ref, Bit16u rectno, Bit16u clr1, Bit16u 
 	if (QUERY_STR_METRICS(str, &bp02, &bp04) != 0 && QUERY_BLIT_RECT(NULL, &bp0c, rectno, &bp02, &bp04, -1) != 0) {
 		//^0B36:135E
 		DRAW_STRING(
-			reinterpret_cast<Bit8u *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(ref->w0)), 
+			reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(ref->w0)), 
 			ref->w0, 
 			ref->rc2.cx, 
 			bp0c.x             -ref->rc2.x,
@@ -63,14 +63,14 @@ void SkWinCore::DRAW_SIMPLE_STR(sk3f6c *ref, Bit16u rectno, Bit16u clr1, Bit16u 
 
 //^0B36:10B6
 void SkWinCore::DRAW_ICON_PICT_BUFF(
-	const Bit8u *buff, 
+	const U8 *buff, 
 	sk3f6c *tt, 
 	SRECT *rc, 
 	i16 srcx, 
 	i16 srcy, 
 	i16 colorkey, 
 	i16 flipmirror, 
-	Bit8u *localpal
+	U8 *localpal
 ) {
 	// draw icon image such as:
 	// a) right part of panel (commander part)
@@ -108,30 +108,24 @@ void SkWinCore::DRAW_ICON_PICT_BUFF(
 }
 
 //^0B36:1136
-void SkWinCore::DRAW_ICON_PICT_ENTRY(Bit8u cls1, Bit8u cls2, Bit8u cls4, sk3f6c *ss, Bit16u rectno, i16 colorkey)
+void SkWinCore::DRAW_ICON_PICT_ENTRY(U8 cls1, U8 cls2, U8 cls4, sk3f6c *ss, U16 iRectNo, i16 iColorKey)
 {
-	//^0B36:1136
 	ENTER(20);
-	//^0B36:113A
-	i16 bp0c = 0;
-	i16 bp0a = 0;
-	//^0B36:1142
-	Bit8u *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(cls1, cls2, cls4);
-	//^0B36:115C
-	SRECT bp14;
-	SRECT *bp08 = QUERY_BLIT_RECT(bp04, &bp14, rectno, &bp0a, &bp0c, -1);
-	//^0B36:1184
+	i16 iSourceY = 0; // bp0c
+	i16 iSourceX = 0; // bp0a
+	X8* xImageBuffer = QUERY_GDAT_IMAGE_ENTRY_BUFF(cls1, cls2, cls4); // bp04
+	SRECT xRectResult; // bp14
+	SRECT* xRectInfo = QUERY_BLIT_RECT(xImageBuffer, &xRectResult, iRectNo, &iSourceX, &iSourceY, -1); // bp08
 	DRAW_ICON_PICT_BUFF(
-		bp04,
+		xImageBuffer,
 		ss,
-		bp08,
-		bp0a,
-		bp0c,
-		colorkey,
+		xRectInfo,
+		iSourceX,
+		iSourceY,
+		iColorKey,
 		0,
 		QUERY_GDAT_IMAGE_LOCALPAL(cls1, cls2, cls4)
 		);
-	//^0B36:11BE
 	return;
 }
 
@@ -154,8 +148,8 @@ void SkWinCore::SHOW_ATTACK_RESULT(i16 yourValue)
 	//^29EE:00E9
 	_29ee_00a3(1);
 	//^29EE:00F0
-	Bit8u bp01 = 4;
-	Bit8u bp02 = 1;
+	U8 bp01 = 4;
+	U8 bp02 = 1;
 	//^29EE:00F8
 	if (di < 0) {
 		//^29EE:00FC
@@ -219,9 +213,9 @@ void SkWinCore::SHOW_ATTACK_RESULT(i16 yourValue)
 #endif
 
 		//^29EE:01A2
-		Bit16u si = 5;
+		U16 si = 5;
 		//^29EE:01A5
-		Bit8u bp0a[8]; memset(bp0a, 0, 8);	// SPX: add clean init
+		U8 bp0a[8]; memset(bp0a, 0, 8);	// SPX: add clean init
 		bp0a[5] = 0;
 		do {
 			//^29EE:01A9
@@ -253,7 +247,7 @@ void SkWinCore::SHOW_ATTACK_RESULT(i16 yourValue)
 		// SPX: Search through all weapons to find which projectile fits the current shooter item
 		for (; bp01 < 255; bp01++) {
 			//^29EE:0224
-			Bit16u si = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WEAPONS, bp01, dtWordValue, GDAT_ITEM_WEAPON_PROJECTILE_FLAG); // 0x05
+			U16 si = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WEAPONS, bp01, dtWordValue, GDAT_ITEM_WEAPON_PROJECTILE_FLAG); // 0x05
 			//^29EE:0238
 			// SPX: Check that the weapon is not a launcher (0x8000) and match the shooter flag
 			if (si != 0 && (si & WEAPON_FLAGS_SHOOTER) == 0 && (glbWeaponShooterNum & si) != 0) {
@@ -304,7 +298,7 @@ void SkWinCore::DISPLAY_RIGHT_PANEL_SQUAD_HANDS()
 
 //^2405:05B4
 // SPX: _2405_05b4 renamed DRAW_ITEM_ON_WOOD_PANEL
-Bit8u *SkWinCore::DRAW_ITEM_ON_WOOD_PANEL(Bit16u player, Bit16u possessionIndex, Picture *ref)
+U8 *SkWinCore::DRAW_ITEM_ON_WOOD_PANEL(U16 player, U16 possessionIndex, Picture *ref)
 {
 	//^2405:05B4
 	ENTER(348);
@@ -315,19 +309,19 @@ Bit8u *SkWinCore::DRAW_ITEM_ON_WOOD_PANEL(Bit16u player, Bit16u possessionIndex,
 		return NULL;
 	}
 	//^2405:05E8
-	Bit16u bp0c = _4976_0106 + _4976_010e;
-	Bit16u bp0e = _4976_0108 + _4976_0110;
+	U16 bp0c = glbRectX_0106 + _4976_010e;
+	U16 bp0e = glbRectY_0108 + _4976_0110;
 	//^2405:05FC
-	Bit16u bp0a = ALLOC_TEMP_CACHE_INDEX();
+	U16 bp0a = ALLOC_TEMP_CACHE_INDEX();
 	//^2405:0604
-    Bit8u *bp04 = ALLOC_NEW_PICT(bp0a, bp0c, bp0e, 8);
+    U8 *bp04 = ALLOC_NEW_PICT(bp0a, bp0c, bp0e, 8);
 	//^2405:061D
 	ObjectID di = glbChampionSquad[player].Possess(possessionIndex);
 	//^2405:0634
-	Bit8u bp05;
-	Bit8u bp06;
-	Bit8u bp07;
-	Bit16u bp12;
+	U8 bp05;
+	U8 bp06;
+	U8 bp07;
+	U16 bp12;
 	if (di == OBJECT_NULL) {
 		//^2405:0639
 		bp05 = 1;
@@ -352,7 +346,7 @@ Bit8u *SkWinCore::DRAW_ITEM_ON_WOOD_PANEL(Bit16u player, Bit16u possessionIndex,
 	//^2405:0699
 	QUERY_PICST_IT(&bp014c);
 	//^2405:06A6
-	Bit8u bp0f = glbPaletteT16[COLOR_RED];	// SPX: RED here is used as transparent for hand icon ..
+	U8 bp0f = glbPaletteT16[COLOR_RED];	// SPX: RED here is used as transparent for hand icon ..
 	//^2405:06B1
 	FILL_ENTIRE_PICT(bp04 = _0b36_00c3(bp0a, ref), bp0f);
 	//^2405:06D5
@@ -371,8 +365,8 @@ Bit8u *SkWinCore::DRAW_ITEM_ON_WOOD_PANEL(Bit16u player, Bit16u possessionIndex,
 	}
 	else {
 		//^2405:06F2
-		Bit8u bp015c[16];
-		for (Bit16u si = 0; si < 16; si++) {
+		U8 bp015c[16];
+		for (U16 si = 0; si < 16; si++) {
 			//^2405:06F6
 			bp015c[si] = glbPaletteT16[COLOR_BLACK];
 			//^2405:0701
@@ -383,7 +377,7 @@ Bit8u *SkWinCore::DRAW_ITEM_ON_WOOD_PANEL(Bit16u player, Bit16u possessionIndex,
 		DRAW_DIALOGUE_PICT(
 			QUERY_PICT_BITS(&bp014c),
 			bp04,
-			ALLOC_TEMP_RECT(_4976_010e, _4976_0110, _4976_0106, _4976_0108),
+			ALLOC_TEMP_RECT(_4976_010e, _4976_0110, glbRectX_0106, glbRectY_0108),
 			0,
 			0,
 			-1,
@@ -398,7 +392,7 @@ Bit8u *SkWinCore::DRAW_ITEM_ON_WOOD_PANEL(Bit16u player, Bit16u possessionIndex,
 		DRAW_DIALOGUE_PICT(
 			QUERY_PICT_BITS(&bp014c),
 			bp04,
-			ALLOC_TEMP_ORIGIN_RECT(_4976_0106, _4976_0108),
+			ALLOC_TEMP_ORIGIN_RECT(glbRectX_0106, glbRectY_0108),
 			0,
 			0,
 			12,
@@ -412,7 +406,7 @@ Bit8u *SkWinCore::DRAW_ITEM_ON_WOOD_PANEL(Bit16u player, Bit16u possessionIndex,
 
 //^0B36:105B
 // SPX: _0b36_105b renamed DRAW_GRAY_OVERLAY
-void SkWinCore::DRAW_GRAY_OVERLAY(sk3f6c *ref, SRECT *rc, Bit16u xx)
+void SkWinCore::DRAW_GRAY_OVERLAY(sk3f6c *ref, SRECT *rc, U16 xx)
 {
 	//^0B36:105B
 	ENTER(8);
@@ -421,7 +415,7 @@ void SkWinCore::DRAW_GRAY_OVERLAY(sk3f6c *ref, SRECT *rc, Bit16u xx)
 		//^0B36:1067
 		SRECT bp08;
 		_44c8_1aca(
-			reinterpret_cast<Bit8u *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(ref->w0)),
+			reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(ref->w0)),
 			OFFSET_RECT(ref, rc, &bp08),
 			xx,
 			ref->rc2.cx
@@ -435,7 +429,7 @@ void SkWinCore::DRAW_GRAY_OVERLAY(sk3f6c *ref, SRECT *rc, Bit16u xx)
 
 //^29EE:026C
 // SPX: _29ee_026c renamed DRAW_HAND_ACTION_ICONS
-void SkWinCore::DRAW_HAND_ACTION_ICONS(Bit16u playerIndex, Bit16u possessionIndex, Bit16u leftOrRight)
+void SkWinCore::DRAW_HAND_ACTION_ICONS(U16 playerIndex, U16 possessionIndex, U16 leftOrRight)
 {
 	//^29EE:026C
 	ENTER(48);
@@ -444,7 +438,7 @@ void SkWinCore::DRAW_HAND_ACTION_ICONS(Bit16u playerIndex, Bit16u possessionInde
 	//^29EE:0278
 	Champion *champion = &glbChampionSquad[playerIndex];
 	//^29EE:0289
-	Bit16u si = (possessionIndex == 1) ? 0x46 : 0x4a;
+	U16 si = (possessionIndex == 1) ? 0x46 : 0x4a;
 	//^29EE:0297
 	si += (champion->playerPos() +4 - glbPlayerDir) & 3;
 	//^29EE:02AC
@@ -459,10 +453,10 @@ void SkWinCore::DRAW_HAND_ACTION_ICONS(Bit16u playerIndex, Bit16u possessionInde
 	else {
 		//^29EE:02DF
 		// SPX: Draw background item square
-		DRAW_ICON_PICT_ENTRY(0x01, 0x04, (Bit8u(possessionIndex) << 1) + Bit8u(leftOrRight) +2, &_4976_3f6c, si, -1);
+		DRAW_ICON_PICT_ENTRY(0x01, 0x04, (U8(possessionIndex) << 1) + U8(leftOrRight) +2, &_4976_3f6c, si, -1);
 		//^29EE:02FD
 		Picture bp30;
-		Bit8u *bp08 = DRAW_ITEM_ON_WOOD_PANEL(playerIndex, possessionIndex, &bp30);
+		U8 *bp08 = DRAW_ITEM_ON_WOOD_PANEL(playerIndex, possessionIndex, &bp30);
 		//^29EE:0316
 		if (bp08 != NULL) {
 			//^29EE:031A
@@ -493,14 +487,14 @@ void SkWinCore::DRAW_HAND_ACTION_ICONS(Bit16u playerIndex, Bit16u possessionInde
 
 //^29EE:058D
 // SPX: _29ee_058d renamed DRAW_SQUAD_SPELL_AND_LEADER_ICON
-void SkWinCore::DRAW_SQUAD_SPELL_AND_LEADER_ICON(Bit16u player, Bit16u yy)
+void SkWinCore::DRAW_SQUAD_SPELL_AND_LEADER_ICON(U16 player, U16 yy)
 {
 	//^29EE:058D
     ENTER(324);
 	//^29EE:0593
 	_29ee_00a3(0);
 	//^29EE:059A
-	Bit16u si = (glbChampionSquad[player].playerPos() +4 - glbPlayerDir) & 3;
+	U16 si = (glbChampionSquad[player].playerPos() +4 - glbPlayerDir) & 3;
 	//^29EE:05B6
 	SRECT bp0a;
 	FILL_RECT_SUMMARY(
@@ -511,10 +505,10 @@ void SkWinCore::DRAW_SQUAD_SPELL_AND_LEADER_ICON(Bit16u player, Bit16u yy)
 	//^29EE:05E1
 	if (glbChampionSquad[player].curHP() != 0) {
 		//^29EE:05F5
-		Bit16u di = (si == 1 || si == 2) ? 1 : 0;
+		U16 di = (si == 1 || si == 2) ? 1 : 0;
 		//^29EE:0606
-		Bit8u bp01;
-		Bit8u bp02;
+		U8 bp01;
+		U8 bp02;
 		if (si <= 1) {
 			//^29EE:060B
 			bp01 = 10;
@@ -635,7 +629,7 @@ void SkWinCore::DRAW_MONEYBOX(ObjectID rl)
 
 //^29EE:21D8
 // SPX: _29ee_21d8 renamed DRAW_CONTAINER_PANEL
-void SkWinCore::DRAW_CONTAINER_PANEL(ObjectID rl, Bit16u xx)
+void SkWinCore::DRAW_CONTAINER_PANEL(ObjectID rl, U16 xx)
 {
 // xx = 1 : right panel / xx = 0 : inventory
 	//^29EE:21D8
@@ -694,12 +688,12 @@ void SkWinCore::DRAW_SQUAD_POS_INTERFACE()
 	//^29EE:03A3
 	DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_GRAPHICSSET, glbSquadInterfaceMapGfxSet, GDAT_GFXSET_SQUAD_4X, &_4976_3f6c, 47, -1);	// gfx = 0xF5
 	//^29EE:03BC
-	Bit8u *bp04 = ALLOC_PICT_BUFF(_4976_0118, _4976_011a, afDefault, 4);
+	U8 *bp04 = ALLOC_PICT_BUFF(_4976_0118, _4976_011a, afDefault, 4);
 	//^29EE:03D6
 	SRECT bp14;
-	for (Bit16u si = 0; si < cd.pi.glbChampionsCount; si++) {
+	for (U16 si = 0; si < cd.pi.glbChampionsCount; si++) {
 		//^29EE:03DB
-		Bit16u bp06 = (glbChampionSquad[si].playerPos() +4 - glbPlayerDir) & 3;
+		U16 bp06 = (glbChampionSquad[si].playerPos() +4 - glbPlayerDir) & 3;
 		//^29EE:03F7
 		if (glbChampionSquad[si].curHP() == 0 || bp06 +1 == _4976_5dbc)
 			//^29EE:0414
@@ -708,7 +702,7 @@ void SkWinCore::DRAW_SQUAD_POS_INTERFACE()
 		i16 bp0c = 0;
 		i16 bp0a = 0;
 		//^29EE:041F
-		Bit16u bp08;
+		U16 bp08;
 		if (QUERY_BLIT_RECT(bp04, &bp14, bp08 = bp06 +53, &bp0a, &bp0c, -1) == NULL)
 			//^29EE:044C
 			continue;
@@ -730,9 +724,9 @@ void SkWinCore::DRAW_SQUAD_POS_INTERFACE()
 			}
 		}
 		//^29EE:0478
-		Bit8u bp015e[16];
+		U8 bp015e[16];
 		DRAW_ICON_PICT_BUFF(
-			QUERY_GDAT_SQUAD_ICON(bp04, Bit8u(si), bp015e),
+			QUERY_GDAT_SQUAD_ICON(bp04, U8(si), bp015e),
             &_4976_3f6c,
 			&bp14,
 			bp0a,
@@ -778,7 +772,7 @@ void SkWinCore::DRAW_SQUAD_POS_INTERFACE()
 }
 
 //^3929:06E1
-void SkWinCore::DRAW_STRONG_TEXT(Bit8u *buff, Bit16u ww, Bit16u cx, Bit16u xx, Bit16u yy, Bit16u clr1, Bit16u fill, Bit8u *str)
+void SkWinCore::DRAW_STRONG_TEXT(U8 *buff, U16 ww, U16 cx, U16 xx, U16 yy, U16 clr1, U16 fill, U8 *str)
 {
 	// draw bold with shadow single-byte-character-set text such as,
 	// a) name "TORHAM"
@@ -787,8 +781,8 @@ void SkWinCore::DRAW_STRONG_TEXT(Bit8u *buff, Bit16u ww, Bit16u cx, Bit16u xx, B
 	//^3929:06E1
 	ENTER(4);
 	//^3929:06E7
-	Bit16u di = xx;
-	Bit16u si = yy;
+	U16 di = xx;
+	U16 si = yy;
 	//^3929:06ED
 	i16 bp02;
 	i16 bp04;
@@ -816,7 +810,7 @@ void SkWinCore::DRAW_STRONG_TEXT(Bit8u *buff, Bit16u ww, Bit16u cx, Bit16u xx, B
 }
 
 //^0B36:13B1
-void SkWinCore::DRAW_NAME_STR(sk3f6c *ref, Bit16u rectno, Bit16u clr1, Bit16u fill, Bit8u *str)
+void SkWinCore::DRAW_NAME_STR(sk3f6c *ref, U16 rectno, U16 clr1, U16 fill, U8 *str)
 {
 	// draw text:
 	// a) player's name "TORHAM", "SAROS" at upper-panel and command bar
@@ -833,7 +827,7 @@ void SkWinCore::DRAW_NAME_STR(sk3f6c *ref, Bit16u rectno, Bit16u clr1, Bit16u fi
 		if (QUERY_BLIT_RECT(NULL, &bp0c, rectno, &bp02, &bp04, -1) != NULL) {
 			//^0B36:13F5
 			DRAW_STRONG_TEXT(
-				reinterpret_cast<Bit8u *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(ref->w0)),
+				reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(ref->w0)),
 				ref->w0,
 				ref->rc2.cx,
 				bp0c.x             -ref->rc2.x,
@@ -874,18 +868,18 @@ void SkWinCore::DRAW_PLAYER_NAME_AT_CMDSLOT()
 }
 
 //^0CAF:0008
-i16 SkWinCore::SK_STRLEN(const Bit8u *ref)
+i16 SkWinCore::SK_STRLEN(const U8 *ref)
 {
 	ENTER(4);
-	const Bit8u *bp04 = ref;
+	const U8 *bp04 = ref;
 	while (*(ref++) != 0);
-	return Bit16u(ref -bp04 -1);
+	return U16(ref -bp04 -1);
 }
 
 
 //^29EE:093E
 // SPX: _29ee_093e renamed DRAW_SPELL_TO_BE_CAST
-void SkWinCore::DRAW_SPELL_TO_BE_CAST(Bit16u xx)
+void SkWinCore::DRAW_SPELL_TO_BE_CAST(U16 xx)
 {
 	//^29EE:093E
 	ENTER(8);
@@ -900,14 +894,14 @@ void SkWinCore::DRAW_SPELL_TO_BE_CAST(Bit16u xx)
 	//^29EE:0968
 	Champion *champion = &glbChampionTable[cd.pi.glbChampionIndex];
 	//^29EE:0979
-	Bit8u bp08[2];
+	U8 bp08[2];
     bp08[1] = 0;
 	//^29EE:097D
-	Bit16u bp06 = SK_STRLEN(champion->GetRunes());
+	U16 bp06 = SK_STRLEN(champion->GetRunes());
 	//^29EE:0991
-	Bit16u di = 261;
+	U16 di = 261;
 	//^29EE:0994
-	for (Bit16u si = 0; si < bp06; si++) {
+	for (U16 si = 0; si < bp06; si++) {
 		//^29EE:0998
 		bp08[0] = champion->GetRunes()[si];
 		//^29EE:09A2
@@ -928,18 +922,18 @@ void SkWinCore::DRAW_SPELL_PANEL()
 	//^29EE:09DA
 	Champion *champion = &glbChampionTable[cd.pi.glbChampionIndex];
 	//^29EE:09EB
-	Bit16u bp06 = champion->runesCount;
+	U16 bp06 = champion->runesCount;
 	//^29EE:09F7
 	// SPX: rune class interface
 	DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_SPELLMENU, bp06 +1, &_4976_3f6c, 92, -1);
 	//^29EE:0A11
 	if (bp06 < 4) {
 		//^29EE:0A17
-		Bit8u bp0a[2];
+		U8 bp0a[2];
 		bp0a[1] = 0;
 		//^29EE:0A1B
-		Bit8u bp07 = Bit8u(bp06 * 6) + 0x60;
-		Bit16u si = 255;
+		U8 bp07 = U8(bp06 * 6) + 0x60;
+		U16 si = 255;
 		//^29EE:0A2B
 		for (bp06 = 0; bp06 < 6; bp06++) {
 			//^29EE:0A32
@@ -964,22 +958,22 @@ void SkWinCore::DRAW_SPELL_PANEL()
 }
 
 //^0CAF:00D2
-Bit8u *SkWinCore::SK_STRSTR(const Bit8u *xx, const Bit8u *yy)
+U8 *SkWinCore::SK_STRSTR(const U8 *xx, const U8 *yy)
 {
 	//^0CAF:00D2
 	ENTER(10);
 	//^0CAF:00D6
-	Bit8u cl = yy[0];
+	U8 cl = yy[0];
 	//^0CAF:00DE
 	if (cl != 0) {
 		//^0CAF:00E2
-		Bit8u bp09;
+		U8 bp09;
 		for (; (bp09 = xx[0]) != 0; xx++) {
 			//^0CAF:00E4
 			if (bp09 == cl) {
 				//^0CAF:00EB
-				const Bit8u *bp04 = xx +1;
-				const Bit8u *bp08 = yy +1;
+				const U8 *bp04 = xx +1;
+				const U8 *bp08 = yy +1;
 				//^0CAF:0105
 				while (bp08[0] != 0 && bp04[0] == bp08[0]) {
 					//^0CAF:0107
@@ -990,7 +984,7 @@ Bit8u *SkWinCore::SK_STRSTR(const Bit8u *xx, const Bit8u *yy)
 				//^0CAF:0124
 				if (bp08[0] == 0) {
 					//^0CAF:012F
-					return const_cast<Bit8u *>(xx);
+					return const_cast<U8 *>(xx);
 				}
 			}
 			//^0CAF:0137
@@ -1002,11 +996,11 @@ Bit8u *SkWinCore::SK_STRSTR(const Bit8u *xx, const Bit8u *yy)
 
 
 //^29EE:0A7B
-void SkWinCore::DRAW_CMD_SLOT(Bit16u cmdSlot, Bit8u ww)
+void SkWinCore::DRAW_CMD_SLOT(U16 cmdSlot, U8 ww)
 {
 	//^29EE:0A7B
 	//^29EE:0A7F
-	Bit16u si = cmdSlot;
+	U16 si = cmdSlot;
 	//^29EE:0A82
 	_29ee_00a3(0);
 	//^29EE:0A89
@@ -1036,7 +1030,7 @@ void SkWinCore::_29ee_0b2b()
 {
 	//^29EE:0B2B
 	//^29EE:0B2F
-	for (Bit16u si = 0; si < _4976_53a4; si++) {
+	for (U16 si = 0; si < _4976_53a4; si++) {
 		//^29EE:0B33
 		DRAW_CMD_SLOT(si, 0);
 		//^29EE:0B3C
@@ -1047,12 +1041,12 @@ void SkWinCore::_29ee_0b2b()
 }
 
 //^29EE:1D03
-void SkWinCore::_29ee_1d03(Bit16u xx)
+void SkWinCore::_29ee_1d03(U16 xx)
 {
 	//^29EE:1D03
 	ENTER(6);
 	//^29EE:1D08
-	Bit16u si = xx;
+	U16 si = xx;
 	//^29EE:1D0B
 	_29ee_00a3(0);
 	//^29EE:1D12
@@ -1061,13 +1055,13 @@ void SkWinCore::_29ee_1d03(Bit16u xx)
 		si ^= glbMagicalMapFlags;
 		si &= 15;
 		//^29EE:1D2C
-		Bit8u bp06[2];
+		U8 bp06[2];
 		bp06[1] = 0;
-		Bit16u bp02 = 0;
+		U16 bp02 = 0;
 		//^29EE:1D35
 		for (; bp02 < 4; bp02++) {
 			//^29EE:1D37
-			Bit8u bp03 = 0x49;
+			U8 bp03 = 0x49;
 			//^29EE:1D3B
 			if ((si & 0x0001) != 0) {
 				//^29EE:1D41
@@ -1090,7 +1084,7 @@ void SkWinCore::_29ee_1d03(Bit16u xx)
 
 
 //^29EE:0C41
-void SkWinCore::DRAW_CHIP_OF_MAGIC_MAP(const Bit8u *buff, Bit16u aa, Bit16u xx, Bit16u yy, Bit16u flipMirror, Bit8u *localpal)
+void SkWinCore::DRAW_CHIP_OF_MAGIC_MAP(const U8 *buff, U16 aa, U16 xx, U16 yy, U16 flipMirror, U8 *localpal)
 {
 	// draws:
 	// a) parts of minion map's 7x7 atlas view.
@@ -1098,7 +1092,7 @@ void SkWinCore::DRAW_CHIP_OF_MAGIC_MAP(const Bit8u *buff, Bit16u aa, Bit16u xx, 
 	//^29EE:0C41
 	ENTER(12);
 	//^29EE:0C47
-	Bit16u di = flipMirror;
+	U16 di = flipMirror;
 	//^29EE:0C4A
 	if (buff != NULL) {
 		//^29EE:0C55
@@ -1140,19 +1134,19 @@ void SkWinCore::DRAW_CHIP_OF_MAGIC_MAP(const Bit8u *buff, Bit16u aa, Bit16u xx, 
 
 
 //^29EE:0D01
-void SkWinCore::DRAW_MAP_CHIP(ObjectID recordLink, i16 ss, i16 tt, i16 ww, Bit16u xx, Bit16u yy, Bit8u cc, Bit16u flags)
+void SkWinCore::DRAW_MAP_CHIP(ObjectID recordLink, i16 ss, i16 tt, i16 ww, U16 xx, U16 yy, U8 cc, U16 flags)
 {
 	//^29EE:0D01
 	ENTER(108);
 	//^29EE:0D07
-	Bit16u di = yy;
+	U16 di = yy;
 	//^29EE:0D0A
-	Bit8u *bp2e = NULL;
+	U8 *bp2e = NULL;
 	//^29EE:0D14
 	ExtendedTileInfo bp4c;
 	SUMMARIZE_STONE_ROOM(&bp4c, ww, ss, tt);
 	//^29EE:0D2A
-	Bit8u bp5c[16];
+	U8 bp5c[16];
 	QUERY_DUNGEON_MAP_CHIP_PICT(GDAT_CATEGORY_GRAPHICSSET, cc, &bp2e, bp5c);
 	//^29EE:0D41
 	if ((flags & 0x0010) != 0) {
@@ -1175,11 +1169,11 @@ void SkWinCore::DRAW_MAP_CHIP(ObjectID recordLink, i16 ss, i16 tt, i16 ww, Bit16
 		FILL_RECT_SUMMARY(&_4976_3f6c, &bp3c, glbPaletteT16[COLOR_RED]);
 	}
 	//^29EE:0DAD
-	Bit16u bp14 = ((bp4c.w2 >> 5) == ttTrickWall && (bp4c.w2 & 1) != 0) ? 1 : 0;
-	Bit16u bp20 = 0;
+	U16 bp14 = ((bp4c.w2 >> 5) == ttTrickWall && (bp4c.w2 & 1) != 0) ? 1 : 0;
+	U16 bp20 = 0;
 	i16 bp0a;
-	Bit8u *bp2a;
-	Bit8u bp6c[16];
+	U8 *bp2a;
+	U8 bp6c[16];
 	i16 bp0e;
 	i16 bp0c;
 
@@ -1190,7 +1184,7 @@ _0dcd:
 		case 7://^0DDF
 			//^29EE:0DDF
 			{
-				if ((flags & 0x0002) != 0 && bp14 != 0 && (Bit16u(glbGameTick) & 2) != 0) {
+				if ((flags & 0x0002) != 0 && bp14 != 0 && (U16(glbGameTick) & 2) != 0) {
 					//^29EE:0DF7
 					bp0a = 1;
 					//^29EE:0DFC
@@ -1210,7 +1204,7 @@ _0dcd:
 						//^29EE:0E41
 						if ((flags & 0x0002) != 0 || QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp0c, dtWordValue, GDAT_IMG_MAP_CHIP) == 0) {
 							//^29EE:0E5F
-							bp0c = QUERY_DUNGEON_MAP_CHIP_PICT(GDAT_CATEGORY_WALL_GFX, Bit8u(bp0c), &bp2a, bp6c);
+							bp0c = QUERY_DUNGEON_MAP_CHIP_PICT(GDAT_CATEGORY_WALL_GFX, U8(bp0c), &bp2a, bp6c);
 							//^29EE:0E79
 							if (bp0c != 0) {
 								//^29EE:0E7D
@@ -1254,7 +1248,7 @@ _0f22:
 					//^29EE:0F49
 					if (true
 						&& ((flags & 0x0002) != 0 || QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_FLOOR_GFX, bp0a, dtWordValue, 0xf9) == 0)
-						&& (bp0c = QUERY_DUNGEON_MAP_CHIP_PICT(GDAT_CATEGORY_FLOOR_GFX, Bit8u(bp0a), &bp2a, bp6c)) != 0
+						&& (bp0c = QUERY_DUNGEON_MAP_CHIP_PICT(GDAT_CATEGORY_FLOOR_GFX, U8(bp0a), &bp2a, bp6c)) != 0
 					) {
 						//^29EE:0F85
 						bp0e = (bp4c.tfoi[2] >> 8) / 10;
@@ -1331,7 +1325,7 @@ _1025:
 					//^29EE:10A2
 					if ((flags & 0x0002) != 0) {
 						//^29EE:10A9
-						if ((Bit16u(glbGameTick) & 1) != 0) {
+						if ((U16(glbGameTick) & 1) != 0) {
 							//^29EE:10B4
 							bp0a++;
 						}
@@ -1366,10 +1360,10 @@ _10b7:
 			//^29EE:10E4
 			if (glbChampionSquad[bp0a].curHP() != 0) {
 				//^29EE:10F8
-				Bit8u bp21 = QUERY_CLS1_FROM_RECORD(recordLink);
-				Bit8u bp22 = QUERY_CLS2_FROM_RECORD(recordLink);
+				U8 bp21 = QUERY_CLS1_FROM_RECORD(recordLink);
+				U8 bp22 = QUERY_CLS2_FROM_RECORD(recordLink);
 				//^29EE:1110
-				Bit8u *bp32 = QUERY_GDAT_IMAGE_ENTRY_BUFF(bp21, bp22, 0x40);
+				U8 *bp32 = QUERY_GDAT_IMAGE_ENTRY_BUFF(bp21, bp22, 0x40);
 				//^29EE:1125
 				DRAW_CHIP_OF_MAGIC_MAP(
 					bp32,
@@ -1389,10 +1383,10 @@ _10b7:
 		//^29EE:1195
 		bp0a = (_4976_5326 != 2) ? ((_4976_5326 != 3) ? 0x02 : 0x0a) : (0x0b);
 		//^29EE:11B7
-		Bit8u bp21 = QUERY_CLS1_FROM_RECORD(recordLink);
-		Bit8u bp22 = QUERY_CLS2_FROM_RECORD(recordLink);
+		U8 bp21 = QUERY_CLS1_FROM_RECORD(recordLink);
+		U8 bp22 = QUERY_CLS2_FROM_RECORD(recordLink);
 		//^29EE:11CF
-		Bit8u *bp32 = QUERY_GDAT_IMAGE_ENTRY_BUFF(bp21, bp22, 0x40);
+		U8 *bp32 = QUERY_GDAT_IMAGE_ENTRY_BUFF(bp21, bp22, 0x40);
 		//^29EE:11E4
 		DRAW_CHIP_OF_MAGIC_MAP(
 			bp32,
@@ -1418,7 +1412,7 @@ _10b7:
 			//^29EE:1235
 			if (bp0a == dbCreature) {
 				//^29EE:123A
-				Bit16u bp16 = QUERY_CREATURE_AI_SPEC_FLAGS(si);
+				U16 bp16 = QUERY_CREATURE_AI_SPEC_FLAGS(si);
 				//^29EE:1244
 				if (QUERY_GDAT_ENTRY_DATA_INDEX(0x0f, QUERY_CLS2_FROM_RECORD(si), dtWordValue, 0xf9) != 0) {
 					//^29EE:125F
@@ -1500,11 +1494,11 @@ _10b7:
 			//^29EE:1374
 			Creature* xCreature = GET_ADDRESS_OF_RECORD4(bp18); // bp04
 			//^29EE:1383
-			Bit16u bp16 = QUERY_CREATURE_AI_SPEC_FLAGS(bp18);
+			U16 bp16 = QUERY_CREATURE_AI_SPEC_FLAGS(bp18);
 			//^29EE:138F
-			Bit8u bp21;
-			Bit8u bp22;
-			Bit8u *bp32;
+			U8 bp21;
+			U8 bp22;
+			U8 *bp32;
 			if ((flags & 0x0020) != 0) {
 				//^29EE:1396
 				bp21 = QUERY_CLS1_FROM_RECORD(recordLink);
@@ -1517,7 +1511,7 @@ _10b7:
 				//^29EE:1546
 				DRAW_CHIP_OF_MAGIC_MAP(
 					bp32, 
-					(Bit16u(glbGameTick) & 1) +3, 
+					(U16(glbGameTick) & 1) +3, 
 					xx, 
 					di, 
 					0, 
@@ -1569,7 +1563,7 @@ _10b7:
 				//^29EE:1526
 				DRAW_CHIP_OF_MAGIC_MAP(
 					bp32, 
-					Bit16u(glbGameTick & 1), 
+					U16(glbGameTick & 1), 
 					xx, 
 					di, 
 					0, 
@@ -1683,7 +1677,7 @@ _1554:
 				//^29EE:1729
 				DRAW_CHIP_OF_MAGIC_MAP(
 					bp2a,
-					Bit16u(glbGameTick & 1) +1,
+					U16(glbGameTick & 1) +1,
 					xx,
 					di,
 					RAND02(),
@@ -1693,14 +1687,14 @@ _1554:
 			//^29EE:174D
 		}
 		//^29EE:175B
-		Bit16u bp1e;
+		U16 bp1e;
 		i16 bp10;
 		i16 bp12;
 		if (bp4c.w0 == 0 && bp20 == 0) {
 			//^29EE:176D
 			bp10 = ss;
 			bp12 = tt;
-			Bit8u *bp26 = NULL;
+			U8 *bp26 = NULL;
 			//^29EE:1783
 			bp0a = glbCurrentMapIndex;
 			//^29EE:1786
@@ -1764,7 +1758,7 @@ void SkWinCore::DRAW_MAJIC_MAP(ObjectID recordLink)
 	//^29EE:1DBD
 	Container *bp04 = GET_ADDRESS_OF_RECORD9(recordLink);
 	//^29EE:1DCC
-	Bit16u bp0e = bp04->b5_5_7();
+	U16 bp0e = bp04->b5_5_7();
 	//^29EE:1DDC
 	Missile *bp08;
 	if (bp0e != 3) {
@@ -1793,7 +1787,7 @@ void SkWinCore::DRAW_MAJIC_MAP(ObjectID recordLink)
 		//^29EE:1E2E
 		DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_MAGICAL_MAPS, glbHoldedContainerType, 0x10, &_4976_3f6c, 92, -1);
 		//^29EE:1E46
-		for (Bit16u si = 0; si < _4976_53a4; si++) {
+		for (U16 si = 0; si < _4976_53a4; si++) {
 			//^29EE:1E4A
 			DRAW_CMD_SLOT(si, 0);
 			//^29EE:1E53
@@ -1804,9 +1798,9 @@ void SkWinCore::DRAW_MAJIC_MAP(ObjectID recordLink)
 		glbMagicalMapFlags |= 0x0400;
 	}
 	//^29EE:1E67
-	Bit16u bp10 = glbPlayerPosX;
-	Bit16u di = glbPlayerPosY;
-	Bit16u bp12 = glbPlayerMap;
+	U16 bp10 = glbPlayerPosX;
+	U16 di = glbPlayerPosY;
+	U16 bp12 = glbPlayerMap;
 	//^29EE:1E77
 	i16 bp16 = 0; // shift-y
 	i16 bp14 = 0; // shift-x
@@ -1893,7 +1887,7 @@ void SkWinCore::DRAW_PLAYER_ATTACK_DIR()
 	//^29EE:0798
 	DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_GRAPHICSSET, glbSquadInterfaceMapGfxSet, GDAT_GFXSET_SQUAD_SINGLE, &_4976_3f6c, 93, -1);	// gfx = 0xF6
 	//^29EE:07B1
-	Bit8u *bp04 = ALLOC_PICT_BUFF(_4976_0118, _4976_011a, afDefault, 4);
+	U8 *bp04 = ALLOC_PICT_BUFF(_4976_0118, _4976_011a, afDefault, 4);
 	//^29EE:07CD
 	i16 bp06 = 0;
 	i16 bp08 = 0;
@@ -1903,7 +1897,7 @@ void SkWinCore::DRAW_PLAYER_ATTACK_DIR()
 		//^29EE:07FB
 		if (glbGlobalSpellEffects.AuraOfSpeed != 0) {
 			//^29EE:0802
-			Bit16u si = RAND02();
+			U16 si = RAND02();
 			//^29EE:0809
 			if (si != 0) {
 				//^29EE:080D
@@ -1918,9 +1912,9 @@ void SkWinCore::DRAW_PLAYER_ATTACK_DIR()
 			}
 		}
 		//^29EE:0824
-		Bit8u bp015a[16];
-		Bit16u di;
-		QUERY_GDAT_SQUAD_ICON(bp04, Bit8u(di = cd.pi.glbChampionIndex - 1), bp015a);
+		U8 bp015a[16];
+		U16 di;
+		QUERY_GDAT_SQUAD_ICON(bp04, U8(di = cd.pi.glbChampionIndex - 1), bp015a);
 		//^29EE:083F
 		DRAW_ICON_PICT_BUFF(bp04, &_4976_3f6c, &bp10, bp06, bp08, 12, 0, bp015a);
 		//^29EE:0866
@@ -1936,7 +1930,7 @@ void SkWinCore::DRAW_PLAYER_ATTACK_DIR()
 			//^29EE:08D4
 			bp014a.height >>= 2;
 			//^29EE:08D9
-			bp014a.w16 = bp014a.height * (Bit16u(glbGameTick) & 3);
+			bp014a.w16 = bp014a.height * (U16(glbGameTick) & 3);
 			//^29EE:08EB
 			_0b36_11c0(&bp014a, &_4976_3f6c, 94, 12);
 		}
@@ -1950,7 +1944,7 @@ void SkWinCore::DRAW_PLAYER_ATTACK_DIR()
 
 
 //^12B4:000D
-void SkWinCore::HIGHLIGHT_ARROW_PANEL(Bit16u cls4, Bit16u rectno, Bit16u bright)
+void SkWinCore::HIGHLIGHT_ARROW_PANEL(U16 cls4, U16 rectno, U16 bright)
 {
 	//^12B4:000D
 	return;
@@ -2000,7 +1994,7 @@ void SkWinCore::IBMIO_FILL_HALFTONE_RECT(SRECT *rc) //#DS=04BF
 	//^00EB:03F3
 	for (i16 si = rc->y; rc->y + rc->cy -1 >= si; si++) {
 		//^00EB:03FC
-		Bit8u *bp04 = &pbVram[si * 320 + rc->x];
+		U8 *bp04 = &pbVram[si * 320 + rc->x];
 		//^00EB:0416
 		for (i16 di = rc->x; rc->x + rc->cx -1 >= di; bp04++, di++) {
 			//^00EB:041E
@@ -2021,7 +2015,7 @@ void SkWinCore::IBMIO_FILL_HALFTONE_RECT(SRECT *rc) //#DS=04BF
 }
 
 //^44C8:1D11
-void SkWinCore::FIRE_FILL_HALFTONE_RECTV(SRECT *rc, Bit16u aa)
+void SkWinCore::FIRE_FILL_HALFTONE_RECTV(SRECT *rc, U16 aa)
 {
 	//^44C8:1D11
 	ENTER(0);
@@ -2032,7 +2026,7 @@ void SkWinCore::FIRE_FILL_HALFTONE_RECTV(SRECT *rc, Bit16u aa)
 }
 
 //^44C8:1DDA
-void SkWinCore::FIRE_FILL_HALFTONE_RECTI(Bit16u rectno, Bit16u aa)
+void SkWinCore::FIRE_FILL_HALFTONE_RECTI(U16 rectno, U16 aa)
 {
 	//^44C8:1DDA
 	ENTER(8);
@@ -2045,7 +2039,7 @@ void SkWinCore::FIRE_FILL_HALFTONE_RECTI(Bit16u rectno, Bit16u aa)
 
 
 //^0B36:129A
-void SkWinCore::_0b36_129a(sk3f6c *ref, i16 xx, i16 yy, Bit8u clr1, Bit8u clr2, Bit8u *str)
+void SkWinCore::_0b36_129a(sk3f6c *ref, i16 xx, i16 yy, U8 clr1, U8 clr2, U8 *str)
 {
 	//^0B36:129A
 	ENTER(4);
@@ -2055,7 +2049,7 @@ void SkWinCore::_0b36_129a(sk3f6c *ref, i16 xx, i16 yy, Bit8u clr1, Bit8u clr2, 
 	if (QUERY_STR_METRICS(str, &bp02, &bp04) != 0) {
 		//^0B36:12BA
 		DRAW_STRING(
-			reinterpret_cast<Bit8u *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(ref->w0)),
+			reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(ref->w0)),
 			ref->w0,
 			ref->rc2.cx,
 			xx - ref->rc2.x,
@@ -2289,8 +2283,8 @@ void SkWinCore::DRAW_PICST(ExtendedPicture *ref)
 }
 
 //^0B36:1688
-//void SkWinCore::DRAW_STATIC_PIC(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit16u rectno, i16 colorkey)
-void SkWinCore::DRAW_STATIC_PIC(Bit8u iCategory, Bit8u iItemNo, Bit8u iEntry, Bit16u rectno, i16 colorkey)
+//void SkWinCore::DRAW_STATIC_PIC(U8 cls1, U8 cls2, U8 cls4, U16 rectno, i16 colorkey)
+void SkWinCore::DRAW_STATIC_PIC(U8 iCategory, U8 iItemNo, U8 iEntry, U16 rectno, i16 colorkey)
 {
 	// draw an statical image such as inventory plate.
 
@@ -2307,7 +2301,7 @@ void SkWinCore::DRAW_STATIC_PIC(Bit8u iCategory, Bit8u iItemNo, Bit8u iEntry, Bi
 }
 
 // SPX: NEW
-void SkWinCore::DRAW_STATIC_PIC_X_SRECT(SRECT xRectangle, Bit8u iCategory, Bit8u iItemNo, Bit8u iEntry, Bit16u rectno, i16 colorkey)
+void SkWinCore::DRAW_STATIC_PIC_X_SRECT(SRECT xRectangle, U8 iCategory, U8 iItemNo, U8 iEntry, U16 rectno, i16 colorkey)
 {
 	ExtendedPicture extPict;	//bp013a
 	QUERY_GDAT_SUMMARY_IMAGE(&extPict, iCategory, iItemNo, iEntry);
@@ -2322,7 +2316,7 @@ void SkWinCore::DRAW_STATIC_PIC_X_SRECT(SRECT xRectangle, Bit8u iCategory, Bit8u
 
 //^2E62:064A
 // SPX: _2e62_064a renamed DRAW_CHARSHEET_OPTION_ICON
-void SkWinCore::DRAW_CHARSHEET_OPTION_ICON(Bit8u cls4, Bit16u rectno, Bit16u zz)
+void SkWinCore::DRAW_CHARSHEET_OPTION_ICON(U8 cls4, U16 rectno, U16 zz)
 {
 	ENTER(0);
 	if ((_4976_581a & zz) != 0)
@@ -2332,7 +2326,7 @@ void SkWinCore::DRAW_CHARSHEET_OPTION_ICON(Bit8u cls4, Bit16u rectno, Bit16u zz)
 }
 
 //^2E62:00A3
-void SkWinCore::DRAW_PLAYER_3STAT_PANE(Bit16u player, Bit16u xx)
+void SkWinCore::DRAW_PLAYER_3STAT_PANE(U16 player, U16 xx)
 {
 	//^2E62:00A3
 	ENTER(2);
@@ -2344,7 +2338,7 @@ void SkWinCore::DRAW_PLAYER_3STAT_PANE(Bit16u player, Bit16u xx)
 		return;
 	//^2E62:00B2
 	// SPX: Choose between 0 (normal champion panel) or 1 (dead champion panel)
-	Bit8u bp01 = (glbChampionSquad[si].curHP() == 0) ? 1 : (((si +1) == glbChampionInventory) ? 9 : 0);
+	U8 bp01 = (glbChampionSquad[si].curHP() == 0) ? 1 : (((si +1) == glbChampionInventory) ? 9 : 0);
 	//^2E62:00DB
 	_0b36_0c52(&_4976_3ff0, si +161, xx);
 	//^2E62:00F0
@@ -2366,44 +2360,42 @@ void SkWinCore::DRAW_PLAYER_3STAT_PANE(Bit16u player, Bit16u xx)
 
 //^2E62:061D
 // SPX: _2e62_061d renamed DRAW_CHAMPION_PICTURE
-void SkWinCore::DRAW_CHAMPION_PICTURE(Bit16u player)
+void SkWinCore::DRAW_CHAMPION_PICTURE(U16 iChampionIndex)
 {
-	//^2E62:061D
 	ENTER(0);
-	//^2E62:0620
+	if (!cd.dm1.bDM1PortraitsActivated)	// Regular DM2
+	{
 	DRAW_ICON_PICT_ENTRY(
 		GDAT_CATEGORY_CHAMPIONS,	// 0x16
-		glbChampionSquad[player].HeroType(),
+		glbChampionSquad[iChampionIndex].HeroType(),
 		0x00,
         &_4976_3ff0,
-		player +173,
+		iChampionIndex + RECT_CHAMPION_PORTRAIT_1,	// index + 173
 		-1
 		);
-	//^2E62:0648
-	if (bDM1PortraitsActivated)	 // SPX attempt to draw savegame portraits
-	{
-		i16 bp0c = 0;
-		i16 bp0a = 0;
-		Bit8u *bp04 = xDM1PortraitsData[player];
-		Bit16u rectno = player + 173;
-		sk3f6c* ss = &_4976_3ff0;
-		i16 colorkey = -1;
-		SRECT bp14;
-		SRECT *bp08 = QUERY_BLIT_RECT(bp04, &bp14, rectno, &bp0a, &bp0c, -1);
-		/*DRAW_ICON_PICT_BUFF(
-			bp04,
-			ss,
-			bp08,
-			bp0a,
-			bp0c,
-			colorkey,
-			0,
-			QUERY_GDAT_IMAGE_LOCALPAL(GDAT_CATEGORY_CHAMPIONS, 0, 0)
-			);*/
-		//IBMIO_BLIT_TO_SCREEN_8TO8BPP(
-		//	bp04, __vram, bp08, 0, 0, 32, 240, -1);
 	}
 
+	if (cd.dm1.bDM1PortraitsActivated)	 // SPX attempt to draw savegame portraits
+	{
+		i16 iSourceY = 0;
+		i16 iSourceX = 0;
+		X8* xImageBuffer = ((X8*)(&cd.dm1.xDM1PortraitsData[iChampionIndex])+6);
+		U16 iRectNo = iChampionIndex + RECT_CHAMPION_PORTRAIT_1;
+		sk3f6c* ss = &_4976_3ff0;
+		i16 iColorKey = -1;
+		SRECT xRectResult;
+		SRECT* xRectDest = QUERY_BLIT_RECT(xImageBuffer, &xRectResult, iRectNo, &iSourceX, &iSourceY, -1);
+		DRAW_ICON_PICT_BUFF(
+			xImageBuffer,
+			ss,
+			xRectDest,
+			iSourceX,
+			iSourceY,
+			iColorKey,
+			0,
+			glbPaletteT16	// use standard DM1 palette for portrait
+			);
+	}
 
 	return;
 }
@@ -2478,7 +2470,7 @@ void SkWinCore::DRAW_PLAYER_3STAT_HEALTH_BAR(U16 player)
 }
 
 //^2E62:0572
-void SkWinCore::DRAW_PLAYER_DAMAGE(Bit16u player)
+void SkWinCore::DRAW_PLAYER_DAMAGE(U16 player)
 {
 	//^2E62:0572
 	ENTER(0);
@@ -2567,13 +2559,13 @@ void SkWinCore::DRAW_PLAYER_3STAT_TEXT(Champion *ref)
 
 //^2E62:05D4
 // SPX: _2e62_05d4 renamed DRAW_EYE_MOUTH_COLORED_RECTANGLE
-void SkWinCore::DRAW_EYE_MOUTH_COLORED_RECTANGLE(Bit8u cls4, Bit16u rectno)
+void SkWinCore::DRAW_EYE_MOUTH_COLORED_RECTANGLE(U8 cls4, U16 rectno)
 {
 	//^2E62:05D4
 	ENTER(8);
 	//^2E62:05D8
 	SRECT bp08;
-	_2405_011f(rectno, &bp08);
+	_2405_011f_RECT(rectno, &bp08);
 	//^2E62:05E8
 	DRAW_DIALOGUE_PARTS_PICT(
 		QUERY_GDAT_IMAGE_ENTRY_BUFF(0x01, 0x02, cls4),
@@ -2587,7 +2579,7 @@ void SkWinCore::DRAW_EYE_MOUTH_COLORED_RECTANGLE(Bit8u cls4, Bit16u rectno)
 
 //^24A5:105B
 // SPX: _24a5_105b renamed DRAW_CRYOCELL_LEVER
-void SkWinCore::DRAW_CRYOCELL_LEVER(Bit16u leverIsOn)
+void SkWinCore::DRAW_CRYOCELL_LEVER(U16 leverIsOn)
 {
 	//^24A5:105B
 	ENTER(0);
@@ -2995,7 +2987,7 @@ void SkWinCore::DRAW_ITEM_ICON(ObjectID recordLink, i16 xx, U16 yy, U16 zz, U16 
 	if (ww != 0 && si < 14) {
 		//^2405:0415
 		SRECT bp14;
-		_2405_011f(di, &bp14);
+		_2405_011f_RECT(di, &bp14);
 		//^2405:0422
 		U8 bp0a = (zz != 0)
 			? 6
@@ -3153,7 +3145,7 @@ void SkWinCore::DRAW_ITEM_STATS_BAR(U16 rectno, i16 curVal, i16 maxVal, U8 chr, 
 }
 
 //^24A5:0C35
-U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, Bit16u xx)
+U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, U16 xx)
 {
 	// You click eye icon with the item which you wanna know about, in item inventory.
 
@@ -3338,7 +3330,7 @@ U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, Bit16u xx)
 	if (SkCodeParam::bUseSuperInfoEye)
 	{
 		char str[32];
-		Bit16u	yy = 95;
+		U16	yy = 95;
 		i32	itemValue = 0;
 		i16 statValue = 0;
 		U8 strMoneyValue[11];
@@ -3385,7 +3377,7 @@ U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, Bit16u xx)
 				yy,
 				glbPaletteT16[COLOR_WHITE],
 				glbPaletteT16[COLOR_BLACK] | 0x4000,
-				(Bit8u*) str
+				(U8*) str
 				);
 			yy += 7;
 		}
@@ -3417,7 +3409,7 @@ U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, Bit16u xx)
 					yy,
 					glbPaletteT16[COLOR_WHITE],
 					glbPaletteT16[COLOR_BLACK] | 0x4000,
-					(Bit8u*) str
+					(U8*) str
 					);
 				yy += 7;
 			}
@@ -3430,7 +3422,7 @@ U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, Bit16u xx)
 
 
 //^2E62:03B5
-U16 SkWinCore::_2e62_03b5(Bit16u player, Bit16u itemNo, Bit16u yy)
+U16 SkWinCore::_2e62_03b5(U16 player, U16 itemNo, U16 yy)
 {
 	//^2E62:03B5
 	ENTER(8);
@@ -3537,7 +3529,7 @@ U16 SkWinCore::_2e62_03b5(Bit16u player, Bit16u itemNo, Bit16u yy)
 }
 
 //^3929:0C37
-void SkWinCore::DRAW_LOCAL_TEXT(Bit16u rectno, Bit16u clr1, Bit16u clr2, Bit8u *str)
+void SkWinCore::DRAW_LOCAL_TEXT(U16 rectno, U16 clr1, U16 clr2, U8 *str)
 {
 	// draw local positioned text.
 	// a) health, mana and stamina: "770/770"
@@ -3574,11 +3566,11 @@ void SkWinCore::DRAW_LOCAL_TEXT(Bit16u rectno, Bit16u clr1, Bit16u clr2, Bit8u *
 
 
 //^0CD5:0018
-void SkWinCore::FILL_STR(Bit8u *buff, Bit16u count, Bit8u value, Bit16u delta)
+void SkWinCore::FILL_STR(U8 *buff, U16 count, U8 value, U16 delta)
 {
 	//^0CD5:0018
 	//^0CD5:0021
-	for (Bit16u si = 0, di = 0; di < count; si += delta, di++) {
+	for (U16 si = 0, di = 0; di < count; si += delta, di++) {
 		buff[si] = value;
 	}
 }
@@ -3745,17 +3737,17 @@ void SkWinCore::REFRESH_PLAYER_STAT_DISP(i16 player)
 	//^2E62:0670
 	ENTER(164);
 	//^2E62:0676
-	Bit16u bp14 = 0;
-	Bit16u bp16 = 0;
-	Bit16u bp18 = 0;
-	Bit16u bp1a = 0;
-	Bit16u bp1c = 0;
+	U16 bp14 = 0;
+	U16 bp16 = 0;
+	U16 bp18 = 0;
+	U16 bp1a = 0;
+	U16 bp1c = 0;
 	//^2E62:068F
 	Champion *champion = &glbChampionSquad[player];	//*bp04
 	//^2E62:06A0
-	Bit16u si = champion->heroFlag;
+	U16 si = champion->heroFlag;
 	//^2E62:06A7
-	Bit16u bp08 = (player +1 == glbChampionInventory) ? 1 : 0; // 1=draw entire inventory panel
+	U16 bp08 = (player +1 == glbChampionInventory) ? 1 : 0; // 1=draw entire inventory panel
 	//^2E62:06BB
 	if (bp08 != 0 && _4976_022c != 0)
 		//^2E62:06C6
@@ -3873,7 +3865,7 @@ void SkWinCore::REFRESH_PLAYER_STAT_DISP(i16 player)
 				DRAW_PLAYER_3STAT_TEXT(champion);
 				//^2E62:08A3
 				// SPX: bp0d holds the color number (rectangle?) around the mouth or eye.
-				Bit8u colorRectangle; //bp0d;
+				U8 colorRectangle; //bp0d;
 #if (XDMX_EXTENDED_FEATURES == 0) // original
 				if (champion->curFood() < 0 || champion->curWater() < 0 || champion->PoisonValue != 0) {
 #elif (XDMX_EXTENDED_FEATURES == 1)
@@ -4007,7 +3999,7 @@ _0a25:
 		}
 		//^2E62:0A72
 		U16 di;
-		Bit8u bp00a4[128];
+		U8 bp00a4[128];
 		if ((si & 0x0400) != 0) {
 			//^2E62:0A7B
 			di = glbPaletteT16[(player == glbChampionLeader && cd.pi.glbNextChampionNumber == 0) ? COLOR_ORANGE : COLOR_WHITE];
@@ -4099,38 +4091,30 @@ _0a25:
 // SPX: _2405_04f4 renamed DRAW_ITEM_IN_HAND
 void SkWinCore::DRAW_ITEM_IN_HAND(LeaderPossession *ref)
 {
-	//^2405:04F4
 	ENTER(8);
-	//^2405:04F8
-	U8 bp05 = QUERY_CLS1_FROM_RECORD(ref->object);
-	//^2405:0507
-	U8 bp06 = QUERY_CLS2_FROM_RECORD(ref->object);
-	//^2405:0516
-	U8 bp07 = GET_ITEM_ICON_ANIM_FRAME(ref->object, -1, 1);
-	//^2405:052A
-	U8 *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(bp05, bp06, bp07);
-	//^2405:0541
+	U8 iIconCategory = QUERY_CLS1_FROM_RECORD(ref->object);	// get cls1
+	U8 iIconTypeID = QUERY_CLS2_FROM_RECORD(ref->object);	// get cls2
+	U8 iIconID = GET_ITEM_ICON_ANIM_FRAME(ref->object, -1, 1); // get cls4
+	X8* xIconData = QUERY_GDAT_IMAGE_ENTRY_BUFF(iIconCategory, iIconTypeID, iIconID);	// bp04
 	COPY_MEMORY(
-		QUERY_GDAT_IMAGE_LOCALPAL(bp05, bp06, bp07),
+		QUERY_GDAT_IMAGE_LOCALPAL(iIconCategory, iIconTypeID, iIconID),
 		ref->b6,
 		16
 		);
-	//^2405:056D
 	FIRE_BLIT_PICTURE(
-		bp04,
+		xIconData,
 		ref->pb2,
-        ALLOC_TEMP_ORIGIN_RECT(_4976_0106, _4976_0108),
+        ALLOC_TEMP_ORIGIN_RECT(glbRectX_0106, glbRectY_0108),
 		0,
 		0,
-		READ_I16(bp04,-4),
-		_4976_0106,
+		READ_I16(xIconData,-4),
+		glbRectX_0106,
 		-1,
 		0,
 		4,
 		4,
 		NULL
 		);
-	//^2405:05B2
 	return;
 }
 
@@ -4139,34 +4123,21 @@ void SkWinCore::DRAW_ITEM_IN_HAND(LeaderPossession *ref)
 //^2E62:0CFA
 void SkWinCore::_2e62_0cfa(U16 xx)
 {
-	//^2E62:0CFA
 	ENTER(4);
-	//^2E62:0CFF
-	for (U16 si = 0; si < cd.pi.glbChampionsCount; si++) {
-		//^2E62:0D03
-		if (si +1 != glbChampionInventory) {
-			//^2E62:0D0C
-			REFRESH_PLAYER_STAT_DISP(si);
+	for (U16 iChampionIndex = 0; iChampionIndex < cd.pi.glbChampionsCount; iChampionIndex++) {
+		if (iChampionIndex + 1 != glbChampionInventory) {
+			REFRESH_PLAYER_STAT_DISP(iChampionIndex);
 		}
-		//^2E62:0D12
 	}
-	//^2E62:0D19
 	if (glbChampionInventory != 0) {
-		//^2E62:0D20
-		U16 si = glbChampionInventory -1;
-		//^2E62:0D26
+		U16 si = glbChampionInventory - 1;
 		Champion *champion = &glbChampionSquad[si];
-		//^2E62:0D34
 		if (champion->enchantmentPower != 0 && champion->enchantmentAura >= ENCHANTMENT_AURA_FIRST && champion->enchantmentAura <= ENCHANTMENT_AURA_LAST) {
-			//^2E62:0D4F
 			champion->heroFlag |= (glbShowItemStats != 0 && glbLeaderHandPossession.object == OBJECT_NULL) ? CHAMPION_FLAG_3000 : CHAMPION_FLAG_1000;	// 0x3000 or 0x1000
 		}
-		//^2E62:0D6C
 		REFRESH_PLAYER_STAT_DISP(glbChampionInventory -1);
 	}
-	//^2E62:0D76
 	UPDATE_RIGHT_PANEL(xx);
-	//^2E62:0D7F
 	return;
 }
 
@@ -5445,7 +5416,7 @@ void SkWinCore::SHOW_CREDITS()
 
 
 //^0B36:1647
-void SkWinCore::DRAW_DIALOGUE_PARTS_PICT(Bit8u *buffsrc, SRECT *rc, i16 colorkey, Bit8u *localpal)
+void SkWinCore::DRAW_DIALOGUE_PARTS_PICT(U8 *buffsrc, SRECT *rc, i16 colorkey, U8 *localpal)
 {
 	// the back buffer is an off-screen buffer of the dungeon viewport (224x136x8bpp)
 
@@ -5476,7 +5447,7 @@ void SkWinCore::DRAW_DIALOGUE_PARTS_PICT(Bit8u *buffsrc, SRECT *rc, i16 colorkey
 
 
 //^3929:0BD7
-void SkWinCore::DRAW_VP_RC_STR(Bit16u rectno, Bit16u clr1, const U8 *str)
+void SkWinCore::DRAW_VP_RC_STR(U16 rectno, U16 clr1, const U8 *str)
 {
 	// draw string to viewport, within specified rectangle.
 
@@ -5503,7 +5474,7 @@ void SkWinCore::DRAW_VP_RC_STR(Bit16u rectno, Bit16u clr1, const U8 *str)
 
 
 //^0B36:16E4
-void SkWinCore::DRAW_GAMELOAD_DIALOGUE_TO_SCREEN(Bit8u *buffsrc, Bit16u rectno, i16 colorkey, Bit8u localpal[16])
+void SkWinCore::DRAW_GAMELOAD_DIALOGUE_TO_SCREEN(U8 *buffsrc, U16 rectno, i16 colorkey, U8 localpal[16])
 {
 	//^0B36:16E4
 	//^0B36:16E8
@@ -5519,11 +5490,11 @@ void SkWinCore::DRAW_GAMELOAD_DIALOGUE_TO_SCREEN(Bit8u *buffsrc, Bit16u rectno, 
 			&bp0c,
 			bp02,
 			bp04,
-			*(Bit16u *)&buffsrc[-4],
+			*(U16 *)&buffsrc[-4],
 			glbScreenWidth,
 			colorkey,
 			0,
-			*(Bit16u *)&buffsrc[-6],
+			*(U16 *)&buffsrc[-6],
 			8,
 			localpal
 			);
@@ -7371,7 +7342,7 @@ _5495:
 
 //^32CB:5D0D
 // SPX: _32cb_5d0d renamed DISPLAY_VIEWPORT
-void SkWinCore::DISPLAY_VIEWPORT(Bit16u dir, i16 xx, i16 yy)
+void SkWinCore::DISPLAY_VIEWPORT(U16 dir, i16 xx, i16 yy)
 {
 	U16 iMemSizeCellTileDetail = sizeof(CellTileDetail); // SPX: added to control size change of structure (extended mode)
 	U16 iMemAllocCellTiles = iMemSizeCellTileDetail * 23;	// originally 414
@@ -7644,9 +7615,9 @@ void SkWinCore::DRAW_DEF_PICT(ExtendedPicture *ref)
 		//^0B36:0A59
 		return;
 	//^0B36:0A5C
-	Bit8u *bp04 = QUERY_PICT_BITS(ref);
+	U8 *bp04 = QUERY_PICT_BITS(ref);
 	//^0B36:0A6E
-	Bit16u bp06 = ref->rectNo;
+	U16 bp06 = ref->rectNo;
 	//^0B36:0A78
 	i16 bp08;
 	i16 bp0a;
@@ -7716,7 +7687,7 @@ void SkWinCore::DRAW_DEF_PICT(ExtendedPicture *ref)
 	//^0B36:0B88
 	bp0a += si;
 	//^0B36:0B8B
-	Bit16u bp0c;
+	U16 bp0c;
 	if (ref->pb44 == _4976_4964) {
 		//^0B36:0BA2
 		si = glbScreenWidth;
@@ -7757,12 +7728,12 @@ void SkWinCore::DRAW_DEF_PICT(ExtendedPicture *ref)
 }
 
 //^0B36:0139
-Bit8u *SkWinCore::QUERY_PICT_BITS(Picture *ref)
+U8 *SkWinCore::QUERY_PICT_BITS(Picture *ref)
 {
 	//^0B36:0139
 	ENTER(0);
 	//^0B36:013D
-	Bit16u si = ref->w4;
+	U16 si = ref->w4;
 	//^0B36:0144
 	if ((si & 0x0004) != 0) {
 		//^0B36:014A
@@ -7781,12 +7752,12 @@ Bit8u *SkWinCore::QUERY_PICT_BITS(Picture *ref)
 
 //^0B36:11C0
 // TODO: image related ?
-void SkWinCore::_0b36_11c0(ExtendedPicture *xx, sk3f6c *yy, Bit16u ss, i16 colorkey2)
+void SkWinCore::_0b36_11c0(ExtendedPicture *xx, sk3f6c *yy, U16 ss, i16 colorkey2)
 {
 	//^0B36:11C0
     ENTER(12);
 	//^0B36:11C4
-	xx->pb44 = reinterpret_cast<Bit8u *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(yy->w0));
+	xx->pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(yy->w0));
 	//^0B36:11DB
 	SRECT bp08;
 	i16 bp0a;
@@ -7838,23 +7809,23 @@ i16 SkWinCore::CALC_STRETCHED_SIZE(i16 val, i16 fact64)
 
 
 //^44C8:08AE
-void SkWinCore::FIRE_BLIT_TO_MEMORY_ROW_4TO8BPP(Bit16u offSrc, Bit16u offDst, Bit16u width, i16 colorkey)
+void SkWinCore::FIRE_BLIT_TO_MEMORY_ROW_4TO8BPP(U16 offSrc, U16 offDst, U16 width, i16 colorkey)
 {
 	// TODO: “¯ˆê”Ÿ”‚ÌˆÚA–â‘è
 	//^44C8:08AE
 	ENTER(0);
 	//^44C8:08B3
-	const Bit8u *bx = glbBlitPalette16;
-	Bit8u *di = _4976_5e6a + offDst;
-	Bit8u dh = Bit8u(colorkey);
-	Bit16u cx = width;
+	const U8 *bx = glbBlitPalette16;
+	U8 *di = _4976_5e6a + offDst;
+	U8 dh = U8(colorkey);
+	U16 cx = width;
 	bool carry = (offSrc & 1) ? true : false;
 	offSrc >>= 1;
-	Bit8u *si = _4976_5e64 + offSrc;
+	U8 *si = _4976_5e64 + offSrc;
 	//^44C8:08D4
 	if (carry) {
 		//^44C8:08D6
-		Bit8u al = *si; si++;
+		U8 al = *si; si++;
 		al &= 0x0f;
 		if (al == dh) {
 			di++;
@@ -7876,8 +7847,8 @@ void SkWinCore::FIRE_BLIT_TO_MEMORY_ROW_4TO8BPP(Bit16u offSrc, Bit16u offDst, Bi
 		if (cx != 0) {
 			//^44C8:08EB
 			do {
-				Bit8u al = *si; si++;
-				Bit8u ah = al & 0x0f;
+				U8 al = *si; si++;
+				U8 ah = al & 0x0f;
 				al >>= 4;
 				if (al != dh) {
 					//^44C8:08F8
@@ -7917,7 +7888,7 @@ void SkWinCore::FIRE_BLIT_TO_MEMORY_ROW_4TO8BPP(Bit16u offSrc, Bit16u offDst, Bi
 		//^44C8:0923
 		if (carry) {
 			//^44C8:0926
-			Bit8u al = *si; si++;
+			U8 al = *si; si++;
 			al >>= 4;
 			if (al != dh) {
 				*di = bx[al]; di++;
@@ -7930,29 +7901,29 @@ void SkWinCore::FIRE_BLIT_TO_MEMORY_ROW_4TO8BPP(Bit16u offSrc, Bit16u offDst, Bi
 
 
 //^44C8:1ACA
-void SkWinCore::_44c8_1aca(Bit8u *buff, SRECT *rc, Bit16u xx, Bit16u yy)
+void SkWinCore::_44c8_1aca(U8 *buff, SRECT *rc, U16 xx, U16 yy)
 {
 	//^44C8:1ACA
 	ENTER(332);
 	//^44C8:1AD0
 	if (rc != NULL) {
 		//^44C8:1ADB
-		Bit16u bp08 = xx ^ 15;
+		U16 bp08 = xx ^ 15;
 		//^44C8:1AE4
-		Bit8u bp014c[320];
+		U8 bp014c[320];
 		_4976_5e64 = bp014c;
 		_4976_5e6a = buff;
 		//^44C8:1AFC
-		Bit16u bp04 = rc->cx;
-		Bit16u bp02 = rc->cy;
+		U16 bp04 = rc->cx;
+		U16 bp02 = rc->cy;
 		//^44C8:1B0D
 		if (bp04 > 0 && bp02 > 0) {
 			//^44C8:1B1F
-			Bit16u bp06 = (bp04 +1) >> 1;
+			U16 bp06 = (bp04 +1) >> 1;
 			//^44C8:1B28
-			Bit8u bp0b = Bit8u(xx) << 4 | Bit8u(bp08);
+			U8 bp0b = U8(xx) << 4 | U8(bp08);
 			//^44C8:1B34
-			Bit16u si;
+			U16 si;
 			for (si = 0; si < bp06; si++) {
 				//^44C8:1B38
 				bp014c[si] = bp0b;
@@ -7961,9 +7932,9 @@ void SkWinCore::_44c8_1aca(Bit8u *buff, SRECT *rc, Bit16u xx, Bit16u yy)
 				//^44C8:1B45
 			}
 			//^44C8:1B4B
-			Bit16u di = rc->y * yy +rc->x;
+			U16 di = rc->y * yy +rc->x;
 			//^44C8:1B5A
-			Bit16u bp0a = ((di / yy) ^ di) & 1;
+			U16 bp0a = ((di / yy) ^ di) & 1;
 			//^44C8:1B67
 			for (si = 0; si < bp02; si++) {
 				//^44C8:1B6B

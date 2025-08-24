@@ -79,10 +79,7 @@ protected:
 	U8	glbXAmbientSoundActivated;
 #endif
 
-// DM1 support variables
-	bool	bDM1PortraitsActivated;
-	X8		xDM1PortraitsData[4][29*32];
-//
+
 
 	//{{SKSAVE_INSORTED_VARS
 	File_header fileHeader;
@@ -247,8 +244,8 @@ protected:
 	i16		_4976_00fa;
 	i16		_4976_00fc;
 	SRECT	_4976_00fe;
-	U16	_4976_0106;
-	U16	_4976_0108;
+	U16	glbRectX_0106;	// _4976_0106
+	U16	glbRectY_0108;	// _4976_0108
 	U16	_4976_010e;
 	U16	_4976_0110;
 	i16		_4976_0112;
@@ -1380,8 +1377,8 @@ protected:
 	void DRAW_PLAYER_DAMAGE(U16 player);
 	void DRAW_CUR_MAX_HMS(U16 rectno, i16 curVal, i16 maxVal);
 	void DRAW_PLAYER_3STAT_TEXT(Champion *ref);
-	void _2405_00ec(U16 rectno, SRECT *rc);
-	void _2405_011f(U16 rectno, SRECT *rc);
+	void _2405_00ec_RECT(U16 rectno, SRECT *rc); // _2405_00ec
+	void _2405_011f_RECT(U16 rectno, SRECT *rc); // _2405_011f
 	void DRAW_EYE_MOUTH_COLORED_RECTANGLE(Bit8u cls4, U16 rectno);
 	void DRAW_CRYOCELL_LEVER(U16 leverIsOn);
 	void DRAW_POWER_STAT_BAR(i16 curval, U16 rectno, U16 color, i16 vv, U16 ww);

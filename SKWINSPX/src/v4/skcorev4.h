@@ -92,9 +92,23 @@ typedef struct {
 } SKCodePlayerInfo;
 
 //..............................................................................
+
+// cd.dm1.
+typedef struct {
+
+// DM1 support variables
+	bool	bDM1PortraitsActivated;
+	X8		xDM1PortraitsData[4][(29*32)+6];	// image contains 6 bytes of info before image itself
+//
+} SKCoreDM1Variables;
+
+
+//..............................................................................
 //------------------------------------------------------------------------------
 
 typedef struct {
+
+	SKCoreDM1Variables dm1;
 
 	SKCoreMenuOption mo;
 

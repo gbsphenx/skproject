@@ -3020,16 +3020,10 @@ sk3f6c *SkWinCore::_0b36_0c52(sk3f6c *ref, U16 rectno, U16 ww)
 //^0B36:0FAB
 SRECT *SkWinCore::OFFSET_RECT(const sk3f6c *refOrg, const SRECT *prcSrc, SRECT *prcOut)
 {
-	//^0B36:0FAB
-	//^0B36:0FAF
 	prcOut->x = prcSrc->x - refOrg->rc2.x;
-	//^0B36:0FC4
 	prcOut->y = prcSrc->y - refOrg->rc2.y;
-	//^0B36:0FD9
 	prcOut->cx = prcSrc->cx;
-	//^0B36:0FE7
 	prcOut->cy = prcSrc->cy;
-	//^0B36:0FF5
 	return prcOut;
 }
 
@@ -4829,14 +4823,12 @@ void SkWinCore::_1031_10c8(sk3f6c *ref, SRECT *rc, U16 cx, U16 cy)
 
 
 //^2405:00EC
-void SkWinCore::_2405_00ec(U16 rectno, SRECT *rc)
+// _2405_00ec renamed _2405_00ec_RECT
+void SkWinCore::_2405_00ec_RECT(U16 rectno, SRECT *rc)
 {
-	//^2405:00EC
 	ENTER(4);
-	//^2405:00F0
-	i16 bp02 = _4976_0106;
-	i16 bp04 = _4976_0108;
-	//^2405:00FC
+	i16 bp02 = glbRectX_0106;
+	i16 bp04 = glbRectY_0108;
 	QUERY_BLIT_RECT(
 		NULL,
 		rc,
@@ -4845,20 +4837,16 @@ void SkWinCore::_2405_00ec(U16 rectno, SRECT *rc)
 		&bp04,
 		-1
 		);
-	//^2405:011D
 	return;
 }
 
 //^2405:011F
-void SkWinCore::_2405_011f(U16 rectno, SRECT *rc)
+// _2405_011f renamed _2405_011f_RECT
+void SkWinCore::_2405_011f_RECT(U16 rectno, SRECT *rc)
 {
-	//^2405:011F
 	ENTER(0);
-	//^2405:0122
-	_2405_00ec(rectno, rc);
-	//^2405:0132
+	_2405_00ec_RECT(rectno, rc);
 	INFLATE_RECT(rc, _4976_0112, _4976_0112);
-	//^2405:0148
 	return;
 }
 
@@ -16042,6 +16030,7 @@ _31b8:		// we jump there from loading a dungeon from new game
 	else	// try read as DM1 savegame
 	{
 		do {
+			U8 iChampionIndex = 0;
 			U8 glbDummyData[10000];
 			// there are 0x24c0 bytes of encoded data
 			SkD((DLV_DBG_GAME_LOAD, "Read as a DM1 savegame ...\n"));
@@ -16051,25 +16040,38 @@ _31b8:		// we jump there from loading a dungeon from new game
 		
 			// then comes portraits : 4 * 29*16 bytes
 			SkD((DLV_DBG_GAME_LOAD, "Read Portraits ...\n"));
-			bDM1PortraitsActivated = true;
+			cd.dm1.bDM1PortraitsActivated = true;
 			if (FILE_READ(glbDataFileHandle, (29*16), glbDummyData) == 0)
 				break;
-			memcpy(xDM1PortraitsData[0], glbDummyData, 29*16);
+			memcpy(cd.dm1.xDM1PortraitsData[0]+6, glbDummyData, 29*16);
+
 			if (FILE_READ(glbDataFileHandle, (29*16), glbDummyData) == 0)
 				break;
-			memcpy(xDM1PortraitsData[1], glbDummyData, 29*16);
+			memcpy(cd.dm1.xDM1PortraitsData[1]+6, glbDummyData, 29*16);
 			if (FILE_READ(glbDataFileHandle, (29*16), glbDummyData) == 0)
 				break;
-			memcpy(xDM1PortraitsData[2], glbDummyData, 29*16);
+			memcpy(cd.dm1.xDM1PortraitsData[2]+6, glbDummyData, 29*16);
 			if (FILE_READ(glbDataFileHandle, (29*16), glbDummyData) == 0)
 				break;
-			memcpy(xDM1PortraitsData[3], glbDummyData, 29*16);
+			memcpy(cd.dm1.xDM1PortraitsData[3]+6, glbDummyData, 29*16);
 			//if (FILE_READ(glbDataFileHandle, 8, bp26) == 0)
+
+			// adjust image data with meta-info
+			for (iChampionIndex = 0; iChampionIndex < 4; iChampionIndex++)
+			{
+				*((U16*)(&cd.dm1.xDM1PortraitsData[iChampionIndex])) = 4; // 4bpp
+				*((U16*)(&cd.dm1.xDM1PortraitsData[iChampionIndex])+1) = 32; // x pitch
+				*((U16*)(&cd.dm1.xDM1PortraitsData[iChampionIndex])+2) = 29; // y pitch
+			}
+
+			
+
+
 
 			_4976_524a = (0x24C0 + (4*29*16)); // file cursor to start dungeon structure
 
 			// Init champions
-			U8 iChampionIndex = 0;
+
 			for (iChampionIndex = 0; iChampionIndex < 4; iChampionIndex++)
 			{
 				Champion *xChampion = &glbChampionSquad[iChampionIndex];
@@ -16190,6 +16192,7 @@ _31b8:		// we jump there from loading a dungeon from new game
 			glbPlayerDefeated = 0x0000;
 			_2fcf_0b8b(glbPlayerPosX, glbPlayerPosY, glbPlayerMap);
 			glbDoLightCheck = 0x0001;
+			//LOG_FULL_DUNGEON_INFO();
 			return 1;
 		} while (false);
 
@@ -22797,7 +22800,7 @@ void SkWinCore::_2405_0009()
 	//^2405:0009
 	ENTER(0);
 	//^2405:000C
-	glbLeaderHandPossession.pb2 = ALLOC_PICT_BUFF(_4976_0106, _4976_0108, afUseUpper, 4);
+	glbLeaderHandPossession.pb2 = ALLOC_PICT_BUFF(glbRectX_0106, glbRectY_0108, afUseUpper, 4);
 	//^2405:0027
 	return;
 }
@@ -25038,8 +25041,8 @@ SkWinCore::SkWinCore()
 
 	skWinApp = NULL;
 // SPX / DM1 special init
-	bDM1PortraitsActivated = false;
-	zeroMem(xDM1PortraitsData, sizeof(xDM1PortraitsData));
+	cd.dm1.bDM1PortraitsActivated = false;
+	zeroMem(cd.dm1.xDM1PortraitsData, sizeof(cd.dm1.xDM1PortraitsData));
 //
 
 	//{{INIT_INSORTED
@@ -25103,8 +25106,8 @@ SkWinCore::SkWinCore()
 	_4976_0198 = 0; // temp index always 0 (_4976_4b84)
 	zeroMem(&_4976_4bca, sizeof(_4976_4bca));
 	_4976_4bc8 = 0;
-	_4976_0106 = 16; // cx
-	_4976_0108 = 16; // cy
+	glbRectX_0106 = 16; // cx
+	glbRectY_0108 = 16; // cy
 	_04bf_0e7a = 0; //?
 	_04bf_17a4 = 0; //?
 	_04bf_09e0.x = 0; _04bf_09e0.y = 0; _04bf_09e0.cx = 0xc; _04bf_09e0.cy = 0x10;

@@ -497,9 +497,9 @@ void SkWinCore::READ_SAVEGAMES_FILENAMES()
 				SEEK_FILE(iFileHandle, 0x2C00);
 				READ_FILE(iFileHandle, 16, &xDungeonDatBeginning);
 				if ((*(U16*)(&xDungeonDatBeginning)) == 0x0063)
-					sprintf((char*)_4976_5250[iFileIndex].sSavegameName, "SKSAVE%d.DAT (DM1 NATIVE SAVEGAME)", iFileIndex);
+					sprintf((char*)_4976_5250[iFileIndex].sSavegameName, "SKSAVE%d.DAT (DM1 SAVEGAME)", iFileIndex);
 				else
-					sprintf((char*)_4976_5250[iFileIndex].sSavegameName, "SKSAVE%d.DAT (NOT DM2 NATIVE)", iFileIndex);
+					sprintf((char*)_4976_5250[iFileIndex].sSavegameName, "SKSAVE%d.DAT (NOT DM2 SAVEGAME)", iFileIndex);
 			}
 			CLOSE_FILE(iFileHandle);
 		}
