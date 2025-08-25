@@ -392,17 +392,17 @@ protected:
 	Bit32u	glbGameTick;	// (_4976_4bec) current game tick
 	U16	glbTickSpeed;	// (_4976_4bf0) 0 is the fastest (no wait between game tick), 15 is slow
 	//U16	glbPlayerLastMove;		// (_4976_4bf2) Last effective move (see PERFORM_MOVE)
-	U16	glbPlayerMap;	// (_4976_4bf4) current player map #
-	U16	glbPlayerDir;	// (_4976_4bf6) current player dir (0,1,2,3=N,E,S,W)
+	//U16	glbPlayerMap;	// (_4976_4bf4) current player map #
+	//U16	glbPlayerDir;	// (_4976_4bf6) current player dir (0,1,2,3=N,E,S,W)
 	U16	glbPlayerSpecialStairsDir;	// SPX: added this for special behaviour going stairs for BW
 	U16	glbRecalcLightIndicator;	// (_4976_4bf8)
-	i16		glbPlayerPosX;	// (_4976_4bfa) current player x-axis (column)
+	//i16		glbPlayerPosX;	// (_4976_4bfa) current player x-axis (column)
 //	U16	glbNextChampionNumber;		// (_4976_4bfc) Related to champions count ?
 	U16	_4976_4bfe;
 	U16	_4976_4c00;
 	U16	_4976_4c02;
 	U16	glbSomePosX_4976_4c04;	// (4976_4c04)
-	i16		glbPlayerPosY;	// (_4976_4c06) current player y-axis (row)
+	//i16		glbPlayerPosY;	// (_4976_4c06) current player y-axis (row)
 	U16	_4976_4c08;
 	U16		_4976_4c0a;
 	U16	_4976_4c0c;
@@ -417,7 +417,7 @@ protected:
 	//i16	glbSpecialScreen;		// (_4976_4c24) Spx: some sort of flag telling if we are in MAIN screen, CREDITS or INGAME ?
 	U16	_4976_4c26;
 	U16	glbMap_4c28;	// (_4976_4c28) a map?
-	U16	glbPlayerDefeated;	// (_4976_4c2a) all player are defeated
+	//U16	glbPlayerDefeated;	// (_4976_4c2a) all player are defeated
 	U16	_4976_4c2c;
 	U16	glbSomePosX_4c2e;	// (_4976_4c2e) a x?
 	U16	glbSomePosY_4c30;	// (_4976_4c30) a y?

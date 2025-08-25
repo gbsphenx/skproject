@@ -84,10 +84,12 @@ typedef struct {
 	U16	glbPlayerDir;	// (_4976_4bf6) current player dir (0,1,2,3=N,E,S,W)
 	U16	glbPlayerSpecialStairsDir;	// SPX: added this for special behaviour going stairs for BW
 	i16	glbPlayerPosX;	// (_4976_4bfa) current player x-axis (column)
+	i16 glbPlayerPosY;	// (_4976_4c06) current player y-axis (row)
 	U16	glbNextChampionNumber;		// (_4976_4bfc) Related to champions count ?
 	U16	glbChampionsCount;				// (_4976_4c3c) player count
 	U16	glbChampionsPendingDamage[MAX_CHAMPIONS];	// (_4976_57ea) amount of damage for players
 	i16	glbChampionIndex;	// (_4976_5366) SPX: Used as a champion cursor in the MAX_CHAMPIONS+1 champions table.
+	U16	glbPlayerDefeated;	// (_4976_4c2a) all player are defeated
 
 } SKCodePlayerInfo;
 
