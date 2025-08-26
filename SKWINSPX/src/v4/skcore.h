@@ -1084,7 +1084,11 @@ public:
 protected:
 	//--------------------------------------------------------------------------
 
+	// SPX new util
+	UINT IS_ZERO_ARRAY(X8* xDataBuffer, UINT iDataLength);
 
+
+	// standard
 
 	X16 IS_NEGATIVE(i16 xx);
 	X16 ANIM_FILE_OPEN(const char *filename);
