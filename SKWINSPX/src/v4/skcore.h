@@ -653,7 +653,7 @@ protected:
 	U16	_4976_53a4;
 	SRECT	_4976_53a6;
 	Bit8u	glbHoldedContainerType;	// (_4976_53ae) type of showing chest
-	LeaderPossession	glbLeaderHandPossession;	// (_4976_57c8) player handy posession
+	//LeaderPossession	glbLeaderHandPossession;	// (_4976_57c8) player handy posession
 	U8		_4976_57de;
 	U16		glbLeaderItemFlags;	// (_4976_57e0) item flags (wordvalue 00)
 	U16		glbLeaderItemWeight;	// (_4976_57e2) weight of holding item by leader

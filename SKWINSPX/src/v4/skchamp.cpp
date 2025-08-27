@@ -25,31 +25,21 @@ void SkWinCore::CALC_PLAYER_WEIGHT(U16 player)
 {
 	// updates player's weight. w253 doesn't contain weight of leader's hand possession.
 
-	//^2C1D:2076
-	U16 di=0;
-	i16 si=0;
-	//^2C1D:207F
+	U16 iTotalWeight = 0;	// di
+	i16 iInvSlot = 0;	// si
+
 	//for (; si < 30; si++) {
-	for (si = 0; si < INVENTORY_MAX_SLOT; si++) {
-		//^2C1D:2081
-		di += QUERY_ITEM_WEIGHT(glbChampionSquad[player].inventory[si]);
-		//^2C1D:209D
+	for (iInvSlot = 0; iInvSlot < INVENTORY_MAX_SLOT; iInvSlot++) {
+		iTotalWeight += QUERY_ITEM_WEIGHT(glbChampionSquad[player].inventory[iInvSlot]);
 	}
-	//^2C1D:20A3
-	if (_4976_5336 -1 == player && glbSelectedHandAction < 2) {
-		//^2C1D:20B3
+	if (_4976_5336 - 1 == player && glbSelectedHandAction < 2) {
 		if (IS_CONTAINER_CHEST(_4976_3de6[RCJ(4,player)][RCJ(2,glbSelectedHandAction)]) != 0) {
-			//^2C1D:20E3
-			for (U16 si = 0; si < 8; si++) {
-				//^2C1D:20D2
-				di += QUERY_ITEM_WEIGHT(glbCurrentContainerItems[si]);
-				//^2C1D:20E2
+			for (U16 iContainerSlot = 0; iContainerSlot < 8; iContainerSlot++) {
+				iTotalWeight += QUERY_ITEM_WEIGHT(glbCurrentContainerItems[iContainerSlot]);
 			}
 		}
 	}
-	//^2C1D:20E8
-	glbChampionSquad[player].curWeight(di);
-	//^2C1D:20F6
+	glbChampionSquad[player].curWeight(iTotalWeight);
 	glbChampionSquad[player].heroFlag |= CHAMPION_FLAG_1000;	// 0x1000
 }
 
@@ -215,7 +205,7 @@ void SkWinCore::PROCESS_ITEM_BONUS(i16 player, ObjectID recordLink, i16 inventor
 				Timer bp16;
 				bp16.TimerType(ttyItemBonus);
 				//^2C1D:05EC
-				bp16.SetMap(glbPlayerMap);
+				bp16.SetMap(cd.pi.glbPlayerMap);
 				bp16.SetTick(QUERY_GDAT_DBSPEC_WORD_VALUE(di, 0x0013) + glbGameTick);
 				//^2C1D:061C
 				bp16.actor = (Bit8u)player;
@@ -283,32 +273,22 @@ ObjectID SkWinCore::REMOVE_POSSESSION(U16 player, U16 possess)
 }
 
 //^2C1D:0831
-void SkWinCore::EQUIP_ITEM_TO_INVENTORY(U16 player, ObjectID rl, U16 inventorySlot)
+void SkWinCore::EQUIP_ITEM_TO_INVENTORY(U16 iChampionID, ObjectID rl, U16 inventorySlot)
 {
-	//^2C1D:0831
 	ENTER(4);
-	//^2C1D:0837
-	ObjectID si = rl;
-	U16 di = inventorySlot;
-	//^2C1D:083D
-	if (si != OBJECT_NULL) {
-		//^2C1D:0842
-		Champion *champion = &glbChampionSquad[player];
-		//^2C1D:0853
-		si.ClearDir();
-		//^2C1D:0857
-		if (di >= INVENTORY_MAX_SLOT) {	// (di >= 30)
-			//^2C1D:085C
-			glbCurrentContainerItems[di - INVENTORY_MAX_SLOT] = si;
+	ObjectID oObject = rl;	// si
+	U16 iInvSlot = inventorySlot;	// di
+	if (oObject != OBJECT_NULL) {
+		Champion* xChampion = &glbChampionSquad[iChampionID];
+		oObject.ClearDir();
+		if (iInvSlot >= INVENTORY_MAX_SLOT) {	// (di >= 30)
+			glbCurrentContainerItems[iInvSlot - INVENTORY_MAX_SLOT] = oObject;
 		}
 		else {
-			//^2C1D:0869
-			champion->Possess(di, si);
+			xChampion->Possess(iInvSlot, oObject);
 		}
-		//^2C1D:0877
-		PROCESS_ITEM_BONUS(player, si, di, 1);
+		PROCESS_ITEM_BONUS(iChampionID, oObject, iInvSlot, 1);
 	}
-	//^2C1D:0885
 	return;
 }
 
@@ -810,7 +790,7 @@ U16 SkWinCore::_1031_009e_PFN12_05(sk1891 *ref)
 	//^1031:009E
 	ENTER(0);
 	//^1031:00A1
-	return (GET_PLAYER_AT_POSITION((ref->b1 + glbPlayerDir) & 3) >= 0) ? 1 : 0;
+	return (GET_PLAYER_AT_POSITION((ref->b1 + cd.pi.glbPlayerDir) & 3) >= 0) ? 1 : 0;
 }
 
 
@@ -889,7 +869,7 @@ void SkWinCore::PUT_ITEM_TO_PLAYER(U16 championIndex)
 	//^2C1D:0654
 	ENTER(0);
 	//^2C1D:0659
-	if (glbLeaderHandPossession.object != OBJECT_NULL) {
+	if (cd.pi.glbLeaderHandPossession.object != OBJECT_NULL) {
 		//^2C1D:0660
 		if (glbChampionSquad[championIndex].curHP() != 0) {
 			X16 si;
@@ -1496,8 +1476,8 @@ void SkWinCore::SHOOT_CHAMPION_MISSILE(Champion *ref, ObjectID rl, U16 yy, U16 z
 	//^2C1D:1D02
 	SHOOT_ITEM(
 		rl,
-		glbPlayerPosX,
-		glbPlayerPosY,
+		cd.pi.glbPlayerPosX,
+		cd.pi.glbPlayerPosY,
 		((((ref->playerPos() -si +1) & 2) >> 1) +si) & 3,
 		si,
 		min_value(yy, 255),
@@ -1506,7 +1486,7 @@ void SkWinCore::SHOOT_CHAMPION_MISSILE(Champion *ref, ObjectID rl, U16 yy, U16 z
 		);
 
 	SkD((DLV_TWEET, "Tweet: You (x:%d, y:%d, map:%d) have thrown %s by cast! \n"
-		, glbPlayerPosX, glbPlayerPosY, glbCurrentMapIndex, static_cast<LPCSTR>(getRecordNameOf(rl))
+		, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, glbCurrentMapIndex, static_cast<LPCSTR>(getRecordNameOf(rl))
 		));
 	//^2C1D:1D57
 	glbPlayerThrowCounter = 4;
@@ -1743,17 +1723,17 @@ U16 SkWinCore::CAST_SPELL_PLAYER(U16 player, SpellDefinition *ref, U16 power)
 				ObjectID si = CREATE_MINION(
 					ref->SpellCastIndex(),
 					((RAND02() + (bp06 << 1)) * power) / 6,
-					(glbPlayerDir +2) &3,
-					glbPlayerPosX,
-					glbPlayerPosY,
-					glbPlayerMap,
+					(cd.pi.glbPlayerDir +2) &3,
+					cd.pi.glbPlayerPosX,
+					cd.pi.glbPlayerPosY,
+					cd.pi.glbPlayerMap,
 					-1,
-					glbPlayerDir
+					cd.pi.glbPlayerDir
 					);
 				//^2759:24E0
 				if (si == OBJECT_NULL)	// SPX: Summon failed? create a cloud
 					//^2759:24E8
-					CREATE_CLOUD(OBJECT_EFFECT_CLOUD, 0x6e, glbPlayerPosX, glbPlayerPosY, 255);	// oFFA8
+					CREATE_CLOUD(OBJECT_EFFECT_CLOUD, 0x6E, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 255);	// oFFA8
 				//^2759:24FF
 				break;
 			}
@@ -1801,7 +1781,7 @@ _2540:	// Do light
 					//^2759:257B
 					bp08 <<= 3;
 					//^2759:257F
-					bp18.SetMap(glbPlayerMap);
+					bp18.SetMap(cd.pi.glbPlayerMap);
 					bp18.SetTick(glbGameTick +bp08);
 					//^2759:25A2
 					QUEUE_TIMER(&bp18);
@@ -1881,8 +1861,8 @@ _25e8:
 					CREATE_CLOUD(
 						OBJECT_EFFECT_REFLECTOR, 
 						BETWEEN_VALUE(21, ((bp06 << 1) +4) * (power +2), 255),
-						glbPlayerPosX,
-						glbPlayerPosY,
+						cd.pi.glbPlayerPosX,
+						cd.pi.glbPlayerPosY,
 						255
 						);
 					//^2759:2667
@@ -1898,7 +1878,7 @@ _25e8:
 					//^2759:267C
 					si = ALLOC_NEW_DBITEM(bp1a);
 					//^2759:2687
-					if (glbLeaderHandPossession.object == OBJECT_NULL) {
+					if (cd.pi.glbLeaderHandPossession.object == OBJECT_NULL) {
 						//^2759:268E
 						TAKE_OBJECT(si, 1);
 						//^2759:2698
@@ -1906,14 +1886,14 @@ _25e8:
 					}
 					else {
 						//^2759:269A
-						bp08 = (RAND01() + glbPlayerDir) & 3;
+						bp08 = (RAND01() + cd.pi.glbPlayerDir) & 3;
 						//^2759:26AC
 						MOVE_RECORD_TO(
 							ObjectID(si, bp08),
 							-1,
 							0,
-							glbPlayerPosX,
-							glbPlayerPosY
+							cd.pi.glbPlayerPosX,
+							cd.pi.glbPlayerPosY
 							);
 
 						break;
@@ -1950,7 +1930,7 @@ _25e8:
 					// csbwin tag01cda4
 					bp08 = bp08 * bp08;
 					// csbwin tag01cdaa (not yet correctly done, see below)
-					bp18.SetMap(glbPlayerMap);
+					bp18.SetMap(cd.pi.glbPlayerMap);
 					bp18.SetTick(glbGameTick + bp08);
 					QUEUE_TIMER(&bp18);
 					break;
@@ -2240,7 +2220,7 @@ U16 SkWinCore::_2c1d_1de2_CHAMPION_SHOOT(U16 xx, i16 yy, U16 zz)
 	ObjectID si ;
 	if (yy < 0) {
 		//^2C1D:1E06
-		if (glbLeaderHandPossession.object == OBJECT_NULL)
+		if (cd.pi.glbLeaderHandPossession.object == OBJECT_NULL)
 			//^2C1D:1E0D
 			return 0;
 		//^2C1D:1E12
@@ -2275,11 +2255,11 @@ U16 SkWinCore::_2c1d_1de2_CHAMPION_SHOOT(U16 xx, i16 yy, U16 zz)
 		QUERY_CLS1_FROM_RECORD(si),
 		QUERY_CLS2_FROM_RECORD(si),
 		SOUND_STD_THROW,
-		0xfe,
-		glbPlayerPosX,
-		glbPlayerPosY,
+		0xFE,
+		cd.pi.glbPlayerPosX,
+		cd.pi.glbPlayerPosY,
 		1,
-		0x6e,
+		0x6E,
 		0x80);
 	//^2C1D:1E98
 	ADJUST_STAMINA(di, _2c1d_0e23(si));
@@ -2314,16 +2294,16 @@ U16 SkWinCore::_2c1d_1de2_CHAMPION_SHOOT(U16 xx, i16 yy, U16 zz)
 	bp06 = (bp10 != 0) ? bp06 : max_value(5, 11 -bp06);
 	//^2C1D:1F70
 	//^2C1D:1F73
-	SHOOT_ITEM(si, glbPlayerPosX, glbPlayerPosY, (glbPlayerDir +zz) & 3, glbPlayerDir, bp0a, bp08, bp06);
+	SHOOT_ITEM(si, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, (cd.pi.glbPlayerDir + zz) & 3, cd.pi.glbPlayerDir, bp0a, bp08, bp06);
 
 	SkD((DLV_TWEET, "Tweet: You (x:%d, y:%d, map:%d) have thrown %s! \n"
-		, glbPlayerPosX, glbPlayerPosY, glbCurrentMapIndex, static_cast<LPCSTR>(getRecordNameOf(si))
+		, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, glbCurrentMapIndex, static_cast<LPCSTR>(getRecordNameOf(si))
 		));
 
 	//^2C1D:1F9E
 	glbPlayerThrowCounter = 4;
 	//^2C1D:1FA4
-	_4976_4c0c = glbPlayerDir;
+	_4976_4c0c = cd.pi.glbPlayerDir;
 	//^2C1D:1FAA
 	return 1;
 }
@@ -2381,7 +2361,7 @@ void SkWinCore::PLAYER_CONSUME_OBJECT(U16 player, ObjectID rlConsume, i16 posses
 		bp12 = 0;
 	}
 	//^24A5:1115
-	else if (glbLeaderHandPossession.object == OBJECT_NULL) {
+	else if (cd.pi.glbLeaderHandPossession.object == OBJECT_NULL) {
 		//^24A5:111C
 		FIRE_MOUSE_SET_CAPTURE();
 		//^24A5:1121
@@ -2407,7 +2387,7 @@ void SkWinCore::PLAYER_CONSUME_OBJECT(U16 player, ObjectID rlConsume, i16 posses
 		//^24A5:115F
 		player = glbChampionInventory -1;
 		//^24A5:1166
-		di = glbLeaderHandPossession.object;
+		di = cd.pi.glbLeaderHandPossession.object;
 		//^24A5:116A
 		possess = -1;
 	}
@@ -2645,7 +2625,7 @@ _14a9:
 		// SPX: Sound made when eating/drinking
 		// 0x16 = Champion category, 0x83 = sound for eat/drink, 0xFE = default index
 		// So there could be a sound for eat and one for drink
-		QUEUE_NOISE_GEN2(GDAT_CATEGORY_CHAMPIONS, champion->HeroType(), SOUND_CHAMPION_EAT_DRINK, 0xfe, glbPlayerPosX, glbPlayerPosY, 0, 0x96, 0x80);
+		QUEUE_NOISE_GEN2(GDAT_CATEGORY_CHAMPIONS, champion->HeroType(), SOUND_CHAMPION_EAT_DRINK, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 0, 0x96, 0x80);
 		//^24A5:14FC
 		champion->heroFlag |= CHAMPION_FLAG_3800;	// 0x3800
 		//^24A5:1505
@@ -2694,10 +2674,10 @@ void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 	champion->timerIndex = TIMER_NONE;
 	champion->playerDir(U8(dir));
 	X16 bp0e;
-	for (bp0e = 0; GET_PLAYER_AT_POSITION((bp0e + glbPlayerDir) & 3) != -1; bp0e++);
+	for (bp0e = 0; GET_PLAYER_AT_POSITION((bp0e + cd.pi.glbPlayerDir) & 3) != -1; bp0e++);
 	//^2F3F:00F6
-	champion->playerPos(bp0e + glbPlayerDir);
-	champion->direction = U8(glbPlayerDir);
+	champion->playerPos(bp0e + cd.pi.glbPlayerDir);
+	champion->direction = U8(cd.pi.glbPlayerDir);
 	for (bp0e = 0; bp0e < INVENTORY_MAX_SLOT; bp0e++)
 		champion->Possess(bp0e, OBJECT_NULL);
 	//^2F3F:012E
@@ -2772,8 +2752,8 @@ void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 	if (SkCodeParam::bDM1Mode) // maybe this could be extendable for DM2 anyway
 	{
 		ObjectID xObject = OBJECT_END_MARKER;
-		U8 iPlayerPosX = glbPlayerPosX;
-		U8 iPlayerPosY = glbPlayerPosY;
+		U8 iPlayerPosX = cd.pi.glbPlayerPosX;
+		U8 iPlayerPosY = cd.pi.glbPlayerPosY;
 		char sHeroInfo[] =
 			"BOGUS\012ILLEGAL HERO\012\012M\012AABBAABBAABB\012ABABABABABABAB\012CCCCCCCCCCCCCCCC";
 
@@ -2926,7 +2906,7 @@ X16 SkWinCore::SELECT_CHAMPION(U16 xx, U16 yy, U16 dir, U16 mm)
 	ENTER(10);
 	//^2F3F:0349
 	U16 iChampionNumber = 0;	// di
-	if (glbLeaderHandPossession.object != OBJECT_NULL || (iChampionNumber = cd.pi.glbChampionsCount) >= MAX_CHAMPIONS)
+	if (cd.pi.glbLeaderHandPossession.object != OBJECT_NULL || (iChampionNumber = cd.pi.glbChampionsCount) >= MAX_CHAMPIONS)
 		//^2F3F:035A
 		return 0;
 	//^2F3F:035F
@@ -3023,7 +3003,7 @@ void SkWinCore::SEARCH_STARTER_CHAMPION() // _2f3f_0789
 	//^2F3F:078F
 	if (cd.mo.glbSpecialScreen == _MENU_SCREEN__RESUME_GAME_SELECT) {
 		//^2F3F:0799
-		ObjectID di = glbLeaderHandPossession.object;
+		ObjectID di = cd.pi.glbLeaderHandPossession.object;
 		//^2F3F:079E
 		if (di == OBJECT_NULL) {
 			//^2F3F:07A3
@@ -3080,9 +3060,9 @@ void SkWinCore::SEARCH_STARTER_CHAMPION() // _2f3f_0789
 		//^2F3F:085F
 		return;
 	}
-	//printf("glbLeaderHandPossession\n"); getch();
+	//printf("cd.pi.glbLeaderHandPossession\n"); getch();
 	//^2F3F:0862
-	glbLeaderHandPossession.object = OBJECT_NULL;
+	cd.pi.glbLeaderHandPossession.object = OBJECT_NULL;
 	_4976_57de = 0xff;
 	//^2F3F:086D
 	// SPX: DM2 will check a RESURECTOR at 0,0 (for TORHAM), while DM/TQ expects one at 1,0 for THERON.
@@ -3101,15 +3081,15 @@ void SkWinCore::SEARCH_STARTER_CHAMPION() // _2f3f_0789
 				_4976_404b = 1;
 				//^2F3F:08AA
 				// SPX: Automatic selection of champion (Thoram)
-				SELECT_CHAMPION(0, 1, DIR_NORTH, glbPlayerMap);	// player is imaginarily at 0,1 facing north
+				SELECT_CHAMPION(0, 1, DIR_NORTH, cd.pi.glbPlayerMap);	// player is imaginarily at 0,1 facing north
 				//^2F3F:08BB
-				_2f3f_04ea_CHAMPION(0, 1, DIR_NORTH, glbPlayerMap, UI_EVENTCODE_REVIVE_CHAMPION);
+				_2f3f_04ea_CHAMPION(0, 1, DIR_NORTH, cd.pi.glbPlayerMap, UI_EVENTCODE_REVIVE_CHAMPION);
 				//^2F3F:08CF
 				_4976_404b = 0;
 				//^2F3F:08D5
-				glbChampionSquad[0].playerDir(U8(glbPlayerDir));
+				glbChampionSquad[0].playerDir(U8(cd.pi.glbPlayerDir));
 				//^2F3F:08DB
-				glbChampionSquad[0].playerPos(U8(glbPlayerDir));
+				glbChampionSquad[0].playerPos(U8(cd.pi.glbPlayerDir));
 				//^2F3F:08E1
 				SET_PARTY_HERO_FLAG(0x4000);
 				//^2F3F:08EA
@@ -3130,11 +3110,11 @@ void SkWinCore::SEARCH_STARTER_CHAMPION() // _2f3f_0789
 				Actuator *bp08 = GET_ADDRESS_OF_ACTU(di);
 				if (bp08->ActuatorType() == ACTUATOR_TYPE_CHAMPION_MIRROR) { // 0x007F
 					_4976_404b = 1;
-					SELECT_CHAMPION(0, 0, DIR_EAST, glbPlayerMap);	// player is really at 0,0 facing east
-					_2f3f_04ea_CHAMPION(0, 0, DIR_EAST, glbPlayerMap, UI_EVENTCODE_REVIVE_CHAMPION);
+					SELECT_CHAMPION(0, 0, DIR_EAST, cd.pi.glbPlayerMap);	// player is really at 0,0 facing east
+					_2f3f_04ea_CHAMPION(0, 0, DIR_EAST, cd.pi.glbPlayerMap, UI_EVENTCODE_REVIVE_CHAMPION);
 					_4976_404b = 0;
-					glbChampionSquad[0].playerDir(U8(glbPlayerDir));
-					glbChampionSquad[0].playerPos(U8(glbPlayerDir));
+					glbChampionSquad[0].playerDir(U8(cd.pi.glbPlayerDir));
+					glbChampionSquad[0].playerPos(U8(cd.pi.glbPlayerDir));
 					SET_PARTY_HERO_FLAG(0x4000);
 					SELECT_CHAMPION_LEADER(0);
 					return;
@@ -3240,7 +3220,7 @@ void SkWinCore::PROCESS_POISON(i16 player, U16 yy) {
 	Timer bp0e;
 	bp0e.TimerType(ttyPoison);
 	bp0e.actor = (U8)player;
-	bp0e.SetMap(glbPlayerMap);
+	bp0e.SetMap(cd.pi.glbPlayerMap);
 	bp0e.SetTick(glbGameTick +0x24);
 	bp0e.value = si;
 	//^2C1D:1BA6  
@@ -3512,13 +3492,13 @@ void SkWinCore::_2c1d_153f(X16 xx)
 			goto _15a9;
 	}
 	//^2C1D:157A
-	for (; GET_PLAYER_AT_POSITION((bp06 + glbPlayerDir) & 3) != -1; bp06++) {
+	for (; GET_PLAYER_AT_POSITION((bp06 + cd.pi.glbPlayerDir) & 3) != -1; bp06++) {
 		//^2C1D:1584  
 	}
 	//^2C1D:1599
-	bp04->playerPos((bp06 + glbPlayerDir) & 3);
+	bp04->playerPos((bp06 + cd.pi.glbPlayerDir) & 3);
 _15a9:
-	bp04->playerDir(glbPlayerDir);
+	bp04->playerDir(cd.pi.glbPlayerDir);
 	bp04->curHP(si);
 	//^2C1D:15B7
 	return;
@@ -3610,7 +3590,7 @@ void SkWinCore::DROP_PLAYER_ITEMS(U16 player)
 		ObjectID bp02 = REMOVE_POSSESSION(player, _4976_3fce[si]);
 		if (bp02 != OBJECT_NULL) {
 			//^2C1D:1512
-			MOVE_RECORD_TO(ObjectID(bp02, di), -1, 0, glbPlayerPosX, glbPlayerPosY);
+			MOVE_RECORD_TO(ObjectID(bp02, di), -1, 0, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
 		}
 		//^2C1D:1535
 	}
@@ -3633,7 +3613,7 @@ void SkWinCore::CHAMPION_DEFEATED(X16 player)
 #if (DM2_EXTENDED_MODE == 1)
 	if (SkCodeParam::bUseExtendedSound == true) {	// SPX: Play the champion own scream sound if dead
 		printf("champion dead: %d\n", champion->HeroType());
-		QUEUE_NOISE_GEN1(GDAT_CATEGORY_CHAMPIONS, champion->HeroType(), SOUND_CHAMPION_SCREAM, 0x61, 0x80, glbPlayerPosX, glbPlayerPosY, 1);
+		QUEUE_NOISE_GEN1(GDAT_CATEGORY_CHAMPIONS, champion->HeroType(), SOUND_CHAMPION_SCREAM, 0x61, 0x80, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1);
 	}
 #endif
 
@@ -3650,9 +3630,9 @@ void SkWinCore::CHAMPION_DEFEATED(X16 player)
 			//^2C1D:160D
 			glbShowItemStats = 0;
 			FIRE_MOUSE_RELEASE_CAPTURE();
-			if (glbLeaderHandPossession.object != OBJECT_NULL)
+			if (cd.pi.glbLeaderHandPossession.object != OBJECT_NULL)
 				//^2C1D:161F
-				DISPLAY_TAKEN_ITEM_NAME(glbLeaderHandPossession.object);
+				DISPLAY_TAKEN_ITEM_NAME(cd.pi.glbLeaderHandPossession.object);
 			//^2C1D:1629
 			glbMouseVisibility = 1;
 		}
@@ -3685,15 +3665,15 @@ void SkWinCore::CHAMPION_DEFEATED(X16 player)
 		xItem->ItemType(GET_CHAMPION_BONES_ITEM_ID()); // SPX: changed hardcoded 0 to function to get proper Bones ID depending on DM2 or DM1 mode
 		xItem->Important(1);
 		xItem->Bone(di);
-		MOVE_RECORD_TO(ObjectID(bp0c, bp0a), -1, 0, glbPlayerPosX, glbPlayerPosY);
+		MOVE_RECORD_TO(ObjectID(bp0c, bp0a), -1, 0, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
 	}
 	//^2C1D:16F1
 	FIRE_HIDE_MOUSE_CURSOR();
 	champion->RuneCnt(0);
 	champion->GetRunes()[0] = 0;
-	champion->playerDir(U8(glbPlayerDir));
+	champion->playerDir(U8(cd.pi.glbPlayerDir));
 	champion->herob41 = 0;
-	if (((bp0a + 4 - glbPlayerDir) & 3) == _4976_5dbc)
+	if (((bp0a + 4 - cd.pi.glbPlayerDir) & 3) == _4976_5dbc)
 		CHAMPION_SQUAD_RECOMPUTE_POSITION();
 	if (champion->PoisonValue != 0)
 		CURE_POISON(di);
@@ -3705,7 +3685,7 @@ void SkWinCore::CHAMPION_DEFEATED(X16 player)
 	X16 si;
 	for (si = 0; si < cd.pi.glbChampionsCount && glbChampionSquad[si].curHP() == 0; si++);
 	if (si == cd.pi.glbChampionsCount) {
-		glbPlayerDefeated = 1;
+		cd.pi.glbPlayerDefeated = 1;
 		_1031_098e();
 	}
 	else if (di == glbChampionLeader) {
@@ -3754,14 +3734,14 @@ void SkWinCore::PROCESS_PLAYERS_DAMAGE()
 			//^2C1D:1810
 			Timer bp10;
 			bp10.TimerType(tty0C);
-			bp10.SetMap(glbPlayerMap);
+			bp10.SetMap(cd.pi.glbPlayerMap);
 			bp10.SetTick(glbGameTick +5);
 			bp10.actor = U8(championIndex);
 			champion->timerIndex = QUEUE_TIMER(&bp10);
 		}
 		else {
 			//^2C1D:1852
-			glbTimersTable[si].SetMap(glbPlayerMap);
+			glbTimersTable[si].SetMap(cd.pi.glbPlayerMap);
 			glbTimersTable[si].SetTick(glbGameTick + 5);
 			_3a15_05f7(si);
 		}
@@ -3912,9 +3892,9 @@ void SkWinCore::GLOBAL_UPDATE_UNKNOW1()
 	ENTER(2);
 	//^2E62:0D86
 	U8 bp01;
-	if (glbLeaderHandPossession.object != OBJECT_NULL && (QUERY_GDAT_DBSPEC_WORD_VALUE(glbLeaderHandPossession.object, 0)&0x8000) != 0 && (bp01 = GET_ITEM_ICON_ANIM_FRAME(glbLeaderHandPossession.object, -1, 1)) != _4976_57de) {
+	if (cd.pi.glbLeaderHandPossession.object != OBJECT_NULL && (QUERY_GDAT_DBSPEC_WORD_VALUE(cd.pi.glbLeaderHandPossession.object, 0)&0x8000) != 0 && (bp01 = GET_ITEM_ICON_ANIM_FRAME(cd.pi.glbLeaderHandPossession.object, -1, 1)) != _4976_57de) {
 		//^2E62:0DB8
-		DRAW_ITEM_IN_HAND(&glbLeaderHandPossession);
+		DRAW_ITEM_IN_HAND(&cd.pi.glbLeaderHandPossession);
 		_443c_0434();
 		_4976_57de = bp01;
 	}
@@ -3970,7 +3950,7 @@ void SkWinCore::RESET_SQUAD_DIR()
 	//^12B4:0122
 	for (U16 si = 0; si < cd.pi.glbChampionsCount; si++) {
 		//^12B4:0126
-		glbChampionSquad[si].playerDir(U8(glbPlayerDir));
+		glbChampionSquad[si].playerDir(U8(cd.pi.glbPlayerDir));
 	}
 	//^12B4:013E
 	return;
@@ -3987,16 +3967,16 @@ void SkWinCore::_12b4_00af(U8 iStairsLead, U8 iStairsDir)
 
 	ENTER(0);
 	if (SkCodeParam::bBWMode) {
-		iCurTileDir = _0cee_06dc_GET_TILE_DIRECTION(glbPlayerPosX, glbPlayerPosY);
+		iCurTileDir = _0cee_06dc_GET_TILE_DIRECTION(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
 		glbPlayerSpecialStairsDir = (iCurTileDir + 2)%4;
 	}
 
-	MOVE_RECORD_TO(OBJECT_NULL, glbPlayerPosX, glbPlayerPosY, -1, 0);
-	glbMapToLoad = LOCATE_OTHER_LEVEL(glbPlayerMap, (xx != 0) ? -1 : +1, &glbPlayerPosX, &glbPlayerPosY, NULL);
+	MOVE_RECORD_TO(OBJECT_NULL, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, -1, 0);
+	glbMapToLoad = LOCATE_OTHER_LEVEL(cd.pi.glbPlayerMap, (xx != 0) ? -1 : +1, &cd.pi.glbPlayerPosX, &cd.pi.glbPlayerPosY, NULL);
 	glbPlayerSpecialStairsDir = 0xFFFF;	// Special BW
 	CHANGE_CURRENT_MAP_TO(glbMapToLoad);
-	ROTATE_SQUAD(_0cee_06dc_GET_TILE_DIRECTION(glbPlayerPosX, glbPlayerPosY));
-	CHANGE_CURRENT_MAP_TO(glbPlayerMap);
+	ROTATE_SQUAD(_0cee_06dc_GET_TILE_DIRECTION(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY));
+	CHANGE_CURRENT_MAP_TO(cd.pi.glbPlayerMap);
 
 	return;
 }

@@ -438,9 +438,9 @@ void SkWinCore::DRAW_HAND_ACTION_ICONS(U16 playerIndex, U16 possessionIndex, U16
 	//^29EE:0278
 	Champion *champion = &glbChampionSquad[playerIndex];
 	//^29EE:0289
-	U16 si = (possessionIndex == 1) ? 0x46 : 0x4a;
+	U16 si = (possessionIndex == 1) ? 0x46 : 0x4A;
 	//^29EE:0297
-	si += (champion->playerPos() +4 - glbPlayerDir) & 3;
+	si += (champion->playerPos() +4 - cd.pi.glbPlayerDir) & 3;
 	//^29EE:02AC
 	SRECT bp10;
 	QUERY_EXPANDED_RECT(si, &bp10);
@@ -494,7 +494,7 @@ void SkWinCore::DRAW_SQUAD_SPELL_AND_LEADER_ICON(U16 player, U16 yy)
 	//^29EE:0593
 	_29ee_00a3(0);
 	//^29EE:059A
-	U16 si = (glbChampionSquad[player].playerPos() +4 - glbPlayerDir) & 3;
+	U16 si = (glbChampionSquad[player].playerPos() +4 - cd.pi.glbPlayerDir) & 3;
 	//^29EE:05B6
 	SRECT bp0a;
 	FILL_RECT_SUMMARY(
@@ -693,7 +693,7 @@ void SkWinCore::DRAW_SQUAD_POS_INTERFACE()
 	SRECT bp14;
 	for (U16 si = 0; si < cd.pi.glbChampionsCount; si++) {
 		//^29EE:03DB
-		U16 bp06 = (glbChampionSquad[si].playerPos() +4 - glbPlayerDir) & 3;
+		U16 bp06 = (glbChampionSquad[si].playerPos() + 4 - cd.pi.glbPlayerDir) & 3;
 		//^29EE:03F7
 		if (glbChampionSquad[si].curHP() == 0 || bp06 +1 == _4976_5dbc)
 			//^29EE:0414
@@ -747,7 +747,7 @@ void SkWinCore::DRAW_SQUAD_POS_INTERFACE()
 		bp014e.w4 |= 0x10;
 		bp014e.width >>= 2;
 		//^29EE:04F7
-		bp014e.w14 = bp014e.width * ((glbChampionSquad[si].playerDir() +4 - glbPlayerDir) & 3);
+		bp014e.w14 = bp014e.width * ((glbChampionSquad[si].playerDir() +4 - cd.pi.glbPlayerDir) & 3);
 		//^29EE:051E
 		bp014e.height >>= 2;
 		//^29EE:0523
@@ -1798,9 +1798,9 @@ void SkWinCore::DRAW_MAJIC_MAP(ObjectID recordLink)
 		glbMagicalMapFlags |= 0x0400;
 	}
 	//^29EE:1E67
-	U16 bp10 = glbPlayerPosX;
-	U16 di = glbPlayerPosY;
-	U16 bp12 = glbPlayerMap;
+	U16 bp10 = cd.pi.glbPlayerPosX;
+	U16 di = cd.pi.glbPlayerPosY;
+	U16 bp12 = cd.pi.glbPlayerMap;
 	//^29EE:1E77
 	i16 bp16 = 0; // shift-y
 	i16 bp14 = 0; // shift-x
@@ -1826,7 +1826,7 @@ void SkWinCore::DRAW_MAJIC_MAP(ObjectID recordLink)
 				//^29EE:1EE9
 				Creature *bp0c = GET_ADDRESS_OF_RECORD4(bp04->GetContainedObject());
 				//^29EE:1EFC
-				i16 si = QUERY_CREATURE_5x5_POS(bp0c, (glbPlayerDir + _4976_3fc2[bp0c->b15_0_1()]) & 3);
+				i16 si = QUERY_CREATURE_5x5_POS(bp0c, (cd.pi.glbPlayerDir + _4976_3fc2[bp0c->b15_0_1()]) & 3);
 				//^29EE:1F28
 				bp14 = si % 5;
 				//^29EE:1F31
@@ -1834,7 +1834,7 @@ void SkWinCore::DRAW_MAJIC_MAP(ObjectID recordLink)
 				//^29EE:1F39
 				if (bp14 > 2) {
 					//^29EE:1F3F
-					si = (glbPlayerDir +1) & 3;
+					si = (cd.pi.glbPlayerDir +1) & 3;
 					//^29EE:1F48
 					bp10 += glbXAxisDelta[si];
 					//^29EE:1F53
@@ -1843,7 +1843,7 @@ void SkWinCore::DRAW_MAJIC_MAP(ObjectID recordLink)
 				//^29EE:1F5B
 				if (bp16 > 2) {
 					//^29EE:1F61
-					si = (glbPlayerDir +2) & 3;
+					si = (cd.pi.glbPlayerDir +2) & 3;
 					//^29EE:1F6B
 					bp10 += glbXAxisDelta[si];
 					//^29EE:1F76
@@ -1866,7 +1866,7 @@ void SkWinCore::DRAW_MAJIC_MAP(ObjectID recordLink)
 		}
 	}
 	//^29EE:1FF6
-	_29ee_1946(recordLink, bp10, di, bp12, glbPlayerDir, bp14, bp16, glbMagicalMapFlags);
+	_29ee_1946(recordLink, bp10, di, bp12, cd.pi.glbPlayerDir, bp14, bp16, glbMagicalMapFlags);
 	//^29EE:2015
 	if ((glbMagicalMapFlags & 0x0100) != 0 || (glbMagicalMapFlags & 0x0200) == 0) {
 		//^29EE:2025
@@ -1926,7 +1926,7 @@ void SkWinCore::DRAW_PLAYER_ATTACK_DIR()
 			bp014a.w4 |= 0x0010;
 			bp014a.width >>= 2;
 			//^29EE:08AD
-			bp014a.w14 = bp014a.width * ((glbChampionSquad[di].playerDir() +4 - glbPlayerDir) & 3);
+			bp014a.w14 = bp014a.width * ((glbChampionSquad[di].playerDir() +4 - cd.pi.glbPlayerDir) & 3);
 			//^29EE:08D4
 			bp014a.height >>= 2;
 			//^29EE:08D9
@@ -2363,7 +2363,7 @@ void SkWinCore::DRAW_PLAYER_3STAT_PANE(U16 player, U16 xx)
 void SkWinCore::DRAW_CHAMPION_PICTURE(U16 iChampionIndex)
 {
 	ENTER(0);
-	if (!cd.dm1.bDM1PortraitsActivated)	// Regular DM2
+	if (!cd.dm1.bDM1PortraitsActivated[iChampionIndex])	// Regular DM2
 	{
 	DRAW_ICON_PICT_ENTRY(
 		GDAT_CATEGORY_CHAMPIONS,	// 0x16
@@ -2375,7 +2375,7 @@ void SkWinCore::DRAW_CHAMPION_PICTURE(U16 iChampionIndex)
 		);
 	}
 
-	if (cd.dm1.bDM1PortraitsActivated)	 // SPX attempt to draw savegame portraits
+	if (cd.dm1.bDM1PortraitsActivated[iChampionIndex])	 // SPX attempt to draw savegame portraits
 	{
 		i16 iSourceY = 0;
 		i16 iSourceX = 0;
@@ -2590,7 +2590,7 @@ void SkWinCore::DRAW_CRYOCELL_LEVER(U16 leverIsOn)
 		//^24A5:1082
 		CHANGE_VIEWPORT_TO_INVENTORY(0);
 		// SPX: If lever is down, play the open cryocell sound
-		QUEUE_NOISE_GEN1(GDAT_CATEGORY_WALL_GFX, GDAT_WALL_ORNATE__CRYOCELL, 0xfb, 0xff, 0xc8, glbPlayerPosX, glbPlayerPosY, 0);
+		QUEUE_NOISE_GEN1(GDAT_CATEGORY_WALL_GFX, GDAT_WALL_ORNATE__CRYOCELL, 0xFB, 0xFF, 0xc8, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 0);
 	}
 	else {
 		//^24A5:10AB
@@ -3901,7 +3901,7 @@ void SkWinCore::REFRESH_PLAYER_STAT_DISP(i16 player)
 			//^2E62:091E
 			if (glbShowItemStats != 0) {
 				//^2E62:0925
-				bp12 = glbLeaderHandPossession.object;
+				bp12 = cd.pi.glbLeaderHandPossession.object;
 			}
 			//^2E62:092A
 			else if (_4976_4bfe != 0) {
@@ -4133,7 +4133,7 @@ void SkWinCore::_2e62_0cfa(U16 xx)
 		U16 si = glbChampionInventory - 1;
 		Champion *champion = &glbChampionSquad[si];
 		if (champion->enchantmentPower != 0 && champion->enchantmentAura >= ENCHANTMENT_AURA_FIRST && champion->enchantmentAura <= ENCHANTMENT_AURA_LAST) {
-			champion->heroFlag |= (glbShowItemStats != 0 && glbLeaderHandPossession.object == OBJECT_NULL) ? CHAMPION_FLAG_3000 : CHAMPION_FLAG_1000;	// 0x3000 or 0x1000
+			champion->heroFlag |= (glbShowItemStats != 0 && cd.pi.glbLeaderHandPossession.object == OBJECT_NULL) ? CHAMPION_FLAG_3000 : CHAMPION_FLAG_1000;	// 0x3000 or 0x1000
 		}
 		REFRESH_PLAYER_STAT_DISP(glbChampionInventory -1);
 	}
@@ -4175,15 +4175,15 @@ void SkWinCore::_443c_0434()
 	//^443C:0434
 	ENTER(4);
 	//^443C:0438
-	_4976_5dac = (glbLeaderHandPossession.object != OBJECT_NULL) ? 1 : 0;
+	_4976_5dac = (cd.pi.glbLeaderHandPossession.object != OBJECT_NULL) ? 1 : 0;
 	//^443C:0449
 	if (_4976_5dac != 0) {
 		//^443C:044D
 		U8 *bp04 = ALLOC_PICT_BUFF(18, 18, afDefault, 8);
 		//^443C:0463
-		_443c_0004(glbLeaderHandPossession.pb2, bp04, glbLeaderHandPossession.b6);
+		_443c_0004(cd.pi.glbLeaderHandPossession.pb2, bp04, cd.pi.glbLeaderHandPossession.b6);
 		//^443C:047C
-		IBMIO_SET_CURSOR_PATTERN(2, bp04, 8, 8, 18, 18, 8, NULL, glbLeaderHandPossession.b6[12]) INDIRECT_CALL;
+		IBMIO_SET_CURSOR_PATTERN(2, bp04, 8, 8, 18, 18, 8, NULL, cd.pi.glbLeaderHandPossession.b6[12]) INDIRECT_CALL;
 		//^443C:04A3
 		FREE_PICT_BUFF(bp04);
 	}
@@ -4441,7 +4441,7 @@ void SkWinCore::DRAW_ALCOVE_ITEMS(U16 xx)
 	X16 bp08 = 2;
 	//^32CB:3F34
 	do {
-		if (di.Dir() != ((glbPlayerDir +2) & 3))
+		if (di.Dir() != ((cd.pi.glbPlayerDir +2) & 3))
 			return;
 		//^32CB:3F4A
 		X16 bp0a = di.DBType();
@@ -4883,7 +4883,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 
 //		i16 iYDist = glbTabYAxisDistance[RCJ(23,cellPos)];	
 		i16 iXDist = glbTabXAxisDistance[RCJ(23,cellPos)];
-		QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp1f, SOUND_ACTIVATION_LOOP + iRandNoise, 0xFE, glbPlayerPosX+iXDist, glbPlayerPosY+iYDist, 0, 140, 200);
+		QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp1f, SOUND_ACTIVATION_LOOP + iRandNoise, 0xFE, cd.pi.glbPlayerPosX+iXDist, cd.pi.glbPlayerPosY+iYDist, 0, 140, 200);
 	}
 #endif
 	//^32CB:1CA9
@@ -7415,7 +7415,7 @@ void SkWinCore::DISPLAY_VIEWPORT(U16 dir, i16 xx, i16 yy)
 		"|-------|-------|-------|-------|-------|-------|-------|\n"
 		"|       |       |%02X %04X|%02X %04X|%02X %04X|       |       |\n"
 		"|-------|-------|-------|-------|-------|-------|-------|\n"
-		, (Bitu)glbPlayerMap, (Bitu)glbPlayerPosX, (Bitu)glbPlayerPosY, (Bitu)glbPlayerDir
+		, (Bitu)cd.pi.glbPlayerMap, (Bitu)cd.pi.glbPlayerPosX, (Bitu)cd.pi.glbPlayerPosY, (Bitu)cd.pi.glbPlayerDir
 		, (Bitu)tblCellTilesRoom[19].xsrd.w0, (Bitu)tblCellTilesRoom[19].xsrd.w4
 		, (Bitu)tblCellTilesRoom[17].xsrd.w0, (Bitu)tblCellTilesRoom[17].xsrd.w4
 		, (Bitu)tblCellTilesRoom[16].xsrd.w0, (Bitu)tblCellTilesRoom[16].xsrd.w4

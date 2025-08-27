@@ -513,7 +513,7 @@ U16 SkWinCore::IS_MISCITEM_DRINK_WATER(ObjectID rlMiscItem)
 		//^24A5:10D7
 		ADD_ITEM_CHARGE(si, -1);
 		//^24A5:10E1
-		if (si == glbLeaderHandPossession.object) {
+		if (si == cd.pi.glbLeaderHandPossession.object) {
 			//^24A5:10E7
 			TAKE_OBJECT(si, 0);
 		}

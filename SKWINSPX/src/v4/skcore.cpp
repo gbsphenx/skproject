@@ -6328,7 +6328,7 @@ U16 SkWinCore::_121e_03ae(U16 aa, U16 bb, U16 xx, U16 yy, U16 cc, U16 dd, U16 ee
 	//^121E:03B3
 	U16 di = dd;
 	//^121E:03B6
-	ObjectID si = _32cb_03a6(aa, bb, cc, xx, yy, ObjectID(glbLeaderHandPossession.object, (cd.pi.glbPlayerDir + di) & 3), ee, 1);
+	ObjectID si = _32cb_03a6(aa, bb, cc, xx, yy, ObjectID(cd.pi.glbLeaderHandPossession.object, (cd.pi.glbPlayerDir + di) & 3), ee, 1);
 	//^121E:03EA
 	if (si == OBJECT_NULL) {
 		//^121E:03EF
@@ -9923,9 +9923,9 @@ _1045:
 		}
 		//^2066:14A3
 	}
-	DEBUG_HELP_WRITER("Leader Hand Object Ref", &glbLeaderHandPossession.object, 2, 1);
+	DEBUG_HELP_WRITER("Leader Hand Object Ref", &cd.pi.glbLeaderHandPossession.object, 2, 1);
 	//^2066:14AF
-	if (WRITE_RECORD_CHECKCODE(glbLeaderHandPossession.object, 0, 0) != 0)
+	if (WRITE_RECORD_CHECKCODE(cd.pi.glbLeaderHandPossession.object, 0, 0) != 0)
 		goto _14fa;
 	//^2066:14C3
 	if (STORE_EXTRA_DUNGEON_DATA() == 0)
@@ -15458,8 +15458,8 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 		}
 	}
 
-	//glbLeaderHandPossession.object = OBJECT_END_MARKER;
-	glbLeaderHandPossession.object = OBJECT_NULL;	// SPX: Same here
+	//cd.pi.glbLeaderHandPossession.object = OBJECT_END_MARKER;
+	cd.pi.glbLeaderHandPossession.object = OBJECT_NULL;	// SPX: Same here
 
 
 	U16 bp18 = glbCurrentMapIndex;
@@ -15528,7 +15528,7 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 		}
 	}
 
-	if (READ_RECORD_CHECKCODE(-1, 0, &glbLeaderHandPossession.object, 0, 0) != 0) {
+	if (READ_RECORD_CHECKCODE(-1, 0, &cd.pi.glbLeaderHandPossession.object, 0, 0) != 0) {
 		goto _1e7e;
 	}
 	//^2066:1BA6
@@ -15544,14 +15544,11 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 		}
 	}
 
-	//^2066:1BF1
-	if (glbLeaderHandPossession.object == OBJECT_END_MARKER) {
-		//^2066:1BF8
-		glbLeaderHandPossession.object = OBJECT_NULL;
+	if (cd.pi.glbLeaderHandPossession.object == OBJECT_END_MARKER) {
+		cd.pi.glbLeaderHandPossession.object = OBJECT_NULL;
 	}
 	else {
-		//^2066:1C00
-		PROCESS_ITEM_BONUS(glbChampionLeader, glbLeaderHandPossession.object, -1, 0);
+		PROCESS_ITEM_BONUS(glbChampionLeader, cd.pi.glbLeaderHandPossession.object, -1, 0);
 	}
 	//^2066:1C14
 	if (READ_SKSAVE_TIMER_3C_3D() != 0) {
@@ -15862,7 +15859,7 @@ _2e5b:
 	_4976_5bf6 = 0;
 	cd.pi.glbChampionsCount = 0;
 	//SPX: changed 0xFFFF to oFFFF
-	glbLeaderHandPossession.object = OBJECT_NULL; // 0xFFFF
+	cd.pi.glbLeaderHandPossession.object = OBJECT_NULL; // 0xFFFF
 	//^2066:2F8C
 	sksave_header_asc bp6a;
 	FILE_READ(glbDataFileHandle, 42, &bp6a);
@@ -16030,9 +16027,18 @@ _31b8:		// we jump there from loading a dungeon from new game
 			if (FILE_READ(glbDataFileHandle, 0x24C0-42, glbDummyData) == 0)
 				break;
 		
+			// 0x24C0 (9408 bytes) of data, what to put into it ? 
+			// An Amiga save looks to have 0x2924 = 10532 bytes
+			// CSBWin tells there are 1 block of 512, then a 2nd block of data,
+			// then block of items, heros, timers, timers queued
+			// some global variables and that may be all ? ...
+			// CSB hero would be around 284 without portraits and fillers
+			// 284 * 4 = 1136
+			// +50 fill * 4 = +200
+			// timers should be around 10 or 12, maybe having 50 at first ? so 50 * 10 = 500, not much
+
 			// then comes portraits : 4 * 29*16 bytes
 			SkD((DLV_DBG_GAME_LOAD, "Read Portraits ...\n"));
-			cd.dm1.bDM1PortraitsActivated = true;
 			// copy portrait data at +6 because we need some meta-info before
 			if (FILE_READ(glbDataFileHandle, (29*16), glbDummyData) == 0)
 				break;
@@ -16052,12 +16058,14 @@ _31b8:		// we jump there from loading a dungeon from new game
 			// adjust image data with meta-info
 			for (iChampionIndex = 0; iChampionIndex < 4; iChampionIndex++)
 			{
+				cd.dm1.bDM1PortraitsActivated[iChampionIndex] = false;
 				*((U16*)(&cd.dm1.xDM1PortraitsData[iChampionIndex])) = 4; // 4bpp
 				*((U16*)(&cd.dm1.xDM1PortraitsData[iChampionIndex])+1) = 32; // x pitch
 				*((U16*)(&cd.dm1.xDM1PortraitsData[iChampionIndex])+2) = 29; // y pitch
 			}
 			// Note: if there are only X champions (with X < 4), then the X+1 portrait would be a zero array.
 			cd.pi.glbChampionsCount = 4;	// player cnt
+			cd.dm1.bDM1PortraitsActivated[0] = true;
 			for (iChampionIndex = 1; iChampionIndex < 4; iChampionIndex++)
 			{
 				// test array
@@ -16065,6 +16073,7 @@ _31b8:		// we jump there from loading a dungeon from new game
 					cd.pi.glbChampionsCount = iChampionIndex;
 					break;
 				}
+				cd.dm1.bDM1PortraitsActivated[iChampionIndex] = true;
 			}
 
 			_4976_524a = (0x24C0 + (4*29*16)); // file cursor to start dungeon structure
@@ -16094,7 +16103,7 @@ _31b8:		// we jump there from loading a dungeon from new game
 			SkD((DLV_DBG_GAME_LOAD, "Start Read File Handle %02d ...\n", glbDataFileHandle));
 			SkD((DLV_DBG_GAME_LOAD, "Read Global Variables ...\n"));
 
-			glbLeaderHandPossession.object = OBJECT_NULL;
+			cd.pi.glbLeaderHandPossession.object = OBJECT_NULL;
 
 			glbGameTick = _4976_4c1a = 1;	// game tick
 			glbRandomSeed = 63;	// random seed
@@ -18775,7 +18784,7 @@ _1741:
 	//^2FCF:17AE
 	if (bp0c == 0) {
 		bp0c = 1;
-		di = glbLeaderHandPossession.object;
+		di = cd.pi.glbLeaderHandPossession.object;
 		goto _1741;
 	}
 	return 0;
@@ -22771,7 +22780,7 @@ void SkWinCore::_2405_0009()
 	//^2405:0009
 	ENTER(0);
 	//^2405:000C
-	glbLeaderHandPossession.pb2 = ALLOC_PICT_BUFF(glbRectX_0106, glbRectY_0108, afUseUpper, 4);
+	cd.pi.glbLeaderHandPossession.pb2 = ALLOC_PICT_BUFF(glbRectX_0106, glbRectY_0108, afUseUpper, 4);
 	//^2405:0027
 	return;
 }
@@ -25012,7 +25021,7 @@ SkWinCore::SkWinCore()
 
 	skWinApp = NULL;
 // SPX / DM1 special init
-	cd.dm1.bDM1PortraitsActivated = false;
+	cd.dm1.bDM1PortraitsActivated[0] = false;
 	zeroMem(cd.dm1.xDM1PortraitsData, sizeof(cd.dm1.xDM1PortraitsData));
 //
 
@@ -25190,7 +25199,7 @@ SkWinCore::SkWinCore()
 	_4976_532c = 0;
 	zeroMem(&_4976_495c, sizeof(_4976_495c));
 	zeroMem(_4976_4df6, sizeof(_4976_4df6));
-	zeroMem(&glbLeaderHandPossession, sizeof(glbLeaderHandPossession));
+	zeroMem(&cd.pi.glbLeaderHandPossession, sizeof(cd.pi.glbLeaderHandPossession));
 	zeroMem(cd.pi.glbChampionsPendingDamage, sizeof(cd.pi.glbChampionsPendingDamage));
 	_4976_4942.x = 2; _4976_4942.y = 2; _4976_4942.cx = 16; _4976_4942.cy = 16;
 	_4976_494a.x = 0; _4976_494a.y = 0; _4976_494a.cx = 16; _4976_494a.cy = 16;

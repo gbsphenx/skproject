@@ -290,10 +290,10 @@ void SkWinCore::CHANGE_CURRENT_MAP_TO(U16 new_map)
 			return;
 		}
 	}
-	glbSomePosX_4c2e = glbPlayerPosX;
-	glbSomePosY_4c30 = glbPlayerPosY;
-	glbMap_4c28 = glbPlayerMap;
-	_4976_4c2c = glbPlayerDir;
+	glbSomePosX_4c2e = cd.pi.glbPlayerPosX;
+	glbSomePosY_4c30 = cd.pi.glbPlayerPosY;
+	glbMap_4c28 = cd.pi.glbPlayerMap;
+	_4976_4c2c = cd.pi.glbPlayerDir;
 
 }
 
@@ -420,7 +420,7 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 	//^24A5:013D
 	ENTER(28);
 	//^24A5:0143
-	if (dunMapsHeaders[glbPlayerMap].Difficulty() == 0) {
+	if (dunMapsHeaders[cd.pi.glbPlayerMap].Difficulty() == 0) {
 		//^24A5:015D
 		glbLightLevel = 1;
 		if (SkCodeParam::bAutoDefaultMaxLight)
@@ -434,9 +434,9 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 		U16 bonusIndex = 0;	// bp06
 		//^24A5:017C
 		// Give light bonus for item currently in hand (if any)
-		if ((QUERY_GDAT_DBSPEC_WORD_VALUE(glbLeaderHandPossession.object, GDAT_ITEM_STATS_GEN_FLAGS) & ITEM_FLAG_PRODUCE_LIGHT) != 0) {
+		if ((QUERY_GDAT_DBSPEC_WORD_VALUE(cd.pi.glbLeaderHandPossession.object, GDAT_ITEM_STATS_GEN_FLAGS) & ITEM_FLAG_PRODUCE_LIGHT) != 0) {
 			//^24A5:018E
-			itemLightBonus[bonusIndex] = ADD_ITEM_CHARGE(glbLeaderHandPossession.object, 0);
+			itemLightBonus[bonusIndex] = ADD_ITEM_CHARGE(cd.pi.glbLeaderHandPossession.object, 0);
 			bonusIndex++;
 		}
 		//^24A5:01AB
@@ -582,7 +582,7 @@ void SkWinCore::PERFORM_TURN_SQUAD(U16 xx)
 	//^12B4:0155
 	RESET_SQUAD_DIR();
 	//^12B4:0159
-	U16 si = GET_TILE_VALUE(glbPlayerPosX, glbPlayerPosY);
+	U16 si = GET_TILE_VALUE(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
 	//^12B4:016C
 	if (si >> 5 == ttStairs) {
 		//^12B4:0173
@@ -594,11 +594,11 @@ void SkWinCore::PERFORM_TURN_SQUAD(U16 xx)
 	}
 	//^12B4:0181
 	TELE_inf bp06;
-	if (GET_TELEPORTER_DETAIL(&bp06, U8(glbPlayerPosX), U8(glbPlayerPosY)) != 0) {
+	if (GET_TELEPORTER_DETAIL(&bp06, U8(cd.pi.glbPlayerPosX), U8(cd.pi.glbPlayerPosY)) != 0) {
 		//^12B4:019A
-		CHANGE_CURRENT_MAP_TO(glbPlayerMap);
+		CHANGE_CURRENT_MAP_TO(cd.pi.glbPlayerMap);
 		//^12B4:01A4
-		MOVE_RECORD_TO(OBJECT_NULL, glbPlayerPosX, glbPlayerPosY, -1, 0);
+		MOVE_RECORD_TO(OBJECT_NULL, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, -1, 0);
 		//^12B4:01BA
 		LOAD_NEWMAP(bp06.b4);
 		//^12B4:01C6
@@ -610,12 +610,12 @@ void SkWinCore::PERFORM_TURN_SQUAD(U16 xx)
 		return;
 	}
 	//^12B4:01ED
-	PLACE_OR_REMOVE_OBJECT_IN_ROOM(glbPlayerPosX, glbPlayerPosY, OBJECT_NULL, 1, FCT_REMOVE_OFF, 0);
+	PLACE_OR_REMOVE_OBJECT_IN_ROOM(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, OBJECT_NULL, 1, FCT_REMOVE_OFF, 0);
 	//^12B4:0205
-	ROTATE_SQUAD((glbPlayerDir + ((xx == 2) ? 1 : 3)) & 3);
+	ROTATE_SQUAD((cd.pi.glbPlayerDir + ((xx == 2) ? 1 : 3)) & 3);
 	//^12B4:0224
-	PLACE_OR_REMOVE_OBJECT_IN_ROOM(glbPlayerPosX, glbPlayerPosY, OBJECT_NULL, 1, FCT_PLACE_ON, 0);
-	LUA_CALL_SCRIPT(_EXP_SCRIPT__PLAYER_TURN_ON_TILE_, glbPlayerMap, glbPlayerPosX, glbPlayerPosY, 0);
+	PLACE_OR_REMOVE_OBJECT_IN_ROOM(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, OBJECT_NULL, 1, FCT_PLACE_ON, 0);
+	LUA_CALL_SCRIPT(_EXP_SCRIPT__PLAYER_TURN_ON_TILE_, cd.pi.glbPlayerMap, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 0);
 	//^12B4:023C
 	return;
 }
@@ -688,7 +688,7 @@ void SkWinCore::SHOOT_ITEM(ObjectID rlItemThrown, U16 xx, U16 yy, U16 dir, U16 a
 	//^075F:00C4
 	APPEND_RECORD_TO(si, NULL, xx, yy);
 	//^075F:00D7
-	if (missile->GetMissileObject() == OBJECT_EFFECT_FIREBALL && glbCurrentMapIndex == glbPlayerMap)	// oFF80
+	if (missile->GetMissileObject() == OBJECT_EFFECT_FIREBALL && glbCurrentMapIndex == cd.pi.glbPlayerMap)	// oFF80
 		//^075F:00EA
 		glbDoLightCheck = 1;
 	//^075F:00F0
@@ -1104,7 +1104,7 @@ void SkWinCore::TRANSFER_PLAYER(i16 xx, i16 yy, U16 zz, U16 dir)
 	//^2FCF:1841
 	i16 di = yy;
 	//^2FCF:1844
-	U16 si = (zz != glbPlayerMap) ? 1 : 0;
+	U16 si = (zz != cd.pi.glbPlayerMap) ? 1 : 0;
 	//^2FCF:1856
 	if (si != 0)
 		//^2FCF:185A
@@ -1114,9 +1114,9 @@ void SkWinCore::TRANSFER_PLAYER(i16 xx, i16 yy, U16 zz, U16 dir)
 		//^2FCF:187C
 		if (si != 0) {
 			//^2FCF:1880
-			CHANGE_CURRENT_MAP_TO(glbPlayerMap);
+			CHANGE_CURRENT_MAP_TO(cd.pi.glbPlayerMap);
 			//^2FCF:188A
-			MOVE_RECORD_TO(OBJECT_NULL, glbPlayerPosX, glbPlayerPosY, -1, 0);
+			MOVE_RECORD_TO(OBJECT_NULL, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, -1, 0);
 			//^2FCF:189F
 			LOAD_NEWMAP(U8(zz));
 			//^2FCF:18A8
@@ -1125,7 +1125,7 @@ void SkWinCore::TRANSFER_PLAYER(i16 xx, i16 yy, U16 zz, U16 dir)
 		}
 		else {
 			//^2FCF:18B2
-			MOVE_RECORD_TO(OBJECT_NULL, glbPlayerPosX, glbPlayerPosY, xx, di);
+			MOVE_RECORD_TO(OBJECT_NULL, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, xx, di);
 		}
 		//^2FCF:18C7
 		ROTATE_SQUAD(dir);
@@ -1135,7 +1135,7 @@ void SkWinCore::TRANSFER_PLAYER(i16 xx, i16 yy, U16 zz, U16 dir)
 	//^2FCF:18D1
 	if (si != 0)
 		//^2FCF:18D5
-		CHANGE_CURRENT_MAP_TO(glbPlayerMap);
+		CHANGE_CURRENT_MAP_TO(cd.pi.glbPlayerMap);
 	//^2FCF:18DF
 	return;
 }
@@ -1153,7 +1153,7 @@ U16 SkWinCore::ENGAGE_X_TELEPORTER()
 	//^2FCF:18E3
 	ENTER(10);
 	//^2FCF:18E9
-	ObjectID si = GET_TILE_RECORD_LINK(glbPlayerPosX, glbPlayerPosY);
+	ObjectID si = GET_TILE_RECORD_LINK(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
 	//^2FCF:18F8
 	U16 bp06;
 	for (; si != OBJECT_END_MARKER && (bp06 = si.DBType()) <= dbActuator; si = GET_NEXT_RECORD_LINK(si)) {
@@ -1189,10 +1189,10 @@ _194a:
 							//^2FCF:1977
 							// SPX: There is BUG here, bp06 is the db type instead of required map
 //								TRANSFER_PLAYER(bp08, bp0a, bp06, glbPlayerDir);
-							TRANSFER_PLAYER(bp08, bp0a, destMap, glbPlayerDir);
+							TRANSFER_PLAYER(bp08, bp0a, destMap, cd.pi.glbPlayerDir);
 							//^2FCF:198B
 							// SPX: This is used by the special teleporter ground cross		
-							QUEUE_NOISE_GEN2(GDAT_CATEGORY_FLOOR_GFX, bp04->TextIndex() & 0xff, SOUND_STD_ACTIVATION, 0xfe, glbPlayerPosX, glbPlayerPosY, 1, 0x8c, 0x80);
+							QUEUE_NOISE_GEN2(GDAT_CATEGORY_FLOOR_GFX, bp04->TextIndex() & 0xff, SOUND_STD_ACTIVATION, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0x8c, 0x80);
 							//^2FCF:19BB
 							if (di == SDFSM_CMD_X_TELEPORTER) {	// di == 4
 								//^2FCF:19C0
@@ -1268,9 +1268,9 @@ U16 SkWinCore::ENGAGE_COMMAND(U16 player, i16 cmdSlot)
 	//^2759:1770
 	U16 bp22 = champion->playerDir();
 	//^2759:177C
-	U16 bp1e = glbPlayerPosX + glbXAxisDelta[bp22];
+	U16 bp1e = cd.pi.glbPlayerPosX + glbXAxisDelta[bp22];
 	//^2759:178A
-	U16 bp20 = glbPlayerPosY + glbYAxisDelta[bp22];
+	U16 bp20 = cd.pi.glbPlayerPosY + glbYAxisDelta[bp22];
 	//^2759:1799
 	glbObjectID_4976_534c = GET_CREATURE_AT(bp1e, bp20);
 	//^2759:17A9
@@ -1336,7 +1336,7 @@ U16 SkWinCore::ENGAGE_COMMAND(U16 player, i16 cmdSlot)
 			}
 			//^2759:18B0
 			Timer bp54;
-			bp54.SetMap(glbPlayerMap);
+			bp54.SetMap(cd.pi.glbPlayerMap);
 			bp54.SetTick(glbGameTick +si);
 			//^2759:18D8
 			QUEUE_TIMER(&bp54);
@@ -1434,7 +1434,7 @@ U16 SkWinCore::ENGAGE_COMMAND(U16 player, i16 cmdSlot)
 
 		case CmSpellReflection: // 7
 			//^2759:1A61
-			CREATE_CLOUD(OBJECT_EFFECT_REFLECTOR, max_value(2, si), glbPlayerPosX, glbPlayerPosY, 255);
+			CREATE_CLOUD(OBJECT_EFFECT_REFLECTOR, max_value(2, si), cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 255);
 			//^2759:1A81
 			break;
 
@@ -1592,9 +1592,9 @@ U16 SkWinCore::ENGAGE_COMMAND(U16 player, i16 cmdSlot)
 
 		case CmUseRope: // 10
 			//^2759:1CB5
-			bp1e = glbPlayerPosX + glbXAxisDelta[glbPlayerDir];
+			bp1e = cd.pi.glbPlayerPosX + glbXAxisDelta[cd.pi.glbPlayerDir];
 			//^2759:1CC5
-			bp20 = glbPlayerPosY + glbYAxisDelta[glbPlayerDir];
+			bp20 = cd.pi.glbPlayerPosY + glbYAxisDelta[cd.pi.glbPlayerDir];
 			//^2759:1CD5
 			bp40 = 1;
 			//^2759:1CDA
@@ -1609,7 +1609,7 @@ U16 SkWinCore::ENGAGE_COMMAND(U16 player, i16 cmdSlot)
 				//^2759:1D1E
 				_4976_5824 = 1;
 				//^2759:1D24
-				MOVE_RECORD_TO(OBJECT_NULL, glbPlayerPosX, glbPlayerPosY, bp1e, bp20);
+				MOVE_RECORD_TO(OBJECT_NULL, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, bp1e, bp20);
 				//^2759:1D3C
 				_4976_5824 = 0;
 				//^2759:1D42
@@ -1673,8 +1673,8 @@ _1d6a:
 			bp0e = _2c1d_1de2_CHAMPION_SHOOT(
 				di,
 				bp34,
-				(champion->playerPos() != ((glbPlayerDir +1) & 3))
-					? (champion->playerPos() == ((glbPlayerDir +2) & 3))
+				(champion->playerPos() != ((cd.pi.glbPlayerDir +1) & 3))
+					? (champion->playerPos() == ((cd.pi.glbPlayerDir +2) & 3))
 						? 1
 						: 0
 					: 1
@@ -1684,7 +1684,7 @@ _1d6a:
 
 		case CmMark: // 44
 			//^2759:1E05
-			bp0e = SET_DESTINATION_OF_MINION_MAP(bp2e, glbPlayerPosX, glbPlayerPosY, glbPlayerMap);
+			bp0e = SET_DESTINATION_OF_MINION_MAP(bp2e, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerMap);
 			//^2759:1E1F
 			if (bp0e != 0)
 				//^2759:1E23
@@ -1716,7 +1716,7 @@ _1d6a:
 				//^2759:1E85
 				bp35 = CREATURE_GOOD_FETCH_MINION;	// SPX: Fetch Minion
 				//^2759:1E89
-				bp0a = glbPlayerDir;
+				bp0a = cd.pi.glbPlayerDir;
 				//^2759:1E8F
 				bp1e = bp08->GetDestX();
 				//^2759:1E9C
@@ -1733,13 +1733,13 @@ _1d6a:
 				bp35 = CREATURE_GOOD_CARRY_MINION;	// SPX: Carry Minion
 				//^2759:1EBE
 _1ebe:
-				bp1e = glbPlayerPosX;
+				bp1e = cd.pi.glbPlayerPosX;
 				//^2759:1EC4
-				bp20 = glbPlayerPosY;
+				bp20 = cd.pi.glbPlayerPosY;
 				//^2759:1ECA
-				bp0a = (glbPlayerDir +2) & 3;
+				bp0a = (cd.pi.glbPlayerDir +2) & 3;
 				//^2759:1ED5
-				bp0c = glbPlayerMap;
+				bp0c = cd.pi.glbPlayerMap;
 				//^2759:1EDB
 _1ed8:
 				bp3e = CREATE_MINION(
@@ -1804,11 +1804,11 @@ _ReleaseMinion:
 			//^2759:1F8E
 //_1f8e:
 _CreateMinion:
-			if (CREATE_MINION(bp3c, si >> 3, (glbPlayerDir +2) & 3, glbPlayerPosX, glbPlayerPosY, glbPlayerMap, bp2e, glbPlayerDir) != OBJECT_NULL)
+			if (CREATE_MINION(bp3c, si >> 3, (cd.pi.glbPlayerDir +2) & 3, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerMap, bp2e, cd.pi.glbPlayerDir) != OBJECT_NULL)
 				//^2759:1FBE
 				break;
 			//^2759:1FC0
-			CREATE_CLOUD(OBJECT_EFFECT_CLOUD, 0x6e, glbPlayerPosX, glbPlayerPosY, 255);
+			CREATE_CLOUD(OBJECT_EFFECT_CLOUD, 0x6E, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 255);
 			//^2759:1FD7
 			break;
 
@@ -1850,7 +1850,7 @@ _CreateMinion:
 	//^2759:2008
 	if (bp4a == 0) {
 		//^2759:200E
-		QUEUE_NOISE_GEN2(glbItemGDATCategory, glbItemGDATIndex, cmdSound, 0xfe, glbPlayerPosX, glbPlayerPosY, bp38, 0x73, 0xc8);
+		QUEUE_NOISE_GEN2(glbItemGDATCategory, glbItemGDATIndex, cmdSound, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, bp38, 0x73, 0xC8);
 	}
 	//^2759:2035
 	if (champion->curHP() == 0 || bp48 != 0)
@@ -2051,7 +2051,7 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 	//printf("Click on wall : ---------------\n");
 
 	// SPX: Custom script compatibility: call event on wall click
-	LUA_CALL_SCRIPT(_EXP_SCRIPT__ANY_EVENT_, glbPlayerMap, xx, yy, dir);
+	LUA_CALL_SCRIPT(_EXP_SCRIPT__ANY_EVENT_, cd.pi.glbPlayerMap, xx, yy, dir);
 
 	// SPX: for DM1 compatibility, we first get the "top" actuator on each side, so that we can compare then if it needs to be considered by interaction or not.
 	ObjectID xTopActuators[4];	// for all side
@@ -2158,7 +2158,7 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 				}
 				//^2FCF:1B40
 				// SPX: Sound when drinking from wall
-				QUEUE_NOISE_GEN2(GDAT_CATEGORY_CHAMPIONS, glbChampionSquad[glbChampionLeader].HeroType(), SOUND_CHAMPION_EAT_DRINK, 0xfe, glbPlayerPosX, glbPlayerPosY, 0, 0x96, 0x80);
+				QUEUE_NOISE_GEN2(GDAT_CATEGORY_CHAMPIONS, glbChampionSquad[glbChampionLeader].HeroType(), SOUND_CHAMPION_EAT_DRINK, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 0, 0x96, 0x80);
 				//^2FCF:1B6F
 				break;
 			}
@@ -2306,7 +2306,7 @@ _1cb6:
 					//di = (bp04->RevertEffect() == bp2c) ? 1 : 0;
 					di = 0; // allow actuator invoke further
 					if (bp04->SoundEffect() != 0 || SkCodeParam::bDM1TQMode == 1) {	// SPX: in TQ, wall trigger do sound, no matter sound flag
-						QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, glbPlayerPosX, glbPlayerPosY, 1, 0x8C, 0x80);
+						QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0x8C, 0x80);
 					}
 					
 					if (bp44 == ACTUATOR_TYPE_DM1_ITEM_EATER && bp04->OnceOnlyActuator() == 1)
@@ -2354,7 +2354,7 @@ _1cb6:
 						if (iInvokeActuator)
 						{
 							if (bp04->SoundEffect() != 0 || SkCodeParam::bDM1TQMode == 1) {	// SPX: in TQ, wall trigger do sound, no matter sound flag
-								QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, glbPlayerPosX, glbPlayerPosY, 1, 0x8C, 0x80);
+								QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0x8C, 0x80);
 							}
 							INVOKE_ACTUATOR(bp04, bp04->ActionType(), 0);
 						}
@@ -2414,7 +2414,7 @@ _1cb6:
 						bDelayedActuatorsRotation = 1;
 						iWallSideToRotate = bp10;
 						if (bp04->SoundEffect() != 0 || SkCodeParam::bDM1TQMode == 1) {	// SPX: in TQ, wall trigger do sound, no matter sound flag
-							QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xfe, glbPlayerPosX, glbPlayerPosY, 1, 0x8c, 0x80);
+							QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0x8C, 0x80);
 						}
 					}
 
@@ -2423,7 +2423,7 @@ _1cb6:
 					//	break;
 					bp26 = 1;
 					if (bp04->SoundEffect() != 0) {
-						QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, glbPlayerPosX, glbPlayerPosY, 1, 0x8C, 0x80);
+						QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0x8C, 0x80);
 					}
 					// Note: if the push button is in ROTATE mode (which shares the INACTIVE bit), then do not trigger a target effect.
 					if (bp04->ActuatorToggler() == 0)
@@ -2469,7 +2469,7 @@ _1d4d:
 					//^2FCF:1DC8
 					if (bp04->SoundEffect() != 0) {
 						//^2FCF:1DD6
-						QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, glbPlayerPosX, glbPlayerPosY, 1, 0x8C, 0x80);
+						QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0x8C, 0x80);
 					}
 					//^2FCF:1DFA
 					INVOKE_ACTUATOR(bp04, 0, 0);
@@ -2493,11 +2493,11 @@ _1d4d:
 
 				case ACTUATOR_TYPE_RESURECTOR: // 0x7E -> 'Activator, resuscitation'
 					//^2FCF:1E6A
-					if (bp04->OnceOnlyActuator() == 0 || ((glbPlayerDir +2) & 3) != dir)
+					if (bp04->OnceOnlyActuator() == 0 || ((cd.pi.glbPlayerDir + 2) & 3) != dir)
 						//^2FCF:1E8B
 						break;
 					//^2FCF:1E8E
-					SELECT_CHAMPION(glbPlayerPosX, glbPlayerPosY, glbPlayerDir, glbPlayerMap);
+					SELECT_CHAMPION(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerDir, cd.pi.glbPlayerMap);
 					//^2FCF:1EA6
 					bp28 = 1;
 					//^2FCF:1EAB
@@ -2508,9 +2508,9 @@ _1d4d:
 				// SPX: addition for DM1 retrocompatibility
 				case ACTUATOR_TYPE_CHAMPION_MIRROR: // 0x7F -> DM1 'Activator, resuscitation'
 
-					if (bp04->ActiveStatus() == 1 || ((glbPlayerDir +2) & 3) != dir) // for DM1, just take condition of direction
+					if (bp04->ActiveStatus() == 1 || ((cd.pi.glbPlayerDir +2) & 3) != dir) // for DM1, just take condition of direction
 						break;
-					SELECT_CHAMPION(glbPlayerPosX, glbPlayerPosY, glbPlayerDir, glbPlayerMap);
+					SELECT_CHAMPION(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerDir, cd.pi.glbPlayerMap);
 					bp28 = 1;
 					di = 0;
 					break;
@@ -2599,7 +2599,7 @@ _1d4d:
 						if (si == OBJECT_NULL && bp04->OnceOnlyActuator() == 0)
 							continue;
 					//^2FCF:2014
-					bp36 = (bp04->RevertEffect() != 0) ? bp04->ActionType() : ((bp04->ActionType() + glbPlayerDir) & 3);
+					bp36 = (bp04->RevertEffect() != 0) ? bp04->ActionType() : ((bp04->ActionType() + cd.pi.glbPlayerDir) & 3);
 					//^2FCF:204E
 					TRANSFER_PLAYER(bp04->Xcoord(), bp04->Ycoord(), bp18 & 0x3f, bp36);
 					//^2FCF:2078
@@ -2623,7 +2623,7 @@ _1d4d:
 			//^2FCF:209F
 			if (bp04->SoundEffect() != 0) {
 				//^2FCF:20B0
-				QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xfe, glbPlayerPosX, glbPlayerPosY, 1, 0x8c, 0x80);
+				QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0x8c, 0x80);
 			}
 			//^2FCF:20D4
 			INVOKE_ACTUATOR(bp04, bp1a, 0);
@@ -2684,7 +2684,7 @@ _1d4d:
 						MOVE_RECORD_TO(si, xx, yy, -1, 0);
 
 						SkD((DLV_TWEET, "Tweet: You (x:%d, y:%d, map:%d) have taken %s from wall \n"
-							, glbPlayerPosX, glbPlayerPosY, glbCurrentMapIndex
+							, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, glbCurrentMapIndex
 							, static_cast<LPCSTR>(getRecordNameOf(si))
 							));
 						//^2FCF:21FD
@@ -2724,7 +2724,7 @@ _1d4d:
 						MOVE_RECORD_TO(ObjectID(si, bp10), -1, 0, xx, yy);
 
 						SkD((DLV_TWEET, "Tweet: You (x:%d, y:%d, map:%d) have placed %s at wall \n"
-							, glbPlayerPosX, glbPlayerPosY, glbCurrentMapIndex
+							, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, glbCurrentMapIndex
 							, static_cast<LPCSTR>(getRecordNameOf(si))
 							));
 
@@ -2757,16 +2757,16 @@ _22ca:
 					//^2FCF:22D2
 					bp36 = (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp23, dtWordValue, GDAT_WALL_ORNATE__IS_LADDER_UP) != 0) ? -1 : 1;
 					//^2FCF:22F4
-					bp20 = glbPlayerPosX;
-					bp22 = glbPlayerPosY;
+					bp20 = cd.pi.glbPlayerPosX;
+					bp22 = cd.pi.glbPlayerPosY;
 					//^2FCF:2300
-					bp36 = LOCATE_OTHER_LEVEL(glbPlayerMap, bp36, &bp20, &bp22, NULL);
+					bp36 = LOCATE_OTHER_LEVEL(cd.pi.glbPlayerMap, bp36, &bp20, &bp22, NULL);
 					//^2FCF:2320
 					if (bp36 < 0)
 						//^2FCF:2322
 						continue;
 					//^2FCF:2324
-					TRANSFER_PLAYER(bp20, bp22, bp36, glbPlayerDir);
+					TRANSFER_PLAYER(bp20, bp22, bp36, cd.pi.glbPlayerDir);
 					//^2FCF:2338
 					_1031_098e();
 					//^2FCF:233D
@@ -3198,7 +3198,7 @@ void SkWinCore::__INIT_GAME_38c8_03ad()
 	_1031_0541(5);
 	//^38C8:040E
 	//printf("38c8_03ad:LOAD_NEWMAP(%d)\n", glbPlayerMap); getch();
-	LOAD_NEWMAP(U8(glbPlayerMap));
+	LOAD_NEWMAP(U8(cd.pi.glbPlayerMap));
 	//^38C8:0418
 	_4976_4bd8 = 0;
 	//^38C8:041E
@@ -3246,7 +3246,7 @@ void SkWinCore::__INIT_GAME_38c8_03ad()
 	_4976_4c02 = 1;
 	//^38C8:0498
 	//printf("38c8_03ad:CHECK_RECOMPUTE_LIGHT\n"); getch();
-	CHECK_RECOMPUTE_LIGHT(glbPlayerPosX, glbPlayerPosY);
+	CHECK_RECOMPUTE_LIGHT(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
 	//^38C8:04A7
 	//printf("38c8_03ad:END\n"); getch();
 	return;
@@ -3263,10 +3263,10 @@ void SkWinCore::END_GAME(U16 xx)
 	//^101B:000A
 	if (xx != 0 && _4976_4c26 == 0) {
 		//^101B:0017
-		U8 bp01 = (cd.pi.glbChampionsCount > 0) ? glbChampionSquad[0].HeroType() : 0xfe;
+		U8 bp01 = (cd.pi.glbChampionsCount > 0) ? glbChampionSquad[0].HeroType() : 0xFE;
 		//^101B:002A
 		// SPX: Sound when dying
-		QUEUE_NOISE_GEN2(GDAT_CATEGORY_CHAMPIONS, bp01, SOUND_CHAMPION_SCREAM, 0xfe, glbPlayerPosX, glbPlayerPosY, 0, 255, 255);
+		QUEUE_NOISE_GEN2(GDAT_CATEGORY_CHAMPIONS, bp01, SOUND_CHAMPION_SCREAM, 0xfe, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 0, 255, 255);
 		//^101B:004E
 		SLEEP_SEVERAL_TIME(240);
 	}
@@ -3379,16 +3379,16 @@ U16 SkWinCore::PERFORM_MOVE(X16 xx)
 #endif
 		//^12B4:0394
 		cd.pi.glbIsPlayerMoving = bp26 >> 1;
-		_4976_4c32 = glbPlayerPosX;
-		_4976_4c34 = glbPlayerPosY;
-		_4976_4c40 = glbPlayerDir;
+		_4976_4c32 = cd.pi.glbPlayerPosX;
+		_4976_4c34 = cd.pi.glbPlayerPosY;
+		_4976_4c40 = cd.pi.glbPlayerDir;
 		cd.pi.glbPlayerLastMove = xx;
 		if (xx != 3) {
-			CALC_VECTOR_W_DIR(glbPlayerDir, -1, 0, &_4976_4c32, &_4976_4c34);
+			CALC_VECTOR_W_DIR(cd.pi.glbPlayerDir, -1, 0, &_4976_4c32, &_4976_4c34);
 		}
 		if (SkCodeParam::bUsePlayerWalkSound)	// Use ROCKY walk sound
 			//QUEUE_NOISE_GEN1(GDAT_CATEGORY_CREATURES, 0x0C, 0x00, 0x46, 0x80, glbPlayerPosX, glbPlayerPosY, 1);
-			QUEUE_NOISE_GEN1(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, SOUND_CHAMPION_FOOTSTEP, 0x46, 0x80, glbPlayerPosX, glbPlayerPosY, 1);
+			QUEUE_NOISE_GEN1(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, SOUND_CHAMPION_FOOTSTEP, 0x46, 0x80, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1);
 		goto _0768;
 	}
 	//^12B4:03D8
@@ -3396,12 +3396,12 @@ U16 SkWinCore::PERFORM_MOVE(X16 xx)
 	if (glbTableToMove != OBJECT_NULL) {
 		//^12B4:03E2
 		if (true
-			&& glbPlayerDir == _4976_4c40 && glbPlayerMap == glbMap_4976_4eaa && glbPlayerPosX == glbPosX_4976_4eae && glbPlayerPosY == glbPosY_4976_4eb0
+			&& cd.pi.glbPlayerDir == _4976_4c40 && cd.pi.glbPlayerMap == glbMap_4976_4eaa && cd.pi.glbPlayerPosX == glbPosX_4976_4eae && cd.pi.glbPlayerPosY == glbPosY_4976_4eb0
 			&& GET_CREATURE_AT(glbTargetPosXTest, glbTargetPosYTest) == glbTableToMove
 		) {
 			//^12B4:0427
 			glbTableToMove = OBJECT_NULL;
-			bp10 = glbPlayerMap;
+			bp10 = cd.pi.glbPlayerMap;
 			if (xx == 3) {
 				//^12B4:0439
 				_12b4_0d75(glbTargetPosXTest, glbTargetPosYTest, _4976_4eac, 0xfe);
@@ -3417,7 +3417,7 @@ U16 SkWinCore::PERFORM_MOVE(X16 xx)
 				}
 			}
 			//^12B4:048B
-			CHANGE_CURRENT_MAP_TO(glbPlayerMap);
+			CHANGE_CURRENT_MAP_TO(cd.pi.glbPlayerMap);
 		}
 		//^12B4:0495
 		glbTableToMove = OBJECT_NULL;
@@ -3461,8 +3461,8 @@ U16 SkWinCore::PERFORM_MOVE(X16 xx)
 	//_4976_4c2c // move dir, not the player facing
 	if (SkCodeParam::bBWMode == true) {
 		int tblFaceDir[8] = {0, 1, 2, 3, 0, 1, 2, 3};
-		int iInterfaceCellFrom = (di + glbPlayerDir)%4;
-		int iInterfaceCellDest = (di + glbPlayerDir + 2)%4;
+		int iInterfaceCellFrom = (di + cd.pi.glbPlayerDir)%4;
+		int iInterfaceCellDest = (di + cd.pi.glbPlayerDir + 2)%4;
 		U16 iInterwallFrom = 0;
 		U16 iInterwallDest = 0;
 
@@ -3476,9 +3476,9 @@ U16 SkWinCore::PERFORM_MOVE(X16 xx)
 	switch (CHECK_MOVE_BETWEEN_TILES_AND_INTERWALLS(di, iFinalInterwallValue, iCurrentTile, iDestTile, playerDestPosX, playerDestPosY, &bp14)) {
 	case 2://^059A	// new tile is stairs
 		//^12B4:059A
-		MOVE_RECORD_TO(OBJECT_NULL, glbPlayerPosX, glbPlayerPosY, -1, 0);
-		glbPlayerPosX = playerDestPosX;
-		glbPlayerPosY = playerDestPosY;
+		MOVE_RECORD_TO(OBJECT_NULL, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, -1, 0);
+		cd.pi.glbPlayerPosX = playerDestPosX;
+		cd.pi.glbPlayerPosY = playerDestPosY;
 		iCurrentTile = iDestTile;
 		goto _05c2;
 	case 1://^05C2	// old tile is stairs
@@ -3530,8 +3530,8 @@ _0685:
 		if (GET_TELEPORTER_DETAIL(&bp22, U8(playerDestPosX), U8(playerDestPosY)) != 0) {
 			if (((bp22.b1 +2) & 3) != bp0e) {
 				//^12B4:06FC
-				CHANGE_CURRENT_MAP_TO(glbPlayerMap);
-				MOVE_RECORD_TO(OBJECT_NULL, glbPlayerPosX, glbPlayerPosY, -1, 0);
+				CHANGE_CURRENT_MAP_TO(cd.pi.glbPlayerMap);
+				MOVE_RECORD_TO(OBJECT_NULL, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, -1, 0);
 				LOAD_NEWMAP(bp22.b4);
 				MOVE_RECORD_TO(OBJECT_NULL, -1, 0, bp22.b2, bp22.b3);
 				ROTATE_SQUAD(bp22.b1);
@@ -3539,12 +3539,12 @@ _0685:
 			}
 		}
 		//^12B4:0750
-		MOVE_RECORD_TO(OBJECT_NULL, glbPlayerPosX, glbPlayerPosY, playerDestPosX, playerDestPosY);
+		MOVE_RECORD_TO(OBJECT_NULL, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, playerDestPosX, playerDestPosY);
 		//^12B4:0768
 _0768:
 		_4976_4c00 = bp26;
 		glbPlayerThrowCounter = 0;
-		LUA_CALL_SCRIPT(_EXP_SCRIPT__PLAYER_ON_TILE_, glbPlayerMap, glbPlayerPosX, glbPlayerPosY, 0);
+		LUA_CALL_SCRIPT(_EXP_SCRIPT__PLAYER_ON_TILE_, cd.pi.glbPlayerMap, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 0);
 
 	
 		//^12B4:0776
@@ -3668,7 +3668,7 @@ U16 SkWinCore::LOAD_NEW_DUNGEON()
 	//^2066:2D74
 	_4976_5bf6 = 0;
 	cd.pi.glbChampionsCount = 0;
-	glbLeaderHandPossession.object = OBJECT_NULL;
+	cd.pi.glbLeaderHandPossession.object = OBJECT_NULL;
 	_4976_524a = 0;
 	return READ_DUNGEON_STRUCTURE(1);
 }
@@ -3699,7 +3699,7 @@ U16 SkWinCore::ORIGINAL__LOAD_NEW_DUNGEON()
 	//^2066:2D74
 	_4976_5bf6 = 0;
 	cd.pi.glbChampionsCount = 0;
-	glbLeaderHandPossession.object = OBJECT_NULL;
+	cd.pi.glbLeaderHandPossession.object = OBJECT_NULL;
 	_4976_524a = 0;
 	return READ_DUNGEON_STRUCTURE(1);
 }
@@ -4010,7 +4010,7 @@ U16 SkWinCore::TRY_PUSH_OBJECT_TO(ObjectID rl, i16 xpos, i16 ypos, i16 *xx, i16 
 	//^2FCF:0CE5
 	X16 si = RAND02();
 	X16 bp0a;
-	i8 *bp04 = (rl == OBJECT_NULL) ? (bp0a = glbPlayerDir, _4976_406c[si]) : (bp0a = 0, _4976_407c[si]);
+	i8 *bp04 = (rl == OBJECT_NULL) ? (bp0a = cd.pi.glbPlayerDir, _4976_406c[si]) : (bp0a = 0, _4976_407c[si]);
 	i16 di;
 	for (di = 0; di <= 3; di++) {
 		//^2FCF:0D1A
@@ -4121,7 +4121,7 @@ void SkWinCore::ATTACK_CREATURE(ObjectID rl, i16 xx, i16 yy, U16 ss, i16 tt, U16
 			//^13E4:054E
 			if ((tblAIStats01[QUERY_GDAT_CREATURE_WORD_VALUE(xCreature->CreatureType(), 1)] & 0x80) == 0 && RAND01() != 0) {
 				//^13E4:057A
-				si = CALC_VECTOR_DIR(xx, yy, glbPlayerPosX, glbPlayerPosY);
+				si = CALC_VECTOR_DIR(xx, yy, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
 				if ((xCreature->iAnimFrame & 8) != 0 && RAND02() != 0)
 					goto _05bd;
 				if ((xCreature->b15 & 3) != si && RAND02() == 0) {

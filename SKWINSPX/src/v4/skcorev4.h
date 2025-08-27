@@ -7,6 +7,10 @@
 #define _SKCODE_CORE_V4_H_
 
 #include <sktypes.h>
+#include <dme.h>
+
+using namespace DMEncyclopaedia;
+using namespace DM2Internal;
 
 //..............................................................................
 //------------------------------------------------------------------------------
@@ -90,6 +94,7 @@ typedef struct {
 	U16	glbChampionsPendingDamage[MAX_CHAMPIONS];	// (_4976_57ea) amount of damage for players
 	i16	glbChampionIndex;	// (_4976_5366) SPX: Used as a champion cursor in the MAX_CHAMPIONS+1 champions table.
 	U16	glbPlayerDefeated;	// (_4976_4c2a) all player are defeated
+	LeaderPossession	glbLeaderHandPossession;	// (_4976_57c8) player handy posession
 
 } SKCodePlayerInfo;
 
@@ -99,7 +104,7 @@ typedef struct {
 typedef struct {
 
 // DM1 support variables
-	bool	bDM1PortraitsActivated;
+	bool	bDM1PortraitsActivated[4];
 	X8		xDM1PortraitsData[4][(29*32)+6];	// image contains 6 bytes of info before image itself
 //
 } SKCoreDM1Variables;

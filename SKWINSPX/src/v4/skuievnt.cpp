@@ -34,11 +34,11 @@ void SkWinCore::ADJUST_UI_EVENT(MousePosition *ref)
 		//^1031:1589
 		Bit16u bp06 = ((si & 1) != 0) ? 1 : 0;
 		//^1031:1599
-		i16 di = GET_PLAYER_AT_POSITION(((si >> 1) + glbPlayerDir) & 3);
+		i16 di = GET_PLAYER_AT_POSITION(((si >> 1) + cd.pi.glbPlayerDir) & 3);
 		//^1031:15AD
 		if (false
 			|| di < 0 
-			|| glbChampionSquad[di +bp06].handCooldown[0] != 0 
+			|| glbChampionSquad[di + bp06].handCooldown[0] != 0 
 			|| IS_ITEM_HAND_ACTIVABLE(di, glbChampionSquad[di].Possess(bp06), bp06) == 0
 		) {
 			//^1031:15E6
@@ -53,7 +53,7 @@ void SkWinCore::ADJUST_UI_EVENT(MousePosition *ref)
 	//else if (si >= 0x5f && si <= 0x62) {
 	else if (si >= UI_EVENTCODE_SPELL_OR_LEADER_1 && si <= UI_EVENTCODE_SPELL_OR_LEADER_4) {
 		//^1031:160A
-		i16 di = GET_PLAYER_AT_POSITION((si -0x5f +glbPlayerDir) & 3);
+		i16 di = GET_PLAYER_AT_POSITION((si -0x5f + cd.pi.glbPlayerDir) & 3);
 		//^1031:161F
 		if (di < 0) {
 			//^1031:1623
@@ -291,13 +291,13 @@ ObjectID SkWinCore::REMOVE_OBJECT_FROM_HAND()
 	//^2C1D:073D
 	ENTER(0);
 	//^2C1D:0741
-	ObjectID si = glbLeaderHandPossession.object;
+	ObjectID si = cd.pi.glbLeaderHandPossession.object;
 	//^2C1D:0746
 	if (si != OBJECT_NULL) {
 		//^2C1D:074B
 		glbLeaderItemFlags = 0;
 		glbLeaderItemWeight = 0;
-		glbLeaderHandPossession.object = OBJECT_NULL;
+		cd.pi.glbLeaderHandPossession.object = OBJECT_NULL;
 		_4976_57de = 0xff;
 		//^2C1D:0762
 		FIRE_HIDE_MOUSE_CURSOR();
@@ -308,7 +308,7 @@ ObjectID SkWinCore::REMOVE_OBJECT_FROM_HAND()
 		PROCESS_ITEM_BONUS(glbChampionLeader, si, -1, -1);
 // SPX: that part is for giving item sound when put it back to inventory or on ground
 		if (SkCodeParam::bUseExtendedSound)
-			QUEUE_NOISE_GEN2(QUERY_CLS1_FROM_RECORD(si), QUERY_CLS2_FROM_RECORD(si), SOUND_ITEM_PUT_DOWN, 0xFE, glbPlayerPosX, glbPlayerPosY, 1, 0, 0);
+			QUEUE_NOISE_GEN2(QUERY_CLS1_FROM_RECORD(si), QUERY_CLS2_FROM_RECORD(si), SOUND_ITEM_PUT_DOWN, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0, 0);
 	}
 	//^2C1D:079E
 	return si;
@@ -331,9 +331,9 @@ void SkWinCore::TAKE_OBJECT(ObjectID rl, U16 xx)
 		glbLeaderItemFlags = QUERY_GDAT_DBSPEC_WORD_VALUE(si, 0);
 		//^2C1D:06D5
 		glbLeaderItemWeight = QUERY_ITEM_WEIGHT(si);
-		glbLeaderHandPossession.object = si;
+		cd.pi.glbLeaderHandPossession.object = si;
 		//^2C1D:06E3
-		DRAW_ITEM_IN_HAND(&glbLeaderHandPossession);
+		DRAW_ITEM_IN_HAND(&cd.pi.glbLeaderHandPossession);
 		//^2C1D:06EE
 		FIRE_HIDE_MOUSE_CURSOR();
 		//^2C1D:06F3
@@ -352,11 +352,11 @@ void SkWinCore::TAKE_OBJECT(ObjectID rl, U16 xx)
 		//^2C1D:0712
 		PROCESS_ITEM_BONUS(glbChampionLeader, si, -1, 1);
 		//^2C1D:0722
-		PLACE_OR_REMOVE_OBJECT_IN_ROOM(glbPlayerPosX, glbPlayerPosY, -1, 1, FCT_PLACE_ON, 0); // NOTE: it is PLACE_ON or REMOVE_OFF ??? item is taken off its place!
+		PLACE_OR_REMOVE_OBJECT_IN_ROOM(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, -1, 1, FCT_PLACE_ON, 0); // NOTE: it is PLACE_ON or REMOVE_OFF ??? item is taken off its place!
 
 // SPX: that part is for giving item sound when taking it
 		if (SkCodeParam::bUseExtendedSound)
-			QUEUE_NOISE_GEN2(QUERY_CLS1_FROM_RECORD(si), QUERY_CLS2_FROM_RECORD(si), SOUND_ITEM_TAKE, 0xFE, glbPlayerPosX, glbPlayerPosY, 1, 0, 0);
+			QUEUE_NOISE_GEN2(QUERY_CLS1_FROM_RECORD(si), QUERY_CLS2_FROM_RECORD(si), SOUND_ITEM_TAKE, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0, 0);
 	}
 	//^2C1D:073A
 	return;
@@ -407,7 +407,7 @@ void SkWinCore::CLICK_ITEM_SLOT(Bit16u xx)
 		di = ((si >= INVENTORY_MAX_SLOT) ? cd.pi.glbChampionIndex : glbChampionInventory) -1;
 	}
 	//^2C1D:08F8
-	ObjectID bp02 = glbLeaderHandPossession.object;
+	ObjectID bp02 = cd.pi.glbLeaderHandPossession.object;
 	//^2C1D:08FE
 	ObjectID bp04 = (si >= INVENTORY_MAX_SLOT) ? glbCurrentContainerItems[si - INVENTORY_MAX_SLOT] : glbChampionSquad[di].Possess(si);
 	//^2C1D:0926
@@ -481,9 +481,9 @@ void SkWinCore::CLICK_MONEYBOX(Bit16u xx)
 	X16 bp02 = cd.pi.glbChampionIndex -1;
 	ObjectID si = glbChampionSquad[bp02].Possess(glbSelectedHandAction);
 	ObjectID di;
-	if (glbLeaderHandPossession.object != OBJECT_NULL) {
+	if (cd.pi.glbLeaderHandPossession.object != OBJECT_NULL) {
 		//^2759:2909
-		if (ADD_COIN_TO_WALLET(si, glbLeaderHandPossession.object) != 0) {
+		if (ADD_COIN_TO_WALLET(si, cd.pi.glbLeaderHandPossession.object) != 0) {
 			REMOVE_OBJECT_FROM_HAND();
 			goto _2945;
 		}
@@ -580,21 +580,21 @@ void SkWinCore::CLICK_WALL(U16 iClickSide)
 	//^121E:0009
 	U16 iDirDelta = 1;	// bp02
 	//^121E:000E
-	i16 iPosX = glbPlayerPosX;	// di
-	i16 iPosY = glbPlayerPosY;	// si
+	i16 iPosX = cd.pi.glbPlayerPosX;	// di
+	i16 iPosY = cd.pi.glbPlayerPosY;	// si
 	//^121E:0016
 	switch (iClickSide) {
 		case 1: // click on left side
 			//^121E:002A
-			iPosX += glbXAxisDelta[(glbPlayerDir +3) & 3];
-			iPosY += glbYAxisDelta[(glbPlayerDir +3) & 3];
+			iPosX += glbXAxisDelta[(cd.pi.glbPlayerDir +3) & 3];
+			iPosY += glbYAxisDelta[(cd.pi.glbPlayerDir +3) & 3];
 			//^121E:004C
 			break;
 
 		case 3:	// click in front of player
 			//^121E:004E
-			iPosX += glbXAxisDelta[glbPlayerDir];
-			iPosY += glbYAxisDelta[glbPlayerDir];
+			iPosX += glbXAxisDelta[cd.pi.glbPlayerDir];
+			iPosY += glbYAxisDelta[cd.pi.glbPlayerDir];
 			//^121E:0062
 			iDirDelta = 2;
 			//^121E:0067
@@ -602,8 +602,8 @@ void SkWinCore::CLICK_WALL(U16 iClickSide)
 
 		case 2: // click on right side
 			//^121E:0069
-			iPosX += glbXAxisDelta[(glbPlayerDir +1) & 3];
-			iPosY += glbYAxisDelta[(glbPlayerDir +1) & 3];
+			iPosX += glbXAxisDelta[(cd.pi.glbPlayerDir +1) & 3];
+			iPosY += glbYAxisDelta[(cd.pi.glbPlayerDir +1) & 3];
 			//^121E:0087
 			iDirDelta = 3;
 
@@ -612,7 +612,7 @@ void SkWinCore::CLICK_WALL(U16 iClickSide)
 	//^121E:008C
 	if (iPosX >= 0 && iPosX < glbCurrentMapWidth && iPosY >= 0 && iPosY < glbCurrentMapHeight) {
 		//^121E:00A0
-		MOVE_RECORD_AT_WALL(iPosX, iPosY, (glbPlayerDir + iDirDelta) & 3, OBJECT_NULL, glbLeaderHandPossession.object);
+		MOVE_RECORD_AT_WALL(iPosX, iPosY, (cd.pi.glbPlayerDir + iDirDelta) & 3, OBJECT_NULL, cd.pi.glbLeaderHandPossession.object);
 	}
 	//^121E:00BA
 	return;
@@ -636,15 +636,15 @@ void SkWinCore::CLICK_VWPT(i16 xx, i16 yy)
 	//^121E:0450
 	di -= _4976_00ea;
 	//^121E:0454
-	U16 bp0c = glbPlayerPosX;
+	U16 bp0c = cd.pi.glbPlayerPosX;
 	//^121E:045A
-	U16 bp0e = glbPlayerPosY;
+	U16 bp0e = cd.pi.glbPlayerPosY;
 	//^121E:0460
-	bp0c += glbXAxisDelta[glbPlayerDir];
+	bp0c += glbXAxisDelta[cd.pi.glbPlayerDir];
 	//^121E:046D
-	bp0e += glbYAxisDelta[glbPlayerDir];
+	bp0e += glbYAxisDelta[cd.pi.glbPlayerDir];
 	//^121E:047A
-	ObjectID rlHandPossession = glbLeaderHandPossession.object;	// bp0a
+	ObjectID rlHandPossession = cd.pi.glbLeaderHandPossession.object;	// bp0a
 	//^121E:0480
 	Door* xDoor;	// bp04
 	U16 si;
@@ -668,8 +668,8 @@ void SkWinCore::CLICK_VWPT(i16 xx, i16 yy)
 					}
 					else {
 						//^121E:04EA
-						bp16 = glbPlayerPosX;
-						bp18 = glbPlayerPosY;
+						bp16 = cd.pi.glbPlayerPosX;
+						bp18 = cd.pi.glbPlayerPosY;
 					}
 					//^121E:04F3
 					//^121E:04F6
@@ -680,7 +680,7 @@ void SkWinCore::CLICK_VWPT(i16 xx, i16 yy)
 						if (rlHandPossession == OBJECT_NULL) {
 							//^121E:0526
 							// SPX: This plays the TICK sound when activating a door button
-							QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES, 0x00, SOUND_STD_ACTIVATION_MESSAGE, 0x8c, 0x80, glbPlayerPosX, glbPlayerPosY, 1);
+							QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES, 0x00, SOUND_STD_ACTIVATION_MESSAGE, 0x8C, 0x80, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1);
 							//^121E:0545
 							Timer bp22;
 							INVOKE_MESSAGE(bp16, bp18, 0, 2, glbGameTick +1);
@@ -707,11 +707,11 @@ void SkWinCore::CLICK_VWPT(i16 xx, i16 yy)
 					}
 					else {
 						//^121E:05BE
-						bp16 += glbXAxisDelta[(glbPlayerDir +1) & 3];
+						bp16 += glbXAxisDelta[(cd.pi.glbPlayerDir +1) & 3];
 						//^121E:05D0
-						bp18 += glbYAxisDelta[(glbPlayerDir +1) & 3];
+						bp18 += glbYAxisDelta[(cd.pi.glbPlayerDir +1) & 3];
 						//^121E:05E2
-						MOVE_RECORD_AT_WALL(bp16, bp18, (glbPlayerDir + 3) & 3, -1, glbLeaderHandPossession.object);
+						MOVE_RECORD_AT_WALL(bp16, bp18, (cd.pi.glbPlayerDir + 3) & 3, -1, cd.pi.glbLeaderHandPossession.object);
 						//^121E:0600
 						continue;
 					}
@@ -760,7 +760,7 @@ void SkWinCore::CLICK_VWPT(i16 xx, i16 yy)
 					U16 bp26;
 					for (bp26 = 0; bp26 <= 1; bp26++) {
 						//^121E:069B
-						if (_121e_03ae(xx, di, glbPlayerPosX, glbPlayerPosY, 0, bp26, 1) != 0)
+						if (_121e_03ae(xx, di, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 0, bp26, 1) != 0)
 							//^121E:06B9
 							return;
 					}
@@ -775,21 +775,21 @@ void SkWinCore::CLICK_VWPT(i16 xx, i16 yy)
 						int iSwitchResult = 0;
 						printf("Interwall door clicked!\n");
 						// Then we would switch the door open <-> closed there
-						iSwitchResult = TRY_SWITCH_INTERWALL_DOOR_STATUS(glbPlayerMap, glbPlayerPosX, glbPlayerPosY, glbPlayerDir);
+						iSwitchResult = TRY_SWITCH_INTERWALL_DOOR_STATUS(cd.pi.glbPlayerMap, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerDir);
 						if (iSwitchResult != 0) {
 							int iKeyFound = 1;
 							// Check and take common key if available
 							iKeyFound = CONSUME_ANY_FROM_HAND(DB_CATEGORY_MISC_ITEM, 1);
 							if (iKeyFound) {
-								UNLOCK_INTERWALL_DOOR(glbPlayerMap, glbPlayerPosX, glbPlayerPosY, glbPlayerDir);
-								iSwitchResult = TRY_SWITCH_INTERWALL_DOOR_STATUS(glbPlayerMap, glbPlayerPosX, glbPlayerPosY, glbPlayerDir);
+								UNLOCK_INTERWALL_DOOR(cd.pi.glbPlayerMap, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerDir);
+								iSwitchResult = TRY_SWITCH_INTERWALL_DOOR_STATUS(cd.pi.glbPlayerMap, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerDir);
 								DISPLAY_HINT_TEXT(COLOR_LIGHT_GREEN, (const U8*) "DOOR UNLOCKED.\n");
 							}
 							else	// If no key, tells it's locked
 								DISPLAY_HINT_TEXT(COLOR_LIGHT_GREEN, (const U8*) "THE DOOR IS LOCKED\n");
 						}
 						if (iSwitchResult == 0)
-							QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES, 0x00, SOUND_STD_INTERWALL_DOOR, 0x8c, 0x80, glbPlayerPosX, glbPlayerPosY, 1);
+							QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES, 0x00, SOUND_STD_INTERWALL_DOOR, 0x8C, 0x80, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1);
 
 						break;
 					}
@@ -852,18 +852,18 @@ void SkWinCore::CLICK_VWPT(i16 xx, i16 yy)
 		}
 		//^121E:07DB
 		// SPX: A default sound like punch.
-		QUEUE_NOISE_GEN2(GDAT_CATEGORY_CREATURES, QUERY_CLS2_FROM_RECORD(bp10), SOUND_STD_DEFAULT, 0xfe, bp0c, bp0e, 0, 0x8c, 0x80);
+		QUEUE_NOISE_GEN2(GDAT_CATEGORY_CREATURES, QUERY_CLS2_FROM_RECORD(bp10), SOUND_STD_DEFAULT, 0xFE, bp0c, bp0e, 0, 0x8C, 0x80);
 		//^121E:0803
 		return;
 	}
 	//^121E:0806
 	for (si = 0; si <= 1; si++) {
 		//^121E:080A
-		if (_121e_03ae(xx, di, glbPlayerPosX, glbPlayerPosY, 0, si, 1) != 0)
+		if (_121e_03ae(xx, di, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 0, si, 1) != 0)
 			//^121E:0826
 			return;
 		//^121E:0829
-		if (_098d_02a2(si +760, xx, di) != 0 && CREATURE_121e_0222(glbPlayerPosX, glbPlayerPosY, si) != 0)
+		if (_098d_02a2(si +760, xx, di) != 0 && CREATURE_121e_0222(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, si) != 0)
 			//^121E:0853
 			return;
 		//^121E:0856
@@ -1059,7 +1059,7 @@ U16 SkWinCore::HANDLE_UI_EVENT(MousePosition *ref)
 	if (si >= UI_EVENTCODE_MOVE_FIRST && si <= UI_EVENTCODE_MOVE_LAST) { // >= 0x03 and <= 0x06
 		if (_4976_4c00 != 0)
 			goto _19b1;
-		if (glbPlayerThrowCounter != 0 && ((glbPlayerDir +si -3) & 3) == _4976_4c0c)
+		if (glbPlayerThrowCounter != 0 && ((cd.pi.glbPlayerDir + si -3) & 3) == _4976_4c0c)
 			goto _19b1;
 	}
 	if (cd.pi.glbIsPlayerMoving != 0) {
@@ -1096,7 +1096,7 @@ _19b1:
 	else if (si >= UI_EVENTCODE_CLICK_STATS_BAR_1 && si <= UI_EVENTCODE_CLICK_STATS_BAR_4) { // (si >= 0xEA && si <= 0xED)
 		PUT_ITEM_TO_PLAYER(si - UI_EVENTCODE_CLICK_STATS_BAR_1);
 		// SPX: extended mode : clicking on stats bar will give player main stats :)
-		if (SkCodeParam::bUseDM2ExtendedMode && glbLeaderHandPossession.object == OBJECT_NULL)
+		if (SkCodeParam::bUseDM2ExtendedMode && cd.pi.glbLeaderHandPossession.object == OBJECT_NULL)
 		{
 			U8 message[64];
 			U8 player = si - UI_EVENTCODE_CLICK_STATS_BAR_1;
@@ -1128,12 +1128,12 @@ _1ab8:
 		UPDATE_RIGHT_PANEL(0);
 	}
 	else if (si >= UI_EVENTCODE_010 && si <= UI_EVENTCODE_013) {	// (si >= 0x10 && si <= 0x13)
-		SELECT_CHAMPION_LEADER(GET_PLAYER_AT_POSITION((si -UI_EVENTCODE_010 + glbPlayerDir) & 3));
+		SELECT_CHAMPION_LEADER(GET_PLAYER_AT_POSITION((si -UI_EVENTCODE_010 + cd.pi.glbPlayerDir) & 3));
 		_2e62_0cfa(0);
 	}
 	else if (si >= UI_EVENTCODE_VIEW_CHAMPION_1 && si <= UI_EVENTCODE_RETURN_VIEWPORT) { // >= 0x07 and <= 0x0B
 		if (cd.pi.glbNextChampionNumber != 0 && si <= UI_EVENTCODE_RETURN_VIEWPORT) {
-			_2f3f_04ea_CHAMPION(glbPlayerPosX, glbPlayerPosY, glbPlayerDir, glbPlayerMap, 0xa1);
+			_2f3f_04ea_CHAMPION(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerDir, cd.pi.glbPlayerMap, 0xa1);
 		}
 		else {
 			U16 bp02 = si - UI_EVENTCODE_VIEW_CHAMPION_1;
@@ -1170,7 +1170,7 @@ _1ab8:
 		ACTIVATE_ACTION_HAND(si >> 1, ((si & 1) != 0) ? 1 : 0);
 	}
 	else if (si >= UI_EVENTCODE_SPELL_OR_LEADER_1 && si <= UI_EVENTCODE_SPELL_OR_LEADER_4) {	// >= 0x5F and <= 0x62
-		i16 iChampionIndex = GET_PLAYER_AT_POSITION((si -UI_EVENTCODE_SPELL_OR_LEADER_1 + glbPlayerDir) & 3); // bp02
+		i16 iChampionIndex = GET_PLAYER_AT_POSITION((si -UI_EVENTCODE_SPELL_OR_LEADER_1 + cd.pi.glbPlayerDir) & 3); // bp02
 		if (iChampionIndex >= 0) {
 			SET_SPELLING_CHAMPION(iChampionIndex);
 		}
@@ -1254,7 +1254,7 @@ _1ab8:
 			}
 		}
 		else if (si == UI_EVENTCODE_REVIVE_CHAMPION || si == UI_EVENTCODE_EXIT_CRYOCELL) { // 0xA0 or 0xA1
-            _2f3f_04ea_CHAMPION(glbPlayerPosX, glbPlayerPosY, glbPlayerDir, glbPlayerMap, si);
+            _2f3f_04ea_CHAMPION(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerDir, cd.pi.glbPlayerMap, si);
 		}
 		else if (si == UI_EVENTCODE_START_NEW_GAME) {	// 0xD7
 			// "NEW" at main menu
