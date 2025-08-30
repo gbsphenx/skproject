@@ -12,7 +12,8 @@
 
 
 //^3E74:48C9
-mement *SkWinCore::_3e74_48c9(U16 mementi)
+// _3e74_48c9 renamed _3e74_48c9_MEMENT
+mement *SkWinCore::_3e74_48c9_MEMENT(U16 mementi)
 {
 	// cqOk @ 21:03 2007/02/21
 
@@ -712,7 +713,7 @@ U16 SkWinCore::ADD_CACHE_HASH(Bit32u cacheHash, U16 *piYaCacheIndex)
 		//^3E74:563F
 		U16 si = QUERY_MEMENTI_FROM(*piYaCacheIndex | 0x8000);
 		//^3E74:564D
-		_3e74_48c9(si);
+		_3e74_48c9_MEMENT(si);
 		//^3E74:5653
 		return 1;
 	}
@@ -725,22 +726,16 @@ U16 SkWinCore::ADD_CACHE_HASH(Bit32u cacheHash, U16 *piYaCacheIndex)
 //^3E74:5817
 U8 *SkWinCore::QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(U16 cacheIndex)
 {
-	//^3E74:581A
-    return reinterpret_cast<U8 *>(&_3e74_48c9(QUERY_MEMENTI_FROM(cacheIndex | 0x8000))[1]); // +18 bytes
+    return reinterpret_cast<U8 *>(&_3e74_48c9_MEMENT(QUERY_MEMENTI_FROM(cacheIndex | 0x8000))[1]); // +18 bytes
 }
 
 //^3E74:583A
 void SkWinCore::_3e74_583a(U16 xx)
 {
-	//^3E74:583A
-	//^3E74:583E
 	U16 si = QUERY_MEMENTI_FROM(xx | 0x8000);
-	//^3E74:584C
-	if (si != 0xffff) {
-		//^3E74:5851
+	if (si != 0xFFFF) {
 		_3e74_4549(si);
 	}
-	//^3E74:5857
 	return;
 }
 
@@ -1132,7 +1127,7 @@ void SkWinCore::RECYCLE_MEMENTI(U16 mementi, U16 yy)
 	//^3E74:4722
 	if (bp04->w4() != 0xffff) {
 		//^3E74:472C
-		_3e74_48c9(di);
+		_3e74_48c9_MEMENT(di);
 		//^3E74:4733
 		return;
 	}
@@ -1266,7 +1261,8 @@ int SkWinCore::TEST_MEMENT(mement *bp04)
 }
 
 //^3E74:5673
-X32 SkWinCore::_3e74_5673(X32 cacheHash, U16 *piYaCacheIndex, X16 ifTryInsert)
+// _3e74_5673 renamed _3e74_5673_CACHE
+X32 SkWinCore::_3e74_5673_CACHE(X32 cacheHash, U16 *piYaCacheIndex, X16 ifTryInsert)
 {
 	//^3E74:5673
 	ENTER(2);
@@ -1284,7 +1280,7 @@ X32 SkWinCore::_3e74_5673(X32 cacheHash, U16 *piYaCacheIndex, X16 ifTryInsert)
 	}
 	//^3E74:56CB
 	*piYaCacheIndex = _4976_5c7e[bp02];
-	return *reinterpret_cast<i32 *>(_3e74_48c9(QUERY_MEMENTI_FROM(*piYaCacheIndex | 0x8000))) -22;
+	return *reinterpret_cast<i32 *>(_3e74_48c9_MEMENT(QUERY_MEMENTI_FROM(*piYaCacheIndex | 0x8000))) -22;
 }
 
 
@@ -1299,3 +1295,19 @@ U8 *SkWinCore::_3e74_5788_CACHE(U16 xx, i32 yy)
 	cd.mc._4976_5c90_cache = 0;
 	return ALLOC_CPXHEAP_MEM(xx, yy);
 }
+
+//^1C9A:0247
+void SkWinCore::_1c9a_0247(ObjectID rl)
+{
+	ENTER(2);
+	i16 si = rl.DBIndex();
+	U16 bp02;
+	if (_3e74_5673_CACHE(0x20000000 | si | glbCurrentThinkingCreatureID.DBIndex(), &bp02, 0) != 0) {
+		FREE_TEMP_CACHE_INDEX(bp02);
+	}
+	if (_3e74_5673_CACHE(0x28000000 | si | glbCurrentThinkingCreatureID.DBIndex(), &bp02, 0) != 0) {
+		FREE_TEMP_CACHE_INDEX(bp02);
+	}
+	return;
+}
+

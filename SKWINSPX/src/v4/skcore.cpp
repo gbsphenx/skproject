@@ -12344,7 +12344,7 @@ U8 *SkWinCore::EXTRACT_GDAT_IMAGE(U16 index, i16 allocUpper)
 			}
 			else {
 				//^3E74:4B93
-				bp04 = _3e74_48c9(si);
+				bp04 = _3e74_48c9_MEMENT(si);
 			}
 			//^3E74:4B9F
 			return reinterpret_cast<U8 *>(&bp04[1]); // +18 bytes
@@ -17421,26 +17421,6 @@ void SkWinCore::_32cb_3edd(i16 xx)
 
 
 
-//^1C9A:0247
-void SkWinCore::_1c9a_0247(ObjectID rl)
-{
-	//^1C9A:0247
-	ENTER(2);
-	//^1C9A:024C
-	i16 si = rl.DBIndex();
-	U16 bp02;
-	if (_3e74_5673(0x20000000 | si | glbCurrentThinkingCreatureID.DBIndex(), &bp02, 0) != 0) {
-		//^1C9A:0281
-		FREE_TEMP_CACHE_INDEX(bp02);
-	}
-	//^1C9A:028A
-	if (_3e74_5673(0x28000000 | si | glbCurrentThinkingCreatureID.DBIndex(), &bp02, 0) != 0) {
-		//^1C9A:02B7
-		FREE_TEMP_CACHE_INDEX(bp02);
-	}
-	//^1C9A:02C0
-	return;
-}
 
 
 
@@ -22153,7 +22133,7 @@ void SkWinCore::_14cd_0276(skxxx9 *ref)
 	if (si > 0) {
 		//^14CD:02DB
 		U16 bp0e;
-		i32 bp0c = _3e74_5673(glbCurrentThinkingCreatureID.DBIndex()|0x28000000, &bp0e, 1);
+		i32 bp0c = _3e74_5673_CACHE(glbCurrentThinkingCreatureID.DBIndex()|0x28000000, &bp0e, 1);
 		i32 bp08 = si << 1;
 		if (bp0c < bp08) {
 			//^14CD:0315

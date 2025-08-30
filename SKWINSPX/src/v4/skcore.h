@@ -1198,7 +1198,7 @@ protected:
 	U16 FIND_ICI_FROM_CACHE_HASH(Bit32u cacheHash, U16 *ici);
 	void RECYCLE_MEMENTI(U16 mementi, U16 yy);
 	int TEST_MEMENT(mement *bp04);	// SPX: changed "void" to "int"
-	mement *_3e74_48c9(U16 mementi);
+	mement *_3e74_48c9_MEMENT(U16 mementi); // _3e74_48c9
 	void FREE_CACHE_INDEX(U16 cacheIndex);
 	void _3e74_4549(U16 xx);
 	void _3e74_0c8c(mement *ref);
@@ -2022,7 +2022,7 @@ protected:
 	U16 GET_PLAYER_WEIGHT(U16 player);
 	U16 MAX_LOAD(Champion *ref);
 	void SOUND_482b_05bf(U16 xx);	// _482b_05bf
-	X32 _3e74_5673(X32 cacheHash, U16 *piYaCacheIndex, X16 ifTryInsert);
+	X32 _3e74_5673_CACHE(X32 cacheHash, U16 *piYaCacheIndex, X16 ifTryInsert); // _3e74_5673
 	void _1c9a_0247(ObjectID rl);
 	void QUERY_MESSAGE_TEXT(U8 *str, ObjectID rl, U16 ww);
 	U16 IS_REBIRTH_ALTAR(ObjectID rl);

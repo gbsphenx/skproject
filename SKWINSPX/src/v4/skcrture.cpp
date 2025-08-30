@@ -2496,7 +2496,7 @@ void SkWinCore::__SET_CURRENT_THINKING_CREATURE_WALK_PATH()
 	if (glbCurrentThinkingCreatureData == NULL || _4976_514e.b0 == 0)
 		return;
 	U16 bp02;
-	if (_3e74_5673(glbCurrentThinkingCreatureID.DBIndex()|0x28000000, &bp02, 0) == 0) {
+	if (_3e74_5673_CACHE(glbCurrentThinkingCreatureID.DBIndex()|0x28000000, &bp02, 0) == 0) {
 		//^1C9A:3800
 		_4976_514e.b1 = 0;
 		_4976_514e.b0 = 0;
@@ -4818,7 +4818,7 @@ void SkWinCore::_13e4_01a3()
 	_4976_4f03 = (RAND16(di +1) + (((0x0147 | 0x0CD5) != 0) ? (di >> 2) : 0) <= (U16)si) ? 1 : 0;
 	U16 bp0e;
 	//^13E4:02C1
-	if (_3e74_5673(glbCurrentThinkingCreatureID.DBIndex()|0x20000000, &bp0e, 0) == 0) {
+	if (_3e74_5673_CACHE(glbCurrentThinkingCreatureID.DBIndex()|0x20000000, &bp0e, 0) == 0) {
 		//^13E4:02E3
 		ZERO_MEMORY(&_4976_514e, sizeof(sk514e));
 		_4976_5151 = 0xff;
@@ -6250,7 +6250,7 @@ _0c47:
 		//^13E4:0C5C
 		U16 bp10;
 		U8 *bp0e;
-		if (_3e74_5673(0x20000000 | glbCurrentThinkingCreatureID.DBIndex(), &bp10, 1) == 0) {
+		if (_3e74_5673_CACHE(0x20000000 | glbCurrentThinkingCreatureID.DBIndex(), &bp10, 1) == 0) {
 			//^13E4:0C7E
 			bp0e = ALLOC_CPXHEAP_MEM(bp10, sizeof(sk514e)); // sizeof(sk514e) == 14
 			_3e74_585a_CACHE(bp10, 1);
