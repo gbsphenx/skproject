@@ -1264,21 +1264,15 @@ int SkWinCore::TEST_MEMENT(mement *bp04)
 // _3e74_5673 renamed _3e74_5673_CACHE
 X32 SkWinCore::_3e74_5673_CACHE(X32 cacheHash, U16 *piYaCacheIndex, X16 ifTryInsert)
 {
-	//^3E74:5673
 	ENTER(2);
-	//^3E74:5677
 	if (glbGameTick != _4976_5d2a) {
-		//^3E74:568A
 		_3e74_44ad();
 	}
-	//^3E74:568E
 	U16 bp02;
 	if (FIND_ICI_FROM_CACHE_HASH(cacheHash, &bp02) == 0) {
-		//^3E74:56A4
-		*piYaCacheIndex = (ifTryInsert != 0) ? INSERT_CACHE_HASH_AT(cacheHash, bp02) : 0xffff;
+		*piYaCacheIndex = (ifTryInsert != 0) ? INSERT_CACHE_HASH_AT(cacheHash, bp02) : 0xFFFF;
 		return 0;
 	}
-	//^3E74:56CB
 	*piYaCacheIndex = _4976_5c7e[bp02];
 	return *reinterpret_cast<i32 *>(_3e74_48c9_MEMENT(QUERY_MEMENTI_FROM(*piYaCacheIndex | 0x8000))) -22;
 }
@@ -1297,16 +1291,17 @@ U8 *SkWinCore::_3e74_5788_CACHE(U16 xx, i32 yy)
 }
 
 //^1C9A:0247
-void SkWinCore::_1c9a_0247(ObjectID rl)
+// _1c9a_0247 renamed _1c9a_0247_FREE_CACHE_FROM_CREATURE
+void SkWinCore::_1c9a_0247_FREE_CACHE_FROM_CREATURE(ObjectID rl)
 {
 	ENTER(2);
-	i16 si = rl.DBIndex();
-	U16 bp02;
-	if (_3e74_5673_CACHE(0x20000000 | si | glbCurrentThinkingCreatureID.DBIndex(), &bp02, 0) != 0) {
-		FREE_TEMP_CACHE_INDEX(bp02);
+	i16 iCreatureIndex = rl.DBIndex();	// si
+	U16 piYaCacheIndex; // bp02
+	if (_3e74_5673_CACHE(0x20000000 | iCreatureIndex | glbCurrentThinkingCreatureID.DBIndex(), &piYaCacheIndex, 0) != 0) {
+		FREE_TEMP_CACHE_INDEX(piYaCacheIndex);
 	}
-	if (_3e74_5673_CACHE(0x28000000 | si | glbCurrentThinkingCreatureID.DBIndex(), &bp02, 0) != 0) {
-		FREE_TEMP_CACHE_INDEX(bp02);
+	if (_3e74_5673_CACHE(0x28000000 | iCreatureIndex | glbCurrentThinkingCreatureID.DBIndex(), &piYaCacheIndex, 0) != 0) {
+		FREE_TEMP_CACHE_INDEX(piYaCacheIndex);
 	}
 	return;
 }

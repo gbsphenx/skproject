@@ -1792,7 +1792,8 @@ _0ea0:
 
 //^12B4:0D75
 // SPX: Creature pushing back another creature or player?
-void SkWinCore::_12b4_0d75(i16 xx, i16 yy, i16 ss, i16 tt)
+// _12b4_0d75 renamed _12b4_0d75_CREATURE
+void SkWinCore::_12b4_0d75_CREATURE(i16 xx, i16 yy, i16 ss, i16 tt)
 {
 	//^12B4:0D75
 	ENTER(24);
@@ -1813,11 +1814,11 @@ void SkWinCore::_12b4_0d75(i16 xx, i16 yy, i16 ss, i16 tt)
 			//^12B4:0DE8
 			if (glbCurrentMapIndex == glbMap_4c28 && bp06 == glbSomePosX_4c2e && bp08 == glbSomePosY_4c30) {
 				//^12B4:0E03
-				_12b4_023f(xx, yy, &bp0a, &bp0c, cd.pi.glbPlayerDir, si = (ss +2) & 3);
+				_12b4_023f_WOUND_RUNNING_INTO_CREATURE(xx, yy, &bp0a, &bp0c, cd.pi.glbPlayerDir, si = (ss +2) & 3);
 			}
 			else {
 				//^12B4:0E2C
-				_1c9a_0247(bp12);
+				_1c9a_0247_FREE_CACHE_FROM_CREATURE(bp12);
 				U8 bp13 = GET_ADDRESS_OF_RECORD4(bp12)->InternalID();
 				if (bp13 != 0xff) {
 					//^12B4:0E4D
@@ -5279,7 +5280,7 @@ X16 SkWinCore::CREATURE_ATTACKS_PARTY()
 		//^1887:096A
 		if ((GET_CREATURE_WEIGHT(glbCurrentThinkingCreatureID) > 100 && (RAND() & 15) != 0) || RAND02() != 0) {
 			//^1887:098C
-			_12b4_0d75(bp10, bp12, bp14, 0xfe);
+			_12b4_0d75_CREATURE(bp10, bp12, bp14, 0xfe);
 		}
 	}
 	//^1887:09A0

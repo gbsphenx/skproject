@@ -8956,7 +8956,8 @@ X16 SkWinCore::CHECK_MOVE_BETWEEN_TILES_AND_INTERWALLS(X16 aa, U16 iInterwall, U
 
 //^12B4:023F
 // SPX: Walk into a wall ?
-U16 SkWinCore::_12b4_023f(i16 xx, i16 yy, i16 *ss, i16 *tt, i16 ww, X16 vv)
+// _12b4_023f renamed _12b4_023f_WOUND_RUNNING_INTO_CREATURE
+U16 SkWinCore::_12b4_023f_WOUND_RUNNING_INTO_CREATURE(i16 xx, i16 yy, i16 *ss, i16 *tt, i16 ww, X16 vv)
 {
 	//^12B4:023F
 	ENTER(6);
@@ -8983,7 +8984,7 @@ U16 SkWinCore::_12b4_023f(i16 xx, i16 yy, i16 *ss, i16 *tt, i16 ww, X16 vv)
 			if (WOUND_PLAYER(bp02, 1, 0x18, 2) != 0) {
 				//^12B4:02C5
 				di = 1;
-				QUEUE_NOISE_GEN2(GDAT_CATEGORY_CHAMPIONS, glbChampionSquad[bp02].HeroType(), SOUND_CHAMPION_BUMP, 0xfe, xx, yy, 1, 0x64, 0xc8);
+				QUEUE_NOISE_GEN2(GDAT_CATEGORY_CHAMPIONS, glbChampionSquad[bp02].HeroType(), SOUND_CHAMPION_BUMP, 0xFE, xx, yy, 1, 0x64, 0xC8);
 			}
 		}
 		//^12B4:02F4
@@ -19346,7 +19347,7 @@ _113b:
 	//^075F:1166
 	if (bp1c != 0) {
 		//^075F:116C
-		_12b4_0d75(
+		_12b4_0d75_CREATURE(
 			xpos,
 			ypos,
 			(si == OBJECT_EFFECT_PUSH) ? (di) : ((di+2) &3),

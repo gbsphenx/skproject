@@ -1001,7 +1001,7 @@ void SkWinCore::CLICK_MAGICAL_MAP_AT(Bit16u ww, i16 xx, i16 yy)
 		//^1031:18D3
 		SET_DESTINATION_OF_MINION_MAP(bp0c, bp0e, bp10, si);
 		//^1031:18E5
-		_1c9a_0247(bp04->GetContainedObject());
+		_1c9a_0247_FREE_CACHE_FROM_CREATURE(bp04->GetContainedObject());
 		//^1031:18F2
 		UPDATE_RIGHT_PANEL(0);
 	}

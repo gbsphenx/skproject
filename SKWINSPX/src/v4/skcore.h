@@ -1670,7 +1670,7 @@ protected:
 	X16 _12b4_0953(Creature *rec, U16 ww);
 	X16 _12b4_0881_CHECK_MOVE_BETWEEN_TILES(X16 aa, U16 oldTile, U16 newTile, i16 xx, i16 yy, ObjectID *rl);	// _12b4_0881
 	X16 CHECK_MOVE_BETWEEN_TILES_AND_INTERWALLS(X16 aa, U16 iInterwall, U16 oldTile, U16 newTile, i16 xx, i16 yy, ObjectID *rl); // SPX: addition
-	U16 _12b4_023f(i16 xx, i16 yy, i16 *ss, i16 *tt, i16 ww, X16 vv);
+	U16 _12b4_023f_WOUND_RUNNING_INTO_CREATURE(i16 xx, i16 yy, i16 *ss, i16 *tt, i16 ww, X16 vv); // _12b4_023f
 	X16 IS_CREATURE_MOVABLE_THERE(i16 xx, i16 yy, i16 dir, ObjectID *prlWhatsLying);
 	X16 _12b4_099e(ObjectID rl);
 	U16 PERFORM_MOVE(X16 xx);
@@ -1925,7 +1925,7 @@ protected:
 	U16 WOUND_PLAYER(i16 play, i16 quantity, U16 ss, U16 tt);
 	void _075f_0182(ObjectID rl, X16 xx, X16 yy);
 	void CREATE_CLOUD(ObjectID rl, U16 ww, U16 xx, U16 yy, U16 ss);
-	void _12b4_0d75(i16 xx, i16 yy, i16 ss, i16 tt);
+	void _12b4_0d75_CREATURE(i16 xx, i16 yy, i16 ss, i16 tt);	// _12b4_0d75
 	U16 QUERY_CREATURE_5x5_POS(Creature *ref, U16 dir);
 	void _098d_000f(i16 xx, i16 yy, U16 ww, U16 *x2, U16 *y2);
 	void DRAW_ARROW_PANEL(); // _29ee_000f renamed DRAW_ARROW_PANEL
@@ -2023,7 +2023,7 @@ protected:
 	U16 MAX_LOAD(Champion *ref);
 	void SOUND_482b_05bf(U16 xx);	// _482b_05bf
 	X32 _3e74_5673_CACHE(X32 cacheHash, U16 *piYaCacheIndex, X16 ifTryInsert); // _3e74_5673
-	void _1c9a_0247(ObjectID rl);
+	void _1c9a_0247_FREE_CACHE_FROM_CREATURE(ObjectID rl); // _1c9a_0247
 	void QUERY_MESSAGE_TEXT(U8 *str, ObjectID rl, U16 ww);
 	U16 IS_REBIRTH_ALTAR(ObjectID rl);
 	X16 _2fcf_164e(ObjectID xx, ObjectID yy);

@@ -2735,7 +2735,7 @@ void SkWinCore::DELETE_CREATURE_RECORD(i16 xpos, i16 ypos, Bit16u dropMode, Bit1
 	//^1C9A:164A
 	DROP_CREATURE_POSSESSION(xCreatureReference, xpos, ypos, dropMode, tt);
 	//^1C9A:165E
-	_1c9a_0247(xCreatureReference);
+	_1c9a_0247_FREE_CACHE_FROM_CREATURE(xCreatureReference);
 	//^1C9A:1664
 	DEALLOC_RECORD(xCreatureReference);
 	//^1C9A:166B

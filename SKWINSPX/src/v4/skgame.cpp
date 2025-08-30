@@ -1706,10 +1706,8 @@ _1d6a:
 		case CmCallFetch: // 46
 			//^2759:1E3A
 			if (GET_MISSILE_REF_OF_MINION(bp08->GetContainedObject(), bp2e) != NULL) {
-				//^2759:1E4F
 				GET_ADDRESS_OF_RECORD4(bp08->GetContainedObject())->CreatureType((bp1c == CmCallCarry) ? 0x32 : 0x33);
-				//^2759:1E70
-				_1c9a_0247(bp08->GetContainedObject());
+				_1c9a_0247_FREE_CACHE_FROM_CREATURE(bp08->GetContainedObject());
 			}
 			//^2759:1E7F
 			else if (bp1c == CmCallFetch) {
@@ -3404,7 +3402,7 @@ U16 SkWinCore::PERFORM_MOVE(X16 xx)
 			bp10 = cd.pi.glbPlayerMap;
 			if (xx == 3) {
 				//^12B4:0439
-				_12b4_0d75(glbTargetPosXTest, glbTargetPosYTest, _4976_4eac, 0xfe);
+				_12b4_0d75_CREATURE(glbTargetPosXTest, glbTargetPosYTest, _4976_4eac, 0xfe);
 			}
 			//^12B4:0450
 			if (PERFORM_MOVE(xx) != 0) {
@@ -3413,7 +3411,7 @@ U16 SkWinCore::PERFORM_MOVE(X16 xx)
 				if (xx != 3) {
 					//^12B4:046B
 					CHANGE_CURRENT_MAP_TO(bp10);
-					_12b4_0d75(glbTargetPosXTest, glbTargetPosYTest, _4976_4eac, 0xfe);
+					_12b4_0d75_CREATURE(glbTargetPosXTest, glbTargetPosYTest, _4976_4eac, 0xfe);
 				}
 			}
 			//^12B4:048B
@@ -3488,26 +3486,19 @@ _05c2:
 		_12b4_00af(iCurrentTile & 4, iCurrentTile & 8);
 		break;
 	case 4://^05D0	// blocked by some creature
-		//^12B4:05D0
 		if (cd.pi.glbChampionsCount == 0)
 			break;
-		//^12B4:05DA
 		bp12 = QUERY_CREATURE_AI_SPEC_FLAGS(bp14) & 1;
-		if (bp12 != 0 || GET_CREATURE_WEIGHT(bp14) == 0xff) {
-			//^12B4:05FB
-			_12b4_023f(playerDestPosX, playerDestPosY, &bp16, &bp18, bp0e, di);
+		if (bp12 != 0 || GET_CREATURE_WEIGHT(bp14) == 0xFF) {
+			_12b4_023f_WOUND_RUNNING_INTO_CREATURE(playerDestPosX, playerDestPosY, &bp16, &bp18, bp0e, di);
 		}
-		//^12B4:0616
 		bp24 = ((bp0e +xx) -3) & 3;
 		if (IS_CREATURE_MOVABLE_THERE(playerDestPosX, playerDestPosY, bp24, &bp14) != 0 && _12b4_099e(bp14) != 0) {
-			//^12B4:064C
-			_12b4_0d75(playerDestPosX, playerDestPosY, bp24, 0xfe);
+			_12b4_0d75_CREATURE(playerDestPosX, playerDestPosY, bp24, 0xfe);
 			goto _0685;
 		}
-		//^12B4:0662
 		if (bp12 != 0)
 			break;	
-		//^12B4:066B
 		ATTACK_CREATURE(OBJECT_NULL, playerDestPosX, playerDestPosY, 0x4005, 5, 0);
 		break;
 	case 6://^0685	// any other case
@@ -3553,7 +3544,7 @@ _0768:
 		//^12B4:0779
 		if (cd.pi.glbChampionsCount == 0)
 			break;
-		_12b4_023f(playerDestPosX, playerDestPosY, &bp16, &bp18, bp0e, di);
+		_12b4_023f_WOUND_RUNNING_INTO_CREATURE(playerDestPosX, playerDestPosY, &bp16, &bp18, bp0e, di);
 		//^12B4:079E
 		if ((iDestTile >> 5) != ttDoor || (iDestTile & 7) != 4)
 			break;
