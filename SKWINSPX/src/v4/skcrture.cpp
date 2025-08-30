@@ -1691,7 +1691,7 @@ X32 SkWinCore::CREATURE_GET_NEXT_THINK_GAMETICK()
 	}
 	else if (cd.pi.glbIsPlayerSleeping != 0) {
 		iDeltaTicks <<= 1;
-		if (glbCurrentMapIndex != glbPlayerMap && glbCurrentMapIndex != glbMap_4976_4c12)
+		if (glbCurrentMapIndex != cd.pi.glbPlayerMap && glbCurrentMapIndex != glbMap_4976_4c12)
 			iDeltaTicks <<= 1;
 	}
 	else if ((glbCurrentThinkingCreatureRec->iAnimFrame & 8) != 0) {
@@ -1813,7 +1813,7 @@ void SkWinCore::_12b4_0d75(i16 xx, i16 yy, i16 ss, i16 tt)
 			//^12B4:0DE8
 			if (glbCurrentMapIndex == glbMap_4c28 && bp06 == glbSomePosX_4c2e && bp08 == glbSomePosY_4c30) {
 				//^12B4:0E03
-				_12b4_023f(xx, yy, &bp0a, &bp0c, glbPlayerDir, si = (ss +2) & 3);
+				_12b4_023f(xx, yy, &bp0a, &bp0c, cd.pi.glbPlayerDir, si = (ss +2) & 3);
 			}
 			else {
 				//^12B4:0E2C
@@ -1861,7 +1861,7 @@ void SkWinCore::_12b4_0d75(i16 xx, i16 yy, i16 ss, i16 tt)
 	di = di / si;
 	di += 0x28;
 	if (tt >= 0xfe || tt > di) {
-		PERFORM_MOVE(((ss - glbPlayerDir) & 3) +3);
+		PERFORM_MOVE(((ss - cd.pi.glbPlayerDir) & 3) +3);
 	}
 	//^12B4:0FA5
 	return;
@@ -2144,9 +2144,9 @@ void SkWinCore::DROP_CREATURE_POSSESSION(ObjectID recordLink, i16 xx, i16 yy, Bi
 					//^1C9A:1400
 					break;
 				//^1C9A:1403
-				if (xx == glbPlayerPosX && yy == glbPlayerPosY) {
+				if (xx == cd.pi.glbPlayerPosX && yy == cd.pi.glbPlayerPosY) {
 					//^1C9A:1415
-					di = (glbPlayerDir + RAND01()) & 3;
+					di = (cd.pi.glbPlayerDir + RAND01()) & 3;
 				}
 				else {
 					//^1C9A:1428
@@ -2188,9 +2188,9 @@ void SkWinCore::DROP_CREATURE_POSSESSION(ObjectID recordLink, i16 xx, i16 yy, Bi
 		//^1C9A:14B5
 		if ((QUERY_CREATURE_AI_SPEC_FLAGS(recordLink) & 0x0001) == 0) {
 			//^1C9A:14C3
-			if (xx == glbPlayerPosX && yy == glbPlayerPosY) {
+			if (xx == cd.pi.glbPlayerPosX && yy == cd.pi.glbPlayerPosY) {
 				//^1C9A:14D5
-				di = (glbPlayerDir + RAND01()) & 3;
+				di = (cd.pi.glbPlayerDir + RAND01()) & 3;
 			}
 			else {
 				//^1C9A:14E8
@@ -2410,7 +2410,7 @@ X16 SkWinCore::WOUND_CREATURE(i16 damage)
 	AIDefinition *xLocalAIDef = glbAIDef; // bp08
 	X16 bDiesFromDamage = 0; // di
 
-	if (glbCurrentMapIndex == glbPlayerMap)
+	if (glbCurrentMapIndex == cd.pi.glbPlayerMap)
 	SkD((DLV_TWEET, "Tweet: %s (a#%03d, x:%d, y:%d, map:%d) took %d damage! (hp:%d ac:%d) \n"
 		, static_cast<LPCSTR>(getRecordNameOf(glbCurrentThinkingCreatureID))
 		, glbCurrentThinkingCreatureID.DBIndex()
@@ -5067,7 +5067,7 @@ i16 SkWinCore::CREATURE_ATTACKS_PLAYER(Creature *ref, U16 player)
 			//^075F:1EBF
 			// SPX: Champion "oof" sound when hit
 			// => it would be possible to have several oof sounds using a random
-			QUEUE_NOISE_GEN2(GDAT_CATEGORY_CHAMPIONS, champion->HeroType(), SOUND_CHAMPION_GETHIT, 0xfe, glbPlayerPosX, glbPlayerPosY, 2, 0x69, 0xc8);
+			QUEUE_NOISE_GEN2(GDAT_CATEGORY_CHAMPIONS, champion->HeroType(), SOUND_CHAMPION_GETHIT, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 2, 0x69, 0xc8);
 			di = AIdef->PoisonDamage;
 			if (di != 0 && RAND01() != 0 && (di = USE_ABILITY_ATTRIBUTE(champion, abVit, di)) > 0) {
 				//^075F:1F16
@@ -5343,8 +5343,8 @@ X16 SkWinCore::CREATURE_CAST_SPELL()
 		SkD((DLV_TWEET, "Tweet: %s (a#%3d, x:%d, y:%d, map:%d) has thrown %s by cast! \n"
 			, static_cast<LPCSTR>(getRecordNameOf(glbCurrentThinkingCreatureID))
 			, glbCurrentThinkingCreatureID.DBIndex()
-			, glbPlayerPosX
-			, glbPlayerPosY
+			, cd.pi.glbPlayerPosX
+			, cd.pi.glbPlayerPosY
 			, glbCurrentMapIndex
 			, static_cast<LPCSTR>(getRecordNameOf(ObjectID::Raw(bp04->ItemToThrow)))
 			));
@@ -6253,7 +6253,7 @@ _0c47:
 		if (_3e74_5673(0x20000000 | glbCurrentThinkingCreatureID.DBIndex(), &bp10, 1) == 0) {
 			//^13E4:0C7E
 			bp0e = ALLOC_CPXHEAP_MEM(bp10, sizeof(sk514e)); // sizeof(sk514e) == 14
-			_3e74_585a(bp10, 1);
+			_3e74_585a_CACHE(bp10, 1);
 		}
 		else {
 			//^13E4:0CA1
@@ -6670,7 +6670,7 @@ U16 SkWinCore::CREATURE_121e_0222(U16 xx, U16 yy, U16 ww) // put item on object 
 	if (glbChampionLeader == -1)
 		return 0;
 
-	U16 bp06 = (glbPlayerDir +ww) & 3;
+	U16 bp06 = (cd.pi.glbPlayerDir +ww) & 3;
 	ObjectID di = GET_CREATURE_AT(xx, yy);
 	if (di != OBJECT_NULL) {
 		AIDefinition* xAIDef = QUERY_CREATURE_AI_SPEC_FROM_RECORD(di);	// bp04
@@ -6690,7 +6690,7 @@ U16 SkWinCore::CREATURE_121e_0222(U16 xx, U16 yy, U16 ww) // put item on object 
 	//^121E:02B0
 	if (ww >= 4 && ww <= 7) {
 		//^121E:02BC
-		U8 bp07 = (ww -4 + glbPlayerDir) & 3;
+		U8 bp07 = (ww - 4 + cd.pi.glbPlayerDir) & 3;
 		//^121E:02CA
 		if (xCreature != NULL) {
 			//^121E:02D2

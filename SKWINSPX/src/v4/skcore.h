@@ -765,8 +765,8 @@ protected:
 	Bit32u	*_4976_5c86;	// cacheindex-to-hashval:  0xFFFFxxxx for pict?  0x2000xxxx for creature thing?  (13:dbidx,7:horzScale,5:vertScale) for stretched pict?
 	U16		_4976_5c8a;
 	mement	*_4976_5c8c;	// mement#3
-	U16	_4976_5c90;
-	U16	_4976_5c92;		// cnt used entries of _4976_5c7e?
+	//U16	_4976_5c90; // (_4976_5c90)
+	//U16	_4976_5c92_cache;		// (_4976_5c92) cnt used entries of _4976_5c7e?
 	i16	glbFileHandleGraphics1;		// (_4976_5c94)	filehandle of GRAPH1.DAT or GRAPHICS.DAT
 	i16	glbFileHandleGraphics2;		// (_4976_5c96) filehandle of GRAPH2.DAT if exists.
 	shelf_memory *glbShelfMemoryTable;	// (_4976_5c98)
@@ -795,7 +795,7 @@ protected:
 	U16	_4976_5d10;
 	sk5d12	_4976_5d12;
 	shelf_memory _4976_5d20;	// top of EMS
-	U16	_4976_5d24;	// =128?
+	U16	_4976_5d24;	// _4976_5d24 / cache relaed ? / value =128?
 	i32		_4976_5d26; // 9E AA 01 00 -> 0001AA9E
 	Bit32u	_4976_5d2a;		// tick?
 	X16		glbGDatNumberOfData; // (_4976_5d2e) 3,491 entries in graphics data file
@@ -1205,7 +1205,7 @@ protected:
 	void _3e74_0d32(mement *ref);
 	virtual bool ValidateMements(bool display);
 	void FREE_INDEXED_MEMENT(U16 index);
-	U16 _3e74_4471();
+	U16 _3e74_4471_CACHE(); // _3e74_4471
 	U16 INSERT_CACHE_HASH_AT(Bit32u cacheHash, U16 ici);
 	void _3e74_44ad();
 	U16 QUERY_MEMENTI_FROM(U16 xx);
@@ -1217,7 +1217,7 @@ protected:
 	void _3e74_2b30();
 	mement *ALLOC_LOWER_CPXHEAP(i32 buffSize);
 	Bit8u *ALLOC_CPXHEAP_MEM(U16 index, Bit32u buffSize);
-	void _3e74_585a(U16 xx, U16 yy);
+	void _3e74_585a_CACHE(U16 xx, U16 yy); // _3e74_585a
 	void FILL_ENTIRE_PICT(Bit8u *buff, U16 fill);
 	void FIRE_HIDE_MOUSE_CURSOR();
 	void _01b0_0adb();
@@ -2188,7 +2188,7 @@ protected:
 	void SELECT_CREATURE_COUNT_AI_REFTAB();
 	void __SET_CURRENT_THINKING_CREATURE_WALK_PATH();
 	i16 CREATURE_THINK_381c(); // _1c9a_381c
-	U8 *_3e74_5788(U16 xx, i32 yy);
+	U8 *_3e74_5788_CACHE(U16 xx, i32 yy); // _3e74_5788
 	void _14cd_0276(skxxx9 *ref);
 	void _14cd_0f0a_EXE_17(U8 func, U8 xx, U8 yy, sk1bf9 *ss); // _14cd_0f0a
 	void _14cd_0f3c(i8 aa, sk1bf9 *ss, sk1bf9 *tt, X8 ww, i8 vv, Ax3 uu, U8 xx, U8 yy);

@@ -11,7 +11,7 @@
 #include <bgdat.h>
 #include <skalocdb.h>
 #include <sktimprc.h>
-#include <skweathr.h>
+#include <skweath5.h>
 #include <sklight.h>
 #include <SK1C9A.h>
 #include <sklodlvl.h>

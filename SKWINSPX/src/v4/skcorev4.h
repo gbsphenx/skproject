@@ -20,6 +20,20 @@ using namespace DM2Internal;
 //..............................................................................
 //------------------------------------------------------------------------------
 
+
+// cd.mc.
+typedef struct {
+
+	U16	_4976_5c92_cache;		// (_4976_5c92) cnt used entries of _4976_5c7e?
+	U16	_4976_5c90_cache; // (_4976_5c90)
+
+
+} SKCodeMemCache;
+
+
+//..............................................................................
+
+// cd.gs.
 typedef struct {
 
 
@@ -120,16 +134,18 @@ typedef struct {
 
 typedef struct {
 
-	SKCoreDM1Variables dm1;
+	SKCodeMemCache			mc;
 
-	SKCoreMenuOption mo;
+	SKCoreDM1Variables		dm1;
 
-	SKCoreSoundCard sc;
-	SKCoreMouseKeyboard mk;
+	SKCoreMenuOption		mo;
 
-	SKCoreGameGeneral gg;
-	SKCoreGameState	gs;
-	SKCodePlayerInfo pi;
+	SKCoreSoundCard			sc;
+	SKCoreMouseKeyboard		mk;
+
+	SKCoreGameGeneral		gg;
+	SKCoreGameState			gs;
+	SKCodePlayerInfo		pi;
 
 } SKCoreData;
 

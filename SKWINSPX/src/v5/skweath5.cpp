@@ -12,7 +12,7 @@
 #include <skxrect.h>
 #include <skcloud.h>
 #include <xtypes.h>
-#include <skweathr.h>
+#include <skweath5.h>
 
 // TODO: optimize temporaries
 #include <regs.h>

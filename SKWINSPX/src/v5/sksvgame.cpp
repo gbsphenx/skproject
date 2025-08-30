@@ -27,7 +27,7 @@
 #include <bitem.h>
 #include <uidialog.h>
 #include <SK1C9A.h>
-#include <skweathr.h>
+#include <skweath5.h>
 #include <skevents.h>
 #include <skmove.h>
 #include <SK0AAF.h>

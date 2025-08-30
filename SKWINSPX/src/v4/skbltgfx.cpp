@@ -2160,7 +2160,7 @@ void SkWinCore::FREE_PICT_MEMENT(Picture *ref)
 	//^0B36:01F4
 	else if ((ref->w4 & 0x0008) != 0) {
 		//^0B36:01FF
-		_3e74_585a(ref->w12, 0);
+		_3e74_585a_CACHE(ref->w12, 0);
 	}
 
 }
@@ -2711,7 +2711,7 @@ ExtendedPicture *SkWinCore::QUERY_PICST_IT(ExtendedPicture *ref)
 	//^0B36:0A1E
 	FREE_PICT_MEMENT(&bp32);
 	//^0B36:0A29
-	_3e74_585a(bp18, 0);
+	_3e74_585a_CACHE(bp18, 0);
 	//^0B36:0A35
 	return ref;
 }

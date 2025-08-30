@@ -181,12 +181,12 @@ void SkWinCore::DUNGEON_SET_TILESET(int iTilesetType, int iMapIndex)
 	xCurrentMap->tileset = iTilesetType;
 
 	// if ingame, force reload gfx
-	if (glbTimersMaximumCount > 0 && iMapIndex == glbPlayerMap)
+	if (glbTimersMaximumCount > 0 && iMapIndex == cd.pi.glbPlayerMap)
 	{
-		CHANGE_CURRENT_MAP_TO(glbPlayerMap);
-		MOVE_RECORD_TO(OBJECT_NULL, glbPlayerPosX, glbPlayerPosY, -1, 0);
+		CHANGE_CURRENT_MAP_TO(cd.pi.glbPlayerMap);
+		MOVE_RECORD_TO(OBJECT_NULL, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, -1, 0);
 		LOAD_NEWMAP(iMapIndex);
-		MOVE_RECORD_TO(OBJECT_NULL, -1, 0, glbPlayerPosX, glbPlayerPosY);
+		MOVE_RECORD_TO(OBJECT_NULL, -1, 0, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
 	}
 
 }
@@ -953,8 +953,8 @@ void SkWinCore::DUNGEON_PUT_NEW_ITEM_INGAME(int iAbsoluteItemID, int iMapIndex, 
 		if (oNewItem == OBJECT_NULL)
 			return;
 		
-		if (iPosX == glbPlayerPosX && iPosY == glbPlayerPosY)
-			iTileQuarter = (glbPlayerDir + RAND01()) & 3;
+		if (iPosX == cd.pi.glbPlayerPosX && iPosY == cd.pi.glbPlayerPosY)
+			iTileQuarter = (cd.pi.glbPlayerDir + RAND01()) & 3;
 		else
 			iTileQuarter = RAND02();
 		
@@ -1352,10 +1352,10 @@ int SkWinCore::INIT_BLANK_DUNGEON(X16 isNewGame)
 	int nColumnCounter = 0;
 
 	// Init start position
-	glbPlayerPosX = 0;
-	glbPlayerPosY = 0;
-	glbPlayerDir = 0;
-	glbPlayerMap = 0;
+	cd.pi.glbPlayerPosX = 0;
+	cd.pi.glbPlayerPosY = 0;
+	cd.pi.glbPlayerDir = 0;
+	cd.pi.glbPlayerMap = 0;
 
 	//U16* globalGroundObjects = NULL; // for all tiles
 	//ObjectID* globalGroundObjects = NULL; // for all tiles 
@@ -1710,7 +1710,7 @@ int SkWinCore::INIT_DUNGEON_FINALIZE_ARRANGE(X16 isNewGame)
 		DECIDE_DEFAULT_DUNGEON_MAP_CHIP_SET();
 	
 	_4976_3b5d = 0;
-	CHANGE_CURRENT_MAP_TO(glbPlayerMap);
+	CHANGE_CURRENT_MAP_TO(cd.pi.glbPlayerMap);
 
 	SkCodeParam::bRandomInitChampion = true;
 

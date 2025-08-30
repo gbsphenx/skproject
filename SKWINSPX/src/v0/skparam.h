@@ -26,7 +26,7 @@ public:
 
 
 	static UINT bOptionNewGame;
-	static UINT bOptionResumeSaveGame;
+	static INT bOptionResumeSaveGame;	// not UINT else there is trouble to get the resume game screen
 
 	//
 

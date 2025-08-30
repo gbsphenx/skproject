@@ -225,7 +225,7 @@ void SkWinCore::UPDATE_WEATHER(U16 aa)	// aa = 1 when called from timer, aa = 0 
 					if (GET_TELEPORTER_DETAIL(&bp1e, U8(di), U8(si)) != 0)
 						continue;
 					//^3DF7:0538
-					if (glbPlayerMap == glbCurrentMapIndex && glbPlayerPosX == di && glbPlayerPosY == si && glbRainStormController < 0xb6)
+					if (cd.pi.glbPlayerMap == glbCurrentMapIndex && cd.pi.glbPlayerPosX == di && cd.pi.glbPlayerPosY == si && glbRainStormController < 0xb6)
 						continue;
 					//^3DF7:0558
 					if (glbGameTick < 0x1770)
@@ -244,11 +244,11 @@ void SkWinCore::UPDATE_WEATHER(U16 aa)	// aa = 1 when called from timer, aa = 0 
 						if (bp08->ArmorClass == AI_DEF_ARMOR_MAX)
 							continue;
 						//^3DF7:05AD
-						bp0c = CALC_SQUARE_DISTANCE(glbPlayerPosX, glbPlayerPosY, di, si);
+						bp0c = CALC_SQUARE_DISTANCE(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, di, si);
 						if (bp0c > 2) {
 							if (bp0c > 3)
 								continue;
-							if (CALC_VECTOR_DIR(glbPlayerPosX, glbPlayerPosY, di, si) != glbPlayerDir)
+							if (CALC_VECTOR_DIR(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, di, si) != cd.pi.glbPlayerDir)
 								continue;
 						}
 					}
@@ -261,11 +261,11 @@ void SkWinCore::UPDATE_WEATHER(U16 aa)	// aa = 1 when called from timer, aa = 0 
 						break;
 					//^3DF7:060F
 					// SPX: glbPlayerPosX = x1, glbPlayerPosY = y1, di = x2, si = y2
-					bp0c = CALC_SQUARE_DISTANCE(glbPlayerPosX, glbPlayerPosY, di, si);
+					bp0c = CALC_SQUARE_DISTANCE(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, di, si);
 					if (bp0c > 3)
 						break;
 					//^3DF7:062A
-					if (CALC_VECTOR_DIR(glbPlayerPosX, glbPlayerPosY, di, si) != glbPlayerDir)
+					if (CALC_VECTOR_DIR(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, di, si) != cd.pi.glbPlayerDir)
 						break;
 					//^3DF7:0642
 					UPDATE_GLOB_VAR(0x41, 1, 3);
@@ -298,7 +298,7 @@ void SkWinCore::UPDATE_WEATHER(U16 aa)	// aa = 1 when called from timer, aa = 0 
 				//^3DF7:070A
 				bp0c = BETWEEN_VALUE(1, bp0c, 15);
 				//SPX: Get sound of distant thunder
-				QUEUE_NOISE_GEN1(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, SOUND_DEFAULT_STORM, 0x19, 0x40, glbPlayerPosX, glbPlayerPosY, bp0c);
+				QUEUE_NOISE_GEN1(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, SOUND_DEFAULT_STORM, 0x19, 0x40, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, bp0c);
 				SkD((DLV_DBG_THUNDER, "Thunder at distance %d!\n", bp0c));
 				glbThunderJustCast = 1;
 			}

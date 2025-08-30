@@ -234,7 +234,7 @@ _1201:
 			case 8:
 				{
 					//^1031:12FF
-					si = GET_PLAYER_AT_POSITION((*(glbPtrTransmittedUIEvent++) + glbPlayerDir) & 3);
+					si = GET_PLAYER_AT_POSITION((*(glbPtrTransmittedUIEvent++) + cd.pi.glbPlayerDir) & 3);
 					//^1031:131C
 					if (si < 0)
 						//^1031:1320

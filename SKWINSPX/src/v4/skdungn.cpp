@@ -761,7 +761,7 @@ void SkWinCore::SUMMARIZE_STONE_ROOM(ExtendedTileInfo *ref, Bit16u dir, Bit16u x
 _1efc:
 				di = _0cee_1a46(ref, di, ldir, 0);
 				//^0CEE:1F0F
-				if (bp10 != 0 && glbPlayerPosX != xx && glbPlayerPosY != yy) {
+				if (bp10 != 0 && cd.pi.glbPlayerPosX != xx && cd.pi.glbPlayerPosY != yy) {
 					//^0CEE:1F25
 					ref->w4 = (0xfffe);
 					//^0CEE:1F2E
@@ -1226,7 +1226,7 @@ _2eee:	// logically when we get here, we have found the required marker, then, r
 		//^2FCF:2F87
 	}
 	//^2FCF:2F99
-	CHANGE_CURRENT_MAP_TO(glbPlayerMap);
+	CHANGE_CURRENT_MAP_TO(cd.pi.glbPlayerMap);
 	//^2FCF:2FA3
 	if (ss == SDFSM_CMD_X_TELEPORTER) {	// 4 = cross teleporter
 		//^2FCF:2FA9
@@ -2235,7 +2235,7 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(i16 xpos, i16 ypos, ObjectID reco
 							goto _29a8;
 						}
 						//^2FCF:287A
-						bp10 = (glbPlayerDir +1 == bp14) ? 1 : 0;
+						bp10 = (cd.pi.glbPlayerDir +1 == bp14) ? 1 : 0;
 						//^2FCF:288D
 						goto _29a8;
 					case ACTUATOR_FLOOR_TYPE__ITEM: // 0x04: Activator, trap floor
@@ -2569,8 +2569,8 @@ _29a8:
 							bp3c.actor = TIMER_ACTOR__00;
 							bp3c.b6_0_4((Bit8u)xpos);
 							bp3c.w6_5_9(ypos);
-							bp3c.Value2((Bit8u)glbPlayerMap);
-							bp3c.w6_a_b(glbPlayerDir);
+							bp3c.Value2((Bit8u)cd.pi.glbPlayerMap);
+							bp3c.w6_a_b(cd.pi.glbPlayerDir);
 							//^2FCF:2C70
 							QUEUE_TIMER(&bp3c);
 							//^2FCF:2C7C
@@ -2586,8 +2586,8 @@ _29a8:
 								glbChampionSquad[bp30].HeroType(),
 								SOUND_CHAMPION_GETHIT,
 								0xfe,
-								glbPlayerPosX,
-								glbPlayerPosY,
+								cd.pi.glbPlayerPosX,
+								cd.pi.glbPlayerPosY,
 								0x01,
 								0x69,
 								0xc8
@@ -2602,8 +2602,8 @@ _29a8:
 							SOUND_STD_ACTIVATION,
 							0x8c,
 							0x80,
-							glbPlayerPosX,
-							glbPlayerPosY,
+							cd.pi.glbPlayerPosX,
+							cd.pi.glbPlayerPosY,
 							0x01
 							);
 						//^2FCF:2CF6
@@ -2807,7 +2807,7 @@ Bit16u SkWinCore::MOVE_RECORD_TO(ObjectID rlWhatYouMove, i16 xposFrom, i16 yposF
 	Bit16u bp10 = 0;
 	Bit16u bp12 = 0;
 	Bit16u bp08 = glbCurrentMapIndex; // current mapno
-	Bit16u bp0c = glbPlayerDir; // current player dir
+	Bit16u bp0c = cd.pi.glbPlayerDir; // current player dir
 	Bit16u bp1a = 0;
 	//^2FCF:0DFA
 	Bit16u bp0a;
@@ -2846,7 +2846,7 @@ Bit16u SkWinCore::MOVE_RECORD_TO(ObjectID rlWhatYouMove, i16 xposFrom, i16 yposF
 			//^2FCF:0E71
 			if (QUERY_GDAT_DBSPEC_WORD_VALUE(si, 0xf8) != 0) {
 				//^2FCF:0E80
-				if (bp08 == glbPlayerMap || _4976_581c == glbPlayerMap) {
+				if (bp08 == cd.pi.glbPlayerMap || _4976_581c == cd.pi.glbPlayerMap) {
 					//^2FCF:0E92
 					glbDoLightCheck = 1;
 				}
@@ -2892,7 +2892,7 @@ Bit16u SkWinCore::MOVE_RECORD_TO(ObjectID rlWhatYouMove, i16 xposFrom, i16 yposF
 			//^2FCF:0F38
 			if (si == 0xffff) {
 				//^2FCF:0F3D
-				if (glbPlayerDir == bp0c) {
+				if (cd.pi.glbPlayerDir == bp0c) {
 					//^2FCF:0F45
 					goto _1562;
 				}
@@ -2909,7 +2909,7 @@ Bit16u SkWinCore::MOVE_RECORD_TO(ObjectID rlWhatYouMove, i16 xposFrom, i16 yposF
 			//^2FCF:0F59
 			if (di != bp08) {
 				//^2FCF:0F5E
-				if (si == 0xffff && glbPlayerMap != bp08) {
+				if (si == 0xffff && cd.pi.glbPlayerMap != bp08) {
 					//^2FCF:0F6B
 					LOAD_LOCALLEVEL_GRAPHICS_TABLE(bp08);
 				}
@@ -2970,7 +2970,7 @@ Bit16u SkWinCore::MOVE_RECORD_TO(ObjectID rlWhatYouMove, i16 xposFrom, i16 yposF
 			//^2FCF:1047
 			_2fcf_0b8b(xposTo, yposTo, di); // SPX: check teleporter information on tile
 			//^2FCF:1055
-			si = GET_CREATURE_AT(glbPlayerPosX, glbPlayerPosY);
+			si = GET_CREATURE_AT(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
 			//^2FCF:1066
 			if (si != OBJECT_NULL) {
 				//^2FCF:106E
@@ -3034,9 +3034,9 @@ Bit16u SkWinCore::MOVE_RECORD_TO(ObjectID rlWhatYouMove, i16 xposFrom, i16 yposF
 _1151:
 	RELEASE_CREATURE_TIMER(si);
 	//^2FCF:1158
-	if (MOVE_RECORD_TO(si, glbPlayerPosX, glbPlayerPosY, -3, 0) == 0) {
+	if (MOVE_RECORD_TO(si, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, -3, 0) == 0) {
 		//^2FCF:1170
-		SET_TIMER_3C_OR_3D(si, glbPlayerPosX, glbPlayerPosY, di, 0);
+		SET_TIMER_3C_OR_3D(si, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, di, 0);
 	}
 
 	//^2FCF:1183
@@ -3045,7 +3045,7 @@ _1183:
 		//^2FCF:1188
 		//^2FCF:1199
 		//^2FCF:155A
-		PLACE_OR_REMOVE_OBJECT_IN_ROOM(glbPlayerPosX, glbPlayerPosY, 0xffff, bp12, FCT_PLACE_ON, 0);
+		PLACE_OR_REMOVE_OBJECT_IN_ROOM(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 0xffff, bp12, FCT_PLACE_ON, 0);
 	}
 	else {
 		//^2FCF:119C

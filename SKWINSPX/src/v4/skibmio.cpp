@@ -87,7 +87,7 @@ i16 SkWinCore::FIRE_MAIN(i16 argc, const char **argv, char **env) //#DS=4976
 
 	while (true) {
 		GAME_LOOP();
-		END_GAME(glbPlayerDefeated);
+		END_GAME(cd.pi.glbPlayerDefeated);
 	}
 	return 0;
 }

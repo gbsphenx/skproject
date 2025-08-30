@@ -227,7 +227,7 @@ void SkWinCore::PROCEED_LIGHT(U16 cmdNum, U16 yy)
 	//^2759:1650
 	bp0a.value = (cmdNum == CmDarkness) ? si : -si;
 	//^2759:1661
-	bp0a.SetMap(glbPlayerMap);
+	bp0a.SetMap(cd.pi.glbPlayerMap);
 	bp0a.SetTick(glbGameTick +di);
 	//^2759:1683
 	bp0a.actor = TIMER_ACTOR__00;
@@ -331,7 +331,7 @@ void SkWinCore::PROCEED_ENCHANTMENT_SELF(U16 mask, U16 yy, U16 zz, U16 tick)
 	bp12.value = zz;
 	bp12.TimerType(ttyEnchantment);
 	bp12.actor = U8(mask);
-	bp12.SetMap(U8(glbPlayerMap));
+	bp12.SetMap(U8(cd.pi.glbPlayerMap));
 	bp12.SetTick(glbGameTick +tick);
 	QUEUE_TIMER(&bp12);
 	//^2C1D:0182
@@ -830,7 +830,7 @@ _0476:
 			}
 		}
 		//^075F:0549
-		if (glbCurrentMapIndex == glbPlayerMap) {
+		if (glbCurrentMapIndex == cd.pi.glbPlayerMap) {
 			glbDoLightCheck = 1;
 		}
 	}
@@ -1117,7 +1117,7 @@ _1aae:
 		}
 	}
 	//^075F:1AD7
-	if (glbCurrentMapIndex == glbPlayerMap) {
+	if (glbCurrentMapIndex == cd.pi.glbPlayerMap) {
 		if (bp04->CloudType() == (missileLightning) || bp04->CloudType() == (missileFireball) || bp04->CloudType() == (missileThunderBolt)) {
 			//^075F:1B06
 			glbDoLightCheck = 1;
@@ -1138,7 +1138,7 @@ void SkWinCore::PROCESS_TIMER_DESTROY_DOOR(Timer *ref)
 	//^3A15:0D14
 	U8 *bp04 = &glbCurrentTileMap[ref->Xcoord()][ref->Ycoord()];
 	*bp04 = (*bp04 & 0xf8) | 0x05;
-	if (glbCurrentMapIndex == glbPlayerMap)
+	if (glbCurrentMapIndex == cd.pi.glbPlayerMap)
 		//^3A15:0D54
 		glbDoLightCheck = 1;
 	//^3A15:0D5A
@@ -1298,7 +1298,7 @@ void SkWinCore::ACTIVATE_CONTINUOUS_ORNATE_ANIMATOR(ObjectID rl, Timer *ref, Act
 			if (pr4->ActiveStatus() == 0) {
 				//^3A15:1167
 				pr4->ActiveStatus(1);
-				if (glbCurrentMapIndex == glbPlayerMap)
+				if (glbCurrentMapIndex == cd.pi.glbPlayerMap)
 					glbDoLightCheck = 1;
 				//^3A15:117B
 				pr4->ActuatorData((pr4->ActuatorData() & 0x100) | (((si -(glbGameTick % si)) % si)&0xff));
@@ -1310,7 +1310,7 @@ void SkWinCore::ACTIVATE_CONTINUOUS_ORNATE_ANIMATOR(ObjectID rl, Timer *ref, Act
 			di = (X16)(((pr4->ActuatorData() & 0xff) + glbGameTick ) % si);
 			if (di == 0) {
 				//^3A15:121A
-				if (glbCurrentMapIndex == glbPlayerMap)
+				if (glbCurrentMapIndex == cd.pi.glbPlayerMap)
 					glbDoLightCheck = 1;
 				pr4->ActiveStatus(0);
 			}
@@ -1658,7 +1658,7 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 				i16 bp2e = (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp08->OrnateIndex(), dtWordValue, GDAT_WALL_ORNATE__IS_LADDER_UP) != 0) ? -1 : 1;
 				i16 bp2a = ref->XcoordB();
 				i16 bp2c = ref->YcoordB();
-				bp2e = LOCATE_OTHER_LEVEL(glbPlayerMap, bp2e, &bp2a, &bp2c, NULL);
+				bp2e = LOCATE_OTHER_LEVEL(cd.pi.glbPlayerMap, bp2e, &bp2a, &bp2c, NULL);
 				if (bp2e < 0)
 					continue;
 				//^3A15:2354
@@ -2164,10 +2164,10 @@ void SkWinCore::ACTUATE_FLOOR_MECHA(Timer *ref)
 			case ACTUATOR_FLOOR_TYPE__PARTY_TELEPORTER://^1958 // 0x2E -> '-'
 				//^3A15:1958
 				bp12 = glbCurrentMapIndex;
-				if (bp12 != glbPlayerMap) {
+				if (bp12 != cd.pi.glbPlayerMap) {
 					//^3A15:1964
-					CHANGE_CURRENT_MAP_TO(glbPlayerMap);
-					MOVE_RECORD_TO(OBJECT_NULL, glbPlayerPosX, glbPlayerPosY, -1, 0);
+					CHANGE_CURRENT_MAP_TO(cd.pi.glbPlayerMap);
+					MOVE_RECORD_TO(OBJECT_NULL, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, -1, 0);
 					LOAD_NEWMAP(U8(bp12));
 					if (bp04->OnceOnlyActuator() != 0) {
 						//^3A15:199E
@@ -2181,11 +2181,11 @@ void SkWinCore::ACTUATE_FLOOR_MECHA(Timer *ref)
 				//^3A15:19CE
 				else if (bp04->OnceOnlyActuator() != 0) {
 					//^3A15:19DF
-					MOVE_RECORD_TO(OBJECT_NULL, glbPlayerPosX, glbPlayerPosY, bp04->Xcoord(), bp04->Ycoord());
+					MOVE_RECORD_TO(OBJECT_NULL, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, bp04->Xcoord(), bp04->Ycoord());
 				}
 				else {
 					//^3A15:19F7
-					MOVE_RECORD_TO(OBJECT_NULL, glbPlayerPosX, glbPlayerPosY, bp0a, di);
+					MOVE_RECORD_TO(OBJECT_NULL, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, bp0a, di);
 				}
 				//^3A15:1A0D
 				if (bp04->RevertEffect() != 0) {
@@ -2194,7 +2194,7 @@ void SkWinCore::ACTUATE_FLOOR_MECHA(Timer *ref)
 				}
 				else {
 					//^3A15:1A32
-					ROTATE_SQUAD((bp04->ActionType() +glbPlayerDir) & 3);
+					ROTATE_SQUAD((bp04->ActionType() + cd.pi.glbPlayerDir) & 3);
 				}
 				break;
 			case ACTUATOR_FLOOR_TYPE__ORNATE_ANIMATOR://^1A53 // 0x32 -> 'Activator, ornate animator'
@@ -2398,7 +2398,7 @@ void SkWinCore::STEP_DOOR(Timer *ref)
 	if (iOpenCloseState == _DOOR_STATE__DESTROYED_) // 5, destroyed, can't operate
 		return;
 	//^3A15:0807
-	if (glbCurrentMapIndex == glbPlayerMap)
+	if (glbCurrentMapIndex == cd.pi.glbPlayerMap)
 		glbDoLightCheck = 1;
 	//^3A15:0816
 	Door *bp08 = GET_ADDRESS_OF_TILE_RECORD(U8(di), U8(si))->castToDoor();
@@ -2581,7 +2581,7 @@ void SkWinCore::ACTUATE_TRICKWALL(Timer *ref)
 			QUEUE_NOISE_GEN1(GDAT_CATEGORY_GRAPHICSSET, 0xFE, SOUND_WALL_OPEN, 0x61, 0x80, bp06, bp08, 1);
 	}
 	//^3A15:0CFD
-	if (glbCurrentMapIndex == glbPlayerMap)
+	if (glbCurrentMapIndex == cd.pi.glbPlayerMap)
 		glbDoLightCheck = 1;
 	//^3A15:0D0C
 	return;
@@ -2689,7 +2689,7 @@ void SkWinCore::PROCESS_TIMER_LIGHT(Timer *ref)
 	Timer newTimer; // bp0c
 	newTimer.TimerType(ttyLight);
 	newTimer.value = di;
-	newTimer.SetMap(glbPlayerMap);
+	newTimer.SetMap(cd.pi.glbPlayerMap);
 	newTimer.SetTick(glbGameTick +8);
 	newTimer.actor = TIMER_ACTOR__00;
 	QUEUE_TIMER(&newTimer);
@@ -2833,7 +2833,7 @@ void SkWinCore::PROCESS_TIMER_59(Timer *ref)
 	Actuator *bp04 = GET_ADDRESS_OF_ACTU(ref->id8());
 	if (bp04->OnceOnlyActuator() == 0) {
 		//^3A15:378E
-		if (glbCurrentMapIndex == glbPlayerMap) {
+		if (glbCurrentMapIndex == cd.pi.glbPlayerMap) {
 			//^3A15:3797
 			glbDoLightCheck = 1;
 		}
@@ -2852,7 +2852,7 @@ void SkWinCore::CONTINUE_ORNATE_NOISE(Timer *ref)
 	ENTER(6);
 	//^3A15:37AC
 	Actuator *pActuator = GET_ADDRESS_OF_ACTU(ref->id8());	// bp04
-	if (pActuator->ActiveStatus() != 0 && ref->GetMap() == glbPlayerMap) {
+	if (pActuator->ActiveStatus() != 0 && ref->GetMap() == cd.pi.glbPlayerMap) {
 		//^3A15:37EA
 		X16 si = ((GET_TILE_VALUE(ref->XcoordB(), ref->YcoordB()) >> 5) == ttWall) ? 1 : 0;
 		U8 iCategory = 0;	// bp05
@@ -2956,11 +2956,11 @@ void SkWinCore::PROCESS_TIMER_AMBIENT_SOUND(Timer *ref)
 
 	//static int iRainSoundCount = 0;
 	SkD((DLV_DBG_RAIN, "Tick %d / Playing Rain sound %02x ! (rain level = %d, rain strength = %d) | Map: %d / GfxSet: %d\n",
-		glbGameTick, iSoundID, rainLevel, glbRainStrength, glbPlayerMap, glbMapGraphicsSet));
+		glbGameTick, iSoundID, rainLevel, glbRainStrength, cd.pi.glbPlayerMap, glbMapGraphicsSet));
 	
 	// Generate sound
 	if (SkCodeParam::bUseExtendedSound)
-		QUEUE_NOISE_GEN1(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, iSoundID, 0x96, 0x80, glbPlayerPosX, glbPlayerPosY, 0);
+		QUEUE_NOISE_GEN1(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, iSoundID, 0x96, 0x80, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 0);
 	//iRainSoundCount = (iRainSoundCount+1)%20;
 	
 	// Issue a new timer
@@ -2977,7 +2977,7 @@ void SkWinCore::PROCESS_TIMER_AMBIENT_SOUND(Timer *ref)
 
 #if (XDMX_FEATURE_AMBIENT_SOUND == 1)
 	Timer xTimerRef;
-	xTimerRef.SetMap(glbPlayerMap);
+	xTimerRef.SetMap(cd.pi.glbPlayerMap);
 	xTimerRef.SetTick(glbGameTick + iDeltaTick);
 	xTimerRef.TimerType(ttyAmbientSound);
 	xTimerRef.actor = TIMER_ACTOR__00;
@@ -3107,7 +3107,7 @@ void SkWinCore::PROCEED_TIMERS()
 				PROCESS_TIMER_0C(timer.actor);
 				break;
 			case ttyLight://^3BE5
-				CHANGE_CURRENT_MAP_TO(glbPlayerMap);
+				CHANGE_CURRENT_MAP_TO(cd.pi.glbPlayerMap);
 				PROCESS_TIMER_LIGHT(xCurrentTimer);
 				RECALC_LIGHT_LEVEL();
 				break;
@@ -3175,8 +3175,8 @@ void SkWinCore::PROCEED_TIMERS()
 				GET_ADDRESS_OF_RECORD2(xCurrentTimer->id6())->TextVisibility(1);
 				break;
 			case tty5D://^3D55
-				if (timer.Value2() == glbPlayerMap) {
-					MOVE_RECORD_TO(OBJECT_NULL, glbPlayerPosX, glbPlayerPosY, timer.b6_0_4(), timer.w6_5_9());
+				if (timer.Value2() == cd.pi.glbPlayerMap) {
+					MOVE_RECORD_TO(OBJECT_NULL, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, timer.b6_0_4(), timer.w6_5_9());
 					ROTATE_SQUAD(timer.w6_a_b());
 				}
 				break;
@@ -3191,7 +3191,7 @@ void SkWinCore::PROCEED_TIMERS()
 _3d93:
 		;
 	}
-	CHANGE_CURRENT_MAP_TO(glbPlayerMap);
+	CHANGE_CURRENT_MAP_TO(cd.pi.glbPlayerMap);
 	return;
 }
 

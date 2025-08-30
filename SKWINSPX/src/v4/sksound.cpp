@@ -404,18 +404,18 @@ void SkWinCore::QUEUE_NOISE_GEN1(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u xx, B
 	//^482B:02DC
 	if (tickDelta > 0) {
 		//^482B:02E2
-		xpos += dunMapLocalHeader->MapOffsetX() - dunMapsHeaders[glbPlayerMap].MapOffsetX() - glbPlayerPosX;
+		xpos += dunMapLocalHeader->MapOffsetX() - dunMapsHeaders[cd.pi.glbPlayerMap].MapOffsetX() - cd.pi.glbPlayerPosX;
 		//^482B:0308
-		ypos += dunMapLocalHeader->MapOffsetY() - dunMapsHeaders[glbPlayerMap].MapOffsetY() - glbPlayerPosY;
+		ypos += dunMapLocalHeader->MapOffsetY() - dunMapsHeaders[cd.pi.glbPlayerMap].MapOffsetY() - cd.pi.glbPlayerPosY;
 	}
 	else {
 		//^482B:0330
-		xpos -= glbPlayerPosX;
-		ypos -= glbPlayerPosY;
+		xpos -= cd.pi.glbPlayerPosX;
+		ypos -= cd.pi.glbPlayerPosY;
 	}
 	//^482B:033C
 	i16 si;
-	switch (glbPlayerDir) {
+	switch (cd.pi.glbPlayerDir) {
 		case 1:
 			//^482B:0350
 			si = xpos;
