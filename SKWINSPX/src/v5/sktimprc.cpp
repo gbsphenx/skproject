@@ -1,3 +1,4 @@
+#include <types.h>
 #include <dm2data.h>
 #include <sktimer.h>
 #include <skmap.h>
@@ -16,7 +17,7 @@
 #include <skmovrec.h>
 #include <skrandom.h>
 #include <uiinput.h>
-#include <skweathr.h>
+#include <skweath5.h>
 #include <skai.h>
 #include <SK1C9A.h>
 #include <skmove.h>

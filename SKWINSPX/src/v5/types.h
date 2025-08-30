@@ -251,6 +251,8 @@
 		  }
 	};
 
+namespace skv5 {
+#ifndef SKWINSPX
 	struct ObjectID
   {
 		// FEDCBA98 76543210
@@ -262,5 +264,8 @@
 		// iiiiiiiiii -> record index. 0 to 1023.
 		ui16 w_00;
   };
+#endif // SKWINSPX
+
+}
 
 #endif

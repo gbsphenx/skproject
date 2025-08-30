@@ -1,5 +1,7 @@
 #include <stdio.h> // NULL
 
+#include <types.h>
+#include <bcreatur.h>
 #include <skrandom.h>
 #include <xtypes.h>
 #include <SK0350.h>
@@ -18,7 +20,7 @@
 #include <skai.h>
 #include <skmove.h>
 #include <skevents.h>
-#include <bcreatur.h>
+
 
 #include <dm2debug.h>
 #include <dosvideo.h>

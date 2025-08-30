@@ -1,3 +1,4 @@
+#include <types.h>
 #include <dm2data.h>
 #include <SK0350.h>
 #include <util.h>
@@ -16,6 +17,8 @@
 
 #include <emu.h>
 #include <regs.h>
+
+using namespace skv5;
 
 // belongs to DM2_14cd_2886
 static i32 DM2_14cd_2807(i16* eaxpw, i16* edxpw)
@@ -3972,7 +3975,7 @@ static i8 DM2_14cd_0389(void)
   //m_15E97:
   if (RG1L != 0)
     return vb_00;
-  return 0xff;
+  return 0xFF;
 }
 
 // belongs to DM2_14cd_0684

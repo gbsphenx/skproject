@@ -1,3 +1,4 @@
+#include <types.h>
 #include <skwinapp.h>
 //#include <SKALEGRO.h>
 #include <dm2globl.h>
@@ -35,7 +36,7 @@
 #include <sktimer.h>
 #include <skguivwp.h>
 #include <sktimprc.h>
-#include <skweathr.h>
+#include <skweath5.h>
 #include <skevents.h>
 //#include <skmove.h>
 #include <skengage.h>

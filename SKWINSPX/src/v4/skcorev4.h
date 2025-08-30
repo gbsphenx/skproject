@@ -13,6 +13,11 @@ using namespace DMEncyclopaedia;
 using namespace DM2Internal;
 
 //..............................................................................
+
+//using ObjectID = DMEncyclopaedia::ObjectID;
+//typedef DMEncyclopaedia::ObjectID ObjectID;
+
+//..............................................................................
 //------------------------------------------------------------------------------
 
 typedef struct {

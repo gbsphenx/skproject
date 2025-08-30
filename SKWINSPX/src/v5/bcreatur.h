@@ -5,6 +5,10 @@
     #include <types.h>
   #endif
 
+#include <dme.h>
+
+//using namespace skv5;
+
   class c_creature // size 0x22
   {
     public:
@@ -42,8 +46,13 @@
 	class SPX_Creature // size 0x10
   {
     public:
-		  ObjectID w_00; // Next object ID.
-		  ObjectID possession; // w2 Next possession object ID. Although not recommended, it is possible to
+#ifdef SKWINSPX
+		DMEncyclopaedia::ObjectID w_00; // Next object ID.
+		DMEncyclopaedia::ObjectID possession; // w2 Next possession object ID. Although not recommended, it is possible to
+#else
+		ObjectID w_00; // Next object ID.
+		ObjectID possession; // w2 Next possession object ID. Although not recommended, it is possible to
+#endif
 		  ui8 b_04; // SPX_Creature type. Her
 		  ui8 b_05; // Position of each c // where &sk4ebe[b5]
 		  ui16 w_06; // Hit points of creature 1

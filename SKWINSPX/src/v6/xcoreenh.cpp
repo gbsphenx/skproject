@@ -171,7 +171,7 @@ U16 SkWinCore::GET_TILE_COUNT_TAKEABLE_ITEMS(U16 iMapX, U16 iMapY, U16 iDirectio
 X16 SkWinCore::SELECT_CHAMPION_FROM_GDAT(U8 iChampionID)
 {
 	U16 iChampionNumber = 0;
-	if (glbLeaderHandPossession.object != OBJECT_NULL || (iChampionNumber = cd.pi.glbChampionsCount) >= MAX_CHAMPIONS)
+	if (cd.pi.glbLeaderHandPossession.object != OBJECT_NULL || (iChampionNumber = cd.pi.glbChampionsCount) >= MAX_CHAMPIONS)
 		return 0;
 	X16 iCurrentMap = glbCurrentMapIndex;
 	ObjectID xObject;

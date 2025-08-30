@@ -261,6 +261,7 @@ namespace DMEncyclopaedia {
 		//U16 w;
 		union {
 			U16 w;
+			U16 w_00;	// V5
 			struct ObjectRefID orif;
 		};
 		//U32 w32;	// SPX extension experimentation; not here like that, this shifts data then crashes
