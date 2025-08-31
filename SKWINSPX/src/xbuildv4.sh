@@ -27,6 +27,7 @@ export SOURCE_FOLDER=./v4
 ./xcomp.sh skaudio
 ./xcomp.sh sksound
 ## MAIN GAME
+./xcomp.sh skmemcch
 ./xcomp.sh skgdat
 ./xcomp.sh skuievnt
 ./xcomp.sh skevent
@@ -44,6 +45,7 @@ export SOURCE_FOLDER=./v4
 ./xcomp.sh skdoor
 ./xcomp.sh skibmio
 ./xcomp.sh skdevui
+./xcomp.sh skfileop
 ./xcomp.sh skgameui
 ./xcomp.sh sklua -w
 

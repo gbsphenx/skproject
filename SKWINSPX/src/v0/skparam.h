@@ -24,7 +24,6 @@ public:
 	static bool bRenderingEngineMFC;				// MFC renderer - Windows only
 	static bool bEngineNoDisplay;
 
-
 	static UINT bOptionNewGame;
 	static INT bOptionResumeSaveGame;	// not UINT else there is trouble to get the resume game screen
 

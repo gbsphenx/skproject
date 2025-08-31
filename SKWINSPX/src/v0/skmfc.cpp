@@ -1,10 +1,10 @@
 #if (_MSC_VER >= 1200) || defined(_USE_MFC80) || defined(_USE_MFC60)
-#include <stdafx.h>	// Required for MSVC6 compilation
-//#include <windows.h>
-#include <afxwin.h>
-#include <objbase.h>
-#pragma comment(lib, "ole32.lib")
-#else
+	#include <stdafx.h>	// Required for MSVC6 compilation
+	//#include <windows.h>
+	#include <afxwin.h>
+	#include <objbase.h>
+	#pragma comment(lib, "ole32.lib")
+#elif !defined (__NO_MFC__)
 	#define __NO_MFC__
 #endif
 

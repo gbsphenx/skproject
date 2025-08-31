@@ -176,7 +176,7 @@ UINT SkRendererSDL::Close()
     SDL_DestroyRenderer(sdlRenderer);
     SDL_DestroyWindow(sdlWindow);
 
-	if (sdlAudio != NULL)
+	if (sdlAudio != 0)
 		SDL_CloseAudioDevice(sdlAudio);
 
     SDL_Quit();
@@ -206,7 +206,7 @@ UINT SkRendererSDL::StartAudioSample(const char* sSampleName)
     xWavSample.userdata = NULL;
 
     sdlAudio = SDL_OpenAudioDevice(NULL, 0, &xWavSample, NULL, 0);
-    if (sdlAudio == NULL) {
+    if (sdlAudio == 0) {
         printf("SDL_OpenAudioDevice error: %s\n", SDL_GetError());
         SDL_FreeWAV(xWavData);
 		return 1;

@@ -70,9 +70,6 @@ protected:
 	// 
 	typedef U16 (SkWinCore::*pfnOversee_t)(ObjectID *ref, void *pv);
 
-// SPX: _4976_53b4 renamed glbChampionSquad
-#define glbChampionSquad (&glbChampionTable[1])
-
 	SkWinMIDI* skmidi;
 
 #if (DM2_EXTENDED_MODE == 1)

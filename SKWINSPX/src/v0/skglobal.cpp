@@ -419,7 +419,7 @@ const X8* const strDungeon = (const X8*)
 #elif defined (SKWINSPX)
 	const X8* const strVersionNumber = (const X8*) "V6.0";	// SPX: 6.0 because it is above 5.x
 #else
-	const X8* const strVersionNumber = (const X8*)	"V1.0"; // original value
+	const X8* const strVersionNumber = (const X8*)	"V?.?"; // SPX: original value was V1.0, but I let ?.? by default because it should not appear when properly compiled
 	//"\x56\x31\x2E\x30\x00";                                            // V1.0.
 #endif
 

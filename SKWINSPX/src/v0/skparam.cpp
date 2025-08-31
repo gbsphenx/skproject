@@ -22,7 +22,6 @@ bool SkCodeParam::bRenderingEngineMFC = false;
 
 bool SkCodeParam::bEngineNoDisplay = false;
 
-
 UINT SkCodeParam::bOptionNewGame = 0;
 INT SkCodeParam::bOptionResumeSaveGame = -1;
 

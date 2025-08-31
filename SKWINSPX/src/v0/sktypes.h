@@ -117,7 +117,12 @@ typedef unsigned int	UINT;
 typedef uint32_t	UINT;	// generic unsigned int for RC, index & loops
 #elif defined (__MINGW__)
 typedef uint32_t	UINT;
+typedef int32_t		INT;
 #endif // Win MSVC6 UINT is (unsigned int)
+
+#if defined (__LINUX__)
+typedef int32_t	INT;
+#endif
 
 //------------------------------------------------------------------------------
 // For Win, LPCSTR is in WINNT.H

@@ -3043,7 +3043,7 @@ void SkWinCore::PROCEED_TIMERS()
 		U16 iTimerType = (U16) timer.TimerType();; // di (from si)
 		U8 iEventActor = 0;
 
-		SkD((SkCodeParam::bEngineNoDisplay||DLV_DBG_TIMER, "DBG: Timer#%2d (%6u,%2u,%02X,%02X,%04X,%04X)\n"
+		SkD((DLV_DBG_TIMER, "DBG: Timer#%2d (%6u,%2u,%02X,%02X,%04X,%04X)\n"
 			, iTimerCount, (Bitu)xCurrentTimer->GetTick(), (Bitu)xCurrentTimer->GetMap(), (Bitu)xCurrentTimer->TimerType()
 			, (Bitu)xCurrentTimer->actor, (Bitu)xCurrentTimer->value, (Bitu)xCurrentTimer->w8
 			));

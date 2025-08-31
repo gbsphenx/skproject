@@ -117,6 +117,9 @@ typedef struct {
 
 } SKCodePlayerInfo;
 
+// SPX: _4976_53b4 renamed glbChampionSquad
+#define glbChampionSquad (&glbChampionTable[1])
+
 //..............................................................................
 
 // cd.dm1.

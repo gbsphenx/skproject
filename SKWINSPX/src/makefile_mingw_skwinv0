@@ -1,0 +1,51 @@
+# MinGW32 SKWinV0 makefile
+# 2025, Sphenx
+# Required librairies : SDL
+MAKE = mingw32-make
+                               
+SKWIN_EXE = skwinv0-mingw
+SKWIN_BUILD_FOLDER = ../build/SKWinV0_MinGW_Release
+CC = g++
+CFLAGS = -g -W -Wall -O3
+CPPFLAGS = -D__MINGW__ -I.. -Iv0 -I$(LUALIB_PATH)/include -I$(MINGW_PATH) -I$(SDLLIB_PATH)/include
+LIBS = -L.. -L$(LUALIB_LIB) -L$(MINGW_LIB) -L$(SDLLIB_LIB)
+LDFLAGS = $(MINGW_LDFLAGS) $(SDLLIB_LDFLAGS)
+
+
+OBJ = $(SKWIN_0_OBJ)
+OBJ_STATIC = $(LUALIB_OBJ) $(MINGW_OBJ) $(SDLLIB_OBJ)
+
+#MINGW
+MINGW_PATH = ../MinGW
+MINGW_H = $(MINGW_PATH)/include
+MINGW_LIB = $(MINGW_PATH)/lib
+MINGW_OBJ = $(MINGW_LIB)/libws2_32.a
+MINGW_LDFLAGS = -lws2_32
+
+#SDL
+SDLLIB_PATH = ../SDL2-2.0.8
+SDLLIB_H = $(SDLLIB_PATH)/include/*.h
+SDLLIB_LIB = $(SDLLIB_PATH)/lib/x86
+SDLLIB_OBJ = $(SDLLIB_LIB)/SDL2.lib $(SDLLIB_LIB)/SDL2main.lib
+#SDLLIB_OBJ = $(SDLLIB_LIB)/SDL2.lib
+SDLLIB_LDFLAGS = -lSDL2main -lSDL2
+
+#LUA
+LUALIB_PATH = ../lua
+LUALIB_H = $(LUALIB_PATH)/include/*.h
+LUALIB_LIB = $(LUALIB_PATH)/lib
+LUALIB_OBJ = $(LUALIB_LIB)/Lua5.1.lib
+
+#SKWIN MINI
+SKWIN_0_PATH = v0
+SKWIN_0_H = $(SKWIN_0_PATH)/*.h
+SKWIN_0_OBJ = $(SKWIN_0_PATH)/skmfc.o $(SKWIN_0_PATH)/skwinmfc.o $(SKWIN_0_PATH)/skcnsole.o $(SKWIN_0_PATH)/skfile.o $(SKWIN_0_PATH)/skdos.o $(SKWIN_0_PATH)/sksdl2.o $(SKWIN_0_PATH)/skvram.o $(SKWIN_0_PATH)/skwinapp.o $(SKWIN_0_PATH)/skparam.o $(SKWIN_0_PATH)/skmini.o $(SKWIN_0_PATH)/skdebug.o $(SKWIN_0_PATH)/skglobal.o $(SKWIN_0_PATH)/skrender.o
+
+
+all: $(SKWIN_EXE)
+
+$(SKWIN_EXE) : $(OBJ)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(LIBS) $(LDFLAGS) $(OBJ) $(OBJ_STATIC) -o ${SKWIN_BUILD_FOLDER}/$(SKWIN_EXE)
+
+clean: 
+	rm $(OBJ)

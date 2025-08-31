@@ -703,7 +703,7 @@ void SkWinApp::GetMousePosButtons(U16 *x, U16 *y, U16 *buttons)
 
 	//SkD((DLV_MOUSE,"SDL_GetMouseState %d,%d buttons=%d / scale=%d\n", U16(iDeviceMouseX), U16(iDeviceMouseY), U16(*buttons), SkCodeParam::iVideoScale));
 	*x = U16(iDeviceMouseX)/SkCodeParam::iVideoScale;
-	*y = U16(iDeviceMouseY)/SkCodeParam::iVideoScale;
+	*y = U16(iDeviceMouseY)/(SkCodeParam::iVideoScale*SkCodeParam::fVideoYScale);
 
 	//SkD((DLV_MOUSE,"GetMousePosButtons (%05d): M(%3d,%3d) Btn:(%2d)\n", iCallCount++, iDeviceMouseX, iDeviceMouseY, iDeviceButtons));
 }

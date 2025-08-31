@@ -9,6 +9,7 @@
 #include <skdebug.h>
 #include <skcore.h>
 
+#include <string.h>
 
 
 //^3E74:48C9
