@@ -11,6 +11,8 @@
 
 #include <sksdl2.h>
 
+#include <skdebug.h>
+
 #if defined (__NO_SDL__)
 #elif defined (__LINUX__)
 	#include <SDL2/SDL.h>
@@ -217,4 +219,49 @@ UINT SkRendererSDL::StartAudioSample(const char* sSampleName)
 
 #endif // not __NO_SDL__
 	return 0;
+}
+
+
+bool SkRendererSDL::ML()
+{
+//#if defined(__SDL__) && !defined(__NO_SDL__)
+	while (true) {
+		//SkD((DLV_MOUSE,"before SDL_PumpEvents\n"));
+		SDL_Event event;
+		SDL_PumpEvents();
+		if (SDL_PollEvent(&event)) {
+			switch (event.type) {
+				SkD((DLV_MOUSE,"Event type = %d\n", event.type));
+				case SDL_KEYDOWN:
+					xMasterWinApp->processKinput(event.key.keysym.sym, true);
+					break;
+				case SDL_KEYUP:
+					xMasterWinApp->processKinput(event.key.keysym.sym, false);
+					break;
+				case SDL_MOUSEMOTION:
+					xMasterWinApp->processMinput(-1, false, event.motion.x, event.motion.y);
+					break;
+				case SDL_MOUSEBUTTONDOWN:
+					xMasterWinApp->processMinput(event.button.button, true, event.button.x, event.button.y);
+					break;
+				case SDL_MOUSEBUTTONUP:
+					xMasterWinApp->processMinput(event.button.button, false, event.button.x, event.button.y);
+					break;
+				case SDL_QUIT:
+					return false;
+				default:
+					break;
+			}
+		}
+		else {
+			//paint(pScreen);
+			//SDL_Flip(pScreen);
+			xMasterWinApp->skwin_Sleep(1);
+			break;
+		}
+	}
+//#endif // __SDL__
+	//SkD((DLV_MOUSE,"Ended SDL_PumpEvents\n"));
+	//xMasterWinApp->skwin_Sleep(1);
+	return true;
 }

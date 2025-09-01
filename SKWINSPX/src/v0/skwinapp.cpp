@@ -347,8 +347,10 @@ UINT SkWinApp::setVideoMode()
 		xSkWinRenderer = (SkRendererGeneric*) new SkRendererMFC();
 	}
 #endif // __NO_MFC__
-	if (xSkWinRenderer != NULL)
+	if (xSkWinRenderer != NULL) {
 		xSkWinRenderer->Init(xVRAM);
+		xSkWinRenderer->InitWinApp(this);
+	}
 	else
 		return 1;
 
@@ -370,6 +372,7 @@ UINT SkWinApp::setVideoMode(UINT iSpecificMode)
 UINT SkWinApp::setVideoTestStatic(UINT iFrames)
 {
 	for (UINT i = 0; i < iFrames; i++) {
+		//SkWinApp::skwin_ML();	// for call to poll event
 		SkWinApp::skwin_Sleep(125);
 		if (xVRAM != NULL)
 			xVRAM->SET_TEST_VRAM_STATIC();
@@ -378,7 +381,6 @@ UINT SkWinApp::setVideoTestStatic(UINT iFrames)
 	}
 	return 0;
 }
-
 
 UINT SkWinApp::setVideoTestGradient()
 {
@@ -616,48 +618,8 @@ bool SkWinApp::skwin_IsAvail()
 
 bool SkWinApp::skwin_ML() {
 
-	if (SkCodeParam::bRenderingEngineSDL) {
-
-#if defined(__SDL__) && !defined(__NO_SDL__)
-		//SkD((DLV_MOUSE,"skwin_ML\n"));
-		while (true) {
-			//SkD((DLV_MOUSE,"before SDL_PumpEvents\n"));
-			SDL_Event event;
-			SDL_PumpEvents();
-			if (SDL_PollEvent(&event)) {
-				switch (event.type) {
-					SkD((DLV_MOUSE,"Event type = %d\n", event.type));
-					case SDL_KEYDOWN:
-						processKinput(event.key.keysym.sym, true);
-						break;
-					case SDL_KEYUP:
-						processKinput(event.key.keysym.sym, false);
-						break;
-					case SDL_MOUSEMOTION:
-						processMinput(-1, false, event.motion.x, event.motion.y);
-						break;
-					case SDL_MOUSEBUTTONDOWN:
-						processMinput(event.button.button, true, event.button.x, event.button.y);
-						break;
-					case SDL_MOUSEBUTTONUP:
-						processMinput(event.button.button, false, event.button.x, event.button.y);
-						break;
-					case SDL_QUIT:
-						return false;
-					default:
-						break;
-				}
-			}
-			else {
-				//paint(pScreen);
-				//SDL_Flip(pScreen);
-				this->skwin_Sleep(1);
-				break;
-			}
-		}
-#endif // __SDL__
-	//SkD((DLV_MOUSE,"Ended SDL_PumpEvents\n"));
-	}
+	if (SkCodeParam::bRenderingEngineSDL)
+		xSkWinRenderer->ML();
 	else
 		this->skwin_Sleep(1);
 

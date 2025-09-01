@@ -16,7 +16,7 @@
 
 SkRendererGeneric::SkRendererGeneric()
 {
-	;
+	xMasterWinApp = NULL;
 }
 
 
@@ -25,6 +25,11 @@ SkRendererGeneric::~SkRendererGeneric()
 	;
 }
 
+UINT SkRendererGeneric::InitWinApp(SkWinApp* xWinApp)
+{
+	xMasterWinApp = xWinApp;
+	return 0;
+}
 
 UINT SkRendererGeneric::Init(SkVRAM* xVRAM)
 {
@@ -61,6 +66,11 @@ UINT SkRendererGeneric::ResizeWindow()
 UINT SkRendererGeneric::StartAudioSample(const char* sSampleName)
 {
 	return 0;
+}
+
+bool SkRendererGeneric::ML()
+{
+	return false;
 }
 
 //------------------------------------------------------------------------------

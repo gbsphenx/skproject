@@ -57,6 +57,8 @@ public:
 	UINT Render();
 	UINT Close();
 
+	bool ML();
+
 	UINT StartAudioSample(const char* sSampleName);
 
 private:
