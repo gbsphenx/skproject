@@ -323,15 +323,10 @@ void SkWinApp::ProcessArgs(int argc, char** argv)
 			SkCodeParam::bOptionNewGame = 2;
 		}
 
-
-
-
-
 		iArgIndex++;
 	}
 
 }
-
 
 
 UINT SkWinApp::setVideoMode()
@@ -342,11 +337,10 @@ UINT SkWinApp::setVideoMode()
 	else if (iVideoRenderer == GFX_RENDERER_DOS) {
 		xSkWinRenderer = (SkRendererGeneric*) new SkRendererDOS();
 	}
-#ifndef __NO_MFC__
 	else if (iVideoRenderer == GFX_RENDERER_MFC) {
 		xSkWinRenderer = (SkRendererGeneric*) new SkRendererMFC();
 	}
-#endif // __NO_MFC__
+
 	if (xSkWinRenderer != NULL) {
 		xSkWinRenderer->Init(xVRAM);
 		xSkWinRenderer->InitWinApp(this);

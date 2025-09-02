@@ -29,6 +29,8 @@ public:
 	UINT SetModeVGA();
 	UINT SetModeVGA16();
 
+	bool ML();
+
 	UINT SetVGAPaletteRGB(X8 *xVGAPalette);
 	UINT ResetTextCursor();
 	UINT Render();

@@ -21,6 +21,14 @@
 
 //------------------------------------------------------------------------------
 
+#if !defined (__NO_MFC__)
+#if (_MSC_VER >= 1200) || defined(_USE_MFC80) || defined(_USE_MFC60)
+
+
+
+#endif // _MSC_VER / _USE_MFC80 / _USE_MFC60
+#endif // not __NO_MFC__
+
 //------------------------------------------------------------------------------
 
 SkRendererMFC::SkRendererMFC()
@@ -98,4 +106,13 @@ UINT SkRendererMFC::Close()
 	skwin.DestroyWindow();
 #endif // not __NO_MFC__
 	return 0;
+}
+
+
+bool SkRendererMFC::ML()
+{
+#if !defined(__NO_MFC__) && ((_MSC_VER >= 1200) || defined(_USE_MFC80) || defined(_USE_MFC60))
+	skwin.ML();
+#endif //
+	return false;
 }
