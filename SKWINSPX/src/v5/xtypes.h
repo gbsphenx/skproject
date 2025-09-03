@@ -124,9 +124,9 @@
 
   struct s_bbw
   {
-    i8 b_00;
-    i8 b_01;
-    i16 w_02;
+    U8 b_00;
+    U8 b_01;
+    U16 w_02;
 
     i32 getlong(void) const;
   };

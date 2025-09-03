@@ -42,8 +42,8 @@
 
   struct s_bb
   {
-    i8 b_00;
-    i8 b_01;
+    U8 b_00;
+    U8 b_01;
   };
 
   union u_bl
@@ -60,7 +60,7 @@
 
   struct s_4bytearray
   {
-    i8 barr_00[0x4];
+    U8 barr_00[0x4];
   };
 
   struct s_www
@@ -82,10 +82,10 @@
 
   struct s_wwwb
   {
-    i16 w_00;
-    i16 w_02;
-    i16 w_04;
-    i8 b_06;
+    U16 w_00;
+    U16 w_02;
+    U16 w_04;
+    U8 b_06;
   };
 
   struct s_sgwords // size 0x2c
@@ -607,11 +607,11 @@
 
   extern const i8 table1d6702[0x10];
   extern const i8 table1d6712[0x15];
-  extern const i8 table1d281c[0x10];
+  extern const U8 table1d281c[0x10];
   extern /*const*/ i8 table1d282c[0x10];
-  extern i8 table1d631a[0x3c]; // TODO later const, when last param of DM2_SUPPRESS_READER can be const
+  extern U8 table1d631a[0x3c]; // TODO later const, when last param of DM2_SUPPRESS_READER can be const
 
-  extern i8 vsgame[0x78];
+  extern U8 vsgame[0x78];
 #define v1d6463 (vsgame + 0x00)
 #define v1d646f (vsgame + 0x0c)
 #define v1d6473 (vsgame + 0x10)
@@ -643,13 +643,13 @@
   extern te_text v1d1140[];
   extern te_text v1d1143[];
   extern te_text v1d10f4[];
-  extern i8* table1d64db[16];
-  extern i8 table1d6356[263];
+  extern U8* table1d64db[16];
+  extern U8 table1d6356[263];
   extern i8 table1d645d[6];
   extern i16 table1d27fc[4];
   extern i16 table1d2804[4];
   // extern ui32 table1d83ec[32];
-  extern i8 tblMusicsMap[64];
+  extern U8 tblMusicsMap[64];
   extern te_text v1d10f2[];
   extern te_text v1d10f0[];
   //extern te_text v1d10eb[];	// replaced by strVersionNumber
@@ -661,14 +661,14 @@
   extern const ui32 table1d7042[4];
   extern const ui8 table1d7029[20];
   extern const ui8 table1d7012[23];
-  extern const i16 table1d6fee[18];
-  extern const i8 table1d6fdc[18];
-  extern const i16 table1d6f9c[32];
-  extern const i8 table1d6f7c[32];
-  extern const i8 table1d6f5c[32];
+  extern const U16 table1d6fee[18];
+  extern const U8 table1d6fdc[18];
+  extern const U16 table1d6f9c[32];
+  extern const U8 table1d6f7c[32];
+  extern const U8 table1d6f5c[32];
   extern const ui8 table1d6f4c[16];
-  extern const i16 table1d6f2c[16];
-  extern const i8 table1d6f27[5];
+  extern const U16 table1d6f2c[16];
+  extern const U8 table1d6f27[5];
   extern const i16 table1d6f0b[14];
   extern const i8 table1d6290[9];
   extern const i16 table1d6299[5];
@@ -694,49 +694,49 @@
   extern const s_4bytearray table1d26f0[2];
   extern const i8 table1d26f8[4];
   extern const i16 table1d2752[4];
-  extern const i8 table1d275a[32][2];
+  extern const U8 table1d275a[32][2];
   extern const i8 table1d324c[44];
-  extern const i16 table1d3278[16];
-  extern const i8 table1d3298[16];
+  extern const U16 table1d3278[16];
+  extern const U8 table1d3298[16];
   extern s_bbw table1d3ed5[10];
   extern /*const*/ s_bbw _table1d3ed5[10];
   extern s_wwwb _table1d3d23[62];
   extern s_wwwb table1d3d23[62];
-  extern const i8 table1d3cd0[83];
+  extern const U8 table1d3cd0[83];
   extern s_bbw table1d3ba0[76];
   extern /*const*/ s_bbw _table1d3ba0[76];
   extern /*const*/ s_ww2 v1d39bc[121]; // fileread
   extern /*const*/ s_www v1d338c[264]; // fileread
   extern t_text v1d5c31[9];
   extern t_text v1d6a4f[5];
-  extern const i8 table1d6afe[23];
+  extern const U8 table1d6afe[23];
   extern const s_4bytearray table1d6a74[23];
-  extern const i8 table1d6ad0[23][2];
-  extern const i8 table1d6b43[23];
-  extern const i8 table1d6b5a[23];
+  extern const U8 table1d6ad0[23][2];
+  extern const U8 table1d6b43[23];
+  extern const U8 table1d6b5a[23];
   extern const i8 table1d6b2c[23];
   extern const i8 table1d6b15[23];
   extern /*const*/ i8 table1d6a54[4][4]; // really const
   extern /*const*/ i8 table1d6a64[4][4]; // really const
   extern const i8 table1d6b71[5];
-  extern const i8 table1d6efd[14];
-  extern const i8 table1d6ee1[14][2];
-  extern const i8 table1d6ed3[14];
+  extern const U8 table1d6efd[14];
+  extern const U8 table1d6ee1[14][2];
+  extern const U8 table1d6ed3[14];
   extern const s_bb table1d6eb3[16];
   extern const i8 table1d6ea8[3];
   extern const i8 table1d6eab[4];
   extern const i8 table1d6eaf[4];
   extern const s_bb table1d6e68[4][8];
-  extern const i8 table1d6e51[23];
-  extern const i8 table1d6797[37];
+  extern const U8 table1d6e51[23];
+  extern const U8 table1d6797[37];
   extern i8 v1d67be[4];
-  extern i8 _v1d67be[4];
+  extern U8 _v1d67be[4];
   extern const i8 table1d6e41[16];
   extern const i8 table1d6e35[12];
-  extern const i16 table1d6c70[16];
+  extern const U16 table1d6c70[16];
   extern const i8 table1d6c90[16];
-  extern const i8 table1d6ca0[16];
-  extern const i8 table1d6cb0[16];
+  extern const U8 table1d6ca0[16];
+  extern const U8 table1d6cb0[16];
   extern const i16 table1d6cc0[16];
   extern const i8 table1d6c10[5];
   extern const i8 table1d6c19[5];
