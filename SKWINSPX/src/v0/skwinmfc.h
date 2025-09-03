@@ -39,6 +39,8 @@ public:
 //..............................................................................
 //------------------------------------------------------------------------------
 
+class SkRendererMFC;
+
 class CSkWinMFC : public CFrameWnd, public CSkWin
 {
 public:
@@ -53,6 +55,7 @@ public:
 
 	SkVRAM* xVRAM;
 	X8 *xVGAPalette;
+	SkRendererMFC* xRendererMFC;
 
 public:
 	CSkWinMFC();

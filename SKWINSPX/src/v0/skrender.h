@@ -18,10 +18,11 @@ class SkRendererGeneric
 {
 protected:
 	SkVRAM* xVRAM;
-	SkWinApp* xMasterWinApp;
 
 	UINT iScreenWidth;
 	UINT iScreenHeight;
+public:
+	SkWinApp* xMasterWinApp;
 
 public:
 	SkRendererGeneric();

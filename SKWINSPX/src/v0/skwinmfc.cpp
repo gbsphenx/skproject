@@ -39,6 +39,8 @@
 
 #include <skwinmfc.h>
 #include <skparam.h>
+#include <skmfc.h>
+#include <skwinapp.h>
 
 //..............................................................................
 
@@ -198,6 +200,7 @@ CSkWinMFC::CSkWinMFC()
 {
 	xVRAM = NULL;
 	xVGAPalette = NULL;
+	xRendererMFC = NULL;
 
 	GetSkwinini() = GetSkwinini();
 	printf("SKini file = %s\n", GetSkwinini());
@@ -321,7 +324,6 @@ void CSkWinMFC::processMinput(UINT nFlags, CPoint point)
 {
 	point.x /= sxfact;
 	point.y /= sxfact;
-
 	CSkMinput *p = allocMinput();
 	if (p != NULL) {
 		p->btn = 0
@@ -330,7 +332,15 @@ void CSkWinMFC::processMinput(UINT nFlags, CPoint point)
 			;
 		p->x = (U16)point.x;
 		p->y = (U16)point.y;
-		// TRACE3("Mice(%d,%3d,%3d)\n", p->btn, p->x, p->y);
+	}
+
+	if (xRendererMFC != NULL && xRendererMFC->xMasterWinApp != NULL) {
+		xRendererMFC->xMasterWinApp->iCallbackMouseX = point.x;
+		xRendererMFC->xMasterWinApp->iCallbackMouseY = point.y;
+		xRendererMFC->xMasterWinApp->iCallbackMouseButton = 0
+			| (((nFlags & MK_LBUTTON) != 0) ? 1 : 0)
+			| (((nFlags & MK_RBUTTON) != 0) ? 2 : 0)
+			;
 	}
 }
 

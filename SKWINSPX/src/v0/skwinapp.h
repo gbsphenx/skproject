@@ -43,9 +43,13 @@ private:
 //	SkRendererMFC* xRendererMFC;
 	SkRendererGeneric* xSkWinRenderer;
 	SkVRAM*	xVRAM;
-	//CSkWin	SKInput;
 
 public:
+
+	U16 iCallbackMouseX;
+	U16 iCallbackMouseY;
+	U32 iCallbackMouseButton;
+
 //	SkWinCore* skw;
 	int sxfact;
 	int sblast;

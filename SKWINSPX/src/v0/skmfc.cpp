@@ -21,19 +21,15 @@
 
 //------------------------------------------------------------------------------
 
-#if !defined (__NO_MFC__)
-#if (_MSC_VER >= 1200) || defined(_USE_MFC80) || defined(_USE_MFC60)
-
-
-
-#endif // _MSC_VER / _USE_MFC80 / _USE_MFC60
-#endif // not __NO_MFC__
-
 //------------------------------------------------------------------------------
 
 SkRendererMFC::SkRendererMFC()
 {
-	;
+#if !defined (__NO_MFC__)
+#if (_MSC_VER >= 1200) || defined(_USE_MFC80) || defined(_USE_MFC60)
+	skwin.xRendererMFC = this;
+#endif // _MSC_VER / _USE_MFC80 / _USE_MFC60
+#endif // not __NO_MFC__
 }
 
 SkRendererMFC::~SkRendererMFC()

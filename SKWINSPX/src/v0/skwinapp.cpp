@@ -109,6 +109,10 @@ SkWinApp::SkWinApp()
 	cntKeybIn = 0;
 	curKeybIn = 0;
 
+	iCallbackMouseX = 0;
+	iCallbackMouseY = 0;
+	iCallbackMouseButton = 0;
+
 }
 
 SkWinApp::~SkWinApp()
@@ -612,7 +616,7 @@ bool SkWinApp::skwin_IsAvail()
 
 bool SkWinApp::skwin_ML() {
 
-	if (SkCodeParam::bRenderingEngineSDL)
+	if (SkCodeParam::bRenderingEngineSDL || SkCodeParam::bRenderingEngineMFC)
 		xSkWinRenderer->ML();
 	else
 		this->skwin_Sleep(1);
@@ -654,12 +658,23 @@ void SkWinApp::GetMousePosButtons(U16 *x, U16 *y, U16 *buttons)
 		if (iDeviceButtons & SDL_BUTTON(SDL_BUTTON_MIDDLE))
 			*buttons += 4; // middle
 #endif // __NO_SDL__
+		*x = U16(iDeviceMouseX)/SkCodeParam::iVideoScale;
+		*y = U16(iDeviceMouseY)/(SkCodeParam::iVideoScale*SkCodeParam::fVideoYScale);
 	}
+
+	// For MFC, get the intern values
+	if (SkCodeParam::bRenderingEngineMFC) {
+		iDeviceMouseX = (int)iCallbackMouseX;	// this is set up from CSkWinMFC::OnMouseMove and such
+		iDeviceMouseY = (int)iCallbackMouseY;
+		iDeviceButtons = (U32)iCallbackMouseButton;
+		*x = U16(iDeviceMouseX);
+		*y = U16(iDeviceMouseY);
+		*buttons = U16(iDeviceButtons);
+	}
+
 		//SkD((DLV_MOUSE,"SDL_GetMouseState\n"));
 
 	//SkD((DLV_MOUSE,"SDL_GetMouseState %d,%d buttons=%d / scale=%d\n", U16(iDeviceMouseX), U16(iDeviceMouseY), U16(*buttons), SkCodeParam::iVideoScale));
-	*x = U16(iDeviceMouseX)/SkCodeParam::iVideoScale;
-	*y = U16(iDeviceMouseY)/(SkCodeParam::iVideoScale*SkCodeParam::fVideoYScale);
 
 	//SkD((DLV_MOUSE,"GetMousePosButtons (%05d): M(%3d,%3d) Btn:(%2d)\n", iCallCount++, iDeviceMouseX, iDeviceMouseY, iDeviceButtons));
 }
