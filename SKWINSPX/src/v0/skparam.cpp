@@ -23,7 +23,7 @@ bool SkCodeParam::bRenderingEngineMFC = false;
 bool SkCodeParam::bEngineNoDisplay = false;
 
 UINT SkCodeParam::bOptionNewGame = 0;
-INT SkCodeParam::bOptionResumeSaveGame = -1;
+int SkCodeParam::bOptionResumeSaveGame = -1;
 
 bool SkCodeParam::bUseBigEnd = false;	// Default is little-end
 

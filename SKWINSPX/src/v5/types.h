@@ -250,7 +250,7 @@
 			  return a;
 		  }
 	};
-
+/*
 namespace skv5 {
 #ifndef SKWINSPX
 	struct ObjectID
@@ -265,7 +265,7 @@ namespace skv5 {
 		ui16 w_00;
   };
 #endif // SKWINSPX
-
 }
+*/
 
 #endif

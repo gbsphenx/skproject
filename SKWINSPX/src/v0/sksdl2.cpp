@@ -198,7 +198,7 @@ UINT SkRendererSDL::StartAudioSample(const char* sSampleName)
     U32 iWavLength;
 
     // Load the WAV
-    if (SDL_LoadWAV(sSampleName, &xWavSample, &xWavData, &iWavLength) == NULL) {
+    if (SDL_LoadWAV(sSampleName, &xWavSample, (Uint8**) &xWavData, (Uint32*) &iWavLength) == NULL) {
         printf("Could not open %s: %s\n", sSampleName, SDL_GetError());
         SDL_Quit();
         return 1;
@@ -210,7 +210,7 @@ UINT SkRendererSDL::StartAudioSample(const char* sSampleName)
     sdlAudio = SDL_OpenAudioDevice(NULL, 0, &xWavSample, NULL, 0);
     if (sdlAudio == 0) {
         printf("SDL_OpenAudioDevice error: %s\n", SDL_GetError());
-        SDL_FreeWAV(xWavData);
+        SDL_FreeWAV((Uint8*)xWavData);
 		return 1;
     }
 

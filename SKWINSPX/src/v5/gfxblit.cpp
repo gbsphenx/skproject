@@ -1068,11 +1068,11 @@ void c_blitter::stretch256(c_pixel256* srcgfx, c_pixel256* destgfx, i16 width, i
 
 // #################################################################
 
-#include "regs.h"
-#include "emu.h"
-#include "xtypes.h"
+#include <regs.h>
+#include <emu.h>
+#include <xtypes.h>
 
-const i8 table1d255a[2] =
+const U8 table1d255a[2] =
 {
   0xf0, 0x0f
 };
@@ -1163,7 +1163,7 @@ void DM2_sub_blit_specialeffects(c_pixel* srcgfx, c_pixel* destgfx, c_pixel* gfx
         if (destofs == 0)
           break;
         i16 rg2l = unsignedlong(pixel_to_ui8(gfx[vw_1c / 2]));
-        if ((unsignedlong(table1d255a[vw_1c & 0x1]) & rg2l) != 0)
+        if ((unsignedlong((i8)table1d255a[vw_1c & 0x1]) & rg2l) != 0)
           break;
         destofs--;
         vw_1c++;
@@ -1185,7 +1185,7 @@ void DM2_sub_blit_specialeffects(c_pixel* srcgfx, c_pixel* destgfx, c_pixel* gfx
         if (w == 0)
           break;
         i32 rg2l = unsignedlong(pixel_to_ui8(gfx[destofs / 2]));
-        if ((unsignedlong(table1d255a[destofs & 0x1]) & rg2l) != 0)
+        if ((unsignedlong((i8)table1d255a[destofs & 0x1]) & rg2l) != 0)
           break;
         w--;
       }

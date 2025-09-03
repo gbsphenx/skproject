@@ -95,7 +95,7 @@ void CVerifySKSaveIO::StartRead(U32 off) {
 #endif
 }
 
-void CVerifySKSaveIO::Read(const void *pvData, const void *pvMask, Bit16u buffSize, Bit32u repeat) {
+void CVerifySKSaveIO::Read(const void *pvData, const void *pvMask, U16 buffSize, U32 repeat) {
 #if _DEBUG
 	if (f == NULL)
 		return;

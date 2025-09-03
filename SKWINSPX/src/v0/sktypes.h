@@ -109,6 +109,7 @@ typedef unsigned char	U8;
 typedef unsigned short	U16;
 typedef unsigned int	U32;
 typedef unsigned int	UINT;
+//typedef int	INT;
 #endif
 
 //------------------------------------------------------------------------------
@@ -119,6 +120,7 @@ typedef uint32_t	UINT;	// generic unsigned int for RC, index & loops
 typedef uint32_t	UINT;
 typedef int32_t		INT;
 #endif // Win MSVC6 UINT is (unsigned int)
+
 
 #if defined (__LINUX__)
 typedef int32_t	INT;

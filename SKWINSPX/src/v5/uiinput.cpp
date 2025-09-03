@@ -29,7 +29,7 @@
 
 extern SkWinApp* skWinApplication;
 
-/*const*/ i8 table1d3efd[236] =
+/*const*/ U8 table1d3efd[236] =
 {
   0x86, 0x85, 0x47, 0x01, 0x03, 0x03, 0xff, 0x46, 0x00, 0x04, 0x03, 0x07, 0x01, 0x03, 0x02, 0xff, 0x82, 0x47, 0x01, 0x03, 0x05, 0xff, 0x46, 0x00, 0x04, 0x03, 0x07, 0x01, 0x03, 0x04, 0xff, 0x82,
   0x47, 0x01, 0x03, 0x07, 0xff, 0x46, 0x00, 0x04, 0x03, 0x07, 0x01, 0x03, 0x06, 0xff, 0x82, 0x47, 0x01, 0x03, 0x09, 0xff, 0x46, 0x00, 0x04, 0x03, 0x07, 0x01, 0x03, 0x08, 0xff, 0x82, 0x47, 0x01,
@@ -205,37 +205,37 @@ static i8* DM2_TRANSMIT_UI_EVENT(c_uievent* xeaxp)
     {
       //m_11008:
       if (n >= 1 && n <= 6)
-        return &table1d3efd[15 * (n - 1) + 2];
+        return (i8*)&table1d3efd[15 * (n - 1) + 2];
       if (n >= 116 && n <= 123)
-        return &table1d3efd[5 * ((n - 116) & 0x1) + 92];
+        return (i8*)&table1d3efd[5 * ((n - 116) & 0x1) + 92];
       if (n >= 95 && n <= 98)
-        return &table1d3efd[5 * (n - 95) + 102];
+        return (i8*)&table1d3efd[5 * (n - 95) + 102];
       if (n == 112)
-        return &table1d3efd[122];
+        return (i8*)&table1d3efd[122];
       if (n == 93 || n == 94)
-        return &table1d3efd[8 * (n - 93) + 130];
+        return (i8*)&table1d3efd[8 * (n - 93) + 130];
       if (n >= 101 && n <= 106)
-        return &table1d3efd[146];
+        return (i8*)&table1d3efd[146];
       if (n == 107)
-        return &table1d3efd[150];
+        return (i8*)&table1d3efd[150];
       if (n == 108)
-        return &table1d3efd[158];
+        return (i8*)&table1d3efd[158];
       if (n >= 113 && n <= 115)
-        return &table1d3efd[5 * (n - 113) + 162];
+        return (i8*)&table1d3efd[5 * (n - 113) + 162];
       if (n == 11 || n == 147)
-        return &table1d3efd[177];
+        return (i8*)&table1d3efd[177];
       if (n == 142)
-        return &table1d3efd[182];
+        return (i8*)&table1d3efd[182];
       if (n == 140)
-        return &table1d3efd[187];
+        return (i8*)&table1d3efd[187];
       if (n >= 86 && n <= 89)
-        return &table1d3efd[7 * (n - 86) + 192];
+        return (i8*)&table1d3efd[7 * (n - 86) + 192];
       if (n < 219 || n > 222)
       {
         //m_11176:
         if (n == 80)
-          return &table1d3efd[234];
-        return &table1d3efd[0];
+          return (i8*)&table1d3efd[234];
+        return (i8*)&table1d3efd[0];
       }
       i16 opt = ddat.v1e0204 - 1;
       if (opt <= 6)
@@ -274,16 +274,16 @@ static i8* DM2_TRANSMIT_UI_EVENT(c_uievent* xeaxp)
 
         if (skip00185)
           //m_11164:
-          return &table1d3efd[220];
+          return (i8*)&table1d3efd[220];
         else if (skip00184)
           //m_11157:
-          return &table1d3efd[227];
+          return (i8*)&table1d3efd[227];
       }
     }
   }
 
   //m_10FFE:
-  return &table1d3efd[1];
+  return (i8*)&table1d3efd[1];
 }
 
 // rectangle of eaxp seems not to be of interest

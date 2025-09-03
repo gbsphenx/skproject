@@ -224,7 +224,7 @@ static void DM2_DRAW_PIT_ROOF(i32 eaxl)
   RG1L = signedlong(RG5w);
   RG4L = RG1L;
   RG3L = signedlong(table1d6c4c[RG1L]);
-  RG2L = unsignedlong(table1d6c5e[RG1L]);
+  RG2L = unsignedlong((i8)table1d6c5e[RG1L]);
   RG4L ^= RG1L;
   RG4Blo = vb_0c;
   DM2_DRAW_DUNGEON_GRAPHIC(8, RG4Blo, RG2Blo, RG3W, parw01, CUTX16(parl02));
@@ -853,7 +853,7 @@ static void DM2_DRAW_TELEPORTER_TILE(i32 eaxl, i32 edxl, i32 ebxl)
   RG1L = signedlong(RG1W);
   if (RG1L > lcon(0xf))
     return;
-  RG5p = table1d6ce0 + 4 * RG1L;
+  RG5p = (i8*)table1d6ce0 + 4 * RG1L;
   RG4W = table1d6cc0[RG1L];
   RG2L = 0;
   vw_2c = RG2W;
@@ -2186,9 +2186,9 @@ void DM2_DRAW_ITEM(i32 eaxl, i32 edxl, i32 ebxl, i32 ecxl, i16 argw0, unk* xargp
     RG1L = signedlong(RG1Blo);
     RG2L = signedlong(dm2_image1.w_1c) + RG1L;
     RG4L = signedlong(argw0);
-    RG1L = signedlong(table1d6b76[unsignedlong(table1d6b76[2 * RG4L + 0x22]) + 0x50]) + RG2L;
+    RG1L = signedlong(table1d6b76[unsignedlong((i8)table1d6b76[2 * RG4L + 0x22]) + 0x50]) + RG2L;
     RG6L = RG1L;
-    RG1L = unsignedlong(table1d6b76[2 * RG4L + 0x23]);
+    RG1L = unsignedlong((i8)table1d6b76[2 * RG4L + 0x23]);
     RG1W = signedword(table1d6b76[RG1L + 0x50]);
     RG5w = signedword(vb_18) + dm2_image1.w_1e + RG1W;
     RG1W = dm2_image1.query1;
@@ -2287,7 +2287,7 @@ void DM2_DRAW_ITEM(i32 eaxl, i32 edxl, i32 ebxl, i32 ecxl, i16 argw0, unk* xargp
     RG6L += RG1L;
     if (RG7p == NULL)
     {
-      RG1L = unsignedlong(table1d6b76[RG4L + 0x23]);
+      RG1L = unsignedlong((i8)table1d6b76[RG4L + 0x23]);
       RG1W = signedword(table1d6b76[RG1L + 0x50]);
       RG5w += RG1W;
     }
@@ -3244,9 +3244,9 @@ static void DM2_guivp_32cb_4185(i32 eaxl, i32 edxl, i32 ebxl, i32 ecxl)
     RG2P = ddat.ptr1e1044;
     if (word_at(RG2P + 2 * RG1L + 2) != 0)
     {
-      RG2L = unsignedlong(table1d6eb3[RG4L].b_00);
+      RG2L = unsignedlong((i8)table1d6eb3[RG4L].b_00);
       RG1P = ddat.v1e1048 + 17 * RG2L;
-      RG2P = RG1P + unsignedlong(table1d6eb3[RG4L].b_01);
+      RG2P = RG1P + unsignedlong((i8)table1d6eb3[RG4L].b_01);
       RG5L = 0;
       RG3Blo = vql_00.peek8();
       //m_42F0D:
@@ -5481,7 +5481,7 @@ static void DM2_guivp_32cb_3f0d(i32 eaxl)
               {
                 RG1W = DM2_guivp_098d_0cd7(RG3W, lcon(0xc), false);
                 RG7l = signedlong(RG1W);
-                RG4L = unsignedlong(table1d6b76[signedlong(table1d6e51[RG3W]) + 0x58]);
+                RG4L = unsignedlong((i8)table1d6b76[signedlong(table1d6e51[RG3W]) + 0x58]);
                 RG1L = RG6L;
                 DM2_guivp_32cb_2cf3(RG1L, RG4L, unsignedlong(vw_08), RG7l);
                 skip00935 = true;

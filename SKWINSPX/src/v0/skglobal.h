@@ -563,14 +563,14 @@ bool	CheckSafePointer(void* p);
 
 #define READ_UI8(PTR,DELTA) *((X8 *)(PTR_PADD(PTR,DELTA)))
 #define READ_UI16(PTR,DELTA) *((U16 *)(PTR_PADD(PTR,DELTA)))
-#define READ_UI32(PTR,DELTA) *((Bit32u *)(PTR_PADD(PTR,DELTA)))
+#define READ_UI32(PTR,DELTA) *((U32 *)(PTR_PADD(PTR,DELTA)))
 #define READ_I8(PTR,DELTA) *((i8 *)(PTR_PADD(PTR,DELTA)))
 #define READ_I16(PTR,DELTA) *((i16 *)(PTR_PADD(PTR,DELTA)))
 #define READ_I32(PTR,DELTA) *((i32 *)(PTR_PADD(PTR,DELTA)))
 
 #define WRITE_UI8(PTR,DELTA,VAL) *((X8 *)(PTR_PADD(PTR,DELTA))) = (VAL);
 #define WRITE_UI16(PTR,DELTA,VAL) *((U16 *)(PTR_PADD(PTR,DELTA))) = (VAL);
-#define WRITE_UI32(PTR,DELTA,VAL) *((Bit32u *)(PTR_PADD(PTR,DELTA))) = (VAL);
+#define WRITE_UI32(PTR,DELTA,VAL) *((U32 *)(PTR_PADD(PTR,DELTA))) = (VAL);
 #define WRITE_I8(PTR,DELTA,VAL) *((i8 *)(PTR_PADD(PTR,DELTA))) = (VAL);
 #define WRITE_I16(PTR,DELTA,VAL) *((i16 *)(PTR_PADD(PTR,DELTA))) = (VAL);
 #define WRITE_I32(PTR,DELTA,VAL) *((i32 *)(PTR_PADD(PTR,DELTA))) = (VAL);
@@ -681,7 +681,7 @@ public:
 	void StartWrite(U32 off);
 	void Write(const void *pvData, const void *pvMask, U16 cbData, U32 repeat);
 	void StartRead(U32 off);
-	void Read(const void *pvData, const void *pvMask, U16 buffSize, Bit32u repeat);
+	void Read(const void *pvData, const void *pvMask, U16 buffSize, U32 repeat);
 };
 
 extern CVerifySKSaveIO s_testSKSave;

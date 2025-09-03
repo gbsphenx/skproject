@@ -1,4 +1,7 @@
 #include <types.h>
+#include <skai.h>
+#include <bcreatur.h>
+
 #include <dm2data.h>
 #include <SK0350.h>
 #include <util.h>
@@ -9,16 +12,17 @@
 #include <bitem.h>
 #include <skcloud.h>
 #include <skmap.h>
-#include <bcreatur.h>
 #include <SK1C9A.h>
 #include <skevents.h>
 #include <startend.h>
-#include <skai.h>
 
 #include <emu.h>
 #include <regs.h>
 
-using namespace skv5;
+//#ifdef SKDOSV5
+//using namespace skv5;
+//#endif
+
 
 // belongs to DM2_14cd_2886
 static i32 DM2_14cd_2807(i16* eaxpw, i16* edxpw)
@@ -112,7 +116,7 @@ static i8 DM2_PROCEED_XACT_59_76(void)
   if (rg3 == -1)
     rg3 = s350.v1e07d8.w_04;
   if (s350.v1e0574 != 0)
-    if (DM2_CREATURE_CAN_HANDLE_ITEM_IN(rg3, unsignedlong(s350.v1e054e->possession.w_00), lcon(0xff)) != -2)
+    if (DM2_CREATURE_CAN_HANDLE_ITEM_IN(rg3, unsignedlong((i16)s350.v1e054e->possession.w_00), lcon(0xff)) != -2)
       return -2;
   DM2_19f0_2165(lcon(0x80), unsignedlong(s350.v1e0562.getxA()), unsignedlong(s350.v1e0562.getyA()), signedlong(s350.creatures->w_18.GetX()), signedlong(s350.creatures->w_18.GetY()), -1, rg3);
   return s350.v1e056f;
@@ -142,7 +146,7 @@ static i8 DM2_PROCEED_XACT_62(void)
       skip00335 = true;
     else
     {
-      RG1W = DM2_CREATURE_CAN_HANDLE_ITEM_IN(16, unsignedlong(s350.v1e054e->possession.w_00), lcon(0xff));
+      RG1W = DM2_CREATURE_CAN_HANDLE_ITEM_IN(16, unsignedlong((i16)s350.v1e054e->possession.w_00), lcon(0xff));
       RG1Blo = RG1W != wcon(0xfffe) ? 1 : 0;
       RG1L = unsignedlong(RG1Blo);
       if (RG1L == 0)
@@ -348,7 +352,7 @@ static i8 DM2_PROCEED_XACT_64(void)
       RG1W = s350.v1e0572;
       if (RG1W == -1)
         RG1W = 63;
-      if (DM2_CREATURE_CAN_HANDLE_ITEM_IN(RG1W, unsignedlong(s350.v1e054e->possession.w_00), lcon(0xff)) != -2)
+      if (DM2_CREATURE_CAN_HANDLE_ITEM_IN(RG1W, unsignedlong((i16)s350.v1e054e->possession.w_00), lcon(0xff)) != -2)
       {
         s350.v1e057c &= lcon(0x8);
         put16(parw02, RG1W);
@@ -938,7 +942,7 @@ static i8 DM2_PROCEED_XACT_71(void)
       if (RG1W == -1)
         return -2;
     }
-    if (DM2_CREATURE_CAN_HANDLE_ITEM_IN(RG1W, unsignedlong(rg3p->w_00), lcon(0xff)) != -2)
+    if (DM2_CREATURE_CAN_HANDLE_ITEM_IN(RG1W, unsignedlong((i16)rg3p->w_00), lcon(0xff)) != -2)
     {
       DM2_19f0_2165(lcon(0x81), unsignedlong(s350.v1e0562.getxA()), unsignedlong(s350.v1e0562.getyA()), unsignedlong(s350.v1e0562.getxA()), unsignedlong(s350.v1e0562.getyA()), -1, RG1W);
       return s350.v1e056f;
@@ -2144,8 +2148,8 @@ static i8 DM2_PROCEED_XACT_90(void)
 // was SKW_14cd_3b69
 static i8 DM2_PROCEED_XACT_91(void)
 {
-  if (DM2_CREATURE_CAN_HANDLE_ITEM_IN(s350.v1e0572, unsignedlong(s350.v1e054e->possession.w_00), lcon(0xff)) == -2)
-    if (DM2_CREATURE_CAN_HANDLE_ITEM_IN(s350.v1e0574, unsignedlong(s350.v1e054e->possession.w_00), lcon(0xff)) == -2)
+  if (DM2_CREATURE_CAN_HANDLE_ITEM_IN(s350.v1e0572, unsignedlong((i16)s350.v1e054e->possession.w_00), lcon(0xff)) == -2)
+    if (DM2_CREATURE_CAN_HANDLE_ITEM_IN(s350.v1e0574, unsignedlong((i16)s350.v1e054e->possession.w_00), lcon(0xff)) == -2)
       //m_19DB8:
       return -3;
   //m_19DB3:

@@ -48,7 +48,7 @@ c_rect* DM2_1031_01d5(i16 eaxw, c_rect* edxrp)
 
 const i8* DM2_1031_023b(s_bbw* eaxp)
 {
-  return &table1d3cd0[eaxp->w_02];
+  return (i8*)&table1d3cd0[eaxp->w_02];
 }
 
 s_www* DM2_1031_024c(s_bbw* eaxp)

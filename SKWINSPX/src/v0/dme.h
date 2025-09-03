@@ -61,6 +61,9 @@ typedef U32 U32ptr;
 typedef X32 X32ptr;
 #endif
 
+// Common DM2 structures
+#include <sktypesx.h>
+
 #pragma pack(push, 1)
 
 #if DM2_EXTENDED_MODE == 1
@@ -226,7 +229,7 @@ namespace DMEncyclopaedia {
 		U8 DoorType0() const { return (U8)((w14 >> 8)&15); }
 		U8 DoorType1() const { return (U8)((w14 >>12)); }
 	};
-
+/*
 #if (DM2_EXTENDED_OBJECT_DEF == 0)
 	// SPX: only struct for precise data
 	struct ObjectID_Reference {
@@ -249,6 +252,7 @@ namespace DMEncyclopaedia {
 		U16 dir:2;
 	};
 	// 
+#ifndef SKDOSV5
 #if (DM2_EXTENDED_OBJECT_DEF == 0) || !defined DM2_EXTENDED_OBJECT_DEF
 	struct ObjectID {
 		// FEDCBA98 76543210
@@ -408,8 +412,8 @@ namespace DMEncyclopaedia {
 		static ObjectID Raw(U32 w) { ObjectID rl; rl.w = w; return rl; };
 	};
 #endif // #ifndef DM2_EXTENDED_OBJECT_DEF
-
-
+#endif // SKDOSV5
+*/
 	// SPX: alternate door structure with precision before merging
 	struct Door_Info
 	{
@@ -1436,11 +1440,11 @@ namespace DM2Internal {
 			w8 |= (val << 8);
 		}
 		U8 b9_4_7() const { return (w8>>12)&15; }
-		DMEncyclopaedia::ObjectID *pv8_0_f() { return reinterpret_cast<DMEncyclopaedia::ObjectID *>(&w8); }
-		DMEncyclopaedia::ObjectID id6() const { return value; }
-		void id6(DMEncyclopaedia::ObjectID val) { value = val; }
-		void id8(DMEncyclopaedia::ObjectID val) { w8 = val; }
-		DMEncyclopaedia::ObjectID id8() const { return w8; }
+		ObjectID *pv8_0_f() { return reinterpret_cast<ObjectID *>(&w8); }
+		ObjectID id6() const { return value; }
+		void id6(ObjectID val) { value = val; }
+		void id8(ObjectID val) { w8 = val; }
+		ObjectID id8() const { return w8; }
 		U8 b9_0_0() const { return (U8)((w8>>8)&1); }
 		void b9_0_0(U8 val) {
 			val &= 1;
@@ -1629,10 +1633,10 @@ namespace DM2Internal {
 		//  +--+ | 5| +--+--+
 		//       +--+
 
-		DMEncyclopaedia::ObjectID inventory[INVENTORY_MAX_SLOT];	// @193 // w193[30] player posessions
+		ObjectID inventory[INVENTORY_MAX_SLOT];	// @193 // w193[30] player posessions
 
-		DMEncyclopaedia::ObjectID Possess(U16 no) const { return DMEncyclopaedia::ObjectID(inventory[no]); }
-		void Possess(U16 no, DMEncyclopaedia::ObjectID recordLink) { inventory[no] = recordLink; }
+		ObjectID Possess(U16 no) const { return ObjectID(inventory[no]); }
+		void Possess(U16 no, ObjectID recordLink) { inventory[no] = recordLink; }
 
 		U8 HeroType() const { return heroType; }
 		void HeroType(U8 val) { heroType = val; }
@@ -2218,7 +2222,7 @@ namespace DM2Internal {
 // SPX EXTENDED		
 
 
-		DMEncyclopaedia::ObjectID id4() const { return w4; }
+		ObjectID id4() const { return w4; }
 	};
 	// SPX: sk1c9a02c3 actually holds the same type of data contained within a creature records data, starting at byte 8.
 	// Depending on creatures type, these data will come from direct creature data or some other table.
@@ -2334,11 +2338,11 @@ namespace DM2Internal {
 		U8 b5_1_1() const { return b5&2; }
 	};
 	// SPX: sk57c8 renamed LeaderPossession
-	struct LeaderPossession { // 22 bytes
-		DMEncyclopaedia::ObjectID object;	// @0 w0
+	/*struct LeaderPossession { // 22 bytes
+		ObjectID object;	// @0 w0
 		U8 *pb2;						// @2 *pb2
 		U8 b6[16];						// @6 b6[16]
-	};
+	};*/
 	// 
 	// SPX: sk3e22 replaced by SpellDefinition
 #if XDM2_EXTENDED_SPELLS_TAB == 0
@@ -2400,12 +2404,12 @@ namespace DM2Internal {
 		U16 w0;							// @0
 		U8 b2;							// @2
 		U8 b3;							// @3
-		DMEncyclopaedia::ObjectID id4;	// @4
+		ObjectID id4;	// @4
 	};
 	// 
 	struct sk4d1a { // 12 bytes
 		SRECT rc0;						// @0
-		DMEncyclopaedia::ObjectID w8;	// @8
+		ObjectID w8;	// @8
 		U8 b10;							// @10
 		U8 b11;							// @11
 	};

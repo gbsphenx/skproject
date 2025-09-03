@@ -69,9 +69,9 @@ SET TARGET_V4=skwinv4-mingw
 SET TARGET_V5=skwinv5-mingw
 SET TARGET_V6=skwinv6-mingw
 
-::mingw32-make -f makefile_mingw_skwinv0 clean
+mingw32-make -f makefile_mingw_skwinv0 clean
 mingw32-make -f makefile_mingw_skwinv0 %TARGET_V0%
-::mingw32-make -f makefile_mingw_skwinv4 clean
+mingw32-make -f makefile_mingw_skwinv4 clean
 mingw32-make -f makefile_mingw_skwinv4 %TARGET_V4%
 ::mingw32-make -f makefile_mingw_skwinv5 clean
 ::mingw32-make -f makefile_mingw_skwinv5 %TARGET_V5%

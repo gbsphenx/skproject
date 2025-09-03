@@ -1475,7 +1475,7 @@ void DM2_LOAD_DYN4(unk* xeaxp, i32 edxl)
         if (DM2_SOUND7(CUTX16(longrg17)) == 0)
           continue;
       }
-      i32 longrg2 = unsignedlong(s36_08.u31p_10->b_01);
+      i32 longrg2 = unsignedlong((i8)s36_08.u31p_10->b_01);
       DM2_SOUND9(s36_08.b_14, s36_08.u31p_10->b_00, CUTLX8(longrg2));
     }
   }

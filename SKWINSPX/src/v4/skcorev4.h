@@ -7,10 +7,11 @@
 #define _SKCODE_CORE_V4_H_
 
 #include <sktypes.h>
-#include <dme.h>
+#include <sktypesx.h>
+//#include <dme.h>
 
-using namespace DMEncyclopaedia;
-using namespace DM2Internal;
+//using namespace DMEncyclopaedia;
+//using namespace DM2Internal;
 
 //..............................................................................
 

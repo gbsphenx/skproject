@@ -463,7 +463,7 @@ static i32 DM2_READ_DUNGEON_STRUCTURE(i32 eaxl)
       RG1L = 2 * RG1L;
       RG2P += RG1L;
       RG1L = signedlong(RG53W);
-      RG3L = unsignedlong(table1d281c[RG1L]);
+      RG3L = unsignedlong((i8)table1d281c[RG1L]);
       //m_26D60:
       for (;;)
       {
@@ -865,7 +865,7 @@ bool DM2_READ_RECORD_CHECKCODE(i32 eaxl, i16* ebxpw, i32 ecxl, i32 edxl, i32 arg
     vl_1c = unsignedlong(vql_2c.peek16());
     DM2_APPEND_RECORD_TO(mk_record(vl_1c), UPCAST(t_record, DOWNCAST(i16, ebxpw)), vql_0c.peek16(), vql_08.peek16());
     s_rec* s100prg5 = XUPCAST(s_rec, DOWNCAST(t_record, DM2_GET_ADDRESS_OF_RECORD(mk_record(mkuw(CUTX16(vl_1c))))));
-    pb_20 = table1d64db[vl_14];
+    pb_20 = (i8*)table1d64db[vl_14];
     if (pb_20 != NULL)
     {
       vl_18 = 0;
@@ -1293,7 +1293,7 @@ static i32 DM2_READ_SKSAVE_DUNGEON(void)
             i16 wordrg12 = (wordrg61 & wcon(0x3c00)) >> bcon(0xa);
             vw_1c = wordrg12;
             i32 longrg42 = unsignedlong(wordrg12);
-            bprg7 = table1d64db[longrg42];
+            bprg7 = (i8*)table1d64db[longrg42];
             if (bprg7 != NULL)
             {
               s_ww* s102prg1 = XUPCAST(s_ww, DOWNCAST(t_record, DM2_GET_ADDRESS_OF_RECORD(mk_record(mkuw(wordrg61)))));
@@ -1480,7 +1480,7 @@ _DEBUG_SHOW_BIGPOOL();
       if (DM2_READ_DUNGEON_STRUCTURE(0) == 0) goto M_exit;
       ddat.cd.mo.glbSpecialScreen = _MENU_SCREEN__RESUME_GAME_SELECT;
       DM2_SUPPRESS_INIT();
-      if (DM2_SUPPRESS_READER(ADRESSOF(s_savegamebuffer, &s33_00), table1d631a, sizeof(s_savegamebuffer), 1, true)) goto M_exit;
+      if (DM2_SUPPRESS_READER(ADRESSOF(s_savegamebuffer, &s33_00), (i8*)table1d631a, sizeof(s_savegamebuffer), 1, true)) goto M_exit;
       timdat.gametick = s33_00.l_00;
       ddat.v1e021c = s33_00.l_00;
       randdat.random = s33_00.ul_04;
@@ -1512,7 +1512,7 @@ _DEBUG_SHOW_BIGPOOL();
       if (DM2_SUPPRESS_READER(ddat.v1e0104, ddat.v1d6316, 1, lcon(0x8), true)) goto M_exit;
       if (DM2_SUPPRESS_READER(ddat.globalb, ddat.v1d6316, 1, lcon(0x40), true)) goto M_exit;
       if (DM2_SUPPRESS_READER(DOWNCAST(i16, ddat.globalw), ddat.v1d6316, 2, lcon(0x40), true)) goto M_exit;
-      if (DM2_SUPPRESS_READER(DOWNCAST(c_hero, party.hero), table1d6356, sizeof(c_hero), unsignedlong(party.heros_in_party), true)) goto M_exit;
+      if (DM2_SUPPRESS_READER(DOWNCAST(c_hero, party.hero), (i8*)table1d6356, sizeof(c_hero), unsignedlong(party.heros_in_party), true)) goto M_exit;
       if (DM2_SUPPRESS_READER(DOWNCAST(c_wbbb, &ddat.savegames1), table1d645d, sizeof(c_wbbb), 1, true)) goto M_exit;
       if (DM2_SUPPRESS_READER(DOWNCAST(c_tim, timdat.timerarray), v1d6463, sizeof(c_tim), unsignedlong(timdat.num_timers), true)) goto M_exit;
 
@@ -1780,7 +1780,7 @@ static bool DM2_WRITE_RECORD_CHECKCODE(i16 eaxw, i32 edxl, i32 ebxl)
         return true;
       break;
     }
-    bprg7 = table1d64db[unsignedlong(vw_14)];
+    bprg7 = (i8*)table1d64db[unsignedlong(vw_14)];
     if (bprg7 != NULL)
     {
       vl_04 = unsignedlong(eaxw);
@@ -2230,7 +2230,7 @@ int DM2_GAME_SAVE_MENU(void)		// SPX: changed void to int for MSVC6 compilation 
   s33_00.b_37 = ddat.v1e1478;
   s33_00.l_38 = ddat.v1e1434;
   DM2_SUPPRESS_INIT();
-  if (DM2_SUPPRESS_WRITER(ADRESSOF(s_savegamebuffer, &s33_00), table1d631a, lcon(0x3c), 1))
+  if (DM2_SUPPRESS_WRITER(ADRESSOF(s_savegamebuffer, &s33_00), (i8*)table1d631a, lcon(0x3c), 1))
     return SUBSAVE(true);
   if (DM2_SUPPRESS_WRITER(ddat.v1e0104, ddat.v1d6316, 1, lcon(0x8)))
     return SUBSAVE(true);
@@ -2238,7 +2238,7 @@ int DM2_GAME_SAVE_MENU(void)		// SPX: changed void to int for MSVC6 compilation 
     return SUBSAVE(true);
   if (DM2_SUPPRESS_WRITER(DOWNCAST(i16, ddat.globalw), ddat.v1d6316, 2, lcon(0x40)))
     return SUBSAVE(true);
-  if (DM2_SUPPRESS_WRITER(DOWNCAST(c_hero, party.hero), table1d6356, sizeof(c_hero), unsignedlong(party.heros_in_party)))
+  if (DM2_SUPPRESS_WRITER(DOWNCAST(c_hero, party.hero), (i8*)table1d6356, sizeof(c_hero), unsignedlong(party.heros_in_party)))
     return SUBSAVE(true);
   if (DM2_SUPPRESS_WRITER(DOWNCAST(c_wbbb, &ddat.savegames1), table1d645d, lcon(0x6), 1))
     return SUBSAVE(true);

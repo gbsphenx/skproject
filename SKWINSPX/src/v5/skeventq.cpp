@@ -128,7 +128,7 @@ static void DM2_3e74_5b7c(i32 eaxl)
   RG2L = RG1L;
   RG4W = ddat.v1d6795;
   RG1L = signedlong(RG4W);
-  RG3L = unsignedlong(table1d6797[RG1L]);
+  RG3L = unsignedlong((i8)table1d6797[RG1L]);
   RG1L = unsignedlong(RG2W);
   RG4L++;
   ddat.v1d6795 = RG4W;

@@ -1890,7 +1890,7 @@ void DM2_ADD_RUNE_TO_TAIL(i16 eaxw)
   RG1W = unsignedword(RG1Blo);
   if (RG2W != 0)
   {
-    RG52l = unsignedlong(table1d6797[unsignedlong(hero->rune[0]) + 1]); // EVIL offset was 0x1d6798
+    RG52l = unsignedlong((i8)table1d6797[unsignedlong(hero->rune[0]) + 1]); // EVIL offset was 0x1d6798
     RG1L = unsignedlong(RG1W) * RG52l;
     RG1L >>= bcon(0x3);
   }

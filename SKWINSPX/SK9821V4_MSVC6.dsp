@@ -183,6 +183,10 @@ SOURCE=.\src\v4\skitem.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\src\v4\skmemcch.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\v4\sktext.cpp
 # End Source File
 # Begin Source File

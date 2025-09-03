@@ -192,8 +192,8 @@ i16 DM2_QUERY_GDAT_PICT_OFFSET(i8 eaxb, i8 edxb, i8 ebxb)
     return 0;
   s_wwbb* s84prg5;
   bool vbool = false;
-  if (!dm2_ulp.islen(unsignedlong(u31prg1->w_02)))
-    s84prg5 = XUPCAST(s_wwbb, dm2_ulp.getp(unsignedlong(u31prg1->w_02)));
+  if (!dm2_ulp.islen(unsignedlong((i16)u31prg1->w_02)))
+    s84prg5 = XUPCAST(s_wwbb, dm2_ulp.getp(unsignedlong((i16)u31prg1->w_02)));
   else
   {
     vbool = true;
