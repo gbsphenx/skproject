@@ -10,7 +10,10 @@
 //------------------------------------------------------------------------------
 // WINDOWS / MSVC6 / MSVC8
 
-#if !defined(SKDOSV5) && (defined (_WINDOWS) || (_MSC_VER >= 1200) || defined(_USE_MFC80) || defined(_USE_MFC60))
+//#if !defined(SKDOSV5) && (defined (_WINDOWS) || (_MSC_VER >= 1200) || defined(_USE_MFC80) || defined(_USE_MFC60))
+//#include <stdafx.h>
+//#endif
+#if (defined (_WINDOWS) || (_MSC_VER >= 1200) || defined(_USE_MFC80) || defined(_USE_MFC60))
 #include <stdafx.h>
 #endif
 

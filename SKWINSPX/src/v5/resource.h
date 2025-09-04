@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Developer Studio generated include file.
-// Used by SKWINx.rc
+// Used by SKWIN5.rc
 //
 #define IDR_MENU1                       101
 #define IDD_ABOUT                       102
@@ -57,6 +57,7 @@
 #define ID_SUPER_MODE                   40076
 #define ID_SUPER_INFO_EYE               40077
 #define ID_WAV_MUSIC_ENABLED            40078
+#define ID_DUNGEON_DM2_SKULLKEEP_EXTENDED 40079
 //#define ID_VERSION_NO_SPECIFIC          40080
 #define ID_DEBUG_INFINITE_SPELL           40081
 #define ID_DEBUG_NO_TIMER                 40082
@@ -64,6 +65,18 @@
 #define ID_DEBUG_GFX_NO_DOORS           40084
 #define ID_DEBUG_GFX_NO_CREATURES       40085
 #define ID_DEBUG_GFX_NO_INTERWALLS      40086
+#define ID_DUNGEON_BWY_BLOODWYCH        40087
+#define ID_DUNGEON_DM2_NO_SPECIFIC      40088
+#define ID_DUNGEON_DM1_KID_DUNGEON      40089
+#define ID_DUNGEON_DM1_DUNGEON_MASTER   40090
+#define ID_DUNGEON_DM1_CHAOS_STRIKES_BACK 40091
+#define ID_DUNGEON_DM1_THERON_QUEST     40092
+#define ID_DUNGEON_DM2_DUNGEON_MASTER   40093
+#define ID_DUNGEON_DM2_CHAOS_STRIKES_BACK 40094
+#define ID_DUNGEON_DM2_THERON_QUEST     40095
+#define ID_DUNGEON_DM2_SKULLKEEP_BETA   40096
+#define ID_DUNGEON_DM2_SKULLKEEP_DEMO   40097
+#define ID_DUNGEON_DM2_LEGEND_SKULLKEEP 40098
 #define ID_Dummy                        40099
 #define ID_HELP_ABOUT                   40100
 #define ID_SEPA                         40101

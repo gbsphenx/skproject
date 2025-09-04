@@ -251,7 +251,7 @@ void* thread_func(ALLEGRO_THREAD* thr, void* vparg)
 }
 
 int __GlobalOption_DM2Skull_MusicMode = 0;
-int __GlobalOption_DM2Skull_NewGameMode = 0; // 0 = wait title menu / 1 = new game
+//int __GlobalOption_DM2Skull_NewGameMode = 0; // 0 = wait title menu / 1 = new game
 
 
 extern SkWinApp* skWinApplication;	// in GFXMAIN.cpp

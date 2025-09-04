@@ -243,7 +243,7 @@ static void DM2_DRAW_TITLE_MENU_SCREEN(void)
 #include <regs.h>
 #include <emu.h>
 
-extern int __GlobalOption_DM2Skull_NewGameMode; // main.cpp
+//extern int __GlobalOption_DM2Skull_NewGameMode; // main.cpp
 
 // id: 0x287A6
 // was SKW_2481_007d, SHOW_MENU_SCREEN
@@ -318,8 +318,8 @@ _DEBUG_SHOW_BIGPOOL("BEFORE SHOW_MOUSE");
 			ddat.cd.mo.glbSpecialScreen = _MENU_SCREEN__LOAD_NEW_GAME;
 		else if (SkCodeParam::bOptionNewGame == 2)
 			ddat.cd.mo.glbSpecialScreen = _MENU_SCREEN__RESUME_GAME_SELECT;
-		//else if (SkCodeParam::bOptionNewGame == 3)
-		//	ddat.cd.mo.glbSpecialScreen = _MENU_SCREEN__SHOW_CREDITS;
+		else if (SkCodeParam::bOptionNewGame == 3)
+			ddat.cd.mo.glbSpecialScreen = _MENU_SCREEN__SHOW_CREDITS;
 	}
     for (;;)
     {
