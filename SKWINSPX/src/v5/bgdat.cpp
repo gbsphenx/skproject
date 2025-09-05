@@ -1059,15 +1059,16 @@ printf("CHECK 3\n");
 
   // initialize the pointer/length-table
   dm2_ulp.init();
-
+printf("CHECK 4\n");
   // create w_table2 and fill it with 0xffff
   dm2_dballochandler.w_table2 = CHGCAST(t_dbidx, dm2_dballochandler.DM2_ALLOC_FREEPOOL_MEMORY(sizeof(t_dbidx) * unsignedlong(gdat.entries)));
   DM2_FILL_I16TABLE(CHGCAST(i16, dm2_dballochandler.w_table2), lcon(0xffffffff), unsignedlong(gdat.entries));
-
+printf("CHECK 5\n");
   // create a temporary word-table (ptrrg3)
   longrg6 = sizeof(i16) * unsignedlong(gdat.entries);
   wptrrg3 = XUPCAST(i16, dm2_dballochandler.DM2_ALLOC_LOBIGPOOL_MEMORY(longrg6));
   ddat.vlong1e0a3c = longrg6 + 2 * sizeof(i16);
+printf("CHECK 6\n");
   if (gdat.versionlo >= wcon(0x3))
   {
     if (!DM2_FILE_READ(gdat.filehandle, DOWNCAST(i32, &ddat.vlong1e0a44), lcon(0x4)))
@@ -1083,6 +1084,7 @@ printf("CHECK 3\n");
     ddat.vlong1e0a44 = unsignedlong(*wptrrg3);
     ddat.vlong1e0a3c += unsignedlong(*wptrrg3);
   }
+printf("CHECK 7\n");
   *wptrrg3 = 0;
   ddat.vlong1e0a40 = ddat.vlong1e0a3c;
   uwordrg1 = 0;
@@ -1091,12 +1093,14 @@ printf("CHECK 3\n");
     ddat.vlong1e0a40 += unsignedlong(*wptrrg3);
     dm2_ulp.setl(uwordrg1++, unsignedlong(*wptrrg3++));
   }
+printf("CHECK 8\n");
   longrg1 = DM2_GET_FILE_SIZE(signedlong(gdat.filehandle));
   gdat.filesize = longrg1;
   if (longrg1 < ddat.vlong1e0a40)
     gdat.filetype1 = gdat.filetype2 = true;
   dm2_dballochandler.DM2_DEALLOC_LOBIGPOOL(longrg6);
   DM2_LOAD_ENT1();
+printf("CHECK 9\n");
   if (gdat.versionlo >= wcon(0x2) && gdat.versionlo != wcon(0x4))
   {
     if (DM2_QUERY_GDAT_ENTRY_DATA_INDEX(0, 0, lcon(0x8), 0) != lcon(0xffffffff))

@@ -68,8 +68,10 @@ BEGIN
         MENUITEM "&2x (640x400)",                         40003
         MENUITEM "&3x (960x600)",                         40011
         MENUITEM "&4x (1280x800)",                         40004
-        MENUITEM "&5x (1600x1000)",                         40000
-
+        MENUITEM "&5x (1600x1000)",                         40060
+        MENUITEM "--- Aspect Correction",  40101, GRAYED, MENUBARBREAK
+        MENUITEM "Off (Square Pixels)",                         40061
+        MENUITEM "On (CRT 4:3)",                         40062
     END
     POPUP "&Sound"
     BEGIN

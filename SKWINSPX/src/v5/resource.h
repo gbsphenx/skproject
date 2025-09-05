@@ -5,18 +5,23 @@
 #define IDR_MENU1                       101
 #define IDD_ABOUT                       102
 #define IDC_POINTER                     104
-#define ID_VIDEO_5X                     40000
 #define ID__EXIT                        40001
+
 #define ID_VIDEO_1X                     40002
 #define ID_VIDEO_2X                     40003
+#define ID_VIDEO_3X                     40011
 #define ID_VIDEO_4X                     40004
+#define ID_VIDEO_5X                     40060
+
+#define ID_VIDEO_CRT_RATIO_OFF          40061
+#define ID_VIDEO_CRT_RATIO_ON           40062
+
 #define ID_SOUND_WINMM                  40005
 #define ID_SOUND_ALLEGRO                40006
 #define ID_SOUND_DIRECTSOUND            40007
 #define ID_SOUND_OPENAL                 40008
 #define ID_SOUND_WINDOWSMULTIMEDIA      40009
 #define ID_SOUND_DS                     40010
-#define ID_VIDEO_3X                     40011
 #define ID_SOUND_NO                     40012
 #define ID_L_180000                     40013
 #define ID_L_182000                     40014
@@ -39,15 +44,16 @@
 #define ID_SPEED_4SLOW                  40043
 #define ID_SPEED_5VERYSLOW              40044
 #define ID_SPEED_6GLACIAL               40045
-#define ID_DUNGEON_DMO_WATERDEEP        40046
+
 #define ID_EXTRA_DOUBLE_STEP_MOVE       40052
+
 #define ID_LANG_ENGLISH                 40053
 #define ID_LANG_FRENCH                  40054
 #define ID_LANG_GERMAN                  40055
 #define ID_LANG_JAPANESE                40056
 #define ID_LANG_SPANISH                 40057
 #define ID_LANG_ITALIAN                 40058
-#define ID_DUNGEON_DMX_SURPRISE         40069
+
 #define ID_DEBUG_BREAK_DOOR             40070
 #define ID_DEBUG_WALK_OVER_PIT          40071
 #define ID_EXTRA_SOUNDS                 40072
@@ -57,26 +63,14 @@
 #define ID_SUPER_MODE                   40076
 #define ID_SUPER_INFO_EYE               40077
 #define ID_WAV_MUSIC_ENABLED            40078
-#define ID_DUNGEON_DM2_SKULLKEEP_EXTENDED 40079
-//#define ID_VERSION_NO_SPECIFIC          40080
+
 #define ID_DEBUG_INFINITE_SPELL           40081
 #define ID_DEBUG_NO_TIMER                 40082
 #define ID_DEBUG_GFX_NO_WALLS           40083
 #define ID_DEBUG_GFX_NO_DOORS           40084
 #define ID_DEBUG_GFX_NO_CREATURES       40085
 #define ID_DEBUG_GFX_NO_INTERWALLS      40086
-#define ID_DUNGEON_BWY_BLOODWYCH        40087
-#define ID_DUNGEON_DM2_NO_SPECIFIC      40088
-#define ID_DUNGEON_DM1_KID_DUNGEON      40089
-#define ID_DUNGEON_DM1_DUNGEON_MASTER   40090
-#define ID_DUNGEON_DM1_CHAOS_STRIKES_BACK 40091
-#define ID_DUNGEON_DM1_THERON_QUEST     40092
-#define ID_DUNGEON_DM2_DUNGEON_MASTER   40093
-#define ID_DUNGEON_DM2_CHAOS_STRIKES_BACK 40094
-#define ID_DUNGEON_DM2_THERON_QUEST     40095
-#define ID_DUNGEON_DM2_SKULLKEEP_BETA   40096
-#define ID_DUNGEON_DM2_SKULLKEEP_DEMO   40097
-#define ID_DUNGEON_DM2_LEGEND_SKULLKEEP 40098
+
 #define ID_Dummy                        40099
 #define ID_HELP_ABOUT                   40100
 #define ID_SEPA                         40101
