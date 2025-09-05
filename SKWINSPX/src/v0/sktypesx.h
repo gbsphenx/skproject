@@ -24,9 +24,10 @@
 #endif
 
 	struct ObjectRefID {
-		U16 idx:10;
-		U16 db:4;
-		U16 dir:2;
+		// DDTTTTii iiiiiiii
+		U16 idx:10;		// iiiiiiiiii -> record index. 0 to 1023.
+		U16 db:4;		// TTTT -> record database type. 0=door, 1=tele, 2=text, 3=actu, ...
+		U16 dir:2;		// DD -> direction. 0=North, 1=E, 2=S, 3=W
 	};
 	// 
 

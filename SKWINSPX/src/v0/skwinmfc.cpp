@@ -273,10 +273,11 @@ void CSkWinMFC::OnPaint()
 		pbi->bmiColors[x].rgbReserved = 0;
 	}
 	if (sxfact == 1) {
-		SetDIBitsToDevice(dc, 0, 0, 320, 200, 0, 0, 0, 200, pVRAMData, pbi, DIB_RGB_COLORS);
+		SetDIBitsToDevice(dc, 0, 0, 320, 200*SkCodeParam::fVideoYScale, 0, 0, 0, 200, pVRAMData, pbi, DIB_RGB_COLORS);
 	}
 	else {
-		StretchDIBits(dc, 0, 0, 320*sxfact, 200*sxfact, 0, 0, 320, 200, pVRAMData, pbi, DIB_RGB_COLORS, SRCCOPY);
+		StretchDIBits(dc, 0, 0, 320*SkCodeParam::iVideoScale, 200*SkCodeParam::iVideoScale*SkCodeParam::fVideoYScale,
+			0, 0, 320, 200, pVRAMData, pbi, DIB_RGB_COLORS, SRCCOPY);
 	}
 }
 
@@ -323,7 +324,7 @@ void CSkWinMFC::OnDestroy()
 void CSkWinMFC::processMinput(UINT nFlags, CPoint point)
 {
 	point.x /= sxfact;
-	point.y /= sxfact;
+	point.y /= (sxfact*SkCodeParam::fVideoYScale);
 	CSkMinput *p = allocMinput();
 	if (p != NULL) {
 		p->btn = 0
@@ -382,7 +383,7 @@ void CSkWinMFC::OnRButtonUp(UINT nFlags, CPoint point)
 BOOL CSkWinMFC::OnEraseBkgnd(CDC* pDC)
 {
 	const int cxvw = 320 * sxfact;
-	const int cyvw = 320 * sxfact;
+	const int cyvw = 320 * (sxfact*SkCodeParam::fVideoYScale);
 
 	int a = pDC->SaveDC();
 	pDC->ExcludeClipRect(0, 0, cxvw, cyvw);
@@ -507,12 +508,17 @@ void CSkWinMFC::OnVideo1x(UINT nID) {
 	int lang = -1;
 	int dung = -1;
 	int gdat_vers = -1;
+	float fYscale = -1.0f;
 	switch (nID) {
-		case ID_VIDEO_1X: sxfact = 1; break;
-		case ID_VIDEO_2X: sxfact = 2; break;
-		case ID_VIDEO_3X: sxfact = 3; break;
-		case ID_VIDEO_4X: sxfact = 4; break;
-		case ID_VIDEO_5X: sxfact = 5; break;
+		case ID_VIDEO_1X: SkCodeParam::iVideoScale = sxfact = 1; break;
+		case ID_VIDEO_2X: SkCodeParam::iVideoScale = sxfact = 2; break;
+		case ID_VIDEO_3X: SkCodeParam::iVideoScale = sxfact = 3; break;
+		case ID_VIDEO_4X: SkCodeParam::iVideoScale = sxfact = 4; break;
+		case ID_VIDEO_5X: SkCodeParam::iVideoScale = sxfact = 5; break;
+
+		case ID_VIDEO_CRT_RATIO_OFF: fYscale = SkCodeParam::fVideoYScale = 1.0f; break;
+		case ID_VIDEO_CRT_RATIO_ON: fYscale = SkCodeParam::fVideoYScale = 1.2f; break;
+
 
 		case ID_SOUND_NO: sblast = 0; break;
 		case ID_SOUND_WINMM: sblast = 1; break;
@@ -562,13 +568,29 @@ void CSkWinMFC::OnVideo1x(UINT nID) {
 		case ID_DEBUG_GFX_NO_INTERWALLS: SkCodeParam::bDebugGFXNoInterWalls = !SkCodeParam::bDebugGFXNoInterWalls; break;
 	
 	}
+	//SkCodeParam::iVideoScale = sxfact;
 	if (sxfact != -1) {
+	//if (sxfact != -1 || SkCodeParam::fVideoYScale != -1) {
 		this->sxfact = sxfact;
 		CRect rc;
 		GetClientRect(&rc);
 		ClientToScreen(&rc);
-		rc.right = rc.left + 320 * sxfact;
-		rc.bottom = rc.top + 200 * sxfact;
+		rc.right = rc.left + 320 * SkCodeParam::iVideoScale;
+		rc.bottom = rc.top + 200 * (SkCodeParam::iVideoScale * SkCodeParam::fVideoYScale);
+		AdjustWindowRectEx(&rc, GetStyle(), true, GetExStyle());
+		MoveWindow(&rc);
+		Invalidate();
+
+		CString str;
+		str.Format("%d", sxfact); WritePrivateProfileString(_skwin, "sxfact", str, GetSkwinini());
+	}
+	if (fYscale != -1.0f) {
+		this->sxfact = sxfact;
+		CRect rc;
+		GetClientRect(&rc);
+		ClientToScreen(&rc);
+		rc.right = rc.left + 320 * SkCodeParam::iVideoScale;
+		rc.bottom = rc.top + 200 * (SkCodeParam::iVideoScale * SkCodeParam::fVideoYScale);
 		AdjustWindowRectEx(&rc, GetStyle(), true, GetExStyle());
 		MoveWindow(&rc);
 		Invalidate();
@@ -614,6 +636,10 @@ void CSkWinMFC::OnUpdateVideo1x(CCmdUI *pCmdUI) {
 		case ID_VIDEO_3X: pCmdUI->SetRadio(sxfact == 3); break;
 		case ID_VIDEO_4X: pCmdUI->SetRadio(sxfact == 4); break;
 		case ID_VIDEO_5X: pCmdUI->SetRadio(sxfact == 5); break;
+
+		case ID_VIDEO_CRT_RATIO_OFF: pCmdUI->SetRadio(SkCodeParam::fVideoYScale == 1.0f); break;
+		case ID_VIDEO_CRT_RATIO_ON: pCmdUI->SetRadio(SkCodeParam::fVideoYScale == 1.2f); break;
+
 
 		case ID_SOUND_NO: pCmdUI->SetRadio(sblast == 0); break;
 		case ID_SOUND_WINMM: pCmdUI->SetRadio(sblast == 1); break;

@@ -56,7 +56,7 @@ UINT SkRendererMFC::Init(SkVRAM* xVRAM)
 	if (AfxWinInit(GetModuleHandle(NULL), NULL, GetCommandLine(), SW_SHOW)) {
 		if (SUCCEEDED(hr = CoInitialize(NULL))) {
 			int iScreenScale = SkCodeParam::iVideoScale;
-			CRect rc(0, 0, 320 * iScreenScale, 200 * iScreenScale);
+			CRect rc(0, 0, 320 * iScreenScale, 200 * iScreenScale * SkCodeParam::fVideoYScale);
 			AdjustWindowRectEx(&rc, WS_OVERLAPPEDWINDOW, true, 0);
 			rc.OffsetRect(-rc.left, -rc.top);
 			printf("Initializing windows screen (%d,%d)\n", -rc.left, -rc.top);
