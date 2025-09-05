@@ -89,6 +89,7 @@ public:
 	static bool bDebugGFXNoInterWalls;
 	static bool bDebugGFXNoDoors;
 	static bool bDebugGFXNoCreatures;
+	static bool bDebugNoCreatures;
 
 	static bool bForceOrnateSound;
 

@@ -8,9 +8,6 @@ bool SkCodeParam::bCompilation64bits = false;
 #endif
 
 
-
-
-
 bool SkCodeParam::bRenderingEngineSDL = false;
 #ifdef __DJGPP__
 	bool SkCodeParam::bRenderingEngineDOS = true;
@@ -62,17 +59,18 @@ bool SkCodeParam::bShowLuck = false;
 
 bool SkCodeParam::bEnableDoubleStepMove = true;
 bool SkCodeParam::bDisableFogEffect = false;
-bool SkCodeParam::bWeakDoors = false;
+bool SkCodeParam::bWeakDoors = true;
 bool SkCodeParam::bWalkOverPits = false;
 bool SkCodeParam::bUseCustomSpells = false;	// Start FALSE. This is automatically put to TRUE if graphics.dat contains custom spell definitions
 bool SkCodeParam::bUnlimitedCharges = false;
 bool SkCodeParam::bNoTimer = false;
 
 bool SkCodeParam::bDebugInfiniteSpells = false;
-bool SkCodeParam::bDebugGFXNoWalls = false;
-bool SkCodeParam::bDebugGFXNoInterWalls = false;
-bool SkCodeParam::bDebugGFXNoDoors = false;
-bool SkCodeParam::bDebugGFXNoCreatures = false;
+bool SkCodeParam::bDebugGFXNoWalls = false;			// don't display solid walls
+bool SkCodeParam::bDebugGFXNoInterWalls = false;	// don't display interwalls
+bool SkCodeParam::bDebugGFXNoDoors = false;		// don't display doors
+bool SkCodeParam::bDebugGFXNoCreatures = false;	// don't display creature
+bool SkCodeParam::bDebugNoCreatures = true;		// drop all creatures -- don't generate creatures
 
 bool SkCodeParam::bMIDIMusicEnabled = true;
 bool SkCodeParam::bWAVMusicEnabled = false;

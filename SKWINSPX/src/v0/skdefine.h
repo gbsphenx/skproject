@@ -1511,4 +1511,29 @@ typedef enum
 #define RECT_CHAMPION_PORTRAIT_3				175
 #define RECT_CHAMPION_PORTRAIT_4				176
 
+
+//------------------------------------------------------------------------------
+//	DIALOG BOXES
+//------------------------------------------------------------------------------
+//
+// 0x0B	- Save game to C:	(old panel)
+//	Save - Quit
+//	Format Floppy - Resume
+
+// 0x1B	- Save game to C:	(V5)
+//	Save - Quit
+//	Restart - Resume
+
+// 0x12	- Save game to C:	(V4)
+//	Save
+//	Quit - Resume
+
+
+// 0x0E - Loading game...
+//	+ progression bar
+
+// 0x0C - The game is not saved, is it ok to quit?
+//	OK
+//	Cancel
+
 #endif // __GENERAL_DEFINE__
