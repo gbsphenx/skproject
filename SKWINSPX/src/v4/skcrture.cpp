@@ -1571,14 +1571,11 @@ U16 SkWinCore::QUERY_CREATURE_AI_W32_FROM_RECORD(ObjectID rl)
 // SPX: _14cd_0802 renamed CREATURE_THINK_FLUSH_POSITION
 void SkWinCore::CREATURE_THINK_FLUSH_POSITION()
 {
-	//^14CD:0802
 	ENTER(0);
-	//^14CD:0805
 	if (glbCurrentThinkingCreatureData == NULL && SkCodeParam::bDebugBypassNullPointers == true)
 		return;
 	glbCurrentThinkingCreatureData->x = xactrNeedReset;
 	glbCurrentThinkingCreatureData->y = 0;
-	//^14CD:0813
 	return;
 }
 //^1C9A:0A48
@@ -2424,7 +2421,7 @@ X16 SkWinCore::WOUND_CREATURE(i16 damage)
 		));
 
 	// If the creature has max defense, then take no damage
-	if (xLocalAIDef->ArmorClass == AI_DEF_ARMOR_MAX)
+	if (xLocalAIDef->ArmorClass == AI_DEF_ARMOR_MAX && !SkCodeParam::bDebugNoCreatures)
 		return bDiesFromDamage;
 	X16 iAIStatsFlag = 0;	// SPX : added default value to 0
 	if (xLocalAIDef->IsStaticObject() == 0) {
@@ -6359,7 +6356,7 @@ void SkWinCore::THINK_CREATURE(X8 xx, X8 yy, X16 timerType)
 		return;
 
 	xCreatureData->TimerIndex(0xffff);
-	if (glbCurrentThinkingCreatureRec->hp1 == 0) {
+	if (glbCurrentThinkingCreatureRec->hp1 == 0 && !SkCodeParam::bDebugNoCreatures) {
 		//^13E4:0D57
 		xCreatureData->w20 = 1;
 		glbCurrentThinkingCreatureRec->hp1 = 1;
@@ -6584,57 +6581,39 @@ ObjectID SkWinCore::ALLOC_NEW_CREATURE(U16 creaturetype, U16 healthMultiplier_1t
 
 	// (creature += 0x8000) if you wanna create minion map's minion creature. then new missile record is attached to the minion creature.
 
-	//^1C9A:121D
 	ENTER(12);
-	//^1C9A:1223
 	U16 si = healthMultiplier_1to31_baseIs8;
-	//^1C9A:1226
 	U16 bp0c = creaturetype & 0x8000;
-	//^1C9A:122F
 	ObjectID bp0a;
 	if (bp0c != 0) {
-		//^1C9A:1233
 		creaturetype &= 0x7fff;
-		//^1C9A:1238
 		bp0a = ALLOC_NEW_RECORD(dbMissile);
-		//^1C9A:1243
 		if (bp0a == OBJECT_NULL) {
-			//^1C9A:1248
 			return OBJECT_NULL;
 		}
 	}
-	//^1C9A:124E
 	ObjectID di = ALLOC_NEW_RECORD(dbCreature);
-	//^1C9A:1258
 	if (di == OBJECT_NULL || _4976_1a68 >= glbCreaturesCount) {
-		//^1C9A:1266
 		if (bp0c != 0)
-			//^1C9A:126C
 			DEALLOC_RECORD(bp0a);
-		//^1C9A:1275
-		//^1C9A:1248
 		return OBJECT_NULL;
 	}
-	//^1C9A:1277
+
 	Creature *xCreature = GET_ADDRESS_OF_RECORD4(di);	//*bp04
 	xCreature->CreatureType(U8(creaturetype));
-	//^1C9A:128E
+
 	AIDefinition *bp08 = QUERY_CREATURE_AI_SPEC_FROM_TYPE(U8(creaturetype));
-	//^1C9A:129B
 	xCreature->SetPossessionObject(OBJECT_END_MARKER);
 	xCreature->b15 = 0xFB;
 	xCreature->b15_0_1(dir);
 	xCreature->SetInternalID(0xFF);
 	if (bp0c != 0) {
-		//^1C9A:12C3
 		APPEND_RECORD_TO(bp0a, &xCreature->possession, -1, 0);
 	}
-	//^1C9A:12DB
 	si = min_value(si, 31);
-	//^1C9A:12E8
 	// SPX: bp08->w4 = Hit Points
 	si = (si * bp08->BaseHP) >> 3;
-	//^1C9A:12F4
+
 	xCreature->HP1(RAND16((si >> 3) +1) +si);
 	xCreature->HP3(0);
 	xCreature->SetTriggerXPos(xx);
@@ -6655,10 +6634,10 @@ ObjectID SkWinCore::ALLOC_NEW_CREATURE(U16 creaturetype, U16 healthMultiplier_1t
 i16 SkWinCore::CREATURE_GET_COLORKEY(U8 cls2)
 {
 	ENTER(0);
-	U16 si = QUERY_GDAT_CREATURE_WORD_VALUE(cls2, GDAT_IMG_COLORKEY_1);	// 0x04
-	if (si == 0)
-		return 4;
-	return si;
+	U16 iColorKey = QUERY_GDAT_CREATURE_WORD_VALUE(cls2, GDAT_IMG_COLORKEY_1);	// 0x04
+	if (iColorKey == 0)
+		return 4;	// default
+	return iColorKey;
 }
 
 

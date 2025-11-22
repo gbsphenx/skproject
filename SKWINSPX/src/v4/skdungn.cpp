@@ -1922,36 +1922,28 @@ ObjectID SkWinCore::ALLOC_NEW_DBITEM(Bit16u itemspec)
 }
 
 //^0CEE:30A6
-Bit8u SkWinCore::GET_WALL_DECORATION_OF_ACTUATOR(Actuator *ref)
+U8 SkWinCore::GET_WALL_DECORATION_OF_ACTUATOR(Actuator *ref)
 {
-	//^0CEE:30A6
-	Bit16u si = ref->GraphicNumber();
-	if (si != 0) {
-		//^0CEE:30BE
+	// if iGFXNum is 0, then no gfx to fetch
+	U16 iGFXNum = ref->GraphicNumber();	// si
+	if (iGFXNum != 0) {
 		Bit8u *bp04 = &glbCurrentTileMap[glbCurrentMapWidth -1][glbCurrentMapHeight + dunMapLocalHeader->CreaturesTypes()];
-		//^0CEE:30ED
-		return bp04[si -1];
+		return bp04[iGFXNum -1];
 	}
-	//^0CEE:30F6
-	return -1;
+	return -1; // 0xFF
 }
 
 //^0CEE:30FB
-Bit8u SkWinCore::GET_FLOOR_DECORATION_OF_ACTUATOR(Actuator *ref)
+U8 SkWinCore::GET_FLOOR_DECORATION_OF_ACTUATOR(Actuator *ref)
 {
-	//^0CEE:30FB
-	//^0CEE:3100
-	Bit16u si = ref->GraphicNumber();
-	//^0CEE:310F
-	if (si != 0) {
-		//^0CEE:3113
+	// if iGFXNum is 0, then no gfx to fetch
+	U16 iGFXNum = ref->GraphicNumber();	// si
+	if (iGFXNum != 0) {
 		Bit8u *bp04 = &glbCurrentTileMap[glbCurrentMapWidth -1][glbCurrentMapHeight + dunMapLocalHeader->CreaturesTypes() + dunMapLocalHeader->WallGraphics()];
-		//^0CEE:3150
-		return bp04[si -1];
+		return bp04[iGFXNum - 1];
 	}
 	else {
-		//^0CEE:3159
-		return 0xff;
+		return -1; // 0xFF
 	}
 }
 
@@ -2517,7 +2509,7 @@ _29a8:
 			//^2FCF:2A72
 			if (bp18->TextMode() == 1) { }
 			//SPX: test DM1
-			if (SkCodeParam::bDM1Mode)
+			if (SkCodeParam::bDM1Mode && !bp18->TextVisibility())
 			{
 				Bit8u bp0106[200];
 				QUERY_MESSAGE_TEXT(bp0106, si, 1);

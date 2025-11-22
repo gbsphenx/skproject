@@ -3497,6 +3497,10 @@ _05c2:
 			_12b4_0d75_CREATURE(playerDestPosX, playerDestPosY, bp24, 0xfe);
 			goto _0685;
 		}
+		if (SkCodeParam::bDebugNoCreatures) {
+			ATTACK_CREATURE(OBJECT_NULL, playerDestPosX, playerDestPosY, 0x4005, 5, 9999);
+			CREATURE_SET_NEW_COMMAND(bp14, playerDestPosX, playerDestPosY, ccmDestroy, 1);
+		}
 		if (bp12 != 0)
 			break;	
 		ATTACK_CREATURE(OBJECT_NULL, playerDestPosX, playerDestPosY, 0x4005, 5, 0);
@@ -3715,7 +3719,7 @@ i16 SkWinCore::SELECT_LOAD_GAME()
 
 		//^2066:32FD
 		while (_476d_05a9() != 0) {
-			_1031_0d36(0x20, SPECIAL_UI_KEY_TRANSFORMATION());
+			_1031_0d36_KEYBOARD(0x20, SPECIAL_UI_KEY_TRANSFORMATION());
 		}
 		//^2066:3317
 		MAIN_LOOP();
@@ -3918,6 +3922,10 @@ void SkWinCore::ARRANGE_DUNGEON()
 									bp14->iAnimSeq = bp14->iAnimFrame = 0;
 									bp14->iAnimSeq = 0x01EB;
 									bp14->iAnimFrame = 0x8001;
+									if (SkCodeParam::bDebugNoCreatures) {
+										bp14->HP1(0);
+										bp14->iAnimSeq = 0x00D3;
+									}
 									//^2066:2248
 									//CREATURE_SET_ANIM_FRAME(di);
 									//^2066:224F
@@ -4169,6 +4177,11 @@ _05bd:
 	//^13E4:06E3
 	else {
 		di = 0;
+	}
+	if (SkCodeParam::bDebugNoCreatures) {
+		xCreatureData->Command = ccmDestroy;
+		xCreature->hp1 = 0;
+		QUEUE_THINK_CREATURE(xx, yy);
 	}
 	//^13E4:06E7
 	if (xCreatureData->Command != ccmDestroy && (di != 0 || xCreature->hp1 <= quantity)) {

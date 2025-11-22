@@ -970,8 +970,8 @@ void SkWinCore::ADD_ITEM_TO_PLAYER(U16 player, ObjectID rl)
 }
 
 //^2F3F:04EA
-// SPX: _2f3f_04ea renamed _2f3f_04ea_CHAMPION
-void SkWinCore::_2f3f_04ea_CHAMPION(U16 xx, U16 yy, U16 dir, U16 zz, U16 ee)
+// SPX: _2f3f_04ea renamed REVIVE_CHAMPION
+void SkWinCore::REVIVE_CHAMPION(U16 xx, U16 yy, U16 dir, U16 zz, U16 ee)
 {
 	//^2F3F:04EA
 	ENTER(142);
@@ -1087,8 +1087,8 @@ void SkWinCore::_2f3f_04ea_CHAMPION(U16 xx, U16 yy, U16 dir, U16 zz, U16 ee)
 			DISPLAY_HINT_NEW_LINE();
 			//^2F3F:06B8
 			U8 bp008e[128];
-			// SPX: Text : AWAKENED
-			DISPLAY_HINT_TEXT(glbChampionColor[si], QUERY_GDAT_TEXT(0x01, 0x00, 0x0e, bp008e));
+			// SPX: Text : AWAKENED / RESURRECTED
+			DISPLAY_HINT_TEXT(glbChampionColor[si], QUERY_GDAT_TEXT(0x01, 0x00, 0x0E, bp008e));
 			//^2F3F:06DD
 			if (glbChampionInventory != 0) {
 				//^2F3F:06E4
@@ -3068,33 +3068,20 @@ void SkWinCore::SEARCH_STARTER_CHAMPION() // _2f3f_0789
 	// SPX: DM2 will check a RESURECTOR at 0,0 (for TORHAM), while DM/TQ expects one at 1,0 for THERON.
 
 	// DM2 Original code
-	//printf("Search Torham\n"); getch();
 	ObjectID di = OBJECT_NULL;
 	for (di = GET_TILE_RECORD_LINK(0, 0); di != OBJECT_END_MARKER; di = GET_NEXT_RECORD_LINK(di)) {
-		//^2F3F:087B
 		if (di.DBType() == dbActuator) {
-			//^2F3F:0888
 			Actuator *bp08 = GET_ADDRESS_OF_ACTU(di);
-			//^2F3F:0895
 			if (bp08->ActuatorType() == ACTUATOR_TYPE_RESURECTOR) { // 0x007E
-				//^2F3F:08A4
 				_4976_404b = 1;
-				//^2F3F:08AA
 				// SPX: Automatic selection of champion (Thoram)
 				SELECT_CHAMPION(0, 1, DIR_NORTH, cd.pi.glbPlayerMap);	// player is imaginarily at 0,1 facing north
-				//^2F3F:08BB
-				_2f3f_04ea_CHAMPION(0, 1, DIR_NORTH, cd.pi.glbPlayerMap, UI_EVENTCODE_REVIVE_CHAMPION);
-				//^2F3F:08CF
+				REVIVE_CHAMPION(0, 1, DIR_NORTH, cd.pi.glbPlayerMap, UI_EVENTCODE_REVIVE_CHAMPION);
 				_4976_404b = 0;
-				//^2F3F:08D5
 				glbChampionSquad[0].playerDir(U8(cd.pi.glbPlayerDir));
-				//^2F3F:08DB
 				glbChampionSquad[0].playerPos(U8(cd.pi.glbPlayerDir));
-				//^2F3F:08E1
 				SET_PARTY_HERO_FLAG(0x4000);
-				//^2F3F:08EA
 				SELECT_CHAMPION_LEADER(0);
-				//^2F3F:08F2
 				return;
 			}
 		}
@@ -3111,7 +3098,7 @@ void SkWinCore::SEARCH_STARTER_CHAMPION() // _2f3f_0789
 				if (bp08->ActuatorType() == ACTUATOR_TYPE_CHAMPION_MIRROR) { // 0x007F
 					_4976_404b = 1;
 					SELECT_CHAMPION(0, 0, DIR_EAST, cd.pi.glbPlayerMap);	// player is really at 0,0 facing east
-					_2f3f_04ea_CHAMPION(0, 0, DIR_EAST, cd.pi.glbPlayerMap, UI_EVENTCODE_REVIVE_CHAMPION);
+					REVIVE_CHAMPION(0, 0, DIR_EAST, cd.pi.glbPlayerMap, UI_EVENTCODE_REVIVE_CHAMPION);
 					_4976_404b = 0;
 					glbChampionSquad[0].playerDir(U8(cd.pi.glbPlayerDir));
 					glbChampionSquad[0].playerPos(U8(cd.pi.glbPlayerDir));

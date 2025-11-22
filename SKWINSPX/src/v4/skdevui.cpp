@@ -1084,12 +1084,12 @@ void SkWinCore::_3929_0b20(U16 xx, U32 yy) { // TODO: Unr
 }
 
 //^1031:0D36
-void SkWinCore::_1031_0d36(U16 xx, U16 yy) // yy = keyboard key
+void SkWinCore::_1031_0d36_KEYBOARD(U16 xx, U16 yy) // yy = keyboard key
 {
 	//^1031:0D36
 	ENTER(0);
 	//^1031:0D3A
-	_3e74_5b7c(yy);
+	_3e74_5b7c_KEYBOARD(yy);
 	//^1031:0D43
 	_4976_19a7 = 1;
 	//^1031:0D49
@@ -1097,7 +1097,7 @@ void SkWinCore::_1031_0d36(U16 xx, U16 yy) // yy = keyboard key
 		//^1031:0D50
 		i16 si = glbMouseStateRingIndex + 2;
 		//^1031:0D57
-		if (si > 10)
+		if (si > 10)	// because MouseState tlbMouseStateRing[11]
 			//^1031:0D5C
 			si -= 11;
 		//^1031:0D5F
@@ -1116,4 +1116,27 @@ void SkWinCore::_1031_0d36(U16 xx, U16 yy) // yy = keyboard key
 	_1031_0b7e_MOUSE();
 	//^1031:0D9B
 	return;
+}
+
+
+//^476D:05B6
+U8 SkWinCore::_476d_05b6_KEYBOARD(U16 xx)
+{
+	ENTER(0);
+	return _01b0_054a_KEYBOARD(xx) CALL_IBMIO;
+}
+
+
+//^01B0:054A
+U8 SkWinCore::_01b0_054a_KEYBOARD(U16 xx) //#DS=04BF
+{
+	ENTER(0);
+	U16 di = xx;
+	LOADDS(0x3083);
+	if ((di & 0x1000) != 0)
+		di = 0;
+	U16 si = ((di & 0x0200) != 0) ? (_04bf_033e[di & 0x007f]) : (_04bf_02be[di & 0x007f]);
+	if (si != 0 && (di & 0x0400) != 0)
+		si &= 0x001f;
+	return U8(si);
 }

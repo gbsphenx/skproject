@@ -1133,7 +1133,7 @@ _1ab8:
 	}
 	else if (si >= UI_EVENTCODE_VIEW_CHAMPION_1 && si <= UI_EVENTCODE_RETURN_VIEWPORT) { // >= 0x07 and <= 0x0B
 		if (cd.pi.glbNextChampionNumber != 0 && si <= UI_EVENTCODE_RETURN_VIEWPORT) {
-			_2f3f_04ea_CHAMPION(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerDir, cd.pi.glbPlayerMap, 0xa1);
+			REVIVE_CHAMPION(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerDir, cd.pi.glbPlayerMap, 0xa1);
 		}
 		else {
 			U16 bp02 = si - UI_EVENTCODE_VIEW_CHAMPION_1;
@@ -1254,7 +1254,7 @@ _1ab8:
 			}
 		}
 		else if (si == UI_EVENTCODE_REVIVE_CHAMPION || si == UI_EVENTCODE_EXIT_CRYOCELL) { // 0xA0 or 0xA1
-            _2f3f_04ea_CHAMPION(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerDir, cd.pi.glbPlayerMap, si);
+            REVIVE_CHAMPION(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerDir, cd.pi.glbPlayerMap, si);
 		}
 		else if (si == UI_EVENTCODE_START_NEW_GAME) {	// 0xD7
 			// "NEW" at main menu

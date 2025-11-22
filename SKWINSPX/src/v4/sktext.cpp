@@ -141,7 +141,7 @@ void SkWinCore::DISPLAY_HINT_TEXT(Bit16u color, const U8 *str) //#DS=4976
 	ENTER(102);
 	//^3929:0A01
 	//U16 si = color;
-	U16 absoluteColor = 255;	// from 256 palette
+	U16 absoluteColor = 255;	// white from 256 palette
 	//^3929:0A04
 	if (_4976_5c06 != 0) {	// roll message ?
 		//^3929:0A0B
@@ -203,11 +203,8 @@ void SkWinCore::DISPLAY_HINT_TEXT(Bit16u color, const U8 *str) //#DS=4976
 // SPX : _3929_0b5a renamed DISPLAY_HINT_NEW_LINE
 void SkWinCore::DISPLAY_HINT_NEW_LINE()
 {
-	//^3929:0B5A
 	ENTER(0);
-	//^3929:0B5D
 	DISPLAY_HINT_TEXT(COLOR_BLACK, const_cast<U8 *>(strEndLine));
-	//^3929:0B6A
 	return;
 }
 
@@ -215,13 +212,9 @@ void SkWinCore::DISPLAY_HINT_NEW_LINE()
 // SPX: _2405_00c9 renamed DISPLAY_TAKEN_ITEM_NAME
 void SkWinCore::DISPLAY_TAKEN_ITEM_NAME(ObjectID rl)
 {
-	//^2405:00C9
 	ENTER(0);
-	//^2405:00CC
 	DISPLAY_HINT_NEW_LINE();
-	//^2405:00D1
 	DISPLAY_HINT_TEXT(COLOR_LIGHTER_GRAY, GET_ITEM_NAME(rl));
-	//^2405:00E5
 	return;
 }
 
@@ -242,9 +235,9 @@ void SkWinCore::DRAW_TEXT_TO_BACKBUFF(i16 xx, i16 yy, U8 *str)
 				*bp04 = *bp04 -0x40;
 			}
 			//^32CB:0E42
-			else if (*bp04 >= 0x7b) {
+			else if (*bp04 >= 0x7B) {
 				//^32CB:0E4B
-				*bp04 = *bp04 -0x60;
+				*bp04 = *bp04 - 0x60;
 			}
 			//^32CB:0E52
 		}
@@ -339,12 +332,12 @@ void SkWinCore::_2066_3820(U8 *xx, U16 yy)
 
 
 //^3E74:5B7C
-void SkWinCore::_3e74_5b7c(U16 xx)
+void SkWinCore::_3e74_5b7c_KEYBOARD(U16 xx)
 {
 	//^3E74:5B7C
 	ENTER(20);
 	//^3E74:5B80
-	_476d_05b6(xx);
+	_476d_05b6_KEYBOARD(xx);
 	//^3E74:5B89
 	if (_4976_484d++ == _4976_484f[RCJ(4,_4976_484d)]) {
 		//^3E74:5B9F

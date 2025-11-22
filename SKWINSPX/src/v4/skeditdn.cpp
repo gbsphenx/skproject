@@ -1334,10 +1334,10 @@ int tblCustomNbItemAllocationPerDB[16] =
 	0, 0, 60, 50
 };
 
-int SkWinCore::INIT_BLANK_DUNGEON(X16 isNewGame)
+int SkWinCore::INIT_BLANK_DUNGEON(X16 isNewGame, int iMaps)
 {
 	int iInitSuccess = 1;
-	int nMaps = 2;
+	int nMaps = iMaps;
 	int nRows = 32;
 	int nCols = 32;
 	int iMapIndex = 0;
@@ -1427,7 +1427,6 @@ int SkWinCore::INIT_BLANK_DUNGEON(X16 isNewGame)
 		iTotalMapDataSize += ( iLocalMapDataSize );
 
 		iMapDataOffset += ( iLocalMapDataSize );
-
 	}
 	dunHeader->cbMapData = iTotalMapDataSize;
 	dunMapData = ALLOC_MEMORY_RAM(dunHeader->cbMapData, afUseUpper, 0x400);
@@ -1729,7 +1728,7 @@ int SkWinCore::DUNGEON_CREATE_BLANK()
 
 	INIT_RANDOM();
 	SkCodeParam::bAllowFreeObjectMove = true;
-	iCreateDungeonSuccess = INIT_BLANK_DUNGEON(1);
+	iCreateDungeonSuccess = INIT_BLANK_DUNGEON(1, 2);
 	//__LOAD_CREATURE_FROM_DUNGEON();
 	
 	SkWinLua_RunFunctionFromScript(this, "data_dmx/script/dungeon.lua", "generate", 0, 0, 0, 0);

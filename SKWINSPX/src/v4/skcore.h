@@ -299,7 +299,7 @@ protected:
 	U16	_4976_3b57;
 	U16	_4976_3b59;
 	U16	_4976_3b5b;
-	i16	_4976_3b5d;
+	i16	_4976_3b5d;	// tells to alloc dungeon header
 	X16		_4976_3d2c;
 	U16		glbInventorySubpanel;	// (_4976_3d2e)
 	ObjectID	_4976_3d30;
@@ -348,7 +348,7 @@ protected:
 	X8		_4976_4838;
 	U16	_4976_4839;		// previously loaded raw data index
 	Bit32u	_4976_483b;		// previously loaded raw data file pos
-	U16	_4976_484b;		// incremental serial for use with memory alloc counter?
+	U16	_4976_484b_cache;		// incremental serial for use with memory alloc counter?
 	U16		_4976_484d;
 	i16	glbMouseVisibility;		// (_4976_4860)
 	SRECT	_4976_4942;
@@ -757,9 +757,9 @@ protected:
 	U16	_4976_5c78;		// next index of free entry mement
 	X16		_4976_5c7a;
 	U16		_4976_5c7c;
-	U16	*_4976_5c7e;	// ici-to-cacheindex. to supply quick sort for searching hash value from _4976_5c86
+	U16	*_4976_5c7e_cache_ici;	// ici-to-cacheindex. to supply quick sort for searching hash value from _4976_5c86
 	U16		*_4976_5c82;	// raw data index to mementi. (usually 3491 word values). 0xffff for unused mark.
-	Bit32u	*_4976_5c86;	// cacheindex-to-hashval:  0xFFFFxxxx for pict?  0x2000xxxx for creature thing?  (13:dbidx,7:horzScale,5:vertScale) for stretched pict?
+	Bit32u	*_4976_5c86_cache_hash;	// cacheindex-to-hashval:  0xFFFFxxxx for pict?  0x2000xxxx for creature thing?  (13:dbidx,7:horzScale,5:vertScale) for stretched pict?
 	U16		_4976_5c8a;
 	mement	*_4976_5c8c;	// mement#3
 	//U16	_4976_5c90; // (_4976_5c90)
@@ -798,7 +798,7 @@ protected:
 	X16		glbGDatNumberOfData; // (_4976_5d2e) 3,491 entries in graphics data file
 	i32		glbFreeRAMMemPool;		// (_4976_5d30) for allocmem. avail size of free memory pool(#1). 325732 bytes avail when dosbox runs
 	U16	_4976_5d34;
-	i16	_4976_5d36;		// index to (_4976_5d08|_4976_5c7e). for recycle indexer?
+	i16	_4976_5d36_cache;		// index to (_4976_5d08|_4976_5c7e). for recycle indexer?
 	U16		*_4976_5d38;	// at first it points [1st rawdata], at second it points [1st CGDEntry]
 	X16		glbGDatNumberOfRawEntries;		// (_4976_5d3c) w2 of 1st raw (cnt of raw entries)
 	X16		_4976_5d3e;		// size of CGDEntry
@@ -1008,6 +1008,7 @@ public:
 
 // SPX: Special procedures
 	bool INIT_RANDOM();
+	int READ_DUNGEON_STRUCTURE_TQ(X16 isNewGame);
 	int READ_DUNGEON_STRUCTURE_EXTENDED_GAME(X16 isNewGame, int iDungeonMode);
 	int READ_DUNGEON_STRUCTURE_BW(X16 isNewGame);
 	U16 UNLOCK_INTERWALL_DOOR(U16 iMap, U16 iPosX, U16 iPosY, U16 iDir);
@@ -1020,7 +1021,7 @@ public:
 	int READ_DUNGEON_STRUCTURE_EOB__OLD(X16 isNewGame);
 	int READ_DUNGEON_STRUCTURE_EOB_MAPFILE(int iMapIndex);
 	int READ_DUNGEON_STRUCTURE_EOB_INFFILE(int iMapIndex);
-	int INIT_BLANK_DUNGEON(X16 isNewGame);
+	int INIT_BLANK_DUNGEON(X16 isNewGame, int iMaps);
 
 	i16 CONSUME_ANY_FROM_HAND(i16 iDBItem, i16 iItemID);
 // SPX: End of new procedures
@@ -1208,7 +1209,7 @@ protected:
 	U16 QUERY_MEMENTI_FROM(U16 xx);
 	U16 ADD_CACHE_HASH(Bit32u cacheHash, U16 *piYaCacheIndex);
 	U8 *QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(U16 cacheIndex);
-	void _3e74_583a(U16 xx);
+	void _3e74_583a_MEMENTI(U16 xx);
 	U16 FIND_FREE_MEMENTI();
 	void GUARANTEE_FREE_CPXHEAP_SIZE(i32 buffSize);
 	void _3e74_2b30();
@@ -1447,7 +1448,7 @@ protected:
 	void CLICK_MONEYBOX(U16 xx);
 	void SELECT_CHAMPION_LEADER(U16 xx);
 	void ADD_ITEM_TO_PLAYER(U16 player, ObjectID rl);
-	void _2f3f_04ea_CHAMPION(U16 xx, U16 yy, U16 dir, U16 zz, U16 ee); // _2f3f_04ea
+	void REVIVE_CHAMPION(U16 xx, U16 yy, U16 dir, U16 zz, U16 ee); // _2f3f_04ea
 	void INTERFACE_CHAMPION(U16 xx); // _24a5_1798
 	void INIT_BACKBUFF();
 	SpellDefinition *FIND_SPELL_BY_RUNES(U8 *runes);
@@ -1609,10 +1610,10 @@ protected:
 	void _3929_0b01(U16 xx, U16 yy); // TODO: Unr
 	void _3929_0b20(U16 xx, U32 yy); // TODO: Unr
 
-	void _3e74_5b7c(U16 xx);
-	void _1031_0d36(U16 xx, U16 yy);
-	U8 _01b0_054a(U16 xx);
-	U8 _476d_05b6(U16 xx);
+	void _3e74_5b7c_KEYBOARD(U16 xx);
+	void _1031_0d36_KEYBOARD(U16 xx, U16 yy);
+	U8 _01b0_054a_KEYBOARD(U16 xx);
+	U8 _476d_05b6_KEYBOARD(U16 xx);
 	void _2066_37f2();
 	i16 _2066_33e7();
 	void _1c9a_3bab();
@@ -1876,6 +1877,7 @@ protected:
 	void INIT_TIMERS(); // _3a15_0002 renamed INIT_TIMERS
 	void DECIDE_DEFAULT_DUNGEON_MAP_CHIP_SET();
 	int READ_DUNGEON_STRUCTURE(X16 isNewGame);
+	int AUTO_DETECT_ENDIANNESS(File_header* xDunHeader);	// SPX: addition to check wether big endian or little endian
 	void CHECK_TILE_RECORDS();
 	int SUPPRESS_READER(void *_data, const void *_mask, U16 buffSize, Bit32u repeat, U16 fill);
 	int READ_1BIT(U16 *pw);
@@ -2136,6 +2138,8 @@ protected:
 	U32 GET_FILE_SIZE(i16 handle);
 	U16 SWAPW(U16 xx);
 	U32 SWAP32(U32 xx);	// SPX: addition for convenience and read LE gdat item
+	void SWAPWPX(U16* xData, U16 iNbItems); // SPX: addition for swapping array of memory
+	void SWAP_OBJECTDATA(U16* xData, U8 iCategory, U16 iNbItems);	// SPX: addition for swapping objects/items data
 	U32 QUERY_GDAT_ENTRY_VALUE(U16 entryIndex, U16 entryPos);
 	void LOAD_GDAT_ENTRIES();
 	X16 _3e74_2162(U16 xx);	// RETURNS 1!!

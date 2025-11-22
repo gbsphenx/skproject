@@ -171,24 +171,24 @@ void SkWinCore::FREE_CACHE_INDEX(U16 cacheIndex)
 	//^3E74:5566
     i16 si = cacheIndex;
 		//^3E74:5569
-	if (_4976_5d36 == -1 || _4976_5d36 > si) {
+	if (_4976_5d36_cache == -1 || _4976_5d36_cache > si) {
 		//^3E74:5576
-		_4976_5d36 = si;
+		_4976_5d36_cache = si;
 	}
 	//^3E74:557A
 	ATLASSERT(si < _4976_5d24);
-	Bit32u bp04 = _4976_5c86[si];
+	Bit32u bp04 = _4976_5c86_cache_hash[si];
 	//^3E74:5592
 	U16 bp06;
 	if (FIND_ICI_FROM_CACHE_HASH(bp04, &bp06) != 0) {
 		//^3E74:55A8
-		_4976_5c86[si] = 0;
+		_4976_5c86_cache_hash[si] = 0;
 		//^3E74:55BE
 		cd.mc._4976_5c92_cache--;
 		//^3E74:55C2
 		MOVE_MEMORY(
-			&_4976_5c7e[bp06 +1],
-			&_4976_5c7e[bp06],
+			&_4976_5c7e_cache_ici[bp06 +1],
+			&_4976_5c7e_cache_ici[bp06],
 			(cd.mc._4976_5c92_cache - bp06) << 1
 			);
 	}
@@ -433,7 +433,7 @@ bool SkWinCore::ValidateMements(bool display = false) {
 				int ref2 = 0;
 				for (i = 0; i < _4976_5d24; i++) {
 					if (_4976_5d08[i] == x) {
-						ref2 = _4976_5c86[i];
+						ref2 = _4976_5c86_cache_hash[i];
 						break;
 					}
 				}
@@ -560,7 +560,7 @@ U16 SkWinCore::_3e74_4471_CACHE()
 {
 	//^3E74:4471
 	//^3E74:4475
-	i16 si = _4976_5d36;
+	i16 si = _4976_5d36_cache;
 	//^3E74:447A
 	if (si >= 0) {
 		//^3E74:447E
@@ -568,15 +568,15 @@ U16 SkWinCore::_3e74_4471_CACHE()
 		//^3E74:4482
 		if (cd.mc._4976_5c92_cache >= _4976_5d24) {
 			//^3E74:448B
-			_4976_5d36 = -1;
+			_4976_5d36_cache = -1;
 		}
 		else {
 			do {
 				//^3E74:4493
-				_4976_5d36++;
+				_4976_5d36_cache++;
 				//^3E74:4497
-				ATLASSERT(_4976_5d36 < _4976_5d24);
-			} while (_4976_5d08[_4976_5d36] != 0xffff);
+				ATLASSERT(_4976_5d36_cache < _4976_5d24);
+			} while (_4976_5d08[_4976_5d36_cache] != 0xffff);
 		}
 	}
 	//^3E74:44A8
@@ -622,14 +622,14 @@ U16 SkWinCore::INSERT_CACHE_HASH_AT(Bit32u cacheHash, U16 ici)
 	U16 si = _3e74_4471_CACHE();
 	//^3E74:5501
 	MOVE_MEMORY(
-		&_4976_5c7e[ici],
-		&_4976_5c7e[ici +1],
+		&_4976_5c7e_cache_ici[ici],
+		&_4976_5c7e_cache_ici[ici +1],
 		(cd.mc._4976_5c92_cache - ici -1) << 1
 		);
 	//^3E74:5536
-	_4976_5c7e[ici] = si;
+	_4976_5c7e_cache_ici[ici] = si;
 	//^3E74:5544
-	_4976_5c86[si] = cacheHash;
+	_4976_5c86_cache_hash[si] = cacheHash;
 	//^3E74:555C
 	return si;
 }
@@ -707,10 +707,10 @@ U16 SkWinCore::ADD_CACHE_HASH(Bit32u cacheHash, U16 *piYaCacheIndex)
 		_3e74_44ad();
 	}
 	//^3E74:5615
-	U16 bp02;
+	U16 bp02 = 0;
 	if (FIND_ICI_FROM_CACHE_HASH(cacheHash, &bp02) != 0) {
 		//^3E74:562B
-		*piYaCacheIndex = _4976_5c7e[bp02];
+		*piYaCacheIndex = _4976_5c7e_cache_ici[bp02];
 		//^3E74:563F
 		U16 si = QUERY_MEMENTI_FROM(*piYaCacheIndex | 0x8000);
 		//^3E74:564D
@@ -731,7 +731,7 @@ U8 *SkWinCore::QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(U16 cacheIndex)
 }
 
 //^3E74:583A
-void SkWinCore::_3e74_583a(U16 xx)
+void SkWinCore::_3e74_583a_MEMENTI(U16 xx)
 {
 	U16 si = QUERY_MEMENTI_FROM(xx | 0x8000);
 	if (si != 0xFFFF) {
@@ -1038,11 +1038,11 @@ void SkWinCore::_3e74_585a_CACHE(U16 xx, U16 yy)
 Bit32u SkWinCore::GET_TEMP_CACHE_HASH()
 {
 	//^3E74:53EA
-	Bit32u bp04;
-	U16 bp06;
+	Bit32u bp04 = 0;
+	U16 bp06 = 0;
 	do {
 		//^3E74:53EE
-		bp04 = 0xffff0000 | (_4976_484b++);
+		bp04 = 0xffff0000 | (_4976_484b_cache++);
 		//^3E74:5401
 	} while (FIND_ICI_FROM_CACHE_HASH(bp04, &bp06) != 0);
 	//^3E74:5418
@@ -1052,7 +1052,7 @@ Bit32u SkWinCore::GET_TEMP_CACHE_HASH()
 //^3E74:5888
 U16 SkWinCore::ALLOC_TEMP_CACHE_INDEX()
 {
-	U16 iCacheIndex; // pb02
+	U16 iCacheIndex = 0; // pb02
 	ADD_CACHE_HASH(GET_TEMP_CACHE_HASH(), &iCacheIndex);
 	return iCacheIndex;
 }
@@ -1090,7 +1090,7 @@ U16 SkWinCore::FIND_ICI_FROM_CACHE_HASH(Bit32u cacheHash, U16 *ici)
 		//^3E74:5445
 		if (!SkCodeParam::bUsePowerDebug)
 			ATLASSERT(si < _4976_5d24);
-		Bit32u bp04 = _4976_5c86[_4976_5c7e[si]];
+		Bit32u bp04 = _4976_5c86_cache_hash[_4976_5c7e_cache_ici[si]];
 		//^3E74:5468
 		if (cacheHash < bp04) {
 			//^3E74:547A
@@ -1274,7 +1274,7 @@ X32 SkWinCore::_3e74_5673_CACHE(X32 cacheHash, U16 *piYaCacheIndex, X16 ifTryIns
 		*piYaCacheIndex = (ifTryInsert != 0) ? INSERT_CACHE_HASH_AT(cacheHash, bp02) : 0xFFFF;
 		return 0;
 	}
-	*piYaCacheIndex = _4976_5c7e[bp02];
+	*piYaCacheIndex = _4976_5c7e_cache_ici[bp02];
 	return *reinterpret_cast<i32 *>(_3e74_48c9_MEMENT(QUERY_MEMENTI_FROM(*piYaCacheIndex | 0x8000))) -22;
 }
 

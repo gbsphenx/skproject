@@ -2101,7 +2101,7 @@ void SkWinCore::ALLOC_PICT_MEMENT(Picture *ref)
 	//^0B36:01B6
 	else if ((ref->w4 & 0x0008) != 0) {
 		//^0B36:01C1
-		_3e74_583a(ref->w12);
+		_3e74_583a_MEMENTI(ref->w12);
 	}
 
 }

@@ -3917,7 +3917,7 @@ void SkWinCore::FILL_CAII_CUR_MAP()
 				
 				do {
 					//^1C9A:3AC4
-					if (si.DBType() == dbCreature) {
+					if (si.DBType() == dbCreature && !SkCodeParam::bDebugNoCreatures) {
 						//^1C9A:3AD1
 						Creature* xCreature = GET_ADDRESS_OF_RECORD4(si); // bp0c
 						if (xCreature->iID != 0xFF)
@@ -5253,37 +5253,7 @@ void SkWinCore::RESUME_FROM_WAKE()
 
 
 
-//^01B0:054A
-U8 SkWinCore::_01b0_054a(U16 xx) //#DS=04BF
-{
-	//^01B0:054A
-	ENTER(0);
-	//^01B0:054F
-	U16 di = xx;
-	//^01B0:0552
-	LOADDS(0x3083);
-	//^01B0:0558
-	if ((di & 0x1000) != 0)
-		//^01B0:055E
-		di = 0;
-	//^01B0:0560
-	U16 si = ((di & 0x0200) != 0) ? (_04bf_033e[di & 0x007f]) : (_04bf_02be[di & 0x007f]);
-    //^01B0:057E
-	if (si != 0 && (di & 0x0400) != 0)
-		//^01B0:0588
-		si &= 0x001f;
-	//^01B0:058E
-	return U8(si);
-}
 
-//^476D:05B6
-U8 SkWinCore::_476d_05b6(U16 xx)
-{
-	//^476D:05B6
-	ENTER(0);
-	//^476D:05B9
-	return _01b0_054a(xx) CALL_IBMIO;
-}
 
 //^2066:37F2
 void SkWinCore::_2066_37f2()
@@ -5355,7 +5325,7 @@ i16 SkWinCore::_2066_33e7()
 		//^2066:348D
 		while (_476d_05a9() != 0) {
 			//^2066:348F
-			_1031_0d36(32, SPECIAL_UI_KEY_TRANSFORMATION());
+			_1031_0d36_KEYBOARD(32, SPECIAL_UI_KEY_TRANSFORMATION());
 			//^2066:349E
 		}
 		//^2066:34A7
@@ -5462,7 +5432,7 @@ i16 SkWinCore::_2066_33e7()
 			//^2066:362C
 			else if (di < 31) {
 				//^2066:3631
-				U8 bp15 = _476d_05b6(_4976_4e9c);
+				U8 bp15 = _476d_05b6_KEYBOARD(_4976_4e9c);
 				//^2066:363E
 				if (bp15 >= 0x61 && bp15 <= 0x7a) {
 					//^2066:364A
@@ -5545,6 +5515,8 @@ void SkWinCore::RESET_CAII()
 	for (iCreatureIndex = dunHeader->nRecords[dbCreature]; iCreatureIndex-- != 0; xCreature++) {
 		xCreature->iID = 0xFF;
 	}
+//	if (SkCodeParam::bDebugNoCreatures)
+//		return;
 	FILL_ORPHAN_CAII();
 	return;
 }
@@ -11643,7 +11615,7 @@ U8 *SkWinCore::QUERY_GDAT_DYN_BUFF(U16 iDataIndex, U16 *yy, U16 allocUpper)
 			if (iAllocFlags == 0)
 				return xData;
 			//^3E74:168F
-			_3e74_583a(*yy);
+			_3e74_583a_MEMENTI(*yy);
 		}
 		else {
 			//^3E74:169D
@@ -13471,6 +13443,24 @@ _2585:
 	return;
 }
 
+int SkWinCore::AUTO_DETECT_ENDIANNESS(File_header* xDunHeader)
+{
+	if (xDunHeader != NULL)
+	{
+		int iDatabaseCategoryIndex = 0;
+		int iHowManyCatAbove = 0;
+		for (iDatabaseCategoryIndex = 0; iDatabaseCategoryIndex < 16; iDatabaseCategoryIndex++)
+		{
+			if (xDunHeader->nRecords[iDatabaseCategoryIndex] > 1024)
+				iHowManyCatAbove++;
+		}
+		if (iHowManyCatAbove > 0)
+			return 1;
+	}
+	return 0;
+}
+
+
 //^2066:25B8
 int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 {
@@ -13481,6 +13471,11 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	U16 si = 0;
 	i16 di;
 	U8 bp01 = 0;
+	U8 iSwapEndian = 0;	// SPX: added to handle non-PC dungeons in big endian
+	U8 iDatabaseCatIndex = 0;
+
+	if (isNewGame == 1 && SkCodeParam::bTQMode)
+		return READ_DUNGEON_STRUCTURE_TQ(isNewGame);
 
 #ifdef __SK_EXTENDED_SKWIN_V6__
 	int iReadExtendedGame = 0;
@@ -13496,22 +13491,9 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	SkD((DLV_DBG_GAME_LOAD, "Dungeon Read iHandle = %d\n", glbDataFileHandle));
 	if (FILE_READ(glbDataFileHandle, 8, bp26) == 0)
 		return 0;
-	//^2066:25DA
-	//SPX: ? a magical number to make "the game is damaged" while reading it. What was the purpose? ...
-	if (*(U16 *)bp26 == 0x8104)
-		return 0;
 
-	//SPX: Add control of DM1 gfx seed
-	if (*(U16 *)bp26 == 0x0063) // DM1 or TQ
-		SkCodeParam::bDM1Mode = true;
-	else if (*(U16 *)bp26 == 0x0D00 || *(U16 *)bp26 == 0x0800) // CSB
-		SkCodeParam::bDM1Mode = true;
-	if (SkCodeParam::bDM1Mode == true) {
-		SkCodeParam::bEnableDoubleStepMove = false;
-		SkCodeParam::bGFXFixModeDM1 = true;
-		SkCodeParam::bAutoDefaultMaxLight = true;
-	}
-	// SPX
+	if (*(U16 *)bp26 == 0x8104)	// x8104 is for compressed dungeon data. DM2 is not handling it.
+		return 0; // returns with "the game is damaged"
 
 	//^2066:25E4
 	SkD((DLV_DBG_GAME_LOAD, "FILE_SEEK pos @ %d\n", _4976_524a));
@@ -13540,16 +13522,33 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	printf("U16 nRecords[0] = %4X:\n", dunHeader->nRecords[0]);
 	getch();
 	*/
-/*
-		U16 w0; //  Random seed used to display random 
-		U16 cbMapData; // Size of global map data in byt
-		U8 nMaps; // Number of maps (in Dungeon Mast;
-		U8 b5; // # Unused, padding
-		U16 cwTextData; // Text data size in words (17
-		U16 w8; // Starting party position (mus
-		U16 cwListSize; // Object list size in wor
-		U16 nRecords[16]; // Number of objects of each type:
-*/	
+
+	// SPX: at this point, perform an autodetect to check if the dungeon read is in big endian rather than expected little endian (PC)
+	iSwapEndian = AUTO_DETECT_ENDIANNESS(dunHeader);
+	if (iSwapEndian)
+	{
+		dunHeader->w0 = SWAPW(dunHeader->w0);
+		dunHeader->cbMapData = SWAPW(dunHeader->cbMapData);
+		dunHeader->cwTextData = SWAPW(dunHeader->cwTextData);
+		dunHeader->w8 = SWAPW(dunHeader->w8);
+		dunHeader->cwListSize = SWAPW(dunHeader->cwListSize);
+
+		for (iDatabaseCatIndex = 0; iDatabaseCatIndex < 16; iDatabaseCatIndex++)
+			dunHeader->nRecords[iDatabaseCatIndex] = SWAPW(dunHeader->nRecords[iDatabaseCatIndex]);
+	}
+
+	//SPX: Add control of DM1 gfx seed
+	if (dunHeader->w0 == 0x0063) // DM1 or TQ
+		SkCodeParam::bDM1Mode = true;
+	else if (dunHeader->w0 == 0x0D00 || dunHeader->w0 == 0x0800) // CSB
+		SkCodeParam::bDM1Mode = true;
+	if (SkCodeParam::bDM1Mode == true) {
+		SkCodeParam::bEnableDoubleStepMove = false;
+		SkCodeParam::bGFXFixModeDM1 = true;
+		SkCodeParam::bAutoDefaultMaxLight = true;
+	}
+	// SPX
+
 	//^2066:262F
 	si = dunHeader->w8;
 	cd.pi.glbPlayerPosX = dunHeader->StartPartyPosX();// si & 0x001F;
@@ -13576,6 +13575,27 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	//^2066:2685
 	if (SKLOAD_READ(dunMapsHeaders, nMaps << 4) == 0)
 		return 0;
+	if (iSwapEndian)
+	{
+		U8 iMapIndex = 0;
+		for (iMapIndex = 0; iMapIndex < nMaps; iMapIndex++)
+		{
+			U16* pMapHeaderData = (U16*) &dunMapsHeaders[iMapIndex];	// (Map_definitions*)
+			
+			*pMapHeaderData = SWAPW(*pMapHeaderData);	pMapHeaderData++;
+			*pMapHeaderData = SWAPW(*pMapHeaderData);	pMapHeaderData++;
+			*pMapHeaderData = SWAPW(*pMapHeaderData);	pMapHeaderData+=2;
+			*pMapHeaderData = SWAPW(*pMapHeaderData);	pMapHeaderData++;
+			*pMapHeaderData = SWAPW(*pMapHeaderData);	pMapHeaderData++;
+			*pMapHeaderData = SWAPW(*pMapHeaderData);	pMapHeaderData++;
+			*pMapHeaderData = SWAPW(*pMapHeaderData);	pMapHeaderData++;
+		}
+	}
+
+
+
+
+
 	//^2066:26A2
 	if (_4976_3b5d != 0) {
 		//^2066:26A9
@@ -13585,7 +13605,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	SkD((DLV_DBG_GAME_LOAD, "Read %d Maps Columns Headers ...\n", nMaps));
 
 	//^2066:26C5
-	U16 bp0e = 0;
+	U16 bp0e = 0;	// total map column
 	//^2066:26CC
 	for (si = 0; si < nMaps; si++) {
 		//^2066:26CE
@@ -13627,7 +13647,8 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	//^2066:277C
 	if (SKLOAD_READ(dunMapTilesObjectIndexPerColumn, bp0e << 1) == 0)
 		return 0;
-
+	if (iSwapEndian)
+		SWAPWPX(dunMapTilesObjectIndexPerColumn, bp0e);
 	// - List of object IDs of first objects on tiles
 
 	//^2066:2798
@@ -13642,12 +13663,17 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 			//^2066:27CC
 		}
 	}
+	if (iSwapEndian)
+		SWAPWPX(dunGroundStacks, si);
 
 	// - Text Data
 
 	//^2066:27D4
 	if (SKLOAD_READ(dunTextData, dunHeader->cwTextData << 1) == 0)
 		return 0;
+	if (iSwapEndian)
+		SWAPWPX(dunTextData, dunHeader->cwTextData);
+
 	//^2066:27F5
 	if (_4976_5bf2 == 0) {
 		//^2066:27FC
@@ -13675,6 +13701,9 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 		U16 *bp04 = (U16 *)glbDBObjectData[si];
 		if (SKLOAD_READ(glbDBObjectData[si], bp0e * di) == 0)
 			return 0;
+		if (iSwapEndian)
+			SWAP_OBJECTDATA((U16*)glbDBObjectData[si], si, di);
+
 		//^2066:28BB
 		if (_4976_5bf2 == 0) {
 			//^2066:28C2
@@ -13706,35 +13735,29 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	// - Map data
 
 	SkD((DLV_DBG_GAME_LOAD, "Read Dungeon Map Data ...\n"));
-	//getch();
-	//^2066:2942
+
 	if (SKLOAD_READ(dunMapData, dunHeader->cbMapData) == 0)
 		return 0;
-	//^2066:2960
+
 	if (_4976_3b5d != 0) {
-		//^2066:296A
+		U16 iMapIndex = 0;
+		U16 iColCount = 0;
 		// SPX: 0x400 = 32*32 tiles / bp10 = #maps / _4976_4cb4 = #cols for all maps
 		glbMapTileValue = reinterpret_cast<U8 ***>(ALLOC_MEMORY_RAM((_4976_4cb4 + nMaps) * sizeof(void *), afUseUpper, 0x400));
 		//^2066:298A
-		U8 ***bp08 = &glbMapTileValue[nMaps];
+		U8 ***pTile = &glbMapTileValue[nMaps];	// bp08
 		//^2066:299C
-		for (di = 0; di < nMaps; di++) {
-			//^2066:29A1
+		for (iMapIndex = 0; iMapIndex < nMaps; iMapIndex++) {
 			// MARK SPX
-			glbMapTileValue[di] = reinterpret_cast<U8 **>(bp08);
-			//^2066:29B9
-			U8 *bp0c = &dunMapData[dunMapsHeaders[di].w0];
-			*bp08 = reinterpret_cast<U8 **>(bp0c);
-			bp08++;
-			//^2066:29E2
-			for (si = 1; dunMapsHeaders[di].Column() -1 >= si; si++) {
-				//^2066:29E7
-				bp0c += dunMapsHeaders[di].Row();
-				*bp08 = reinterpret_cast<U8 **>(bp0c);
-				bp08++;
-				//^2066:2A14
+			glbMapTileValue[iMapIndex] = reinterpret_cast<U8 **>(pTile);
+			U8 *pTileFromMap = &dunMapData[dunMapsHeaders[iMapIndex].w0];	// w0 = map offset
+			*pTile = reinterpret_cast<U8 **>(pTileFromMap);
+			pTile++;
+			for (iColCount = 1; dunMapsHeaders[iMapIndex].Column() -1 >= iColCount; iColCount++) {
+				pTileFromMap += dunMapsHeaders[iMapIndex].Row();
+				*pTile = reinterpret_cast<U8 **>(pTileFromMap);
+				pTile++;
 			}
-			//^2066:2A2E
 		}
 	}
 
@@ -13778,43 +13801,49 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	//getch();
 	//^2066:2AE4
 	for (UINT bp12 = 0; bp12 < MAXDEPTH; bp1c++, bp12++) {
-		//^2066:2AEB
 		for (UINT bp1e = 0; bp1e < nMaps; bp1e++) {
-			//^2066:2AF2
 			if (dunMapsHeaders[bp1e].Level() == bp12) {
-				//^2066:2B0A
 				*bp18 = (U8)bp1e;
 				bp18++;
 				bp14++;
 			}
-			//^2066:2B19
 		}
-		//^2066:2B24
 		*bp18 = 0xff;
 		bp18++;
 		bp14++;
 		*bp1c = (U8)bp14;
-		//^2066:2B3A
 	}
 	SkD((DLV_DBG_GAME_LOAD, "Assert 1 : %08x - %08x <= %d + %d => [%d]\n", bp1c, _4976_4cb0, MAXDEPTH, 1U, (bp1c - _4976_4cb0)));
 	SkD((DLV_DBG_GAME_LOAD, "Assert 2 : %08x - %08x <= %d + %d + %d => [%d]\n", bp18, _4976_4c72, MAXDEPTH, MAXMAPS, 1U, (bp18 - _4976_4c72)));
 	ATLASSERT((bp1c - _4976_4cb0) <= (MAXDEPTH + 1U));
 	ATLASSERT((bp18 - _4976_4c72) <= (MAXDEPTH + MAXMAPS + 1U));
 
+	// SPX: Special -> remove creatures from dungeon
+	/*if (SkCodeParam::bDebugNoCreatures) {
+		UINT iCreatureIndex = 0;
+		U16 iCreatureRecords = dunHeader->nRecords[DB_CATEGORY_CREATURE];
+		Creature* xCreature = NULL;
+		xCreature = (Creature*) glbDBObjectData[DB_CATEGORY_CREATURE];
+		// header = 0
+		for (iCreatureIndex = 0; iCreatureIndex < iCreatureRecords; iCreatureIndex++) {
+			xCreature->w0 = 0xFFFF;	// no creature
+			xCreature->hp1 = 0;
+			xCreature->iID = 0;
+			xCreature++;
+		}
+		//dunHeader->nRecords[DB_CATEGORY_CREATURE] = 0;
+		// should go through all maps to remove creature references
+	}*/
+
+
 	SkD((DLV_DBG_GAME_LOAD, "After ASSERTS. isNewGame = %d\n", isNewGame));
-	//^2066:2B46
 	if (isNewGame != 0) {
-		//^2066:2B4C
 		ARRANGE_DUNGEON();
 	}
-	//^2066:2B50
 	if (_4976_3b5d != 0) {
-		//^2066:2B57
 		DECIDE_DEFAULT_DUNGEON_MAP_CHIP_SET();
 	}
-	//^2066:2B5B
 	_4976_3b5d = 0;
-	//^2066:2B64
 
 	//CHECK_TILE_RECORDS();
 	SkD((DLV_DBG_GAME_LOAD, "Read Dungeon Structure Completed !\n"));
@@ -20565,6 +20594,7 @@ U32 SkWinCore::GET_FILE_SIZE(i16 handle) {
 	return fset.fileGetSize(handle);
 }
 
+
 //^3E74:0004
 U16 SkWinCore::SWAPW(U16 xx)
 {
@@ -20576,6 +20606,34 @@ U32 SkWinCore::SWAP32(U32 xx)
 {
 	return ((xx & 0xFF000000)>>24) + ((xx & 0x00FF0000)>>8) + ((xx & 0x0000FF00)<<8) + ((xx & 0x000000FF)<<24);
 }
+
+void SkWinCore::SWAPWPX(U16* xData, U16 iNbItems)
+{
+	U16 iSwapIndex = 0;
+	for (iSwapIndex = 0; iSwapIndex < iNbItems; iSwapIndex++, xData++)
+		*xData = SWAPW(*xData);
+}
+
+void SkWinCore::SWAP_OBJECTDATA(U16* xData, U8 iCategory, U16 iNbItems)
+{
+	int iItemIndex = 0;
+	int iWordSwap = 0;
+	int i16bSize = glbItemSizePerDB[iCategory]/2;
+	for (iItemIndex = 0; iItemIndex < iNbItems; iItemIndex++)
+	{
+		// all data are swapped, except for 2 bytes within the monster structure.
+		// to do so, just swap it again afterwards
+		for (iWordSwap = 0; iWordSwap < i16bSize; iWordSwap++, xData++)
+			*xData = SWAPW(*xData);
+		
+		if (iCategory == DB_CATEGORY_CREATURE)	// swap back 3rd word
+		{
+			xData-=6;
+			*xData = SWAPW(*xData);
+		}
+	}
+}
+
 
 //^3E74:16ED
 U32 SkWinCore::QUERY_GDAT_ENTRY_VALUE(U16 entryIndex, U16 entryPos)
@@ -21696,7 +21754,7 @@ void SkWinCore::SHOW_MENU_SCREEN()
 		goto _0180;
 _0171:
 		//SkD((DLV_DBG_INIT, "_1031_0d36 / SPECIAL_UI_KEY_TRANSFORMATION\n"));
-		_1031_0d36(0x20, SPECIAL_UI_KEY_TRANSFORMATION());
+		_1031_0d36_KEYBOARD(0x20, SPECIAL_UI_KEY_TRANSFORMATION());
 _0180:
 		do {
 			//SkD((DLV_DBG_INIT, "MessageLoop\n"));
@@ -21973,8 +22031,10 @@ void SkWinCore::ALLOC_CPX_SETUP(X8 *xx)
 		_4976_5d24 = 0x80;
 		_4976_5d08 = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(_4976_5d24 << 1, afUseUpper, 0x400));
 		FILL_U16(reinterpret_cast<i16 *>(_4976_5d08), _4976_5d24, -1, 2);
-		_4976_5c7e = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(_4976_5d24 << 1, afUseUpper, 0x400));
-		_4976_5c86 = reinterpret_cast<U32 *>(ALLOC_MEMORY_RAM(_4976_5d24 << 2, afZeroMem|afUseUpper, 0x400));
+//		_4976_5c7e_cache_ici = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(_4976_5d24 << 1, afUseUpper, 0x400));
+		_4976_5c7e_cache_ici = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(_4976_5d24 * sizeof (U16), afUseUpper, 0x400));
+//		_4976_5c86_cache_hash = reinterpret_cast<U32 *>(ALLOC_MEMORY_RAM(_4976_5d24 << 2, afZeroMem|afUseUpper, 0x400));
+		_4976_5c86_cache_hash = reinterpret_cast<U32 *>(ALLOC_MEMORY_RAM(_4976_5d24 * sizeof (U32), afZeroMem|afUseUpper, 0x400));
 		_4976_5ce2 = _4976_5cf4 - _4976_00ec;
 		SkD((DLV_DBG_INIT, "ALLOC_CPX_SETUP:INIT_CPXHEAP\n"));
 		INIT_CPXHEAP(&_4976_5d12, ptr2t(_4976_5ce2), 0, _4976_5cee);
@@ -23580,7 +23640,7 @@ _00a4:
 		CHOOSE_HIGHLIGHT_ARROW_PANEL();
 		if (false) {
 _01f7:
-			_1031_0d36(0x20, SPECIAL_UI_KEY_TRANSFORMATION());
+			_1031_0d36_KEYBOARD(0x20, SPECIAL_UI_KEY_TRANSFORMATION());
 		}
 
 		MessageLoop(true); // in game
