@@ -42,6 +42,7 @@ public:
 	static bool bDM1ReadSavegame;		// read savegame as a native DM1 savegame (DM1 retrocompatibility)
 	static bool bDM1TQMode;				// dungeon runs as TQ DM1 dungeon
 
+	static bool bTQMode;				// experimental TQ mode (i.e. reading data from original TQ data)
 	static bool bBWMode;				// experimental Bloodwych mode
 	static bool bEOBMode;				// experimental Eye of the Beholder mode
 	static bool bGameModeExtended;		// experimental
@@ -90,6 +91,7 @@ public:
 	static bool bDebugGFXNoDoors;
 	static bool bDebugGFXNoCreatures;
 	static bool bDebugNoCreatures;
+	static bool bDebugTileset;
 
 	static bool bForceOrnateSound;
 

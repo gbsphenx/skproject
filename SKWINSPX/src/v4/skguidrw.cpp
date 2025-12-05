@@ -4542,7 +4542,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 	}
 	else {	// values in GDAT are 1 to 25. shift it back to 0 to 24.
 		//^32CB:16A7
-		iRefPoint = iOrnatePos >> 8;	 // SPX: value in GDAT is 2 byte. Upper byte is how to draw image from ornate position
+		iRefPoint = iOrnatePos >> 8;	 // SPX: value in GDAT is 2 bytes. Upper byte is how to draw image from ornate position
 		iOrnatePos = (iOrnatePos & 255) -1;
 	}
 	//^32CB:16BA
@@ -4655,21 +4655,22 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		//^32CB:188F
 		U16 bp26 = ALLOC_TEMP_CACHE_INDEX();
 		//^32CB:1897
-		U8 bp009c[80];
-		QUERY_MESSAGE_TEXT(bp009c, bp32, 2);
+		U8 strWallText[80]; // bp009c
+		// TODO SPX protection : check that bp32 is of text cat
+		QUERY_MESSAGE_TEXT(strWallText, bp32, 2);	// str, rl
 		//^32CB:18AA
 		U16 bp36 = 0;
 		U16 bp38 = 1;
 		//^32CB:18B4
 		U8 bp45;
-		while ((bp45 = bp009c[bp36++]) != 0) {
+		while ((bp45 = strWallText[bp36++]) != 0) {
 			//^32CB:18B6
 			if (bp45 == vbLf)
 				//^32CB:18BC
 				bp38++;
 		}
 		//^32CB:18D5
-		U16 bp4c = QUERY_MBCS_PRESENCE(bp009c);
+		U16 bp4c = QUERY_MBCS_PRESENCE(strWallText);
 		//^32CB:18E5
 		U16 bp3a;
 		U16 bp3c;
@@ -4694,14 +4695,14 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		//^32CB:1945
 		if (bp4c != 0) {
 			//^32CB:194E
-			for (U16 bp36 = 0; bp009c[bp36] != 0; ) {
+			for (U16 bp36 = 0; strWallText[bp36] != 0; ) {
 				//^32CB:1956
 				if (bp4aheight - (_4976_0130 + _4976_0136 +1) <= rc44.y)
 					//^32CB:1968
 					break;
 				//^32CB:196B
 				U8 bp0356[384];
-				i16 bp30 = _3929_04e2_DRAW_TEXT_STRINGS(bp009c, bp0356, &bp36, bp48width -1);
+				i16 bp30 = _3929_04e2_DRAW_TEXT_STRINGS(strWallText, bp0356, &bp36, bp48width -1);
 				//^32CB:198C
 				if (bp30 != 0) {
 					//^32CB:1995
@@ -4717,12 +4718,9 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 					}
 				}
 				//^32CB:1A49
-				if (bp009c[bp36] == vbLf)
-					//^32CB:1A58
+				if (strWallText[bp36] == vbLf)
 					bp36++;
-				//^32CB:1A5B
 				rc44.y += bp3c;
-				//^32CB:1A61
 			}
 		}
 		else {
@@ -4735,7 +4733,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 			//^32CB:1A9C
 			U8 *bp08 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp26));
 			//^32CB:1AAB
-			U8 *bp04 = bp009c;
+			U8 *bp04 = strWallText;
 
 			do {
 				//^32CB:1AB5
@@ -6990,27 +6988,21 @@ void SkWinCore::DRAW_WALL(i16 iViewportCell)	// i16 xx
 // SPX: _32cb_50fe renamed DRAW_WALL_TILE
 void SkWinCore::DRAW_WALL_TILE(i16 iViewportCell)	// i16 xx
 {
-	//^32CB:50FE
 	ENTER(0);
-	//^32CB:5102
 	i16 iLocalViewportCell = iViewportCell;	//i16 si = xx;
 	DRAW_WALL(iLocalViewportCell);
 	switch (_4976_4654[RCJ(23,iLocalViewportCell)]) {
 		case 1: //^_5121	// front vision
-			//^32CB:5121
 			DRAW_WALL_ORNATE(iLocalViewportCell, 0, 1);
 			break;
 		case 3: //^_5127	// side
-			//^32CB:5127
 			DRAW_WALL_ORNATE(iLocalViewportCell, 0, 1);
-			goto _5133;
+//			goto _5133;
 		case 2: //^_5133	// side
-			//^32CB:5133
-_5133:
+//_5133:
             DRAW_WALL_ORNATE(iLocalViewportCell, glbTabXAxisDistance[RCJ(23,iLocalViewportCell)], 1);
 			break;
 	}
-	//^32CB:5143
 	return;
 }
 

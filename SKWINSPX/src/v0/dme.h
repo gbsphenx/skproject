@@ -163,26 +163,26 @@ namespace DMEncyclopaedia {
 	// Added this structure for more precision on Map_definitions without replacing its variable definition .. yet
 	struct Map_definition_info
 	{
-		unsigned short mapOffset;
-		char unused1[4];
-		unsigned char xOffset; // apparently up to 255
-		unsigned char yOffset;
-		unsigned short level:4; // position of the level in the level stack. 0 is top.
-		unsigned short unused2:2;
-		unsigned short xDim:5; // values 0x00 to 0x1F give dimensions 1 to 32.
-		unsigned short yDim:5;
-		unsigned char nWalls:4;
-		unsigned char rWalls:4;
-		unsigned char nFloors:4;	
-		unsigned char rFloors:4;	
-		unsigned char nOrnates:4;	
-		unsigned char nMonsters:4;
-		unsigned char unknown1:4;		
-		unsigned char depth:4; // determinates the default level of generated monsters.	
-		unsigned char unknown2:4;
-		unsigned char tileset:4;
-		unsigned char door1:4;
-		unsigned char door2:4;
+		U16 mapOffset;	// map data offset
+		U8 unused1[4];
+		U8 xOffset; // apparently up to 255
+		U8 yOffset;
+		U16 level:4; // position of the level in the level stack. 0 is top.
+		U16 unused2:2;
+		U16 xDim:5; // values 0x00 to 0x1F give dimensions 1 to 32.
+		U16 yDim:5;
+		U8 nWalls:4;
+		U8 rWalls:4;
+		U8 nFloors:4;	
+		U8 rFloors:4;	
+		U8 nOrnates:4;	
+		U8 nMonsters:4;
+		U8 unknown1:4;		
+		U8 depth:4; // determinates the default level of generated monsters.	
+		U8 unknown2:4;
+		U8 tileset:4;
+		U8 door1:4;
+		U8 door2:4;
 	};
 
 	// 
@@ -1805,7 +1805,7 @@ namespace DM2Internal {
 		i8 ItemToThrow;			// @30	// b30	ItemToThrow or CreatureToSummon
 		i8 b31;			// @31	// 1 or 2 while jumping ?
 		i8 b32;			// @32
-		U8 b33;			// @33	// result of proceed_ccm ?
+		U8 iSeqControl;	// @33	// b33 / result of proceed_ccm ?	// spx: somehow control the next creature time 21/22 to get to next animation
 
 		U8 b30_6_6() const { return (ItemToThrow>>6)&1; }
 
@@ -2812,7 +2812,7 @@ namespace DM2Internal {
 		X16 *pw0;		// cls1-to-cls2
 		X16 *pw4;		// cls2-to-cls3?
 		RawEntry *pv8;
-		U16 w12;		// cnt cls1
+		U16 iTotalClass1;		// w12 cnt cls1
 		X16 w14;		// total cnt of cls2
 		X16 w16;
 		X16 w18;

@@ -89,7 +89,7 @@ Bit16u SkWinCore::CREATURE_STEP_ANIMATION_V5(U8 iCreatureType, Bit16u iAnimOffse
 	// Get the FC data from creature
 	xCAnimFrameSeqTable = reinterpret_cast<CreatureAnimationFrameInfoFC_V5*> (QUERY_GDAT_ENTRY_DATA_BUFF_FORCE(GDAT_CATEGORY_CREATURES, iCreatureType, dtRaw7, GDAT_CREATURE_ANIM_INFO_SEQUENCE));
 
-	SkD((DLV_DBG_SED2, "DBG: CREATURE_STEP_ANIMATION_V5 %04X %04X \n", (Bitu)iAnimOffset, (Bitu)*pAnimFrame));
+	SkD((DLV_DBG_CANIM, "DBG: CREATURE_STEP_ANIMATION_V5 %04X %04X \n", (Bitu)iAnimOffset, (Bitu)*pAnimFrame));
 	Bit16u iFrameIndex = *pAnimFrame; // si
 	CreatureAnimationFrameInfoFC_V5* xCAnimFrameSeq = NULL;
 
@@ -136,7 +136,7 @@ _0253:
 Bit16u SkWinCore::CREATURE_STEP_ANIMATION(Bit16u iAnimOffset, Bit16u *pAnimFrame, CreatureAnimationFrame **rref)
 {
 	//^4937:01A9
-	SkD((DLV_DBG_SED2, "DBG: CREATURE_STEP_ANIMATION %04X %04X \n", (Bitu)iAnimOffset, (Bitu)*pAnimFrame));
+	SkD((DLV_DBG_CANIM, "DBG: CREATURE_STEP_ANIMATION %04X %04X \n", (Bitu)iAnimOffset, (Bitu)*pAnimFrame));
 	Bit16u iFrameIndex = *pAnimFrame; // si
 
 	CreatureAnimationFrame* xCAnimFrame = NULL;	// bp04
@@ -503,12 +503,12 @@ void SkWinCore::CREATURE_SET_NEW_COMMAND(ObjectID rlCreatureIn, U16 xx, U16 yy, 
 
 #if UseAltic
 	if ((tlbCreatureCommandsFlags[RCJ(MAX_CREATURE_COMMANDS, max(xCreatureData->Command, 0))] & 0x10) != 0) {
-		xCreatureData->b33 = 1;
+		xCreatureData->iSeqControl = 1;
 		return;
 	}
 #else
 	if ((tlbCreatureCommandsFlags[RCJ(MAX_CREATURE_COMMANDS,xCreatureData->Command)] & 0x10) != 0) {	// bp06->b26 = command
-		xCreatureData->b33 = 1;
+		xCreatureData->iSeqControl = 1;
 		return;
 	}
 #endif
@@ -1107,7 +1107,7 @@ _1df6:
 			//^19F0:1F9A
 _1f9a:
 			CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_YELLOW, BLACK);
-			SkD((DLV_DBG_SED2, "Creature (go there) => Commands : %02X (%s) -> Local %02X (%s)\n", 
+			SkD((DLV_DBG_CANIM, "Creature (go there) => Commands : %02X (%s) -> Local %02X (%s)\n", 
 				glbCreatureCommandThinking, getCreatureCommandName(glbCreatureCommandThinking), iLocalCommand, getCreatureCommandName(iLocalCommand)));
 			CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
 
@@ -1186,7 +1186,7 @@ ObjectID SkWinCore::_19f0_04bf()
 U16 SkWinCore::_19f0_0559(X16 xx)
 {
 	//^19F0:0559
-	SkD((DLV_DBG_SED3, "DBG: _19f0_0559 %04X \n", (Bitu)xx));
+	SkD((DLV_CCM, "DBG: _19f0_0559 %04X \n", (Bitu)xx));
 	ENTER(4);
 	//^19F0:055E
 	X16 si = xx;
@@ -1677,7 +1677,7 @@ X32 SkWinCore::CREATURE_GET_NEXT_THINK_GAMETICK()
 		goto _0cd1;
 	}
 	//^1C9A:0C2A
-	SkD((DLV_DBG_SED2, "DBG: glbCreatureAnimationFrame %04X %04X %02X %02X \n", (Bitu)glbCreatureAnimationFrame->w0, (Bitu)glbCreatureAnimationFrame->w2, (Bitu)glbCreatureAnimationFrame->b4, (Bitu)glbCreatureAnimationFrame->sound));
+	SkD((DLV_DBG_CANIM, "DBG: glbCreatureAnimationFrame %04X %04X %02X %02X \n", (Bitu)glbCreatureAnimationFrame->w0, (Bitu)glbCreatureAnimationFrame->w2, (Bitu)glbCreatureAnimationFrame->b4, (Bitu)glbCreatureAnimationFrame->sound));
 	iDeltaTicks = (glbCreatureAnimationFrame->b4 >> 3) & 3;
 	if (iDeltaTicks != 0) {
 		iDeltaTicks = RAND16(iDeltaTicks);
@@ -1912,15 +1912,15 @@ void SkWinCore::PREPARE_CREATURE_ANIMATION_INFO_V5(U8 iCreatureType, U16 iAnimOf
 Bit16u SkWinCore::GET_CREATURE_ANIMATION_FRAME(Bit8u iCreatureType, Bit16u command, Bit16u *iAnimSeq, Bit16u *iAnimInfo, CreatureAnimationFrame **animframe, Bit16u vv)
 {
 	//^4937:00CC
-	SkD((DLV_DBG_SED2, "DBG: GET_CREATURE_ANIMATION_FRAME %02X ccm:%04X (%s) %04X %04X %04X \n", (Bitu)iCreatureType, (Bitu)command, getCreatureCommandName((Bitu)command), (Bitu)*iAnimSeq, (Bitu)*iAnimInfo, (Bitu)vv));
+	SkD((DLV_DBG_CANIM, "DBG: GET_CREATURE_ANIMATION_FRAME %02X ccm:%04X (%s) %04X %04X %04X \n", (Bitu)iCreatureType, (Bitu)command, getCreatureCommandName((Bitu)command), (Bitu)*iAnimSeq, (Bitu)*iAnimInfo, (Bitu)vv));
 	// Note: at this point, iAnimSeq holds the previous animation (ended) that is going to be replaced
 	if (tlbCreaturesActionsGroupOffsets == NULL || tlbCreaturesActionsGroupSets == NULL || tlbCreaturesAnimationSequences == NULL) {
 		*iAnimInfo = 0xFFFF;
 		*iAnimSeq = 0;
 		return 1;
 	}
-	*iAnimInfo = 0xFFFF;	// pw0a
-	*iAnimSeq = 0;	// pw08
+	//*iAnimInfo = 0xFFFF;	// pw0a
+	//*iAnimSeq = 0;	// pw08
 	
 	CreatureCommandAnimation *xCCAnim = NULL;
 
@@ -1963,7 +1963,7 @@ Bit16u SkWinCore::GET_CREATURE_ANIMATION_FRAME(Bit8u iCreatureType, Bit16u comma
 		}
 		return 1;
 	}
-	*iAnimInfo = 0xFFFF;
+	*iAnimInfo = 0xFFFF;	// SPX remove this to check if animation does not get stuck
 	if (SkCodeParam::bDM2V5Mode)
 		return CREATURE_STEP_ANIMATION_V5(iCreatureType, iAnimOffset, iAnimInfo, animframe);
 	return CREATURE_STEP_ANIMATION(iAnimOffset, iAnimInfo, animframe);
@@ -6122,7 +6122,7 @@ void SkWinCore::CREATURE_THINK_0982()
 	// It seems that with a tty22, we expect to get a new animation.
 	if (glbCreatureTimer.TimerType() == tty22) {
 		CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_YELLOW, BLACK);
-		SkD((DLV_DBG_SED2, "Creature (tty22) => Commands : %02X %02X\n", xCreatureInfo->Command, xCreatureInfo->Command2));
+		SkD((DLV_DBG_CANIM, "Creature (tty22) => Commands : %02X %02X\n", xCreatureInfo->Command, xCreatureInfo->Command2));
 		CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
         //^13E4:09DC
 		bp0a = 1;
@@ -6200,7 +6200,7 @@ _0a6a:
 			iUpcomingCommand = (RAND01() != 0) ? ccmCastSpell1 : ccmCastSpell2;
 		}
 		CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_YELLOW, BLACK);
-		SkD((DLV_DBG_SED2, "Creature => Commands : %02X %02X / Upcoming : %02X\n", xCreatureInfo->Command, xCreatureInfo->Command2, iUpcomingCommand));
+		SkD((DLV_DBG_CANIM, "Creature => Commands : %02X %02X / Upcoming : %02X\n", xCreatureInfo->Command, xCreatureInfo->Command2, iUpcomingCommand));
 		CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
 		// SPX: try this : set to neutral if the next command would be the same as current (which may be not terminated)
 		/*if (SkCodeParam::bUseFixedMode) {
@@ -6217,15 +6217,15 @@ _0a6a:
 	}
 	//^13E4:0B90
 _0b90:
-	if (bp0a != 0 || xCreatureInfo->b33 == 0 || glbCreatureAnimationFrame->w2_9_9() == 0) {
+	if (bp0a != 0 || xCreatureInfo->iSeqControl == 0 || glbCreatureAnimationFrame->w2_9_9() == 0) {
 		if (glbCreatureAnimationFrame->w2_8_8() != 0) {
 			//^13E4:0BB8
 			_13e4_01a3();
-			xCreatureInfo->b33 |= PROCEED_CCM();
+			xCreatureInfo->iSeqControl |= PROCEED_CCM();
 		}
 	}
 	//^13E4:0BCE
-	if (xCreatureInfo->b33 != 0 && glbCreatureAnimationFrame->w2_9_9() != 0) {
+	if (xCreatureInfo->iSeqControl != 0 && glbCreatureAnimationFrame->w2_9_9() != 0) {
 		//^13E4:0BE4
 		di = CREATURE_4937_028a(bp08->iAnimSeq, &bp08->iAnimInfo, &glbCreatureAnimationFrame);
 		if (di != 2)
@@ -6235,7 +6235,11 @@ _0b90:
 	if (di == 1)
 		glbCreatureTimer.TimerType(tty21);
 	else
+	{
 		glbCreatureTimer.TimerType(tty22);
+		if (SkCodeParam::bUseFixedMode)
+			xCreatureInfo->iSeqControl = 0;	// somehow, this resets the animation sequence control and allow the creature to properly proceed its animation instead of being stuck and generate tty22 continuously
+	}
 	//^13E4:0C17
 	if (glbCreatureActionProceeded != 0)
 		return;
@@ -6280,7 +6284,7 @@ void SkWinCore::CREATURE_13e4_071b()
 	ENTER(10);
 	//^13E4:0721
 	sk1c9a02c3* xAnimInfo = glbCreatureAnimSeqInfo; // bp08
-	if ((xAnimInfo->iAnimInfo & 0xe03f) == 0x8001) // 1 possible frame and static object ?
+	if ((xAnimInfo->iAnimInfo & 0xE03F) == 0x8001) // 1 possible frame and static object ?
 		return;
 	//^13E4:0740
 	CreatureAnimationFrame* bp04 = &tlbCreaturesAnimationSequences[xAnimInfo->iAnimSeq];
@@ -6734,7 +6738,7 @@ Bit16u SkWinCore::CREATURE_4937_005c(Bit16u iAnimSeq, Bit16u* piSeqInfo) // xx *
 		if (SkCodeParam::bUseFixedMode)
 		{
 			if ( (*piSeqInfo & 0x003F) == 0)
-				*piSeqInfo &= 1;
+				*piSeqInfo |= 1;
 		}
 		// Depending on game tick, select frame number within the sequence, flag x3F holding the number of possible frames.
 		iFrame = (glbGameTick + di) % (*piSeqInfo & 0x003F);
@@ -6742,7 +6746,7 @@ Bit16u SkWinCore::CREATURE_4937_005c(Bit16u iAnimSeq, Bit16u* piSeqInfo) // xx *
 	else {
 		iFrame = *piSeqInfo & 0x003F;
 	}
-	SkD((DLV_DBG_SED2, "Creature Anim => Tick= %04d Frame= %02X => Final Seq = %04X (*piSeqInfo = %04X)\n", glbGameTick, iFrame, (iAnimSeq + iFrame), *piSeqInfo));
+	SkD((DLV_DBG_CANIM, "Creature Anim => Tick= %04d Frame= %02X => Final Seq = %04X (*piSeqInfo = %04X)\n", glbGameTick, iFrame, (iAnimSeq + iFrame), *piSeqInfo));
 	return iAnimSeq + iFrame;
 }
 

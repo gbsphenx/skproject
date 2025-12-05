@@ -601,7 +601,7 @@ CString SkWinCore::getCreatureCommandName(U8 ccm)
 	if (ccm == ccm3E)			return "EXPLODE 2 x3E";
 	if (ccm == ccm3F)			return "EXPLODE 3 x3F";
 	if (ccm == ccm40)			return "EXPLODE 4 x40";
-	if (ccm == ccm14)			return "x41";
+	//if (ccm == ccm41)			return "x41";
 	if (ccm == ccm42)			return "x42";
 //	if (ccm == ccm43)			return "x43";	
 //	if (ccm == ccm44)			return "x44";
@@ -5322,15 +5322,10 @@ i16 SkWinCore::_2066_33e7()
 	U16 bp0c = 0;
 
 	do {
-		//^2066:348D
-		while (_476d_05a9() != 0) {
-			//^2066:348F
+		while (IS_THERE_KEY_INPUT_2() != 0) {
 			_1031_0d36_KEYBOARD(32, SPECIAL_UI_KEY_TRANSFORMATION());
-			//^2066:349E
 		}
-		//^2066:34A7
 		MAIN_LOOP();
-		//^2066:34AC
 		SRECT bp14;
 		i16 bp06;
 		i16 bp08;
@@ -9088,24 +9083,6 @@ void SkWinCore::TICK_STEP_CHECK()
 	return;
 }
 
-//^01B0:051A
-U16 SkWinCore::IBMIO_01b0_051a() //#DS=04BF
-{
-	ENTER(0);
-	LOADDS(0x3083);
-	if (glbDMode != 0 && _04bf_0284 != 0) {
-		TICK_STEP_CHECK() INDIRECT_CALL;
-	}
-	//^01B0:0536
-	return (glbUIKeyReadCount != 0) ? 1 : 0;
-}
-
-//^476D:05A9
-U16 SkWinCore::_476d_05a9()
-{
-	ENTER(0);
-	return IBMIO_01b0_051a() CALL_IBMIO;
-}
 
 //^476D:04E8
 U8 SkWinCore::_476d_04e8(U16 xx) { // TODO: Unr
@@ -10377,7 +10354,7 @@ RawEntry *SkWinCore::QUERY_GDAT_ENTRYPTR(U8 iCategory, U16 iItem, U8 iType, U16 
 
 	//^3E74:178C
 	// If requested category is above max category
-	if (iCategory > U8(glbGDatEntries.w12)) {
+	if (iCategory > U8(glbGDatEntries.iTotalClass1)) {
 		//^3E74:179D
 		return NULL;
 	}
@@ -12888,13 +12865,11 @@ U8 SkWinCore::_0aaf_0067(U8 cls2)
 				_1031_0781(bp08 + 0x00db);
 			}
 		}
-		//^0AAF:0179
-		if (_4976_4dfc == 0x00ff && _476d_05a9() != 0 && SPECIAL_UI_KEY_TRANSFORMATION() == 0x001C) {
-			//^0AAF:0194
-			_1031_0781(0x00db);
+		if (_4976_4dfc == 0x00FF && IS_THERE_KEY_INPUT_2() != 0 && SPECIAL_UI_KEY_TRANSFORMATION() == 0x001C) {
+			_1031_0781(0x00DB);
 		}
 		//^0AAF:019D
-	} while (_4976_4dfc == 0x00ff);
+	} while (_4976_4dfc == 0x00FF);
 
 	//^0AAF:01A5
 	U8 bp0c = (U8)bp38[_4976_4dfc];
@@ -13620,6 +13595,9 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 			dunMapsHeaders[si].bGfxFlags = MAPGFX_FLAG__PIT_UPPER_ROOF | MAPGFX_FLAG__PIT_LOWER_GROUND | MAPGFX_FLAG__STAIRS_GOING_UP | MAPGFX_FLAG__STAIRS_GOING_DOWN | MAPGFX_FLAG__TELEPORTER | MAPGFX_FLAG__DOOR_0 | MAPGFX_FLAG__DOOR_1;
 			dunMapsHeaders[si].w14 = (3 << 4) + (dunMapsHeaders[si].w14 & 0xFF00); // tileset = 3 (keep)
 		}
+
+		if (SkCodeParam::bDebugTileset)
+			dunMapsHeaders[si].w14 = (0x0F << 4) + (dunMapsHeaders[si].w14 & 0xFF00);
 	}
 	//^2066:26FD
 	_4976_4cb4 = bp0e;
@@ -15283,7 +15261,7 @@ X16 SkWinCore::QUERY_NEXT_GDAT_ENTRY(SkEntIter *ref)
 			ref->cls1cur(0x00);
 			//^3E74:19C0
 _19c0:
-			ref->cls1base(U8(glbGDatEntries.w12));
+			ref->cls1base(U8(glbGDatEntries.iTotalClass1));
 		}
 		//^3E74:19C8
 		else if (bp0e != 0) {
@@ -15298,7 +15276,7 @@ _19c0:
 			ref->cls1base(ref->x2.x2.cls1());
 		}
 		//^3E74:19EA
-		if (ref->cls1cur() < 0 || ref->cls1cur() > ref->cls1base() || ref->cls1base() > glbGDatEntries.w12)
+		if (ref->cls1cur() < 0 || ref->cls1cur() > ref->cls1base() || ref->cls1base() > glbGDatEntries.iTotalClass1)
 			goto _1cd4;
 	}
 	do {
@@ -20796,7 +20774,7 @@ void SkWinCore::BUILD_GDAT_ENTRY_DATA(GDATEntries *ref, X16 (SkWinCore::*pfnIfLo
 	// SPX: Original value was 0x3a0, so 0x1D max categories
 	const int buffSize = (GDAT_CATEGORY_LIMIT+1) * 16 * 2;
 	U16 *bp04 = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(buffSize, afUseLower|afZeroMem, 0x400));
-	ref->w12 = 0;
+	ref->iTotalClass1 = 0;
 	ref->w16 = 0;
 	U16 si;
 	U8 bp0a;
@@ -20811,9 +20789,9 @@ void SkWinCore::BUILD_GDAT_ENTRY_DATA(GDATEntries *ref, X16 (SkWinCore::*pfnIfLo
 			continue;
 		//^3E74:1DC1
 		ref->w16++;
-		if (ref->w12 < bp0a) {
+		if (ref->iTotalClass1 < bp0a) {
 			//^3E74:1DD3
-			ref->w12 = bp0a;
+			ref->iTotalClass1 = bp0a;
 		}
 		//^3E74:1DDC
 		bp04[(bp0a << 4) + (bp09)]++;
@@ -20825,7 +20803,7 @@ void SkWinCore::BUILD_GDAT_ENTRY_DATA(GDATEntries *ref, X16 (SkWinCore::*pfnIfLo
 	}
 	//^3E74:1E36
 	X16 bp0c = 0;
-	for (bp0a = 0; ref->w12 >= bp0a; bp0a++) {
+	for (bp0a = 0; ref->iTotalClass1 >= bp0a; bp0a++) {
 		//^3E74:1E41
 		bp0c += bp04[(bp0a << 4) +15];
 		//^3E74:1E59
@@ -20858,13 +20836,13 @@ void SkWinCore::BUILD_GDAT_ENTRY_DATA(GDATEntries *ref, X16 (SkWinCore::*pfnIfLo
 		//^3E74:1EE2
 	}
 	//^3E74:1EE8
-	ref->pw0 = reinterpret_cast<X16 *>(ALLOC_MEMORY_RAM((ref->w12 +2) << 1, afUseUpper, 0x400));
+	ref->pw0 = reinterpret_cast<X16 *>(ALLOC_MEMORY_RAM((ref->iTotalClass1 +2) << 1, afUseUpper, 0x400));
 	ref->pw4 = reinterpret_cast<X16 *>(ALLOC_MEMORY_RAM((ref->w14 +1) << 1, afUseUpper, 0x400));
 	ref->pv8 = reinterpret_cast<RawEntry *>(ALLOC_MEMORY_RAM(U32(ref->w16) << 2, afUseUpper, 0x400));
 	bp0c = 0;
 	si = 0;
 	U8 bp09;
-	for (bp0a = 0; ref->w12 >= bp0a; bp0a++) {
+	for (bp0a = 0; ref->iTotalClass1 >= bp0a; bp0a++) {
 		//^3E74:1F66
 		ref->pw0[bp0a] = bp0c;
 		di = bp04[(bp0a << 4) +15];
@@ -20877,7 +20855,7 @@ void SkWinCore::BUILD_GDAT_ENTRY_DATA(GDATEntries *ref, X16 (SkWinCore::*pfnIfLo
 		//^3E74:1FCF
 	}
 	//^3E74:1FE0
-	ref->pw0[ref->w12 +1] = bp0c;
+	ref->pw0[ref->iTotalClass1 +1] = bp0c;
 	//^3E74:1FFC
 	ref->pw4[ref->w14] = ref->w16;
 	//^3E74:2021
@@ -21283,10 +21261,17 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_0A()
 		tblCreatureFrameInfo14 = reinterpret_cast<U8 (*)[14]>(ALLOC_MEMORY_RAM(iItemSize,	afUseUpper, 0x400));
 		FILE_READ(hAnimFrameTabHandle, iItemSize, tblCreatureFrameInfo14);
 		FILE_CLOSE(hAnimFrameTabHandle);
+	}
+	else {
+	// SPX: This points to a 1652 bytes file .. seems to have struct of 14 bytes => 118 records. creature/objects anim frame size info and such
+	tblCreatureFrameInfo14 = reinterpret_cast<U8 (*)[14]>(ALLOC_MEMORY_RAM(bp04 = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt07, 0x0A), afUseUpper, 0x400));
+	LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt07, 0x0A, reinterpret_cast<U8 *>(tblCreatureFrameInfo14));
+	}
+	if (SkCodeParam::bUsePowerDebug) {
 		//--- Display hex data of this table
 		int iNbItems = 1652 / 14;
 		U8* pTabBuffer = (U8*) tblCreatureFrameInfo14;
-		/*
+	
 		for (int i = 0; i < iNbItems; i++) {
 			printf("%03d)) ", i);
 			for (int b = 0; b < 14; b++) {
@@ -21294,13 +21279,9 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_0A()
 			}
 			printf("\n");
 			pTabBuffer += 14;
-		}*/
+		}
 	}
-	else {
-	// SPX: This points to a 1652 bytes file .. seems to have struct of 14 bytes => 118 records. creature/objects anim frame size info and such
-	tblCreatureFrameInfo14 = reinterpret_cast<U8 (*)[14]>(ALLOC_MEMORY_RAM(bp04 = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt07, 0x0A), afUseUpper, 0x400));
-	LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt07, 0x0A, reinterpret_cast<U8 *>(tblCreatureFrameInfo14));
-	}
+
 	//^32CB:0052
 	return;
 }
@@ -21401,9 +21382,9 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_00()
 
 	
 	/// DUMP Level 1 tlbCreaturesActionsGroupOffsets (from GDAT value 0F-xx-00-00
-	/*
+	
 	FILE* fp = NULL;
-	fp = fopen("anim.txt", "wt+");
+	fp = fopen("creature-anims.txt", "wt+");
 	int i = 0;
 	for (i = 0; i < 42; i++)
 	{
@@ -21432,13 +21413,13 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_00()
 		CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
 	}
 	fclose(fp);
-	*/
+	
 	
 
 	return;
 }
 //^38C8:00C8
-void SkWinCore::_38c8_00c8()
+void SkWinCore::_38c8_00c8_ALLOC_PICT()
 {
 	//^38C8:00C8
 	ENTER(0);
@@ -21522,7 +21503,7 @@ void SkWinCore::_470a_0003()
 }
 
 //^3929:0E16
-void SkWinCore::_3929_0e16()
+void SkWinCore::_3929_0e16_FONT_LOAD()
 {
 	//^3929:0E16
 	ENTER(8);
@@ -21530,7 +21511,7 @@ void SkWinCore::_3929_0e16()
 	_3929_07e1(0, 0);
 	_4976_5c08 = ALLOC_PICT_BUFF(_4976_013e, _4976_0140, afUseUpper, 8);
 	_4976_5c0e = ALLOC_MEMORY_RAM(0x300, afUseUpper, 0x400);
-	LOAD_GDAT_ENTRY_DATA_TO(0x1, 0x0, dt07, 0x0, _4976_5c0e);
+	LOAD_GDAT_ENTRY_DATA_TO(0x1, 0x0, dt07, 0x0, _4976_5c0e);	// default font
 	U16 si;
 	for (si = 0; si < 1; si++) {
 		//^3929:0E75
@@ -21549,20 +21530,17 @@ void SkWinCore::_3929_0e16()
 	return;
 }
 //^2405:0009
-void SkWinCore::_2405_0009()
+void SkWinCore::_2405_0009_ALLOC_ITEM_HAND_PICT()
 {
-	//^2405:0009
 	ENTER(0);
-	//^2405:000C
 	cd.pi.glbLeaderHandPossession.pb2 = ALLOC_PICT_BUFF(glbRectX_0106, glbRectY_0108, afUseUpper, 4);
-	//^2405:0027
 	return;
 }
 
 
 
 //^443C:067A
-void SkWinCore::_443c_067a(sk0cea *ref)
+void SkWinCore::_443c_067a_ALLOC_RAM_SRECT(sk0cea *ref)
 {
 	//^443C:067A
 	ENTER(0);
@@ -21577,7 +21555,7 @@ void SkWinCore::_443c_067a(sk0cea *ref)
 }
 
 //^1031:07D6
-void SkWinCore::_1031_07d6()
+void SkWinCore::_1031_07d6_SOME_INIT()
 {
 	//^1031:07D6
 	ENTER(194);
@@ -21653,7 +21631,7 @@ void SkWinCore::_1031_07d6()
 	//^1031:0943
 	for (bp02 = 0; bp02 < 0x12; bp02++) {	// 18
 		//^1031:094A
-		_443c_067a(&_4976_0ce0[1 +bp02]);
+		_443c_067a_ALLOC_RAM_SRECT(&_4976_0ce0[1 +bp02]);
 		//^1031:095E
 	}
 	//^1031:0967
@@ -21665,11 +21643,11 @@ U8 SkWinCore::_3e74_2439_GET_ENTRIES_NUMBER(X8 cls1, X8 cls4)
 {
 
 	ENTER(0);
-	if (cls1 > U8(glbGDatEntries.w12))
+	if (cls1 > U8(glbGDatEntries.iTotalClass1))
 		return 0;
 
 	X16 si = glbGDatEntries.pw0[cls1];
-	if (glbGDatEntries.pw0[cls1 +1] -si <= cls4)
+	if (glbGDatEntries.pw0[cls1 + 1] - si <= cls4)
 		return 0;
 
 	return glbGDatEntries.pv8[U32(glbGDatEntries.pw4[cls4 +si +1]) -1].cls2;
@@ -21760,7 +21738,7 @@ _0180:
 			//SkD((DLV_DBG_INIT, "MessageLoop\n"));
 			MessageLoop(true); // main menu
 
-			if (_476d_05a9() != 0)
+			if (IS_THERE_KEY_INPUT_2() != 0)
 				goto _0171;
 			MAIN_LOOP();
 			//SkD((DLV_DBG_INIT, "Main Screen = %d\n", _MENU_SCREEN__TITLE_MENU));
@@ -22121,19 +22099,18 @@ UINT SkWinCore::INIT()
 	
 	SkD((DLV_DBG_INIT, "LOAD_GDAT_INTERFACE_00_00\n"));
 	LOAD_GDAT_INTERFACE_00_00();
-	_38c8_00c8();
-	_3929_0e16();
+	_38c8_00c8_ALLOC_PICT();
+	_3929_0e16_FONT_LOAD();
 	glbTextEntryEncoded = QUERY_GDAT_ENTRY_DATA_INDEX(0x0, 0x0, dtWordValue, 0) & 8;	// Value is 0B ..
-	_2405_0009();
+	_2405_0009_ALLOC_ITEM_HAND_PICT();
 	IBMIO_INIT_CURSORS_MOUSE();
 	_4976_4748 = 1;
-	_1031_07d6();
+	_1031_07d6_SOME_INIT();
 
-
-	cd.gg.glbCreaturesMaxCount = _3e74_2439_GET_ENTRIES_NUMBER(0xf, 0xb);
-	X16 si = (cd.gg.glbCreaturesMaxCount +1) * 3;
-	cd.gg.glbSomeCreatureTable = ALLOC_MEMORY_RAM(si, afUseUpper, 1024);
-	FILL_STR(cd.gg.glbSomeCreatureTable, si, 0xFF, 1);
+	cd.gg.glbCreaturesMaxCount = _3e74_2439_GET_ENTRIES_NUMBER(GDAT_CATEGORY_CREATURES, fmtWordVal);	// 0xf, 0xb
+	X16 iDefaultCreaturesMaxAllocation = (cd.gg.glbCreaturesMaxCount +1) * 3;	// si
+	cd.gg.glbSomeCreatureTable = ALLOC_MEMORY_RAM(iDefaultCreaturesMaxAllocation, afUseUpper, 1024);
+	FILL_STR(cd.gg.glbSomeCreatureTable, iDefaultCreaturesMaxAllocation, 0xFF, 1);
 	//^38C8:05C1
 	SkD((DLV_DBG_INIT, "while (SHOW_MENU_SCREEN()/GAME_LOAD())\n"));
 //--- SHOW_MENU_SCREEN LOOP
@@ -23620,7 +23597,7 @@ _00a4:
 			, (Bitu)(U8)glbTabCreaturesInfo[1].ItemToThrow
 			, (Bitu)(U8)glbTabCreaturesInfo[1].b31
 			, (Bitu)(U8)glbTabCreaturesInfo[1].b32
-			, (Bitu)(U8)glbTabCreaturesInfo[1].b33
+			, (Bitu)(U8)glbTabCreaturesInfo[1].iSeqControl
 			));
 		if ((X16(glbGameTick) & 0x1ff) == 0)	// every 511 tick, burn lighting items
 			//^13AE:01BB
@@ -23645,9 +23622,7 @@ _01f7:
 
 		MessageLoop(true); // in game
 		do {
-			//^13AE:0206
-			if (_476d_05a9() != 0) {
-				//^13AE:020D
+			if (IS_THERE_KEY_INPUT_2() != 0) {
 				goto _01f7;
 			}
 			//^13AE:020F

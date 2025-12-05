@@ -30,11 +30,8 @@ void SkWinCore::_1031_0b7e_MOUSE() //#DS=4976
 //^1031:098E
 void SkWinCore::_1031_098e() //#DS=4976
 {
-	//^1031:098E
 	ENTER(0);
-	//^1031:0993
-	while (_476d_05a9() != 0)
-		//^1031:0995
+	while (IS_THERE_KEY_INPUT_2() != 0)
 		SPECIAL_UI_KEY_TRANSFORMATION();
 	//^1031:09A3
 	_4976_19a7 = 1;
@@ -154,7 +151,7 @@ U16 SkWinCore::FIRE_MOUSE_EVENT_RECEIVER(Bit16u xx, Bit16u yy, i16 button) //#DS
 	// DOS values :
 	// Left button Click = 2 / Release = 4
 	// Right button Click = 1 / Release = 8
-	printf("MOUSE : %d %d => BUTTON : %d\n", xx, yy, button);
+	//printf("MOUSE : %d %d => BUTTON : %d\n", xx, yy, button);
 	ENTER(2);
 	//LOADDS(0x038B) //#DS=4976
 	U16 iEventResult = 0; // bp02
@@ -271,7 +268,7 @@ void SkWinCore::_443c_00a9_MOUSE(sk0cea *ref, i16 x, i16 cx, i16 y, i16 cy)
 // Basically, zones are viewport, champions, positionning, action panel, move arrows, bottom text
 X16 SkWinCore::_443c_00f8_MOUSE(X16 xx, X16 yy)
 {
-	printf("_443c_00f8_MOUSE\n");
+	//printf("_443c_00f8_MOUSE\n");
 	ENTER(14);
 	if (glbMouseVisibility > 0)
 		return 0xffff;

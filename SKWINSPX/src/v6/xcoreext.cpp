@@ -20,6 +20,8 @@ int SkWinCore::READ_DUNGEON_STRUCTURE_EXTENDED_GAME(X16 isNewGame, int iDungeonM
 {
 	if (isNewGame == 1 && SkCodeParam::bGameModeExtended)
 		return DUNGEON_CREATE_BLANK();
+	else if (isNewGame == 1 && SkCodeParam::bTQMode)
+		return READ_DUNGEON_STRUCTURE_TQ(isNewGame);
 #ifdef __SK_EXTENDED_SKWIN_V6__
 	if (isNewGame == 1 && SkCodeParam::bBWMode)
 		return READ_DUNGEON_STRUCTURE_BW(isNewGame);

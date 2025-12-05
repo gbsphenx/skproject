@@ -26,7 +26,7 @@ bool SkCodeParam::bUseBigEnd = false;	// Default is little-end
 
 bool SkCodeParam::bNoAudio = false;
 bool SkCodeParam::bNoMusic = false;
-bool SkCodeParam::bChampionImmune = false;
+bool SkCodeParam::bChampionImmune = true;
 
 bool SkCodeParam::bUseAudioSDL = false;
 
@@ -40,6 +40,7 @@ bool SkCodeParam::bDM2V5Mode = false;	// activate when detecting PC-DOS V5 graph
 bool SkCodeParam::bAutoDefaultMaxLight = false;	// turn this to true for DM1-like dungeon (or rather not DM2) instead to get a value from GDAT.
 // If not set, the default "full" light will always be one step below normal light
 
+bool SkCodeParam::bTQMode = false;
 bool SkCodeParam::bBWMode = false;
 bool SkCodeParam::bEOBMode = false;
 bool SkCodeParam::bGameModeExtended = false;
@@ -70,7 +71,9 @@ bool SkCodeParam::bDebugGFXNoWalls = false;			// don't display solid walls
 bool SkCodeParam::bDebugGFXNoInterWalls = false;	// don't display interwalls
 bool SkCodeParam::bDebugGFXNoDoors = false;		// don't display doors
 bool SkCodeParam::bDebugGFXNoCreatures = false;	// don't display creature
-bool SkCodeParam::bDebugNoCreatures = true;		// drop all creatures -- don't generate creatures
+bool SkCodeParam::bDebugNoCreatures = false;		// drop all creatures -- don't generate creatures
+bool SkCodeParam::bDebugTileset = false;
+
 
 bool SkCodeParam::bMIDIMusicEnabled = true;
 bool SkCodeParam::bWAVMusicEnabled = false;

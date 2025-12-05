@@ -91,7 +91,8 @@ UINT SkRendererMFC::Render()
 {
 #if !defined (__NO_MFC__)
 	SetVGAPaletteRGB(xVRAM->GET_PALETTE());
-	skwin.RedrawWindow();	
+	if (((CSkWinMFC*)&skwin) != NULL)	// crash here when exiting directly from window
+		skwin.RedrawWindow();
 #endif // not __NO_MFC__
 	return 0;
 }

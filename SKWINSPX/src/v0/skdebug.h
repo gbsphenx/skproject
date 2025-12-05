@@ -13,14 +13,14 @@
 	#define SkD(X) ;;
 #else
 	#define SkD(X) SkwinDEBUG X
-#endif
+#endif // __DJGPP__
 
 
 #ifdef _DEBUG
 	#define LOGX(X) Write2LOGX X
 #else
 	#define LOGX(X) ;;
-#endif
+#endif // _DEBUG
 
 #define DLV_BUGHERE 1
 
@@ -35,13 +35,15 @@
 #define DLV_RCT 0
 #define DLV_FIL 1	// Track file open (useful for custom GDAT)
 #define DLV_DBC 0
-#define DLV_CAI 0
 #define DLV_TWEET 0
 #define DLV_MOVE 0	// Player moves
 #define DLV_EUI 0	// Event from UI code
 #define DLV_DBG_UI	0
-#define DLV_MOUSE 1	// Mouse
+#define DLV_MOUSE 0	// Mouse
+#define DLV_CAI 0	// Creature AI / CCM
 #define DLV_CCM 0	// Creature command
+#define DLV_DBG_CANIM	0			// Creature animation
+#define DLV_DBG_SED3	0
 #define DLV_FSM 0	// Find special marker (for x teleport and void fall)
 #define DLV_XP	0	// Display info about XP gain
 #define DLV_DBG_INIT	0	// Display steps from the init
@@ -53,8 +55,6 @@
 #define DLV_DBG_RAND	0
 #define DLV_DBG_CEL2	0
 #define DLV_DBG_SEED	0
-#define DLV_DBG_SED2	0			// Creature animation
-#define DLV_DBG_SED3	0
 #define DLV_DBG_RAIN	0		// Rain/Storm information
 #define DLV_DBG_DIST	0		// Distant element
 #define DLV_DBG_THUNDER		0

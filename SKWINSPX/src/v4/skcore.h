@@ -203,12 +203,12 @@ protected:
 //	U16	glbMouseButtonState;		// (_04bf_17ee) mouse push state (latest); bit0=left, bit1=right
 	U16	_04bf_1850;
 	SRECT	_04bf_1852;
-	i16		_04bf_185a;		// _04bf_185a key roundrobin index
+	i16		glbKeyboardWriteRRIndex;		// (_04bf_185a) key roundrobin index
 	i16 _04bf_185c;
 	i16	_04bf_185e;
 	i16 _04bf_1860;
 	X16 _04bf_1862;
-	X16		_04bf_1864;		// _04bf_1864 key read index (ringed buffer)
+	X16		glbKeyboardReadRRIndex;		// (_04bf_1864) key read index (ringed buffer)
 	i16		glbUIKeyReadCount;		// _04bf_1886 / key read avail count
 	X16	_04bf_18a4;
 	X16	_04bf_18a6;
@@ -1057,7 +1057,7 @@ protected:
 	void IBMIO_MOUSE_HANDLER();
 	void INIT_KBOARD_HOOK();
 	void IBMIO_KBOARD_HANDLER();
-	void _01b0_00ce(X16 xx);
+	void IBMIO_STORE_KEYBOARD_INPUT(X16 iKeyboardVInput); // _01b0_00ce
 	void IBMIO_CHECK_KEYBOARD_INPUT();	// _01b0_00fc renamed IBMIO_CHECK_KEYBOARD_INPUT
 	void _01b0_18ae(); // TODO: Unr
 	X16 _01b0_292b(); // TODO: Unr
@@ -1102,8 +1102,8 @@ protected:
 	void _0759_0126();
 	void _0759_06c2();
 	void _0759_06db();
-	X16 _0759_072c();
-	void _0759_071b();
+	X16 IS_THERE_KEY_INPUT_1();	// _0759_072c
+	void UI_CONSUME_KEYBOARD_INPUT();	// _0759_071b
 	void ANIM_farfree(U8 *buff);
 	U32 ANIM_farcoreleft();
 
@@ -1678,8 +1678,8 @@ protected:
 	sk0d9e *_1031_06b3(sk1891 *ref, X16 xx);
 	void _1031_0781(U16 xx);
 	void TICK_STEP_CHECK();	// _4726_0383
-	U16 IBMIO_01b0_051a();	// _01b0_051a
-	U16 _476d_05a9();
+	U16 IBMIO_IS_THERE_KEY_INPUT();	// _01b0_051a
+	U16 IS_THERE_KEY_INPUT_2(); // _476d_05a9
 
 	Bit8u _476d_04e8(U16 xx); // TODO: Unr
 	U16 _476d_04af(U16 xx); // TODO: Unr
@@ -2155,16 +2155,16 @@ protected:
 	void LOAD_GDAT_INTERFACE_00_0A();
 	void LOAD_GDAT_INTERFACE_00_02();
 	void LOAD_GDAT_INTERFACE_00_00();
-	void _38c8_00c8();
+	void _38c8_00c8_ALLOC_PICT();
 	void KANJI_FONT_LOAD(X8 cls2);
 
 	void _470a_0003();	// NOTHING??
-	void _3929_0e16();
-	void _2405_0009();
+	void _3929_0e16_FONT_LOAD();	// _3929_0e16
+	void _2405_0009_ALLOC_ITEM_HAND_PICT();	// _2405_0009
 	void _01b0_08b6_SET_RECEIVER(U16 (SkWinCore::*pfn)(U16 xx, U16 yy, i16 zz));	// _01b0_08b6
 	void IBMIO_INIT_CURSORS_MOUSE();	// (_443c_0380) IBMIO
-	void _443c_067a(sk0cea *ref);
-	void _1031_07d6();
+	void _443c_067a_ALLOC_RAM_SRECT(sk0cea *ref); // _443c_067a
+	void _1031_07d6_SOME_INIT(); // _1031_07d6
 	U8 _3e74_2439_GET_ENTRIES_NUMBER(X8 cls1, X8 cls4); // _3e74_2439
 	void DRAW_TITLE_MENU_SCREEN(); // _2481_0002
 	void DEALLOC_BIGPOOL_STRUCT_BEFORE(U8 *ref);	// _3e74_0a77

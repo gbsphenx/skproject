@@ -3717,8 +3717,7 @@ i16 SkWinCore::SELECT_LOAD_GAME()
 	do {
 		MessageLoop(true); // game load
 
-		//^2066:32FD
-		while (_476d_05a9() != 0) {
+		while (IS_THERE_KEY_INPUT_2() != 0) {
 			_1031_0d36_KEYBOARD(0x20, SPECIAL_UI_KEY_TRANSFORMATION());
 		}
 		//^2066:3317
@@ -3920,14 +3919,14 @@ void SkWinCore::ARRANGE_DUNGEON()
 									}
 									//^2066:223B
 									bp14->iAnimSeq = bp14->iAnimFrame = 0;
-									bp14->iAnimSeq = 0x01EB;
-									bp14->iAnimFrame = 0x8001;
+									//bp14->iAnimSeq = 0x01EB;	// SPX add	0x01EB = spawn animation sequence
+									//bp14->iAnimFrame = 0x8001;	// SPX add => 1 frame
 									if (SkCodeParam::bDebugNoCreatures) {
 										bp14->HP1(0);
-										bp14->iAnimSeq = 0x00D3;
+										bp14->iAnimSeq = 0x00D3;	// SPX: not sure about this
 									}
 									//^2066:2248
-									//CREATURE_SET_ANIM_FRAME(di);
+									CREATURE_SET_ANIM_FRAME(di);
 									//^2066:224F
 									if (bp14->b14_7_7() != 0)
 										break;
@@ -4266,9 +4265,9 @@ U8 *SkWinCore::PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timer
 			}
 		}
 	} // SPX: Debug bypass
-	CHANGE_CONSOLE_COLOR(BRIGHT, ((glbCurrentThinkingCreatureID.DBIndex()+1)%8)+8, BLACK);
+	CHANGE_CONSOLE_COLOR(BRIGHT, (glbCurrentThinkingCreatureID.DBIndex()%6+2)+8, BLACK);
 	if (MVALID(glbCurrentThinkingCreatureData))
-	SkD((DLV_DBG_SED2, "Current creature CCM = %02x (%s) / %02X (%s)\n", glbCurrentThinkingCreatureData->Command, getCreatureCommandName(glbCurrentThinkingCreatureData->Command),
+	SkD((DLV_CCM, "Current creature CCM = %02x (%s) / %02X (%s)\n", glbCurrentThinkingCreatureData->Command, getCreatureCommandName(glbCurrentThinkingCreatureData->Command),
 		glbCurrentThinkingCreatureData->Command2, getCreatureCommandName(glbCurrentThinkingCreatureData->Command2)));
 	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
 	//^13E4:019B

@@ -25,24 +25,9 @@ using namespace DMEncyclopaedia;
 using namespace DM2Internal;
 using namespace kkBitBlt;
 
-//#if defined(_USE_MFC80) || defined(_USE_MFC60)
-//#include <SKMFC.h>
-//#include <resource.h>
-//#endif // defined(_USE_MFC80) || defined(_USE_MFC60)
 
-/*
-#ifdef _USE_SDL
-#include <SKWINSDL.h>
-#endif // _USE_SDL
-#if defined(__DJGPP__) || defined (__MINGW__) || defined (__LINUX__)
-#include <SKDOS.h>
-#include <stdlib.h> // rand note: putting stdlib here and not right after stdafx prevents a bunch of conflicts with min/max macros
-#endif // __DJGPP__
-
-
-#include <KAITABLE.h>	// for dAITableGenuine (hard coded AI table)
-  */
-//--- Common part with A.cpp
+// This global variable is very important to handle dungeon ground objects at reading and initialization
+ObjectID* globalGroundObjects = NULL; // for all tiles
 
 //==============================================================================
 //------ For Extended Time ------ (not sure to be 100% compatible)
@@ -192,7 +177,7 @@ void SkWinCore::DUNGEON_SET_TILESET(int iTilesetType, int iMapIndex)
 }
 
 //==============================================================================
-extern ObjectID* globalGroundObjects;
+//extern ObjectID* globalGroundObjects;
 
 
 ObjectID SkWinCore::DUNGEON_GET_TILE_RECORD(int iMapIndex, int iPosX, int iPosY)
@@ -201,12 +186,14 @@ ObjectID SkWinCore::DUNGEON_GET_TILE_RECORD(int iMapIndex, int iPosX, int iPosY)
 	int z = 0;
 	z = iMapIndex*1024 + iPosY*32 + iPosX;
 
-	oGroundObject = globalGroundObjects[z];
-/*
-	CHANGE_CURRENT_MAP_TO(iMapIndex);
-	oGroundObject = GET_TILE_RECORD_LINK(iPosX, iPosY);
-	CHANGE_CURRENT_MAP_TO(glbPlayerMap);
-*/
+	if (globalGroundObjects != NULL)	// Dungeon edit mode off-game
+		oGroundObject = globalGroundObjects[z];
+	else
+	{
+		CHANGE_CURRENT_MAP_TO(iMapIndex);
+		oGroundObject = GET_TILE_RECORD_LINK(iPosX, iPosY);
+		CHANGE_CURRENT_MAP_TO(cd.pi.glbPlayerMap);
+	}
 	return oGroundObject;
 }
 
@@ -1322,9 +1309,6 @@ void SkWinCore::DUNGEON_PUT_PARTY_SPIN_180(int iMapIndex, int iPosX, int iPosY)
 	
 
 //==============================================================================
-
-// This global variable is very important to handle dungeon ground objects at reading and initialization
-ObjectID* globalGroundObjects = NULL; // for all tiles
 
 int tblCustomNbItemAllocationPerDB[16] = 
 {

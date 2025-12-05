@@ -404,7 +404,7 @@ U16 SkWinCore::FORCE_PLAYER_PARTY_TO(i16 xposTo, i16 yposTo, i16 mapTo)
 void SkWinCore::ADD_PARTY_CHAMPION(int iChampionID)
 {
 	SELECT_CHAMPION_FROM_GDAT(iChampionID);
-	_2f3f_04ea_CHAMPION(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerDir, cd.pi.glbPlayerMap, UI_EVENTCODE_REVIVE_CHAMPION);
+	REVIVE_CHAMPION(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerDir, cd.pi.glbPlayerMap, UI_EVENTCODE_REVIVE_CHAMPION);
 	_4976_404b = 0;
 	glbChampionSquad[0].playerDir(U8(cd.pi.glbPlayerDir));
 	glbChampionSquad[0].playerPos(U8(cd.pi.glbPlayerDir));
@@ -435,7 +435,7 @@ void SkWinCore::INIT_CHAMPIONS_CUSTOM_MODES()
 
 			printf("INIT_CHAMPIONS_CUSTOM_MODES FOR BW/EOB\n");
 			SELECT_CHAMPION_FROM_GDAT(iChampionID);
-			_2f3f_04ea_CHAMPION(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerDir, cd.pi.glbPlayerMap, UI_EVENTCODE_REVIVE_CHAMPION);
+			REVIVE_CHAMPION(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerDir, cd.pi.glbPlayerMap, UI_EVENTCODE_REVIVE_CHAMPION);
 			_4976_404b = 0;
 			glbChampionSquad[0].playerDir(U8(cd.pi.glbPlayerDir));
 			glbChampionSquad[0].playerPos(U8(cd.pi.glbPlayerDir));

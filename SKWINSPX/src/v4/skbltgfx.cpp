@@ -810,7 +810,7 @@ void SkWinCore::QUERY_CREATURE_PICST(U16 xx, i16 iDistToPlayer, Creature *xCreat
 	// SPX: there might be an issue here where animation frame is not retrieved correctly. A static object would have si = 4, so that its gets images x10 x12 x13 x12
 	U16 bp06 = (xInfo == NULL) ? 0 : xInfo->b7;
 	U16 iFaceDirImg = ((QUERY_CREATURE_AI_SPEC_FLAGS(rl) & 4) != 0) ? 2 : ((_4976_5aa0 - xCreature->b15_0_1()) & 3); // bp0a
-	U16 iMirrorFlag = tblCreatureFrameInfo14[iFrameID][iFaceDirImg + 10];	// bp08 / _4976_5a98 table has 4+8 bytes, 4 first points to address of item 0653 loaded into mem
+	U16 iMirrorFlag = tblCreatureFrameInfo14[iFrameID][iFaceDirImg + 10];	// bp08 / _4976_5a98 table has 2+4+4+4 bytes: 4 * images ID in GDAT, 4 * scales, then 4 * mirror flags (starting at 10th pos as requested here)
 	U8 iImageID = tblCreatureFrameInfo14[iFrameID][iFaceDirImg + 2]; // bp0c, standard front is x12
 
 	if (SkCodeParam::bDM2V5Mode) {
@@ -820,8 +820,8 @@ void SkWinCore::QUERY_CREATURE_PICST(U16 xx, i16 iDistToPlayer, Creature *xCreat
 		iImageID = GET_CREATURE_ANIMATION_IMAGE_ID_V5(iCreatureType, xInfoData->iAnimSeq, iFrameID, iFaceDirImg);
 	}
 
-	CHANGE_CONSOLE_COLOR(BRIGHT, ((rl.DBIndex()+1)%8)+8, BLACK);
-	SkD((DLV_DBG_SED2, "Creature Type %d => %04X F:%04X => Table Frame = %d (C: %02X %02X) => IMG = %02X\n", 
+	CHANGE_CONSOLE_COLOR(BRIGHT, (rl.DBIndex()%6+2)+8, BLACK);
+	SkD((DLV_DBG_CANIM, "Creature Type %d => %04X F:%04X => Table Frame = %d (C: %02X %02X) => IMG = %02X\n", 
 		iCreatureType, xInfoData->iAnimSeq, xInfoData->iAnimInfo, iFrameID, xCreature->iAnimSeq, xCreature->iAnimFrame, iImageID));
 	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
 

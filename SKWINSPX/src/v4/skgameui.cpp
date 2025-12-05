@@ -11,16 +11,14 @@
 // _01b0_04e4 renamed UI_READ_KEY_INPUT
 X16 SkWinCore::UI_READ_KEY_INPUT() //#DS=04BF
 {
-	//^01B0:04E4
 	ENTER(0);
-	//^01B0:04E8
 	LOADDS(0x3083);
 	while (glbUIKeyReadCount == 0);
-	//^01B0:04F5
-	X16 si = tlbUIKeyInput[_04bf_1864];
-	_04bf_1864 = (_04bf_1864 +1) % 10;
+
+	X16 iKeyboardVValue = tlbUIKeyInput[glbKeyboardReadRRIndex];
+	glbKeyboardReadRRIndex = (glbKeyboardReadRRIndex + 1) % 10;
 	glbUIKeyReadCount--;
-	return si;
+	return iKeyboardVValue;
 }
 
 //^476D:050E
@@ -73,7 +71,8 @@ Bit16u SkWinCore::SPECIAL_UI_KEY_TRANSFORMATION()
 
 
 //^0759:071B
-void SkWinCore::_0759_071b()
+// _0759_071b renamed UI_CONSUME_KEYBOARD_INPUT
+void SkWinCore::UI_CONSUME_KEYBOARD_INPUT()
 {
 	ENTER(0);
 	UI_READ_KEY_INPUT();

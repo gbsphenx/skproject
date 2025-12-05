@@ -278,6 +278,10 @@ void SkWinApp::ProcessArgs(int argc, char** argv)
 		}
 
 		/// Options: specific game modes
+		else if (!strcmp(argv[iArgIndex], "-tq")) {	// Theron's Quest
+			printf("Option: game mode = Theron's Quest\n");
+			SkCodeParam::bTQMode = true;
+		}
 		else if (!strcmp(argv[iArgIndex], "-bwy")) {	// Bloodwych mode
 			printf("Option: game mode = Bloodwych\n");
 			//dung = _OPTION_DUNGEON_BWY_BW_;
@@ -841,6 +845,14 @@ void SkWinApp::processKinput(U32 nChar, bool press)
 		case SDLK_m: v = 50; break;
 
 		case SDLK_SPACE: v = 57; break;
+
+		//case SDL_SCANCODE_GRAVE: v = 57; break;
+/*
+		if (event.key.keysym.sym == SDLK_F12 &&
+			(event.key.keysym.mod & KMOD_CTRL)) {
+			// Ctrl + F12 kill switch
+		}*/
+
 		}
 		p->raw = (press) ? (v) : (v | 0x80);
 	}

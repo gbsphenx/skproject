@@ -254,8 +254,8 @@ void SkWinCore::INIT_KBOARD_HOOK() //#DS=04BF
 	ENTER(0);
 	//^01B0:042B
 	glbUIKeyReadCount = 0;
-	_04bf_1864 = 0;
-	_04bf_185a = 0;
+	glbKeyboardReadRRIndex = 0;
+	glbKeyboardWriteRRIndex = 0;
 	_04bf_0e7e = 0;
 	_04bf_185c = 0;
 	_04bf_18a8 = 0;
@@ -275,12 +275,9 @@ void SkWinCore::INIT_KBOARD_HOOK() //#DS=04BF
 //^01B0:0478
 void SkWinCore::IBMIO_KBOARD_HANDLER() { //#DS=04BF
 #if UseAltic
-	//^01B0:0478
-	//^01B0:0482
 	LOADDS(0x3083);
 	IBMIO_CHECK_KEYBOARD_INPUT();
 	if (glbDMode == 0) {
-		//^01B0:0499
 		// MessageBeep(-1);
 		return;
 	}
@@ -291,19 +288,15 @@ void SkWinCore::IBMIO_KBOARD_HANDLER() { //#DS=04BF
 }
 
 //^01B0:00CE
-void SkWinCore::_01b0_00ce(X16 xx)
+// _01b0_00ce renamed
+void SkWinCore::IBMIO_STORE_KEYBOARD_INPUT(X16 iKeyboardVInput)
 {
-	//^01B0:00CE
 	ENTER(0);
-	//^01B0:00D1
 	if (glbUIKeyReadCount < 10) {
-		//^01B0:00DA
-		tlbUIKeyInput[_04bf_185a] = xx;
-		_04bf_185a = (_04bf_185a +1) % 10;
+		tlbUIKeyInput[glbKeyboardWriteRRIndex] = iKeyboardVInput;
+		glbKeyboardWriteRRIndex = (glbKeyboardWriteRRIndex + 1) % 10;
 		glbUIKeyReadCount++;
 	}
-	//^01B0:00F9
-	//^01B0:00FA
 	return;
 }
 
@@ -315,8 +308,8 @@ void SkWinCore::IBMIO_CHECK_KEYBOARD_INPUT()
 	ENTER(6);
 	//^01B0:0102
 	do {
-		U16 bp06 = SK_UI_IMPORTB(0x60);
-		if (bp06 == 0xe0) {
+		U16 bp06 = SK_UI_IMPORTB(0x60);	// get "v" keyboard value
+		if (bp06 == 0xE0) {
 			//^01B0:0110
 			_04bf_0e7e |= 0x1000;
 			continue;
@@ -456,7 +449,7 @@ void SkWinCore::IBMIO_CHECK_KEYBOARD_INPUT()
 						//^01B0:02BA
 						if ((bp04[(bp06 >> 4)&7] & (1 << (bp06&15))) == 0) {
 							//^01B0:02DA
-							_01b0_00ce((_04bf_0e7e & 0x1e00)|bp06);
+							IBMIO_STORE_KEYBOARD_INPUT((_04bf_0e7e & 0x1e00)|bp06);
 							break;
 						}
 				}
@@ -673,19 +666,19 @@ void SkWinCore::_01b0_0fa3()
 				//^01B0:10BC
 				if ((_04bf_179a & 8) == 0) {
 					//^01B0:10C3
-					_01b0_00ce(0x48);
+					IBMIO_STORE_KEYBOARD_INPUT(0x48);
 				}
 				else if ((_04bf_179a & 16) == 0) {
 					//^01B0:10CE
-					_01b0_00ce(0x50);
+					IBMIO_STORE_KEYBOARD_INPUT(0x50);
 				}
 				else if ((_04bf_179a & 32) == 0) {
 					//^01B0:10D9
-					_01b0_00ce(0x47);
+					IBMIO_STORE_KEYBOARD_INPUT(0x47);
 				}
 				else if ((_04bf_179a & 64) == 0) {
 					//^01B0:10E4
-					_01b0_00ce(0x49);
+					IBMIO_STORE_KEYBOARD_INPUT(0x49);
 				}
 			}
 		}
@@ -2055,10 +2048,8 @@ int SkWinCore::_0759_08e7(i16 argc, const char **argv, char **env) // #DS=089C
 	_0759_0126();
 	_0759_06db();
 	//^0759:0AEE
-	while (_0759_072c() != 0) {
-		//^0759:0AF0
-		_0759_071b();
-		//^0759:0AF4
+	while (IS_THERE_KEY_INPUT_1() != 0) {
+		UI_CONSUME_KEYBOARD_INPUT();
 	}
 	//^0759:0AFC
 	X16 bp30;
@@ -2354,11 +2345,8 @@ _12ce:
 			bp5c = 0;
 			bp18 = bp24;
 		}
-		//^0759:1312
-		if (_0759_072c() != 0 && bp34 == 0 && bp44 != 0) {
-			//^0759:1326
-			_0759_071b();
-			//^0759:132A
+		if (IS_THERE_KEY_INPUT_1() != 0 && bp34 == 0 && bp44 != 0) {
+			UI_CONSUME_KEYBOARD_INPUT();
 			break;
 		}
 		//^0759:132C
@@ -2672,13 +2660,33 @@ void SkWinCore::ANIM_DECODE_IMG1(U8 *xx, U8 *yy)
 	return;
 }
 
+//^01B0:051A
+// IBMIO_01b0_051a renamed IBMIO_IS_THERE_KEY_INPUT
+U16 SkWinCore::IBMIO_IS_THERE_KEY_INPUT() //#DS=04BF
+{
+	ENTER(0);
+	LOADDS(0x3083);
+	if (glbDMode != 0 && _04bf_0284 != 0) {
+		TICK_STEP_CHECK() INDIRECT_CALL;
+	}
+	return (glbUIKeyReadCount != 0) ? 1 : 0;
+}
+
+//^476D:05A9
+// _476d_05a9 renamed IS_THERE_KEY_INPUT_2
+U16 SkWinCore::IS_THERE_KEY_INPUT_2()
+{
+	ENTER(0);
+	return IBMIO_IS_THERE_KEY_INPUT() CALL_IBMIO;
+}
 
 
 //^0759:072C
-X16 SkWinCore::_0759_072c()
+// _0759_072c renamed IS_THERE_KEY_INPUT_1
+X16 SkWinCore::IS_THERE_KEY_INPUT_1()
 {
 	ENTER(0);
-	return IBMIO_01b0_051a() CALL_IBMIO;
+	return IBMIO_IS_THERE_KEY_INPUT() CALL_IBMIO;
 }
 
 
