@@ -3254,9 +3254,7 @@ void SkWinCore::__INIT_GAME_38c8_03ad()
 //SPX: _101b_0001 renamed END_GAME
 void SkWinCore::END_GAME(U16 xx)
 {
-	//^101B:0001
 	ENTER(2);
-	//^101B:0005
 	FIRE_HIDE_MOUSE_CURSOR();
 	//^101B:000A
 	if (xx != 0 && _4976_4c26 == 0) {
@@ -3264,7 +3262,7 @@ void SkWinCore::END_GAME(U16 xx)
 		U8 bp01 = (cd.pi.glbChampionsCount > 0) ? glbChampionSquad[0].HeroType() : 0xFE;
 		//^101B:002A
 		// SPX: Sound when dying
-		QUEUE_NOISE_GEN2(GDAT_CATEGORY_CHAMPIONS, bp01, SOUND_CHAMPION_SCREAM, 0xfe, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 0, 255, 255);
+		QUEUE_NOISE_GEN2(GDAT_CATEGORY_CHAMPIONS, bp01, SOUND_CHAMPION_SCREAM, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 0, 255, 255);
 		//^101B:004E
 		SLEEP_SEVERAL_TIME(240);
 	}
@@ -4068,7 +4066,7 @@ X16 SkWinCore::ATTACK_PARTY(U16 quantity, U16 yy, U16 zz)
 void SkWinCore::ATTACK_CREATURE(ObjectID rl, i16 xx, i16 yy, U16 ss, i16 tt, U16 quantity)
 {
 	// quantity=0 to warn the creature. e.g. hazard notice of incoming missile.
-
+	printf("ATTACK CREATURE @ %d,%d with %d\n", xx, yy, quantity);
 	//^13E4:0401
 	ENTER(20);
 	//^13E4:0407

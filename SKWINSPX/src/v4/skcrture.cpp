@@ -954,7 +954,7 @@ _1a94:
 										bp2a = (ww == 6) ? bp0c : ww;
 										if (glbTimersTable[bp04->TimerIndex()].Direction() != bp2a) {
 											//^19F0:1C1E
-											bp10 = _075f_06bd(bp04, bp04->GetMissileObject());
+											bp10 = PROJECTILE_GET_IMPACT_ATTACK(bp04, bp04->GetMissileObject());
 										}
 									}
 								}
@@ -6461,7 +6461,7 @@ X16 SkWinCore::_19f0_13aa(i16 xx, i16 yy)
 					//^19F0:145B
 					if (bp06.DBType() == dbMissile) {
 						Missile *bp04 = GET_ADDRESS_OF_RECORDE(bp06);
-						if (glbTimersTable[bp04->TimerIndex()].Direction() == ((bp08 +2) & 3) && _075f_06bd(bp04, bp04->GetMissileObject()) != 0) {
+						if (glbTimersTable[bp04->TimerIndex()].Direction() == ((bp08 +2) & 3) && PROJECTILE_GET_IMPACT_ATTACK(bp04, bp04->GetMissileObject()) != 0) {
 							//^19F0:14BA
 							return 1;
 						}

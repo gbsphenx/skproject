@@ -365,7 +365,7 @@ protected:
 	i16		_4976_49d0;
 	i16		_4976_49d2;
 	X16		glbMiscItemsLoaded;	// (_4976_4a02) 1=loaded 0=not loaded
-	U16	_4976_4b7a;
+	U16	glbProjectileAttackType;	// (_4976_4b7a)
 	U16	glbPoisonAttackDamage;		// (_4976_4b7c) poisonous attack value
 	U16		_4976_4b7e;
 	Bit32u	_4976_4b80;
@@ -2077,7 +2077,7 @@ protected:
 	void PROCESS_QUEUED_DEALLOC_RECORD();
 	void QUEUE_DEALLOC_RECORD(ObjectID recordLink);
 	void DEALLOC_RECORD(ObjectID recordLink);
-	U16 _075f_06bd(Missile *ref, ObjectID recordLink);
+	U16 PROJECTILE_GET_IMPACT_ATTACK(Missile *ref, ObjectID recordLink);	// _075f_06bd
 	U16 CREATURE_1c9a_0958(ObjectID recordLink); // 1c9a_0958
 	U16 _RAND01();
 	U16 GET_DOOR_STAT_10(Bit8u cls2);

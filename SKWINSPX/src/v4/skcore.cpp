@@ -10345,27 +10345,24 @@ U16 SkWinCore::min_value(i16 v1, i16 v2) {
 
 //^3E74:178C
 //RawEntry *SkWinCore::QUERY_GDAT_ENTRYPTR(U8 cls1, U16 cls2, U8 cls3, U16 cls4)
-RawEntry *SkWinCore::QUERY_GDAT_ENTRYPTR(U8 iCategory, U16 iItem, U8 iType, U16 iEntry)
+RawEntry *SkWinCore::QUERY_GDAT_ENTRYPTR(U8 iGDatCategory, U16 iGDatItemId, U8 iGDatEntryType, U16 iGDatEntryId)
 {
 	// cls1 - main category	-> iCategory
 	// cls2 - sub category	-> iItem
 	// cls3 - type			-> iType
 	// cls4 - name			-> iEntry
 
-	//^3E74:178C
 	// If requested category is above max category
-	if (iCategory > U8(glbGDatEntries.iTotalClass1)) {
-		//^3E74:179D
+	if (iGDatCategory > U8(glbGDatEntries.iTotalClass1)) {
 		return NULL;
 	}
-	U16 si = glbGDatEntries.pw0[iCategory];
-	if (glbGDatEntries.pw0[iCategory +1] - si < iType) {
-		//^3E74:17D2
+	U16 si = glbGDatEntries.pw0[iGDatCategory];	// si
+	if (glbGDatEntries.pw0[iGDatCategory + 1] - si < iGDatEntryType) {
 		return NULL;
 	}
 	//^3E74:17D2
-	si += iType;
-	U16 di = glbGDatEntries.pw4[si];
+	si += iGDatEntryType;
+	U16 di = glbGDatEntries.pw4[si];	// di
 //		3E74:17E6  8BF8                 mov  di,ax
 //		3E74:17E8  33D2                 xor  dx,dx							DX:AX=0000:1399
 //		3E74:17EA  05FFFF               add  ax,FFFF
@@ -10385,37 +10382,31 @@ RawEntry *SkWinCore::QUERY_GDAT_ENTRYPTR(U8 iCategory, U16 iItem, U8 iType, U16 
 //9283:0006 + 00703C -> 99872
 //9987:0002 + 000030 -> 998A2
 
-	RawEntry *bp08 = &glbGDatEntries.pv8[di -1];
+	RawEntry *bp08 = &glbGDatEntries.pv8[di - 1];
 	//^3E74:180D
-	di = glbGDatEntries.pw4[si +1] -di +1;
+	// SPX: replaced di / si with boundary
+	U16 iLowerBound = 0;
+	U16 iUpperBound = 0;
+	iUpperBound = glbGDatEntries.pw4[si + 1] - di + 1;
 	//^3E74:1820
-	si = 0;
+	iLowerBound = 0;
 	while (true) {
-		//^3E74:1822
-		U16 bp0a = (si +di) / 2;
-		//^3E74:182B
-		if (!(bp0a != si))
+		U16 iMidIndex = (iLowerBound + iUpperBound) / 2;	// bp0a
+		if (!(iMidIndex != iLowerBound))
 			return NULL;
-		//^3E74:1833
-		RawEntry *bp04 = &bp08[bp0a];
-		i16 bp0c = bp04->cls2 - iItem;
-		//^3E74:1866
-		if (!(bp0c != 0)) {
-			//^3E74:186A
-			bp0c = bp04->cls4 - iEntry;
-			if (!(bp0c != 0)) {
-				//^3E74:187E
-				return bp04;
+		RawEntry* xRawEnt = &bp08[iMidIndex];	//*bp04
+		i16 iSearchDirection = xRawEnt->cls2 - iGDatItemId;	// bp0c
+		if (!(iSearchDirection != 0)) {
+			iSearchDirection = xRawEnt->cls4 - iGDatEntryId;
+			if (!(iSearchDirection != 0)) {
+				return xRawEnt;
 			}
 		}
-		//^3E74:1887
-		if (!(bp0c <= 0)) {
-			//^3E74:188D
-			di = bp0a;
+		if (!(iSearchDirection <= 0)) {
+			iUpperBound = iMidIndex;
 		}
 		else {
-			//^3E74:1892
-			si = bp0a;
+			iLowerBound = iMidIndex;
 		}
 	}
 }
@@ -10586,7 +10577,7 @@ U8 SkWinCore::_0aaf_02f8_DIALOG_BOX(U8 xx, U8 yy) //#DS=4976
 	U8 bp04d4[128];
 	U8 bp0454[128];
 	U8 bp03d4[0x14][40];
-	U8 *bp00b4[0x14];
+	U8 *bp00b4[0x14];	// panel buttons texts
 	U8 bp64[60];
 	U16 bp28[2];
 	skxxx1 *bp24;
@@ -10601,6 +10592,11 @@ U8 SkWinCore::_0aaf_02f8_DIALOG_BOX(U8 xx, U8 yy) //#DS=4976
 	U16 bp0a;
 	U8 *bp08;
 	U8 *bp04;
+
+	// SPX clean init
+	for (bp17 = 0; bp17 < 0x14; bp17++) {
+		bp00b4[bp17] = NULL;
+	}
 
 	//^0AAF:02F8
 	//^0AAF:02FE
@@ -18790,101 +18786,68 @@ void SkWinCore::DEALLOC_RECORD(ObjectID recordLink)
 }
 
 //^075F:06BD
+// _075f_06bd renamed PROJECTILE_GET_IMPACT_ATTACK
 // TODO: related to missile/item attack strength ?
-U16 SkWinCore::_075f_06bd(Missile *ref, ObjectID recordLink) //#DS=4976?
+// F0216_PROJECTILE_GetImpactAttack
+U16 SkWinCore::PROJECTILE_GET_IMPACT_ATTACK(Missile *ref, ObjectID recordLink) //#DS=4976?
 {
 	//^075F:06BD
 	//^075F:06C3
 	glbPoisonAttackDamage = 0;
-	_4976_4b7a = 3;
-	//^075F:06CF
-	U16 di = ref->EnergyRemaining();
-	//^075F:06DA
+	glbProjectileAttackType = C3_ATTACK_BLUNT;
+	U16 iKineticEnergy = ref->EnergyRemaining();	// di
 	U16 iAttackDamage = 0; // si
 	if (recordLink.DBType() != dbCloud) {
-		//^075F:06EB
 		iAttackDamage = QUERY_GDAT_DBSPEC_WORD_VALUE(recordLink, GDAT_ITEM_WEAPON_THROW_STRENGTH);	// 0x09
-		//^075F:06F9
 		if (iAttackDamage != 0) {
-			//^075F:06FD
-			iAttackDamage += (di >> 1);
-			//^075F:0703
+			iAttackDamage += (iKineticEnergy >> 1);
 			U16 bp02 = ref->b5_4_7() +3;
-			//^075F:0715
 			iAttackDamage = (bp02 * bp02 * iAttackDamage) >> 7;
-			//^075F:071F
-			_4976_4b7a = 4;
-			//^075F:0725
+			glbProjectileAttackType = C4_ATTACK_SHARP;
 			glbPoisonAttackDamage = QUERY_GDAT_DBSPEC_WORD_VALUE(recordLink, GDAT_ITEM_STATS_POISONOUS);	// 0x0D
-			//^075F:0734
 			if (glbPoisonAttackDamage != 0) {
-				//^075F:0738
-				if ((RAND() & 0x007f) > di) {
-					//^075F:0744
+				if ((RAND() & 0x007f) > iKineticEnergy) {
 					glbPoisonAttackDamage -= RAND16((glbPoisonAttackDamage >> 1) + 1);
 				}
 			}
 		}
-		//^075F:0755
 		iAttackDamage += RAND02();
-		//^075F:075C
 		iAttackDamage += QUERY_ITEM_WEIGHT(recordLink);
-		//^075F:0767
 		if ((RAND() & 0x01ff) < ref->EnergyRemaining2()) {
-			//^075F:077C
 			iAttackDamage <<= 1;
 		}
 	}
 	else {
-		//^075F:0780
-		// TODO: May check CSBWin for comparison
 		if (recordLink == OBJECT_EFFECT_POISON_BLOB) {	// oFF81
-			//^075F:0786
-			iAttackDamage = RAND() & 0x000f;
-			//^075F:0790
+			iAttackDamage = (RAND() & 0x000F);
 			glbPoisonAttackDamage = iAttackDamage + 10;
-			//^075F:0796
-			iAttackDamage += RAND() & 0x001f;
+			iAttackDamage += (RAND() & 0x001F);
 		}
 		else {
-			//^075F:07A2
-			// SPX: TODO may need to reorganize this block
 			if (recordLink >= OBJECT_EFFECT_DISPELL) {	// oFF83
-				//^075F:07A8
-				_4976_4b7a = 5;
-				//^075F:07AE
+				glbProjectileAttackType = C5_ATTACK_MAGIC;
 				if (recordLink == OBJECT_EFFECT_POISON_BOLT) {	// oFF86
-					//^075F:07B4
-					glbPoisonAttackDamage = di >> 1;
-					//^075F:07BB
-					return (di >> 4) + 1;
+					glbPoisonAttackDamage = iKineticEnergy >> 1;	// DM1 has not this divided /2
+					return (iKineticEnergy >> 4) + 1;
 				}
-				//^075F:07C4
 				return 0;
 			}
-			//^075F:07C9
-			_4976_4b7a = 1;
-			//^075F:07CF
-			iAttackDamage = (RAND() & 0x000f) + (RAND() & 0x000f) + 10;
-			//^075F:07E8
+			glbProjectileAttackType = C1_ATTACK_FIRE;
+			iAttackDamage = (RAND() & 0x000F) + (RAND() & 0x000F) + 10;	// 0 to 40
 			if (recordLink == OBJECT_EFFECT_LIGHTNING) {	// oFF82
-				//^075F:07EE
-				_4976_4b7a = 7;
-				//^075F:07F4
-				iAttackDamage >>= 4;
-				iAttackDamage += di;
+				glbProjectileAttackType = C7_ATTACK_LIGHTNING;
+				iAttackDamage <<= 4;	// SPX: weirdly was written as iAttackDamage >>= 4 ! mistake ?!
+				iAttackDamage += iKineticEnergy;
 			}
 		}
 	}
-	//^075F:07F9
-	iAttackDamage = ((iAttackDamage + di) >> 4) + 1;
-	//^075F:0803
-	iAttackDamage += RAND16((iAttackDamage >> 1) + 1) + RAND02();
-	//^075F:0818
+	iAttackDamage = ((iAttackDamage + iKineticEnergy) >> 4) + 1;
+	iAttackDamage += (RAND16((iAttackDamage >> 1) + 1) + RAND02());
+	// SPX: should check V5 to be sure
 	iAttackDamage = max_value(iAttackDamage, iAttackDamage - 32 - ((ref->EnergyRemaining2() >> 3) << 1));
-	//^075F:083A
-	iAttackDamage = min_value(iAttackDamage, di << 1);
-	//^075F:0847
+	// AL0483_ui_Attack = F0025_MAIN_GetMaximumValue(AL0483_ui_Attack >> 1, AL0483_ui_Attack - (32 - (P0451_ps_Projectile->Attack >> 3)));
+	iAttackDamage = min_value(iAttackDamage, iKineticEnergy << 1);
+	printf("MISSILE ATTACK [%d] = %d\n", glbProjectileAttackType, iAttackDamage);
 	return iAttackDamage;
 }
 
@@ -19090,7 +19053,7 @@ U16 SkWinCore::MISSILE_HIT_075f_0af9(i16 u16tileType, i16 xpos, i16 ypos, U16 di
 					}
 				}
 				//^075F:0D47
-				U16 bp16 = _075f_06bd(bp08, si) +1;
+				U16 bp16 = PROJECTILE_GET_IMPACT_ATTACK(bp08, si) +1;
 				//^075F:0D59
 				ATTACK_DOOR(xpos, ypos, bp16 + RAND16(bp16), 0, 0);
 				//^075F:0D7A
@@ -19115,16 +19078,16 @@ U16 SkWinCore::MISSILE_HIT_075f_0af9(i16 u16tileType, i16 xpos, i16 ypos, U16 di
 				//^075F:0D98
 				bp36 = 1;
 				//^075F:0D9D
-				bp16 = _075f_06bd(bp08, si);
+				bp16 = PROJECTILE_GET_IMPACT_ATTACK(bp08, si);
 				//^075F:0DAE
 				if (bp16 != 0) {
 					//^075F:0DB2
 					if ((((glbChampionSquad[bp12].playerDir() == (glbTimersTable[bp08->TimerIndex()].Direction() +2)) ? 1 : 0) & 3) != 0) {
 						//^075F:0DF2
-						_4976_4b7a |= 0x8000;
+						glbProjectileAttackType |= 0x8000;
 					}
 					//^075F:0DF8
-					if (WOUND_PLAYER(bp12, bp16, 0, _4976_4b7a) != 0 && glbPoisonAttackDamage != 0 && RAND01() != 0) {
+					if (WOUND_PLAYER(bp12, bp16, 0, glbProjectileAttackType) != 0 && glbPoisonAttackDamage != 0 && RAND01() != 0) {
 						//^075F:0E20
 						PROCESS_POISON(bp12, glbPoisonAttackDamage);
 					}
@@ -19235,7 +19198,7 @@ _0f11:
 				}
 				//^075F:0F82
 _0f82:
-				bp16 = (_075f_06bd(bp08, si) << 6) / xAIDef->ArmorClass;
+				bp16 = (PROJECTILE_GET_IMPACT_ATTACK(bp08, si) << 6) / xAIDef->ArmorClass;
 				//^075F:0FA7
 				if (bp16 != 0) {
 					//^075F:0FAB
@@ -19245,7 +19208,7 @@ _0f82:
 						bp3a,
 						0x200d,
 						0x0064,
-						((xAIDef->w24 & 0x1000) != 0 && _4976_4b7a != 1) ? 0 : (bp16 + APPLY_CREATURE_POISON_RESISTANCE(bp2e, glbPoisonAttackDamage))
+						((xAIDef->w24 & 0x1000) != 0 && glbProjectileAttackType != 1) ? 0 : (bp16 + APPLY_CREATURE_POISON_RESISTANCE(bp2e, glbPoisonAttackDamage))
 						);
 					//^075F:0FED
 					if (bp26 == 0 && xAIDef->AbsorbsMissile() != 0) {	// if not a grey cloud and w0_9_9 = 1
@@ -21722,9 +21685,9 @@ void SkWinCore::SHOW_MENU_SCREEN()
 		FIRE_SHOW_MOUSE_CURSOR();
 		_1031_098e();
 		cd.mo.glbSpecialScreen = _MENU_SCREEN__TITLE_MENU;	// 0x63
-		if (SkCodeParam::bOptionNewGame == 1)
+		if (SkCodeParam::bOptionNewGame == _OPTION_CLI_TITLE_NEW_GAME)
 			cd.mo.glbSpecialScreen = _MENU_SCREEN__LOAD_NEW_GAME;
-		else if (SkCodeParam::bOptionNewGame == 2)
+		else if (SkCodeParam::bOptionNewGame == _OPTION_CLI_TITLE_RESUME_SCREEN)
 		{
 			cd.mo.glbSpecialScreen = _MENU_SCREEN__RESUME_GAME_SELECT;
 			skWinApp->newgame = 0;
@@ -21744,6 +21707,11 @@ _0180:
 			//SkD((DLV_DBG_INIT, "Main Screen = %d\n", _MENU_SCREEN__TITLE_MENU));
 		} while (cd.mo.glbSpecialScreen == _MENU_SCREEN__TITLE_MENU);	// 0x63
 	} while (cd.mo.glbSpecialScreen == _MENU_SCREEN__SHOW_CREDITS); // 0xDA
+	// At this point, we hit new game
+	// SPX:
+	//do {
+	//	_0aaf_02f8_DIALOG_BOX(0x0020, 0x0000); // failing
+	//} while (cd.mo.glbSpecialScreen == _MENU_SCREEN__RESUME_GAME_SELECT);
 	FIRE_HIDE_MOUSE_CURSOR();
 	if (_4976_3d2c != 0) {
 		DEALLOC_BIGPOOL_STRUCT_BEFORE(cd.mo.glbImageMenuScreen);
