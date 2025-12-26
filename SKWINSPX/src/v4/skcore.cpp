@@ -21314,6 +21314,7 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_00()
 		pDataTable = ALLOC_MEMORY_RAM(iItemSize,	afUseUpper, 0x400);
 		FILE_READ(hCreatureTabHandle, iItemSize, pDataTable);
 		FILE_CLOSE(hCreatureTabHandle);
+		SkCodeParam::bDM2V5Mode = true;
 	}
 	else {
 		pDataTable = ALLOC_MEMORY_RAM(

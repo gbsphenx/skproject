@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <math.h>	// sqrt
 
 
 //#if !defined (SKDOSV5) && ((_MSC_VER >= 1200) || defined (_USE_MFC80) || defined (_USE_MFC60))
@@ -309,17 +310,17 @@ void SkWinApp::ProcessArgs(int argc, char** argv)
 		else if (!strcmp(argv[iArgIndex], "-new")) {	// directly start new game
 			printf("Option: quick start = start new game\n");
 			//newgame = 1;
-			SkCodeParam::bOptionNewGame = 1;
+			SkCodeParam::bOptionNewGame = _OPTION_CLI_TITLE_NEW_GAME;
 		}
 		else if (!strcmp(argv[iArgIndex], "-resume")) {	// go to resume screen
 			printf("Option: quick start = start on resume screen\n");
 			//newgame = 2;
-			SkCodeParam::bOptionNewGame = 2;
+			SkCodeParam::bOptionNewGame = _OPTION_CLI_TITLE_RESUME_SCREEN;
 		}
 		else if (!strcmp(argv[iArgIndex], "-credits")) {	// go to credits screen
 			printf("Option: quick start = start on credits screen\n");
 			//newgame = 2;
-			SkCodeParam::bOptionNewGame = 3;
+			SkCodeParam::bOptionNewGame = _OPTION_CLI_TITLE_CREDITS;
 		}
 
 		// r0 to r9 (r"x") to load and resume savegame "x"
@@ -328,7 +329,7 @@ void SkWinApp::ProcessArgs(int argc, char** argv)
 			int iSavegameVal = atoi(sParam);
 			printf("Option: quick start = load and resume savegame %d\n", iSavegameVal);
 			SkCodeParam::bOptionResumeSaveGame = iSavegameVal;
-			SkCodeParam::bOptionNewGame = 2;
+			SkCodeParam::bOptionNewGame = _OPTION_CLI_TITLE_RESUME_SCREEN;
 		}
 
 		iArgIndex++;
@@ -501,12 +502,39 @@ const X8* SkWinApp::GET_DATA_FOLDER_NAME()
 
 void SkWinApp::skwin_SndPlayHi(const U8 *buff, U32 buffSize, i8 vol)
 {
-	;
+	// SPX: added this small block to have random frequencies
+	int iBasePlaybackFrequency = SKWIN_PLAYBACK_FREQUENCY;	// 6000
+	int iPlaybackFrequency = iBasePlaybackFrequency;
+	if (SkCodeParam::bDM2V5Mode) {
+		iPlaybackFrequency = 22050;	// 11025	// SKWIN_PLAYBACK_FREQUENCY_V5
+	}
+/*	if (SkCodeParam::bUseVaryingPlaybackFrequency)
+	{
+		int iRandomValue = rand()%500 - 250;
+		iPlaybackFrequency += iRandomValue;
+	}
+	// SPX
+*/
+	xSkWinRenderer->AudioPlaySound(buff, buffSize, vol, iPlaybackFrequency);
 }
 
 void SkWinApp::skwin_SndPlayLo(const U8 *buff, U32 buffSize, i8 dX, i8 dY)
 {
-	;
+	i8 iSoundVolume = 0;
+	/*
+	sblast_sys::PlayBuff pb;
+	pb.pbBuff = (BYTE *)buff;
+	pb.cbBuff = buffSize;
+	pb.dX = dX;
+	pb.dY = dY;
+	pb.af = sbdsaf;
+	pb.bf = sbdsbf;
+	*/
+
+	iSoundVolume = 16 - (__int8)(sqrt(float(dX*dX +dY*dY)) * 3);
+	if (iSoundVolume < 1)
+		return;
+	skwin_SndPlayHi(buff, buffSize, iSoundVolume);
 }
 
 

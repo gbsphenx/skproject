@@ -43,7 +43,7 @@ private:
 	SDL_Texture* sdlTexture;
 	SDL_Color sdlPalette[256];
 
-	SDL_AudioDeviceID sdlAudio;
+	SDL_AudioDeviceID sdlAudioDeviceId;
 
 	uint32_t* xRGBBuffer;
 
@@ -60,9 +60,11 @@ public:
 	bool ML();
 
 	UINT StartAudioSample(const char* sSampleName);
+	UINT AudioPlaySound(const U8 *xSoundBuffer, U32 iBufferSize, i8 iSoundVolume, U16 iPlaybackFrequency);
 
 private:
 	UINT ConvertVRAMToRGB();
+	UINT InitAudio();
 };
 
 

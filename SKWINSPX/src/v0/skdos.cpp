@@ -265,4 +265,9 @@ UINT SkRendererDOS::Close()
 }
 
 
+UINT SkRendererDOS::AudioPlaySound(const U8 *xSoundBuffer, U32 iBufferSize, i8 iSoundVolume, U16 iPlaybackFrequency)
+{
+	return 0;
+}
+
 //------------------------------------------------------------------------------

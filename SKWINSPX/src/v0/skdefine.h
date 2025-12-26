@@ -22,6 +22,10 @@
 #define _OPTION_DUNGEON_EOB_EOB1_			13	// Eye of the Beholder Engine
 #define _OPTION_DUNGEON_DMX_				14	// DM Xtended
 
+#define _OPTION_CLI_TITLE_NEW_GAME				1
+#define _OPTION_CLI_TITLE_RESUME_SCREEN			2
+#define _OPTION_CLI_TITLE_CREDITS				3
+
 
 #define _GDAT_LANG_ENGLISH_					0x10
 #define _GDAT_LANG_JAPANESE_				0x20
@@ -85,12 +89,10 @@ enum dtIndex
 #define DIR_SOUTH	2
 #define DIR_WEST	3
 
-
-
-
 // Playback 0x157C = 5500 Hz
 #define PLAYBACK_FREQUENCY			5500
 #define SKWIN_PLAYBACK_FREQUENCY	6000
+#define SKWIN_PLAYBACK_FREQUENCY_V5	11025
 
 // Number of possible champions
 #define MAX_CHAMPIONS			4		// That can't be increased with no pain
@@ -1535,5 +1537,20 @@ typedef enum
 // 0x0C - The game is not saved, is it ok to quit?
 //	OK
 //	Cancel
+
+
+//------------------------------------------------------------------------------
+// Defs from redmcsb/DEFS.H
+/* Creature info Attack types */
+#define C0_ATTACK_NORMAL    0 /* Caused when a champion is poisoned, lacks stamina or stands in a Poison Cloud and by creatures (Giggler). This attack type cannot cause wounds */
+#define C1_ATTACK_FIRE      1 /* Caused by Fireball explosions (or Lightning Bolt explosions if created right on the cell of a champion on the party square) and creatures (Black Flame) */
+#define C2_ATTACK_SELF      2 /* Caused by the party walking into a wall, falling through a pit or standing in a closing door */
+#define C3_ATTACK_BLUNT     3 /* Caused by all non explosion projectiles, Slime explosions and creatures (Demon, Mummy, Ruster, Stone Golem, Swamp Slime / Slime Devil, Trolin / Ant Man, Water Elemental) */
+#define C4_ATTACK_SHARP     4 /* Caused by creatures (Animated Armour / Deth Knight, Couatl, Giant Scorpion / Scorpion, Giant Wasp / Muncher, Magenta Worm / Worm, Oitu, Pain Rat / Hellhound, Red Dragon / Dragon, Rockpile / Rock pile, Skeleton) */
+#define C5_ATTACK_MAGIC     5 /* Caused by Poison Bolt explosions and creatures (Grey Lord, Lord Chaos, Lord Order, Materializer / Zytaz, Vexirk, Wizard Eye / Flying Eye) */
+#define C6_ATTACK_PSYCHIC   6 /* Caused by creatures (Ghost / Rive, Screamer) */
+#define C7_ATTACK_LIGHTNING 7 /* Caused by Lightning Bolt explosions */
+//------------------------------------------------------------------------------
+
 
 #endif // __GENERAL_DEFINE__

@@ -103,6 +103,9 @@ Bit16u SkWinCore::CREATURE_STEP_ANIMATION_V5(U8 iCreatureType, Bit16u iAnimOffse
 		iFrameIndex += bp08;
 	}*/
 	//bp04 = &tlbCreaturesAnimationSequences[iAnimOffset + iFrameIndex];
+	if (xCAnimFrameSeqTable == NULL) {
+		return -1;
+	}
 	xCAnimFrameSeq = &xCAnimFrameSeqTable[iAnimOffset + iFrameIndex];
 
 	
@@ -1872,7 +1875,9 @@ CreatureCommandAnimation* SkWinCore::GET_CREATURE_COMMAND_ANIMATION_V5(Bit8u iCr
 
 	// Get the FB data from creature
 	xCCAnim = reinterpret_cast<CreatureCommandAnimation*> (QUERY_GDAT_ENTRY_DATA_BUFF_FORCE(GDAT_CATEGORY_CREATURES, iCreatureType, dtRaw8, GDAT_CREATURE_ANIM_ATTRIBUTION));
-	
+	if (xCCAnim == NULL)
+		return NULL;
+
 	while (xCCAnim->ccmReference != 0xFFFF && xCCAnim->ccmReference != command) {
 		xCCAnim++;
 	}
@@ -1893,6 +1898,10 @@ void SkWinCore::PREPARE_CREATURE_ANIMATION_INFO_V5(U8 iCreatureType, U16 iAnimOf
 	U8 iNbFrames = 1;
 	CreatureAnimationFrameInfoFC_V5* xCCAnimInfo = NULL;
 	xCCAnimInfo = reinterpret_cast<CreatureAnimationFrameInfoFC_V5*> (QUERY_GDAT_ENTRY_DATA_BUFF_FORCE(GDAT_CATEGORY_CREATURES, iCreatureType, dtRaw7, GDAT_CREATURE_ANIM_INFO_SEQUENCE));
+	if (xCCAnimInfo == NULL) {
+		*iAnimInfo = 0x8000;
+		return;
+	}
 	xCCAnimInfo += iAnimOffset;
 
 	//There we get the number of frame within this animation
@@ -1926,7 +1935,7 @@ Bit16u SkWinCore::GET_CREATURE_ANIMATION_FRAME(Bit8u iCreatureType, Bit16u comma
 
 	if (SkCodeParam::bDM2V5Mode)
 		xCCAnim = GET_CREATURE_COMMAND_ANIMATION_V5(iCreatureType, command);
-	else { // V4
+	if (SkCodeParam::bDM2V5Mode == false || xCCAnim == NULL) { // V4 by default or if V5 anim is not found
 		xCCAnim = &tlbCreaturesActionsGroupSets[tlbCreaturesActionsGroupOffsets[QUERY_GDAT_CREATURE_WORD_VALUE(iCreatureType, CREATURE_STAT_00)]]; // bp04
 		//^4937:00FD
 		// Search for the animation starting offset corresponding to the current command. If not found, the last (which should be xFFFF) is used)
@@ -6094,11 +6103,12 @@ _02d0:
 // SPX: _13e4_0982 renamed CREATURE_THINK_0982
 void SkWinCore::CREATURE_THINK_0982()
 {
-	//^13E4:0982
 	ENTER(16);
-	//^13E4:0988
 	CreatureInfoData *xCreatureInfo = glbCurrentThinkingCreatureData;	// *bp04
 	// SPX DEBUG
+	U16 iCreatureAnimEndSeq = 1;	// SPX fix in case glbCreatureAnimationFrame is null
+	U16 iCreatureAnimBit8 = 0;		// SPX fix in case glbCreatureAnimationFrame is null
+
 	if (xCreatureInfo->ItemToThrow != 0)
 	{
 		//if(SkCodeParam::bUseIngameDebug) printf("BP04 B30 = %04X\n", bp04->ItemToThrow);
@@ -6217,15 +6227,22 @@ _0a6a:
 	}
 	//^13E4:0B90
 _0b90:
-	if (bp0a != 0 || xCreatureInfo->iSeqControl == 0 || glbCreatureAnimationFrame->w2_9_9() == 0) {
-		if (glbCreatureAnimationFrame->w2_8_8() != 0) {
+	// SPX
+	if (glbCreatureAnimationFrame != NULL) {
+		iCreatureAnimEndSeq = glbCreatureAnimationFrame->w2_9_9();
+		iCreatureAnimBit8 = glbCreatureAnimationFrame->w2_8_8();
+	}
+	// SPX end fix
+
+	if (bp0a != 0 || xCreatureInfo->iSeqControl == 0 || iCreatureAnimEndSeq == 0) {
+		if (iCreatureAnimBit8 != 0) {
 			//^13E4:0BB8
 			_13e4_01a3();
 			xCreatureInfo->iSeqControl |= PROCEED_CCM();
 		}
 	}
 	//^13E4:0BCE
-	if (xCreatureInfo->iSeqControl != 0 && glbCreatureAnimationFrame->w2_9_9() != 0) {
+	if (xCreatureInfo->iSeqControl != 0 && iCreatureAnimEndSeq != 0) {
 		//^13E4:0BE4
 		di = CREATURE_4937_028a(bp08->iAnimSeq, &bp08->iAnimInfo, &glbCreatureAnimationFrame);
 		if (di != 2)

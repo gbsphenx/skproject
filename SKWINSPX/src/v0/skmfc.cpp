@@ -113,3 +113,72 @@ bool SkRendererMFC::ML()
 #endif //
 	return false;
 }
+
+//..............................................................................
+
+UINT SkRendererMFC::AudioPlaySound(const U8 *xSoundBuffer, U32 iBufferSize, i8 iSoundVolume, U16 iPlaybackFrequency)
+{
+#if !defined(__NO_MFC__) && ((_MSC_VER >= 1200) || defined(_USE_MFC80) || defined(_USE_MFC60))
+	U32 nSamples = iBufferSize;
+#pragma pack(push, 1)
+	struct {
+		DWORD riff;
+		DWORD n1;
+		DWORD wave;
+		DWORD fmt;
+		DWORD n2;
+
+		WORD wFormatTag, nChannels;
+		DWORD nSamplesPerSec, nAvgBytesPerSec;
+		WORD nBlockAlign, wBitsPerSample, cbSize;
+
+		DWORD fact;
+		DWORD n3;
+		DWORD n4;
+
+		DWORD data;
+		DWORD n5;
+	}	sPackedRiffWav = {
+		*(DWORD *)"RIFF",
+		4+(8)+(2+2+4+4+2+2+2)+(8)+(4)+(8)+(nSamples),
+		*(DWORD *)"WAVE",
+		*(DWORD *)"fmt ",
+		(2+2+4+4+2+2+2),
+		1,
+		1,
+		iPlaybackFrequency,
+		iPlaybackFrequency,
+		1,
+		8,
+		0,
+		*(DWORD *)"fact",
+		4,
+		nSamples,
+		*(DWORD *)"data",
+		nSamples,
+	};
+#pragma pack(pop)
+
+	static int cnt = 0;
+	static BYTE buffInt[65536];	// because sound data from GDAT is 64K max
+
+	// MFC stuff
+	if (cnt != 0) PlaySound(NULL, NULL, SND_PURGE);
+	CMemFile f;
+	f.Write(&sPackedRiffWav, sizeof(sPackedRiffWav));
+	i8 c;
+	for (U32 x = 0; x < iBufferSize; x++) {
+		c = xSoundBuffer[x];
+		c = max(-127, min(127, i16(c) * iSoundVolume / 16));
+		c += (i8)0x80;
+		f.Write(&c, 1);
+	}
+	f.SeekToBegin();
+	f.Read(buffInt, 65536);
+	PlaySound((LPCSTR)buffInt, NULL, SND_ASYNC|SND_MEMORY);	// 
+	cnt |= 1;
+#endif //
+	return 0;
+}
+
+//..............................................................................

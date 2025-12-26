@@ -49,6 +49,28 @@ SkRendererSDL::~SkRendererSDL()
 	;
 }
 
+
+UINT SkRendererSDL::InitAudio()
+{
+#if !defined (__NO_SDL__)
+    SDL_AudioSpec want = {0};
+
+//    want.freq = 11025;
+    want.freq = 6000;
+    want.format = AUDIO_S8;
+    want.channels = 1;
+    want.samples = 1024;
+    want.callback = NULL;           // use queueing
+
+    sdlAudioDeviceId = SDL_OpenAudioDevice(
+        NULL, 0, &want, NULL, 0);
+
+    SDL_PauseAudioDevice(sdlAudioDeviceId, 0);
+#endif // not __NO_SDL__
+	return 0;
+}
+
+
 UINT SkRendererSDL::Init(SkVRAM* xVRAM)
 {
 	char sSDLWindowName[128];
@@ -106,6 +128,8 @@ UINT SkRendererSDL::Init(SkVRAM* xVRAM)
     }
 
 	SDL_ShowCursor(SDL_DISABLE);
+
+	InitAudio();
 
 #endif // not __NO_SDL__
 	return 0;
@@ -178,8 +202,8 @@ UINT SkRendererSDL::Close()
     SDL_DestroyRenderer(sdlRenderer);
     SDL_DestroyWindow(sdlWindow);
 
-	if (sdlAudio != 0)
-		SDL_CloseAudioDevice(sdlAudio);
+	if (sdlAudioDeviceId != 0)
+		SDL_CloseAudioDevice(sdlAudioDeviceId);
 
     SDL_Quit();
 #endif // not __NO_SDL__
@@ -207,15 +231,15 @@ UINT SkRendererSDL::StartAudioSample(const char* sSampleName)
     xWavSample.callback = NULL;
     xWavSample.userdata = NULL;
 
-    sdlAudio = SDL_OpenAudioDevice(NULL, 0, &xWavSample, NULL, 0);
-    if (sdlAudio == 0) {
+    sdlAudioDeviceId = SDL_OpenAudioDevice(NULL, 0, &xWavSample, NULL, 0);
+    if (sdlAudioDeviceId == 0) {
         printf("SDL_OpenAudioDevice error: %s\n", SDL_GetError());
         SDL_FreeWAV((Uint8*)xWavData);
 		return 1;
     }
 
-    SDL_QueueAudio(sdlAudio, xWavData, iWavLength);
-    SDL_PauseAudioDevice(sdlAudio, 0);
+    SDL_QueueAudio(sdlAudioDeviceId, xWavData, iWavLength);
+    SDL_PauseAudioDevice(sdlAudioDeviceId, 0);
 
 #endif // not __NO_SDL__
 	return 0;
@@ -264,4 +288,33 @@ bool SkRendererSDL::ML()
 	//SkD((DLV_MOUSE,"Ended SDL_PumpEvents\n"));
 	//xMasterWinApp->skwin_Sleep(1);
 	return true;
+}
+
+UINT SkRendererSDL::AudioPlaySound(const U8 *xSoundBuffer, U32 iBufferSize, i8 iSoundVolume, U16 iPlaybackFrequency)
+{
+#if !defined (__NO_SDL__)
+	static int cnt = 0;
+	static Uint8 buffInt[65536];   // final PCM buffer
+    uint32_t x;
+    int c;
+
+    if (cnt != 0) {
+        SDL_ClearQueuedAudio(sdlAudioDeviceId); // equivalent to SND_PURGE
+    }
+
+    for (x = 0; x < iBufferSize; x++) {
+        c = xSoundBuffer[x] + 0x80;
+        c = (c * iSoundVolume) / 16;
+        if (c < -127) c = -127;
+        if (c >  127) c =  127;
+
+        //buffInt[x] = (Uint8)(c + 0x80); // signed ? unsigned
+		buffInt[x] = (Uint8)(c); // signed ? unsigned
+    }
+
+    SDL_QueueAudio(sdlAudioDeviceId, buffInt, iBufferSize);
+    cnt |= 1;
+
+#endif // not __NO_SDL__
+	return 0;
 }
