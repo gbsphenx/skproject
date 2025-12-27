@@ -318,7 +318,7 @@ protected:
 	U8		glbChampionColor[MAX_CHAMPIONS];	// (_4976_3fec) player health bar color
 	sk3f6c	_4976_3ff0;
 
-	U16		_4976_404b;
+	U16		glbChampionShowResurrect;			// (_4976_404b) about seeing champion selection ? or resurrection ?
 	X16		_4976_4212;
 	U16		glbMistyMap;		// (_4976_4214) is misty fogged map
 	U16		glbSceneColorKey;		// (_4976_4216) scene colorkey
@@ -368,7 +368,7 @@ protected:
 	U16	glbProjectileAttackType;	// (_4976_4b7a)
 	U16	glbPoisonAttackDamage;		// (_4976_4b7c) poisonous attack value
 	U16		_4976_4b7e;
-	Bit32u	_4976_4b80;
+	Bit32u	glbGameTick_4b80;		// (_4976_4b80) something about game tick
 	sk4b84	_4976_4b84[4];	// size=4? temporary ring rect buffer
 	U16	_4976_4ba4;		// 1=rect is present
 	U16	_4976_4ba6;		// index of next avail temporary rects

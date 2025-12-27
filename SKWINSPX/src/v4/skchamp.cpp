@@ -971,136 +971,88 @@ void SkWinCore::ADD_ITEM_TO_PLAYER(U16 player, ObjectID rl)
 
 //^2F3F:04EA
 // SPX: _2f3f_04ea renamed REVIVE_CHAMPION
-void SkWinCore::REVIVE_CHAMPION(U16 xx, U16 yy, U16 dir, U16 zz, U16 ee)
+void SkWinCore::REVIVE_CHAMPION(U16 xx, U16 yy, U16 dir, U16 zz, U16 iEventCode)
 {
-	//^2F3F:04EA
 	ENTER(142);
-	//^2F3F:04F0
-	U16 si = cd.pi.glbNextChampionNumber - 1;
-	//^2F3F:04F6
-	Champion *bp04 = &glbChampionSquad[si];
-	//^2F3F:0504
-	U16 bp0c = glbCurrentMapIndex;
-	//^2F3F:050A
+	U16 iChampionNumber = cd.pi.glbNextChampionNumber - 1;	// si
+	Champion* xChampion = &glbChampionSquad[iChampionNumber];	// bp04
+	U16 iCurrentMapIndex = glbCurrentMapIndex;	// bp0c
 	CHANGE_CURRENT_MAP_TO(zz);
-	//^2F3F:0513
-	ObjectID bp0e = REMOVE_OBJECT_FROM_HAND();
-	//^2F3F:051B
-	if (ee == UI_EVENTCODE_EXIT_CRYOCELL) { // 161
-		//^2F3F:0525
+	ObjectID tObjectHand = REMOVE_OBJECT_FROM_HAND();	// bp0e
+	if (iEventCode == UI_EVENTCODE_EXIT_CRYOCELL) { // 161
 		INTERFACE_CHAMPION(4);
-		//^2F3F:052D
 		FIRE_HIDE_MOUSE_CURSOR();
-		//^2F3F:0532
         if (cd.pi.glbChampionsCount == 1)
 			SELECT_CHAMPION_LEADER(0xffff);
 		if (cd.pi.glbNextChampionNumber >= cd.pi.glbChampionsCount)
 			cd.pi.glbChampionsCount--;
 		cd.pi.glbNextChampionNumber = 0;
-		//^2F3F:0554
-		bp04->curHP(0);
-		//^2F3F:055D
-		glbChampionAlive[si] = 0;
-		//^2F3F:0567
-		_4976_3de2[si] = 0xff;
-		_4976_3dde[RCJ(4,si)] = 0xff;
-		//^2F3F:0571
-		glbChampionHandCoolingDown[si][1] = 0;
-		_4976_3de6[RCJ(4,si)][1] = 0xffff;
-		//^2F3F:058A
-		glbChampionHandCoolingDown[si][0] = 0;
-		_4976_3de6[RCJ(4,si)][0] = 0xffff;
-		//^2F3F:05A3
-		glbChampionHandCoolingDown[si][2] = 0;
-		//^2F3F:05B1
-		FIRE_FILL_SCREEN_RECT(si +161, glbPaletteT16[COLOR_BLACK]);
-		//^2F3F:05C8
+		xChampion->curHP(0);
+		glbChampionAlive[iChampionNumber] = 0;
+		_4976_3de2[iChampionNumber] = 0xFF;
+		_4976_3dde[RCJ(4,iChampionNumber)] = 0xFF;
+		glbChampionHandCoolingDown[iChampionNumber][1] = 0;
+		_4976_3de6[RCJ(4,iChampionNumber)][1] = 0xFFFF;
+		glbChampionHandCoolingDown[iChampionNumber][0] = 0;
+		_4976_3de6[RCJ(4,iChampionNumber)][0] = 0xFFFF;
+		glbChampionHandCoolingDown[iChampionNumber][2] = 0;
+		FIRE_FILL_SCREEN_RECT(iChampionNumber + 161, glbPaletteT16[COLOR_BLACK]);
 		_38c8_0060();
-		//^2F3F:05CD
 		FIRE_SHOW_MOUSE_CURSOR();
 	}
-	else { // ee = UI_EVENTCODE_REVIVE_CHAMPION (160)
-		//^2F3F:05D5
-		if (_4976_404b == 0)
-			//^2F3F:05DC
+	else { // iEventCode = UI_EVENTCODE_REVIVE_CHAMPION (160)
+		if (glbChampionShowResurrect == 0)
 			DRAW_CRYOCELL_LEVER(1);
-		//^2F3F:05E4
-		if (bp0e != OBJECT_NULL)
-			//^2F3F:05EA
-			ADD_ITEM_TO_PLAYER(si, bp0e);
-		//^2F3F:05F4
+		if (tObjectHand != OBJECT_NULL)
+			ADD_ITEM_TO_PLAYER(iChampionNumber, tObjectHand);
 		cd.pi.glbNextChampionNumber = 0;
-		//^2F3F:05FA
 		xx += glbXAxisDelta[dir];
-		//^2F3F:0606
 		yy += glbYAxisDelta[dir];
-		//^2F3F:0612
-		for (U16 bp0a = 0; bp0a < 30; bp0a++) {
-			//^2F3F:0619
-			ObjectID di = bp04->Possess(bp0a);
-			//^2F3F:062A
-			if (di != OBJECT_NULL) {
-				//^2F3F:062F
-				CUT_RECORD_FROM(di, NULL, xx, yy);
+
+		for (U16 iInventoryIndex = 0; iInventoryIndex < INVENTORY_MAX_SLOT; iInventoryIndex++) {	// bp0a < 30
+			ObjectID tObject = xChampion->Possess(iInventoryIndex);	// di
+			if (tObject != OBJECT_NULL) {
+				CUT_RECORD_FROM(tObject, NULL, xx, yy);
 			}
-			//^2F3F:0642
 		}
-		//^2F3F:064B
-		ObjectID di = GET_TILE_RECORD_LINK(xx, yy);
+		ObjectID tObject = GET_TILE_RECORD_LINK(xx, yy);	// di
 		// SPX: enter this infinite while only is there is something on the tile (normally that would be the case, calling champion from actuator), but if it isn't, just don't get in the loop.
-		if (SkCodeParam::bUseFixedMode == true && (di != OBJECT_END_MARKER && di != OBJECT_NULL)) {
+		if (SkCodeParam::bUseFixedMode == true && (tObject != OBJECT_END_MARKER && tObject != OBJECT_NULL)) {
 			while (true) {
-				//^2F3F:0658
-				if (di.DBType() == dbActuator) {
-					//^2F3F:0667
-					Actuator *bp08 = GET_ADDRESS_OF_ACTU(di);
-					//^2F3F:0674
-					if (bp08->ActuatorType() == ACTUATOR_TYPE_RESURECTOR)
+				if (tObject.DBType() == dbActuator) {
+					Actuator* xActuator = GET_ADDRESS_OF_ACTU(tObject);	// bp08
+					if (xActuator->ActuatorType() == ACTUATOR_TYPE_RESURECTOR)	// DM2
 					{
-						//^2F3F:0683
-						bp08->OnceOnlyActuator(0);
-						//^2F3F:0688
+						xActuator->OnceOnlyActuator(0);
 						break;
 					}
-					else if (bp08->ActuatorType() == ACTUATOR_TYPE_CHAMPION_MIRROR) // SPX: handle DM1 Champion Mirror too
+					else if (xActuator->ActuatorType() == ACTUATOR_TYPE_CHAMPION_MIRROR) // SPX: handle DM1 Champion Mirror too
 					{
-						bp08->ActiveStatus(1); // change to "inactive", different from the "once only" status
+						xActuator->ActiveStatus(1); // change to "inactive", different from the "once only" status
 						break;
 					}
 				}
-				//^2F3F:068A
-				di = GET_NEXT_RECORD_LINK(di);
-				if (SkCodeParam::bUseFixedMode == true && (di == OBJECT_END_MARKER || di == OBJECT_NULL))
+				tObject = GET_NEXT_RECORD_LINK(tObject);
+				if (SkCodeParam::bUseFixedMode == true && (tObject == OBJECT_END_MARKER || tObject == OBJECT_NULL))
 					break;
 			}
 		} // fixed mode
-		//^2F3F:0693
 		if (cd.pi.glbChampionsCount == 1) {
-			//^2F3F:069A
-			_4976_4b80 = glbGameTick;
+			glbGameTick_4b80 = glbGameTick;
 		}
-		//^2F3F:06A8
-		if (_4976_404b == 0) {
-			//^2F3F:06AF
-			glbChampionBonesIndex = si;
-			//^2F3F:06B3
+		if (glbChampionShowResurrect == 0) {
+			glbChampionBonesIndex = iChampionNumber;
 			DISPLAY_HINT_NEW_LINE();
-			//^2F3F:06B8
-			U8 bp008e[128];
-			// SPX: Text : AWAKENED / RESURRECTED
-			DISPLAY_HINT_TEXT(glbChampionColor[si], QUERY_GDAT_TEXT(0x01, 0x00, 0x0E, bp008e));
-			//^2F3F:06DD
+			U8 sTxtChampionAwakened[128];	// bp008e
+			// SPX: Text 0x0E: AWAKENED / RESURRECTED
+			DISPLAY_HINT_TEXT(glbChampionColor[iChampionNumber], QUERY_GDAT_TEXT(GDAT_CATEGORY_INTERFACE_GENERAL, 0x00, 0x0E, sTxtChampionAwakened));
 			if (glbChampionInventory != 0) {
-				//^2F3F:06E4
 				INTERFACE_CHAMPION(4);
-				//^2F3F:06EC
 				_38c8_0060();
 			}
 		}
 	}
-	//^2F3F:06F1
-	CHANGE_CURRENT_MAP_TO(bp0c);
-	//^2F3F:06FA
+	CHANGE_CURRENT_MAP_TO(iCurrentMapIndex);
 	return;
 }
 
@@ -2964,7 +2916,7 @@ X16 SkWinCore::SELECT_CHAMPION(U16 xx, U16 yy, U16 dir, U16 mm)
 	//^2F3F:0494
 	xx += glbXAxisDelta[(dir +2) & 3];
 	yy += glbYAxisDelta[(dir +2) & 3];
-	if (_4976_404b == 0) {
+	if (glbChampionShowResurrect == 0) {
 		//^2F3F:04BF
 		INTERFACE_CHAMPION(iChampionNumber);
 		_1031_0541(7);
@@ -3067,17 +3019,17 @@ void SkWinCore::SEARCH_STARTER_CHAMPION() // _2f3f_0789
 	//^2F3F:086D
 	// SPX: DM2 will check a RESURECTOR at 0,0 (for TORHAM), while DM/TQ expects one at 1,0 for THERON.
 
-	// DM2 Original code
-	ObjectID di = OBJECT_NULL;
-	for (di = GET_TILE_RECORD_LINK(0, 0); di != OBJECT_END_MARKER; di = GET_NEXT_RECORD_LINK(di)) {
-		if (di.DBType() == dbActuator) {
-			Actuator *bp08 = GET_ADDRESS_OF_ACTU(di);
-			if (bp08->ActuatorType() == ACTUATOR_TYPE_RESURECTOR) { // 0x007E
-				_4976_404b = 1;
+	// DM2 Original code : search for champion at 0,0 facing south
+	ObjectID tObject = OBJECT_NULL;	// di
+	for (tObject = GET_TILE_RECORD_LINK(0, 0); tObject != OBJECT_END_MARKER; tObject = GET_NEXT_RECORD_LINK(tObject)) {
+		if (tObject.DBType() == dbActuator) {
+			Actuator* xActuator = GET_ADDRESS_OF_ACTU(tObject);	// bp08
+			if (xActuator->ActuatorType() == ACTUATOR_TYPE_RESURECTOR) { // 0x007E
+				glbChampionShowResurrect = 1;
 				// SPX: Automatic selection of champion (Thoram)
 				SELECT_CHAMPION(0, 1, DIR_NORTH, cd.pi.glbPlayerMap);	// player is imaginarily at 0,1 facing north
 				REVIVE_CHAMPION(0, 1, DIR_NORTH, cd.pi.glbPlayerMap, UI_EVENTCODE_REVIVE_CHAMPION);
-				_4976_404b = 0;
+				glbChampionShowResurrect = 0;
 				glbChampionSquad[0].playerDir(U8(cd.pi.glbPlayerDir));
 				glbChampionSquad[0].playerPos(U8(cd.pi.glbPlayerDir));
 				SET_PARTY_HERO_FLAG(0x4000);
@@ -3085,21 +3037,18 @@ void SkWinCore::SEARCH_STARTER_CHAMPION() // _2f3f_0789
 				return;
 			}
 		}
-		//^2F3F:08F4
 	}
-	//^2F3F:0905
 
-	//printf("Search DM / TQ\n"); getch();
-	// SPX: Second loop to check for DM/TQ at 1,0
+	// SPX: Second loop to check for DM/TQ at 1,0 : search for champion at 1,0 facing west
 	if (SkCodeParam::bDM1Mode == true || SkCodeParam::bDM1TQMode == true) {
-		for (di = GET_TILE_RECORD_LINK(1, 0); di != OBJECT_END_MARKER; di = GET_NEXT_RECORD_LINK(di)) {
-			if (di.DBType() == dbActuator) {
-				Actuator *bp08 = GET_ADDRESS_OF_ACTU(di);
-				if (bp08->ActuatorType() == ACTUATOR_TYPE_CHAMPION_MIRROR) { // 0x007F
-					_4976_404b = 1;
+		for (tObject = GET_TILE_RECORD_LINK(1, 0); tObject != OBJECT_END_MARKER; tObject = GET_NEXT_RECORD_LINK(tObject)) {
+			if (tObject.DBType() == dbActuator) {
+				Actuator* xActuator = GET_ADDRESS_OF_ACTU(tObject);	// bp08
+				if (xActuator->ActuatorType() == ACTUATOR_TYPE_CHAMPION_MIRROR) { // 0x007F
+					glbChampionShowResurrect = 1;
 					SELECT_CHAMPION(0, 0, DIR_EAST, cd.pi.glbPlayerMap);	// player is really at 0,0 facing east
 					REVIVE_CHAMPION(0, 0, DIR_EAST, cd.pi.glbPlayerMap, UI_EVENTCODE_REVIVE_CHAMPION);
-					_4976_404b = 0;
+					glbChampionShowResurrect = 0;
 					glbChampionSquad[0].playerDir(U8(cd.pi.glbPlayerDir));
 					glbChampionSquad[0].playerPos(U8(cd.pi.glbPlayerDir));
 					SET_PARTY_HERO_FLAG(0x4000);
@@ -3109,7 +3058,7 @@ void SkWinCore::SEARCH_STARTER_CHAMPION() // _2f3f_0789
 			}
 		}
 	}
-//	printf("SEARCH_STARTER_CHAMPION_CUSTOM_MODES\n");
+
 	INIT_CHAMPIONS_CUSTOM_MODES();	// SPX added for special custom mode init/start
 
 	return;
@@ -3785,7 +3734,7 @@ void SkWinCore::UPDATE_CHAMPIONS_STATS()
 		//^2C1D:222A
 		si = 0;
 		X16 di = BETWEEN_VALUE(1, (champion->maxStamina() >> 8) -1, 6);
-		bp0a = U16(glbGameTick) -U16(_4976_4b80);
+		bp0a = U16(glbGameTick) -U16(glbGameTick_4b80);
 		if (bp0a > 0x50) {
 			//^2C1D:2252
 			di++;

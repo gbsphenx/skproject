@@ -8572,7 +8572,7 @@ _1045:
 	sGameVar.wChampionLeader = glbChampionLeader;
 	sGameVar.wTimersCount = glbTimersCount;
 	sGameVar.dw22 = _4976_0090;
-	sGameVar.dw26 = _4976_4b80;
+	sGameVar.dw26 = glbGameTick_4b80;
 	sGameVar.w30 = _4976_4c00;
 	sGameVar.wPlayerThrowCounter = glbPlayerThrowCounter;
 	sGameVar.w34 = _4976_4c0c;
@@ -14668,7 +14668,7 @@ _2e5b:
 			glbChampionLeader = t1.wChampionLeader;	// leader
 			glbTimersCount = t1.wTimersCount;	// timer cnt
 			_4976_0090 = t1.dw22;
-			_4976_4b80 = t1.dw26;
+			glbGameTick_4b80 = t1.dw26;
 			_4976_4c00 = t1.w30;
 			glbPlayerThrowCounter = t1.wPlayerThrowCounter;
 			_4976_4c0c = t1.w34;
@@ -14874,7 +14874,7 @@ _31b8:		// we jump there from loading a dungeon from new game
 			glbChampionLeader = 0;	// leader
 			glbTimersCount = 0;	// wTimersCount
 			_4976_0090 = 0;
-			_4976_4b80 = 0;
+			glbGameTick_4b80 = 0;
 			_4976_4c00 = 0;
 			glbPlayerThrowCounter = 0; //wPlayerThrowCounter
 			_4976_4c0c = 0;
