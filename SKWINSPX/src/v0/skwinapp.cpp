@@ -531,7 +531,7 @@ void SkWinApp::skwin_SndPlayLo(const U8 *buff, U32 buffSize, i8 dX, i8 dY)
 	pb.bf = sbdsbf;
 	*/
 
-	iSoundVolume = 16 - (__int8)(sqrt(float(dX*dX +dY*dY)) * 3);
+	iSoundVolume = 16 - (i8)(sqrt(float(dX*dX +dY*dY)) * 3);
 	if (iSoundVolume < 1)
 		return;
 	skwin_SndPlayHi(buff, buffSize, iSoundVolume);

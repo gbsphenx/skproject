@@ -789,7 +789,7 @@ protected:
 	U8		*_4976_5d04;	// temp buffer. size=1024
 	U16	*_4976_5d08;	// cacheindex-to-mementi. use with tlbMementsPointers[_4976_5d08[xxx]]
 	sk5d0c	*_4976_5d0c;	// image chain table
-	U16	_4976_5d10;
+	U16	glbGDatOpenCloseFlag;		// (_4976_5d10) some open/close? flag related to Graphics.dat file
 	sk5d12	_4976_5d12;
 	shelf_memory _4976_5d20;	// top of EMS
 	U16	_4976_5d24;	// _4976_5d24 / cache relaed ? / value =128?

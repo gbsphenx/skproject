@@ -42,7 +42,7 @@ SKWIN_CORE_OBJ = $(SKWIN_CORE_PATH)/skmemcch.o $(SKWIN_CORE_PATH)/skfileop.o $(S
 #EXTENSION
 SKWINXV6_PATH = v6
 SKWINXV6_H = $(SKWINXV6_PATH)/*.h
-SKWINXV6_OBJ =  $(SKWINXV6_PATH)/xstartup.o $(SKWINXV6_PATH)/xcorelog.o $(SKWINXV6_PATH)/xcoreenh.o $(SKWINXV6_PATH)/xcoredm1.o $(SKWINXV6_PATH)/xsfxsdl.o
+SKWINXV6_OBJ =  $(SKWINXV6_PATH)/xstartup.o $(SKWINXV6_PATH)/xcorelog.o $(SKWINXV6_PATH)/xcoreenh.o $(SKWINXV6_PATH)/xcoredm1.o $(SKWINXV6_PATH)/xcoretq.o $(SKWINXV6_PATH)/xsfxsdl.o
 
 
 all: $(SKWIN_EXE)

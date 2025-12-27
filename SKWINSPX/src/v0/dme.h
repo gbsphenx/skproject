@@ -2796,9 +2796,9 @@ namespace DM2Internal {
 		U8 b9;
 	};
 	// 
-	struct skfh4 { // 4 bytes
-		U16 w0; // 1 U16: File Signature (8005h)
-		U16 w2; // 1 U16: Number of items in file.
+	struct TGDATFileHeader { // (skfh4) 4 bytes
+		U16 iSignature; // w0 1 U16: File Signature (8005h)
+		U16 iNbItems;	// w2 1 U16: Number of items in file.
 	};
 	// 
 	struct skxxxe { // 4 bytes

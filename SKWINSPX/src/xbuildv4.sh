@@ -55,6 +55,7 @@ export SOURCE_FOLDER=./v6
 ./xcomp.sh xcoredm1
 ./xcomp.sh xcorelog -w
 ./xcomp.sh xstartup
+./xcomp.sh xcoretq
 ./xcomp.sh xsfxsdl -w
 
 ./xlink.sh

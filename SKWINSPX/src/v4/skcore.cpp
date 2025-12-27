@@ -1545,7 +1545,7 @@ void SkWinCore::GRAPHICS_DATA_OPEN()
 		sLocalGraphicsDatFileString = (X8*) skWinApp->sCustomGraphicsDatFilename;
 	}
 
-	if ((_4976_5d10++) == 0) {
+	if ((glbGDatOpenCloseFlag++) == 0) {
 		glbFileHandleGraphics1 = FILE_OPEN(FORMAT_SKSTR(sLocalGraphicsDatFileString, NULL));
 		if (glbFileHandleGraphics1 < 0) {
 			printf("GDAT1: Searching for file %s\n", FORMAT_SKSTR(sLocalGraphicsDatFileString, NULL));
@@ -1569,7 +1569,7 @@ void SkWinCore::ORIGINAL__GRAPHICS_DATA_OPEN()
 {
 	//^3E74:2598
 	//^3E74:259B
-	if ((_4976_5d10++) == 0) {
+	if ((glbGDatOpenCloseFlag++) == 0) {
 		//^3E74:25A6
 		glbFileHandleGraphics1 = FILE_OPEN(FORMAT_SKSTR(ptrGraphics, NULL));
 		//^3E74:25C6
@@ -10826,7 +10826,7 @@ _0641:
 void SkWinCore::GRAPHICS_DATA_CLOSE()
 {
 	//^3E74:2614
-	if ((_4976_5d10--) == 0) {
+	if ((glbGDatOpenCloseFlag--) == 0) {
 		//^3E74:261D
 		FILE_CLOSE(glbFileHandleGraphics1);
 		//^3E74:2627
@@ -20609,7 +20609,7 @@ void SkWinCore::LOAD_GDAT_ENTRIES()
 		if (QUERY_GDAT_ENTRY_VALUE(di, EPcls6) != 0xff)
 			continue;
 		U8 bp05 = QUERY_GDAT_ENTRY_VALUE(di, EPcls3);
-		if (bp05 == 0xb || bp05 == 0xc)
+		if (bp05 == fmtWordVal || bp05 == fmtPicOff)	// (bp05 == 0xb || bp05 == 0xc)
 			continue;
 		//^3E74:21A3
 		X16 si = QUERY_GDAT_ENTRY_VALUE(di, EPdata);
@@ -21108,35 +21108,29 @@ const char* SkWinCore::DEBUG_SKGDATENT(SkEntIter* xSkGDATEnt)
 //^3E74:2641
 void SkWinCore::READ_GRAPHICS_STRUCTURE()
 {
-	//^3E74:2641
 	ENTER(12);
-	//^3E74:2647
-	_4976_5d10 = 0;
-//printf("GRAPHICS_DATA_OPEN\n");
+	glbGDatOpenCloseFlag = 0;
 	GRAPHICS_DATA_OPEN();
-	skfh4 bp0c;
-//printf("READ_FILE\n");
-	if (READ_FILE(glbFileHandleGraphics1, 4, &bp0c) == 0)	// Read the first 4 bytes of GDAT, which hold GDAT signature + nb of data items
-		goto _28d2;
-	if ((bp0c.w0 & 0x8000) == 0) {	// Default data is supposed to use little-end storage (PC)
+	TGDATFileHeader tFileHeader;	// bp0c
+	if (READ_FILE(glbFileHandleGraphics1, 4, &tFileHeader) == 0)	// Read the first 4 bytes of GDAT, which hold GDAT signature + nb of data items
+		goto _read_graphics_structure__raise_error;
+	if ((tFileHeader.iSignature & 0x8000) == 0) {	// Default data is supposed to use little-end storage (PC)
 		// try now big-end
-		if ((SWAPW(bp0c.w0) & 0x8000) == 0)
-			goto _28d2;
+		if ((SWAPW(tFileHeader.iSignature) & 0x8000) == 0)
+			goto _read_graphics_structure__raise_error;
 		// at this point, we try big-end
 		SkCodeParam::bUseBigEnd = true;
-		bp0c.w0 = SWAPW(bp0c.w0);
-		bp0c.w2 = SWAPW(bp0c.w2);
+		tFileHeader.iSignature = SWAPW(tFileHeader.iSignature);
+		tFileHeader.iNbItems = SWAPW(tFileHeader.iNbItems);
 	}
-//printf("3E74:2677\n");
-	//^3E74:2677
-	glbGDATVersion = bp0c.w0 & 0x7fff;
-	glbGDatNumberOfData = bp0c.w2;
+	glbGDATVersion = tFileHeader.iSignature & 0x7FFF;	// GDAT internal format version should be 5
+	glbGDatNumberOfData = tFileHeader.iNbItems;
 
 	U16 *bp04;
 	X32 bp08;
 	if (glbGDATVersion != 4 && glbGDATVersion != 5 && glbGDATVersion != 2)
-		goto _28d2;
-	//^3E74:269E
+		goto _read_graphics_structure__raise_error;
+
 	glbShelfMemoryTable = reinterpret_cast<shelf_memory *>(ALLOC_MEMORY_RAM(sizeof(shelf_memory) * U32(glbGDatNumberOfData), afUseUpper, 0x400));
 	_4976_5c82 = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(U32(glbGDatNumberOfData) << 1, afUseUpper, 0x400));
 	FILL_U16(reinterpret_cast<i16 *>(_4976_5c82), glbGDatNumberOfData, -1, 2);
@@ -21145,43 +21139,34 @@ void SkWinCore::READ_GRAPHICS_STRUCTURE()
 	_4976_5d6a = bp08 +4;	// nb items sizes + (magic number + nb items) = offset of first raw data which must be the ENT1
 	if (glbGDATVersion < 3) {
 		if (READ_FILE(glbFileHandleGraphics1, bp08, bp04) == 0)
-			goto _28d2;
-		//^3E74:2755
+			goto _read_graphics_structure__raise_error;
+
 		_4976_5d7a = *bp04;
 		_4976_5d6a += _4976_5d7a;
 	}
 	else {
-		//^3E74:2775
 		if (READ_FILE(glbFileHandleGraphics1, 4, &_4976_5d7a) == 0)	// Read the next 4 bytes of GDAT which hold the size for the first item entry which must be the ENT1 item
-			goto _28d2;
-		//^3E74:2790
-		_4976_5d6a += _4976_5d7a +2;	// there _4976_5d6a gets the offset of the second item after ENT1 item
+			goto _read_graphics_structure__raise_error;
+		_4976_5d6a += _4976_5d7a + 2;	// there _4976_5d6a gets the offset of the second item after ENT1 item
 		if (READ_FILE(glbFileHandleGraphics1, bp08 -2, &bp04[1]) == 0)	// here read the size table before the ENT1 item (except the first item already read, which is exceptionnally on 4 bytes; all others are on 2 bytes max)
-			goto _28d2;
+			goto _read_graphics_structure__raise_error;
 	}
-	//^3E74:27CF
 	bp04[0] = 0;
 	_4976_5caa = _4976_5d6a;
 	U16 si;
 	for (si = 0; si < glbGDatNumberOfData; bp04++, si++) {
-		//^3E74:27E9
 		_4976_5caa += *bp04;
 		glbShelfMemoryTable[si] = shelf_memory::FromSizeOnUnloaded(*bp04);
 		//printf("Shelf memory %05d: size = %06d\n", si, glbShelfMemoryTable[si].val & 0x7fff);
-		//^3E74:2813
 	}
-	//^3E74:281E
 	_4976_5cea = GET_FILE_SIZE(glbFileHandleGraphics1);
 	if (_4976_5cea < _4976_5caa) {
-		//^3E74:283D
 		_4976_5ca8 = 1;
 		_4976_5c9c = 1;
 	}
-	//^3E74:2846
 	DEALLOC_UPPER_MEMORY(bp08);
 	LOAD_ENT1();
 	if (glbGDATVersion >= 2 && glbGDATVersion != 4 && QUERY_GDAT_ENTRY_DATA_INDEX(0x0, 0x0, dt08, 0x0) != 0xffff) {
-		//^3E74:2878
         _4976_5d0c = reinterpret_cast<sk5d0c *>(ALLOC_MEMORY_RAM(
 			_4976_5d78 = QUERY_GDAT_ENTRY_DATA_LENGTH(0x0, 0x0, dt08, 0x0),
 			afUseUpper, 0x400));
@@ -21191,15 +21176,12 @@ void SkWinCore::READ_GRAPHICS_STRUCTURE()
 
 //DEBUG_DISPLAY_GDAT_MAIN_INFO();
 
-	//^3E74:28C6
 	_4976_5cb0 = 1;
 	_3e74_24b8();
-	//^3E74:28D0
 	return;
-	//^3E74:28D2
-_28d2:
+
+_read_graphics_structure__raise_error:
 	RAISE_SYSERR(SYSTEM_ERROR__INVALID_GRAPHICS_STRUCTURE);
-	//^3E74:28DA
 	return;
 }
 
@@ -21230,6 +21212,7 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_0A()
 	tblCreatureFrameInfo14 = reinterpret_cast<U8 (*)[14]>(ALLOC_MEMORY_RAM(bp04 = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt07, 0x0A), afUseUpper, 0x400));
 	LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt07, 0x0A, reinterpret_cast<U8 *>(tblCreatureFrameInfo14));
 	}
+	/*
 	if (SkCodeParam::bUsePowerDebug) {
 		//--- Display hex data of this table
 		int iNbItems = 1652 / 14;
@@ -21243,7 +21226,7 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_0A()
 			printf("\n");
 			pTabBuffer += 14;
 		}
-	}
+	}*/
 
 	//^32CB:0052
 	return;

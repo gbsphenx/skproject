@@ -3169,84 +3169,47 @@ void SkWinCore::CHECK_RECOMPUTE_LIGHT(i16 xx, i16 yy)
 // SPX: _38C8_03AD renamed __INIT_GAME_38c8_03ad
 void SkWinCore::__INIT_GAME_38c8_03ad()
 {
-	//printf("38c8_03ad:ENTER\n");
 	SkD((SkCodeParam::bEngineNoDisplay, "__INIT_GAME_38c8_03ad\n"));
-	//^38C8:03AD
 	ENTER(0);
-	//^38C8:03B1
 	glbShowItemStats = 0;
 	_4976_4bfe = 0;
 	_4976_4c3e = 0;
 	glbTryPushPullObject = 0;
 	cd.pi.glbIsPlayerSleeping = 0;
 	_4976_5bec = 0;
-	//^38C8:03D5
-	//printf("38c8_03ad:ZERO_MEMORY\n"); getch();
 	ZERO_MEMORY(glbChampionMajorSkillsLevel, sizeof(glbChampionMajorSkillsLevel));
-	//^38C8:03E5
 	ZERO_MEMORY(glbChampionEngagingHandCommand, sizeof(glbChampionEngagingHandCommand));
-	//^38C8:03F5
 	cd.pi.glbChampionIndex = 0;
 	_4976_5dbc = 0;
-	//^38C8:0401
-	//printf("38c8_03ad:RESET_CAII\n"); getch();
 	RESET_CAII();
-	//^38C8:0406
-	//printf("38c8_03ad:_1031_0541\n"); getch();
 	_1031_0541(5);
-	//^38C8:040E
-	//printf("38c8_03ad:LOAD_NEWMAP(%d)\n", glbPlayerMap); getch();
 	LOAD_NEWMAP(U8(cd.pi.glbPlayerMap));
-	//^38C8:0418
 	_4976_4bd8 = 0;
-	//^38C8:041E
 	if (cd.mo.glbSpecialScreen == _MENU_SCREEN__RESUME_GAME_SELECT) {
-		//^38C8:0425
 		FIRE_FILL_SCREEN_RECT(2, 0);
-		//^38C8:0430
 		_0aaf_0067(_0aaf_02f8_DIALOG_BOX(6, 0));
-		//^38C8:0442
-		U16 si = _4976_5d10;
-		//^38C8:0447
-		if (si != 0) {
-			//^38C8:044B
-			_4976_5d10 = 1;
-			//^38C8:0451
+		U16 iGDatFlag = glbGDatOpenCloseFlag;
+		if (iGDatFlag != 0) {
+			glbGDatOpenCloseFlag = 1;
 			GRAPHICS_DATA_CLOSE();
 		}
-		//^38C8:0456
 		_2066_03e0(0);
-		//^38C8:045E
-		if (si != 0) {
-			//^38C8:0462
+		if (iGDatFlag != 0) {
 			GRAPHICS_DATA_OPEN();
-			//^38C8:0467
-			_4976_5d10 = si;
+			glbGDatOpenCloseFlag = iGDatFlag;
 		}
-		//^38C8:046B
 		WAIT_SCREEN_REFRESH();
 	}
 	else {
-		//^38C8:0472
 		WAIT_SCREEN_REFRESH();
-		//^38C8:0477
 		cd.gg.glbGameHasEnded = 0;
 	}
-	//^38C8:047D
-	//printf("38c8_03ad:FIRE_FILL_SCREEN_RECT\n"); getch();
 	FIRE_FILL_SCREEN_RECT(2, 0);
-	//^38C8:0488
 	DRAW_ARROW_PANEL();
-	//^38C8:048D
 	printf("38c8_03ad:INIT_CHAMPIONS\n");
 	SEARCH_STARTER_CHAMPION();
-	//^38C8:0492
 	_4976_4c02 = 1;
-	//^38C8:0498
-	//printf("38c8_03ad:CHECK_RECOMPUTE_LIGHT\n"); getch();
 	CHECK_RECOMPUTE_LIGHT(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
-	//^38C8:04A7
-	//printf("38c8_03ad:END\n"); getch();
 	return;
 }
 
