@@ -2617,88 +2617,71 @@ U16 DECODE_CHARACTER_VALUE(U8* buf,i16 num, bool allowTruncation = false)
 void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 {
 	//CSBWin similarities : Character.cpp:TAG0139be/AddCharacter
-	//^2F3F:009A
 	ENTER(148);
-	//^2F3F:00A0
-	Champion *champion = &glbChampionSquad[player = cd.pi.glbChampionsCount];	//*bp04
-	champion->HeroType(U8(heroType));
-	champion->handCommand[1] = champion->handCommand[0] = 0xff;
-	champion->timerIndex = TIMER_NONE;
-	champion->playerDir(U8(dir));
-	X16 bp0e;
-	for (bp0e = 0; GET_PLAYER_AT_POSITION((bp0e + cd.pi.glbPlayerDir) & 3) != -1; bp0e++);
-	//^2F3F:00F6
-	champion->playerPos(bp0e + cd.pi.glbPlayerDir);
-	champion->direction = U8(cd.pi.glbPlayerDir);
-	for (bp0e = 0; bp0e < INVENTORY_MAX_SLOT; bp0e++)
-		champion->Possess(bp0e, OBJECT_NULL);
-	//^2F3F:012E
-	U8 bp0094[0x80];
+	Champion* xChampion = &glbChampionSquad[player = cd.pi.glbChampionsCount];	//*bp04
+	xChampion->HeroType(U8(heroType));
+	xChampion->handCommand[1] = xChampion->handCommand[0] = 0xff;
+	xChampion->timerIndex = TIMER_NONE;
+	xChampion->playerDir(U8(dir));
+	X16 iLocalIndex = 0;	// bp0e
+	for (iLocalIndex = 0; GET_PLAYER_AT_POSITION((iLocalIndex + cd.pi.glbPlayerDir) & 3) != -1; iLocalIndex++);	// find available slot
+
+	xChampion->playerPos(iLocalIndex + cd.pi.glbPlayerDir);
+	xChampion->direction = U8(cd.pi.glbPlayerDir);
+	for (iLocalIndex = 0; iLocalIndex < INVENTORY_MAX_SLOT; iLocalIndex++)	// init inventory
+		xChampion->Possess(iLocalIndex, OBJECT_NULL);
+
+	U8 sChampionNameBuffer[0x80];	// bp0094
 	// SPX: get HERO NAME
-	U8 *bp0c = QUERY_GDAT_TEXT(GDAT_CATEGORY_CHAMPIONS, U8(heroType), 0x18, bp0094);
-	X16 bp10;
-	for (bp0e = 0; (bp10 = i8(*(bp0c++))) != 0x20 && bp10 != 0 && bp0e < 7; bp0e++) {
-		//^2F3F:0151
-		champion->firstName[bp0e] = U8(bp10);
-		//^2F3F:015D
+	U8* pChampionTextBuffer = QUERY_GDAT_TEXT(GDAT_CATEGORY_CHAMPIONS, U8(heroType), 0x18, sChampionNameBuffer);	// bp0c
+	X16 cNameCurChar = 0;	// bp10
+	for (iLocalIndex = 0; (cNameCurChar = i8(*(pChampionTextBuffer++))) != 0x20 && cNameCurChar != 0 && iLocalIndex < 7; iLocalIndex++) {
+		xChampion->firstName[iLocalIndex] = U8(cNameCurChar);
 	}
-	//^2F3F:017E
-	champion->firstName[bp0e] = 0;
-	bp0e = 0;
-	if (bp10 != 0) {
-		//^2F3F:0193
+	xChampion->firstName[iLocalIndex] = 0;
+	iLocalIndex = 0;
+	if (cNameCurChar != 0) {
 		while (true) {
-			bp10 = *(bp0c++);
-			if (bp10 == 0)
+			cNameCurChar = *(pChampionTextBuffer++);
+			if (cNameCurChar == 0)
 				break;
-			if ((champion->lastName[bp0e++] = U8(bp10)) == 0x13)
+			if ((xChampion->lastName[iLocalIndex++] = U8(cNameCurChar)) == 0x13)
 				break;
 		}
 	}
-	//^2F3F:01BC
-	champion->lastName[bp0e] = 0;
+	xChampion->lastName[iLocalIndex] = 0;
 //DEBUG_DUMP_ULP();
-	skhero *bp08 = reinterpret_cast<skhero *>(QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_CHAMPIONS, U8(heroType), dt08, 0x00));
+	TSKHero* xChampionData = reinterpret_cast<TSKHero *>(QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_CHAMPIONS, U8(heroType), dt08, 0x00));	// bp08
 #if DM2_EXTENDED_MODE == 1	// TODO To be replaced with fixedmode + checkmem
-	if (bp08 == NULL)
+	if (xChampionData == NULL)
 		RAISE_SYSERR(SYSTEM_ERROR__NO_PLAYER_DATA);
 #endif
-	champion->maxHP(bp08->maxHP());
-	champion->curHP(bp08->maxHP());
-	champion->maxStamina(bp08->maxStamina());
-	champion->curStamina(bp08->maxStamina());
-	champion->maxMP(bp08->maxMP());
-	champion->curMP(bp08->maxMP());
-	for (bp0e = 0; bp0e <= 6; bp0e++) {
-		//^2F3F:0220
-		champion->attributes[bp0e][ATTRIBUTE_MAX] = champion->attributes[bp0e][ATTRIBUTE_CURRENT] = U8(max_value(0x1e, bp08->herodata[bp0e +3]));
-		champion->attributesEnhanced[bp0e] = 0;
-		//^2F3F:0260
+	xChampion->maxHP(xChampionData->maxHP());
+	xChampion->curHP(xChampionData->maxHP());
+	xChampion->maxStamina(xChampionData->maxStamina());
+	xChampion->curStamina(xChampionData->maxStamina());
+	xChampion->maxMP(xChampionData->maxMP());
+	xChampion->curMP(xChampionData->maxMP());
+	X16 iSkillAttributeIndex = 0; // SPX: added
+	for (iSkillAttributeIndex = 0; iSkillAttributeIndex <= 6; iSkillAttributeIndex++) {
+		xChampion->attributes[iSkillAttributeIndex][ATTRIBUTE_MAX] = xChampion->attributes[iSkillAttributeIndex][ATTRIBUTE_CURRENT] = U8(max_value(0x1E, xChampionData->herodata[iSkillAttributeIndex + 3]));
+		xChampion->attributesEnhanced[iSkillAttributeIndex] = 0;
 	}
-	//^2F3F:0269
-	for (bp0e = 4; bp0e <= 19; bp0e++) {
-		//^2F3F:0270
-		bp10 = bp08->herodata[bp0e +10 -4];
-		champion->skills[bp0e] = (bp10 != 0) ? (U32(0x40) << bp10) : 0;
-		//^2F3F:02B0
+	for (iSkillAttributeIndex = 4; iSkillAttributeIndex <= 19; iSkillAttributeIndex++) {	// sub-skills fighter / ninja / priest / wizard
+		X16 iSkillValue = xChampionData->herodata[iSkillAttributeIndex + 10 - 4];	// bp10
+		xChampion->skills[iSkillAttributeIndex] = (iSkillValue != 0) ? (U32(0x40) << iSkillValue) : 0;
 	}
-	//^2F3F:02B9
-	for (bp0e = 0; bp0e <= 3; bp0e++) {
-		//^2F3F:02C0
-		X32 bp14 = 0;
-		bp10 = (bp0e +1) << 2;
-		U16 si;
-		for (si = 0; si < 4; si++) {
-			bp14 += champion->skills[bp10 +si];
+	for (iSkillAttributeIndex = 0; iSkillAttributeIndex <= 3; iSkillAttributeIndex++) {	// (bp0e) main-skills fighter / ninja / priest / wizard
+		X32 iSkillExperience = 0;	// bp14
+		X16 iBaseSkill = (iSkillAttributeIndex + 1) << 2;	// bp10
+		U16 iSubSkillIndex;	// si
+		for (iSubSkillIndex = 0; iSubSkillIndex < 4; iSubSkillIndex++) {
+			iSkillExperience += xChampion->skills[iBaseSkill + iSubSkillIndex];
 		}
-		//^2F3F:02F9
-		champion->skills[bp0e] = bp14;
-		//^2F3F:0312
+		xChampion->skills[iSkillAttributeIndex] = iSkillExperience;
 	}
-	//^2F3F:031B
-	champion->curFood((RAND() & 255) + START_BASE_FOOD);
-	champion->curWater((RAND() & 255) + START_BASE_WATER);
-	//^2F3F:033F
+	xChampion->curFood((RAND() & 255) + START_BASE_FOOD);
+	xChampion->curWater((RAND() & 255) + START_BASE_WATER);
 
 	// SPX: DM1 Compatibility code -- check TEXT at player position which should contain CHAMPION stats
 	if (SkCodeParam::bDM1Mode) // maybe this could be extendable for DM2 anyway
@@ -2734,8 +2717,8 @@ void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 					iStrLimit--;
 					iWriteIndex++;
 				}
-				memset(champion->firstName, 0, 8);
-				strcpy((char*)champion->firstName, (char*)sBuffer);
+				memset(xChampion->firstName, 0, 8);
+				strcpy((char*)xChampion->firstName, (char*)sBuffer);
 
 				// Read last name
 				sHeroPtr++;
@@ -2758,9 +2741,9 @@ void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 					iStrLimit--;
 					iWriteIndex++;
 				}
-				memset(champion->lastName, 0, 16);
+				memset(xChampion->lastName, 0, 16);
 				//strcpy((char*)champion->lastName, (char*)sBuffer);
-				strncpy((char*)champion->lastName, (char*)sBuffer, 16);
+				strncpy((char*)xChampion->lastName, (char*)sBuffer, 16);
 
 				// Read gender
 				sHeroPtr+=1;
@@ -2769,16 +2752,16 @@ void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 				// Read basic stats
 				sHeroPtr+=2;
 				iStatValue = DECODE_CHARACTER_VALUE(sHeroPtr, 4);
-				champion->maxHP(iStatValue);
-				champion->curHP(iStatValue);
+				xChampion->maxHP(iStatValue);
+				xChampion->curHP(iStatValue);
 				sHeroPtr+=4;
 				iStatValue = DECODE_CHARACTER_VALUE(sHeroPtr, 4);
-				champion->maxStamina(iStatValue);
-				champion->curStamina(iStatValue);
+				xChampion->maxStamina(iStatValue);
+				xChampion->curStamina(iStatValue);
 				sHeroPtr+=4;
 				iStatValue = DECODE_CHARACTER_VALUE(sHeroPtr, 4);
-				champion->maxMP(iStatValue);
-				champion->curMP(iStatValue);
+				xChampion->maxMP(iStatValue);
+				xChampion->curMP(iStatValue);
 				sHeroPtr+=4;
 
 				sHeroPtr++; // new line
@@ -2786,8 +2769,8 @@ void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 				for (iSkillIndex = 0; iSkillIndex < 7; iSkillIndex++)
 				{
 					iStatValue = DECODE_CHARACTER_VALUE(sHeroPtr, 2);
-					champion->attributes[iSkillIndex][0] = iStatValue;
-					champion->attributes[iSkillIndex][1] = champion->attributes[iSkillIndex][0];
+					xChampion->attributes[iSkillIndex][0] = iStatValue;
+					xChampion->attributes[iSkillIndex][1] = xChampion->attributes[iSkillIndex][0];
 					sHeroPtr+=2;
 				}
 
@@ -2798,7 +2781,7 @@ void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 					X32 iXP = 0;
 					iStatValue = DECODE_CHARACTER_VALUE(sHeroPtr, 1);
 					iXP = 125 << iStatValue;
-					champion->skills[iSkillIndex] = iXP;
+					xChampion->skills[iSkillIndex] = iXP;
 					sHeroPtr++;
 				}
 				//-- Main skills level
@@ -2809,9 +2792,9 @@ void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 					iMainSkill = (iSkillIndex + 1) << 2;
 					U16 iSubSkill;
 					for (iSubSkill = 0; iSubSkill < 4; iSubSkill++) {
-						iTotalMajorXP += champion->skills[iMainSkill + iSubSkill];
+						iTotalMajorXP += xChampion->skills[iMainSkill + iSubSkill];
 					}
-					champion->skills[iSkillIndex] = iTotalMajorXP;
+					xChampion->skills[iSkillIndex] = iTotalMajorXP;
 				}
 
 
@@ -2836,14 +2819,14 @@ void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 			//PROCESS_PLAGUE(player, 10);
 		}
 
-		champion->maxHP(statHP);
-		champion->curHP(champion->maxHP());
-		champion->maxStamina(statStamina);
-		champion->curStamina(champion->maxStamina());
-		champion->maxMP(statMP);
-		champion->curMP(champion->maxMP());
+		xChampion->maxHP(statHP);
+		xChampion->curHP(xChampion->maxHP());
+		xChampion->maxStamina(statStamina);
+		xChampion->curStamina(xChampion->maxStamina());
+		xChampion->maxMP(statMP);
+		xChampion->curMP(xChampion->maxMP());
 		for (int i = 0; i < SKILL_COUNT; i++)
-			champion->skills[i] = SKILL_EXPERIENCE_BASE_LEVEL<<(SkLvlMasterLo-2);
+			xChampion->skills[i] = SKILL_EXPERIENCE_BASE_LEVEL<<(SkLvlMasterLo-2);
 	} // End super/debug block
 
 	return;
