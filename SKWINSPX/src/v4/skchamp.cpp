@@ -2301,129 +2301,82 @@ void SkWinCore::PLAYER_CONSUME_OBJECT(U16 player, ObjectID rlConsume, i16 posses
 	U16 WaterValue = WATER_DEFAULT_ITEM_VALUE;	// 800
 
 
-	//^24A5:10FB
 	ENTER(18);
-	//^24A5:1101
-	ObjectID di = rlConsume;
-	//^24A5:1104
+	ObjectID tObjectConsumed = rlConsume;	// di
 	U16 bp12 = 1;
-	//^24A5:1109
-	if (di != OBJECT_NULL) {
-		//^24A5:110E
+	U16 iBodyFlagTestCounter = 10;	// bp0c	
+	U16 iPowerDivisor = 8;	// bp0c
+	if (tObjectConsumed != OBJECT_NULL) {
 		bp12 = 0;
 	}
-	//^24A5:1115
 	else if (cd.pi.glbLeaderHandPossession.object == OBJECT_NULL) {
-		//^24A5:111C
 		FIRE_MOUSE_SET_CAPTURE();
-		//^24A5:1121
 		_4976_4bfe = 1;
-		//^24A5:1127
-		//^24A5:113B
 		if ((_4976_5dae.rc4.cy & 2) == 0) {
-			//^24A5:1143
 			FIRE_MOUSE_RELEASE_CAPTURE();
-			//^24A5:1148
 			_4976_4bfe = 0;
-			//^24A5:114E
 			return;
 		}
-		//^24A5:1151
 		FIRE_HIDE_MOUSE_CURSOR();
-		//^24A5:1156
 		glbMouseVisibility = 1;
-		//^24A5:115C
 		return;
 	}
 	else {
-		//^24A5:115F
 		player = glbChampionInventory -1;
-		//^24A5:1166
-		di = cd.pi.glbLeaderHandPossession.object;
-		//^24A5:116A
+		tObjectConsumed = cd.pi.glbLeaderHandPossession.object;
 		possess = -1;
 	}
-	//^24A5:116F
 	if (cd.pi.glbNextChampionNumber != 0)
-		//^24A5:1176
 		return;
-	//^24A5:1179
+
 	Champion *champion = &glbChampionSquad[player];
-	//^24A5:118A
-	U16 bp10 = QUERY_GDAT_FOOD_VALUE_FROM_RECORD(di);
-	//^24A5:1194
-	U16 bp0c;
+	U16 iFoodValue = QUERY_GDAT_FOOD_VALUE_FROM_RECORD(tObjectConsumed);	// bp10
+	U16 iMouthAnimCounter;	// bp0c
 	U16 si;
 	Potion *bp08;
-	if (bp10 != 0) {
-		//^24A5:119B
+	if (iFoodValue != 0) {
 		if (bp12 != 0) {
-			//^24A5:11A1
 			FIRE_HIDE_MOUSE_CURSOR();
-			//^24A5:11A6
 			REMOVE_OBJECT_FROM_HAND();
-			//^24A5:11AB
-			for (bp0c = 5; (--bp0c) != 0; ) {
-				//^24A5:11B2
-				DRAW_STATIC_PIC(GDAT_CATEGORY_INTERFACE_CHARSHEET, 0x00, ((bp0c & 1) != 0) ? 0x25 : 0x26, 545, -1);	// mouth icon
-				//^24A5:11D1
+			for (iMouthAnimCounter = 5; (--iMouthAnimCounter) != 0; ) {
+				DRAW_STATIC_PIC(GDAT_CATEGORY_INTERFACE_CHARSHEET, 0x00, ((iMouthAnimCounter & 1) != 0) ? 0x25 : 0x26, 545, -1);	// mouth icon
 				CHANGE_VIEWPORT_TO_INVENTORY(0);
-				//^24A5:11D9
 				SLEEP_SEVERAL_TIME(8);
-				//^24A5:11E1
 			}
-			//^24A5:11EB
 			FIRE_SHOW_MOUSE_CURSOR();
 		}
-		//^24A5:11F0
 		//SPX: Eating food item
-		champion->curFood(min_value(champion->curFood() +bp10, FOOD_MAX));
-		//^24A5:120C
-		PROCESS_ITEM_BONUS(player, di, possess, 2);
-		//^24A5:121D
-		DEALLOC_RECORD(di);
-		//^24A5:1224
+		champion->curFood(min_value(champion->curFood() + iFoodValue, FOOD_MAX));
+		PROCESS_ITEM_BONUS(player, tObjectConsumed, possess, 2);
+		DEALLOC_RECORD(tObjectConsumed);
 		if (possess != -1) {
-			//^24A5:122D
 			champion->Possess(possess, OBJECT_NULL);
 		}
-		//^24A5:123E
 		goto _14a9;
 	}
-	//^24A5:1241
 	U16 bp0a;
-	if (IS_MISCITEM_DRINK_WATER(di) != 0) {
+	if (IS_MISCITEM_DRINK_WATER(tObjectConsumed) != 0) {
 		// SPX: This assume that any misc item gives 800 water per drink
 		WaterValue = WATER_DEFAULT_ITEM_VALUE;
 
-		// SPX: Custom Water value
+		// SPX: Custom Water value, override it if any
 		if (SkCodeParam::bUseDM2ExtendedMode)
-			WaterValue = QUERY_GDAT_WATER_VALUE_FROM_RECORD(di);
+			WaterValue = QUERY_GDAT_WATER_VALUE_FROM_RECORD(tObjectConsumed);
 
-		//^24A5:124B
-		champion->curWater(min_value(champion->curWater() +WaterValue, WATER_MAX));
-		//^24A5:1267
+		champion->curWater(min_value(champion->curWater() + WaterValue, WATER_MAX));
 		if (possess != -1) {
-			//^24A5:1270
-			champion->Possess(possess, di);
+			champion->Possess(possess, tObjectConsumed);
 		}
-		//^24A5:127C
 		goto _14a9;
 	}
-	//^24A5:127F
-	bp0a = di.DBType();
-	//^24A5:128A
+	bp0a = tObjectConsumed.DBType();
 	if (bp0a == dbPotion) {
-		//^24A5:1292
-		bp08 = GET_ADDRESS_OF_RECORD8(di);
-		//^24A5:129F
+		iPowerDivisor = 8;	// SPX, bp0c
+		bp08 = GET_ADDRESS_OF_RECORD8(tObjectConsumed);
 		si = bp08->PotionPower();
-		//^24A5:12AB
 		// SPX: Degressive divisor => bp0c = 08 (lowest power) to 02 (highest power)
-		bp0c = ((511 -si) / (((si +1) >> 3) +32)) >> 1;
-		//^24A5:12C2
+		iPowerDivisor = ((511 -si) / (((si +1) >> 3) +32)) >> 1;
 		si = (si / 25) +8;
-		//^24A5:12D0
 		U16 bp0e;
 		switch (bp08->PotionType())
 		{
@@ -2470,7 +2423,7 @@ void SkWinCore::PLAYER_CONSUME_OBJECT(U16 player, ObjectID rlConsume, i16 posses
 
 			case 11:			// ”é–ò{MON}	Regain stamina
 				//^24A5:1330
-				champion->curStamina(champion->curStamina() +min_value(champion->maxStamina() -champion->curStamina(),champion->maxStamina() / bp0c));
+				champion->curStamina(champion->curStamina() +min_value(champion->maxStamina() -champion->curStamina(),champion->maxStamina() / iPowerDivisor));
 				//^24A5:1354
 				break;
 
@@ -2499,7 +2452,7 @@ void SkWinCore::PLAYER_CONSUME_OBJECT(U16 player, ObjectID rlConsume, i16 posses
 				//^24A5:13C5
 				bp0a = bp08->PotionPower() / 42;
 				//^24A5:13E3
-				champion->curHP(champion->curHP() + (champion->maxHP() / bp0c));
+				champion->curHP(champion->curHP() + (champion->maxHP() / iPowerDivisor));
 				//^24A5:13FB
 				bp0e = champion->bodyFlag;
 				//^24A5:1402
@@ -2507,32 +2460,23 @@ void SkWinCore::PLAYER_CONSUME_OBJECT(U16 player, ObjectID rlConsume, i16 posses
 					//^24A5:1404
 					break;
 				//^24A5:1406
-				bp0c = 10;
+				iBodyFlagTestCounter = 10;	// bp0c
 				do {
-					//^24A5:140B
 					for (si = 0; si < bp0a; si++) {
-						//^24A5:140F
 						champion->bodyFlag &= RAND();
-						//^24A5:141B
 					}
-					//^24A5:1421
 					bp0a = 1;
-					//^24A5:1426
 					if (champion->bodyFlag != bp0e)
-						//^24A5:1430
 						break;
-					//^24A5:1432
-					bp0c--;
-					//^24A5:1435
-				} while (bp0c != 0);
-				//^24A5:143C
+					iBodyFlagTestCounter--;
+				} while (iBodyFlagTestCounter != 0);
 				break;
 
 			case 15:			// WATER FLASK
 				WaterValue = WATER_FLASK_VALUE;	// Default value 1600
 
 				if (SkCodeParam::bUseDM2ExtendedMode)
-					WaterValue = QUERY_GDAT_WATER_VALUE_FROM_RECORD(di);
+					WaterValue = QUERY_GDAT_WATER_VALUE_FROM_RECORD(tObjectConsumed);
 				
 				//^24A5:143E
 				champion->curWater(min_value(champion->curWater() +WaterValue, WATER_MAX));
@@ -2544,23 +2488,23 @@ void SkWinCore::PLAYER_CONSUME_OBJECT(U16 player, ObjectID rlConsume, i16 posses
 			//^24A5:1460
 			REMOVE_OBJECT_FROM_HAND();
 		//^24A5:1465
-		DEALLOC_RECORD(di);
+		DEALLOC_RECORD(tObjectConsumed);
 		//^24A5:146C
-		di = ALLOC_NEW_RECORD(dbPotion);
+		tObjectConsumed = ALLOC_NEW_RECORD(dbPotion);
 		//^24A5:1476
-		if (di == OBJECT_NULL)
+		if (tObjectConsumed == OBJECT_NULL)
 			//^24A5:147B
 			return;
 		//^24A5:147E
-		SET_ITEMTYPE(di, 0x14);
+		SET_ITEMTYPE(tObjectConsumed, 0x14);
 		//^24A5:1488
 		if (possess == -1) {
 			//^24A5:148E
-			TAKE_OBJECT(di, 0);
+			TAKE_OBJECT(tObjectConsumed, 0);
 		}
 		else {
 			//^24A5:149A
-			champion->Possess(possess, di);
+			champion->Possess(possess, tObjectConsumed);
 		}
 		//^24A5:14A9
 _14a9:

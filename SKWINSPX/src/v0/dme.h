@@ -2911,7 +2911,7 @@ namespace DM2Internal {
 		X16 w8;
 	};
 	// 
-	struct skhero { // 52 bytes
+	struct TSKHero { // (skhero) 52 bytes
 		U16 herodata[26];	// w0[26] : 3 + 7 + 16 = 26
 		// SPX: data would be as follow:
 		// 00 - 02 : HP, Stamina, Mana

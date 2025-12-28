@@ -55,8 +55,8 @@ UINT SkRendererSDL::InitAudio()
 #if !defined (__NO_SDL__)
     SDL_AudioSpec want = {0};
 
-//    want.freq = 11025;
-    want.freq = 6000;
+    //want.freq = 11025;
+    want.freq = 6000;	// V4
     want.format = AUDIO_S8;
     want.channels = 1;
     want.samples = 1024;
@@ -289,7 +289,7 @@ bool SkRendererSDL::ML()
 	//xMasterWinApp->skwin_Sleep(1);
 	return true;
 }
-
+#include <math.h>
 UINT SkRendererSDL::AudioPlaySound(const U8 *xSoundBuffer, U32 iBufferSize, i8 iSoundVolume, U16 iPlaybackFrequency)
 {
 #if !defined (__NO_SDL__)
@@ -301,15 +301,15 @@ UINT SkRendererSDL::AudioPlaySound(const U8 *xSoundBuffer, U32 iBufferSize, i8 i
     if (cnt != 0) {
         SDL_ClearQueuedAudio(sdlAudioDeviceId); // equivalent to SND_PURGE
     }
-
-    for (x = 0; x < iBufferSize; x++) {
-        c = xSoundBuffer[x] + 0x80;
-        c = (c * iSoundVolume) / 16;
-        if (c < -127) c = -127;
-        if (c >  127) c =  127;
-
-        //buffInt[x] = (Uint8)(c + 0x80); // signed ? unsigned
-		buffInt[x] = (Uint8)(c); // signed ? unsigned
+//	printf("Volume = %d => scale = %f\n", iSoundVolume, (float)(iSoundVolume / 16.f));
+    for (x = 0; x < iBufferSize; x++) {	// original sound is signed 8bits (0 at 0x80)
+		c = (xSoundBuffer[x]);
+		if (c >= 0 && c < 0x80)
+			c = (int)((float)c * (float)(iSoundVolume / 16.f));
+		if (c > 0x80)	// value x80 to xFF
+			c = ((int)(((float)(signed char)c) * (float)(iSoundVolume / 16.f)));
+		buffInt[x] = (Uint8)(c);
+//		printf("BUFF%05d: %02X V(%f)> %02X\n", x, xSoundBuffer[x], (float)(iSoundVolume / 16.f), buffInt[x]);
     }
 
     SDL_QueueAudio(sdlAudioDeviceId, buffInt, iBufferSize);
