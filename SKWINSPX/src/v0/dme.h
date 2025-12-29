@@ -3032,33 +3032,33 @@ namespace DM2Internal {
 	};
 	// ccm (creature command)
 	enum {
-		ccmNeutral = 0,		// (ccm0) stand .. do nothing
+		ccm00_Neutral = 0,		// (ccm0) stand .. do nothing
 		ccm01 = 0x01, // walk?
 		ccm02 = 0x02, // walk?
 		ccm03 = 0x03, // turn ?
 		ccm04 = 0x04, // turn right and walk ?
-		ccmJump = 0x05, // (ccm05) jump
+		ccm05_Jump = 0x05, // (ccm05) jump
 		ccm06 = 0x06,	// turn left -> stand ?
 		ccm07 = 0x07,	// turn right -> stand ?
-		ccmMeleeAttack = 0x08, // (ccm08) standard attack
+		ccm08_MeleeAttack = 0x08, // (ccm08) standard attack
 		ccm09 = 0x09, // walk?
-		ccmSteal = 0x0A, // (ccm0A) steal
+		ccm0A_Steal = 0x0A, // (ccm0A) steal
 		ccm0B = 0x0B,	// another attack ?
 		ccm0C = 0x0C, // shopkeeper takes item from pool?
 		ccm0D = 0x0D,	// pick item
-		ccmShootItem1 = 0x0E, // (ccm0E = 0x0E) throw item
-		ccmShootItem2 = 0x0F, // (ccm0F = 0x0F) throw item
+		ccm0E_ShootItem1 = 0x0E, // (ccm0E = 0x0E) throw item
+		ccm0F_ShootItem2 = 0x0F, // (ccm0F = 0x0F) throw item
 		ccm10 = 0x10,	// another attack ?
-		ccmSpawn = 0x11,	// (ccm11) spawn
+		ccm11_Spawn = 0x11,	// (ccm11) spawn
 		ccm12 = 0x12,	// unused
-		ccmDestroy = 0x13, // (ccm13) death
+		ccm13_Destroy = 0x13, // (ccm13) death
 		ccm14 = 0x14,	// unused
 		ccm15 = 0x15,
 		ccm16 = 0x16,
-		ccmPlaceMerchandise = 0x17, // place money/merchandise at the trade table
-		ccmTakeMerchandise = 0x18, // (ccm18) take money/merchandise at the trade table
+		ccm17_PlaceMerchandise = 0x17, // place money/merchandise at the trade table
+		ccm18_TakeMerchandise = 0x18, // (ccm18) take money/merchandise at the trade table
 		ccm19 = 0x19,	// take arrow from quiver ?
-		ccm1A = 0x1A,	// pick arrow ?
+		ccm1A_PickItem = 0x1A,	// pick arrow ?
 		ccm1B = 0x1B,	// state 0 / refuse
 		ccm1C = 0x1C,	// state 1 / yell / accept
 		ccm1D = 0x1D,	// state 2 / blink
@@ -3070,18 +3070,18 @@ namespace DM2Internal {
 		ccm23 = 0x23,	// Go to sleep (bat) ?
 		ccm24 = 0x24,	// Sleep (bat) ?
 		ccm25 = 0x25,	// Awake from sleep (bat) ?
-		ccmPushBack = 0x26, // (ccm26 = 0x26) attacking you? knock back ?	
-		ccmCastSpell1 = 0x27, // (ccm27 = 0x27) cast spell
-		ccmCastSpell2 = 0x28, // (ccm28 = 0x28) cast spell
+		ccm26_PushBack = 0x26, // (ccm26 = 0x26) attacking you? knock back ?	
+		ccm27_CastSpell1 = 0x27, // (ccm27 = 0x27) cast spell
+		ccm28_CastSpell2 = 0x28, // (ccm28 = 0x28) cast spell
 		ccm29 = 0x29,	// take bone ?
 		ccm2A = 0x2A,	// put bone ? (also take?)
-		ccm2B = 0x2B,	// pick item and move ?
-		ccm2C = 0x2C,	// pick item and move ?
+		ccm2B_PickItem = 0x2B,	// pick item and move ?
+		ccm2C_PickItem = 0x2C,	// pick item and move ?
 		ccm2D = 0x2D,	// take ?
 		ccm2E = 0x2E,	// take ?
-		ccm2F = 0x2F,	// switch button ?
-		ccm30 = 0x30,	// switch button (giggler) ?
-		ccm31 = 0x31,	// switch button (giggler) ?
+		ccm2F_ActivateWallSwitch = 0x2F,	// switch button ?
+		ccm30_ActivateWallSwitch = 0x30,	// switch button (giggler) ?
+		ccm31_ActivateWallSwitch = 0x31,	// switch button (giggler) ?
 		ccm32 = 0x32,	// unknown / used at 13E4:0AEC
 		ccm33 = 0x33,	// unknown / used at 13E4:0AEC
 		ccm34 = 0x34,	// unknown / used at 13E4:0AEC
@@ -3091,9 +3091,9 @@ namespace DM2Internal {
 		ccm37 = 0x37,	// Coming from top (minion) ?
 		ccm39 = 0x39,	// Going up (minion) ?
 		ccm3A = 0x3A,	// Coming from top (minion) ?
-		ccmTransform = 0x3B,	// (ccm3B)	creature transforms into another (minion => guard minion)
-		ccmTransform2 = 0x3C,
-		ccmExplode = 0x3D,	// 3D 1	// (ccm3D) Prepare to explode (fire orb) ?
+		ccm3B_Transform1 = 0x3B,	// (ccm3B)	creature transforms into another (minion => guard minion)
+		ccm3C_Transform2 = 0x3C,
+		ccm3D_Explode = 0x3D,	// 3D 1	// (ccm3D) Prepare to explode (fire orb) ?
 		ccm3E = 0x3E,	// 3D 2
 		ccm3F = 0x3F,	// 3D 3
 		ccm40 = 0x40,	// 3D 4
@@ -3101,8 +3101,8 @@ namespace DM2Internal {
 		ccm42 = 0x42,	// Hello 1 (rocky) ?
 		ccm52 = 0x52,	// Hello 2 (rocky) ?
 		
-		ccmCastSpell1or2 = 0x55,	// Cast reflector (Dragoth) ? No, will either transform to ccmCastSpell1 or ccmCastSpell2
-		ccmInv = -1,	// Idle
+		ccm55_CastSpell1or2 = 0x55,	// Cast reflector (Dragoth) ? No, will either transform to ccmCastSpell1 or ccmCastSpell2
+		ccmFF_Idle = -1,	// Idle
 	};
 #define MAX_CREATURE_COMMANDS	86
 	// prog check ccm is < 86, because using static info ccm table _4976_37a6

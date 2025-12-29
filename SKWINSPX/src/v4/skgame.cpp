@@ -3460,7 +3460,7 @@ _05c2:
 		}
 		if (SkCodeParam::bDebugNoCreatures) {
 			ATTACK_CREATURE(OBJECT_NULL, playerDestPosX, playerDestPosY, 0x4005, 5, 9999);
-			CREATURE_SET_NEW_COMMAND(bp14, playerDestPosX, playerDestPosY, ccmDestroy, 1);
+			CREATURE_SET_NEW_COMMAND(bp14, playerDestPosX, playerDestPosY, ccm13_Destroy, 1);
 		}
 		if (bp12 != 0)
 			break;	
@@ -4139,17 +4139,14 @@ _05bd:
 		di = 0;
 	}
 	if (SkCodeParam::bDebugNoCreatures) {
-		xCreatureData->Command = ccmDestroy;
+		xCreatureData->Command = ccm13_Destroy;
 		xCreature->hp1 = 0;
 		QUEUE_THINK_CREATURE(xx, yy);
 	}
-	//^13E4:06E7
-	if (xCreatureData->Command != ccmDestroy && (di != 0 || xCreature->hp1 <= quantity)) {
-		//^13E4:0701
+	if (xCreatureData->Command != ccm13_Destroy && (di != 0 || xCreature->hp1 <= quantity)) {
 		RELEASE_CREATURE_TIMER(rl);
 		QUEUE_THINK_CREATURE(xx, yy);
 	}
-	//^13E4:0717
 	return;
 }
 
@@ -4216,13 +4213,13 @@ U8 *SkWinCore::PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timer
 	//^13E4:014B
 	if (xCreatureInfo == NULL && SkCodeParam::bDebugBypassNullPointers == false) {
 		if (timerType == tty22) {
-			_4976_4ee8 = 0;
+			glbCreatureCommand_4976_4ee8 = 0;
 			_4976_4eea = 0;
 			glbCreatureCommandThinking = (xCreatureInfo->Command == -1) ? 0 : xCreatureInfo->Command;
 			if (xCreatureInfo != NULL) {
 				//^13E4:017D
 				ZERO_MEMORY(&xCreatureInfo->w24, 10);
-				xCreatureInfo->Command = ccmInv;
+				xCreatureInfo->Command = ccmFF_Idle;
 			}
 		}
 	} // SPX: Debug bypass

@@ -1661,10 +1661,10 @@ U16 SkWinCore::CAST_SPELL_PLAYER(U16 player, SpellDefinition *ref, U16 power)
 							&& bp1e->w0 != OBJECT_NULL 
 							&& bp1e->CreatureType() == CREATURE_GOOD_U_HAUL_MINION
 							&& (bp0a = bp1e->iID) != 0x00FF
-							&& glbTabCreaturesInfo[bp0a].Command != ccmDestroy	// 0x13
+							&& glbTabCreaturesInfo[bp0a].Command != ccm13_Destroy	// 0x13
 						) {
 							//^2759:2470
-							glbTabCreaturesInfo[bp0a].Command2 = ccmDestroy;	// 0x13
+							glbTabCreaturesInfo[bp0a].Command2 = ccm13_Destroy;	// 0x13
 							//^2759:2483
 							goto _26cf;
 						}

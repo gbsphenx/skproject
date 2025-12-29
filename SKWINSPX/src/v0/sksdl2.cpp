@@ -255,7 +255,7 @@ bool SkRendererSDL::ML()
 		SDL_PumpEvents();
 		if (SDL_PollEvent(&event)) {
 			switch (event.type) {
-				SkD((DLV_MOUSE,"Event type = %d\n", event.type));
+				//SkD((DLV_MOUSE,"Event type = %d\n", event.type));
 				case SDL_KEYDOWN:
 					xMasterWinApp->processKinput(event.key.keysym.sym, true);
 					break;

@@ -15,17 +15,10 @@
 
 int iDungeonGame = 0;
 
-
-//#if !defined(__DJGPP__) && !defined(__MINGW__) && !defined(__LINUX__)
-
-
-//#define MAX_BUFFER_SIZE (512 * 12)
-#define MAX_BUFFER_SIZE (32 * 12)	// short buffer, allowing music change more quickly
-
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-// static table of musics mapped to maps
+// static table of musics mapped to maps -- that should be read from SONGLIST.DAT
 int tMusicMaps[64] =
 {
 	0x02, 0x11, 0x0e, 0x1b,		0x04, 0x0c, 0x0c, 0x12,

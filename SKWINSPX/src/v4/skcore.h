@@ -519,7 +519,7 @@ protected:
 	X8		_4976_4ee5;		// selector of next xact?
 	X8		glbCreatureActionProceeded;		// _4976_4ee6 creature move block?
 	U8		glbSomeMap_4976_4ee7;		// _4976_4ee7 some map?
-	X16		_4976_4ee8;	// sk3672.b3()
+	X16		glbCreatureCommand_4976_4ee8;	// (_4976_4ee8) sk3672.b3()
 	X16		_4976_4eea;	// sk3672.b4()
 	U16		_4976_4eec;
 	U16		glbAIAttacksSpells;		// (_4976_4eee) global Attack and Spells types for current creature?
@@ -1648,7 +1648,7 @@ protected:
 	void ADD_BACKGROUND_LIGHT_FROM_TILE(i16 aa, U16 bb, i16 xx, i16 yy, U16 ww);
 	ObjectID _19f0_266c(ObjectID rl, U16 dir, U16 ww, U16 bb);
 	X16 _19f0_2723(ObjectID rl, U16 ww, U16 bb, X16 cc);
-	U16 _19f0_2813(U16 ww, i16 xx, i16 yy, i16 ss, i16 tt, i16 aa, U16 bb);
+	U16 CREATURE_19f0_2813(U16 ww, i16 xx, i16 yy, i16 ss, i16 tt, i16 aa, U16 bb);	// _19f0_2813
 	U16 _19f0_0d10(U16 ww,i16 xx,i16 yy,i16 ss,i16 tt,i16 aa);
 	X16 GET_DOOR_STAT_0D(U8 xx); // _0cee_3275
 	U16 _19f0_000a(i16 xx, i16 yy);

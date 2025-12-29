@@ -871,7 +871,7 @@ void SkWinCore::QUERY_CREATURE_PICST(U16 xx, i16 iDistToPlayer, Creature *xCreat
 	i16 iImageScaleFromDist = tlbDistanceStretch[RCJ(5,iDistToPlayer)]; // bp10
 	i16 iImageScale = iImageScaleFromDist;
 	//^32CB:2A8D
-	i16 iFrameID2 = (xInfo != NULL && xInfo->Command == ccmDestroy) ? xInfo->w14 : iFrameID;	// bp14
+	i16 iFrameID2 = (xInfo != NULL && xInfo->Command == ccm13_Destroy) ? xInfo->w14 : iFrameID;	// bp14
 	//^32CB:2AAB
 	U16 iOffsetPosition = tblCreatureFrameInfo14[iFrameID2][0]; // bp12	-- Standard is 0x0C = 12 = centered
 	if (SkCodeParam::bDM2V5Mode)

@@ -153,12 +153,10 @@ X16 SkWinCore::EXTENDED_LOAD_AI_DEFINITION(void)
 	int rc = 0;
 	U8 index = 0;
 	// SPX: If not extended, load the default table from static data / OR if dungeon selected is skullkeep (security because AI is not in GDAT currently)
-	//if (!SkCodeParam::bUseDM2ExtendedMode || skwin.dung == _OPTION_DUNGEON_DM2_BETA_ || skwin.dung == _OPTION_DUNGEON_DM2_DEMO_ || skwin.dung == _OPTION_DUNGEON_DM2_SK)
-	// 2023-07-26 : removed the test : in all case, first setup the AI table with default DM2 values, then overwrite with what's from GDAT 
+	// 2023-07-26 : removed the test : in all case, first setup the AI table with default DM2 values, then overwrite with what's from GDAT if any
 	{
 		//&_4976_03a2[res * 0x0024]
-		//memcpy(dAITable, _4976_03a2, 62 * 36);
-		memcpy(dAITable, dAITableGenuine, MAXAI * 36);
+		memcpy(dAITable, dAITableGenuine, 62 * 36);
 
 		//int r = memcmp(_4976_03a2, dAITableGenuine, 36 * 62);
 		//ATLASSERT(r == 0);
@@ -531,34 +529,34 @@ CString SkWinCore::getCreatureCommandName(U8 ccm)
 {
 	static X8 text[128] = {0};
 	sprintf((char*)text, "CCM-%02X", ccm);	// default
-	if (ccm == ccmNeutral)		return "NONE";
+	if (ccm == ccm00_Neutral)		return "NONE";
 	if (ccm == ccm01)			return "WALK/MOVE x01";
 	if (ccm == ccm02)			return "WALK/MOVE x02";
 	if (ccm == ccm03)			return "TURN LEFT + MOVE ? x03";	// right also ????
 	if (ccm == ccm04)			return "TURN RIGHT + MOVE x04";
-	if (ccm == ccmJump)			return "JUMP";
+	if (ccm == ccm05_Jump)			return "JUMP";
 	if (ccm == ccm06)			return "TURN LEFT ? x06";
 	if (ccm == ccm07)			return "TURN RIGHT ? x07";
-	if (ccm == ccmMeleeAttack)	return "MELEE ATTACK";
+	if (ccm == ccm08_MeleeAttack)	return "MELEE ATTACK";
 	if (ccm == ccm09)			return "WALK x09";
-	if (ccm == ccmSteal)		return "STEAL";
+	if (ccm == ccm0A_Steal)		return "STEAL";
 	if (ccm == ccm0B)			return "ATTACK x0??";
 	if (ccm == ccm0C)			return "x0C";
 	if (ccm == ccm0D)			return "x0D";
-	if (ccm == ccmShootItem1)	return "THROW ITEM x0E";
-	if (ccm == ccmShootItem2)	return "THROW ITEM x0F";
+	if (ccm == ccm0E_ShootItem1)	return "THROW ITEM x0E";
+	if (ccm == ccm0F_ShootItem2)	return "THROW ITEM x0F";
 	if (ccm == ccm10)			return "ATTACK x10?";
-	if (ccm == ccmSpawn)		return "SPAWN";
+	if (ccm == ccm11_Spawn)		return "SPAWN";
 	if (ccm == ccm12)			return "UNUSED x12";
-	if (ccm == ccmDestroy)		return "DEATH";
+	if (ccm == ccm13_Destroy)		return "DEATH";
 	if (ccm == ccm14)			return "x14";
 	if (ccm == ccm15)			return "x15";
 	if (ccm == ccm16)			return "x16";
 
-	if (ccm == ccmPlaceMerchandise)			return "PUT MERCHANDISE x17";
-	if (ccm == ccmTakeMerchandise)			return "TAKE MERCHANDISE x18";
+	if (ccm == ccm17_PlaceMerchandise)			return "PUT MERCHANDISE x17";
+	if (ccm == ccm18_TakeMerchandise)			return "TAKE MERCHANDISE x18";
 	if (ccm == ccm19)			return "GRAB ARROW ? x19";
-	if (ccm == ccm1A)			return "PICK ARROW ? x1A";
+	if (ccm == ccm1A_PickItem)			return "PICK ARROW ? x1A";
 	if (ccm == ccm1B)			return "STATE 0 / REFUSEx1B";
 	if (ccm == ccm1C)			return "STATE 1 / ACCEPT / YELL x1C";
 	if (ccm == ccm1D)			return "STATE 2 / BLINK x1D";
@@ -571,19 +569,19 @@ CString SkWinCore::getCreatureCommandName(U8 ccm)
 	if (ccm == ccm23)			return "GO TO SLEEP x23";
 	if (ccm == ccm24)			return "SLEEP x24";
 	if (ccm == ccm25)			return "AWAKE x25";
-	if (ccm == ccmPushBack)		return "PUSH BACK";
-	if (ccm == ccmCastSpell1)	return "CAST SPELL 3";
-	if (ccm == ccmCastSpell2)	return "CAST SPELL 2";		
+	if (ccm == ccm26_PushBack)		return "PUSH BACK";
+	if (ccm == ccm27_CastSpell1)	return "CAST SPELL 3";
+	if (ccm == ccm28_CastSpell2)	return "CAST SPELL 2";		
 
 	if (ccm == ccm29)			return "TAKE BONE x29";
 	if (ccm == ccm2A)			return "PUT BONE x2A";
-	if (ccm == ccm2B)			return "PICK ITEM THEN MOVE ? x2B";
-	if (ccm == ccm2C)			return "PICK ITEM THEN MOVE ? x2C";
+	if (ccm == ccm2B_PickItem)			return "PICK ITEM THEN MOVE ? x2B";
+	if (ccm == ccm2C_PickItem)			return "PICK ITEM THEN MOVE ? x2C";
 	if (ccm == ccm2D)			return "TAKE ? x2D";
 	if (ccm == ccm2E)			return "TAKE ? x2E";
-	if (ccm == ccm2F)			return "SWITCH BUTTON ? x2F";
-	if (ccm == ccm30)			return "SWITCH BUTTON ? x30";
-	if (ccm == ccm31)			return "SWITCH BUTTON ? x31";	
+	if (ccm == ccm2F_ActivateWallSwitch)			return "SWITCH BUTTON ? x2F";
+	if (ccm == ccm30_ActivateWallSwitch)			return "SWITCH BUTTON ? x30";
+	if (ccm == ccm31_ActivateWallSwitch)			return "SWITCH BUTTON ? x31";	
 
 	if (ccm == ccm32)			return "13E4:0AEC 1 x32";
 	if (ccm == ccm33)			return "13E4:0AEC 2 x33";
@@ -595,9 +593,9 @@ CString SkWinCore::getCreatureCommandName(U8 ccm)
 	if (ccm == ccm39)			return "MINION UP x39";
 	if (ccm == ccm3A)			return "MINION COMING FROM TOP x3A";	
 
-	if (ccm == ccmTransform)	return "TRANSFORM 1 x3B";
-	if (ccm == ccmTransform2)	return "TRANSFORM 2 x3C";
-	if (ccm == ccmExplode)		return "SUMMON 1 / EXPLODE 1 x3D";
+	if (ccm == ccm3B_Transform1)	return "TRANSFORM 1 x3B";
+	if (ccm == ccm3C_Transform2)	return "TRANSFORM 2 x3C";
+	if (ccm == ccm3D_Explode)		return "SUMMON 1 / EXPLODE 1 x3D";
 	if (ccm == ccm3E)			return "EXPLODE 2 x3E";
 	if (ccm == ccm3F)			return "EXPLODE 3 x3F";
 	if (ccm == ccm40)			return "EXPLODE 4 x40";
@@ -614,8 +612,8 @@ CString SkWinCore::getCreatureCommandName(U8 ccm)
 //		ccm42 = 0x42,	// Hello 1 (rocky) ?
 //		ccm52 = 0x52,	// Hello 2 (rocky) ?
 	if (ccm == ccm52)				return "ROCKY HELLO 2 ? x52";
-	if (ccm == ccmCastSpell1or2)	return "SPELL 1 OR 2 ? x55";
-	if (ccm == ccmInv)				return "IDLE";	
+	if (ccm == ccm55_CastSpell1or2)	return "SPELL 1 OR 2 ? x55";
+	if (ccm == ccmFF_Idle)				return "IDLE";	
 
 	if (text[0] != 0)
 		return (LPCSTR)text;
@@ -5960,50 +5958,40 @@ _0bae:
 //									printf("BP12 = %04X, %d\n", bp12, bp12);
 								switch (bp12) {
 									case AI_ATTACK_FLAGS__PUSH_BACK:	// 0x0002 Knock back
-										//^19F0:0BED
-										glbCurrentThinkingCreatureData->Command = ccmPushBack;
+										glbCurrentThinkingCreatureData->Command = ccm26_PushBack;
 										break;
 									case AI_ATTACK_FLAGS__MELEE:	// 0x0001 Standard attack
-										//^19F0:0BF9
-										glbCurrentThinkingCreatureData->Command = ccmMeleeAttack;
+										glbCurrentThinkingCreatureData->Command = ccm08_MeleeAttack;
 										break;
 									case AI_ATTACK_FLAGS__STEAL:	// 0x0004 Steal?
-										//^19F0:0C04
-										glbCurrentThinkingCreatureData->Command = ccmSteal;
+										glbCurrentThinkingCreatureData->Command = ccm0A_Steal;
 										glbCurrentThinkingCreatureData->ItemToThrow = 0x0B;	// ????
 										break;
 									case AI_ATTACK_FLAGS__FIREBALL:	// 0x0010	- 16
-										//^19F0:0C14
 //											bp04 = i16(0xff80);		// fireball
 										bp04 = i16(OBJECT_EFFECT_FIREBALL.w);
 										goto _0c4a;
 									case AI_ATTACK_FLAGS__DISPELL:	// 0x0020	- 32
-										//^19F0:0C1B
 //											bp04 = i16(0xff83);		// dispell
 										bp04 = i16(OBJECT_EFFECT_DISPELL.w);
 										goto _0c4a;
 									case AI_ATTACK_FLAGS__LIGHTNING:	// 0x0040	- 64
-										//^19F0:0C22
 //											bp04 = i16(0xff82);		// lightning
 										bp04 = i16(OBJECT_EFFECT_LIGHTNING.w);
 										goto _0c4a;
 									case AI_ATTACK_FLAGS__POISON_CLOUD:	// 0x0080	- 128
-										//^19F0:0C29
 //											bp04 = i16(0xff87);		// poison cloud
 										bp04 = i16(OBJECT_EFFECT_POISON_CLOUD.w);
 										goto _0c4a;
 									case AI_ATTACK_FLAGS__POISON_BOLT:	// 0x0100	- 256
-										//^19F0:0C30
 //											bp04 = i16(0xff86);		// poison bolt
 										bp04 = i16(OBJECT_EFFECT_POISON_BOLT.w);
 										goto _0c4a;
 									case AI_ATTACK_FLAGS__PUSH_SPELL:	// 0x0400	- 1024
-										//^19F0:0C37
 //											bp04 = i16(0xff89);		// push
 										bp04 = i16(OBJECT_EFFECT_PUSH.w);
 										goto _0c4a;
 									case AI_ATTACK_FLAGS__PULL_SPELL:	// 0x0800	- 2048
-										//^19F0:0C3E
 //											bp04 = i16(0xff8a);		// pull
 										bp04 = i16(OBJECT_EFFECT_PULL.w);	
 										goto _0c4a;
@@ -6012,14 +6000,12 @@ _0bae:
 										bp04 = i16(OBJECT_EFFECT_POISON_BLOB.w);
 										//SPX: It does look like this effect doesn't work (no image)
 										// I guess in actual code, we never reach this line.
-										//^19F0:0C4A
 _0c4a:
 										glbCurrentThinkingCreatureData->ItemToThrow = U8(bp04);
-										glbCurrentThinkingCreatureData->Command = (bp08 != 0) ? ccmCastSpell2 : ccmCastSpell1;
+										glbCurrentThinkingCreatureData->Command = (bp08 != 0) ? ccm28_CastSpell2 : ccm27_CastSpell1;
 										break;
 									case AI_ATTACK_FLAGS__SHOOT:	// 0x0008 Able to launch item / or maybe take item ? (axe, arrow?)
-										//^19F0:0C65
-										glbCurrentThinkingCreatureData->Command = (bp08 != 0) ? ccmShootItem2 : ccmShootItem1;
+										glbCurrentThinkingCreatureData->Command = (bp08 != 0) ? ccm0F_ShootItem2 : ccm0E_ShootItem1;
 										break;
 								}
 								//^19F0:0C79
@@ -6420,7 +6406,8 @@ _27e2:
 }
 
 //^19F0:2813
-U16 SkWinCore::_19f0_2813(U16 ww, i16 xx, i16 yy, i16 ss, i16 tt, i16 aa, U16 bb)
+// _19f0_2813 renamed CREATURE_19f0_2813
+U16 SkWinCore::CREATURE_19f0_2813(U16 ww, i16 xx, i16 yy, i16 ss, i16 tt, i16 aa, U16 bb)
 {
 	//^19F0:2813
 	ENTER(10);
@@ -6496,16 +6483,14 @@ _286d:
 												glbCurrentThinkingCreatureData->b27 = (X8)aa;
 												glbCurrentThinkingCreatureData->ItemToThrow = (X8)bb;
 												glbCurrentThinkingCreatureData->b32 = (X8)ww;
-												//^19F0:2A45
 												if (ww == 0) {
-													glbCurrentThinkingCreatureData->Command = ccm2F;
+													glbCurrentThinkingCreatureData->Command = ccm2F_ActivateWallSwitch;
 												}
-												//^19F0:2A52
 												else if (ww == 1) {
-													glbCurrentThinkingCreatureData->Command = ccm30;
+													glbCurrentThinkingCreatureData->Command = ccm30_ActivateWallSwitch;
 												}
 												else {
-													glbCurrentThinkingCreatureData->Command = ccm31;
+													glbCurrentThinkingCreatureData->Command = ccm31_ActivateWallSwitch;
 												}
 												//^19F0:2A6C
 												_4976_4ee5 = (ww == 0 && bp04->ActionType() < 2)
@@ -6723,10 +6708,8 @@ _108f:
 		_4976_4ee5 = xactrYes;
 		goto _1235;
 	}
-	//^19F0:10D0
 	if (bp06 == 2) {
-		//^19F0:10D6
-		glbCurrentThinkingCreatureData->Command = ccmNeutral;
+		glbCurrentThinkingCreatureData->Command = ccm00_Neutral;
 		goto _1230;
 	}
 	//^19F0:10E2
@@ -6756,11 +6739,9 @@ _108f:
 	if ((si & 1) != 0) {
 		//^19F0:113A
 		if ((si & 0xffbc) == 0 || RAND02() == 0) {
-			//^19F0:1149
-			glbCurrentThinkingCreatureData->Command = (RAND01() != 0) ? ccmCastSpell2 : ccmCastSpell1;
-			//^19F0:1160
+			glbCurrentThinkingCreatureData->Command = (RAND01() != 0) ? ccm28_CastSpell2 : ccm27_CastSpell1;
 			// SPX: 8D (unknow zo2?) replaced with 84 (open door zo1)
-			glbCurrentThinkingCreatureData->ItemToThrow = (ww == 0) ? 0x8d : 0x84;	// zo spell 2 or zo spell 1
+			glbCurrentThinkingCreatureData->ItemToThrow = (ww == 0) ? 0x8D : 0x84;	// zo spell 2 or zo spell 1
 			goto _11d2;
 		}
 	}
@@ -7544,27 +7525,20 @@ _1f19:
 									break;
 
 								case 22:
-									//^1C9A:3291
 									if ((_4976_521c & 16) == 0)
-										//^1C9A:3298
 										break;
-									//^1C9A:329B
-									si = _19f0_2813(bp0c->w10, bp42, bp44, bp12,bp14,bp30,bp0c->w8);
-									//^1C9A:32BF
-									if (si==0)
-										//^1C9A:32C3
-										bp37=0xff;
+									si = CREATURE_19f0_2813(bp0c->w10, bp42, bp44, bp12,bp14,bp30,bp0c->w8);
+									if (si == 0)
+										bp37 = 0xFF;
 									//^1C9A:32C7
 									break;
 
 								case 23:
 									//^1C9A:32C9
 									if ((_4976_521c & 16)!=0){
-										//^1C9A:32D0
 										// SPX: bp2c = distance
 										ADD_BACKGROUND_LIGHT_FROM_TILE(bp2c,bp30,bp12,bp14,4);
-										//^1C9A:32E6
-										bp37=0xff;
+										bp37 = 0xFF;
 									}
 									//^1C9A:32EA
 									break;
@@ -17672,7 +17646,7 @@ i16 SkWinCore::_19f0_2165(X16 aa, i16 xx, i16 yy, i16 ss, i16 tt, i16 vv, i16 ww
 					goto _2484;
 				}
 				//^19F0:22C7
-				bp02 = ccm1A;
+				bp02 = ccm1A_PickItem;
 				bp04 = _4976_522e[0];
 				di = glbCreatureSomeObjectFromTile;
 				for (; di != OBJECT_END_MARKER; di = GET_NEXT_RECORD_LINK(di)) {
@@ -17706,7 +17680,7 @@ i16 SkWinCore::_19f0_2165(X16 aa, i16 xx, i16 yy, i16 ss, i16 tt, i16 vv, i16 ww
 				//^19F0:2382
 				if (bp0a == 0)
 					//^19F0:238B
-					bp02 = ccmPlaceMerchandise;
+					bp02 = ccm17_PlaceMerchandise;
 				goto _2484;
 			}
 			//^19F0:2393
@@ -17722,7 +17696,7 @@ i16 SkWinCore::_19f0_2165(X16 aa, i16 xx, i16 yy, i16 ss, i16 tt, i16 vv, i16 ww
 						//^19F0:23EA
 						if (bp04 >= 8) {
 							//^19F0:23F0
-							bp02 = ccmMeleeAttack;
+							bp02 = ccm08_MeleeAttack;
 							bp04 &= 3;
 							goto _2484;
 						}
@@ -17791,7 +17765,7 @@ _2484:
 					//^19F0:24D0
 					bp04 = vv;
 				}
-				else if (bp02 == ccmPlaceMerchandise) {
+				else if (bp02 == ccm17_PlaceMerchandise) {
 					//^19F0:24DF
 					di = _19f0_050f();
 					si = _48ae_01af(CREATURE_0cee_2df4(di), vv);
@@ -17815,10 +17789,10 @@ _2484:
 				}
 			}
 			//^19F0:2563
-			else if (bp02 == X16(ccmInv)) {
+			else if (bp02 == X16(ccmFF_Idle)) {
 				si = (bp04 - glbCurrentThinkingCreatureData->b29 +1) & 3;
 				if (bp0a == 0) {
-					bp02 = (si < 2) ? ccm2B : ccm2C;
+					bp02 = (si < 2) ? ccm2B_PickItem : ccm2C_PickItem;
 				}
 				else {
 					bp02 = (si < 2) ? ccm0C : ccm0D;
@@ -23410,8 +23384,8 @@ void SkWinCore::GAME_LOOP()
 	SkCodeParam::bUseIngameDebug = true;
 	if (SkCodeParam::bUseIngameDebug)
 	{
-		U8 sMessage[64];
-		char sExtraInfo[64]; memset(sExtraInfo, 0, 64);
+		U8 sMessage[128];  memset(sMessage, 0, 128);
+		char sExtraInfo[16]; memset(sExtraInfo, 0, 16);
 		if (SkCodeParam::bDM2V5Mode)
 			strcpy(sExtraInfo, " V5-GFX");
 //		sprintf((char*)sMessage, "RAM = %08d / EMS = %08d\n", glbFreeRAMMemPool, glbFreeEMSMemPool);

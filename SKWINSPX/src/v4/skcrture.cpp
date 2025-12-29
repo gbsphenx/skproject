@@ -487,7 +487,7 @@ void SkWinCore::CREATURE_SET_NEW_COMMAND(ObjectID rlCreatureIn, U16 xx, U16 yy, 
 		return;
 
 	CreatureInfoData* xCreatureData = &glbTabCreaturesInfo[iGlbCreatureIndex];	// bp06
-	if (xCreatureData->Command2 == ccmDestroy || xCreatureData->Command == ccmDestroy)
+	if (xCreatureData->Command2 == ccm13_Destroy || xCreatureData->Command == ccm13_Destroy)
 		return;
 
 	xCreatureData->Command2 = iCommand;
@@ -498,7 +498,7 @@ void SkWinCore::CREATURE_SET_NEW_COMMAND(ObjectID rlCreatureIn, U16 xx, U16 yy, 
 	// preventing further going into RELEASE + QUEUE THINK which actually performs the "die" command
 	// then if command is "die", bypass that block
 
-	if (iCommand == ccmDestroy && SkCodeParam::bUsePowerDebug) {
+	if (iCommand == ccm13_Destroy && SkCodeParam::bUsePowerDebug) {
 		RELEASE_CREATURE_TIMER(rlCreature);
 		QUEUE_THINK_CREATURE(xx, yy);
 	}
@@ -529,7 +529,7 @@ void SkWinCore::RELEASE_MINION(ObjectID rlCreature)
 	if (xMissile != NULL) {
 		U16 si = glbCurrentMapIndex;
 		CHANGE_CURRENT_MAP_TO(xMissile->GetMap());
-		CREATURE_SET_NEW_COMMAND(rlCreature, xMissile->GetX(), xMissile->GetY(), ccmDestroy, 1);
+		CREATURE_SET_NEW_COMMAND(rlCreature, xMissile->GetX(), xMissile->GetY(), ccm13_Destroy, 1);
 		CHANGE_CURRENT_MAP_TO(si);
 	}
 	return;
@@ -618,7 +618,7 @@ i16 SkWinCore::CREATURE_GO_THERE(X16 aa, i16 xx, i16 yy, i16 xx2, i16 yy2, i16 w
 	X16 bp1c = aa & 0x80;
 	i16 iLocalCommand = 0;	// bp08
 	if (bp1c != 0)
-		iLocalCommand = ccmInv;
+		iLocalCommand = ccmFF_Idle;
 	//^19F0:154B
 	X16 bp1e = aa & 0x40;
 	X16 bp20 = aa & 0x20;
@@ -1016,7 +1016,7 @@ _1a94:
 								//^19F0:1DA3
 								if (bp1a != 0) {
 									//^19F0:1DA9
-									iLocalCommand = ccmJump;
+									iLocalCommand = ccm05_Jump;
 								}
 								//^19F0:1DB0
 								else if ((_4976_4eec & 8) != 0) {
@@ -1075,7 +1075,7 @@ _1df6:
 				iLocalCommand = ccm09;
 			}
 			//^19F0:1EC8
-			else if (iLocalCommand == i16(ccmInv)) {
+			else if (iLocalCommand == i16(ccmFF_Idle)) {
 				iLocalCommand = (ABS16(xx - xx3) + ABS16(yy - yy2) <= 1) ? ccm02 : ccm01;
 			}
 			//^19F0:1EFC
@@ -1105,7 +1105,7 @@ _1df6:
 			}
 			//^19F0:1F7C
 			else if ((tlbCreatureCommandsFlags[RCJ(86,glbCreatureCommandThinking)] & 2) != 0 && aa != 6 && bp16 == 0) {
-				iLocalCommand = ccmNeutral;
+				iLocalCommand = ccm00_Neutral;
 			}
 			//^19F0:1F9A
 _1f9a:
@@ -1212,7 +1212,7 @@ _059e:
 	}
 	else {
 		//^19F0:05A7
-		glbCurrentThinkingCreatureData->Command = ccmNeutral;
+		glbCurrentThinkingCreatureData->Command = ccm00_Neutral;
 		_4976_4ee5 = xactrYes;
 		//^19F0:05B5
 		return 0;
@@ -1686,7 +1686,7 @@ X32 SkWinCore::CREATURE_GET_NEXT_THINK_GAMETICK()
 		iDeltaTicks = RAND16(iDeltaTicks);
 	}
 	iDeltaTicks = (glbCreatureAnimationFrame->b4 & 7) + iDeltaTicks;
-	if (glbCurrentThinkingCreatureData->Command == ccmDestroy && glbGlobalSpellEffects.FreezeCounter != 0 && glbAIDef->w0_c_c() == 0) {
+	if (glbCurrentThinkingCreatureData->Command == ccm13_Destroy && glbGlobalSpellEffects.FreezeCounter != 0 && glbAIDef->w0_c_c() == 0) {
 		iDeltaTicks = 3 * iDeltaTicks;
 	}
 	else if (cd.pi.glbIsPlayerSleeping != 0) {
@@ -1759,24 +1759,24 @@ _0ea0:
 	ZERO_MEMORY(bp04, sizeof(CreatureInfoData));
 	bp04->CreatureIndex(rl.DBIndex());
 	xCreature->iID = U8(bp0e);
-	bp04->TimerIndex(0xffff);
-	bp04->Command = ccmInv;
+	bp04->TimerIndex(0xFFFF);
+	bp04->Command = ccmFF_Idle;
 	U8 *bp0c = PREPARE_LOCAL_CREATURE_VAR(rl, xx, yy, 0x22);
 	CREATURE_THINK_FLUSH_POSITION();
 	bp04->b6_ = U8(glbGameTick >> 2) -1;
-	bp04->b4 = U8(glbGameTick) -0x7f;
+	bp04->b4 = U8(glbGameTick) - 0x7F;
 	//^1C9A:0F2C
 	bp04->w12.SetX(glbCreatureTimer.XcoordB());
 	bp04->w12.SetY(glbCreatureTimer.YcoordB());
 	bp04->w12.SetMap(glbCurrentMapIndex);
 	_4976_514e.b1 = 0;
 	bp04->b22 = -1;
-	bp04->Command2 = ccmInv;
+	bp04->Command2 = ccmFF_Idle;
 	bp04->b7 = 0;
 	//^1C9A:0F78
 	QUEUE_THINK_CREATURE(xx, yy);
 	//^1C9A:0F84
-	bp04->Command = (xCreature->iAnimSeq == 0xFFFF) ? ccmSpawn : ccmNeutral;
+	bp04->Command = (xCreature->iAnimSeq == 0xFFFF) ? ccm11_Spawn : ccm00_Neutral;
 	//^1C9A:0F9B
 	if (glbAIDef->IsStaticObject() == 0) {
 		glbCurrentThinkingCreatureRec->iAnimFrame |= 0x8000;
@@ -1824,7 +1824,7 @@ void SkWinCore::_12b4_0d75_CREATURE(i16 xx, i16 yy, i16 ss, i16 tt)
 					//^12B4:0E4D
 					CreatureInfoData *bp18 = &glbTabCreaturesInfo[bp13];
 					si = bp18->Command;
-					if (si != -1 && si != ccmDestroy && (tlbCreatureCommandsFlags[RCJ(MAX_CREATURE_COMMANDS,si)] & 4) != 0) {
+					if (si != -1 && si != ccm13_Destroy && (tlbCreatureCommandsFlags[RCJ(MAX_CREATURE_COMMANDS,si)] & 4) != 0) {
 						RELEASE_CREATURE_TIMER(bp12);
 						QUEUE_THINK_CREATURE(xx, yy);
 					}
@@ -2077,7 +2077,7 @@ U16 SkWinCore::CREATURE_IS_JUMPING(Creature* xCreature)
 	X16 iCreatureID = xCreature->InternalID();	// di
 	if (iCreatureID != 0xFF) {
         CreatureInfoData* xCreatureData = &glbTabCreaturesInfo[iCreatureID]; // bp04
-		if (xCreatureData->Command == ccmJump) {
+		if (xCreatureData->Command == ccm05_Jump) {
 			switch (xCreatureData->b31) {
 				case 1:
 				case 2:
@@ -2477,7 +2477,7 @@ X16 SkWinCore::WOUND_CREATURE(i16 damage)
 		if ((iAIStatsFlag & 0x800) != 0)
 			glbEndCounter = 0x18;
 		//^1C9A:1950
-		CREATURE_SET_NEW_COMMAND(glbCurrentThinkingCreatureID, glbCreatureTimer.XcoordB(), glbCreatureTimer.YcoordB(), ccmDestroy, 1); // 0x13
+		CREATURE_SET_NEW_COMMAND(glbCurrentThinkingCreatureID, glbCreatureTimer.XcoordB(), glbCreatureTimer.YcoordB(), ccm13_Destroy, 1); // 0x13
 		if (SkCodeParam::bUsePowerDebug)
 			bDiesFromDamage = 1;
 	}
@@ -3000,7 +3000,7 @@ i8 SkWinCore::DECIDE_NEXT_XACT()
 	bp07 = bp04[cl].b0();
 	if (bp07 == 86)
 		printf("break");
-	_4976_4ee8 = bp04[cl].b3();
+	glbCreatureCommand_4976_4ee8 = bp04[cl].b3();
     _4976_4eea = bp04[cl].b4();		
 	//^14CD:08F0
 	return bp07;
@@ -3039,18 +3039,13 @@ void SkWinCore::PROCEED_XACT_57()
 // SPX : _14cd_232b renamed PROCEED_XACT_59_76
 X8 SkWinCore::PROCEED_XACT_59_76()
 {
-	//^14CD:232B
 	ENTER(0);
-	//^14CD:232F
-	X16 si = _4976_4ee8;
-	if (si == 0xffff)
-		si = _4976_5152;
-	//^14CD:233D
-	if (_4976_4eea != 0 && CREATURE_CAN_HANDLE_ITEM_IN(si, glbCurrentThinkingCreatureRec->possession, -1) != OBJECT_END_MARKER)
+	X16 iCreatureCommand = glbCreatureCommand_4976_4ee8;	// si
+	if (iCreatureCommand == 0xFFFF)
+		iCreatureCommand = _4976_5152;
+	if (_4976_4eea != 0 && CREATURE_CAN_HANDLE_ITEM_IN(iCreatureCommand, glbCurrentThinkingCreatureRec->possession, -1) != OBJECT_END_MARKER)
 		return xactrYes;
-	//^14CD:2361
-	_19f0_2165(128, glbCreatureTimerGetX, glbCreatureTimerGetY, glbCurrentThinkingCreatureData->w24.GetX(), glbCurrentThinkingCreatureData->w24.GetY(), -1, si);
-	//^14CD:2392
+	_19f0_2165(128, glbCreatureTimerGetX, glbCreatureTimerGetY, glbCurrentThinkingCreatureData->w24.GetX(), glbCurrentThinkingCreatureData->w24.GetY(), -1, iCreatureCommand);
 	return _4976_4ee5;
 }
 
@@ -3061,35 +3056,27 @@ X8 SkWinCore::PROCEED_XACT_59_76()
 // SPX : _14cd_2c23 renamed PROCEED_XACT_62
 X8 SkWinCore::PROCEED_XACT_62()
 {
-	//^14CD:2C23
 	ENTER(16);
-	//^14CD:2C29
 	X16 bp0e = 0;
 	X16 bp02 = _4976_4ef2;
 	if ((bp02 & 0x77) == 0)
-		//^14CD:2C39
 		return xactrNo;
-	//^14CD:2C3E
 	if (_4976_4eea == 1 && CREATURE_CAN_HANDLE_ITEM_IN(16, glbCurrentThinkingCreatureRec->possession, -1) != OBJECT_END_MARKER)
 		return xactrYes;
-	//^14CD:2C62
 	X16 bp04;
 	X16 bp06;
-	if (_4976_4ee8 != 0) {
-		//^14CD:2C69
+	if (glbCreatureCommand_4976_4ee8 != 0) {
 		bp04 = glbCreatureTimerGetX;
 		bp06 = glbCreatureTimerGetY;
 	}
 	else {
-		//^14CD:2C78
 		bp04 = glbCurrentThinkingCreatureData->w24.GetX();
 		bp06 = glbCurrentThinkingCreatureData->w24.GetY();
 	}
-	//^14CD:2C93
 	ObjectID si = FIND_TILE_ACTUATOR(bp04, bp06, -1, 0x30);
 	if (si == OBJECT_NULL)
 		return xactrNo;
-	//^14CD:2CAE
+
 	Actuator *bp0a = GET_ADDRESS_OF_ACTU(si);
 	X16 bp0c = bp0a->ActuatorData();
 	if (_4976_4eea == 2) {
@@ -3176,63 +3163,47 @@ X8 SkWinCore::PROCEED_XACT_63()
 	//             0-**-2           3 for left side?
 	//               11  TABLE
 
-	//^14CD:25B8
 	ENTER(6);
-	//^14CD:25BE
 	X8 bp04 = xactrNo;
-	X16 bp06 = _4976_4ee8;
-	if (bp06 == 0xffff)
+	X16 bp06 = glbCreatureCommand_4976_4ee8;
+	if (bp06 == 0xFFFF)
 		return bp04;
-	//^14CD:25D0
 	X16 di = glbCreatureTimerGetX;
 	X16 si = glbCreatureTimerGetY;
 	X8 bp03 = X8(_4976_4eea);
-	if (bp03 != 0xff) {
-		//^14CD:25E8
+	if (bp03 != 0xFF) {
 		bp03 = (glbCurrentThinkingCreatureRec->b15_0_1() +bp03 +2)&3;
 	}
-	//^14CD:25FD
 	di += glbXAxisDelta[glbCurrentThinkingCreatureRec->b15_0_1()];
 	si += glbYAxisDelta[glbCurrentThinkingCreatureRec->b15_0_1()];
 	ObjectID bp02 = GET_CREATURE_AT(di, si);
 	if (bp02 != OBJECT_NULL && CREATURE_CAN_HANDLE_ITEM_IN(bp06, GET_ADDRESS_OF_RECORD4(bp02)->GetPossessionObject(), bp03) != OBJECT_END_MARKER)
-		//^14CD:2657
 		bp04 = xactrYes;
-	//^14CD:265B
 	return bp04;
 }
 //^14CD:240E
 // SPX: _14cd_240e renamed PROCEED_XACT_64
 X8 SkWinCore::PROCEED_XACT_64()
 {
-	//^14CD:240E
 	ENTER(0);
-	//^14CD:2413
-	X16 di;
+	X16 di = 0;
 	if (glbCurrentThinkingCreatureRec->possession == OBJECT_END_MARKER || ((di = _4976_4ef2) & 8) == 0)
-		//^14CD:2428
 		return xactrNo;
-	//^14CD:242C
-	X16 si = _4976_4ee8;
-	if (si == 0xffff)
-		si = 0x3f;
-	//^14CD:2439
+	X16 si = glbCreatureCommand_4976_4ee8;
+	if (si == 0xFFFF)
+		si = 0x3F;
 	if (CREATURE_CAN_HANDLE_ITEM_IN(si, glbCurrentThinkingCreatureRec->possession, -1) == OBJECT_END_MARKER)
 		return xactrNo;
-	//^14CD:2454
 	_4976_4ef2 &= 8;
 	_19f0_2165(0x81, glbCreatureTimerGetX, glbCreatureTimerGetY, -1, -1, glbCurrentThinkingCreatureRec->b15_0_1(), si);
 	_4976_4ef2 = di;
-	//^14CD:2486
 	return _4976_4ee5;
 }
 //^14CD:2E6E
 // SPX: _14cd_2e6e renamed PROCEED_XACT_65
 X8 SkWinCore::PROCEED_XACT_65()
 {
-	//^14CD:2E6E
 	ENTER(6);
-	//^14CD:2E74
 	glbCurrentThinkingCreatureData->w12 = Ax3::Invalid;
 	X16 si = glbCurrentThinkingCreatureRec->b15_0_1();
 	X16 bp02 = glbCreatureTimerGetX + (glbXAxisDelta[si] << 1);
@@ -3240,15 +3211,12 @@ X8 SkWinCore::PROCEED_XACT_65()
 	ObjectID bp04 = GET_CREATURE_AT(bp02, di);
 	X8 bp05;
 	if ((bp04 != OBJECT_NULL && (QUERY_CREATURE_AI_SPEC_FLAGS(bp04) & 1) == 0) || (glbCurrentMapIndex == glbCreatureMap && bp02 == glbCreaturePosX && di == glbCreaturePosY)) {
-		//^14CD:2EED
 		bp05 = xactrYes;
 	}
 	else {
-		//^14CD:2EF3
 		glbCurrentThinkingCreatureData->Command = ccm1D;
 		bp05 = xactrAgain;
 	}
-	//^14CD:2F00
 	return bp05;
 }
 
@@ -3287,12 +3255,9 @@ X16 SkWinCore::CREATURE_CHECK_HANDLE_ITEM_AHEAD(i8 dir)
 // SPX: _14cd_274f renamed PROCEED_XACT_66
 X8 SkWinCore::PROCEED_XACT_66()
 {
-	//^14CD:274F
 	ENTER(2);
-	//^14CD:2754
 	X8 bp01;
 	if (CREATURE_CHECK_HANDLE_ITEM_AHEAD(2) != 0) {
-		//^14CD:275F
 		bp01 = xactrAgain;
 		if (glbCurrentThinkingCreatureData->w14-- <= 5) {
 			//^14CD:2774
@@ -3300,36 +3265,28 @@ X8 SkWinCore::PROCEED_XACT_66()
 			glbCurrentThinkingCreatureData->Command = ccm1F;
 		}
 		else {
-			//^14CD:2782
 			glbCurrentThinkingCreatureData->Command = ccm1D;
 		}
 	}
 	else {
-		//^14CD:278D
-		X16 si = _4976_4ee8;
-		_4976_4ee8 = 16;
+		X16 si = glbCreatureCommand_4976_4ee8;
+		glbCreatureCommand_4976_4ee8 = 16;
 		_4976_4eea = 2;
-		if (PROCEED_XACT_63() == 0xfe || (si != 0 && (_4976_4ee8 = 7) != 0 && PROCEED_XACT_63() == 0xfe)) {
-			//^14CD:27BD
+		if (PROCEED_XACT_63() == 0xfe || (si != 0 && (glbCreatureCommand_4976_4ee8 = 7) != 0 && PROCEED_XACT_63() == 0xFE)) {
 			bp01 = xactrYes;
 		}
-		//^14CD:27C3
 		else if (glbCurrentThinkingCreatureData->w14-- <= 0) {
-			//^14CD:27D3
 			glbCurrentThinkingCreatureData->w14 = 5;
 			bp01 = xactrNo;
 			glbCurrentThinkingCreatureData->Command = ccm1E;
 		}
 		else {
-			//^14CD:27E4
 			if (glbCurrentThinkingCreatureData->w14 > 5)
 				glbCurrentThinkingCreatureData->w14 -= 5;
-			//^14CD:27F4
 			bp01 = xactrNo;
 			glbCurrentThinkingCreatureData->Command = ccm1D;
 		}
 	}
-	//^14CD:2801
 	return bp01;
 }
 //^14CD:2807
@@ -3507,7 +3464,7 @@ X8 SkWinCore::PROCEED_XACT_68()
 	//^14CD:2F0D
 	X8 bp0d = xactrNo;
 	X16 bp06 = glbCurrentThinkingCreatureRec->b15_0_1();
-	if (CREATURE_CHECK_HANDLE_ITEM_AHEAD((_4976_4ee8 +2)&3) != 0) {
+	if (CREATURE_CHECK_HANDLE_ITEM_AHEAD((glbCreatureCommand_4976_4ee8 + 2)&3) != 0) {
 		//^14CD:2F30
 		bp0d = xactrNo;
 		glbCurrentThinkingCreatureData->Command = ccm1F;
@@ -3518,7 +3475,7 @@ X8 SkWinCore::PROCEED_XACT_68()
 		if (bp0c != OBJECT_NULL) {
 			//^14CD:2F70
 			ObjectID *bp04 = &GET_ADDRESS_OF_RECORD4(bp0c)->possession;
-			bp06 = (bp06 + _4976_4ee8)&3;
+			bp06 = (bp06 + glbCreatureCommand_4976_4ee8)&3;
 			i16 di = _14cd_2886_CREATURE(bp04, 0x10, (bp06 +2)&3, 1, 1, 0);
 			U8 bp22[18];
 			i16 bp10;
@@ -3569,7 +3526,7 @@ void SkWinCore::PROCEED_XACT_69()
 	X16 si = glbCurrentThinkingCreatureRec->b15_0_1();
 	bp04->w24.SetX((glbCreatureTimerGetX + glbXAxisDelta[si])&31);
 	bp04->w24.SetY((glbCreatureTimerGetY + glbYAxisDelta[si])&31);
-	bp04->b29 = U8(_4976_4ee8);
+	bp04->b29 = U8(glbCreatureCommand_4976_4ee8);
 	bp04->Command = (bp04->b29 == 1) ? ccm16 : ccm15;
 	//^14CD:240B
 	return;
@@ -3637,7 +3594,7 @@ X8 SkWinCore::PROCEED_XACT_71()
 	//^14CD:308C
 	ObjectID *bp04 = &glbCurrentThinkingCreatureRec->possession;
 	X16 si = _4976_4eea;
-	if (si != 0xfffe && (si != 0xffff || ((si = _4976_5154) != 0xffff)) && *bp04 != OBJECT_END_MARKER) {
+	if (si != 0xFFFE && (si != 0xFFFF || ((si = _4976_5154) != 0xFFFF)) && *bp04 != OBJECT_END_MARKER) {
 		//^14CD:30BD
 		_1c9a_078b(bp04, si, -1);
 	}
@@ -3646,8 +3603,8 @@ X8 SkWinCore::PROCEED_XACT_71()
 		//^14CD:30D8
 		return xactrNo;
 	//^14CD:30DC
-	si = _4976_4ee8;
-	if (si == 0xffff && (si = _4976_5152) == 0xffff)
+	si = glbCreatureCommand_4976_4ee8;
+	if (si == 0xFFFF && (si = _4976_5152) == 0xFFFF)
 		//^14CD:30F0
 		return xactrYes;
 	//^14CD:30F4
@@ -3683,7 +3640,7 @@ X8 SkWinCore::PROCEED_XACT_73()
 			//^14CD:3162
 			bp10 = si&16;
 			si &= 15;
-			bp0a = 1 << _4976_4ee8;
+			bp0a = 1 << glbCreatureCommand_4976_4ee8;
 			bp0c = ((bp0a & bp08->iAnimFrame) == bp0a) ? 1 : 0;
 			di = bp08->iAnimFrame;
 			if (si == 0) {
@@ -3774,28 +3731,21 @@ i8 SkWinCore::PROCEED_XACT_74()
 		si = CALC_VECTOR_DIR(glbCreatureTimerGetX, glbCreatureTimerGetY, bp04->w24.GetX(), bp04->w24.GetY());
 		if (glbCurrentThinkingCreatureRec->b15_0_1() == si)
 			return xactrYes;
-		//^14CD:337B
 		if (bp06 != 0 && RAND01() != 0) {
-			//^14CD:338A
 _338a:
-			bp04->Command = ccmNeutral;
-			//^14CD:3392
+			bp04->Command = ccm00_Neutral;
 			return xactrAgain;
 		}
-		//^14CD:3396
 		_19f0_0559(si);
 	}
 	else {
-		//^14CD:339F
 		if (bp06 != 0)
 			goto _338a;
 		X16 di = 0x80;
 		if (glbCurrentThinkingCreatureRec->w10_c_c() != 0)
 			di |= 0x20;
-		//^14CD:33B8
 		CREATURE_GO_THERE(di, glbCreatureTimerGetX, glbCreatureTimerGetY, -1, -1, bp04->b27);
 	}
-	//^14CD:33DA
 	return _4976_4ee5;
 }
 //^14CD:2162
@@ -3896,7 +3846,7 @@ void SkWinCore::PROCEED_XACT_79()
 	X16 bp06 = RAND01();
 	X16 bp08 = RAND02();
 	bp04->ItemToThrow = i8(0x82);
-	bp04->Command = (bp06 != 0) ? ccmCastSpell2 : ccmCastSpell1;
+	bp04->Command = (bp06 != 0) ? ccm28_CastSpell2 : ccm27_CastSpell1;
 	bp04->b27 = U8(bp08);
 	bp04->b28 = U8(bp06)&3;
 	bp04->b32 = 0;
@@ -3910,7 +3860,7 @@ X8 SkWinCore::PROCEED_XACT_80()
 	//^14CD:34D3
 	ENTER(2);
 	//^14CD:34D9
-	X16 di = _4976_4ee8;
+	X16 di = glbCreatureCommand_4976_4ee8;
 	X16 bp02 = (di == 0) ? 0 : 6;
 	X16 si = _4976_4eec;
 	_4976_4eec |= 0x1800;
@@ -3924,13 +3874,10 @@ X8 SkWinCore::PROCEED_XACT_80()
 // SPX: _14cd_3535 renamed PROCEED_XACT_81
 X8 SkWinCore::PROCEED_XACT_81()
 {
-	//^14CD:3535
 	ENTER(4);
-	//^14CD:3539
 	CreatureInfoData *bp04 = glbCurrentThinkingCreatureData;
-	_19f0_2813(_4976_5154|0x80, glbCreatureTimerGetX, glbCreatureTimerGetY, bp04->w24.GetX(), bp04->w24.GetY(), -1, _4976_5152);
+	CREATURE_19f0_2813(_4976_5154|0x80, glbCreatureTimerGetX, glbCreatureTimerGetY, bp04->w24.GetX(), bp04->w24.GetY(), -1, _4976_5152);
 	return _4976_4ee5;
-	//^14CD:3580
 }
 
 //^14CD:3582
@@ -4064,7 +4011,7 @@ X8 SkWinCore::PROCEED_XACT_82()
 		glbCurrentThinkingCreatureData->Command = ccm1D;
 		Creature *bp04 = GET_ADDRESS_OF_RECORD4(bp0c);
 		//^14CD:3718
-		if (_4976_4ee8 == 0) {
+		if (glbCreatureCommand_4976_4ee8 == 0) {
 			//^14CD:3722
 			ObjectID bp12 = CREATURE_CAN_HANDLE_ITEM_IN(0x3e, GET_ADDRESS_OF_RECORD4(bp0c)->GetPossessionObject(), (glbCurrentThinkingCreatureRec->b15_0_1() +2)&3);
 			if (bp12 == OBJECT_END_MARKER)
@@ -4080,11 +4027,11 @@ X8 SkWinCore::PROCEED_XACT_82()
 		else {
 			//^14CD:37A7
 			i16 *bp08;
-			if (_4976_4ee8 == 1) {
+			if (glbCreatureCommand_4976_4ee8 == 1) {
 				//^14CD:37AE
 				bp08 = &glbCurrentThinkingCreatureData->w16;
 			}
-			else if (_4976_4ee8 == 2) {
+			else if (glbCreatureCommand_4976_4ee8 == 2) {
 				//^14CD:37C1
 				bp08 = &glbCurrentThinkingCreatureData->w14;
 			}
@@ -4103,7 +4050,7 @@ X8 SkWinCore::PROCEED_XACT_82()
 				//^14CD:3800
 			}
 			//^14CD:380E
-			_4976_4ee8 = 0x47;
+			glbCreatureCommand_4976_4ee8 = 0x47;
 			if (*bp08 <= 0) {
 				//^14CD:381D
 				bp09 = PROCEED_XACT_64();
@@ -4159,15 +4106,15 @@ i8 SkWinCore::PROCEED_XACT_83()
 	ENTER(2);
 	//^14CD:38C6
 	i8 bp01 = xactrYes;
-	if (glbCurrentThinkingCreatureRec->w10_7_7() == 0 && _4976_4ee8 == 0) {
+	if (glbCurrentThinkingCreatureRec->w10_7_7() == 0 && glbCreatureCommand_4976_4ee8 == 0) {
 		//^14CD:38DD
 		bp01 = xactrNo;
 	}
 	else {
 		//^14CD:38E3
-		glbCurrentThinkingCreatureData->Command = BETWEEN_VALUE(0, _4976_4ee8, 2) +0x23;
+		glbCurrentThinkingCreatureData->Command = BETWEEN_VALUE(0, glbCreatureCommand_4976_4ee8, 2) +0x23;
 		//^14CD:38FD
-		if (glbCurrentThinkingCreatureRec->w10_7_7() != 0 && _4976_4ee8 == 1) {
+		if (glbCurrentThinkingCreatureRec->w10_7_7() != 0 && glbCreatureCommand_4976_4ee8 == 1) {
 			//^14CD:3910
 			bp01 = xactrAgain;
 		}
@@ -4235,7 +4182,7 @@ X8 SkWinCore::PROCEED_XACT_84()
 		//^14CD:39A4
 		CUT_RECORD_FROM(si, &glbCurrentThinkingCreatureRec->possession, -1, 0);
 		DEALLOC_RECORD(si);
-		glbCurrentThinkingCreatureData->Command = ccmNeutral;
+		glbCurrentThinkingCreatureData->Command = ccm00_Neutral;
 		bp05 = xactrYes;
 	}
 	else {
@@ -4264,7 +4211,7 @@ i8 SkWinCore::PROCEED_XACT_85()
 				if (bp04->SimpleTextExtUsage() == 1) {
 					//^14CD:3A61
 					glbCurrentThinkingCreatureData->ItemToThrow = i8(bp06 & 0xff);
-					glbCurrentThinkingCreatureData->Command = ccmTransform;
+					glbCurrentThinkingCreatureData->Command = ccm3B_Transform1;
 					return xactrYes;
 				}
 			}
@@ -4272,7 +4219,7 @@ i8 SkWinCore::PROCEED_XACT_85()
 		//^14CD:3A77
 	}
 	//^14CD:3A94
-	CREATURE_SET_NEW_COMMAND(glbCurrentThinkingCreatureID, glbCreatureTimerGetX, glbCreatureTimerGetY, ccmDestroy, 1);
+	CREATURE_SET_NEW_COMMAND(glbCurrentThinkingCreatureID, glbCreatureTimerGetX, glbCreatureTimerGetY, ccm13_Destroy, 1);
 	glbCurrentThinkingCreatureData->Command = ccm33;
 	return xactrNo;
 	//^14CD:3ABB
@@ -4281,29 +4228,22 @@ i8 SkWinCore::PROCEED_XACT_85()
 // SPX: _14cd_3abf renamed PROCEED_XACT_86
 X8 SkWinCore::PROCEED_XACT_86() 
 {
-	//^14CD:3ABF
 	ENTER(4);
-	//^14CD:3AC3
 	CreatureInfoData *bp04 = glbCurrentThinkingCreatureData;
 	bp04->b32 = _4976_514e.b4();
 	bp04->ItemToThrow = _4976_514e.b6();
-	bp04->Command = U8(_4976_4ee8) + ccmExplode;
-	//^14CD:3AEA
+	bp04->Command = U8(glbCreatureCommand_4976_4ee8) + ccm3D_Explode;
 	return xactrYes;
 }
 //^14CD:3AEE
 // SPX: _14cd_3aee renamed PROCEED_XACT_72_87_88
 void SkWinCore::PROCEED_XACT_72_87_88()
 {
-	//^14CD:3AEE
 	ENTER(0);
-	//^14CD:3AF1
-	U8 dl = U8(_4976_4ee8);
-	if (dl == U8(ccmInv))
-		dl = U8(_4976_5152);
-	//^14CD:3AFF
-	glbCurrentThinkingCreatureData->Command = dl;
-	//^14CD:3B09
+	U8 iNewCommand = U8(glbCreatureCommand_4976_4ee8);	// dl
+	if (iNewCommand == U8(ccmFF_Idle))
+		iNewCommand = U8(_4976_5152); // (_4976_514e.w4)
+	glbCurrentThinkingCreatureData->Command = iNewCommand;
 	return;
 }
 //^14CD:3B0B
@@ -4326,21 +4266,17 @@ X8 SkWinCore::PROCEED_XACT_89()
 // SPX: _14cd_3b4c renamed PROCEED_XACT_90
 X8 SkWinCore::PROCEED_XACT_90()
 {
-	//^14CD:3B4C
 	ENTER(2);
-	//^14CD:3B50
 	X8 bp01;
-	return bp01 = ((RAND16(0x64) < _4976_4ee8) ? xactrYes : xactrNo);
+	return bp01 = ((RAND16(0x64) < glbCreatureCommand_4976_4ee8) ? xactrYes : xactrNo);
 }
 //^14CD:3B69
 // SPX: _14cd_3b69 renamed PROCEED_XACT_91
 X8 SkWinCore::PROCEED_XACT_91()
 {
-	//^14CD:3B69
 	ENTER(0);
-	//^14CD:3B6C
 	return (false
-		|| CREATURE_CAN_HANDLE_ITEM_IN(_4976_4ee8, glbCurrentThinkingCreatureRec->GetPossessionObject(), -1) != OBJECT_END_MARKER
+		|| CREATURE_CAN_HANDLE_ITEM_IN(glbCreatureCommand_4976_4ee8, glbCurrentThinkingCreatureRec->GetPossessionObject(), -1) != OBJECT_END_MARKER
 		|| CREATURE_CAN_HANDLE_ITEM_IN(_4976_4eea, glbCurrentThinkingCreatureRec->GetPossessionObject(), -1) != OBJECT_END_MARKER
 		) ? xactrYes : xactrNo;
 }
@@ -4348,15 +4284,12 @@ X8 SkWinCore::PROCEED_XACT_91()
 // SPX: _14cd_248d renamed PROCEED_XACT_70
 X8 SkWinCore::PROCEED_XACT_70()
 {
-	//^14CD:248D
 	ENTER(8);
-	//^14CD:2493
 	CreatureInfoData *bp04 = glbCurrentThinkingCreatureData;
 	X8 bp05 = xactrNo;
-	X16 bp08 = _4976_4ee8;
+	X16 bp08 = glbCreatureCommand_4976_4ee8;
 	if (bp08 == 0xffff)
 		bp08 = 0x3f;
-	//^14CD:24B4
 	bp04->w24.SetX(glbCreatureTimer.b6_0_4());
 	bp04->w24.SetY(glbCreatureTimer.b7_0_4());
 	bp04->b28 = (glbCurrentThinkingCreatureRec->b15_0_1() +2)&3;
@@ -4365,16 +4298,14 @@ X8 SkWinCore::PROCEED_XACT_70()
 	bp04->w24.SetY(bp04->w24.GetY() + glbYAxisDelta[glbCurrentThinkingCreatureRec->b15_0_1()]);
 	ObjectID si = GET_CREATURE_AT(bp04->w24.GetX(), bp04->w24.GetY());
 	if (si != OBJECT_NULL) {
-		//^14CD:2578
 		if (CREATURE_CAN_HANDLE_ITEM_IN(bp08, GET_ADDRESS_OF_RECORD4(si)->possession, bp04->b28) == OBJECT_END_MARKER) {
 			bp05 = xactrYes;
 		}
 		else {
-			bp04->Command = ccmTakeMerchandise;
+			bp04->Command = ccm18_TakeMerchandise;
 			bp05 = xactrAgain;
 		}
 	}
-	//^14CD:25B1
 	return bp05;
 }
 
@@ -4399,137 +4330,105 @@ i8 SkWinCore::PROCEED_XACT(i8 xact)
 		PROCEED_XACT_57();
 		break;
 	case 58://^2023	// XACT 58 tells creature to destroy itself ?
-		//^14CD:2023
-		glbCurrentThinkingCreatureData->Command = ccmDestroy;
+		glbCurrentThinkingCreatureData->Command = ccm13_Destroy;
 		break;
 	case 76://^202F
-		//^14CD:202F
-		_4976_4ee8 = 0xffff;
+		glbCreatureCommand_4976_4ee8 = 0xFFFF;
 		_4976_4eea = 0;
 		bp01 = PROCEED_XACT_59_76();
 		break;
 	case 59://^203B
-		//^14CD:203B
 		bp01 = PROCEED_XACT_59_76();
 		break;
 	case 60://^2043 // still. do nothing
-		//^14CD:2043
-		glbCurrentThinkingCreatureData->Command = ccmNeutral;
+		glbCurrentThinkingCreatureData->Command = ccm00_Neutral;
 		break;
 	case 62://^204F
-		//^14CD:204F
 		bp01 = PROCEED_XACT_62();
 		break;
 	case 63://^2057
-		//^14CD:2057
 		bp01 = PROCEED_XACT_63();
 		break;
 	case 64://^205F
-		//^14CD:205F
 		bp01 = PROCEED_XACT_64();
 		break;
 	case 65://^2067
-		//^14CD:2067
 		bp01 = PROCEED_XACT_65();
 		break;
 	case 66://^206F
-		//^14CD:206F
 		bp01 = PROCEED_XACT_66();
 		break;
 	case 67://^2077
-		//^14CD:2077
 		bp01 = PROCEED_XACT_67();
 		break;
 	case 68://^207F
-		//^14CD:207F
 		bp01 = PROCEED_XACT_68();
 		break;
 	case 69://^2087
-		//^14CD:2087
 		PROCEED_XACT_69();
 		break;
 	case 70://^208F
-		//^14CD:208F
 		bp01 = PROCEED_XACT_70();
 		break;
 	case 71://^2096
-		//^14CD:2096
 		bp01 = PROCEED_XACT_71();
 		break;
 	case 73://^209D
-		//^14CD:209D
 		bp01 = PROCEED_XACT_73();
 		break;
 	case 74://^20A4
-		//^14CD:20A4
 		bp01 = PROCEED_XACT_74();
 		break;
 	case 75://^20AB
-		//^14CD:20AB
 		bp01 = PROCEED_XACT_75();
 		break;
 	case 77://^20B2
-		//^14CD:20B2
 		bp01 = PROCEED_XACT_77();
 		break;
 	case 78://^20B9
-		//^14CD:20B9
 		bp01 = PROCEED_XACT_78();
 		break;
 	case 79://^20C0
-		//^14CD:20C0
 		PROCEED_XACT_79();
 		break;
 	case 80://^20C7
-		//^14CD:20C7
 		bp01 = PROCEED_XACT_80();
 		break;
 	case 81://^20CE
-		//^14CD:20CE
 		bp01 = PROCEED_XACT_81();
 		break;
 	case 82://^20D5
-		//^14CD:20D5
 		bp01 = PROCEED_XACT_82();
 		break;
 	case 83://^20DC
-		//^14CD:20DC
 		bp01 = PROCEED_XACT_83();
 		break;
 	case 84://^20E3
-		//^14CD:20E3
 		bp01 = PROCEED_XACT_84();
 		break;
 	case 85://^20EA
-		//^14CD:20EA
 		bp01 = PROCEED_XACT_85();
 		break;
 	case 86://^20F1
-		//^14CD:20F1
 		bp01 = PROCEED_XACT_86();
 		break;
 	case 72://^20F8
 	case 87://^20F8
 	case 88://^20F8
-		//^14CD:20F8
 		PROCEED_XACT_72_87_88();
 		break;
 	case 89://^20FF
-		//^14CD:20FF
 		bp01 = PROCEED_XACT_89();
 		break;
 	case 90://^2106
-		//^14CD:2106
 		bp01 = PROCEED_XACT_90();
 		break;
 	case 91://^210D
-		//^14CD:210D
 		bp01 = PROCEED_XACT_91();
 		break;
 	case 61://^2115
 		break;
 	}
-	//^14CD:2115
 	SkD((DLV_CAI, "CAI: --S a#%03d r %d   %s \n"
 		, (Bitu)glbCurrentThinkingCreatureData->CreatureIndex(), (Bits)bp01, getXActrName((Bits)bp01)
 		));
@@ -4616,7 +4515,7 @@ void SkWinCore::CREATURE_THINK_09E2()
 	if (glbCreatureAIRefLev1Ptr->pv2 == _4976_1d6c) {
 		//^14CD:0A43
 	_0a43:
-		xCreatureInfo->Command = ccmNeutral;
+		xCreatureInfo->Command = ccm00_Neutral;
 		return;
 	}
 	//^14CD:0A4E
@@ -4672,7 +4571,7 @@ void SkWinCore::CREATURE_THINK_09E2()
 							if (_19f0_13aa(glbCreatureTimer.XcoordB(), glbCreatureTimer.YcoordB()) != 0) {
 								xCreatureInfo->x = xactrNeedReset;
 								xCreatureInfo->y = 0;
-								xCreatureInfo->Command = ccmCastSpell1or2;
+								xCreatureInfo->Command = ccm55_CastSpell1or2;
 								goto _0eee;
 							}
 						}
@@ -4703,7 +4602,7 @@ void SkWinCore::CREATURE_THINK_09E2()
 		}
 	}
 	//^14CD:0D4F
-	xCreatureInfo->Command = ccmInv;
+	xCreatureInfo->Command = ccmFF_Idle;
 	bp0d = SELECT_CREATURE_3672();
 	X8 bp11;
 	X8 bp12;
@@ -4712,7 +4611,7 @@ void SkWinCore::CREATURE_THINK_09E2()
 	if (bp0d == -3) {
 		if ((_4976_5162 & 0x80) == 0) {
 			//^14CD:0D6F
-			xCreatureInfo->Command = ccmNeutral;
+			xCreatureInfo->Command = ccm00_Neutral;
 		}
 		else {
 			//^14CD:0D7A
@@ -4767,16 +4666,13 @@ void SkWinCore::CREATURE_THINK_09E2()
 			if (bp0d != xactrAgain) {
 				si |= CREATURE_THINK_08F5(bp0d);
 			}
-			//^14CD:0EAC
 			if (si != 0)
 				_4976_514e.b1 = 0;
 			if (di++ > 0x20)
-				xCreatureInfo->Command = ccmNeutral;
-			//^14CD:0EC5
-			if (xCreatureInfo->Command == i8(ccmInv) && bp0d != xactrAgain && xCreatureInfo->x == xactrNeedReset)
-				xCreatureInfo->Command = ccmNeutral;
-			//^14CD:0EE1
-		} while (xCreatureInfo->Command == i8(ccmInv));
+				xCreatureInfo->Command = ccm00_Neutral;
+			if (xCreatureInfo->Command == i8(ccmFF_Idle) && bp0d != xactrAgain && xCreatureInfo->x == xactrNeedReset)
+				xCreatureInfo->Command = ccm00_Neutral;
+		} while (xCreatureInfo->Command == i8(ccmFF_Idle));
 	}
 	//^14CD:0EEE
 _0eee:
@@ -4853,7 +4749,7 @@ U16 SkWinCore::CREATURE_WALK_NOW()
 	CreatureInfoData *bp04 = glbCurrentThinkingCreatureData;
 	if (glbAIDef->PushWhenMoving() != 0) {
 		//^1887:0115
-		bp04->Command = ccmPushBack;
+		bp04->Command = ccm26_PushBack;
 		bp04->b28 = 4;
 		CREATURE_ATTACKS_PARTY();
 	}
@@ -5282,7 +5178,7 @@ X16 SkWinCore::CREATURE_ATTACKS_PARTY()
 			return 1;
 	}
 	//^1887:0960
-	if (bp08->Command == ccmPushBack) {
+	if (bp08->Command == ccm26_PushBack) {
 		//^1887:096A
 		if ((GET_CREATURE_WEIGHT(glbCurrentThinkingCreatureID) > 100 && (RAND() & 15) != 0) || RAND02() != 0) {
 			//^1887:098C
@@ -5293,7 +5189,7 @@ X16 SkWinCore::CREATURE_ATTACKS_PARTY()
 	return 0;
 }
 //^1887:09AB
-// CREATURE_ccmCastSpell1
+// CREATURE_ccm27_CastSpell1
 X16 SkWinCore::CREATURE_CAST_SPELL()
 {
 	//^1887:09AB
@@ -5575,7 +5471,7 @@ X16 SkWinCore::CREATURE_PUTS_DOWN_ITEM()
 	return (di == 0) ? 1 : 0;
 }
 //^1887:0DF7
-void SkWinCore::CREATURE_KILL_ON_TIMER_POSITION()	// ccmDestroy
+void SkWinCore::CREATURE_KILL_ON_TIMER_POSITION()	// ccm13_Destroy
 {
 	ENTER(0);
 	DELETE_CREATURE_RECORD(glbCreatureTimerGetX, glbCreatureTimerGetY, CREATURE_GENERATED_DROPS, 1);
@@ -5674,20 +5570,14 @@ X16 SkWinCore::TAKE_MERCHANDISE()
 //^1887:1191
 X16 SkWinCore::CREATURE_ACTIVATES_WALL()
 {
-	//^1887:1191
 	ENTER(6);
-	//^1887:1197
 	CreatureInfoData *bp04 = glbCurrentThinkingCreatureData;
 	i16 di = bp04->ItemToThrow;
 	i16 bp06;
-	if (_19f0_2813((bp06 = bp04->b32)|0x80, glbCreatureTimerGetX, glbCreatureTimerGetY, glbCreatureTempTargetX, glbCreatureTempTargetY, glbCurrentThinkingCreatureRec->b15_0_1(), di) == 0)
-		//^1887:11E8
-		//^1887:1266
+	if (CREATURE_19f0_2813((bp06 = bp04->b32)|0x80, glbCreatureTimerGetX, glbCreatureTimerGetY, glbCreatureTempTargetX, glbCreatureTempTargetY, glbCurrentThinkingCreatureRec->b15_0_1(), di) == 0)
 		return 1;
 	ObjectID si;
-	//^1887:11EA
 	if (bp06 == 2 || di == -1) {
-		//^1887:11F5
 		si = OBJECT_NULL;
 	}
 	else {
@@ -5810,7 +5700,7 @@ void SkWinCore::CREATURE_TRANSFORM()
 	U16 di = glbCreatureTimerGetX;
 	U16 si = glbCreatureTimerGetY;
 	i8 bp07 = bp04->b31;
-	if (bp04->Command == ccmTransform) {
+	if (bp04->Command == ccm3B_Transform1) {
 		//^1887:12A6
 		X16 bp06 = RAND02() +1;
 		for (; bp06-- != 0; ) {
@@ -5832,7 +5722,7 @@ void SkWinCore::CREATURE_TRANSFORM()
 		}
 		else {
 			//^1887:1321
-			bp04->Command = ccmTransform2;
+			bp04->Command = ccm3C_Transform2;
 			bp04->b31 = 0;
 			glbCurrentThinkingCreatureRec->HP3(0);
 			glbCurrentThinkingCreatureRec->CreatureType(bp04->ItemToThrow);
@@ -5896,17 +5786,15 @@ X16 SkWinCore::CREATURE_EXPLODE_OR_SUMMON()
 }
 
 //^1887:150C
+// Proceed Creature Command
 U16 SkWinCore::PROCEED_CCM()
 {
-	//^1887:150C
 	ENTER(0);
-	//^1887:1510
-	X16 si = 0;
+	X16 iCCMResult = 0;	// si
 	_4976_520e = ALLOC_MEMORY_RAM(0x100, afDefault, 1024);
 	glbCreatureTempTargetX = glbCurrentThinkingCreatureData->w24.GetX();
 	glbCreatureTempTargetY = glbCurrentThinkingCreatureData->w24.GetY();
 
-	//^1887:1546
 	SkD((DLV_CAI, "CAI: T-- a#%03d ccm<%02X> (%2d,%2d) \n"
 		, (Bitu)glbCurrentThinkingCreatureData->CreatureIndex(), (Bitu)glbCurrentThinkingCreatureData->Command, (Bitu)glbCreatureTempTargetX, (Bitu)glbCreatureTempTargetY 
 		));
@@ -5915,87 +5803,70 @@ U16 SkWinCore::PROCEED_CCM()
 	case ccm01://^155D
 	case ccm02://^155D // track objective located at (glbCreatureTempTargetX,glbCreatureTempTargetY)
 	case ccm09://^155D
-		//^1887:155D
-		si = CREATURE_WALK_NOW();
+		iCCMResult = CREATURE_WALK_NOW();
 		break;
 	case ccm03://^1563 // track you?	// turn left and move
 	case ccm04://^1563					// turn right ? and move
-		//^1887:1563
-		si = CREATURE_CCM03();
+		iCCMResult = CREATURE_CCM03();
 		break;
-	case ccmJump://^1569
-		//^1887:1569
-		si = CREATURE_JUMPS();
+	case ccm05_Jump://^1569
+		iCCMResult = CREATURE_JUMPS();
 		break;
 	case ccm06://^156F					// simply turn left
 	case ccm07://^156F					// turn right ?
-		//^1887:156F
 		CREATURE_CCM06();
 		break;
-	case ccmMeleeAttack://^1575 // attack you?
-	case ccmPushBack://^1575
-		//^1887:1575
-		si = CREATURE_ATTACKS_PARTY();
+	case ccm08_MeleeAttack://^1575 // attack you?
+	case ccm26_PushBack://^1575
+		iCCMResult = CREATURE_ATTACKS_PARTY();
 		break;
-	case ccmCastSpell1://^157B
-	case ccmCastSpell2://^157B // throw you something. poison ball?
-		//^1887:157B
-		si = CREATURE_CAST_SPELL();
+	case ccm27_CastSpell1://^157B
+	case ccm28_CastSpell2://^157B // throw you something. poison ball?
+		iCCMResult = CREATURE_CAST_SPELL();
 		break;
-	case ccmSteal://^1581
-		//^1887:1581
-		si = CREATURE_STEAL_FROM_CHAMPION();
+	case ccm0A_Steal://^1581
+		iCCMResult = CREATURE_STEAL_FROM_CHAMPION();
 		break;
 	case ccm0B://^1587
-		//^1887:1587
-		si = CREATURE_CCM0B();
+		iCCMResult = CREATURE_CCM0B();
 		break;
 	case ccm0C://^158D
 	case ccm0D://^158D
-		//^1887:158D
-		si = CREATURE_CCM0C();
+		iCCMResult = CREATURE_CCM0C();
 		break;
-	case ccm1A://^1593
-	case ccm2B://^1593
-	case ccm2C://^1593
-		//^1887:1593
-		si = CREATURE_TAKES_ITEM();
+	case ccm1A_PickItem://^1593
+	case ccm2B_PickItem://^1593
+	case ccm2C_PickItem://^1593
+		iCCMResult = CREATURE_TAKES_ITEM();
 		break;
-	case ccmShootItem1://^1599
-	case ccmShootItem2://^1599
-		//^1887:1599
-		si = CREATURE_SHOOT_ITEM();
+	case ccm0E_ShootItem1://^1599
+	case ccm0F_ShootItem2://^1599
+		iCCMResult = CREATURE_SHOOT_ITEM();
 		break;
 	case ccm19://^159F
 	case ccm29://^159F
 	case ccm2A://^159F
 	case ccm2D://^159F
 	case ccm2E://^159F
-		//^1887:159F
-		si = CREATURE_PUTS_DOWN_ITEM();
+		iCCMResult = CREATURE_PUTS_DOWN_ITEM();
 		break;
-	case ccmDestroy://^15A5
-		//^1887:15A5
+	case ccm13_Destroy://^15A5
 		CREATURE_KILL_ON_TIMER_POSITION();
 		break;
 	case ccm15://^15AB
 	case ccm16://^15AB
-		//^1887:15AB
-		si = CREATURE_ROTATES_TARGET_CREATURE();
+		iCCMResult = CREATURE_ROTATES_TARGET_CREATURE();
 		break;
-	case ccmPlaceMerchandise://^15B1
-		//^1887:15B1
-		si = PLACE_MERCHANDISE();
+	case ccm17_PlaceMerchandise://^15B1
+		iCCMResult = PLACE_MERCHANDISE();
 		break;
-	case ccmTakeMerchandise://^15B7
-		//^1887:15B7
-		si = TAKE_MERCHANDISE();
+	case ccm18_TakeMerchandise://^15B7
+		iCCMResult = TAKE_MERCHANDISE();
 		break;
-	case ccm2F://^15BD
-	case ccm30://^15BD
-	case ccm31://^15BD
-		//^1887:15BD
-		si = CREATURE_ACTIVATES_WALL();
+	case ccm2F_ActivateWallSwitch://^15BD
+	case ccm30_ActivateWallSwitch://^15BD
+	case ccm31_ActivateWallSwitch://^15BD
+		iCCMResult = CREATURE_ACTIVATES_WALL();
 		break;
 	case ccm35://^15C3
 	case ccm36://^15C3
@@ -6003,23 +5874,20 @@ U16 SkWinCore::PROCEED_CCM()
 	case ccm38://^15C3
 	case ccm39://^15C3
 	case ccm3A://^15C3
-		//^1887:15C3
-		si = CREATURE_USES_LADDER_HOLE();
+		iCCMResult = CREATURE_USES_LADDER_HOLE();
 		break;
-	case ccmTransform://^15C9	// ccm3B
-	case ccmTransform2://^15C9
-		//^1887:15C9
+	case ccm3B_Transform1://^15C9	// ccm3B
+	case ccm3C_Transform2://^15C9
 		CREATURE_TRANSFORM();
 		break;
-	case ccmExplode://^15CF
+	case ccm3D_Explode://^15CF
 	case ccm3E://^15CF
 	case ccm3F://^15CF
 	case ccm40://^15CF
-		//^1887:15CF
 		CREATURE_EXPLODE_OR_SUMMON();
 		break;	// SPX: added break here, safer.
 	case ccm10://^15D5
-	case ccmSpawn://^15D5
+	case ccm11_Spawn://^15D5
 	case ccm12://^15D5
 	case ccm14://^15D5
 	case ccm1B://^15D5
@@ -6038,27 +5906,23 @@ U16 SkWinCore::PROCEED_CCM()
 	case ccm34://^15D5
         break;
 	}
-	//^1887:15D5
 	SkD((DLV_CAI, "CAI: --T a#%03d r %d \n"
-		, (Bitu)glbCurrentThinkingCreatureData->CreatureIndex(), (Bits)si
+		, (Bitu)glbCurrentThinkingCreatureData->CreatureIndex(), (Bits)iCCMResult
 		));
 
-	if (si != 0) {
+	if (iCCMResult != 0) {
 		_4976_514e.b1 = 0;
 	}
 	else {
-		//^1887:15E0
 		if ((tlbCreatureCommandsFlags[RCJ(MAX_CREATURE_COMMANDS,glbCurrentThinkingCreatureData->Command)] & 3) != 0) {
-			//^1887:15F2
 			glbCurrentThinkingCreatureData->b4 = U8(glbGameTick);
 		}
 	}
-	//^1887:15FD
 	_4976_520e = NULL;
 	DEALLOC_UPPER_MEMORY(0x100);
-	//^1887:1615
-	return si;
+	return iCCMResult;
 }
+
 //^4937:028A
 X16 SkWinCore::CREATURE_4937_028a(U16 xx, U16 *yy, CreatureAnimationFrame **ref)
 {
@@ -6118,7 +5982,7 @@ void SkWinCore::CREATURE_THINK_0982()
 		
 	}
 	sk1c9a02c3 *bp08;
-	if (glbGlobalSpellEffects.FreezeCounter != 0 && glbAIDef->w0_c_c() == 0 && xCreatureInfo->Command != ccmDestroy && xCreatureInfo->Command2 != ccmDestroy) {
+	if (glbGlobalSpellEffects.FreezeCounter != 0 && glbAIDef->w0_c_c() == 0 && xCreatureInfo->Command != ccm13_Destroy && xCreatureInfo->Command2 != ccm13_Destroy) {
 		//^13E4:09B8
 		glbCreatureTimer.dw00 += 4;
 		goto _0c47;
@@ -6139,12 +6003,12 @@ void SkWinCore::CREATURE_THINK_0982()
 		//^13E4:09E1
 		//LOGX(("13E4:09E1 ccm%02X", (U8)xCreatureInfo->Command2));
 		xCreatureInfo->Command = xCreatureInfo->Command2;
-		if (xCreatureInfo->Command != i8(ccmInv)) {
+		if (xCreatureInfo->Command != i8(ccmFF_Idle)) {
 			//^13E4:09F0
-			xCreatureInfo->Command2 = ccmInv;
-			if (_14cd_062e() != 0 && xCreatureInfo->Command != ccmDestroy) {
+			xCreatureInfo->Command2 = ccmFF_Idle;
+			if (_14cd_062e() != 0 && xCreatureInfo->Command != ccm13_Destroy) {
 				//^13E4:0A08
-				xCreatureInfo->Command = ccmInv;
+				xCreatureInfo->Command = ccmFF_Idle;
 				goto _0a6a;
 			}
 			//^13E4:0A0F
@@ -6172,7 +6036,7 @@ void SkWinCore::CREATURE_THINK_0982()
 		//^13E4:0A6A
 _0a6a:
 		X16 iUpcomingCommand; // si
-		if (xCreatureInfo->Command == ccmDestroy) {
+		if (xCreatureInfo->Command == ccm13_Destroy) {
 			//^13E4:0A74
 			xCreatureInfo->w14 = CREATURE_SEQUENCE_4937_000f(bp08->iAnimSeq, &bp08->iAnimInfo);
 			if ((tblAIStats01[QUERY_GDAT_CREATURE_WORD_VALUE(glbCurrentThinkingCreatureRec->CreatureType(), 1)] & 8) == 0) {
@@ -6204,10 +6068,9 @@ _0a6a:
 			glbCreatureTimer.SetTick(glbGameTick + (iUpcomingCommand - 50));	// ccm32 to ccm34 are 50 to 52, then same command but with different delay ?
 			goto _0c47;
 		}
-		//^13E4:0B2B
-		if (iUpcomingCommand == ccmCastSpell1or2) { // 0x55
+		if (iUpcomingCommand == ccm55_CastSpell1or2) { // 0x55
 			//si = (RAND01() != 0) ? 0x27 : 0x28;
-			iUpcomingCommand = (RAND01() != 0) ? ccmCastSpell1 : ccmCastSpell2;
+			iUpcomingCommand = (RAND01() != 0) ? ccm27_CastSpell1 : ccm28_CastSpell2;
 		}
 		CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_YELLOW, BLACK);
 		SkD((DLV_DBG_CANIM, "Creature => Commands : %02X %02X / Upcoming : %02X\n", xCreatureInfo->Command, xCreatureInfo->Command2, iUpcomingCommand));
@@ -6215,7 +6078,7 @@ _0a6a:
 		// SPX: try this : set to neutral if the next command would be the same as current (which may be not terminated)
 		/*if (SkCodeParam::bUseFixedMode) {
 			if (iUpcomingCommand == xCreatureInfo->Command)
-				iUpcomingCommand = ccmNeutral;
+				iUpcomingCommand = ccm00_Neutral;
 		}*/
 		//^13E4:0B43
 		di = GET_CREATURE_ANIMATION_FRAME(glbCurrentThinkingCreatureRec->CreatureType(), iUpcomingCommand, &bp08->iAnimSeq, &bp08->iAnimInfo, &glbCreatureAnimationFrame, 0);
@@ -6540,7 +6403,7 @@ void SkWinCore::ACTIVATE_CREATURE_KILLER(X16 argLo, X16 argHi, X16 srcx, X16 src
 						continue;
 					case 2:
 						//^3A15:0E9F
-						CREATURE_SET_NEW_COMMAND(bp02, tarx + si, tary + di, ccmDestroy, 1);
+						CREATURE_SET_NEW_COMMAND(bp02, tarx + si, tary + di, ccm13_Destroy, 1);
 						continue;
 					default:
 						return;
