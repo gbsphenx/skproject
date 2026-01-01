@@ -4315,18 +4315,13 @@ i8 SkWinCore::PROCEED_XACT(i8 xact)
 	SkD((DLV_CAI, "CAI: S-- a#%03d PROCEED_XACT_%d\n"
 		, (Bitu)glbCurrentThinkingCreatureData->CreatureIndex(), (Bitu)xact, (Bitu)xact
 		));
-	//^14CD:1FF3
 	ENTER(2);
-	//^14CD:1FF7
 	i8 bp01 = -2;
-	//printf("XACT = %d\n", xact);
 	switch (xact) {
 	case 56://^2013
-		//^14CD:2013
 		bp01 = PROCEED_XACT_56();
 		break;
 	case 57://^201B
-		//^14CD:201B
 		PROCEED_XACT_57();
 		break;
 	case 58://^2023	// XACT 58 tells creature to destroy itself ?
@@ -4439,55 +4434,41 @@ i8 SkWinCore::PROCEED_XACT(i8 xact)
 // SPX: _14cd_08f5 renamed CREATURE_THINK_08F5
 X16 SkWinCore::CREATURE_THINK_08F5(i8 xx)
 {
-	//^14CD:08F5
 	ENTER(10);
-	//^14CD:08FA
-	i8 cl = xx;
+	i8 cl = xx;	// cl
 	CreatureInfoData *xCreatureInfo = glbCurrentThinkingCreatureData;	 // bp08
-	i8 bp09 = -1;
-	X16 si = 0;
-	bp09 = xCreatureInfo->x;
-	i8 bp0a = xCreatureInfo->y;
-	sk3672 *bp04 = _4976_3672[RCJ(56,bp09)];
+	X16 si = 0;	// si
+	i8 iThinkX = xCreatureInfo->x;	// bp09
+	i8 iThinkY = xCreatureInfo->y;	// bp0a
+	sk3672 *bp04 = _4976_3672[RCJ(56,iThinkX)];
 	cl = (cl == xactrYes)
-		? bp04[bp0a].b1()
-		: bp04[bp0a].b2();
+		? bp04[iThinkY].b1()
+		: bp04[iThinkY].b2();
 	if (cl == xactrYes || cl == xactrNo) {
-		//^14CD:096F
 		xCreatureInfo->x = xactrNeedReset;
 		xCreatureInfo->y = 0;
 		return si = 1;
 	}
-	//^14CD:0981
 	if (cl <= xactrNext1 && cl >= xactrNext2) {
-		//^14CD:098B
 		if (cl != xactrRetry) {
 			if (cl == xactrNext2) {
-				//^14CD:0995
-				bp0a += 2;
+				iThinkY += 2;
 			}
-			//^14CD:099F
 			else if (cl == xactrNext1) {
-				//^14CD:09A4
-				bp0a += +1;
+				iThinkY += +1;
 			}
 			else {
-				//^14CD:09A8
-				bp0a += -1;
+				iThinkY += -1;
 			}
-			//^14CD:09B2
 			si = 1;
 		}
 	}
 	else {
-		//^14CD:09B7
-		si = (bp0a != cl) ? 1 : 0;
-		bp0a = cl;
+		si = (iThinkY != cl) ? 1 : 0;
+		iThinkY = cl;
 	}
-	//^14CD:09CC
-	xCreatureInfo->x = bp09;
-	xCreatureInfo->y = bp0a;
-	//^14CD:09DD
+	xCreatureInfo->x = iThinkX;
+	xCreatureInfo->y = iThinkY;
 	return si;
 }
 

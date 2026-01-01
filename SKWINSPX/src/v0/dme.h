@@ -2088,29 +2088,29 @@ namespace DM2Internal {
 
 	// Digging deeper into the data files:
 	// http://www.dungeon-master.com/forum/viewtopic.php?t=24695
-
-	// The description of CommandNumber and CommandMeaning are supplied by Suule!
+	// http://dmweb.free.fr/games/dungeon-master-ii/solutions/items/
+	// The description of CommandNumber and CommandMeaning are supplied by Suule & Christophe F!
 
 	// 
 	enum CommandNumber {
-		CnSK, // 0
-		CnLV, // 1
-		CnCM, // 2
-		CnBZ, // 3
-		CnTR, // 4
-		CnST, // 5
-		CnPA, // 6
-		CnTA, // 7
-		CnNC, // 8
-		CnEX, // 9
-		CnPB, // 10
-		CnDM, // 11
-		CnMS, // 12
-		CnSD, // 13
- 		CnRP, // 14
-		CnHN, // 15
-		CnAT, // 16
-		CnWH, // 17
+		CnSK_Skill,				// 0
+		CnLV_Level,				// 1
+		CnCM_Command,			// 2
+		CnBZ_Busy,				// 3
+		CnTR_Tire,				// 4
+		CnST_Strength,			// 5
+		CnPA_Parameter,			// 6
+		CnTA_TemporaryArmor,	// 7
+		CnNC_NumberCharge,		// 8
+		CnEX_Experience,		// 9
+		CnPB_Probability,		// 10
+		CnDM_Damage,			// 11
+		CnMS,					// 12
+		CnSD_Sound,				// 13
+ 		CnRP_Repeat,			// 14
+		CnHN_HarmNonMaterial,	// 15
+		CnAT_AttackType,		// 16
+		CnWH_Where,				// 17
 	};
 	//
 	// SPX: I put the DM1 command list in correspondance. All DM1 "physical" attacks have been replaced by generic command (4 and 8)
@@ -2118,7 +2118,7 @@ namespace DM2Internal {
 	// New commands would rather use ID than old DM1 ones.
 	enum CommandMeaning {
 								// 0 = N (none)
-		CmBlock=1,				// 1 = BLOCK
+		CmBlock=1,				//=1 = BLOCK
 		CmInvisibility=2,		// 2 = CHOP
 		CmLaunchMissile=3,		// 3 = X (unused)
 		CmPhysicalDamage4=4,	// 4 = BLOW HORN
@@ -2127,8 +2127,8 @@ namespace DM2Internal {
 		CmSpellReflection=7,	// 7 = KICK
 		CmPhysicalDamage8=8,	// 8 = WAR CRY
 		CmAuraOfSpeed=9,		// 9 = STAB
-		CmUseRope=10,			// 10 = CLIMB DOWN
-		CmFreezeLife=11,		// 11 = FREEZE LIFE
+		CmUseRope=10,			//=10 = CLIMB DOWN
+		CmFreezeLife=11,		//=11 = FREEZE LIFE
 		CmAuraOfDex=12,			// 12 = HIT
 		CmAuraOfWiz=13,			// 13 = SWING
 		CmAuraOfVit=14,			// 14 = STAB
@@ -2144,23 +2144,23 @@ namespace DM2Internal {
 								// 24 = DISRUPT
 								// 25 = MELEE
 								// 26 = X
-		CmInvoke=27,			// 27 = INVOKE
+		CmInvoke=27,			//=27 = INVOKE
 								// 28 = SLASH
 								// 29 = CLEAVE
 								// 30 = BASH
 								// 31 = STUN
-		CmLaunchProjectile=32,	// 32 = SHOOT
-		CmSpellshield=33,		// 33 = SPELLSHIELD
-		CmFireshield=34,		// 34 = FIRESHIELD
+		CmLaunchProjectile=32,	//=32 = SHOOT
+		CmSpellshield=33,		//=33 = SPELLSHIELD
+		CmFireshield=34,		//=34 = FIRESHIELD
 		CmShield=35,			// 35 = FLUXCAGE
-		CmHealing=36,			// 36 = HEAL
+		CmHealing=36,			//=36 = HEAL
 								// 37 = CALM
-		CmLight=38,				// 38 = LIGHT
+		CmLight=38,				//=38 = LIGHT
 		CmLongLight=39,			// 39 = WINDOW
 								// 40 = SPIT
 								// 41 = BRANDISH
-		CmThrow=42,				// 42 = THROW
-		CmFuse=43,				// 43 = FUSE
+		CmThrow=42,				//=42 = THROW
+		CmFuse=43,				//=43 = FUSE
 		CmMark=44,
 		CmCallCarry=45,
 		CmCallFetch=46,
@@ -2850,7 +2850,7 @@ namespace DM2Internal {
 #ifdef __DJGPP__
 	// 
 	struct sk3672 { // 7 bytes
-		i32 b0_[7];
+		i32 b0_[7];	// SPX, was that necessary ?
 
 		i8 b0() const { return b0_[0]; } // xact
 		i8 b1() const { return b0_[1]; } // if yes, xactrNext1, xactrPrev1, xactrRetry, xactrNext2, or b1(),b2() may be yy of _4976_3672[xx][yy] if positive number given.

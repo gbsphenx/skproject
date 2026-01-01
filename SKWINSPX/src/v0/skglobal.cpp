@@ -549,27 +549,29 @@ const X8 _4976_0c5e[0x2c] = {
 };
 
 // The description is from Suule's post at http://www.dungeon-master.com/forum/viewtopic.php?t=24695
-// Nice work, Suule!
+// + http://dmweb.free.fr/games/dungeon-master-ii/solutions/items/
+// Nice work, Suule & Christophe F!
 
 // SPX: _4976_3f32 renamed ItemCommandsTable
 const char ItemCommandsTable[18][3] = {
 	"SK", //SK - Skill number used. Skills from 0-3 are 'normal' visible skills (Fighter, Ninja, Priest, Wizard) 
-	"LV", //LV - minimal skill level for the command to appear 
+	"LV", //LV - minimal skill level for the command to be available 
 	"CM", //CM - Command : It seems to be 'how to handle an attack'. 
-	"BZ", //BZ - Stamina loss (SPX: I think this is BLITZ, amount of time to regain from action)
-	"TR", //TR - Fatigue ( the ammount of time before reusal of the weapon) 
+	"BZ", //BZ - "Busy" Cooldown (amount of time to regain from action)
+	"TR", //TR - "Tire" : Fatigue (stamina loss) 
 	"ST", //ST - Spell Strength (SPX)
-	"PA", // Magical projectile associated.	// 6th
-	"TA", //TA - Defence modifier 
-	"NC", //NC - Number of Charges (SPX) How many charges are consummed by the action
+	"PA", //PA - Paramater / Magical projectile associated.
+	"TA", //TA - Temporary Armor value applied by action / defence modifier 
+	"NC", //NC - Number of Charges (SPX) How many charges are consumed by the action
+			// There are special cases when NC = 16, 17, 18
 	"EX", //EX - Experience gained 
 	"PB", //PB - Hit Probality 
 	"DM", //DM - Damage done 
 	"MS",	// SPX: this one seems to be never used?
 	"SD", //SD - Sound Entry (used for "shooting" items such as bow and staves)
 	"RP", //RP - Repeat action
-	"HN", //HN - Hurt Non material
-	"AT",	// SPX: Something about fire and hit probability?
+	"HN", //HN - Harm Non material
+	"AT", //AT - Attack Type - Specially used for Torch (Fire type attack)
 	"WH", //WH - Where? Pouch or Scabbard
 };
 

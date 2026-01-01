@@ -686,13 +686,13 @@ U16 SkWinCore::IS_ITEM_HAND_ACTIVABLE(U16 player, ObjectID recordLink, i16 yy)
 			//^2759:0353
 			continue;
 		//^2759:0356
-		U16 bp0a = QUERY_CMDSTR_ENTRY(iCategory, iItemIndex, iEntryNumber, CnCM);	// CnCM = Command
+		U16 bp0a = QUERY_CMDSTR_ENTRY(iCategory, iItemIndex, iEntryNumber, CnCM_Command);	// CnCM_Command = Command
 		//^2759:036E
 		if (bp0a == 0)
 			//^2759:0372
 			continue;
 		//^2759:0375
-		U16 bp0e = QUERY_CMDSTR_ENTRY(iCategory, iItemIndex, iEntryNumber, CnWH);	// CnWH = where (pouch or scabbard?)
+		U16 bp0e = QUERY_CMDSTR_ENTRY(iCategory, iItemIndex, iEntryNumber, CnWH_Where);	// CnWH_Where = where (pouch or scabbard?)
 		//^2759:038D
 		if (bp0e != 0 && bp0e -1 != yy)
 			//^2759:0399
@@ -704,7 +704,7 @@ U16 SkWinCore::IS_ITEM_HAND_ACTIVABLE(U16 player, ObjectID recordLink, i16 yy)
 				//^2759:03B3
 				continue;
 			//^2759:03B6
-			i16 bp0c = QUERY_CMDSTR_ENTRY(iCategory, iItemIndex, iEntryNumber, CnNC);	// NC = Number of charges consumed by action
+			i16 bp0c = QUERY_CMDSTR_ENTRY(iCategory, iItemIndex, iEntryNumber, CnNC_NumberCharge);	// NC = Number of charges consumed by action
 			if (SkCodeParam::bUnlimitedCharges == true)
 				bp0c = 0;
 			//^2759:03CE
@@ -741,9 +741,9 @@ U16 SkWinCore::IS_ITEM_HAND_ACTIVABLE(U16 player, ObjectID recordLink, i16 yy)
 		}
 		//^2759:0425
 _0425:
-		U16 bp08 = QUERY_CMDSTR_ENTRY(iCategory, iItemIndex, iEntryNumber, CnSK);
+		U16 bp08 = QUERY_CMDSTR_ENTRY(iCategory, iItemIndex, iEntryNumber, CnSK_Skill);
 		//^2759:043D
-		U16 bp06 = QUERY_CMDSTR_ENTRY(iCategory, iItemIndex, iEntryNumber, CnLV);
+		U16 bp06 = QUERY_CMDSTR_ENTRY(iCategory, iItemIndex, iEntryNumber, CnLV_Level);
 		//^2759:0455
 		if (QUERY_PLAYER_SKILL_LV(player, bp08, 1) >= bp06) {
 			//^2759:046A
@@ -2116,11 +2116,11 @@ _152e:
 			return 0;
 	}
 	//^2759:157E
-	si = QUERY_CUR_CMDSTR_ENTRY(CnPB);
+	si = QUERY_CUR_CMDSTR_ENTRY(CnPB_Probability);
 	//^2759:1587
-	di = QUERY_CUR_CMDSTR_ENTRY(CnDM);
+	di = QUERY_CUR_CMDSTR_ENTRY(CnDM_Damage);
 	//^2759:1590
-	if (QUERY_CUR_CMDSTR_ENTRY(CnHN) != 0)
+	if (QUERY_CUR_CMDSTR_ENTRY(CnHN_HarmNonMaterial) != 0)
 		//^2759:159B
 		si |= 0x8000;	// Hurt non material
 	//^2759:159F

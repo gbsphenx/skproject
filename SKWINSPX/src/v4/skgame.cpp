@@ -1249,9 +1249,9 @@ U16 SkWinCore::ENGAGE_COMMAND(U16 player, i16 cmdSlot)
 		//^2759:1715
 		return 0;
 	//^2759:171A
-	U16 bp1c = QUERY_CUR_CMDSTR_ENTRY(CnCM);		// Command
+	U16 bp1c = QUERY_CUR_CMDSTR_ENTRY(CnCM_Command);		// Command
 	//^2759:1724
-	U8 cmdSound = U8(QUERY_CUR_CMDSTR_ENTRY(CnSD));		// bp36 Sound
+	U8 cmdSound = U8(QUERY_CUR_CMDSTR_ENTRY(CnSD_Sound));		// bp36 Sound
 	//^2759:172E
 	U16 bp38 = 0;
 	//^2759:1733
@@ -1280,21 +1280,14 @@ U16 SkWinCore::ENGAGE_COMMAND(U16 player, i16 cmdSlot)
 		//^2759:17AE
 		bp1a = QUERY_CREATURE_AI_SPEC_FROM_TYPE(bp35 = QUERY_CLS2_FROM_RECORD(glbObjectID_4976_534c));
 	}
-	//^2759:17C8
-	U16 bp26 = QUERY_CUR_CMDSTR_ENTRY(CnBZ);	// Blitz
-	//^2759:17D2
-	U16 bp2a = QUERY_CUR_CMDSTR_ENTRY(CnSK);	// Skill used
-	//^2759:17DC
-	U16 bp28 = QUERY_CUR_CMDSTR_ENTRY(CnTR) + RAND01();	// Fatigue
-	//^2759:17EF
-	i16 bp2c = QUERY_CUR_CMDSTR_ENTRY(CnEX);	// Experience
-    //^2759:17F9
-	U16 si = QUERY_CUR_CMDSTR_ENTRY(CnST);		// Spell Strength
-	//^2759:1802
-	i16 bp46 = QUERY_CUR_CMDSTR_ENTRY(CnAT);	// ?
-	//^2759:180C
-	champion->handDefenseClass[bp34] = U8(QUERY_CUR_CMDSTR_ENTRY(CnTA));	// Armor modified
-	//^2759:181D
+	U16 bp26 = QUERY_CUR_CMDSTR_ENTRY(CnBZ_Busy);	// bp26 Busy
+	U16 bp2a = QUERY_CUR_CMDSTR_ENTRY(CnSK_Skill);	// bp2a Skill used
+	U16 bp28 = QUERY_CUR_CMDSTR_ENTRY(CnTR_Tire) + RAND01();	// bp28 Fatigue
+	i16 bp2c = QUERY_CUR_CMDSTR_ENTRY(CnEX_Experience);	// bp2c Experience
+	U16 si = QUERY_CUR_CMDSTR_ENTRY(CnST_Strength);		// si Spell Strength
+	i16 iAttackType = QUERY_CUR_CMDSTR_ENTRY(CnAT_AttackType);	// pb46 Attack type
+	i16 iPouchOrScabbard = 0;// bp46 (SPX: added for clarity)
+	champion->handDefenseClass[bp34] = U8(QUERY_CUR_CMDSTR_ENTRY(CnTA_TemporaryArmor));	// Armor modified
 	U16 bp24 = GET_TILE_VALUE(bp1e, bp20);
 	//^2759:182F
 	U16 bp0e = 1;
@@ -1345,7 +1338,7 @@ U16 SkWinCore::ENGAGE_COMMAND(U16 player, i16 cmdSlot)
 
 		case CmLaunchMissile: // 3 magical missile
 			//^2759:18E7
-			bp44 = ObjectID::MissileRecord(QUERY_CUR_CMDSTR_ENTRY(CnPA));
+			bp44 = ObjectID::MissileRecord(QUERY_CUR_CMDSTR_ENTRY(CnPA_Parameter));
 			//^2759:18F4
 			//bp42 = 7 - min_value(6, QUERY_PLAYER_SKILL_LV(di, bp2a, 1));
 			bp42 = 7 - min_value(SkLvlCraftsman, QUERY_PLAYER_SKILL_LV(di, bp2a, 1));
@@ -1410,9 +1403,9 @@ U16 SkWinCore::ENGAGE_COMMAND(U16 player, i16 cmdSlot)
 			}
 			else {
 				//^2759:1A02
-				bp44 = QUERY_CUR_CMDSTR_ENTRY(CnPA);		// Spell missile
+				bp44 = QUERY_CUR_CMDSTR_ENTRY(CnPA_Parameter);		// Spell missile
 				//^2759:1A0C
-				bp0e = WIELD_WEAPON(di, bp44, bp1e, bp20, bp2a, bp46);
+				bp0e = WIELD_WEAPON(di, bp44, bp1e, bp20, bp2a, iAttackType);
 				//^2759:1A26
 				if (bp0e == 0) {
 					//^2759:1A2A
@@ -1540,13 +1533,10 @@ U16 SkWinCore::ENGAGE_COMMAND(U16 player, i16 cmdSlot)
 			//^2759:1BF4
 			bp4a = 1;
 			//^2759:1BF9
-			bp46 = FIND_POUCH_OR_SCABBARD_POSSESSION_POS(di, bp34);
-			//^2759:1C06
-			if (bp46 < 0)
-				//^2759:1C0C
+			iPouchOrScabbard = FIND_POUCH_OR_SCABBARD_POSSESSION_POS(di, bp34);
+			if (iPouchOrScabbard < 0)
 				break;
-			//^2759:1C0F
-			bp2e = REMOVE_POSSESSION(di, bp46);
+			bp2e = REMOVE_POSSESSION(di, iPouchOrScabbard);
 			//^2759:1C1D
 			EQUIP_ITEM_TO_INVENTORY(di, bp2e, bp34);
 			//^2759:1C2C
@@ -1874,7 +1864,7 @@ _CreateMinion:
 		//^2759:208B
 		sk536e *bp16 = &glbChampionEngagingHandCommand[di][bp34];
 		//^2759:20A8
-		bp16->w0 = QUERY_CUR_CMDSTR_ENTRY(CnRP);
+		bp16->w0 = QUERY_CUR_CMDSTR_ENTRY(CnRP_Repeat);
 		//^2759:20B5
 		if (bp16->w0 != 0) {
 			//^2759:20B9
@@ -1894,67 +1884,45 @@ _CreateMinion:
 // SPX: _2759_1204 renamed PROCEED_COMMAND_SLOT
 U16 SkWinCore::PROCEED_COMMAND_SLOT(i16 cmdSlot)
 {
-	//^2759:1204
 	ENTER(6);
 	SkD((DLV_TWEET, "Tweet: Command slot %d for object %s. \n"
 		, cmdSlot, static_cast<LPCSTR>(getRecordNameOf(glbChampionItemInUse))
 		));
 	
-	//^2759:120A
-	U16 bp06 = 0;
-	//^2759:120F
+	U16 iEngageResult = 0;	// bp06
 	if (cd.pi.glbChampionIndex != 0) {
-		//^2759:1219
-		U16 di = cd.pi.glbChampionIndex - 1;
-		//^2759:121F
-		Champion *champion = &glbChampionSquad[di];	//*bp04
-		//^2759:122D
+		U16 iChampionIndex = cd.pi.glbChampionIndex - 1;	// di
+		Champion *champion = &glbChampionSquad[iChampionIndex];	//*bp04
 		if (cmdSlot == -1) {
-			//^2759:1233
 			glbMagicalMapFlags = 0;
 		}
 		else {
-			//^2759:123C
 			champion->heroFlag |= CHAMPION_FLAG_0800;	// 0x0800
-			//^2759:1245
-			bp06 = ENGAGE_COMMAND(di, cmdSlot);
-			//^2759:1253
-			i16 si = QUERY_CMDSTR_ENTRY(glbItemGDATCategory, glbItemGDATIndex, glbItemGDATEntry, CnNC);
-			//^2759:126A
-			if (si == 16) {
-				//^2759:126F
-				si = 15;
+			iEngageResult = ENGAGE_COMMAND(iChampionIndex, cmdSlot);
+			i16 iNbChargesToConsume = QUERY_CMDSTR_ENTRY(glbItemGDATCategory, glbItemGDATIndex, glbItemGDATEntry, CnNC_NumberCharge);	// si
+			if (iNbChargesToConsume == C16_CHARGES_CONSUME_ALL_AT_ONCE) {	// 16
+				iNbChargesToConsume = 15;	// an item has 15 charges at max, then consume all
 			}
-			//^2759:1272
-			if (si != 17 && si != 18) {
-				//^2759:127C
-				ADD_ITEM_CHARGE(glbChampionItemInUse, -si);
+			if (iNbChargesToConsume != C17_CHARGES_REQUIRED_NO_DECREASE && iNbChargesToConsume != C18_CHARGES_AVAILABLE_WHEN_NONE) {	// !=17 && != 18
+				ADD_ITEM_CHARGE(glbChampionItemInUse, -iNbChargesToConsume);
 			}
-			//^2759:128C
 			if (true
 				&& ADD_ITEM_CHARGE(glbChampionItemInUse, 0) == 0
 				&& (QUERY_GDAT_DBSPEC_WORD_VALUE(glbChampionItemInUse, 0x00) & 0x0800) != 0
 			) {
-				//^2759:12AF
-				REMOVE_POSSESSION(di, glbSelectedHandAction);
-				//^2759:12BB
+				REMOVE_POSSESSION(iChampionIndex, glbSelectedHandAction);
 				DEALLOC_RECORD(glbChampionItemInUse);
 			}
 		}
-		//^2759:12C5
 		if (glbMagicalMapFlags != 0) {
-			//^2759:12CC
-			glbMagicalMapFlags &= 0xfbff;
+			glbMagicalMapFlags &= 0xFBFF;
 		}
 		else {
-			//^2759:12D4
 			DISPLAY_RIGHT_PANEL_SQUAD_HANDS();
 		}
-		//^2759:12D8
 		UPDATE_RIGHT_PANEL(0);
 	}
-	//^2759:12DF
-	return bp06;
+	return iEngageResult;
 }
 
 //^2759:0589

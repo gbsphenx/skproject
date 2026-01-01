@@ -3664,12 +3664,12 @@ U16 SkWinCore::_2759_0155(ObjectID rl)
 		//^2759:017C
 		if (true
 			&& QUERY_GDAT_ENTRY_IF_LOADABLE(bp01, bp02, dtText, bp03) != 0
-			&& QUERY_CMDSTR_ENTRY(bp01, bp02, bp03, CnCM) != 0
+			&& QUERY_CMDSTR_ENTRY(bp01, bp02, bp03, CnCM_Command) != 0
 			&& QUERY_CMDSTR_ENTRY(
 				QUERY_CLS1_FROM_RECORD(si),
 				QUERY_CLS2_FROM_RECORD(si),
 				bp03,
-				CnNC
+				CnNC_NumberCharge
 				) != 0
 		) {
 			//^2759:01D0

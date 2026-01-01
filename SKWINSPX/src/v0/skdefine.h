@@ -1463,6 +1463,14 @@ typedef enum
 } SpellMissile;	//	replacing i16 type
 */
 
+//------------------------------------------------------------------------------
+//	SPECIFIC ITEM ACTION COMMAND VALUE
+//------------------------------------------------------------------------------
+
+#define C16_CHARGES_CONSUME_ALL_AT_ONCE			16
+#define C17_CHARGES_REQUIRED_NO_DECREASE		17
+#define C18_CHARGES_AVAILABLE_WHEN_NONE			18
+
 
 
 //------------------------------------------------------------------------------
