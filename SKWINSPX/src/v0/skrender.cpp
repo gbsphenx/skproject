@@ -79,4 +79,16 @@ UINT SkRendererGeneric::AudioPlaySound(const U8 *xSoundBuffer, U32 iBufferSize, 
 {
 	return 0;
 }
+
+UINT SkRendererGeneric::AudioPlayFile(const char* sFilename, i8 iSoundVolume)
+{
+	return 0;
+}
+
+UINT SkRendererGeneric::AudioStop()
+{
+	return 0;
+}
+
+
 //------------------------------------------------------------------------------

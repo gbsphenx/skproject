@@ -61,6 +61,8 @@ public:
 
 	UINT StartAudioSample(const char* sSampleName);
 	UINT AudioPlaySound(const U8 *xSoundBuffer, U32 iBufferSize, i8 iSoundVolume, U16 iPlaybackFrequency);
+	UINT AudioPlayFile(const char* sFilename, i8 iSoundVolume);
+	UINT AudioStop();
 
 private:
 	UINT ConvertVRAMToRGB();

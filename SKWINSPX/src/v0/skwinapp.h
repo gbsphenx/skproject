@@ -109,6 +109,8 @@ public:
 	void StartMessage();
 	void ExitMessage();
 
+	void AudioPlayDirect(const char* sAudioFilename, i8 vol);
+
 //-- old compatibility
 	const X8* GET_DATA_FOLDER_NAME();
 

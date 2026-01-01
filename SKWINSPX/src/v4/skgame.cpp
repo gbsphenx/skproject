@@ -1927,37 +1927,23 @@ U16 SkWinCore::PROCEED_COMMAND_SLOT(i16 cmdSlot)
 
 //^2759:0589
 // SPX: _2759_0589 renamed ACTIVATE_ACTION_HAND
-void SkWinCore::ACTIVATE_ACTION_HAND(U16 xx, U16 yy)
+void SkWinCore::ACTIVATE_ACTION_HAND(U16 iChampionNo, U16 iHandNo)
 {
-	//^2759:0589
 	ENTER(4);
-	//^2759:058F
-	U16 si = xx;	// champion no
-	U16 di = yy;	// hand
-	//^2759:0595
-	Champion *champion = &glbChampionSquad[si];	//*bp04
-	//^2759:05A9
-	if (champion->curHP() == 0)
-		//^2759:05B0
+	U16 iChampionIndex = iChampionNo;	// si / champion no
+	U16 iHandIndex = iHandNo;	// di / hand
+	Champion* xChampion = &glbChampionSquad[iChampionIndex];	//*bp04
+	if (xChampion->curHP() == 0)
 		return;
-	//^2759:05B2
-	if (IS_ITEM_HAND_ACTIVABLE(si, champion->Possess(di), di) == 0)
-		//^2759:05CB
+	if (IS_ITEM_HAND_ACTIVABLE(iChampionIndex, xChampion->Possess(iHandIndex), iHandIndex) == 0)
 		return;
-	//^2759:05CD
-	glbSelectedHandAction = glbSelectedHand_2 = di;
-	//^2759:05D5
-	cd.pi.glbChampionIndex = glbSomeChampionIndex = si +1;
-	//^2759:05DE
+	glbSelectedHandAction = glbSelectedHand_2 = iHandIndex;
+	cd.pi.glbChampionIndex = glbSomeChampionIndex = iChampionIndex + 1;
 	glbSomeChampionPanelFlag = 1;
 	glbMagicalMapFlags = 0;
-	//^2759:05EA
 	CHAMPION_SQUAD_RECOMPUTE_POSITION();
-	//^2759:05EF
 	UPDATE_RIGHT_PANEL(0);
-	//^2759:05F7
-	REFRESH_PLAYER_STAT_DISP(si);
-	//^2759:05FE
+	REFRESH_PLAYER_STAT_DISP(iChampionIndex);
 	return;
 }
 
@@ -1966,24 +1952,15 @@ void SkWinCore::ACTIVATE_ACTION_HAND(U16 xx, U16 yy)
 // Called when a champion is selected to spell runes
 void SkWinCore::SET_SPELLING_CHAMPION(U16 iChampionNo)	// U16 xx
 {
-	//^2759:0602
 	ENTER(0);
-	//^2759:0605
 	if (glbChampionSquad[iChampionNo].curHP() == 0)
-		//^2759:0614
 		return;
-	//^2759:0616
 	glbSelectedHandAction = glbSelectedHand_2 = 2;
-	//^2759:061F
-	cd.pi.glbChampionIndex = glbSomeChampionIndex = iChampionNo +1;
-	//^2759:0629
+	cd.pi.glbChampionIndex = glbSomeChampionIndex = iChampionNo + 1;
 	glbSomeChampionPanelFlag = 1;
 	glbMagicalMapFlags = 0;
-	//^2759:0635
 	CHAMPION_SQUAD_RECOMPUTE_POSITION();
-	//^2759:063A
 	UPDATE_RIGHT_PANEL(0);
-	//^2759:0642
 	return;
 }
 

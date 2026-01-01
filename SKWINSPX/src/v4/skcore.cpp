@@ -21602,7 +21602,7 @@ void SkWinCore::SHOW_MENU_SCREEN()
 	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_RED, BLACK);
 	SkD((SkCodeParam::bEngineNoDisplay||DLV_DBG_INIT, "DISPLAY TITLE MENU SCREEN\n"));
 	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
-	REQUEST_PLAY_MUSIC(100);	// SPX: title music
+	REQUEST_PLAY_MUSIC(100, 100);	// SPX: title music
 
 	SkD((DLV_DBG_INIT, "SHOW_MENU_SCREEN\n"));
 
@@ -23585,11 +23585,7 @@ _01f7:
 			CHANGE_CURRENT_MAP_TO(iLocalMap);
 		}
 		//DM2DOS_R_BA7(ddata.v1e0266);
-		//if (iLocalMap != 0xFFFF)
-		if (SkCodeParam::bMIDIMusicEnabled)
-			skmidi->REQUEST_PLAY_MUSIC_FROM_MAP(cd.pi.glbPlayerMap);
-		else if (SkCodeParam::bWAVMusicEnabled)
-			REQUEST_PLAY_MUSIC_FROM_MAP(cd.pi.glbPlayerMap);
+		REQUEST_PLAY_MUSIC_FROM_MAP(cd.pi.glbPlayerMap);
 		continue;
 	}
 	//^13AE:029F

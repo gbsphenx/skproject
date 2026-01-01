@@ -42,7 +42,8 @@ public:
 	virtual UINT StartAudioSample(const char* sSampleName);
 
 	virtual UINT AudioPlaySound(const U8 *xSoundBuffer, U32 iBufferSize, i8 iSoundVolume, U16 iPlaybackFrequency);
-
+	virtual UINT AudioPlayFile(const char* sFilename, i8 iSoundVolume);
+	virtual UINT AudioStop();
 
 };
 

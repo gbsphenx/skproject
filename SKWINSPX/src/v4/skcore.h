@@ -923,7 +923,7 @@ public:
 	U16 EXT_PROCEED_DCS_GENERIC_COMMAND(const char* command, const char* scope, const char* subcommand, int arg1, int arg2, int arg3, int arg4, int arg5);
 	void PLAY_DIRECT_SOUND(const char* sAudioFilename, int volume);
 	void REQUEST_PLAY_MUSIC_FROM_MAP(int iMapNumber);
-	void REQUEST_PLAY_MUSIC(int iMusicNumber);
+	void REQUEST_PLAY_MUSIC(int iMusicNumber, int iVolume);
 	void CHANGE_MUSIC_ID(int iMapNumber, int iMusicID);
 	void ADD_PARTY_CHAMPION(int iChampionID);
 	void INIT_CHAMPIONS_CUSTOM_MODES();
@@ -1489,7 +1489,7 @@ protected:
 	U16 ENGAGE_X_TELEPORTER();
 	U16 ENGAGE_COMMAND(U16 player, i16 cmdSlot);
 	U16 PROCEED_COMMAND_SLOT(i16 cmdSlot);
-	void ACTIVATE_ACTION_HAND(U16 xx, U16 yy);
+	void ACTIVATE_ACTION_HAND(U16 iChampionNo, U16 iHandNo);
 	void SET_SPELLING_CHAMPION(U16 iChampionNo);
 	void IBMIO_MOUSE_SET_CAPTURE();
 	void FIRE_MOUSE_SET_CAPTURE();

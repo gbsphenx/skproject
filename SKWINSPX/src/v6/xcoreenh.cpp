@@ -186,7 +186,7 @@ X16 SkWinCore::SELECT_CHAMPION_FROM_GDAT(U8 iChampionID)
 	cd.pi.glbChampionsCount++;
 	if (iChampionNumber == 0)	// First champion, then select it as leader
 		SELECT_CHAMPION_LEADER(0);
-	if (_4976_404b == 0) {
+	if (glbChampionShowResurrect == 0) {
 		INTERFACE_CHAMPION(iChampionNumber);
 		_1031_0541(7);
 		_38c8_0002();
@@ -405,7 +405,7 @@ void SkWinCore::ADD_PARTY_CHAMPION(int iChampionID)
 {
 	SELECT_CHAMPION_FROM_GDAT(iChampionID);
 	REVIVE_CHAMPION(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerDir, cd.pi.glbPlayerMap, UI_EVENTCODE_REVIVE_CHAMPION);
-	_4976_404b = 0;
+	glbChampionShowResurrect = 0;
 	glbChampionSquad[0].playerDir(U8(cd.pi.glbPlayerDir));
 	glbChampionSquad[0].playerPos(U8(cd.pi.glbPlayerDir));
 	SET_PARTY_HERO_FLAG(0x4000);
@@ -436,7 +436,7 @@ void SkWinCore::INIT_CHAMPIONS_CUSTOM_MODES()
 			printf("INIT_CHAMPIONS_CUSTOM_MODES FOR BW/EOB\n");
 			SELECT_CHAMPION_FROM_GDAT(iChampionID);
 			REVIVE_CHAMPION(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerDir, cd.pi.glbPlayerMap, UI_EVENTCODE_REVIVE_CHAMPION);
-			_4976_404b = 0;
+			glbChampionShowResurrect = 0;
 			glbChampionSquad[0].playerDir(U8(cd.pi.glbPlayerDir));
 			glbChampionSquad[0].playerPos(U8(cd.pi.glbPlayerDir));
 			SET_PARTY_HERO_FLAG(0x4000);
@@ -990,54 +990,21 @@ int iCurrentWavMusic = -1;
 void SkWinCore::REQUEST_PLAY_MUSIC_FROM_MAP(int iMapNumber)
 {
 	int iNextRequestedMusic = 0;
-	char sDataRootFolder[64];
-	char sFullMusicPath[256];
-	int iVolume = 50;
-	sprintf(sDataRootFolder, "DATA");	// default
 
-//	if (skwin.dung == _OPTION_DUNGEON_DM2_SK_BETA_ || skwin.dung == _OPTION_DUNGEON_DM2_SK_DEMO_ ||
-//		skwin.dung == _OPTION_DUNGEON_DM2_SK_ || skwin.dung == _OPTION_DUNGEON_DM2_SK_EXT_ || 
-//		skwin.dung == _OPTION_DUNGEON_DMX_)
-		iNextRequestedMusic = tMusicMapsWAV[iMapNumber];
-//	else
-//		iNextRequestedMusic = iMapNumber;
+	iNextRequestedMusic = tMusicMapsWAV[iMapNumber];
 
-//	if (skwin.dung == _OPTION_DUNGEON_DM1_DM_ && iMapNumber != 0)
-//		iNextRequestedMusic = 1;
+	REQUEST_PLAY_MUSIC(iNextRequestedMusic, 50);
 
-
-
-	if (iNextRequestedMusic == iCurrentWavMusic)
-		return;
-//#if defined(_USE_MFC80) || defined(_USE_MFC60)
-	//PlaySound(NULL, NULL, SND_PURGE);
-//	XAUDIO_SDL_PLAY_SOUND_FILE(NULL, 0);
-//#endif
-	/*
-	switch(skwin.dung)
-	{
-		case _OPTION_DUNGEON_NO_SPECIFIC_:
-		default:
-			sprintf(sDataRootFolder, "DATA"); break;
-	} // END of specific block
-	*/
-	sprintf(sDataRootFolder, "%s", skWinApp->GET_DATA_FOLDER_NAME());
-	sprintf(sFullMusicPath, "./%s/music/%02x.wav", sDataRootFolder, iNextRequestedMusic);
-	//PLAY_DIRECT_SOUND(sFullMusicPath, 50);
-	//#if defined(_USE_MFC80) || defined(_USE_MFC60)
-		iCurrentWavMusic = iNextRequestedMusic;
-		skWinApp->skwin_SndPlayFile(sFullMusicPath, iVolume);
-	//#endif
 	return;
 }
 
-void SkWinCore::REQUEST_PLAY_MUSIC(int iMusicNumber)
+void SkWinCore::REQUEST_PLAY_MUSIC(int iMusicNumber, int iVolume = 100)
 {
 	int iNextRequestedMusic = 0;
 	char sDataRootFolder[64];
+	char sMusicRootFolder[128];
 	char sFullMusicPath[256];
-	int iVolume = 50;
-	sprintf(sDataRootFolder, "DATA");	// default
+	sprintf(sMusicRootFolder, "DATA-DM2/COMMON/MUSICS");	// default
 	iNextRequestedMusic = iMusicNumber;
 
 	if (iNextRequestedMusic == iCurrentWavMusic)
@@ -1048,29 +1015,20 @@ void SkWinCore::REQUEST_PLAY_MUSIC(int iMusicNumber)
 
 	//sprintf(sDataRootFolder, "%s", GET_DATA_FOLDER_NAME(skwin.dung));
 	sprintf(sDataRootFolder, "%s", skWinApp->GET_DATA_FOLDER_NAME());
-	sprintf(sFullMusicPath, "./%s/music/%02x.wav", sDataRootFolder, iNextRequestedMusic);
+	sprintf(sFullMusicPath, "./%s/%02x.wav", sMusicRootFolder, iNextRequestedMusic);
 	//sprintf(sFullMusicPath, "./%s/music/%02x.hmp.mid", sDataRootFolder, iNextRequestedMusic);
+	printf("MUSIC %02X = %s %s %s\n", iMusicNumber, sDataRootFolder, sMusicRootFolder, sFullMusicPath);
 	iCurrentWavMusic = iNextRequestedMusic;
 
-	if (SkCodeParam::bUseAudioSDL) {
-		XAUDIO_SDL_PLAY_SOUND_FILE(sFullMusicPath, iVolume);
-		//XAUDIO_SDL_PLAY_MIDI_FILE(sFullMusicPath, iVolume);
-	}
-	else
-	{
-	////// XAUDIO MFC
-#if defined(_USE_MFC80) || defined(_USE_MFC60)
-	//PlaySound(NULL, NULL, SND_PURGE);
-	XAUDIO_SDL_PLAY_SOUND_FILE(NULL, 0);
-#endif
+	//XAUDIO_SDL_PLAY_SOUND_FILE(sFullMusicPath, iVolume);
+
+	skWinApp->AudioPlayDirect(sFullMusicPath, iVolume);
+
+//	XAUDIO_SDL_PLAY_SOUND_FILE(NULL, 0);
 	//PLAY_DIRECT_SOUND(sFullMusicPath, 50);
-	//#if defined(_USE_MFC80) || defined(_USE_MFC60)
-		skWinApp->skwin_SndPlayFile(sFullMusicPath, iVolume);
-	//#endif
+//		skWinApp->skwin_SndPlayFile(sFullMusicPath, iVolume);
 /////// XAUDIO MFC
 		;
-	}
-
 
 	return;
 }

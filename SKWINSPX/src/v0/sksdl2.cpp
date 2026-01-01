@@ -18,14 +18,13 @@
 	#include <SDL2/SDL.h>
 #elif !defined (__DJGPP__)
 	#include <SDL.h>
-//	#include <SDL_mixer.h>
+	#include <SDL_mixer.h>
 #endif // __LINUX__
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-
 
 
 //..............................................................................
@@ -61,11 +60,17 @@ UINT SkRendererSDL::InitAudio()
     want.channels = 1;
     want.samples = 1024;
     want.callback = NULL;           // use queueing
-
+/*
     sdlAudioDeviceId = SDL_OpenAudioDevice(
         NULL, 0, &want, NULL, 0);
 
     SDL_PauseAudioDevice(sdlAudioDeviceId, 0);
+*/
+	if (Mix_OpenAudio(44100, AUDIO_S16SYS, 2, 1024) < 0) {
+	   printf("Mixer error: %s\n", Mix_GetError());
+	}
+
+
 #endif // not __NO_SDL__
 	return 0;
 }
@@ -116,8 +121,6 @@ UINT SkRendererSDL::Init(SkVRAM* xVRAM)
                                              SDL_PIXELFORMAT_RGBA8888,
                                              SDL_TEXTUREACCESS_STREAMING,
                                              iScreenWidth, iScreenHeight);
-	
-//	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
 
 	//SDL_SetPaletteColors(SDL_AllocPalette(256), palette, 0, 256);
 
@@ -202,8 +205,10 @@ UINT SkRendererSDL::Close()
     SDL_DestroyRenderer(sdlRenderer);
     SDL_DestroyWindow(sdlWindow);
 
-	if (sdlAudioDeviceId != 0)
-		SDL_CloseAudioDevice(sdlAudioDeviceId);
+	if (sdlAudioDeviceId != 0) {
+		Mix_CloseAudio();
+		//SDL_CloseAudioDevice(sdlAudioDeviceId);
+	}
 
     SDL_Quit();
 #endif // not __NO_SDL__
@@ -290,6 +295,7 @@ bool SkRendererSDL::ML()
 	return true;
 }
 #include <math.h>
+/* SDL_QueueAudio version
 UINT SkRendererSDL::AudioPlaySound(const U8 *xSoundBuffer, U32 iBufferSize, i8 iSoundVolume, U16 iPlaybackFrequency)
 {
 #if !defined (__NO_SDL__)
@@ -315,6 +321,105 @@ UINT SkRendererSDL::AudioPlaySound(const U8 *xSoundBuffer, U32 iBufferSize, i8 i
     SDL_QueueAudio(sdlAudioDeviceId, buffInt, iBufferSize);
     cnt |= 1;
 
+#endif // not __NO_SDL__
+	return 0;
+}
+*/
+
+#if !defined (__NO_SDL__)
+Mix_Chunk* MakeMixChunkFromPCM(const U8* buffInt, Uint32 buffSize, int volume)
+{
+    Mix_Chunk* chunk = (Mix_Chunk*)malloc(sizeof(Mix_Chunk));
+    if (!chunk) return NULL;
+
+    chunk->abuf = (Uint8*)malloc(buffSize);
+    if (!chunk->abuf)
+    {
+        free(chunk);
+        return NULL;
+    }
+
+    memcpy(chunk->abuf, buffInt, buffSize);
+    chunk->alen = buffSize;
+    chunk->volume = volume;   // 0-128
+    chunk->allocated = 1;     // mixer frees abuf when freeing chunk
+    return chunk;
+}
+#endif // not __NO_SDL__
+
+#if !defined (__NO_SDL__)
+Mix_Chunk* MakeMixChunkFromConvertedPCM(const U8* xSoundBuffer, Uint32 iBufferSize, int volume)
+{
+	SDL_AudioCVT cvt;
+
+	SDL_BuildAudioCVT(
+		&cvt,
+		AUDIO_S8,        // source format (example: unsigned 8-bit)
+		1,               // source channels (mono)
+		6000,            // source frequency
+		AUDIO_S16SYS,    // destination format
+		2,               // destination channels (stereo)
+		44100            // destination frequency
+	);
+
+	cvt.len = iBufferSize;   // size of original buffer in bytes
+	cvt.buf = (Uint8*)SDL_malloc(cvt.len * cvt.len_mult);
+
+	memcpy(cvt.buf, xSoundBuffer, iBufferSize);
+
+	SDL_ConvertAudio(&cvt);
+	Uint8* resampledBuffer = cvt.buf;
+	int    resampledSize   = cvt.len_cvt;
+
+	Mix_Chunk* chunk = (Mix_Chunk*)malloc(sizeof(Mix_Chunk));
+
+	chunk->abuf = resampledBuffer;
+	chunk->alen = resampledSize;
+	chunk->volume = MIX_MAX_VOLUME;
+	chunk->allocated = 1;   // mixer will free abuf
+
+    return chunk;
+}
+#endif // not __NO_SDL__
+
+
+
+UINT SkRendererSDL::AudioPlaySound(const U8* xSoundBuffer, U32 iBufferSize, i8 iSoundVolume, U16 iPlaybackFrequency)
+{
+#if !defined (__NO_SDL__)
+	static int cnt = 0;
+
+    Mix_Chunk* chunk = MakeMixChunkFromConvertedPCM(xSoundBuffer, iBufferSize, 128); // full volume
+	int channel = Mix_PlayChannel(-1, chunk, 0); // play once
+
+    cnt |= 1;
+
+#endif // not __NO_SDL__
+	return 0;
+}
+
+
+
+UINT SkRendererSDL::AudioPlayFile(const char* sFilename, i8 iSoundVolume)
+{
+#if !defined (__NO_SDL__)
+	printf("SDL: play sound: %s (@%d)\n", sFilename, iSoundVolume);
+	Mix_Chunk* sound = Mix_LoadWAV(sFilename);
+	if (!sound) {
+		printf("Failed to load WAV: %s\n", Mix_GetError());
+	}
+	Mix_VolumeChunk(sound, (int)((float)iSoundVolume*128.f / 100.f));
+	Mix_PlayChannel(-1, sound, 0);
+#endif // not __NO_SDL__
+	return 0;
+}
+
+
+UINT SkRendererSDL::AudioStop()
+{
+#if !defined (__NO_SDL__)
+	Mix_HaltMusic();
+	Mix_HaltChannel(-1);
 #endif // not __NO_SDL__
 	return 0;
 }

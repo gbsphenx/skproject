@@ -498,6 +498,12 @@ const X8* SkWinApp::GET_DATA_FOLDER_NAME()
 }
 
 
+void SkWinApp::AudioPlayDirect(const char* sAudioFilename, i8 vol)
+{
+	xSkWinRenderer->AudioStop();
+	xSkWinRenderer->AudioPlayFile(sAudioFilename, vol);
+}
+
 // Old compatibility with CSkWin -----------------------------------------------
 
 void SkWinApp::skwin_SndPlayHi(const U8 *buff, U32 buffSize, i8 vol)
@@ -521,15 +527,6 @@ void SkWinApp::skwin_SndPlayHi(const U8 *buff, U32 buffSize, i8 vol)
 void SkWinApp::skwin_SndPlayLo(const U8 *buff, U32 buffSize, i8 dX, i8 dY)
 {
 	i8 iSoundVolume = 0;
-	/*
-	sblast_sys::PlayBuff pb;
-	pb.pbBuff = (BYTE *)buff;
-	pb.cbBuff = buffSize;
-	pb.dX = dX;
-	pb.dY = dY;
-	pb.af = sbdsaf;
-	pb.bf = sbdsbf;
-	*/
 
 	iSoundVolume = 16 - (i8)(sqrt(float(dX*dX +dY*dY)) * 3);
 	if (iSoundVolume < 1)
