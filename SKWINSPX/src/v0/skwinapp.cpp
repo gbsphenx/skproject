@@ -645,10 +645,14 @@ bool SkWinApp::skwin_IsAvail()
 
 bool SkWinApp::skwin_ML() {
 
+	bool bMessageLoopResult = true;
 	if (SkCodeParam::bRenderingEngineSDL || SkCodeParam::bRenderingEngineMFC)
-		xSkWinRenderer->ML();
+		bMessageLoopResult = xSkWinRenderer->ML();
 	else
 		this->skwin_Sleep(1);
+
+	if (bMessageLoopResult == false)
+		return false;
 
 	return skwin_IsAvail();
 }
