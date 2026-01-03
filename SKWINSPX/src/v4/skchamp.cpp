@@ -3606,7 +3606,7 @@ void SkWinCore::PROCESS_PLAYERS_DAMAGE()
 			//^2C1D:1852
 			glbTimersTable[si].SetMap(cd.pi.glbPlayerMap);
 			glbTimersTable[si].SetTick(glbGameTick + 5);
-			_3a15_05f7(si);
+			TIMER_3a15_05f7(si);
 		}
 		//^2C1D:1892
 	}

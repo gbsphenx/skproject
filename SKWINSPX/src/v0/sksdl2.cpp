@@ -16,6 +16,7 @@
 #if defined (__NO_SDL__)
 #elif defined (__LINUX__)
 	#include <SDL2/SDL.h>
+	#include <SDL2/SDL_mixer.h>
 #elif !defined (__DJGPP__)
 	#include <SDL.h>
 	#include <SDL_mixer.h>

@@ -17887,109 +17887,67 @@ ObjectID *SkWinCore::OVERSEE_RECORD(ObjectID *ref, U8 dir, ObjectID **recordMatc
 }
 
 //^3A15:0381
-int SkWinCore::_3a15_0381(Timer *xx, Timer *yy)
+// SPX _3a15_0381 renamed TIMER_COMPARE
+int SkWinCore::TIMER_COMPARE(Timer* xTimer1, Timer* xTimer2)
 {
-	//^3A15:0381
-	if (xx->GetTick() >= yy->GetTick()) {
-		//^3A15:03B8
-		U16 si =  (xx->GetTick() == yy->GetTick()) ? 1 : 0;
-		//^3A15:03EC
-		if (si != 0 && (xx->TimerType() > yy->TimerType()))
-			//^3A15:03FE
+	if (xTimer1->GetTick() >= xTimer2->GetTick()) {
+		U16 si =  (xTimer1->GetTick() == xTimer2->GetTick()) ? 1 : 0;
+		if (si != 0 && (xTimer1->TimerType() > xTimer2->TimerType()))
 			return 1;
-		//^3A15:0400
 		if (si != 0) {
-			//^3A15:0404
-			si = (xx->TimerType() == yy->TimerType()) ? 1 : 0;
-			//^3A15:041D
+			si = (xTimer1->TimerType() == xTimer2->TimerType()) ? 1 : 0;
 			if (si != 0) {
-				//^3A15:0421
-				if (xx->actor > yy->actor) {
-					//^3A15:043D
+				if (xTimer1->actor > xTimer2->actor) {
 					return 1;
 				}
 			}
 		}
-		//^3A15:0431
 		if (si == 0)
-			//^3A15:0433
 			return 0;
-		//^3A15:0435
 		//if ((U16)xx <= (U16)yy) // loose conversion
-		if ((void*) xx <= (void*) yy)
-			//^3A15:043D
+		if ((void*) xTimer1 <= (void*) xTimer2)
 			return 1;
-		//^3A15:043B
 		return 0;
 	}
-	//^3A15:043D
 	return 1;
 }
 
 //^3A15:0486
-void SkWinCore::_3a15_0486(U16 xx)
+// SPX _3a15_0486 renamed TIMER_3a15_0486
+void SkWinCore::TIMER_3a15_0486(U16 xx)
 {
-	//^3A15:0486
-	//^3A15:048C
 	U16 di = xx;
-	_4976_4762 = -1;
+	glbTimer_4976_4762 = -1;
 	U16 bp06 = glbTimersCount -1;
-	//^3A15:049C
 	if (bp06 == 0)
-		//^3A15:04A0
 		return;
-	//^3A15:04A3
 	U16 bp0a = glbTimerNextEntries[di];
-	//^3A15:04B3
 	Timer *bp04 = &glbTimersTable[bp0a];
-	//^3A15:04C8
 	U16 bp08 = 0;
-	//^3A15:04CD
 	for (; di > 0; ) {
-		//^3A15:04CF
 		U16 si = (di -1) >> 1;
-		//^3A15:04D6
-		if (_3a15_0381(bp04, &glbTimersTable[glbTimerNextEntries[si]]) == 0)
-			//^3A15:0500
+		if (TIMER_COMPARE(bp04, &glbTimersTable[glbTimerNextEntries[si]]) == 0)
 			break;
-		//^3A15:0502
 		glbTimerNextEntries[di] = glbTimerNextEntries[si];
-		//^3A15:051C
 		di = si;
-		//^3A15:051E
 		bp08 = 1;
-		//^3A15:0523
 	}
-	//^3A15:0527
 	if (bp08 == 0) {
-		//^3A15:0530
 		bp06 = (bp06 -1) >> 1;
-		//^3A15:0539
 		while (di <= bp06) {
-			//^3A15:053C
 			U16 si = (di << 1) +1;
-			//^3A15:0544
 			if ((si +1) < glbTimersCount) {
-				//^3A15:054A
-				if (_3a15_0381(&glbTimersTable[glbTimerNextEntries[si +1]], &glbTimersTable[glbTimerNextEntries[si]]) != 0) {
-					//^3A15:0590
+				if (TIMER_COMPARE(&glbTimersTable[glbTimerNextEntries[si +1]], &glbTimersTable[glbTimerNextEntries[si]]) != 0) {
 					si++;
 				}
 			}
-			//^3A15:0591
-			if (_3a15_0381(&glbTimersTable[glbTimerNextEntries[si]], bp04) == 0)
-				//^3A15:05BD
+			if (TIMER_COMPARE(&glbTimersTable[glbTimerNextEntries[si]], bp04) == 0)
 				break;
-			//^3A15:05BF
 			glbTimerNextEntries[di] = glbTimerNextEntries[si];
-			//^3A15:05D9
 			di = si;
-			//^3A15:05DB
 		}
 	}
-	//^3A15:05E3
 	glbTimerNextEntries[di] = bp0a;
-	//^3A15:05F3
 	return;
 }
 
@@ -23262,16 +23220,13 @@ _146e:
 
 
 //^3A15:05F7
-void SkWinCore::_3a15_05f7(X16 xx)
+// SPX _3a15_05f7 renamed TIMER_3a15_05f7
+void SkWinCore::TIMER_3a15_05f7(X16 xx)
 {
-	//^3A15:05F7
 	ENTER(0);
-	//^3A15:05FA
-	if (_4976_4762 >= 0) 
-		_3a15_0486(_4976_4762);
-	//^3A15:060A
-	_3a15_0486(GET_TIMER_NEW_INDEX(xx));
-	//^3A15:0618
+	if (glbTimer_4976_4762 >= 0) 
+		TIMER_3a15_0486(glbTimer_4976_4762);
+	TIMER_3a15_0486(GET_TIMER_NEW_INDEX(xx));
 	return;
 }
 
@@ -23395,9 +23350,7 @@ void SkWinCore::GAME_LOOP()
 		SkD((SkCodeParam::bEngineNoDisplay||DLV_DBG_INIT, "%s\n", sMessage));
 		CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
 	}
-	//^13AE:005C
 	ENTER(0);
-	//^13AE:0061
 	glbTickSpeed = stdTickBalance;
 	cd.gg.glbGameHasEnded = 0;
 	FILL_ORPHAN_CAII();
@@ -23415,23 +23368,18 @@ void SkWinCore::GAME_LOOP()
 		glbTickSpeed = stdTickBalance;
 		// SPX
 
-		//^13AE:0072
 		glbIntermediateTickCounter = 0;
-		if (glbMapToLoad == 0xffff)
+		if (glbMapToLoad == 0xFFFF)
 			goto _00a4;
 		while (true)
 		{
-			//^13AE:007F
-			//printf("LOAD_NEWMAP %d\n", glbMapToLoad);
 			LOAD_NEWMAP(U8(glbMapToLoad));
 			printf("MOVE_RECORD_TO\n");
 			MOVE_RECORD_TO(OBJECT_NULL, -1, 0, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
-			glbMapToLoad = 0xffff;
-			//^13AE:00A4
+			glbMapToLoad = 0xFFFF;
 _00a4:
-			//printf("PROCEED_TIMERS\n");
 			PROCEED_TIMERS();
-			if (glbMapToLoad != 0xffff)
+			if (glbMapToLoad != 0xFFFF)
 				continue;
 			break;
 		}
@@ -23818,7 +23766,7 @@ SkWinCore::SkWinCore()
 	zeroMem(glbIngameGlobVarBytes, sizeof(glbIngameGlobVarBytes));
 	zeroMem(glbIngameGlobVarWords, sizeof(glbIngameGlobVarWords));
 	_4976_47fc = 1;
-	_4976_4762 = -1;
+	glbTimer_4976_4762 = -1;
 	_4976_4c08 = 0;
 	glbMap_4976_4c12 = 0;
 	glbCurrentMapIndex = -1;

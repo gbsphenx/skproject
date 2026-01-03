@@ -546,77 +546,49 @@ void SkWinCore::REARRANGE_TIMERLIST()
 // SPX: _3a15_008e renamed __SORT_TIMERS
 void SkWinCore::__SORT_TIMERS()
 {
-	//^3A15:008E
-	//^3A15:0094
-	Bit16u bp12 = glbTimersCount;
-	//^3A15:009A
-	if (bp12 != 0) {
-		//^3A15:00A1
-		for (Bit16u di = 0; di < bp12; di++) {
-			//^3A15:00A5
-			glbTimerNextEntries[di] = di;
-			//^3A15:00B2
+	Bit16u iTimersCount = glbTimersCount;	// bp12
+	Bit16u iTimerIndex = 0; // di
+	Bit16u iTimerIndex2 = 0; // si
+	if (iTimersCount != 0) {
+		for (Bit16u iTimerIndex = 0; iTimerIndex < iTimersCount; iTimerIndex++) {
+			glbTimerNextEntries[iTimerIndex] = iTimerIndex;
 		}
-		//^3A15:00B8
-		if (bp12 != 1) {
-			//^3A15:00C1
-			for (i16 bp0e = (bp12 -2) >> 1; bp0e >= 0; bp0e--) {
-				//^3A15:00CE
-				Bit16u di = bp0e;
-				Timer *bp04 = &glbTimersTable[glbTimerNextEntries[di]];
+		if (iTimersCount != 1) {
+			for (i16 bp0e = (iTimersCount - 2) >> 1; bp0e >= 0; bp0e--) {
+				Bit16u iTimerIndex = bp0e;
+				Timer* xTimer = &glbTimersTable[glbTimerNextEntries[iTimerIndex]];	// bp04
 				while (true) {
-					//^3A15:00F3
-					Bit16u si = (di << 1) + 1;
-					//^3A15:00FA
-					if (si >= bp12)
+					Bit16u iTimerIndex2 = (iTimerIndex << 1) + 1;
+					if (iTimerIndex2 >= iTimersCount)
 						break;
-					//^3A15:0102
-					Timer *bp08 = &glbTimersTable[glbTimerNextEntries[si]];
-					//^3A15:0124
-					if (si+1 < bp12) {
-						//^3A15:012C
-						Timer *bp0c = &glbTimersTable[glbTimerNextEntries[si+1]];
-						//^3A15:014F
-						if (_3a15_0381(bp04, bp08) != 0) {
-							//^3A15:0167
-							if (_3a15_0381(bp04, bp0c) != 0)
-								//^3A15:017D
+					Timer* xTimer2 = &glbTimersTable[glbTimerNextEntries[iTimerIndex2]];	// bp08
+					if (iTimerIndex2+1 < iTimersCount) {
+						Timer* xTimer3 = &glbTimersTable[glbTimerNextEntries[iTimerIndex2+1]];	// bp0c
+						if (TIMER_COMPARE(xTimer, xTimer2) != 0) {
+							if (TIMER_COMPARE(xTimer, xTimer3) != 0)
 								break;
-							//^3A15:017F
-							si++;
+							iTimerIndex2++;
 						}
 						else {
-							//^3A15:0182
-							if (_3a15_0381(bp0c, bp08) != 0)
-								//^3A15:019A
-								si++;
+							if (TIMER_COMPARE(xTimer3, xTimer2) != 0)
+								iTimerIndex2++;
 						}
 					}
 					else {
-						//^3A15:019D
-						if (_3a15_0381(bp04, bp08) != 0)
-							//^3A15:01B3
+						if (TIMER_COMPARE(xTimer, xTimer2) != 0)
 							break;
 					}
-					//^3A15:01B5
 					// SPX: This is a swap typical in sort algo
-					Bit16u bp10 = glbTimerNextEntries[di];
-					//^3A15:01C5
-					glbTimerNextEntries[di] = glbTimerNextEntries[si];
-					//^3A15:01DF
-					glbTimerNextEntries[si] = bp10;
-					//^3A15:01EF
-					di = si;
+					Bit16u iSwapIndex = glbTimerNextEntries[iTimerIndex];	// bp10
+					glbTimerNextEntries[iTimerIndex] = glbTimerNextEntries[iTimerIndex2];
+					glbTimerNextEntries[iTimerIndex2] = iSwapIndex;
+					iTimerIndex = iTimerIndex2;
 				}
-				//^3A15:01F4
 			}
 		}
 	}
-	//^3A15:0200
-	_4976_4762 = -1;
-	//^3A15:0206
+	glbTimer_4976_4762 = -1;
 	REARRANGE_TIMERLIST();
-	//^3A15:020B
 	return;
 }
 
@@ -625,27 +597,21 @@ void SkWinCore::__SORT_TIMERS()
 // _3a15_0002 renamed INIT_TIMERS
 void SkWinCore::INIT_TIMERS()
 {
-	//^3A15:0002
 	ENTER(4);
-	//^3A15:0007
 	glbTimersTable = reinterpret_cast<Timer *>(ALLOC_MEMORY_RAM(glbTimersMaximumCount * 10, afUseUpper, 0x400));
 	glbTimerNextEntries = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(glbTimersMaximumCount << 1, afUseUpper, 0x400));
 	if (cd.mo.glbSpecialScreen != _MENU_SCREEN__RESUME_GAME_SELECT) {
-		Timer *bp04 = glbTimersTable;
-		U16 si = 0;
-		for (; si < glbTimersMaximumCount; bp04++) {
-			//^3A15:005A
-			bp04->TimerType(tty00);
-			bp04->w0_0_f(++si);
-			//^3A15:006A
+		Timer* pTimer = glbTimersTable;	// bp04
+		U16 iTimerIndex = 0;	// si
+		for (; iTimerIndex < glbTimersMaximumCount; pTimer++) {
+			pTimer->TimerType(tty00);
+			pTimer->w0_0_f(++iTimerIndex);
 		}
-		//^3A15:0070
 		glbTimersActiveCount = 0;
-		bp04[-1].w0_0_f(0xffff);
+		pTimer[-1].w0_0_f(0xFFFF);
 		glbTimersCount = 0;
 		glbTimerIndexNextAvailable = 0;
 	}
-	//^3A15:008B
 	return;
 }
 
@@ -654,26 +620,18 @@ void SkWinCore::INIT_TIMERS()
 // _2fcf_01c5 renamed SET_TIMER_3C_OR_3D
 void SkWinCore::SET_TIMER_3C_OR_3D(ObjectID recordLink, i16 xx, i16 yy, Bit16u curmap, Bit16u ss)
 {
-	//^2FCF:01C5
 	ENTER(10);
-	//^2FCF:01C9
-	Timer xtimer; // bp0a
-	xtimer.SetMap(curmap);
-	xtimer.SetTick(glbGameTick +5);
-	//^2FCF:01EC
+	Timer tTimer; // bp0a
+	tTimer.SetMap(curmap);
+	tTimer.SetTick(glbGameTick +5);
 	// SPX: though .. tty3D and tty3C seems to be handled exactly the same way!
-	xtimer.TimerType((ss != 0) ? tty3D : tty3C);
-	//^2FCF:01FB
-	xtimer.actor = TIMER_ACTOR__00;
-	//^2FCF:01FF
-	xtimer.Xcoord(xx);
-	xtimer.Ycoord(yy);
-	xtimer.id8(recordLink);
-	//^2FCF:0211
+	tTimer.TimerType((ss != 0) ? tty3D : tty3C);
+	tTimer.actor = TIMER_ACTOR__00;
+	tTimer.Xcoord(xx);
+	tTimer.Ycoord(yy);
+	tTimer.id8(recordLink);
 	SET_MINION_RECENT_OPEN_DOOR_LOCATION(recordLink, xx, yy, curmap, 1);
-	//^2FCF:0226
-	QUEUE_TIMER(&xtimer);
-	//^2FCF:0232
+	QUEUE_TIMER(&tTimer);
 	return;
 }
 
@@ -843,7 +801,6 @@ _0476:
 // SPX: _3df7_000a renamed SET_TIMER_WEATHER
 void SkWinCore::SET_TIMER_WEATHER(U32 tickDelta)
 {
-	//^3DF7:000A
 	ENTER(10);
 
 	if (SkCodeParam::bUseDM2ExtendedMode && SkCodeParam::fDebugRainSpeed != 1)
@@ -854,15 +811,12 @@ void SkWinCore::SET_TIMER_WEATHER(U32 tickDelta)
 		, glbGameTick +tickDelta
 		));
 
-
-	//^3DF7:000E
-	Timer bp0a;
-	bp0a.SetMap(0);
-	bp0a.SetTick(glbGameTick +tickDelta);
-	bp0a.TimerType(ttyWeather);
-	bp0a.actor = TIMER_ACTOR__00;
-	QUEUE_TIMER(&bp0a);
-	//^3DF7:0035
+	Timer tTimerWeather;	// bp0a
+	tTimerWeather.SetMap(0);
+	tTimerWeather.SetTick(glbGameTick + tickDelta);
+	tTimerWeather.TimerType(ttyWeather);
+	tTimerWeather.actor = TIMER_ACTOR__00;
+	QUEUE_TIMER(&tTimerWeather);
 	return;
 }
 
@@ -893,26 +847,19 @@ Bit16u SkWinCore::GET_TIMER_NEW_INDEX(Bit16u xx)
 //^3A15:0696
 Bit16u SkWinCore::QUEUE_TIMER(Timer *ref)
 {
-	ATLASSERT(ref->TimerType() != 0xcc);
+	ATLASSERT(ref->TimerType() != 0xCC);
 
 	//ATLASSERT(ref->GetMap() != 0 || ref->TimerType() != tty1E);
 	SkD((DLV_DBG_TIMER, "Timers : Active:%d / Cnt:%d / MaxCnt:%d\n", glbTimersActiveCount, glbTimersCount, glbTimersMaximumCount));
 
-	//^3A15:0696
 	if (ref->TimerType() == 0) {
-		//^3A15:06A5
-		return 0xffff;
+		return 0xFFFF;
 	}
-	//^3A15:06AB
 	if (glbTimersCount == glbTimersMaximumCount) {
-		//^3A15:06B4
 		RAISE_SYSERR(SYSTEM_ERROR__TIMER_MAX_REACHED);
 	}
-	//^3A15:06BC
 	Bit16u si = glbTimerIndexNextAvailable;
-	//^3A15:06CD
 	glbTimerIndexNextAvailable = glbTimersTable[si].w0_0_f();
-	//^3A15:06D5
 	glbTimersTable[si] = *ref;
 
 	SkD((DLV_DBG_TIMER, "DBG: Timer#%03d(%6u,%2u,%02X,%02X,%04X,%04X) Added.\n"
@@ -921,26 +868,17 @@ Bit16u SkWinCore::QUEUE_TIMER(Timer *ref)
 		, (Bitu)ref->actor, (Bitu)ref->value, (Bitu)ref->w8
 		));
 
-	//^3A15:06F3
 	if (glbTimersActiveCount <= si) {
-		//^3A15:
-		glbTimersActiveCount = si +1;
+		glbTimersActiveCount = si + 1;
 	}
-	//^3A15:06FF
-	i16 di = _4976_4762;
-	//^3A15:0704
+	i16 di = glbTimer_4976_4762;
 	if (di < 0) {
-		//^3A15:0708
 		di = glbTimersCount;
 	}
-	//^3A15:070C
-	_4976_4762 = -1;
+	glbTimer_4976_4762 = -1;
 	glbTimersCount++;
-	//^3A15:0716
 	glbTimerNextEntries[di] = si;
-	//^3A15:0723
-	_3a15_0486(di);
-	//^3A15:0729
+	TIMER_3a15_0486(di);
 	return si;
 }
 
@@ -950,35 +888,21 @@ Bit16u SkWinCore::QUEUE_TIMER(Timer *ref)
 // SPX: _3a15_061a renamed DELETE_TIMER
 void SkWinCore::DELETE_TIMER(Bit16u xx)
 {
-	//^3A15:061A
-	//^3A15:061F
 	Bit16u si = xx;
-	//^3A15:0622
-	if (_4976_4762 >= 0) {
-		//^3A15:0629
-		_3a15_0486(_4976_4762);
+	if (glbTimer_4976_4762 >= 0) {
+		TIMER_3a15_0486(glbTimer_4976_4762);
 	}
-	//^3A15:0632
 	glbTimersTable[si].TimerType(tty00);
-	//^3A15:0644
 	glbTimersTable[si].w0_0_f(glbTimerIndexNextAvailable);
-	//^3A15:0657
 	glbTimerIndexNextAvailable = si;
-	//^3A15:065B
 	glbTimersCount--;
-	//^3A15:065F
 	Bit16u di = glbTimersCount;
-	//^3A15:0664
 	if (di != 0) {
-		//^3A15:0668
 		si = GET_TIMER_NEW_INDEX(si);
-		//^3A15:0670
 		if (si != di) {
-			//^3A15:0674
-			glbTimerNextEntries[_4976_4762 = si] = glbTimerNextEntries[di];
+			glbTimerNextEntries[glbTimer_4976_4762 = si] = glbTimerNextEntries[di];
 		}
 	}
-	//^3A15:0692
 	return;
 }
 
@@ -986,17 +910,14 @@ void SkWinCore::DELETE_TIMER(Bit16u xx)
 // SPX: _3a15_0763 renamed IS_TIMER_TO_PROCEED
 X16 SkWinCore::IS_TIMER_TO_PROCEED()
 {
-	//^3A15:0763
 	ENTER(0);
-	//^3A15:0766
-	if (_4976_4762 >= 0) {
-		_3a15_0486(_4976_4762);
+	if (glbTimer_4976_4762 >= 0) {
+		TIMER_3a15_0486(glbTimer_4976_4762);
 	}
 	if (glbTimersCount != 0) {
 		if (glbTimersTable[*glbTimerNextEntries].GetTick() <= glbGameTick)
 			return 1;
 	}
-	//^3A15:07B0
 	return 0;
 }
 
@@ -1006,13 +927,10 @@ X16 SkWinCore::IS_TIMER_TO_PROCEED()
 // SPX: _3a15_072f renamed GET_AND_DELETE_NEXT_TIMER
 void SkWinCore::GET_AND_DELETE_NEXT_TIMER(Timer *ref)
 {
-	//^3A15:072F
 	ENTER(0);
-	//^3A15:0733
-	X16 si;
-	*ref = glbTimersTable[si = *glbTimerNextEntries];
-	DELETE_TIMER(si);
-	//^3A15:0760
+	X16 iTimerIndex = *glbTimerNextEntries;	// si
+	*ref = glbTimersTable[iTimerIndex];
+	DELETE_TIMER(iTimerIndex);
 	return;
 }
 

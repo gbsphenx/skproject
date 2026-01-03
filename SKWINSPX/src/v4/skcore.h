@@ -336,7 +336,7 @@ protected:
 	U16	_4976_4750;
 	U16		_4976_475c;
 	Bit8u	_4976_475e;
-	i16	_4976_4762;
+	i16	glbTimer_4976_4762;				// (_4976_4762) timer related ?
 	X16		_4976_47fc;
 	X16		glbThunderJustCast;	// (_4976_47fe)
 	X8		_4976_4806;
@@ -2038,9 +2038,9 @@ protected:
 	X16 _19f0_2024(ObjectID rl, i16 ss, i16 tt);
 	i16 _19f0_2165(X16 aa, i16 xx, i16 yy, i16 ss, i16 tt, i16 vv, i16 ww);	
 	ObjectID *OVERSEE_RECORD(ObjectID *ref, Bit8u dir, ObjectID **recordMatched, U16 (SkWinCore::*pfnFinder)(ObjectID *ref, void *pvUser), void *pvUser, U16 alsoCreaturePossessions, U16 alsoContainedObjects);
-	int _3a15_0381(Timer *xx, Timer *yy);
-	void _3a15_0486(U16 xx);
-	U16 QUEUE_TIMER(Timer *ref);
+	int TIMER_COMPARE(Timer* xTimer1, Timer* xTimer2);	// _3a15_0381
+	void TIMER_3a15_0486(U16 xx); // _3a15_0486
+	U16 QUEUE_TIMER(Timer *ref);	// _3a15_061a
 	void _01b0_1c8d(U16 xx);
 	U16 IBMIO_SBLASTER_BLEND_TO_SNDBUFF(Bit8u *buff, U16 buffSize, i8 volume, U16 caller);
 	U16 IBMIO_BLEND_TO_SNDBUFF(Bit8u *buff, U16 buffSize, Bit8u volume, U16 caller);
@@ -2344,7 +2344,7 @@ protected:
 	void PROCEED_TIMERS();
 	void DROP_PLAYER_ITEMS(U16 player);
 	void CHAMPION_DEFEATED(X16 player);
-	void _3a15_05f7(X16 xx);
+	void TIMER_3a15_05f7(X16 xx);	// _3a15_05f7
 	void PROCESS_PLAYERS_DAMAGE();
 	void UPDATE_CHAMPIONS_STATS();
 	void GLOBAL_UPDATE_UNKNOW1();
