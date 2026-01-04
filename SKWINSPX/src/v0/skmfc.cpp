@@ -109,7 +109,7 @@ UINT SkRendererMFC::Close()
 bool SkRendererMFC::ML()
 {
 #if !defined(__NO_MFC__) && ((_MSC_VER >= 1200) || defined(_USE_MFC80) || defined(_USE_MFC60))
-	skwin.ML();
+	return skwin.ML();
 #endif //
 	return false;
 }
