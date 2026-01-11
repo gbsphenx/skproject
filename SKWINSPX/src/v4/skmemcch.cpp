@@ -176,7 +176,7 @@ void SkWinCore::FREE_CACHE_INDEX(U16 cacheIndex)
 		_4976_5d36_cache = si;
 	}
 	//^3E74:557A
-	ATLASSERT(si < _4976_5d24);
+	ATLASSERT(si < _4976_5d24_cache);
 	Bit32u bp04 = _4976_5c86_cache_hash[si];
 	//^3E74:5592
 	U16 bp06;
@@ -431,7 +431,7 @@ bool SkWinCore::ValidateMements(bool display = false) {
 				}
 				SkD((DLV_CPX, "%4d ", ref1));
 				int ref2 = 0;
-				for (i = 0; i < _4976_5d24; i++) {
+				for (i = 0; i < _4976_5d24_cache; i++) {
 					if (_4976_5d08[i] == x) {
 						ref2 = _4976_5c86_cache_hash[i];
 						break;
@@ -476,7 +476,7 @@ void SkWinCore::FREE_INDEXED_MEMENT(U16 index)
 		//^3E74:291A
 		di &= 0x7fff;
 		//^3E74:291E
-		ATLASSERT(di < _4976_5d24);
+		ATLASSERT(di < _4976_5d24_cache);
 		_4976_5d08[di] = 0xffff;
 		//^3E74:292D
 		if (cd.mc._4976_5c90_cache == 0) {
@@ -566,7 +566,7 @@ U16 SkWinCore::_3e74_4471_CACHE()
 		//^3E74:447E
 		cd.mc._4976_5c92_cache++;
 		//^3E74:4482
-		if (cd.mc._4976_5c92_cache >= _4976_5d24) {
+		if (cd.mc._4976_5c92_cache >= _4976_5d24_cache) {
 			//^3E74:448B
 			_4976_5d36_cache = -1;
 		}
@@ -575,12 +575,12 @@ U16 SkWinCore::_3e74_4471_CACHE()
 				//^3E74:4493
 				_4976_5d36_cache++;
 				//^3E74:4497
-				ATLASSERT(_4976_5d36_cache < _4976_5d24);
+				ATLASSERT(_4976_5d36_cache < _4976_5d24_cache);
 			} while (_4976_5d08[_4976_5d36_cache] != 0xffff);
 		}
 	}
 	//^3E74:44A8
-	ATLASSERT(0 <= si && si < _4976_5d24);
+	ATLASSERT(0 <= si && si < _4976_5d24_cache);
 	return si;
 }
 
@@ -591,7 +591,7 @@ U16 SkWinCore::INSERT_CACHE_HASH_AT(Bit32u cacheHash, U16 ici)
 
 	//^3E74:54A1
 	//^3E74:54A6
-	if (cd.mc._4976_5c92_cache == _4976_5d24) {
+	if (cd.mc._4976_5c92_cache == _4976_5d24_cache) {
 		//^3E74:54AF
 		mement *bp04 = _4976_5d5e;
 		//^3E74:54B6
@@ -1089,7 +1089,7 @@ U16 SkWinCore::FIND_ICI_FROM_CACHE_HASH(Bit32u cacheHash, U16 *ici)
 		}
 		//^3E74:5445
 		if (!SkCodeParam::bUsePowerDebug)
-			ATLASSERT(si < _4976_5d24);
+			ATLASSERT(si < _4976_5d24_cache);
 		Bit32u bp04 = _4976_5c86_cache_hash[_4976_5c7e_cache_ici[si]];
 		//^3E74:5468
 		if (cacheHash < bp04) {

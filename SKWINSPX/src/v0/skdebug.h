@@ -33,7 +33,7 @@
 #define DLV_DYN 0
 #define DLV_SYS 0
 #define DLV_RCT 0
-#define DLV_FIL 1	// Track file open (useful for custom GDAT)
+#define DLV_FIL 0	// Track file open (useful for custom GDAT)
 #define DLV_DBC 0
 #define DLV_TWEET 0
 #define DLV_MOVE 0	// Player moves
@@ -65,7 +65,7 @@
 #define DLV_DBG_GAME_LOAD	0
 #define DLV_DBG_LUA			0
 #define DLV_DBG_SND			0
-#define DLV_USE_LOGX		1
+#define DLV_USE_LOGX		0
 
 #ifdef __DJGPP__
 #define DLV_DBG_DOS			1

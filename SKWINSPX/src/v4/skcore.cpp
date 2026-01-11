@@ -3737,70 +3737,52 @@ U16 SkWinCore::GET_ORNATE_ANIM_LEN(Actuator *ref, U16 isWall)
 //^3A15:0FA5
 void SkWinCore::TRY_ORNATE_NOISE(Actuator *ref, ObjectID rl, U16 xx, U16 yy, U16 animLen, U16 isWall)
 {
-	//^3A15:0FA5
 	ENTER(12);
-	//^3A15:0FAB
 	// if (ref->SoundEffect() != 1) // original line
 	if (ref->SoundEffect() != 1 && !SkCodeParam::bForceOrnateSound)
-		//^3A15:0FBD
 		return;
-	//^3A15:0FC0
 	if ((ref->ActuatorData() & 0x0100) != 0)
-		//^3A15:0FCF
 		return;
-	//^3A15:0FD2
-	U8 iCategory = 0;	// bp0b
-	U8 iItemNumber = 0;	// bp0c
+	U8 iGDatCategory = 0;	// bp0b
+	U8 iGDatItemId = 0;	// bp0c
 	if (isWall != 0) {
-		//^3A15:0FD8
-		iCategory = GDAT_CATEGORY_WALL_GFX;	// 9
-		//^3A15:0FDC
-		iItemNumber = GET_WALL_DECORATION_OF_ACTUATOR(ref);
+		iGDatCategory = GDAT_CATEGORY_WALL_GFX;	// 9
+		iGDatItemId = GET_WALL_DECORATION_OF_ACTUATOR(ref);
 	}
 	else {
-		//^3A15:0FE9
-		iCategory = GDAT_CATEGORY_FLOOR_GFX;	// 10
-		//^3A15:0FED
-		iItemNumber = GET_FLOOR_DECORATION_OF_ACTUATOR(ref);
+		iGDatCategory = GDAT_CATEGORY_FLOOR_GFX;	// 10
+		iGDatItemId = GET_FLOOR_DECORATION_OF_ACTUATOR(ref);
 	}
-	//^3A15:0FFD
-	U16 si = ((ref->ActuatorData() & 0xff) + glbGameTick + QUERY_GDAT_ENTRY_DATA_INDEX(iCategory, iItemNumber, dtWordValue, SOUND_STD_ACTIVATION)) % animLen;
-	//^3A15:1044
-	Timer bp0a;
-	bp0a.SetMap(glbCurrentMapIndex);
-	bp0a.SetTick(animLen - si + glbGameTick);
-	//^3A15:106B
-	bp0a.TimerType(tty5A);
-	bp0a.actor = TIMER_ACTOR__00;
-	//^3A15:1073
-	bp0a.w8 = rl;
-	bp0a.XcoordB(U8(xx));
-	bp0a.YcoordB(U8(yy));
-	//^3A15:1085
-	QUEUE_TIMER(&bp0a);
-	//^3A15:1090
+	U16 si = ((ref->ActuatorData() & 0xFF) + glbGameTick + QUERY_GDAT_ENTRY_DATA_INDEX(iGDatCategory, iGDatItemId, dtWordValue, SOUND_STD_ACTIVATION)) % animLen;
+
+	Timer tTimer;	// bp0a
+	tTimer.SetMap(glbCurrentMapIndex);
+	tTimer.SetTick(animLen - si + glbGameTick);
+	tTimer.TimerType(tty5A);
+	tTimer.actor = TIMER_ACTOR__00;
+	tTimer.w8 = rl;
+	tTimer.XcoordB(U8(xx));
+	tTimer.YcoordB(U8(yy));
+	QUEUE_TIMER(&tTimer);
 	ref->ActuatorData(ref->ActuatorData() | 0x0100);
-	//^3A15:10B0
 	if (si == 0) {
-		//^3A15:10B4
 		QUEUE_NOISE_GEN2(
-			iCategory,
-			iItemNumber,
+			iGDatCategory,
+			iGDatItemId,
 			SOUND_STD_ACTIVATION,
-			0xfe,
+			0xFE,
 			xx,
 			yy,
 			1,
-			0x8c,
+			0x8C,
 			0x80
 			);
 	}
-	//^3A15:10D8
 	return;
 }
 
 //^3A15:38B6
-void SkWinCore::_3a15_38b6(U16 xx)
+void SkWinCore::LOAD_NEWMAP_3a15_38b6(U16 xx)
 {
 	//^3A15:38B6
 	ENTER(22);
@@ -3952,24 +3934,19 @@ void SkWinCore::FILL_CAII_CUR_MAP()
 //^13AE:0009
 void SkWinCore::LOAD_NEWMAP(U8 newmap)
 {
-	//^13AE:0009
 	SkD((DLV_DBG_INIT, "LOAD_NEWMAP (%d)\n", newmap));
 	ENTER(0);
-	//^13AE:000C
-	if (_4976_5c8a == 0) {
-		//^13AE:0013
+	if (glbNewMap_4976_5c8a == 0) {
 		FIRE_HIDE_MOUSE_CURSOR();
-		//^13AE:0018
-		_3a15_38b6(0);
+		LOAD_NEWMAP_3a15_38b6(0);
 	}
-	//^13AE:0020
 	SkD((DLV_DBG_INIT, "LOAD_NEWMAP: LOAD_LOCALLEVEL_GRAPHICS_TABLE\n"));
 	LOAD_LOCALLEVEL_GRAPHICS_TABLE(newmap);
 	SkD((DLV_DBG_INIT, "LOAD_NEWMAP: LOAD_LOCALLEVEL_DYN\n"));
 	LOAD_LOCALLEVEL_DYN();
-	if (_4976_5c8a == 0) {
-		SkD((DLV_DBG_INIT, "LOAD_NEWMAP: _3a15_38b6(1)\n"));
-		_3a15_38b6(1);
+	if (glbNewMap_4976_5c8a == 0) {
+		SkD((DLV_DBG_INIT, "LOAD_NEWMAP: LOAD_NEWMAP_3a15_38b6(1)\n"));
+		LOAD_NEWMAP_3a15_38b6(1);
 		SkD((DLV_DBG_INIT, "LOAD_NEWMAP: FILL_CAII_CUR_MAP\n"));
 		FILL_CAII_CUR_MAP();
 		SkD((DLV_DBG_INIT, "LOAD_NEWMAP: RECALC_LIGHT_LEVEL\n"));
@@ -13783,6 +13760,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 		// should go through all maps to remove creature references
 	}*/
 
+	LUA_CALL_SCRIPT(_EXP_SCRIPT__GAME_INIT_, 0, 0, 0, 0);	// SPX: call this before ARRANGE notably because creatures are initialized in ARRANGE. INIT may change some values for these.
 
 	SkD((DLV_DBG_GAME_LOAD, "After ASSERTS. isNewGame = %d\n", isNewGame));
 	if (isNewGame != 0) {
@@ -13797,8 +13775,6 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	SkD((DLV_DBG_GAME_LOAD, "Read Dungeon Structure Completed !\n"));
 	if (SkCodeParam::bDebugInfoMapInit == true)
 		LOG_FULL_DUNGEON_INFO();
-
-	LUA_CALL_SCRIPT(_EXP_SCRIPT__GAME_INIT_, 0, 0, 0, 0);
 
 	return 1;
 }
@@ -15770,7 +15746,7 @@ void SkWinCore::LOAD_DYN4(SkLoadEnt *ref, i16 aa)
 	//           ref. cnt
 	//         pool flag?
 	//        pool flag?
-	if (_4976_5c8a == 0) {
+	if (glbNewMap_4976_5c8a == 0) {
 		_482b_07c2(0);
 	}
 	SkLoadEnt *bp08 = ref;
@@ -16113,7 +16089,7 @@ _3abe:
 	_4976_5d26 = bp2a - _4976_5ca0;
 	_4976_5d66 = bp2a;
 	i32 bp26;
-	if (_4976_5c8a == 0) {
+	if (glbNewMap_4976_5c8a == 0) {
 		if (_4976_5d26 < 0 || _4976_5d62 < 0) {
 			//^3E74:3F1B
 			if (bp38 == 0) {
@@ -16560,7 +16536,7 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 		}
 	}
 	//^2676:06E8
-	if (_4976_5bee[0] != 0 || (_4976_5c8a != 0 && cd.pi.glbChampionsCount != 4)) {
+	if (_4976_5bee[0] != 0 || (glbNewMap_4976_5c8a != 0 && cd.pi.glbChampionsCount != 4)) {
 		//^2676:06FD
 		// SPX: x16 GDAT2 Champion category
 		MARK_DYN_LOAD(0x16ffffff); // Mark: Champions, all, all, all
@@ -16752,13 +16728,13 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 	
 	SkD((DLV_DBG_INIT, "LOAD_LOCALLEVEL_DYN: Part 7\n"));
 	//^2676:0C8F
-	if (_4976_5c8a == 0)
+	if (glbNewMap_4976_5c8a == 0)
 		_482b_060e_AUDIO();
 	//^2676:0C9B
 	
 	LOAD_DYN4(_4976_52fc, _4976_5300);
 	
-	if (_4976_5c8a == 0)
+	if (glbNewMap_4976_5c8a == 0)
 		LOAD_MISCITEM();
 	
 	//^2676:0CBB
@@ -16775,7 +16751,7 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 	DEALLOC_UPPER_MEMORY(0xfa);
 	DEALLOC_UPPER_MEMORY(0xfa);
 	DEALLOC_UPPER_MEMORY(0x960);
-	if (_4976_5c8a != 0)
+	if (glbNewMap_4976_5c8a != 0)
 		return;
 	//^2676:0D73
 	i16 bp38;
@@ -21791,11 +21767,12 @@ void SkWinCore::INIT_CPXHEAP(sk5d12 *ref, tiamat poolBuff, U32 poolSize, U16 poo
 	return;
 }
 //^38C8:0224
-X16 SkWinCore::_38c8_0224(X16 xx, i32 yy)
+// SPX _38c8_0224 renamed LOAD_MAPS_PROGRESS_BAR
+X16 SkWinCore::LOAD_MAPS_PROGRESS_BAR(X16 xx, i32 yy)
 {
 	ENTER(6);
 	X16 bp06 = cd.pi.glbPlayerMap;
-	_4976_5c8a = 1;
+	glbNewMap_4976_5c8a = 1;
 	i32 bp04 = i32(0x7FFFFFFF);
 	U16 iMapIndex = 0;	// i16 si
 	i16 di = 0; // i16 di
@@ -21845,7 +21822,7 @@ X16 SkWinCore::_38c8_0224(X16 xx, i32 yy)
 		}
 	}
 	SkD((DLV_DBG_INIT, "Ending _38c8_0224\n"));
-	_4976_5c8a = 0;
+	glbNewMap_4976_5c8a = 0;
 	cd.pi.glbPlayerMap = bp06;
 	if (bp04 >= 0)
 		return 1;
@@ -21890,13 +21867,13 @@ void SkWinCore::ALLOC_CPX_SETUP(X8 *xx)
 		SkD((DLV_DBG_INIT, "ALLOC_CPX_SETUP:tlbMementsPointers\n"));
 		//tlbMementsPointers = reinterpret_cast<mement **>(ALLOC_MEMORY_RAM(glbNumberOfMements << 2, afZeroMem|afUseUpper, 0x400));
 		tlbMementsPointers = reinterpret_cast<mement **>(ALLOC_MEMORY_RAM(glbNumberOfMements * sizeof(void*), afZeroMem|afUseUpper, 0x400));	// 32/64-bits adaptation
-		_4976_5d24 = 0x80;
-		_4976_5d08 = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(_4976_5d24 << 1, afUseUpper, 0x400));
-		FILL_U16(reinterpret_cast<i16 *>(_4976_5d08), _4976_5d24, -1, 2);
-//		_4976_5c7e_cache_ici = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(_4976_5d24 << 1, afUseUpper, 0x400));
-		_4976_5c7e_cache_ici = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(_4976_5d24 * sizeof (U16), afUseUpper, 0x400));
-//		_4976_5c86_cache_hash = reinterpret_cast<U32 *>(ALLOC_MEMORY_RAM(_4976_5d24 << 2, afZeroMem|afUseUpper, 0x400));
-		_4976_5c86_cache_hash = reinterpret_cast<U32 *>(ALLOC_MEMORY_RAM(_4976_5d24 * sizeof (U32), afZeroMem|afUseUpper, 0x400));
+		_4976_5d24_cache = 0x80;
+		_4976_5d08 = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(_4976_5d24_cache << 1, afUseUpper, 0x400));
+		FILL_U16(reinterpret_cast<i16 *>(_4976_5d08), _4976_5d24_cache, -1, 2);
+//		_4976_5c7e_cache_ici = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(_4976_5d24_cache << 1, afUseUpper, 0x400));
+		_4976_5c7e_cache_ici = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(_4976_5d24_cache * sizeof (U16), afUseUpper, 0x400));
+//		_4976_5c86_cache_hash = reinterpret_cast<U32 *>(ALLOC_MEMORY_RAM(_4976_5d24_cache << 2, afZeroMem|afUseUpper, 0x400));
+		_4976_5c86_cache_hash = reinterpret_cast<U32 *>(ALLOC_MEMORY_RAM(_4976_5d24_cache * sizeof (U32), afZeroMem|afUseUpper, 0x400));
 		_4976_5ce2 = _4976_5cf4 - _4976_00ec;
 		SkD((DLV_DBG_INIT, "ALLOC_CPX_SETUP:INIT_CPXHEAP\n"));
 		INIT_CPXHEAP(&_4976_5d12, ptr2t(_4976_5ce2), 0, _4976_5cee);
@@ -21916,7 +21893,7 @@ void SkWinCore::ALLOC_CPX_SETUP(X8 *xx)
 		_4976_5cf8 = tiamat::Size(ptr2t(_4976_5ce2), ptr2t(reinterpret_cast<U8 *>(_4976_5ce6)));
 		//^3E74:153C
 		SkD((DLV_DBG_INIT, "ALLOC_CPX_SETUP:_38c8_0224 (!%d,%d)\n", si, bp18));
-	} while (_38c8_0224(!si, bp18) == 0);
+	} while (LOAD_MAPS_PROGRESS_BAR(!si, bp18) == 0);
 	_4976_5d76 = 1;
 	SkD((DLV_DBG_INIT, "ALLOC_CPX_SETUP:Complete\n"));
 	return;

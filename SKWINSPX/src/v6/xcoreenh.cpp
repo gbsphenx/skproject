@@ -816,6 +816,7 @@ U16 SkWinCore::EXT_PROCEED_DCS_GENERIC_COMMAND(const char* sCommandName, const c
 		char* sAttribute = (char*) sSubCommand;
 		int iCreatureType = iArg4;
 		int iAttributeValue = iArg5;
+		printf("Change AI-STAT #%02d %s to %d\n", iCreatureType, sAttribute, iAttributeValue);
 		if (!strcmp(sAttribute, "hp"))
 			dAITable[iCreatureType].BaseHP = iAttributeValue;
 		else if (!strcmp(sAttribute, "ac"))

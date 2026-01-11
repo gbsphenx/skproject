@@ -4,9 +4,10 @@ TARGET_BUILD_PATH=$BUILD_FOLDER
 
 ## Link
 echo "Linking ..."
-## Requirement for SDL2
+## Requirement for SDL2 + SDL2_Mixer
 ## sudo apt install libsdl2-dev
-g++ -g -W -Wall -O3 -D__LINUX__ -D__NOSDL__ -Iv0 -Iv4 -Iv5 -Iv6 -Ilua/include -L. -L../lua/lib $TARGET_BUILD_PATH/*.o -lSDL2 -o $TARGET_BUILD_PATH/$TARGET
+## sudo apt install libsdl2-mixer-dev
+g++ -g -W -Wall -O3 -D__LINUX__ -D__NOSDL__ -Iv0 -Iv4 -Iv5 -Iv6 -Ilua/include -L. -L../lua/lib $TARGET_BUILD_PATH/*.o -lSDL2 -lSDL2_mixer -o $TARGET_BUILD_PATH/$TARGET
 GCC_RC=$?
 if [[ $GCC_RC -eq 0 ]]; then
     echo "$TARGET done."

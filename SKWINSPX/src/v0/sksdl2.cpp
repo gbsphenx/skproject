@@ -409,8 +409,10 @@ UINT SkRendererSDL::AudioPlayFile(const char* sFilename, i8 iSoundVolume)
 	if (!sound) {
 		printf("Failed to load WAV: %s\n", Mix_GetError());
 	}
-	Mix_VolumeChunk(sound, (int)((float)iSoundVolume*128.f / 100.f));
-	Mix_PlayChannel(-1, sound, 0);
+	else {
+		Mix_VolumeChunk(sound, (int)((float)iSoundVolume*128.f / 100.f));
+		Mix_PlayChannel(-1, sound, 0);
+	}
 #endif // not __NO_SDL__
 	return 0;
 }

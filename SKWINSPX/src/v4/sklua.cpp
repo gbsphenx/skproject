@@ -327,9 +327,12 @@ bool SkWinLua_RunFunctionFromScript(SkWinCore* xSkCore, const char* sScriptFilen
 
 			///--- Running script
 			iRetLUA = lua_pcall(LuaState, 4, 0, 0);
-			if (iRetLUA)
+			if (iRetLUA != 0) {
 				SkWinLua_Bail(LuaState, STR_TO_CHAR_COMPAT_MINGW "lua_pcall() failed", sScriptFilename, sFunctionName);
+				CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_RED, BLACK);
+			}
 			SkD((DLV_DBG_LUA, "Lua Execution done RC = %d\n", iRetLUA));
+			CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
 		}
 
 

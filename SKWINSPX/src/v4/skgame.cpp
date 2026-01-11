@@ -30,7 +30,7 @@ void SkWinCore::LUA_CALL_SCRIPT(U8 iScriptEvent, i16 iPosMap, i16 iPosX, i16 iPo
 //	if (skwin.dung == _OPTION_DUNGEON_EOB_EOB1_)
 //		sprintf(sLocalScriptName, "eobmap%02d.lua", iPosMap);		
 //		sprintf(sLocalScriptName, "eobmap.lua");		
-	sprintf(sScriptName, "%s/script/%s", skWinApp->GET_DATA_FOLDER_NAME(), sLocalScriptName);
+	sprintf(sScriptName, "%s/scripts/%s", skWinApp->GET_DATA_FOLDER_NAME(), sLocalScriptName);
 	
 	switch (iScriptEvent)
 	{

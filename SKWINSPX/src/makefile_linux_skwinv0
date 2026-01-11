@@ -8,10 +8,12 @@ SKWIN_BUILD_FOLDER = ../build/SKWinV0_Linux_Release
 CC = g++
 CFLAGS = -g -W -Wall -O3
 CPPFLAGS = -D__LINUX__ -D__SDL__ -D__NO_MFC__ -I.. -Iv0 -Iv4 -Iv5 -Iv6
-CPPFLAGS  += $(shell pkg-config --cflags sdl2)
+CPPFLAGS += $(shell pkg-config --cflags sdl2)
+CPPFLAGS += $(shell pkg-config --cflags SDL2_mixer)
 #LIBS = -L.. -L$(LUALIB_LIB)
 LIBS = -L..
 LDFLAGS += $(shell pkg-config --libs sdl2)
+LDFLAGS += $(shell pkg-config --libs SDL2_mixer)
 
 OBJ = $(SKWIN_0_OBJ)
 OBJ_STATIC = $(LUALIB_OBJ) $(SDLLIB_OBJ)

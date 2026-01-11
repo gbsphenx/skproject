@@ -760,7 +760,7 @@ protected:
 	U16	*_4976_5c7e_cache_ici;	// ici-to-cacheindex. to supply quick sort for searching hash value from _4976_5c86
 	U16		*_4976_5c82;	// raw data index to mementi. (usually 3491 word values). 0xffff for unused mark.
 	Bit32u	*_4976_5c86_cache_hash;	// cacheindex-to-hashval:  0xFFFFxxxx for pict?  0x2000xxxx for creature thing?  (13:dbidx,7:horzScale,5:vertScale) for stretched pict?
-	U16		_4976_5c8a;
+	U16		glbNewMap_4976_5c8a;		// _4976_5c8a
 	mement	*_4976_5c8c;	// mement#3
 	//U16	_4976_5c90; // (_4976_5c90)
 	//U16	_4976_5c92_cache;		// (_4976_5c92) cnt used entries of _4976_5c7e?
@@ -792,7 +792,7 @@ protected:
 	U16	glbGDatOpenCloseFlag;		// (_4976_5d10) some open/close? flag related to Graphics.dat file
 	sk5d12	_4976_5d12;
 	shelf_memory _4976_5d20;	// top of EMS
-	U16	_4976_5d24;	// _4976_5d24 / cache relaed ? / value =128?
+	U16	_4976_5d24_cache;	// _4976_5d24 / cache relaed ? / value =128?
 	i32		_4976_5d26; // 9E AA 01 00 -> 0001AA9E
 	Bit32u	_4976_5d2a;		// tick?
 	X16		glbGDatNumberOfData; // (_4976_5d2e) 3,491 entries in graphics data file
@@ -1421,7 +1421,7 @@ protected:
 	void _12b4_00af(U8 iStairsLead, U8 iStairsDir); // _12b4_00af // SPX: changing signature for more custom behaviour
 	U16 GET_ORNATE_ANIM_LEN(Actuator *ref, U16 isWall);
 	void TRY_ORNATE_NOISE(Actuator *ref, ObjectID rl, U16 xx, U16 yy, U16 animLen, U16 isWall);
-	void _3a15_38b6(U16 xx);
+	void LOAD_NEWMAP_3a15_38b6(U16 xx);	// _3a15_38b6
 	void FILL_CAII_CUR_MAP();
 	void LOAD_NEWMAP(U8 newmap);
 	void PERFORM_TURN_SQUAD(U16 xx);
@@ -2175,7 +2175,7 @@ protected:
 	X16 _38c8_0109(X8 **buff, X32 *xx, X16 *yy);
 	void _38c8_0104();
 	void INIT_CPXHEAP(sk5d12 *ref, tiamat poolBuff, U32 poolSize, U16 poolflag);
-	X16 _38c8_0224(X16 xx, i32 yy);
+	X16 LOAD_MAPS_PROGRESS_BAR(X16 xx, i32 yy);	// _38c8_0224
 	void ALLOC_CPX_SETUP(X8 *xx);	// _3e74_1330 renamed ALLOC_CPX_SETUP
 	X16 SET_GRAPHICS_RGB_PALETTE(U8 (*pal)[4], X16 yy);	// _00eb_05c7 renamed GRAPHICS_SET_RGB_PALETTE
 	void SET_RGB_PALETTE_FROM_DATA(U8 *pal);	// _44c8_1baf renamed SET_RGB_PALETTE_FROM_DATA

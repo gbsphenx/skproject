@@ -2410,15 +2410,13 @@ X16 SkWinCore::WOUND_CREATURE(i16 damage)
 	SkD((DLV_DBM, "DBM: WOUND_CREATURE(%3d) C:%p\n"
 		, (Bitu)damage, glbCurrentThinkingCreatureRec));
 
-	//^1C9A:184C
 	ENTER(12);
-	//^1C9A:1852
 	Creature *xLocalCreature = glbCurrentThinkingCreatureRec; // bp04
 	AIDefinition *xLocalAIDef = glbAIDef; // bp08
 	X16 bDiesFromDamage = 0; // di
 
 	if (glbCurrentMapIndex == cd.pi.glbPlayerMap)
-	SkD((DLV_TWEET, "Tweet: %s (a#%03d, x:%d, y:%d, map:%d) took %d damage! (hp:%d ac:%d) \n"
+	SkD((DLV_TWEET||DLV_DBM, "Tweet: %s (a#%03d, x:%d, y:%d, map:%d) took %d damage! (hp:%d ac:%d) \n"
 		, static_cast<LPCSTR>(getRecordNameOf(glbCurrentThinkingCreatureID))
 		, glbCurrentThinkingCreatureID.DBIndex()
 		, glbCreatureTimer.XcoordB() // really? x
@@ -2434,11 +2432,9 @@ X16 SkWinCore::WOUND_CREATURE(i16 damage)
 		return bDiesFromDamage;
 	X16 iAIStatsFlag = 0;	// SPX : added default value to 0
 	if (xLocalAIDef->IsStaticObject() == 0) {
-		//^1C9A:1882
 		X16 iAIStatsIndex = QUERY_GDAT_CREATURE_WORD_VALUE(xLocalCreature->CreatureType(), 1);	// bp0a
 		iAIStatsFlag = tblAIStats01[iAIStatsIndex];	// si
 		if ((iAIStatsFlag & 4) == 0) {	// minions
-			//^1C9A:18A5
 			X16 iCurrentMap = glbCurrentMapIndex; // bp0c
 			if (SkCodeParam::bUsePowerDebug) // SPX: issue here after gameload where some creature get their triggermap beyond the number of maps (then fail)
 			{ // if that case happens here, let's default trigger map to current map, and let it go that way
@@ -2465,28 +2461,22 @@ X16 SkWinCore::WOUND_CREATURE(i16 damage)
 		return bDiesFromDamage;
 	}
 	// SPX : we get here if creature has not enough HP to survive damage done
-	//^1C9A:190E
 	//xLocalCreature->HP1(1);
 	if (xLocalAIDef->IsStaticObject() == 0) {
 		if ((iAIStatsFlag & 0x800) != 0) {	// Dragoth only
-			//^1C9A:1927
 			if (_1c9a_17c7(glbCreatureTimer.XcoordB(), glbCreatureTimer.YcoordB(), glbSomeMap_4976_4ee7) == 0)
 				return bDiesFromDamage;
 		}
-		//^1C9A:1944
 		if ((iAIStatsFlag & 0x800) != 0)
 			glbEndCounter = 0x18;
-		//^1C9A:1950
 		CREATURE_SET_NEW_COMMAND(glbCurrentThinkingCreatureID, glbCreatureTimer.XcoordB(), glbCreatureTimer.YcoordB(), ccm13_Destroy, 1); // 0x13
 		if (SkCodeParam::bUsePowerDebug)
 			bDiesFromDamage = 1;
 	}
 	else {
-		//^1C9A:196E
 		bDiesFromDamage = 1;
 		DELETE_CREATURE_RECORD(glbCreatureTimer.XcoordB(), glbCreatureTimer.YcoordB(), CREATURE_GENERATED_DROPS, 1);
 	}
-	//^1C9A:1988
 	return bDiesFromDamage;
 }
 
