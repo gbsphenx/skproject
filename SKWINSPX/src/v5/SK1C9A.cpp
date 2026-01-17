@@ -4754,7 +4754,7 @@ static i32 DM2_19f0_2723(i32 eaxl, i32 edxl, i32 ebxl, i32 ecxl)
       //m_1F30F:
       if (RG5w != 0)
         return RG2L;
-      return vw_00 != wcon(0xffffffff) ? lcon(0x1) : RG2L;
+      return vw_00 != wcon(0xFFFF) ? lcon(0x1) : RG2L;	// wcon(0xffffffff)
     }
     if (RG1W != lcon(0x3))
       return RG2L;

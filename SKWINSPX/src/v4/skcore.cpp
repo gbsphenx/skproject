@@ -816,7 +816,7 @@ CString SkWinCore::getUIEventName(U8 event)
 
 // 0xD0
 	if (event == UI_EVENTCODE_START_NEW_GAME) return "START NEW GAME";
-	if (event == UI_EVENTCODE_0D8) return "???";
+	if (event == UI_EVENTCODE_0D8) return "0D8?";
 	if (event == UI_EVENTCODE_RESUME_GAME) return "RESUME GAME";
 	if (event == UI_EVENTCODE_SHOW_CREDITS) return "SHOW CREDITS";
 
@@ -13399,7 +13399,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	if (isNewGame == 1 && SkCodeParam::bTQMode)
 		return READ_DUNGEON_STRUCTURE_TQ(isNewGame);
 
-#ifdef __SK_EXTENDED_SKWIN_V6__
+#if (__SK_EXTENDED_SKWIN_V6__ == 1)
 	int iReadExtendedGame = 0;
 	iReadExtendedGame = READ_DUNGEON_STRUCTURE_EXTENDED_GAME(isNewGame, skWinApp->dung);
 	if (iReadExtendedGame)	/// should return 1 if extended game was read correctly
@@ -20008,7 +20008,7 @@ void (SkWinCore::*SkWinCore::_crt_getvect(U16 interruptno))() {
 
 //^01B0:2B1B
 // TODO : that one does nothing ?!
-X16 SkWinCore::_01b0_2b1b()
+int SkWinCore::_01b0_2b1b()
 {
 	ENTER(0);
 	return 0;

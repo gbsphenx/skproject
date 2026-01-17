@@ -12,9 +12,9 @@
 // there are two additional rectangle-infos in mouse2.dat, requested
 // by DM2_DRAW_DIALOGUE_PICT
 
-#define MOUSECURSORFILE1 "bin/v5/mouse1.dat"
+#define MOUSECURSORFILE1 (t_text*)"bin/v5/mouse1.dat"
 #define MOUSECURSORFILESIZE1 (0x60)
-#define MOUSECURSORFILE2 "bin/v5/mouse2.dat"
+#define MOUSECURSORFILE2 (t_text*)"bin/v5/mouse2.dat"
 
 c_pixel16 mouse_cur1[MOUSECURSORFILESIZE1];
 s_cursor2 mouse_cur2;

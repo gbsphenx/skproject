@@ -2638,7 +2638,7 @@ void SKW__OPEN_DIALOG_PANEL(i32 eaxl, i32 edxl)
   SKW_DRAW_DIALOGUE_PARTS_PICT(UPCAST(t_gfxdata, RG61p), lcon(0xffffffff), UPCAST(t_colidx, RG3P), RG4R);
   SKW_FREE_PICT_ENTRY(RG1P);
   SKW_FIRE_FADE_SCREEN(lcon(0x1));
-  SKW_DRAW_VP_RC_STR(lcon(0x1c2), CHGCAST(t_text, strVersionNumber), RG4W);
+  SKW_DRAW_VP_RC_STR(lcon(0x1c2), CHGCAST(t_text, strVersionNumberV5), RG4W);
   SKW_DRAW_VP_RC_STR(lcon(0x1d2), UPCAST(t_text, DOWNCAST(t_text, tp_58)), RG4W);
   SKW_DRAW_VP_RC_STR(lcon(0x1d3), RG2T, RG4W);
   SKW_2066_38d9();

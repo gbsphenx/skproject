@@ -244,7 +244,7 @@ i32 DM2_WOUND_CREATURE(i32 eaxl)
     DM2_DELETE_CREATURE_RECORD(unsignedlong(s350.v1e0562.getxA()), unsignedlong(s350.v1e0562.getyA()), 0, lcon(0x1));
     return vl_0c;
   }
-  if (vl_08 == 0 && (vol_04.getbyte1() & bcon(0xffffff80)) != 0)
+  if (vl_08 == 0 && (vol_04.getbyte1() & bcon(0x80)) != 0)	// bcon(0xffffff80))
   {
     bool skip00553 = false;
     RG1L = DM2_RAND();

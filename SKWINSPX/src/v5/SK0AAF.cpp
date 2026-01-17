@@ -450,7 +450,7 @@ i32 DM2_0aaf_02f8(i32 eaxl, i32 edxl)
   //m_A6A6:
   RG4UBlo = palettecolor_to_ui8(paldat.palette[E_COL11]); // SPX changed grey color E_COL12 to yellow
   RG4L = unsignedlong(RG4Blo);
-  RG2T = strVersionNumber;
+  RG2T = strVersionNumberV5;
   DM2_DRAW_VP_RC_STR(lcon(0x1c2), RG4W, RG2T);
   RG1L = unsignedlong(RG51W);
   if (RG1L >= 2)

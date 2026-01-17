@@ -13,7 +13,8 @@ extern SkWinApp* skWinApplication;
 
 c_dm2data ddat;
 
-te_text strVersionNumber[] = "V5.4";	// (v1d1044) SPX: for LOAD panel, originally V1.0. Moved to V5.4
+te_text strVersionNumberV5[] = "V5.4";	// (v1d1044) SPX: for LOAD panel, originally V1.0. Moved to V5.4
+
 /*const*/ te_text v1d104c[] = "SYSTEM ERROR .Z000";
 // next one not used?
 const te_text v1d105f[] = "";

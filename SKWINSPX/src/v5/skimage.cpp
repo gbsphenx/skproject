@@ -22,7 +22,7 @@ void init_global_images(void)
 	SPX_DEBUG_PRINT("INIT_GLOBAL_IMAGES:INIT\n");
 	// img1.dat is exactly 314 bytes long
   //DM2_READ_BINARY("img1.dat", VCAST(&dm2_image1), sizeof(c_image));	/// MSVC6 compiles c_image at 316 bytes, which is too long
-  DM2_READ_BINARY("bin/v5/img1.dat", VCAST(&dm2_image1), 314);
+  DM2_READ_BINARY((t_text*)"bin/v5/img1.dat", VCAST(&dm2_image1), 314);
 
   dm2_image2.init();
 }

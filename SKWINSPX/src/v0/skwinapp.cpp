@@ -893,7 +893,8 @@ void SkWinApp::processKinput(U32 nChar, bool press)
 
 //------------------------------------------------------------------------------
 #ifdef SKDOSV5
-	extern char strVersionNumber[]; // (te_text) dm2data
+	extern char strVersionNumberV5[]; // (te_text) dm2data
+	X8* strVersionNumber = (X8*) strVersionNumberV5;
 #else
 	extern const X8* const strVersionNumber; // skglobal.cpp
 #endif

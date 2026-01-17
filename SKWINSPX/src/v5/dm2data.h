@@ -631,7 +631,7 @@
 #define v1d64d3 (i8*)(vsgame + (U8)0x70)
 
   extern /*const*/ t_text* table1d27e8[3];
-  extern te_text strVersionNumber[];	// v1d1044
+  extern te_text strVersionNumberV5[];	// v1d1044
   extern te_text v1d1118[];
   extern te_text v1d1124[];
   extern te_text v1d1128[];

@@ -139,6 +139,9 @@
 
 #if defined (SKWINSPX)
 	#define XDMX_EXTENDED_FEATURES		1	// New functions that should not exist for V4 or V5, only for V6, may break compatibility
+	#define __SK_EXTENDED_SKWIN_V6__	1
+#else
+	#define __SK_EXTENDED_SKWIN_V6__	0
 #endif
 
 #define XDMX_FEATURE_AMBIENT_SOUND	1	// Rain/Weather
@@ -153,56 +156,6 @@
 #endif
 
 //------------------------------------------------------------------------------
-
-// Debug Build
-//#define RELEASE_FREE		0	// Standard working debug exe 
-
-// Standard Releases
-//#define RELEASE_STD			1	// Release Standard
-//#define RELEASE_EXT_MOD		2	// Release Extended mode
-//#define RELEASE_EXT_SUPER	3	// Release Extended mode + Super champions for debug/test
-
-// 2024 : REMOVE ALL THIS, NOT NEEDED ANYMORE
-
-//#define CURRENT_RELEASE		RELEASE_EXT_MOD
-
-/*
-#if (CURRENT_RELEASE == RELEASE_STD)
-	#undef DM2_EXTENDED_MODE
-	#define DM2_EXTENDED_MODE		0
-	#undef DM2_EXTENDED_MAP
-	#define DM2_EXTENDED_MAP		0
-	#undef DM2_EXTENDED_BUFFER
-	#define DM2_EXTENDED_BUFFER		0
-	#undef DM2_EXTENDED_DATABASE
-	#define DM2_EXTENDED_DATABASE	0
-	#undef DM2_DEBUG_SUPER_MODE
-	#define DM2_DEBUG_SUPER_MODE	0
-#elif (CURRENT_RELEASE == RELEASE_EXT_MOD)
-	#undef DM2_EXTENDED_MODE
-	#define DM2_EXTENDED_MODE		1
-	#undef DM2_EXTENDED_MAP
-	#define DM2_EXTENDED_MAP		0
-	#undef DM2_EXTENDED_BUFFER
-	#define DM2_EXTENDED_BUFFER		1
-	#undef DM2_EXTENDED_DATABASE
-	#define DM2_EXTENDED_DATABASE	1
-	#undef DM2_DEBUG_SUPER_MODE
-	#define DM2_DEBUG_SUPER_MODE	0
-#elif (CURRENT_RELEASE == RELEASE_EXT_SUPER)
-	#undef DM2_EXTENDED_MODE
-	#define DM2_EXTENDED_MODE		1
-	#undef DM2_EXTENDED_MAP
-	#define DM2_EXTENDED_MAP		0
-	#undef DM2_EXTENDED_BUFFER
-	#define DM2_EXTENDED_BUFFER		1
-	#undef DM2_EXTENDED_DATABASE
-	#define DM2_EXTENDED_DATABASE	1
-	#undef DM2_DEBUG_SUPER_MODE
-	#define DM2_DEBUG_SUPER_MODE	1
-#endif
-*/
-
 //------------------------------------------------------------------------------
 
 #endif // _SK_VERSION_CONTROL_H_

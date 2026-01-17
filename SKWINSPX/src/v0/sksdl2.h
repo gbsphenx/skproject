@@ -19,8 +19,9 @@
 	typedef void SDL_Window;
 	typedef void SDL_Renderer;
 	typedef void SDL_Texture;
-	typedef X8 SDL_Color;
+//typedef X8 SDL_Color;
 	typedef U32 SDL_Color;
+	typedef U32 SDL_AudioDeviceID;
 #endif // __NO_SDL__
 
 //..............................................................................

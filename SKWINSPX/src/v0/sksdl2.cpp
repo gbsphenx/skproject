@@ -255,6 +255,7 @@ UINT SkRendererSDL::StartAudioSample(const char* sSampleName)
 bool SkRendererSDL::ML()
 {
 //#if defined(__SDL__) && !defined(__NO_SDL__)
+#if !defined (__NO_SDL__)
 	while (true) {
 		//SkD((DLV_MOUSE,"before SDL_PumpEvents\n"));
 		SDL_Event event;
@@ -290,7 +291,7 @@ bool SkRendererSDL::ML()
 			break;
 		}
 	}
-//#endif // __SDL__
+#endif // __SDL__
 	//SkD((DLV_MOUSE,"Ended SDL_PumpEvents\n"));
 	//xMasterWinApp->skwin_Sleep(1);
 	return true;

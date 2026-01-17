@@ -203,11 +203,11 @@ static bool DM2_QUERY_NEXT_GDAT_ENTRY(s_gdat* eaxp_s36)
                   break; // goto M_2C979;
                 if (longrg5 == 0)
                 {
-                  if (byterg3lo == bcon(0xffffffff) || byterg3lo == u31prg4b->b_01) goto M_false;
+                  if (byterg3lo == bcon(0xFF) || byterg3lo == u31prg4b->b_01) goto M_false;	// bcon(0xffffffff)
                 }
                 else
                 {
-                  if (byterg3lo == bcon(0xffffffff)) goto M_false;
+                  if (byterg3lo == bcon(0xFF)) goto M_false;	// bcon(0xffffffff)
                   if (mkub(byterg3lo) <= mkub(u31prg4b->b_01))
                   {
                     byterg3hi = vb_18;

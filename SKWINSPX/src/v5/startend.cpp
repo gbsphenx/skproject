@@ -831,7 +831,7 @@ static void DM2_GAME_LOOP(void)
 		char sExtraInfo[64]; memset(sExtraInfo, 0, 64);
 //		if (SkCodeParam::bDM2V5Mode)
 //			strcpy(sExtraInfo, " V5-GFX");
-		sprintf((char*)message, "%s (%s) [%s] <%s>%s\n", __SKWIN_PROGNAME__, strVersionNumber, __SKWIN_RELEASE_DATE__, __SKWIN_SYSTEM__, sExtraInfo);
+		sprintf((char*)message, "%s (%s) [%s] <%s>%s\n", __SKWIN_PROGNAME__, strVersionNumberV5, __SKWIN_RELEASE_DATE__, __SKWIN_SYSTEM__, sExtraInfo);
 		DM2_DISPLAY_HINT_TEXT(COLOR_YELLOW, (t_text*)message);
 //		SkD((DLV_DBG_INIT, "%s\n", message));
 	}

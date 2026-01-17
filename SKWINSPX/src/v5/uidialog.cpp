@@ -405,7 +405,7 @@ void DM2_dialog_OPEN_DIALOG_PANEL(i32 eaxl, i32 edxl)
     DM2_FADE_SCREEN(1);
   RG4UBlo = palettecolor_to_ui8(paldat.palette[E_COL11]); // originally grey color (E_COL12), but kind of too dark. I reverted back to yellow as for DM1.
   RG4L = unsignedlong(RG4Blo);
-  DM2_DRAW_VP_RC_STR(lcon(0x1c2), RG4W, CHGCAST(t_text, strVersionNumber));
+  DM2_DRAW_VP_RC_STR(lcon(0x1c2), RG4W, CHGCAST(t_text, strVersionNumberV5));
   RG4UBlo = palettecolor_to_ui8(paldat.palette[E_COL11]);
   RG4L = unsignedlong(RG4Blo);
   DM2_DRAW_VP_RC_STR(lcon(0x1d2), RG4W, tp_58);

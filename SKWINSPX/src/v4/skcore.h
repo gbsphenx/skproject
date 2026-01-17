@@ -1286,7 +1286,7 @@ protected:
 	void DRAW_STRONG_TEXT(Bit8u *buff, U16 ww, U16 cx, U16 xx, U16 yy, U16 clr1, U16 fill, Bit8u *str);
 	void DRAW_NAME_STR(sk3f6c *ref, U16 rectno, U16 clr1, U16 fill, Bit8u *str);
 	void DRAW_PLAYER_NAME_AT_CMDSLOT();
-	i16 SK_STRLEN(const Bit8u *ref);
+	i16 SK_STRLEN(const U8 *ref);
 	void DRAW_SPELL_TO_BE_CAST(U16 xx);
 	void DRAW_SPELL_PANEL();
 	Bit8u *SK_STRSTR(const Bit8u *xx, const Bit8u *yy);
@@ -2106,7 +2106,7 @@ protected:
 	//void *_crt_getvect(U16 interruptno)();
 	void _00eb_0bc4();
 
-	X16 _01b0_2b1b();	// RETURNS 0
+	int _01b0_2b1b();	// X16 RETURNS 0
 
 	X16 _01b0_0e80(void (SkWinCore::*pfn)());
 

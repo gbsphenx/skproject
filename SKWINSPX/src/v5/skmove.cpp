@@ -1447,7 +1447,7 @@ i32 DM2_move_075f_0af9(i32 eaxl, i32 edxl, i32 ebxl, i32 ecxl, i32 argl0)
   if (RG2W < wcon(0xffff))
   {
     //m_744E:
-    if (RG2W >= wcon(0xfffffffd))
+    if (RG2W >= wcon(0xFFFD))	// wcon(0xfffffffd)
     {
       //m_75F2:
       RG1W = DM2_GET_PLAYER_AT_POSITION(vql_00.peek16());

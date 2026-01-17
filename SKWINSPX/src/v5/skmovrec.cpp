@@ -675,7 +675,7 @@ i32 DM2_MOVE_RECORD_TO(i32 eaxl, i32 edxl, i32 ebxl, i32 ecxl, i16 argw0)
         RG1L = signedlong(vw_78);
         if (RG1L == lcon(0x4))
         {
-          if (vw_68 < wcon(0xffffffff))
+          if (vw_68 < wcon(0xFFFF))	// wcon(0xffffffff)
           {
             RG1L = 0;
             RG1Blo = byte_at(DOWNCAST(unk, xp_34), lcon(0x5));

@@ -1042,7 +1042,7 @@ void c_dballochandler::DM2_ALLOCATION10(void)
   }
   while (xmptr->dbidx0 != 0)
   {
-    if (xmptr->dbidx0 <= uwcon(0xfffffffd))
+    if (xmptr->dbidx0 <= uwcon(0xFFFD))	// uwcon(0xfffffffd)
       xmptr->dbidx0 = 0;
     t_dbidx prev_idx = xmptr->prev_idx;
     if (prev_idx == NODATA)
