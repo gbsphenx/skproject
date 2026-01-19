@@ -36,6 +36,7 @@ bool SkCodeParam::bDM1ReadSavegame = false;
 bool SkCodeParam::bDM1TQMode = false;	// Try to get the more TQ compatibility mode, specially in dungeon, many visible actuators do sound whereas the sound flag is not set.
 
 bool SkCodeParam::bDM2V5Mode = false;	// activate when detecting PC-DOS V5 graphics.dat
+bool SkCodeParam::bDM2CDMusic = false;	// use CD.DAT for triggering music on locations
 
 bool SkCodeParam::bAutoDefaultMaxLight = false;	// turn this to true for DM1-like dungeon (or rather not DM2) instead to get a value from GDAT.
 // If not set, the default "full" light will always be one step below normal light
@@ -66,7 +67,7 @@ bool SkCodeParam::bUseCustomSpells = false;	// Start FALSE. This is automaticall
 bool SkCodeParam::bUnlimitedCharges = false;
 bool SkCodeParam::bNoTimer = false;
 
-bool SkCodeParam::bDebugInfiniteSpells = false;
+bool SkCodeParam::bDebugInfiniteSpells = true;
 bool SkCodeParam::bDebugGFXNoWalls = false;			// don't display solid walls
 bool SkCodeParam::bDebugGFXNoInterWalls = false;	// don't display interwalls
 bool SkCodeParam::bDebugGFXNoDoors = false;		// don't display doors

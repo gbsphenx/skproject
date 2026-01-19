@@ -8,6 +8,10 @@
 	#define __NO_MFC__
 #endif
 
+#if defined(_USE_MFC80) || defined(_USE_MFC60)
+#pragma comment(lib, "winmm.lib")	// PlaySound
+#endif // defined(_USE_MFC80) || defined(_USE_MFC60)
+
 #include <skver.h>
 #include <skmfc.h>
 #include <skwinmfc.h>

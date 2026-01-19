@@ -594,8 +594,8 @@ const Bit8u *SkWinCore::DRAW_MBCS_STR(
 	if (bp04 == NULL)
 		return str;
 	//^3929:015F
-	Bit16u bp18 = _4976_5ca8;
-	_4976_5ca8 = -_4976_5d76;
+	Bit16u bp18 = glbGDatFloppyFlag;
+	glbGDatFloppyFlag = -_4976_5d76;
 	//^3929:0170
 	// SPX: add protection here : if the graphics.dat does not contain japanese font, replacing the missing font with default image (yukman) will lead into a crash
 	// Therefore, we check if the font exist; if not, just leave for now.
@@ -714,7 +714,7 @@ _02e5:
 	//^3929:03BF
 	FREE_PICT_ENTRY(bp08);
 	//^3929:03CC
-	_4976_5ca8 = bp18;
+	glbGDatFloppyFlag = bp18;
 	//^3929:03D2
 	return str;
 }

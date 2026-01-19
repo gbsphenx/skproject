@@ -377,38 +377,25 @@ void SkWinCore::_32cb_0804(U8 *localpal, i16 cls4, U16 colorkey1, i16 colorkey2,
 // SPX: _32cb_09a7 renamed QUERY_MULTILAYERS_PIC
 U16 SkWinCore::QUERY_MULTILAYERS_PIC(ExtendedPicture *ref, U8 cls1, U8 cls2, U8 cls4, U16 horzRes, U16 vertRes, i16 zz, U16 mirrorflip, i16 colorkey1, U16 colorkey2)
 {
-	//^32CB:09A7
+	U16 iRCAlloc;	// si
 	ENTER(0);
-	//^32CB:09AB
 	QUERY_TEMP_PICST(mirrorflip, horzRes, vertRes, 0, 0, zz, -1, -1, colorkey1, -1, cls1, cls2, cls4);
-	//^32CB:09D7
 	COPY_MEMORY(&glbTempPicture, ref, sizeof(ExtendedPicture));
-	//^32CB:09EE
 	ALLOC_PICT_MEMENT(ref);
-	//^32CB:09FB
 	ref->colorKeyPassThrough = colorkey2;
-	//^32CB:0A05
 	SET_ORIGIN_RECT(&ref->rc36, ref->width, ref->height);
-	//^32CB:0A1F
-	U16 si;
-	ref->pb44 = ALLOC_NEW_PICT(si = ALLOC_TEMP_CACHE_INDEX(), ref->width, ref->height, 8);
-	//^32CB:0A47
-	return si;
+	ref->pb44 = ALLOC_NEW_PICT(iRCAlloc = ALLOC_TEMP_CACHE_INDEX(), ref->width, ref->height, 8);
+	return iRCAlloc;
 }
 
 
 //^44C8:0762
 void SkWinCore::FIRE_UPDATE_BLIT_PALETTE(const U8 *localpal)
 {
-	//^44C8:0762
 	ENTER(0);
-	//^44C8:0767
-	U8 *di = glbBlitPalette16;
-	//^44C8:0771
-	const U8 *si = localpal;
-	//^44C8:0774
-	memcpy(di, si, 16);
-	//^44C8:078D
+	U8* pPalette16 = glbBlitPalette16;	// di
+	const U8* pLocalPalette = localpal;	// si
+	memcpy(pPalette16, pLocalPalette, 16);	// copy localpal into blit palette
 	return;
 }
 

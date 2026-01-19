@@ -51,6 +51,7 @@ public:
 	static bool bAllowFreeObjectMove;
 
 	static bool bDM2V5Mode;
+	static bool bDM2CDMusic;			// use CD.DAT info
 
 	static bool bAutoDefaultMaxLight;
 

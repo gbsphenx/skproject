@@ -156,6 +156,16 @@ typedef int32_t	INT;
 
 //..............................................................................
 
+// SPX: Added this structure to handle CD.DAT file
+struct tCDMusicMap {	// 4 bytes
+	X8 iXTriggerPosition;	// absolute x on world
+	X8 iYTriggerPosition;	// absolute y on world
+	X8 iZTriggerPosition;	// z altitude on world
+	X8 iCDMusicID;
+};
+
+//..............................................................................
+
 #define CALL_IBMIO 
 #define INDIRECT_CALL
 #define LOADDS(X)

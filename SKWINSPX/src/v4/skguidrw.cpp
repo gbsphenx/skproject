@@ -5443,6 +5443,262 @@ void SkWinCore::DRAW_DIALOGUE_PARTS_PICT(U8 *buffsrc, SRECT *rc, i16 colorkey, U
 	return;
 }
 
+//^0AAF:02F8
+// _0aaf_02f8 renamed _0aaf_02f8_DIALOG_BOX
+// Dialog box for new game
+U8 SkWinCore::_0aaf_02f8_DIALOG_BOX(U8 xx, U8 yy) //#DS=4976
+{
+	U16 si;
+	skxxx1 bp04e4[2];
+	U8 bp04d4[128];
+	U8 bp0454[128];
+	U8 bp03d4[0x14][40];
+	U8 *bp00b4[0x14];	// panel buttons texts
+	U8 bp64[60];
+	U16 bp28[2];
+	skxxx1 *bp24;
+	SRECT bp20;
+	U8 bp17;
+	U16 bp16;
+	U16 bp14;
+	U16 bp12;
+	U16 bp10;
+	U16 bp0e;
+	U16 bp0c;
+	U16 bp0a;
+	U8 *bp08;
+	U8 *bp04;
+
+	// SPX clean init
+	for (bp17 = 0; bp17 < 0x14; bp17++) {
+		bp00b4[bp17] = NULL;
+	}
+
+	//^0AAF:02F8
+	//^0AAF:02FE
+	if (xx == 0x07 || xx == 0x13) {
+		//^0AAF:030A
+		if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_DIALOG_BOXES, 0x0059, 0x0001, 0x0000) != 0) {
+			//^0AAF:031E
+			xx = 0x59;
+		}
+	}
+	//^0AAF:0322
+	bp28[0] = glbPaletteT16[COLOR_YELLOW];
+	bp28[1] = glbPaletteT16[COLOR_ORANGE];
+	//^0AAF:0338
+	if (yy != 0 && xx != 0) {
+		//^0AAF:0344
+		if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_DIALOG_BOXES, 0x0000, 0x0001, 0x0000) != 0) {
+			//^0AAF:0358
+			_0aaf_0067(_0aaf_02f8_DIALOG_BOX(0, yy));
+			//^0AAF:036A
+			yy = 0x00;
+		}
+	}
+	//^0AAF:036E
+	bp0c = 0;
+	//^0AAF:0377
+	for (bp17=0; bp17 < 0x14; bp17++) {
+		//^0AAF:0379
+		bp00b4[bp0c] = QUERY_GDAT_TEXT(GDAT_CATEGORY_DIALOG_BOXES, xx, bp17, bp03d4[bp0c]);
+		//^0AAF:03B6
+		if (bp00b4[bp0c][0] != 0) {
+			//^0AAF:03C0
+			bp0c++;
+		}
+		//^0AAF:03C3
+	}
+	//^0AAF:03CC
+	if ((_4976_5cb0_GDatFlag != 0) && ((_4976_5d76 != 0) || (_4976_00f4 +8 <= glbFreeRAMMemPool))) {
+		//^0AAF:03F9
+		bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_DIALOG_BOXES, xx, 0x00);
+		//^0AAF:040F
+		if (_4976_5d76 != 0) {
+			//^0AAF:0416
+			bp08 = QUERY_GDAT_IMAGE_LOCALPAL(GDAT_CATEGORY_DIALOG_BOXES, xx, 0);
+		}
+		else {
+			//^0AAF:042B
+			bp08 = bp04 + CALC_IMAGE_BYTE_LENGTH(bp04);
+		}
+		//^0AAF:0443
+		DRAW_DIALOGUE_PARTS_PICT(bp04, QUERY_EXPANDED_RECT(4, &bp20), -1, bp08);
+		//^0AAF:046D
+		FREE_PICT_ENTRY(bp04);
+		//^0AAF:047A
+	}
+	else {
+		//^0AAF:047D
+		FIRE_FILL_BACKBUFF_RECT(SET_ORIGIN_RECT(&bp20, _4976_00f6, _4976_00f8), glbPaletteT16[COLOR_DARK_GRAY]);
+		//^0AAF:04A7
+		FIRE_FILL_BACKBUFF_RECT(INFLATE_RECT(&bp20, -10, -10), glbPaletteT16[COLOR_BROWN]);
+		//^0AAF:04CD
+		if (bp0c == 0x0003) {
+			bp10 = 1;
+		}
+		else if (bp0c == 0x0004) {
+			bp10 = 4;
+		}
+		else {
+			bp10 = 0;
+		}
+		//^0AAF:04EF
+		for (U16 si=0; si < bp0c; si++) {
+			//^0AAF:04F3
+			_0aaf_01db(_4976_01bc[0][RCJ(8,si + bp10)], 0);
+			//^0AAF:0506
+		}
+	}
+	//^0AAF:050C
+	// SPX: Draw string version on dialog box
+	int iColorVersion = COLOR_GRAY;
+	int iColorButton = COLOR_ORANGE;
+	if (SkCodeParam::bDM2V5Mode) {
+		iColorVersion = COLOR_YELLOW;
+		iColorButton = COLOR_YELLOW;
+	}
+	DRAW_VP_RC_STR(0x1c2, glbPaletteT16[iColorVersion], strVersionNumber);
+	//^0AAF:0526
+	FIRE_FADE_SCREEN(1);
+	//^0AAF:052D
+	if (bp0c < 2) {
+		//^0AAF:0533
+		bp0e = 0x01d5;
+	}
+	else {
+		//^0AAF:053A
+		bp0e = 0x01d7;
+	}
+	//^0AAF:053F
+	switch (bp0c) {
+		case 2:
+			//^0AAF:0553
+			bp10 = 1;
+			break;
+		case 3:
+			//^0AAF:055A
+			bp10 = 3;
+			break;
+		case 4:
+			//^0AAF:0561
+			bp10 = 6;
+			break;
+		default:
+			//^0AAF:0568
+			bp10 = 0;
+			break;
+	}
+	//^0AAF:056D
+	for (si=0; si < bp0c; si++) { // display button texts
+		//^0AAF:0571
+		DRAW_VP_RC_STR(_4976_01bc[1][RCJ(8,si + bp10)], glbPaletteT16[iColorButton], bp00b4[si]);
+		//^0AAF:05A1
+	}
+	//^0AAF:05A7
+	QUERY_EXPANDED_RECT(bp0e, &bp20);
+	//^0AAF:05B7
+	bp12 = bp20.cx;
+	bp14 = bp20.cy;
+	//^0AAF:05C3
+	if (yy != 0 && xx == 0) {
+		//^0AAF:05CF
+		bp04e4[0].pb0 = QUERY_GDAT_TEXT(GDAT_CATEGORY_DIALOG_BOXES, xx, yy, bp0454);
+	}
+	else {
+		//^0AAF:05F1
+		bp04e4[0].pb0 = QUERY_GDAT_TEXT(GDAT_CATEGORY_DIALOG_BOXES, xx, 0x14, bp0454);
+		//^0AAF:060F
+		if (yy != 0) {
+			//^0AAF:0615
+			bp04e4[1].pb0 = QUERY_GDAT_TEXT(GDAT_CATEGORY_DIALOG_BOXES, 0, yy, bp04d4);
+			//^0AAF:0633
+			goto _0641;
+		}
+	}
+	//^0AAF:0635
+	bp04e4[1].pb0 = NULL;
+	//^0AAF:0641
+_0641:
+	U16 di = 0;
+	si = 0;
+	//^0AAF:0647
+	bp24 = &bp04e4[0];
+	//^0AAF:0651
+	for (bp16=0; bp16 < 2; bp16++, bp24++) {
+		//^0AAF:0659
+		if (bp24->pb0 != 0) {
+			//^0AAF:0668
+			QUERY_STR_METRICS_U16(bp24->pb0, &bp24->w4, &bp24->w6);
+			//^0AAF:068B
+			if (bp24->w4 > bp12 - (bp12 >> 3)) {
+				//^0AAF:069F
+				if (bp24->w4 < bp12 + (bp12 >> 2)) {
+					//^0AAF:06B0
+					bp24->w4 -= bp24->w4 >> 2;
+				}
+				else {
+					//^0AAF:06BD
+					bp24->w4 = bp12;
+				}
+			}
+			//^0AAF:06C7
+			for (bp0e=0; bp24->pb0[bp0e] != 0; ) {
+				//^0AAF:06CE
+				_3929_04e2_DRAW_TEXT_STRINGS(bp24->pb0, bp64, &bp0e, bp24->w4);
+				//^0AAF:06EE
+				di += bp24->w6 + (_4976_0134 << 1) - (_4976_0136) + 1;
+				//^0AAF:0704
+				if (bp24->pb0[bp0e] == vbLf) {
+					//^0AAF:0710
+					bp0e++;
+				}
+				//^0AAF:0713
+			}
+		}
+		//^0AAF:0722
+	}
+	//^0AAF:0732
+	if (di != 0) {
+		//^0AAF:0739
+		di = max_value(0, ((bp14 - di - (_4976_0134 << 1)) >> 1) + _4976_0130 - 1);
+		//^0AAF:075A
+		di += bp20.y;
+		//^0AAF:075D
+		bp24 = bp04e4;
+		//^0AAF:0767
+		for (bp16=0; bp16 < 2; bp24++, bp16++) {
+			//^0AAF:076F
+			if (bp24->pb0 != NULL) {
+				//^0AAF:077B
+				for (bp0e=0; bp24->pb0[bp0e] != 0; ) {
+					//^0AAF:0782
+					bp0a = _3929_04e2_DRAW_TEXT_STRINGS(bp24->pb0, bp64, &bp0e, bp24->w4);
+					//^0AAF:07A5
+					DRAW_VP_STR((_4976_00f6 -bp0a) >> 1, di, bp28[bp16], bp64);
+					//^0AAF:07C9
+					di += _4976_013a + _4976_0134;
+					//^0AAF:07D2
+					if (bp24->pb0[bp0e] == vbLf) {
+						//^0AAF:07E1
+						bp0e++;
+					}
+					//^0AAF:07E4
+				}
+			}
+			//^0AAF:07F3
+		}
+	}
+	//^0AAF:0803
+	_0aaf_002f();
+	FIRE_FADE_SCREEN(0);
+	//^0AAF:080E
+	_4976_022c = 1;
+	//^0AAF:0814
+	return xx;
+}
+
+
 
 //^3929:0BD7
 void SkWinCore::DRAW_VP_RC_STR(U16 rectno, U16 clr1, const U8 *str)

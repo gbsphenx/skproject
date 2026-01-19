@@ -401,7 +401,7 @@ UINT SkWinApp::startAudioTest()
 #if !defined (__NO_SDL__)
 	if (iVideoRenderer == GFX_RENDERER_SDL) {
 	printf("Start Audio Test\n");
-		xSkWinRenderer->StartAudioSample("DATADM2/64.wav");
+		xSkWinRenderer->StartAudioSample("DATA-DM2/COMMON/MUSICS/64.wav");
 	}
 #endif
 	return 0;

@@ -754,12 +754,12 @@ protected:
 	X16		glbRainThunderRandom;	// (_4976_5c72)
 	U8		glbRainHasWetGround;	// (_4976_5c74)
 	U16		glbRainSceneType;	// (_4976_5c76) WordValue:66
-	U16	_4976_5c78;		// next index of free entry mement
+	U16		glbNextFreeMementIndex;		// (_4976_5c78) next index of free entry mement
 	X16		_4976_5c7a;
 	U16		_4976_5c7c;
 	U16	*_4976_5c7e_cache_ici;	// ici-to-cacheindex. to supply quick sort for searching hash value from _4976_5c86
-	U16		*_4976_5c82;	// raw data index to mementi. (usually 3491 word values). 0xffff for unused mark.
-	Bit32u	*_4976_5c86_cache_hash;	// cacheindex-to-hashval:  0xFFFFxxxx for pict?  0x2000xxxx for creature thing?  (13:dbidx,7:horzScale,5:vertScale) for stretched pict?
+	U16*	tblRawDataToMement;	// (_4976_5c82) raw data index to mementi. (usually 3491 word values). 0xffff for unused mark.
+	Bit32u	*_4976_5c86_cache_hash;	// (_4976_5c86) cacheindex-to-hashval:  0xFFFFxxxx for pict?  0x2000xxxx for creature thing?  (13:dbidx,7:horzScale,5:vertScale) for stretched pict?
 	U16		glbNewMap_4976_5c8a;		// _4976_5c8a
 	mement	*_4976_5c8c;	// mement#3
 	//U16	_4976_5c90; // (_4976_5c90)
@@ -767,14 +767,14 @@ protected:
 	i16	glbFileHandleGraphics1;		// (_4976_5c94)	filehandle of GRAPH1.DAT or GRAPHICS.DAT
 	i16	glbFileHandleGraphics2;		// (_4976_5c96) filehandle of GRAPH2.DAT if exists.
 	shelf_memory *glbShelfMemoryTable;	// (_4976_5c98)
-	U16	_4976_5c9c;		// 1 if run on floppy, 0 if run on harddisk. (to know which is used GRAPH1.DAT or GRAPHICS.DAT)
-	U16	_4976_5c9e;
+	U16		glbFloppyDiskFlag;		// (_4976_5c9c) 1 if run on floppy, 0 if run on harddisk. (to know which is used GRAPH1.DAT or GRAPHICS.DAT)
+	U16		glbMementIndex_4976_5c9e;	// (_4976_5c9e)
 	X32		_4976_5ca0; // 98 B7 00 00 -> 0000B798
-	mement	**tlbMementsPointers;	// (_4976_5ca4) mementi-to-mement
-	U16	_4976_5ca8;
+	mement	**tblMementsPointers;	// (_4976_5ca4) mementi-to-mement
+	U16		glbGDatFloppyFlag;			// (_4976_5ca8)
 	Bit32u	_4976_5caa;		// copy of GRAPHICS.DAT absolute file position of 2nd raw data
 	X16		_4976_5cae;
-	U16	_4976_5cb0;
+	U16	_4976_5cb0_GDatFlag;			// (_4976_5cb0)
 	mement	*_4976_5cb2;	// for complex alloc mem. most lower address of memory pool(#x1) in FIRE.exe?
 	GDATEntries	glbGDatEntries;		// (sk5cb6 _4976_5cb6) entries for loaded gdat
 	U8		*_4976_5ce2;	// for complex alloc mem. most upper address of memory pool(#x1) in FIRE.exe
@@ -787,25 +787,25 @@ protected:
 	sk5cfc_root	_4976_5cfc;
 	sk5d00	*_4976_5d00;	// EMS mapped memory location. always point to E000:0000. also first mement located at first EMS page
 	U8		*_4976_5d04;	// temp buffer. size=1024
-	U16	*_4976_5d08;	// cacheindex-to-mementi. use with tlbMementsPointers[_4976_5d08[xxx]]
+	U16*	tblCacheToMement;	// (_4976_5d08) cacheindex-to-mementi. use with tblMementsPointers[_4976_5d08[xxx]]
 	sk5d0c	*_4976_5d0c;	// image chain table
 	U16	glbGDatOpenCloseFlag;		// (_4976_5d10) some open/close? flag related to Graphics.dat file
 	sk5d12	_4976_5d12;
 	shelf_memory _4976_5d20;	// top of EMS
-	U16	_4976_5d24_cache;	// _4976_5d24 / cache relaed ? / value =128?
+	U16		glbCacheRecyclerMax;	// _4976_5d24 / cache relaed ? / value =128?
 	i32		_4976_5d26; // 9E AA 01 00 -> 0001AA9E
 	Bit32u	_4976_5d2a;		// tick?
 	X16		glbGDatNumberOfData; // (_4976_5d2e) 3,491 entries in graphics data file
 	i32		glbFreeRAMMemPool;		// (_4976_5d30) for allocmem. avail size of free memory pool(#1). 325732 bytes avail when dosbox runs
-	U16	_4976_5d34;
-	i16	_4976_5d36_cache;		// index to (_4976_5d08|_4976_5c7e). for recycle indexer?
-	U16		*_4976_5d38;	// at first it points [1st rawdata], at second it points [1st CGDEntry]
+	U16	_4976_5d34;		// (_4976_5d34)
+	i16		glbCacheRecyclerCurrentIndex;		// (_4976_5d36) index to (_4976_5d08|_4976_5c7e). for recycle indexer?
+	U16		*_4976_5d38;	// (_4976_5d38) at first it points [1st rawdata], at second it points [1st CGDEntry]
 	X16		glbGDatNumberOfRawEntries;		// (_4976_5d3c) w2 of 1st raw (cnt of raw entries)
-	X16		_4976_5d3e;		// size of CGDEntry
-	X16		_4976_5d40;		// w4 of 2nd raw
-	i16		_4976_5d42[7];
-	U8		_4976_5d50[7];
-	U16		_4976_5d58;
+	X16		_4976_5d3e;		// (_4976_5d3e) size of CGDEntry
+	X16		_4976_5d40;		// (_4976_5d40) w4 of 2nd raw
+	i16		_4976_5d42[7];	// (_4976_5d42[7])
+	U8		_4976_5d50[7];	// (_4976_5d50[7])
+	U16		_4976_5d58;		// (_4976_5d58)
 	tiamat	_4976_5d5a;	// for allocmem. most upper address of largest memory pool (#2) in ibmio?
 	mement	*_4976_5d5e;	// mement#5
 	i32		_4976_5d62; // C6 6C D0 00 -> 00D06CC6
@@ -813,7 +813,7 @@ protected:
 	Bit32u	_4976_5d6a;		// GRAPHICS.DAT absolute file position of 2nd raw data
 	U16	_4976_5d6e;		// poolflag of EMS memory pool
 	mement	*_4976_5d70;	// mement#4
-	U16	glbNumberOfMements;		// (_4976_5d74) cnt tlbMementsPointers
+	U16	glbNumberOfMements;		// (_4976_5d74) cnt tblMementsPointers
 	U16	_4976_5d76;		// complex memory pool availability: 0=disabled, 1=enabled
 	U16	_4976_5d78;		// image chain map (entry cnt)
 	Bit32u	_4976_5d7a;		// size of 1st direntry rawdata
@@ -920,6 +920,7 @@ public:
 	void LOG_DUNGEON_INFO_GROUND_STACKS();
 	void LOG_HEXA(X8* pData, UINT iNbBytes);
 
+	void LOAD_CD_DAT_FILE();
 	U16 EXT_PROCEED_DCS_GENERIC_COMMAND(const char* command, const char* scope, const char* subcommand, int arg1, int arg2, int arg3, int arg4, int arg5);
 	void PLAY_DIRECT_SOUND(const char* sAudioFilename, int volume);
 	void REQUEST_PLAY_MUSIC_FROM_MAP(int iMapNumber);

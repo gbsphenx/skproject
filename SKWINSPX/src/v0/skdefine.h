@@ -1560,5 +1560,9 @@ typedef enum
 #define C7_ATTACK_LIGHTNING 7 /* Caused by Lightning Bolt explosions */
 //------------------------------------------------------------------------------
 
+#define MEM_CACHE_TABLE_MAX	1024	// original was 0x80 and hard coded over the place
+// Is used for tblCacheToMement
+
+//------------------------------------------------------------------------------
 
 #endif // __GENERAL_DEFINE__

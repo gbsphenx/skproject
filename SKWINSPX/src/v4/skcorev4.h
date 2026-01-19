@@ -96,6 +96,8 @@ typedef struct {
 
 	X16	_04bf_04f1;
 
+	tCDMusicMap*		glbTabCDMusicTriggers;	// Contains CD.DAT file data
+
 } SKCoreSoundCard;
 
 // cd.pi.
