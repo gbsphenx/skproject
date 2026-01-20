@@ -6113,7 +6113,8 @@ _0c47:
 			bp0e = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp10));
 		}
 		//^13E4:0CB0
-		COPY_MEMORY(&_4976_514e, bp0e, sizeof(sk514e)); // sizeof(sk514e) == 14
+		if (SkCodeParam::bUsePowerDebug && CheckSafePointer(bp0e))
+			COPY_MEMORY(&_4976_514e, bp0e, sizeof(sk514e)); // sizeof(sk514e) == 14
 	}
 	//^13E4:0CC6
 	if (glbCurrentThinkingCreatureData->TimerIndex() != 0xffff) {

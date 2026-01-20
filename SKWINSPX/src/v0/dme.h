@@ -2043,10 +2043,10 @@ namespace DM2Internal {
 		U8 *pb0;		// @0 // pic bits
 		U16 w4;		// @4 // 4=Use (b8,b9,b11), 8=Use w12 for cacheIndex
 		U16 w6;		// @6 // raw data index
-		U8 b8;		// @8 // cls1
-		U8 b9;		// @9 // cls2
-		U8 b10;		// @10 // cls3
-		U8 b11;		// @11 // cls4
+		U8 iGDatCategory;		// @8 // cls1
+		U8 iGDatItemId;		// @9 // cls2
+		U8 iGDatEntryType;		// @10 // cls3
+		U8 iGDatEntryId;		// @11 // cls4
 		i16 w12;	// @12
 		U16 w14;		// @14
 		U16 w16;		// @16

@@ -348,7 +348,7 @@ U8 *SkWinCore::DRAW_ITEM_ON_WOOD_PANEL(U16 player, U16 possessionIndex, Picture 
 	//^2405:06A6
 	U8 bp0f = glbPaletteT16[COLOR_RED];	// SPX: RED here is used as transparent for hand icon ..
 	//^2405:06B1
-	FILL_ENTIRE_PICT(bp04 = _0b36_00c3(bp0a, ref), bp0f);
+	FILL_ENTIRE_PICT(bp04 = QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(bp0a, ref), bp0f);
 	//^2405:06D5
 	if (bp12 != 0) {
 		//^2405:06DB
@@ -386,7 +386,7 @@ U8 *SkWinCore::DRAW_ITEM_ON_WOOD_PANEL(U16 player, U16 possessionIndex, Picture 
 		//^2405:0751
 		TRANSLATE_PALETTE(bp014c.b58, 1, 0, 1, 16);
 		//^2405:0767
-		bp04 = _0b36_00c3(bp0a, ref);
+		bp04 = QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(bp0a, ref);
 		//^2405:077E
 		//^2405:0792
 		DRAW_DIALOGUE_PICT(
@@ -4918,7 +4918,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		bp0310.w26 = iRefPoint;
 		bp0310.w56 = 0;
 		//^32CB:1DD0
-		_0b36_00c3(bp26, &bp0310);
+		QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(bp26, &bp0310);
 		//^32CB:1DE1
 		DRAW_PICST(&bp0310);
 		//^32CB:1DEE
@@ -5186,7 +5186,7 @@ void SkWinCore::DRAW_ITEM(ObjectID rl, i16 xx, U16 yy, U16 zz, i16 vv, Creature 
 		//^32CB:3766
 		bp0a = 0;
 		//^32CB:376B
-		bp1a = QUERY_GDAT_ENTRY_DATA_INDEX(_4976_5aa8.b8, _4976_5aa8.b9, dtImageOffset, 0xfd);
+		bp1a = QUERY_GDAT_ENTRY_DATA_INDEX(_4976_5aa8.iGDatCategory, _4976_5aa8.iGDatItemId, dtImageOffset, 0xfd);
 		//^32CB:3783
 		yy = _4976_5aa8.w28 + i8(bp1a >> 8) + _4976_41de[RCJ(8,_4976_41b0[RCJ(16,vv)][0])];
 		//^32CB:37A4
@@ -5766,12 +5766,19 @@ void SkWinCore::DRAW_ARROW_PANEL()
 	// Standard move arrows are 0x02 to 0x0D
 	// Yellow arrows to move objects are 0x0E to 0x19
 	U8 iStartArrowID = (glbTryPushPullObject != 0) ? 0x0E : 0x02;	// bp01
-	sk3f6c bp36;
+	sk3f6c bp36; 
+	bp36.w0 = 0;
+	bp36.w10 = 0;
+	bp36.rc2.x = 0;
+	bp36.rc2.y = 0;
+	bp36.rc2.cx = 0;
+	bp36.rc2.cy = 0;	// SPX: pseudo init
+
 	_0b36_0c52(&bp36, 9, 1);
 	FILL_ENTIRE_PICT(reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp36.w0)), glbPaletteT16[COLOR_BLACK]);	// make black the background of area for 6 arrow buttons
 	
 	i16 iRectNo = 0x28; // si
-	for (; iRectNo < 0x2e; iStartArrowID += 2, iRectNo++) {
+	for (; iRectNo < 0x2E; iStartArrowID += 2, iRectNo++) {
 		DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_MOVE_ARROWS, iStartArrowID, &bp36, iRectNo, -1);
 	}
 	//^29EE:007E
@@ -6347,7 +6354,7 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 							//^32CB:4BBC
 							xPicture.colorKeyPassThrough = xPicture.b58[iDoorColorPassThrough];
 							xPicture.w56 = 0;
-							_0b36_00c3(iCacheNo, &xPicture);
+							QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(iCacheNo, &xPicture);
 							// SPX: that draws the main door (without ornate)
 							COPY_MEMORY(&xPicture, &glbTempPicture, sizeof(ExtendedPicture));
 							glbTempPicture.pb44 = _4976_4c16;
@@ -6690,7 +6697,7 @@ X16 SkWinCore::DRAW_EXTERNAL_TILE(i16 xx)
 			bp0164.rectNo = bp0c;
 			bp0164.w26 = bp12;
 			bp0164.w56 = 0;
-			_0b36_00c3(bp20, &bp0164);
+			QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(bp20, &bp0164);
 			DRAW_PICST(&bp0164);
 			FREE_TEMP_CACHE_INDEX(bp20);
 			return bp1c;
@@ -7015,9 +7022,9 @@ void SkWinCore::DRAW_TELEPORTER_TILE(i16 xx, X16 cls1, X16 cls2)
 	}
 	else {
 		//^32CB:259A
-		bp3c.b8 = U8(cls1);
-		bp3c.b9 = U8(cls2);
-		bp3c.b11 = bp13;
+		bp3c.iGDatCategory = U8(cls1);
+		bp3c.iGDatItemId = U8(cls2);
+		bp3c.iGDatEntryId = bp13;
 		bp08 = QUERY_PICST_IMAGE(&bp3c);
 		ALLOC_PICT_MEMENT(&bp3c);
 		if (bp16 != 0) {
@@ -7037,7 +7044,7 @@ void SkWinCore::DRAW_TELEPORTER_TILE(i16 xx, X16 cls1, X16 cls2)
 				ALLOC_TEMP_ORIGIN_RECT(si -di, bp24), 0, 0, 
 				si, si, -1, 1, 4, 4, NULL);
 			FREE_PICT_MEMENT(&bp3c);
-			_0b36_00c3(bp12, &bp3c);
+			QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(bp12, &bp3c);
 			ALLOC_PICT_MEMENT(&bp3c);
 		}
 	}
@@ -7216,7 +7223,7 @@ void SkWinCore::DRAW_WALL(i16 iViewportCell)	// i16 xx
 			//--- Get correct pass through color
 			xExtPicWall.colorKeyPassThrough = xExtPicWall.b58[iColorkey1];
 			xExtPicWall.w56 = 0;
-			_0b36_00c3(iPicture, &xExtPicWall);
+			QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(iPicture, &xExtPicWall);
 			COPY_MEMORY(&xExtPicWall, &glbTempPicture, sizeof(ExtendedPicture));
 			glbTempPicture.pb44 = _4976_4c16;
 			glbTempPicture.rectNo = 3 + 0x2BE;
@@ -7978,22 +7985,15 @@ void SkWinCore::DRAW_DEF_PICT(ExtendedPicture *ref)
 //^0B36:0139
 U8 *SkWinCore::QUERY_PICT_BITS(Picture *ref)
 {
-	//^0B36:0139
 	ENTER(0);
-	//^0B36:013D
 	U16 si = ref->w4;
-	//^0B36:0144
 	if ((si & 0x0004) != 0) {
-		//^0B36:014A
-		return ref->pb0 = QUERY_GDAT_IMAGE_ENTRY_BUFF(ref->b8, ref->b9, ref->b11);
+		return ref->pb0 = QUERY_GDAT_IMAGE_ENTRY_BUFF(ref->iGDatCategory, ref->iGDatItemId, ref->iGDatEntryId);
 	}
-	//^0B36:016D
 	else if ((si & 0x0008) != 0) {
-		//^0B36:0173
 		return ref->pb0 = QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(ref->w12);
 	}
 	else {
-		//^0B36:0182
 		return ref->pb0;
 	}
 }

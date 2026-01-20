@@ -14,152 +14,101 @@
 
 //^3E74:48C9
 // _3e74_48c9 renamed _3e74_48c9_MEMENT
-mement *SkWinCore::_3e74_48c9_MEMENT(U16 mementi)
+mement* SkWinCore::_3e74_48c9_MEMENT(U16 mementi)
 {
 	// cqOk @ 21:03 2007/02/21
 
-	//^3E74:48C9
-	//^3E74:48CF
-	mement *bp04 = tblMementsPointers[mementi];
-	TEST_MEMENT(bp04);
-	if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(bp04))
+	mement* xMement = NULL;	// (bp04) can't hold more than glbNumberOfMements
+	if (SkCodeParam::bUsePowerDebug && mementi >= glbNumberOfMements)
 		return NULL;
-	//^3E74:48E8
-	U16 si = bp04->w4();
-	//^3E74:48EF
-	if (si == 0xffff || si == 0xfffe) {
-		//^3E74:48F9
-		return bp04;
+	xMement = tblMementsPointers[mementi];	// (bp04) can't hold more than glbNumberOfMements
+	TEST_MEMENT(xMement);
+	if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(xMement))
+		return NULL;
+	U16 si = xMement->w4();	// si
+	if (si == 0xFFFF || si == 0xFFFE) {
+		return xMement;
 	}
-	//^3E74:4902
-	mement *bp0c = bp04;
-	//^3E74:490E
+	mement* xMement2 = xMement;	// bp0c
 	if (si == 0) {
-		//^3E74:4915
-		U16 di = bp04->w8();
-		//^3E74:491E
+		U16 di = xMement->w8();
 		if (di == 0xffff) {
-			//^3E74:4923
-			_4976_5d90 = (bp04 != _4976_5c8c) ? bp04 : NULL;
-			//^3E74:494B
-			bp04->w4(1);
-			//^3E74:4954
-			//^3E74:48F9
-			return bp04;
+			_4976_5d90 = (xMement != _4976_5c8c) ? xMement : NULL;
+			xMement->w4(1);
+			return xMement;
 		}
-		//^3E74:4956
-		mement *bp08 = tblMementsPointers[di];
-		TEST_MEMENT(bp08);
-		//^3E74:496E
-		U16 bp0e = bp04->w6();
-		//^3E74:4978
+		mement* xMement3 = tblMementsPointers[di];	// bp08
+		TEST_MEMENT(xMement3);
+		U16 bp0e = xMement->w6();
 		if (bp0e == 0xffff) {
-			//^3E74:497D
-			_4976_5d5e = bp08;
+			_4976_5d5e = xMement3;
 		}
 		else {
-			//^3E74:498C
-			bp04 = tblMementsPointers[bp0e];
-			TEST_MEMENT(bp04);
-			//^3E74:49A5
-			bp04->w8(di);
+			xMement = tblMementsPointers[bp0e];
+			TEST_MEMENT(xMement);
+			xMement->w8(di);
 		}
-		//^3E74:49AC
-		bp08->w6(bp0e);
-		//^3E74:49B6
-		bp0c->w4(0xffff);
-		//^3E74:49BF
+		xMement3->w6(bp0e);
+		xMement2->w4(0xFFFF);
 		RECYCLE_MEMENTI(mementi, 0);
-		//^3E74:49CA
 	}
 	else {
-		//^3E74:49CD
-		if (si < 0xfffd) {
-			//^3E74:49D2
+		if (si < 0xFFFD) {
 			si++;
 		}
-		//^3E74:49D3
-		bp04->w4(si);
-		//^3E74:49DA
-		if (bp04 == _4976_5d70) {
-			//^3E74:49EF
-			//^3E74:48F9
-			return bp04;
+		xMement->w4(si);
+		if (xMement == _4976_5d70) {
+			return xMement;
 		}
-		//^3E74:49F2
-		U16 di = bp04->w8();
-		//^3E74:49FB
-		mement *bp08 = tblMementsPointers[di];
-		TEST_MEMENT(bp08);
-		//^3E74:4A11
-		if (bp08->w4() >= si) {
-			//^3E74:4A1A
-			//^3E74:48F9
-			return bp04;
+		U16 di = xMement->w8();
+		mement* xMement3 = tblMementsPointers[di];	// bp08
+		TEST_MEMENT(xMement3);
+		if (xMement3->w4() >= si) {
+			return xMement;
 		}
-		//^3E74:4A1D
-		U16 bp0e = bp04->w6();
-		//^3E74:4A27
-		if (bp0e == 0xffff) {
-			//^3E74:4A2C
-			_4976_5d90 = bp08;
-			_4976_5d5e = bp08;
-			//^3E74:4A40
-			bp08->w6(0xffff);
+		U16 bp0e = xMement->w6();
+		if (bp0e == 0xFFFF) {
+			_4976_5d90 = xMement3;
+			_4976_5d5e = xMement3;
+			xMement3->w6(0xFFFF);
 		}
 		else {
-			//^3E74:4A4B
-			if (bp04 == _4976_5d90) {
-				//^3E74:4A5F
-				_4976_5d90 = bp08;
+			if (xMement == _4976_5d90) {
+				_4976_5d90 = xMement3;
 			}
-			//^3E74:4A6C
-			bp04 = tblMementsPointers[bp0e];
-			TEST_MEMENT(bp04);
-			//^3E74:4A85
-			bp04->w8(di);
-			bp08->w6(bp0e);
+			xMement = tblMementsPointers[bp0e];
+			TEST_MEMENT(xMement);
+			xMement->w8(di);
+			xMement3->w6(bp0e);
 		}
-		//^3E74:4A96
 		if (_4976_5d90 == _4976_5c8c) {
-			//^3E74:4AAC
 			_4976_5d90 = NULL;
 		}
 
 		while (true) {
-			//^3E74:4AB8
-			bp04 = bp08;
+			xMement = xMement3;
 			bp0e = di;
-			di = bp04->w8();
-			//^3E74:4AD0
+			di = xMement->w8();
 			if (di == 0xffff) {
-				//^3E74:4AD5
-				bp04->w8(mementi);
-				//^3E74:4ADC
-				bp0c->w6(bp0e);
-				bp0c->w8(0xffff);
-				//^3E74:4AEC
-				_4976_5d70 = bp0c;
+				xMement->w8(mementi);
+				xMement2->w6(bp0e);
+				xMement2->w8(0xffff);
+				_4976_5d70 = xMement2;
 			}
 			else {
-				//^3E74:4AFB
-				bp08 = tblMementsPointers[di];
-				TEST_MEMENT(bp08);
-				//^3E74:4B13
-				if (bp08->w4() < si)
-					//^3E74:4B1A
+				xMement3 = tblMementsPointers[di];
+				TEST_MEMENT(xMement3);
+				if (xMement3->w4() < si)
 					continue;
-				//^3E74:4B1C
-				bp04->w8(mementi);
-				bp0c->w6(bp0e);
-				bp0c->w8(di);
-				bp08->w6(mementi);
+				xMement->w8(mementi);
+				xMement2->w6(bp0e);
+				xMement2->w8(di);
+				xMement3->w6(mementi);
 			}
 			break;
 		}
 	}
-	//^3E74:4B3E
-	return bp0c;
+	return xMement2;
 }
 
 //^3E74:5561
@@ -568,11 +517,13 @@ U16 SkWinCore::_3e74_4471_CACHE()	// find a temp cache index ?
 			do {
 				glbCacheRecyclerCurrentIndex++;
 				ATLASSERT(glbCacheRecyclerCurrentIndex < glbCacheRecyclerMax);
-			} while (tblCacheToMement[glbCacheRecyclerCurrentIndex] != 0xffff);
+			} while (tblCacheToMement[glbCacheRecyclerCurrentIndex] != 0xFFFF);
 		}
 	}
 	printf("_3e74_4471_CACHE: previous = %d / nextmement = %d / current = %d / memcache = %d / max = %d\n", 
 		iPreviousCacheIndex, glbNextFreeMementIndex, glbCacheRecyclerCurrentIndex, cd.mc._4976_5c92_cache, glbCacheRecyclerMax);
+	if (SkCodeParam::bUsePowerDebug && iPreviousCacheIndex < 0)	// like 0xFFFF
+		return 0xFFFF;	// bypass ASSERT for now ...
 	ATLASSERT(0 <= iPreviousCacheIndex && iPreviousCacheIndex < glbCacheRecyclerMax);
 	return iPreviousCacheIndex;
 }
@@ -613,6 +564,8 @@ U16 SkWinCore::INSERT_CACHE_HASH_AT(Bit32u cacheHash, U16 ici)
 	}
 	//^3E74:54FB
 	U16 si = _3e74_4471_CACHE();
+	if (SkCodeParam::bUsePowerDebug && si == 0xFFFF) // 0xFFFF
+		return 0xFFFF;
 	//^3E74:5501
 	MOVE_MEMORY(
 		&_4976_5c7e_cache_ici[ici],
@@ -676,7 +629,7 @@ U16 SkWinCore::QUERY_MEMENTI_FROM(U16 iEntryIndex)
 	if ((iLocalEntryIndex & 0x8000) != 0) {
 		if (SkCodeParam::bUseFixedMode && (iLocalEntryIndex & 0x7FFF) >= MEM_CACHE_TABLE_MAX)	// SPX: protection to avoid further invalid pointer
 			return 0xFFFF;
-		return tblCacheToMement[iLocalEntryIndex & 0x7fff];
+		return tblCacheToMement[iLocalEntryIndex & 0x7FFF];
 	}
 	else {
 		if (SkCodeParam::bUseFixedMode && (iLocalEntryIndex & 0x7FFF) >= glbGDatNumberOfData) // SPX: protection to avoid further invalid pointer
@@ -689,35 +642,33 @@ U16 SkWinCore::QUERY_MEMENTI_FROM(U16 iEntryIndex)
 U16 SkWinCore::ADD_CACHE_HASH(Bit32u cacheHash, U16 *piYaCacheIndex)
 {
 	// returns 0 if inserted new one, 1 if already exists.
-
-	//^3E74:55F9
-	//^3E74:55FE
 	if (glbGameTick != _4976_5d2a) {
-		//^3E74:5611
 		_3e74_44ad();
 	}
-	//^3E74:5615
 	U16 bp02 = 0;
 	if (FIND_ICI_FROM_CACHE_HASH(cacheHash, &bp02) != 0) {
-		//^3E74:562B
 		*piYaCacheIndex = _4976_5c7e_cache_ici[bp02];
-		//^3E74:563F
 		U16 si = QUERY_MEMENTI_FROM(*piYaCacheIndex | 0x8000);
-		//^3E74:564D
 		_3e74_48c9_MEMENT(si);
-		//^3E74:5653
 		return 1;
 	}
-	//^3E74:5658
 	*piYaCacheIndex = INSERT_CACHE_HASH_AT(cacheHash, bp02);
-	//^3E74:566E
 	return 0;
 }
 
 //^3E74:5817
-U8 *SkWinCore::QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(U16 cacheIndex)
+U8* SkWinCore::QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(U16 cacheIndex)
 {
-    return reinterpret_cast<U8 *>(&_3e74_48c9_MEMENT(QUERY_MEMENTI_FROM(cacheIndex | 0x8000))[1]); // +18 bytes
+	// SPX: break down, there was only 1 line (return reinterpret ...)
+	U8* pMementP1 = NULL;
+	mement* xMement = NULL;
+	U16 iMement = QUERY_MEMENTI_FROM(cacheIndex | 0x8000);
+	xMement = _3e74_48c9_MEMENT(iMement);
+	if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(xMement))
+		return NULL;
+	pMementP1 = reinterpret_cast<U8*> (&xMement[1]);
+    //return reinterpret_cast<U8 *>(&_3e74_48c9_MEMENT(QUERY_MEMENTI_FROM(cacheIndex | 0x8000))[1]); // +18 bytes (sizeof(mement))
+	return pMementP1;
 }
 
 //^3E74:583A
@@ -733,8 +684,10 @@ void SkWinCore::_3e74_583a_MEMENTI(U16 xx)
 //^3E74:4416
 U16 SkWinCore::FIND_FREE_MEMENTI()
 {
+//	if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(_4976_5d5e))
+//		return -1;
 	U16 iNextFreeMementi = glbNextFreeMementIndex;	// si
-	if (iNextFreeMementi == 0xffff) {
+	if (iNextFreeMementi == 0xFFFF) {
 		FREE_INDEXED_MEMENT(_4976_5d5e->w10());
 		iNextFreeMementi = glbNextFreeMementIndex;
 	}
@@ -967,31 +920,29 @@ _2da5:
 //^3E74:5708
 U8 *SkWinCore::ALLOC_CPXHEAP_MEM(U16 index, Bit32u buffSize)
 {
-	//^3E74:5708
-	//^3E74:570D
-	buffSize += sizeof(mement) +4;
-	//^3E74:5715
+	if (SkCodeParam::bUsePowerDebug && index == 0xFFFF)
+		return NULL;
+
+	buffSize += sizeof(mement) + 4;
 	if ((buffSize & 1) != 0) {
-		//^3E74:5720
 		buffSize++;
 	}
-	//^3E74:5728
-	mement *bp04 = ALLOC_LOWER_CPXHEAP(buffSize);
-	//^3E74:573B
+
+	mement* xMement = ALLOC_LOWER_CPXHEAP(buffSize);	// bp04
 	U16 si = FIND_FREE_MEMENTI();
-	//^3E74:5740
+	if (SkCodeParam::bUsePowerDebug && si == 0xFFFF)
+		return NULL;
+
 	ATLASSERT(tblCacheToMement[index] == U16(-1));
 	tblCacheToMement[index] = si;
-	//^3E74:574E
+
 	ATLASSERT(tblMementsPointers[si] == 0);
-	tblMementsPointers[si] = bp04;
-	//^3E74:5766
-	bp04->w10(index | 0x8000);
+	tblMementsPointers[si] = xMement;
+	xMement->w10(index | 0x8000);
 
-	SkD((DLV_CPX,"DBG: CPX Alloc Ci#%02d Mi#%02d (%5u) = %p\n", index, si, 0U +buffSize, bp04));
+	SkD((DLV_CPX,"DBG: CPX Alloc Ci#%02d Mi#%02d (%5u) = %p\n", index, si, 0U + buffSize, xMement));
 
-	//^3E74:5773
-	return reinterpret_cast<U8 *>(&bp04[1]); // +18 bytes
+	return reinterpret_cast<U8 *>(&xMement[1]); // +18 bytes (sizeof(mement))
 }
 
 //^3E74:585A
@@ -1254,7 +1205,12 @@ X32 SkWinCore::_3e74_5673_CACHE(X32 cacheHash, U16 *piYaCacheIndex, X16 ifTryIns
 		return 0;
 	}
 	*piYaCacheIndex = _4976_5c7e_cache_ici[bp02];
-	return *reinterpret_cast<i32 *>(_3e74_48c9_MEMENT(QUERY_MEMENTI_FROM(*piYaCacheIndex | 0x8000))) -22;
+// SPX: Break down to catch and prevent NULL / crash
+	mement* xm = _3e74_48c9_MEMENT(QUERY_MEMENTI_FROM(*piYaCacheIndex | 0x8000));
+	if (CheckSafePointer(xm))
+		return *reinterpret_cast<i32 *>(xm) - 22;
+//	return *reinterpret_cast<i32 *>(_3e74_48c9_MEMENT(QUERY_MEMENTI_FROM(*piYaCacheIndex | 0x8000))) -22;	// SPX: -22 ?? -sizeof(mement) - 4 ?
+	return 0;
 }
 
 

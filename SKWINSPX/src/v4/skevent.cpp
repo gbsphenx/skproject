@@ -1147,7 +1147,9 @@ void SkWinCore::ACTIVATE_RELAY2(Timer *ref, Actuator *pr4, X16 xx)
 }
 //^3A15:0D5C
 void SkWinCore::_3a15_0d5c(Timer *ref, Actuator *pr4) { // TODO: Unr
-	Unr();
+	//Unr();
+	// SPX TODO
+	// this was hit when coming front of the Ghost Merchant in the Crypt level.
 }
 //^3A15:12B8
 void SkWinCore::ACTIVATE_ORNATE_ANIMATOR(Timer *ref, Actuator *pr4, ObjectID rl, X16 isWall)

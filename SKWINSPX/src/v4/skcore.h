@@ -993,7 +993,7 @@ public:
 	int INIT_DUNGEON_FINALIZE_ARRANGE(X16 isNewGame);
 	int DUNGEON_CREATE_BLANK();
 
-
+	void CHECK_TRIGGER_MUSIC_FROM_PLAYER_POSITION(U16 iMapPosition, U16 iPositionX, U16 iPositionY);
 
 // SPX: End of new procedures
 
@@ -1251,8 +1251,8 @@ protected:
 	Bit8u *QUERY_PICT_BITS(Picture *ref);
 	void _0b36_11c0(ExtendedPicture *xx, sk3f6c *yy, U16 ss, i16 colorkey2);
 	i16 CALC_STRETCHED_SIZE(i16 val, i16 fact64);
-	Bit8u *_0b36_00c3(i16 xx, Picture *ref);
-	Bit8u *QUERY_PICST_IMAGE(Picture *ref);
+	X8* QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(i16 iCacheIndex, Picture *ref);	// (_0b36_00c3)
+	X8* QUERY_PICST_IMAGE(Picture *ref);
 	void ALLOC_IMAGE_MEMENT(Bit8u cls1, Bit8u cls2, Bit8u cls4);
 	void ALLOC_PICT_MEMENT(Picture *ref);
 	Bit32u CALC_PICT_ENT_HASH(ExtendedPicture *ref);
@@ -2179,7 +2179,7 @@ protected:
 	X16 LOAD_MAPS_PROGRESS_BAR(X16 xx, i32 yy);	// _38c8_0224
 	void ALLOC_CPX_SETUP(X8 *xx);	// _3e74_1330 renamed ALLOC_CPX_SETUP
 	X16 SET_GRAPHICS_RGB_PALETTE(U8 (*pal)[4], X16 yy);	// _00eb_05c7 renamed GRAPHICS_SET_RGB_PALETTE
-	void SET_RGB_PALETTE_FROM_DATA(U8 *pal);	// _44c8_1baf renamed SET_RGB_PALETTE_FROM_DATA
+	void SET_RGB_PALETTE_FROM_DATA(U8* xPalette);	// _44c8_1baf renamed SET_RGB_PALETTE_FROM_DATA
 	UINT INIT();	// _38c8_04aa renamed INIT
 	X16 IS_TIMER_TO_PROCEED();
 	void GET_AND_DELETE_NEXT_TIMER(Timer *ref);

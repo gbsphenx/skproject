@@ -1624,18 +1624,17 @@ SRECT *SkWinCore::ALLOC_TEMP_ORIGIN_RECT(U16 iWidth, U16 iHeight)
 
 
 //^44C8:1D26
-void SkWinCore::FILL_ENTIRE_PICT(U8 *buff, U16 fill)
+void SkWinCore::FILL_ENTIRE_PICT(U8* buff, U16 fill)
 {
-	//^44C8:1D26
 	ENTER(8);
-	//^44C8:1D2B
+	if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(buff))
+		return;
 	X16 si = READ_UI16(buff,-6);
 	SRECT bp08;
 	bp08.x = bp08.y = 0;
 	bp08.cx = (((si == 4) ? 2 : 1) +READ_UI16(buff,-4) -1) & (~(((si == 4) ? 2 : 1) -1));
 	bp08.cy = READ_UI16(buff,-2);
 	FIRE_FILL_RECT_ANY(buff, &bp08, fill, bp08.cx, si);
-	//^44C8:1D89
 	return;
 }
 
@@ -1643,21 +1642,16 @@ void SkWinCore::FILL_ENTIRE_PICT(U8 *buff, U16 fill)
 //^3E74:57B5
 U8 *SkWinCore::ALLOC_NEW_PICT(U16 index, U16 width, U16 height, U16 bpp)
 {
-	//^3E74:57B5
-	//^3E74:57BA
 	U16 si = width;
-	//^3E74:57BD
 	U8 *bp04 = ALLOC_CPXHEAP_MEM(
 		index,
 		Bit32u((bpp == 4) ? (((si +1) & 0xfffe) >> 1) : (si & 0xffff)) * height
 		);
-	//^3E74:57E8
+	if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(bp04))
+		return NULL;
 	WRITE_UI16(bp04,-4,si);
-	//^3E74:57EF
 	WRITE_UI16(bp04,-2,height);
-	//^3E74:57F9
 	WRITE_UI16(bp04,-6,bpp);
-	//^3E74:580E
 
 	SkD((DLV_DBG_GETPIC,"DBG: ALLOC_NEW_PICT(%3u,%3u,%3u,%u) = %p\n", (Bitu)index, (Bitu)width, (Bitu)height, (Bitu)bpp, bp04));
 	return bp04;
@@ -1764,22 +1758,14 @@ _0ec7:
 //^0B36:0C52
 sk3f6c *SkWinCore::_0b36_0c52(sk3f6c *ref, U16 rectno, U16 ww)
 {
-	//^0B36:0C52
-	//^0B36:0C55
 	if (rectno != 0xffff) {
-		//^0B36:0C5B
 		QUERY_EXPANDED_RECT(rectno, &ref->rc2);
 	}
-	//^0B36:0C6F
 	ALLOC_NEW_PICT(ref->w0 = ALLOC_TEMP_CACHE_INDEX(), ref->rc2.cx, ref->rc2.cy, 8);
-	//^0B36:0C90
 	ref->w10 = 0;
-	//^0B36:0C99
 	if (ww != 0) {
-		//^0B36:0C9F
 		_0b36_0d67(ref, &ref->rc2);
 	}
-	//^0B36:0CB6
 	return ref;
 }
 
@@ -12233,13 +12219,13 @@ void SkWinCore::DUMP_5CA4() {
 }
 
 //^3E74:4FBE
-U8* SkWinCore::QUERY_GDAT_IMAGE_ENTRY_BUFF(U8 cls1, U8 cls2, U8 cls4)
+U8* SkWinCore::QUERY_GDAT_IMAGE_ENTRY_BUFF(U8 iGDatCategory, U8 iGDatItemId, U8 iGDatEntryId)	// (U8 cls1, U8 cls2, U8 cls4)
 {
-	SkD((DLV_DBG_GETPIC,"DBG: QUERY_GDAT_IMAGE_ENTRY_BUFF(%02X,%02X,%02X)\n", (Bitu)cls1, (Bitu)cls2, (Bitu)cls4));
+	SkD((DLV_DBG_GETPIC,"DBG: QUERY_GDAT_IMAGE_ENTRY_BUFF(%02X,%02X,%02X)\n", (Bitu)iGDatCategory, (Bitu)iGDatItemId, (Bitu)iGDatEntryId));
 	DUMP_5CA4();
-	// ATLASSERT(!(cls1 == 1 && cls2 == 2 && cls4 == 0));
-	// ATLASSERT(!(cls1 == 7 && cls2 == 0 && cls4 == 0));
-	// ATLASSERT(!(cls1 == 10 && cls2 == 0x37 && cls4 == 2));
+	// ATLASSERT(!(iGDatCategory == 1 && iGDatItemId == 2 && iGDatEntryId == 0));
+	// ATLASSERT(!(iGDatCategory == 7 && iGDatItemId == 0 && iGDatEntryId == 0));
+	// ATLASSERT(!(iGDatCategory == 10 && iGDatItemId == 0x37 && iGDatEntryId == 2));
 
 	//^3E74:4FBE
 	U16 iCriticalLoad = 0;
@@ -12248,13 +12234,13 @@ U8* SkWinCore::QUERY_GDAT_IMAGE_ENTRY_BUFF(U8 cls1, U8 cls2, U8 cls4)
 	if (glbGameTick != _4976_5d2a) {
 		_3e74_44ad();
 	}
-	RawEntry* pEntry = QUERY_GDAT_ENTRYPTR(cls1, cls2, 1, cls4);
+	RawEntry* pEntry = QUERY_GDAT_ENTRYPTR(iGDatCategory, iGDatItemId, 1, iGDatEntryId);
 	U16 iGDATItemID;
 	if (pEntry == NULL) {
 		iGDATItemID = 0xFFFF;
 	}
 	else {
-		iCriticalLoad |= IS_CLS1_CRITICAL_FOR_LOAD(cls1);
+		iCriticalLoad |= IS_CLS1_CRITICAL_FOR_LOAD(iGDatCategory);
 		iGDATItemID = pEntry->data & 0x7FFF;
 	}
 	if (iGDATItemID != 0xFFFF) {
@@ -12264,7 +12250,7 @@ U8* SkWinCore::QUERY_GDAT_IMAGE_ENTRY_BUFF(U8 cls1, U8 cls2, U8 cls4)
 		}
 	}
 	SkD((DLV_BUGHERE,"BUG? Image (%02X,%02X,%02X) not found. We just supply a \":P\" icon\n"
-		, (Bitu)cls1, (Bitu)cls2, (Bitu)cls4));
+		, (Bitu)iGDatCategory, (Bitu)iGDatItemId, (Bitu)iGDatEntryId));
 	
 	// SPX: the default image (yukman) is located as default image from MISC ITEM category
 	// If that default image is not here, it is very likely to crash thereafter (anytime the default is required)
@@ -20922,6 +20908,7 @@ void SkWinCore::LOAD_CD_DAT_FILE()
 	pDataTable = calloc(10, sizeof(tCDMusicMap));
 	FILE_READ(hCDFileHandle, 10*4, pDataTable);
 	FILE_CLOSE(hCDFileHandle);
+	cd.sc.glbTabCDMusicTriggers = (tCDMusicMap*) pDataTable;
 	SkCodeParam::bDM2CDMusic = true;
 }
 

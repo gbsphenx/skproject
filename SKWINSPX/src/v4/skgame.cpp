@@ -3445,8 +3445,10 @@ _0685:
 _0768:
 		_4976_4c00 = bp26;
 		glbPlayerThrowCounter = 0;
+		// SPX addition for external script when player arrives on tile
 		LUA_CALL_SCRIPT(_EXP_SCRIPT__PLAYER_ON_TILE_, cd.pi.glbPlayerMap, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 0);
-
+		// SPX re-implementation of music trigger from CD.DAT when player arrives on certain tile
+		CHECK_TRIGGER_MUSIC_FROM_PLAYER_POSITION(cd.pi.glbPlayerMap, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
 	
 		//^12B4:0776
 		return 1;
@@ -4368,45 +4370,69 @@ _0e8d:
 //^3A15:1DCA
 void SkWinCore::MOVE_ITEM_TO(ObjectID rl, Actuator *pr4, i16 xposFrm, i16 yposFrm, i16 xposTo, i16 yposTo, X16 dir, X16 takeFrmCreature, X16 putToCreature) 
 {
-	//^3A15:1DCA
 	ENTER(0);
-	//^3A15:1DCF
 	ObjectID si = rl;
 	if (QUERY_CLS1_FROM_RECORD(si) != 0x15 || QUERY_CLS2_FROM_RECORD(si) != 0) {
-		//^3A15:1DE8
-		i16 di;
+		i16 di = 0;	// di	// SPX init this 0
 		switch (pr4->ActionType()) {
 			case 0: //^_1e05
-				//^3A15:1E05
 				di = GET_MAX_CHARGE(si);
 				break;
 			case 1: //^_1e0d
-				//^3A15:1E0D
 				di = 0;
 				break;
 			case 2: //^_1e11
-				//^3A15:1E11
-				di = RAND16(GET_MAX_CHARGE(si) +1);
+				di = RAND16(GET_MAX_CHARGE(si) + 1);
 				break;
 			default: //^_1e22 // di is still uninit. BUG?
 				break;
 		}
-		//^3A15:1E22
 		ADD_ITEM_CHARGE(si, di);
 	}
-	//^3A15:1E2B
 	if ((GET_TILE_VALUE(xposTo, yposTo) >> 5) != ttWall) {
-		//^3A15:1E41
 		dir = RAND16(4);
 	}
-	//^3A15:1E4C
 	if (xposFrm >= 0 && yposFrm >= 0) {
-		//^3A15:1E58
 		MOVE_RECORD_TO(si, xposFrm, yposFrm, -1, (takeFrmCreature != 0) ? -1 : 0);
 	}
-	//^3A15:1E77
 	MOVE_RECORD_TO(ObjectID(si, dir), -1, (putToCreature != 0) ? -1 : 0, xposTo, yposTo);
-	//^3A15:1EA4
 	return;
 }
 
+// SPX: new function (or reimplementation)
+void SkWinCore::CHECK_TRIGGER_MUSIC_FROM_PLAYER_POSITION(U16 iMapPosition, U16 iPositionX, U16 iPositionY)
+{
+	U16 iSelectedTrigger = -1;
+	U8 iSelectedMusicID = -1;
+	U16 iTriggerDefIndex = 0;
+	//U16 iCurrentMapIndex = glbCurrentMapIndex;
+	//CHANGE_CURRENT_MAP_TO(iMapPosition);
+	Map_definitions* xCurrentMapDef = NULL;
+	U16 iMapAltitude = 0;
+	U16 iAbsolutePositionX = 0;
+	U16 iAbsolutePositionY = 0;
+	xCurrentMapDef = &dunMapsHeaders[iMapPosition];
+	iAbsolutePositionX = xCurrentMapDef->MapOffsetX() + iPositionX;
+	iAbsolutePositionY = xCurrentMapDef->MapOffsetY() + iPositionY;
+	iMapAltitude = (U16) xCurrentMapDef->Level();
+	printf("position = (%d | %d, %d) => AG = (%d | %d, %d)\n", iMapPosition, iPositionX, iPositionY,
+		iMapAltitude, iAbsolutePositionX, iAbsolutePositionY);
+	
+	if (SkCodeParam::bDM2CDMusic && CheckSafePointer(cd.sc.glbTabCDMusicTriggers)) {
+		// Check if location is a music trigger point
+		for (iTriggerDefIndex = 0; iTriggerDefIndex < 10; iTriggerDefIndex++) {
+			if (cd.sc.glbTabCDMusicTriggers[iTriggerDefIndex].iZTriggerPosition == iMapAltitude
+				&& cd.sc.glbTabCDMusicTriggers[iTriggerDefIndex].iXTriggerPosition == iAbsolutePositionX
+				&& cd.sc.glbTabCDMusicTriggers[iTriggerDefIndex].iYTriggerPosition == iAbsolutePositionY) {
+				iSelectedMusicID = cd.sc.glbTabCDMusicTriggers[iTriggerDefIndex].iCDMusicID;
+				iSelectedTrigger = iTriggerDefIndex;
+				break;
+			}
+		}
+	}
+
+	if (iSelectedTrigger != 0xFFFF)
+		REQUEST_PLAY_MUSIC(iSelectedMusicID, 100);
+	
+	//CHANGE_CURRENT_MAP_TO(iCurrentMapIndex);
+}
