@@ -327,13 +327,13 @@ extern const U8 _4976_3d7d[];
 
 //{{SKVAL1
 
-extern U16 tlbUIKeyInput[10];
+extern U16 tblUIKeyInput[10];
 
 // "Rr" ... 変数項の占有メモリ領域を確認し，RCJを付与済み
 // "Rr`" ... "Rr"中，RCJを部分的に施した
 // "Rp" ... 変数項の占有メモリは追跡しないことを決定し，RCJを付与しない
 
-extern i8 _4976_0094[32]; //Rr
+extern i8 tbl32_4976_0094[32]; //Rr
 extern U8 _4976_00b4[8]; //Rr  // flags for 8 missiles. 2=can harm door
 extern X8 _4976_00e3[5]; //Rr
 extern U16 tRectnoOffsetsWallOrnates[16]; //Rr	(_4976_019a)
@@ -358,7 +358,7 @@ extern i8 _4976_4172[23]; //Rr
 extern U8 tlbDistanceStretch[5]; //Rr (_4976_4189) // distance to creature scale factor
 extern U8 _4976_418e[6][4]; //Rr`
 extern U8 _4976_41a9[7]; //Rr
-extern U8 _4976_41b0[16][2]; //Rr
+extern U8 tblItemStackDisplace[16][2]; //Rr  (_4976_41b0)
 extern i8 _4976_41de[8]; //Rr
 extern U8 _4976_41e6[7]; //Rr
 extern U8 _4976_41ed[17]; //Rr
@@ -588,8 +588,8 @@ extern bool	bUsePowerDebug;
 
 
 #if DM2_EXTENDED_BUFFER == 1
-	//#define BUFF_SIZE_MAX	1024000
-	#define BUFF_SIZE_MAX	60000
+	#define BUFF_SIZE_MAX	1024000
+	//#define BUFF_SIZE_MAX	65536	// 0x10000, anyway that was not in the original code, that's for verification
 #else
 	#define BUFF_SIZE_MAX	60000	// Original value = 60000
 #endif

@@ -271,22 +271,18 @@ i16 SkWinCore::FIND_LADDER_AROUND(i16 xx, i16 yy, i16 isupper, Actuator **ref)
 
 
 //^0CEE:315E
-Bit16u SkWinCore::GET_WALL_ORNATE_ALCOVE_TYPE(Bit8u cls2)
+Bit16u SkWinCore::GET_WALL_ORNATE_ALCOVE_TYPE(U8 iGDatItemId)
 {
 	// return 0 if non-alcove.
 	// return 1 if an alcove.
 	// return 2 if a shop glass
 	// return 3 if an active sleep device.
 
-	//^0CEE:315E
 	ENTER(0);
-	//^0CEE:3161
-	if (cls2 == 0xff) {
-		//^0CEE:3167
-		return 0;
+	if (iGDatItemId == 0xFF) {
+		return C0_WALL_ORNATE_OBJECT__NONE;
 	}
-	//^0CEE:316B
-	return QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, cls2, dtWordValue, GDAT_WALL_ORNATE__0A);	// 0x09 .. .. 0x0A
+	return QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, iGDatItemId, dtWordValue, GDAT_WALL_ORNATE__0A);	// 0x09 .. .. 0x0A
 }
 
 //^0CEE:17E7
@@ -1250,28 +1246,19 @@ U16 SkWinCore::IS_WALL_ORNATE_ALCOVE_FROM_RECORD(ObjectID rl)
 	// SPX: Add protection : if object is not a simple actuator or actuator, then exit!
 	if (rl.RealDBType() != DB_CATEGORY_SIMPLE_ACTUATOR && rl.RealDBType() != DB_CATEGORY_ACTUATOR)
 		return 0;
-	//^0CEE:317F
 	ENTER(0);
-	//^0CEE:3182
-	return (GET_WALL_ORNATE_ALCOVE_TYPE(QUERY_CLS2_FROM_RECORD(rl)) == WALL_ORNATE_OBJECT__ALCOVE) ? 1 : 0;
-	//return (GET_WALL_ORNATE_ALCOVE_TYPE(QUERY_CLS2_FROM_RECORD(rl)) == 1) ? 1 : 0;
+	return (GET_WALL_ORNATE_ALCOVE_TYPE(QUERY_CLS2_FROM_RECORD(rl)) == C1_WALL_ORNATE_OBJECT__ALCOVE) ? 1 : 0;
 }
 
 //^0CEE:0AE1
 ObjectID SkWinCore::GET_WALL_TILE_ANYITEM_RECORD(U16 xx, U16 yy)
 {
-	//^0CEE:0AE1
 	ENTER(0);
-	//^0CEE:0AE5
-	ObjectID si = GET_TILE_RECORD_LINK(xx, yy);
-	//^0CEE:0AF1
-	while (si.DBType() <= dbActuator) {
-		//^0CEE:0AF3
-		si = GET_NEXT_RECORD_LINK(si);
-		//^0CEE:0AF9
+	ObjectID oObjectID = GET_TILE_RECORD_LINK(xx, yy);	// si
+	while (oObjectID.DBType() <= dbActuator) {
+		oObjectID = GET_NEXT_RECORD_LINK(oObjectID);
 	}
-	//^0CEE:0B08
-	return si;
+	return oObjectID;
 }
 
 //^0CEE:31D7
@@ -1281,16 +1268,11 @@ U16 SkWinCore::IS_WALL_ORNATE_SPRING(ObjectID rl)
 	// (case was Drumstick (misc id = 35) leading to fountain (wall id = 35)
 	if (rl.RealDBType() != DB_CATEGORY_SIMPLE_ACTUATOR && rl.RealDBType() != DB_CATEGORY_ACTUATOR)
 		return 0;
-	//^0CEE:31D7
 	ENTER(2);
-	//^0CEE:31DB
-	U8 bp01 = QUERY_CLS2_FROM_RECORD(rl);
-	//^0CEE:31E6
-	if (bp01 == 0xff)
-		//^0CEE:31EA
+	U8 iGDatItemId = QUERY_CLS2_FROM_RECORD(rl);	// bp01
+	if (iGDatItemId == 0xFF)
 		return 0;
-	//^0CEE:31EE
-	return QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp01, dtWordValue, GDAT_WALL_ORNATE__IS_WATER_SPRING);
+	return QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, iGDatItemId, dtWordValue, GDAT_WALL_ORNATE__IS_WATER_SPRING);
 }
 
 
@@ -1892,10 +1874,8 @@ Bit16u SkWinCore::IS_REBIRTH_ALTAR(ObjectID rl)
 //SPX: _0cee_317f renamed IS_OBJECT_ALCOVE
 X16 SkWinCore::IS_OBJECT_ALCOVE(ObjectID rl)
 {
-	//^0CEE:317F
 	ENTER(0);
-	//^0CEE:3182
-	if (GET_WALL_ORNATE_ALCOVE_TYPE(QUERY_CLS2_FROM_RECORD(rl)) == WALL_ORNATE_OBJECT__ALCOVE) // == 1
+	if (GET_WALL_ORNATE_ALCOVE_TYPE(QUERY_CLS2_FROM_RECORD(rl)) == C1_WALL_ORNATE_OBJECT__ALCOVE) // == 1
 		return 1;
 	return 0;
 }

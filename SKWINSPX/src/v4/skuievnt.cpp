@@ -1100,7 +1100,8 @@ _19b1:
 		{
 			U8 message[64];
 			U8 player = si - UI_EVENTCODE_CLICK_STATS_BAR_1;
-			sprintf((char*)message, "HP %d / %d | STA %d / %d | MANA %d / %d\n",
+			sprintf((char*)message, "%s: HP %d / %d |STA %d / %d |MANA %d / %d\n",
+				glbChampionSquad[player].firstName,
 				glbChampionSquad[player].curHP(), glbChampionSquad[player].maxHP(),
 				glbChampionSquad[player].curStamina()/10, glbChampionSquad[player].maxStamina()/10,
 				glbChampionSquad[player].curMP(), glbChampionSquad[player].maxMP());

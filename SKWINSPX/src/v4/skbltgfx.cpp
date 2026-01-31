@@ -252,10 +252,10 @@ _08fe:
 	}
 	//^32CB:0932
 	glbTempPicture.mirrorFlip = mirrorflip;
-	glbTempPicture.w52 = horzStretch;
-	glbTempPicture.w54 = vertStretch;
-	glbTempPicture.w28 += offx;
-	glbTempPicture.w30 += offy;
+	glbTempPicture.iXStretch = horzStretch;
+	glbTempPicture.iYStretch = vertStretch;
+	glbTempPicture.iXOffset += offx;
+	glbTempPicture.iYOffset += offy;
 	glbTempPicture.rectNo = rectno;
 	glbTempPicture.w26 = pp;
 	glbTempPicture.pb44 = _4976_4c16;
@@ -1008,17 +1008,17 @@ void SkWinCore::FREE_PICT_ENTRY(Bit8u *buff)
 // 6 => centered from right (image is then moved to left)
 // 7 => centered from bottom (image is then moved to upper)
 // 8 => centered from left (image is then moved to right)
-SRECT *SkWinCore::QUERY_BLIT_RECT(Bit8u *buff, SRECT *rect, Bit16u rectno, i16 *yourcx, i16 *yourcy, i16 ww) //#DS=4976?
+SRECT *SkWinCore::QUERY_BLIT_RECT(Bit8u *buff, SRECT *rect, U16 rectno, i16 *yourcx, i16 *yourcy, i16 ww) //#DS=4976?
 {
 	SkD((DLV_RCT, "RCT: -> QUERY_BLIT_RECT(%p,%p(     x,     x,     x,     x),%4d,%3d,%3d,%3d)\n"
 		, buff, rect, (Bitu)(rectno & 0x7fff), (Bitu)*yourcx, (Bitu)*yourcy, (Bitu)ww));
 
 	i16 di = 0;
 
-	Bit16u bp24 = 0;
+	U16 bp24 = 0;
 	SRECT spRect1;	// bp1a
-	Bit16u bp12 = 0;
-	Bit16u bp10 = 0;
+	U16 bp12 = 0;
+	U16 bp10 = 0;
 	i16 bp0c = 0;
 	i16 bp0a = 0;
 	SRECT *spRect2 = NULL; // bp08
@@ -1028,8 +1028,8 @@ SRECT *SkWinCore::QUERY_BLIT_RECT(Bit8u *buff, SRECT *rect, Bit16u rectno, i16 *
 		return NULL;
 	}
 
-	Bit16u si = 0;
-	Bit16u iRectnoFlag = rectno & 0x8000;	// si
+	U16 si = 0;
+	U16 iRectnoFlag = rectno & 0x8000;	// si
 	if (iRectnoFlag != 0) {
 		rectno &= 0x7fff;
 	}
@@ -1043,7 +1043,7 @@ SRECT *SkWinCore::QUERY_BLIT_RECT(Bit8u *buff, SRECT *rect, Bit16u rectno, i16 *
 	SET_SRECT(&spRect1, -10000, -10000, 20000, 20000);
 	//^098D:05FC
 	SRECT bp22;
-	Bit16u bp0e;
+	U16 bp0e;
 	if (ww == -1) {
 		//^098D:0602
 		bp0e = spRectMain->x;
@@ -1568,13 +1568,13 @@ SRECT *SkWinCore::QUERY_BLIT_RECT(Bit8u *buff, SRECT *rect, Bit16u rectno, i16 *
 
 
 //^01B0:0008
-void SkWinCore::MOVE_MEMORY(const void *buffSrc, void *buffDst, Bit16u size)
+void SkWinCore::MOVE_MEMORY(const void *buffSrc, void *buffDst, U16 size)
 {
 	memmove(buffDst, buffSrc, size);
 }
 
 //^00EB:01EB
-void SkWinCore::MOVE_MEMORY_WITH_DELTA(Bit16u offSrc, Bit16u offDst, Bit16u size) //#DS=04BF
+void SkWinCore::MOVE_MEMORY_WITH_DELTA(U16 offSrc, U16 offDst, U16 size) //#DS=04BF
 {
 	//^00EB:01EB
 	//^00EB:01EE
@@ -1588,13 +1588,13 @@ void SkWinCore::MOVE_MEMORY_WITH_DELTA(Bit16u offSrc, Bit16u offDst, Bit16u size
 }
 
 //^00EB:0221
-void SkWinCore::COPY_MEMORY_WITH_DELTA_AND_TRANSPARENT(Bit16u offSrc, Bit16u offDst, Bit16u size, Bit8u colorkey) //#DS=04BF
+void SkWinCore::COPY_MEMORY_WITH_DELTA_AND_TRANSPARENT(U16 offSrc, U16 offDst, U16 size, Bit8u colorkey) //#DS=04BF
 {
 	//^00EB:0221
 	//^00EB:0224
 	Bit8u dh = colorkey;
 	Bit8u *di = _04bf_0e34 + offDst;
-	Bit16u cx = size;
+	U16 cx = size;
 	Bit8u *si = _04bf_0cf0 + offSrc;
 
 	do {
@@ -1616,7 +1616,7 @@ void SkWinCore::COPY_MEMORY_WITH_DELTA_AND_TRANSPARENT(Bit16u offSrc, Bit16u off
 }
 
 //^00EB:0812
-void SkWinCore::MOVE_MEMORY_STRETCH_13TO16(Bit16u offSrc, Bit16u offDst)
+void SkWinCore::MOVE_MEMORY_STRETCH_13TO16(U16 offSrc, U16 offDst)
 {
 	// compose 0.5 stepping viewport. (123% larger)
 
@@ -1624,7 +1624,7 @@ void SkWinCore::MOVE_MEMORY_STRETCH_13TO16(Bit16u offSrc, Bit16u offDst)
 	//^00EB:0817
 	Bit8u *di = _04bf_0e34 +offDst;
 	Bit8u *si = _04bf_0cf0 +offSrc;
-	Bit16u cx = 14;
+	U16 cx = 14;
 
 	// DS:SI	E000:871B -> E000:8728 (+13)
 	// ES:DI	A000:3340 -> A000:3350 (+16)
@@ -1661,14 +1661,14 @@ void SkWinCore::MOVE_MEMORY_STRETCH_13TO16(Bit16u offSrc, Bit16u offDst)
 
 
 //^098D:0D3F
-SRECT *SkWinCore::SCALE_RECT(Bit16u rectno, SRECT *rc, Bit16u horzResolution, Bit16u vertResolution)
+SRECT *SkWinCore::SCALE_RECT(U16 rectno, SRECT *rc, U16 horzResolution, U16 vertResolution)
 {
 	// horzResolution, vertResolution: 10,000 is fair. 5,000 is half. 20,000 is double.
 
 	//^098D:0D3F
 	//^098D:0D45
-	Bit16u di = horzResolution;
-	Bit16u si = vertResolution;
+	U16 di = horzResolution;
+	U16 si = vertResolution;
 	//^098D:0D4B
 	SRECT *bp04 = QUERY_RECT(&glbRectNoTable, rectno);
 	//^098D:0D63
@@ -1709,7 +1709,7 @@ SRECT *SkWinCore::SCALE_RECT(Bit16u rectno, SRECT *rc, Bit16u horzResolution, Bi
 }
 
 //^098D:0E5D
-SRECT *SkWinCore::QUERY_EXPANDED_RECT(Bit16u rectno, SRECT *rc)
+SRECT *SkWinCore::QUERY_EXPANDED_RECT(U16 rectno, SRECT *rc)
 {
 	//^098D:0E5D
 	//^098D:0E60
@@ -1718,7 +1718,7 @@ SRECT *SkWinCore::QUERY_EXPANDED_RECT(Bit16u rectno, SRECT *rc)
 
 
 //^0B36:1599
-void SkWinCore::DRAW_DIALOGUE_PICT(Bit8u *srcImage, Bit8u *dstImage, SRECT *rect, Bit16u srcx, Bit16u srcy, Bit16u colorkey, Bit8u localpal[16])
+void SkWinCore::DRAW_DIALOGUE_PICT(Bit8u *srcImage, Bit8u *dstImage, SRECT *rect, U16 srcx, U16 srcy, U16 colorkey, Bit8u localpal[16])
 {
 	// draw the:
 	// a) pre rendered dialogue to screen
@@ -1730,12 +1730,12 @@ void SkWinCore::DRAW_DIALOGUE_PICT(Bit8u *srcImage, Bit8u *dstImage, SRECT *rect
 		rect,
 		srcx,
 		srcy,
-		((Bit16u *)srcImage)[-2], // src-pitch
-		((Bit16u *)dstImage)[-2], // dst-pitch
+		((U16 *)srcImage)[-2], // src-pitch
+		((U16 *)dstImage)[-2], // dst-pitch
 		colorkey,
 		0,
-		((Bit16u *)srcImage)[-3], // src-bpp
-		((Bit16u *)dstImage)[-3], // dst-bpp
+		((U16 *)srcImage)[-3], // src-bpp
+		((U16 *)dstImage)[-3], // dst-bpp
 		localpal
 		);
 }
@@ -1874,7 +1874,7 @@ i16 SkWinCore::QUERY_GDAT_PICT_OFFSET(Bit8u cls1, Bit8u cls2, Bit8u cls4)
 	//^3E74:52F4
 	ENTER(8);
 	//^3E74:52FA
-	Bit16u di = 0;
+	U16 di = 0;
 	//^3E74:52FC
 	RawEntry *bp04 = QUERY_GDAT_ENTRYPTR(cls1, cls2, dtImage, cls4);
 	//^3E74:5317
@@ -1884,7 +1884,7 @@ i16 SkWinCore::QUERY_GDAT_PICT_OFFSET(Bit8u cls1, Bit8u cls2, Bit8u cls4)
 	}
 	else {
 		//^3E74:532A
-		Bit16u si = bp04->data;
+		U16 si = bp04->data;
 		//^3E74:5331
 		SkImage *bp04;
 		if (glbShelfMemoryTable[si].Absent()) {
@@ -1949,8 +1949,8 @@ ExtendedPicture *SkWinCore::QUERY_GDAT_SUMMARY_IMAGE(ExtendedPicture *ref, Bit8u
 	ref->iGDatItemId = iItemNo;
 	ref->iGDatEntryType = dtImage;
 	ref->iGDatEntryId = iEntry;
-	ref->w54 = 64;
-	ref->w52 = 64;
+	ref->iYStretch = 64;
+	ref->iXStretch = 64;
 	ref->rectNo = 0xffff;
 	ref->w26 = 0xffff;
 	ref->pb44 = _4976_4964;
@@ -1964,18 +1964,15 @@ ExtendedPicture *SkWinCore::QUERY_GDAT_SUMMARY_IMAGE(ExtendedPicture *ref, Bit8u
 		//^0B36:05C4
 		if (bp02 != 0) {
 			//^0B36:05C8
-			ref->w28 += i8(bp02 >> 8);
+			ref->iXOffset += i8(bp02 >> 8);
 			//^0B36:05D3
-			ref->w30 += i8(bp02);
+			ref->iYOffset += i8(bp02);
 		}
 		//^0B36:05DB
 		bp02 = QUERY_GDAT_PICT_OFFSET(iCategory, iItemNo, iEntry);
-		//^0B36:05F2
 		if (bp02 != 0) {
-			//^0B36:05F6
-			ref->w28 += i8(bp02 >> 8);
-			//^0B36:0601
-			ref->w30 += i8(bp02);
+			ref->iXOffset += i8(bp02 >> 8);
+			ref->iYOffset += i8(bp02);
 		}
 		//^0B36:0609
 		Bit8u *bp06 = QUERY_GDAT_IMAGE_LOCALPAL(iCategory, iItemNo, iEntry);
@@ -2012,7 +2009,7 @@ void SkWinCore::ALLOC_IMAGE_MEMENT(Bit8u cls1, Bit8u cls2, Bit8u cls4)
 	//^3E74:58BF
 	ENTER(4);
 	//^3E74:58C5
-	Bit16u si = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, dtImage, cls4);
+	U16 si = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, dtImage, cls4);
 	//^3E74:58DC
 	if (si != 0xffff && glbShelfMemoryTable[si].Absent()) {
 		//^3E74:58FC
@@ -2021,7 +2018,7 @@ void SkWinCore::ALLOC_IMAGE_MEMENT(Bit8u cls1, Bit8u cls2, Bit8u cls4)
 	//^3E74:590F
 	if (si != 0xffff) {
 		//^3E74:5914
-		Bit16u di = QUERY_MEMENTI_FROM(si);
+		U16 di = QUERY_MEMENTI_FROM(si);
 		//^3E74:591C
 		if (di == 0xffff) {
 			if (glbShelfMemoryTable[si].Absent()) {
@@ -2070,10 +2067,8 @@ void SkWinCore::ALLOC_PICT_MEMENT(Picture *ref)
 //^0B36:068F
 Bit32u SkWinCore::CALC_PICT_ENT_HASH(ExtendedPicture *ref)
 {
-	//^0B36:068F
 	ENTER(0);
-	//^0B36:0692
-	return (Bit32u(ref->w6 & 0x1fff) << 12) | ((ref->w52 & 0x007f) << 5) | (ref->w54 & 0x001f);
+	return (Bit32u(ref->w6 & 0x1fff) << 12) | ((ref->iXStretch & 0x007f) << 5) | (ref->iYStretch & 0x001f);
 }
 
 //^3E74:5992
@@ -2082,7 +2077,7 @@ void SkWinCore::FREE_IMAGE_MEMENT(Bit8u cls1, Bit8u cls2, Bit8u cls4)
 	//^3E74:5992
 	ENTER(0);
 	//^3E74:5997
-	Bit16u si = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, dtImage, cls4);
+	U16 si = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, dtImage, cls4);
 	//^3E74:59AE
 	if (si == 0xffff || glbShelfMemoryTable[si].Absent()) {
 		//^3E74:59CE
@@ -2098,7 +2093,7 @@ void SkWinCore::FREE_IMAGE_MEMENT(Bit8u cls1, Bit8u cls2, Bit8u cls4)
 		_4976_4807 = 0xffff;
 	}
 	//^3E74:59F2
-	Bit16u di = QUERY_MEMENTI_FROM(si);
+	U16 di = QUERY_MEMENTI_FROM(si);
 	//^3E74:59FA
 	if (di != 0xffff) {
 		//^3E74:59FF
@@ -2144,7 +2139,7 @@ void SkWinCore::_44c8_2307(X16 xx, X16 yy, X16 zz, X16 ww)
 
 
 //^44C8:2351
-void SkWinCore::_44c8_2351(Bit8u *xx, Bit8u *yy, Bit16u ss, Bit16u tt, Bit16u uu, Bit16u vv)
+void SkWinCore::_44c8_2351(Bit8u *xx, Bit8u *yy, U16 ss, U16 tt, U16 uu, U16 vv)
 {
 	//^44C8:2351
 	ENTER(10);
@@ -2178,14 +2173,14 @@ void SkWinCore::_44c8_2351(Bit8u *xx, Bit8u *yy, Bit16u ss, Bit16u tt, Bit16u uu
 }
 
 //^44C8:000F
-void SkWinCore::FIRE_BLIT_TO_MEMORY_ROW_4TO4BPP(Bit16u offSrc, Bit16u offDst, Bit16u width)
+void SkWinCore::FIRE_BLIT_TO_MEMORY_ROW_4TO4BPP(U16 offSrc, U16 offDst, U16 width)
 {
 	//^44C8:000F
 	ENTER(0);
 	//^44C8:0015
 	Bit8u *di = _4976_5e6a;
 	Bit8u *si = _4976_5e64;
-	Bit16u cx = width;
+	U16 cx = width;
 
 	bool carry1 = (offSrc & 1) ? true : false;
 	offSrc >>= 1;
@@ -2358,7 +2353,7 @@ _0036:
 }
 
 //^44C8:20E5
-void SkWinCore::_44c8_20e5(Bit16u srcOff, Bit16u dstOff, Bit16u srcWidth, Bit16u dstWidth)
+void SkWinCore::_44c8_20e5(U16 srcOff, U16 dstOff, U16 srcWidth, U16 dstWidth)
 {
 	ATLASSERT(srcWidth != 0);
 
@@ -2366,8 +2361,8 @@ void SkWinCore::_44c8_20e5(Bit16u srcOff, Bit16u dstOff, Bit16u srcWidth, Bit16u
 	ENTER(0);
 	//^44C8:20EA
     Bit8u *di = _4976_5e6a + (dstOff >> 1);
-	Bit16u cx = srcWidth >> 1;
-	Bit16u dx = (dstWidth +1) >> 1;
+	U16 cx = srcWidth >> 1;
+	U16 dx = (dstWidth +1) >> 1;
 	Bit8u *si = _4976_5e64 + (srcOff >> 1);
 	Bit8u bh = 0;
 	do {
@@ -2397,7 +2392,7 @@ void SkWinCore::_44c8_20e5(Bit16u srcOff, Bit16u dstOff, Bit16u srcWidth, Bit16u
 
 
 //^44C8:2143
-void SkWinCore::_44c8_2143(Bit16u xx, Bit16u yy, Bit16u ss, Bit16u tt)
+void SkWinCore::_44c8_2143(U16 xx, U16 yy, U16 ss, U16 tt)
 {
 	//^44C8:2143
 	ENTER(4);
@@ -2450,57 +2445,36 @@ void SkWinCore::_44c8_2143(Bit16u xx, Bit16u yy, Bit16u ss, Bit16u tt)
 #pragma warning(disable: 4700)
 
 //^44C8:21F3
-void SkWinCore::FIRE_STRETCH_BLIT_TO_MEMORY_4TO4BPP(Bit8u *src, Bit8u *dst, Bit16u srcWidth, Bit16u srcHeight, Bit16u dstWidth, Bit16u dstHeight, U8 *aa)
+void SkWinCore::FIRE_STRETCH_BLIT_TO_MEMORY_4TO4BPP(Bit8u *src, Bit8u *dst, U16 srcWidth, U16 srcHeight, U16 dstWidth, U16 dstHeight, U8 *aa)
 {
 	if (SkCodeParam::bUsePowerDebug && (!CheckSafePointer(src) || !CheckSafePointer(dst) ))
 		return;
 	ENTER(12);
-	//^44C8:21F9
 	_4976_5e64 = src;
-	//^44C8:2206
 	_4976_5e6a = dst;
-	//^44C8:2213
 	_4976_5dbe = aa;
-	//^44C8:2220
-	Bit16u bp08 = (dstWidth +1) & 0xfffe;
-	//^44C8:222D
-	Bit16u bp0a = (srcWidth +1) & 0xfffe;
-	//^44C8:2234
-	Bit16u bp04 = (i32(i16(srcWidth)) << 7) / i16(dstWidth);
-	//^44C8:224F
-	Bit16u bp06 = (i32(i16(srcHeight)) << 7) / i16(dstHeight);
-	//^44C8:226A
-	Bit16u bp02 = bp06 >> 1;
-	//^44C8:226F
-	Bit16u bp0c = 0; // defaulting to 0
-	for (Bit16u si = 0; si < dstHeight; si++) {
-		//^44C8:2274
-		Bit16u di = bp02 >> 7;
-		//^44C8:227C
+	U16 bp08 = (dstWidth +1) & 0xFFFE;
+	U16 bp0a = (srcWidth +1) & 0xFFFE;
+	U16 bp04 = (i32(i16(srcWidth)) << 7) / i16(dstWidth);
+	U16 bp06 = (i32(i16(srcHeight)) << 7) / i16(dstHeight);
+	U16 bp02 = bp06 >> 1;
+	U16 bp0c = 0; // defaulting to 0
+	for (U16 si = 0; si < dstHeight; si++) {
+		U16 di = bp02 >> 7;
 		if (bp0c == di && si > 0) {
-			//^44C8:2285
 			_4976_5e64 = dst;
-			//^44C8:2292
 			FIRE_BLIT_TO_MEMORY_ROW_4TO4BPP((si -1) * bp08, si * bp08, dstWidth);
-			//^44C8:22A9
 			_4976_5e64 = src;
 		}
-		//^44C8:22B8
 		else if (aa == 0) {
-			//^44C8:22C0
 			_44c8_20e5(di * bp0a, si * bp08, bp04, dstWidth);
 		}
 		else {
-			//^44C8:22D8
 			_44c8_2143(di * bp0a, si * bp08, bp04, dstWidth);
 		}
-		//^44C8:22F1
 		bp0c = di;
-		//^44C8:22F4
 		bp02 += bp06;
-		//^44C8:22FA
 	}
-	//^44C8:2303
 	return;
 }
 #pragma warning(pop)
@@ -2511,108 +2485,66 @@ ExtendedPicture *SkWinCore::QUERY_PICST_IT(ExtendedPicture *ref)
 	// query image with some capacity
 	// - stretch
 
-	//^0B36:06D3
 	ENTER(364);
-	//^0B36:06D9
-	Bit16u bp12 = (ref->w52 != 64 || ref->w54 != 64) ? 1 : 0;
-	Bit16u bp14 = 0;
-	//^0B36:06F9
-	Bit16u bp16 = (ref->w6 == 0xffff && ref->w12 >= 0) ? 1 : 0;
-	//^0B36:0714
-	if (bp12 != 0) {
-		//^0B36:071A
-		ref->w28 = CALC_STRETCHED_SIZE(ref->w28, ref->w52);
-		//^0B36:0732
-		ref->w30 = CALC_STRETCHED_SIZE(ref->w30, ref->w54);
+	U16 iIsStretched = (ref->iXStretch != 64 || ref->iYStretch != 64) ? 1 : 0;	// bp12
+	U16 bp14 = 0;
+	U16 bp16 = (ref->w6 == 0xFFFF && ref->w12 >= 0) ? 1 : 0;
+	if (iIsStretched != 0) {
+		ref->iXOffset = CALC_STRETCHED_SIZE(ref->iXOffset, ref->iXStretch);
+		ref->iYOffset = CALC_STRETCHED_SIZE(ref->iYOffset, ref->iYStretch);
 	}
-	//^0B36:0747
 	if ((ref->mirrorFlip & 0x0001) != 0) {
-		//^0B36:0752
-		ref->w28 = - ref->w28;
+		ref->iXOffset = - ref->iXOffset;
 	}
-	//^0B36:075C
 	if (ref->colorKeyPassThrough == -3)
-		//^0B36:0766
-		//^0B36:0A35
 		return ref;
-	//^0B36:0769
-	if (bp12 == 0 && bp14 == 0) {
-		//^0B36:0775
+	if (iIsStretched == 0 && bp14 == 0) {
 		if (bp16 != 0) {
-			//^0B36:077B
-			//^0B36:0788
 			QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(ref->w12, ref);
-			//^0B36:0A35
 			return ref;
 		}
 		else {
-			//^0B36:0792
 			QUERY_PICST_IMAGE(ref);
-			//^0B36:079E
-			//^0B36:0A35
 			return ref;
 		}
 	}
-	//^0B36:07A1
-	Bit16u bp18;
+	U16 bp18;
 	Bit8u *bp04;
 	Bit8u *bp08;
 	Picture bp32;
 	if (bp16 != 0) {
-		//^0B36:07A7
 		bp18 = ALLOC_TEMP_CACHE_INDEX();
-		//^0B36:07AF
 		COPY_MEMORY(ref, &bp32, 24);
-		//^0B36:07C6
 		Bit8u *bp08 = QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(bp32.w12, &bp32);
-		//^0B36:07DB
 		ALLOC_PICT_MEMENT(&bp32);
-		//^0B36:07E6
 		bp04 = NULL;
 	}
 	else {
-		//^0B36:07F3
 		Bit32u bp10 = CALC_PICT_ENT_HASH(ref);
-		//^0B36:0805
 		if (ADD_CACHE_HASH(bp10, &bp18) != 0) {
-			//^0B36:081C
-			//^0B36:0788
 			QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(bp18, ref);
-			//^0B36:0A35
 			return ref;
 		}
 		else {
-			//^0B36:0828
 			bp04 = NULL;
 			bp08 = NULL;
-			//^0B36:0838
 			if (bp08 == NULL) {
-				//^0B36:0840
 				COPY_MEMORY(ref, &bp32, 24);
-				//^0B36:0857
 				bp08 = QUERY_PICST_IMAGE(&bp32);
-				//^0B36:0868
 				ALLOC_PICT_MEMENT(&bp32);
 			}
 		}
 	}
-	//^0B36:0873
 	if ((bp32.w4 & 0x0010) != 0) {
-		//^0B36:087D
 		ExtendedPicture bp016c;
 		COPY_MEMORY(ref, &bp016c, 314);
-		//^0B36:0896
 		bp016c.mirrorFlip = 0;
-		bp016c.w54 = 64;
-		bp016c.w52 = 64;
-		//^0B36:08A7
-		Bit16u bp1a;
+		bp016c.iYStretch = 64;
+		bp016c.iXStretch = 64;
+		U16 bp1a;
 		if (ADD_CACHE_HASH(CALC_PICT_ENT_HASH(&bp016c), &bp1a) == 0) {
-			//^0B36:08C6
 			bp08 = ALLOC_NEW_PICT(bp1a, bp32.width, bp32.height, bp32.w22);
-			//^0B36:08E0
 			Bit8u *bp0c = QUERY_PICT_BITS(&bp32);
-			//^0B36:08F1
 			FIRE_BLIT_PICTURE(
 				bp0c,
 				bp08,
@@ -2628,66 +2560,64 @@ ExtendedPicture *SkWinCore::QUERY_PICST_IT(ExtendedPicture *ref)
 				NULL
 				);
 		}
-		//^0B36:0936
 		FREE_PICT_MEMENT(&bp32);
-		//^0B36:0941
 		Bit8u *bp08 = QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(bp1a, &bp32);
-		//^0B36:0956
 		ALLOC_PICT_MEMENT(&bp32);
 	}
-	//^0B36:0961
-	if (bp12 != 0) {
-		//^0B36:096A
-		i16 di = CALC_STRETCHED_SIZE(bp32.width, ref->w52);
-		//^0B36:097C
-		i16 si = CALC_STRETCHED_SIZE(bp32.height, ref->w54);
-		//^0B36:098E
+	if (iIsStretched != 0) {
+		i16 di = CALC_STRETCHED_SIZE(bp32.width, ref->iXStretch);
+		i16 si = CALC_STRETCHED_SIZE(bp32.height, ref->iYStretch);
 		if (di <= 0 || si <= 0) {
-			//^0B36:0996
 			ref->width = di;
 			ref->height = si;
 		}
 		else {
-			//^0B36:09A3
 			ALLOC_NEW_PICT(bp18, di, si, bp32.w22);
-			//^0B36:09B3
 			bp08 = QUERY_PICT_BITS(&bp32);
-			//^0B36:09C4
 			bp04 = QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(bp18, ref);
-			//^0B36:09DA
 			if (bp32.w22 == 8) {
-				//^0B36:09E0
 				_44c8_2351(bp08, bp04, bp32.width, bp32.height, di, si);
 			}
 			else {
-				//^0B36:09FE
 				FIRE_STRETCH_BLIT_TO_MEMORY_4TO4BPP(bp08, bp04, bp32.width, bp32.height, di, si, NULL);
 			}
 		}
 	}
-	//^0B36:0A1E
 	FREE_PICT_MEMENT(&bp32);
-	//^0B36:0A29
 	_3e74_585a_CACHE(bp18, 0);
-	//^0B36:0A35
 	return ref;
 }
 
 
-//^0B36:0334
-Bit8u *SkWinCore::TRANSLATE_PALETTE(Bit8u *localpal, Bit8u cls1, Bit8u cls2, Bit8u cls4, i16 palentcnt)
+//^32CB:2CF3
+void SkWinCore::_32cb_2cf3(U8 cls2, U16 scale64, U16 mirrorFlip, U16 rectno)
 {
-	//^0B36:0334
+	ENTER(0);
+	U16 si = scale64;
+	si = BETWEEN_VALUE(8, si & 0xfffe, 64);
+	QUERY_GDAT_SUMMARY_IMAGE(&glbTempPicture, 0xd, cls2, 0x41);
+	glbTempPicture.w32 = glbTempPicture.iXOffset;
+	glbTempPicture.w34 = glbTempPicture.iYOffset;
+	glbTempPicture.iYOffset = glbTempPicture.iXOffset = 0;
+	glbTempPicture.w26 = 0;
+	glbTempPicture.rectNo = rectno;
+	glbTempPicture.colorKeyPassThrough = 10;	// hard set color key!
+	glbTempPicture.pb44 = _4976_4c16;
+	glbTempPicture.mirrorFlip = mirrorFlip;
+	glbTempPicture.iYStretch = glbTempPicture.iXStretch = si;
+	_0b36_037e(glbTempPicture.b58, i8(_4976_5a88), 10, -1, glbTempPicture.w56);
+	QUERY_PICST_IT(&glbTempPicture);
+	return;
+}
+
+//^0B36:0334
+X8* SkWinCore::TRANSLATE_PALETTE(X8* localpal, U8 iGDatCategory, U8 iGDatItemId, U8 iGDatEntryId, i16 palentcnt)
+{
 	ENTER(4);
-	//^0B36:0339
-	Bit8u *bp04 = QUERY_GDAT_ENTRY_DATA_PTR(cls1, cls2, dt07, cls4);
-	//^0B36:0355
-	for (i16 si = 0; si < palentcnt; si++) {
-		//^0B36:0359
-		localpal[si] = bp04[localpal[si]];
-		//^0B36:036F
+	X8* xTranslatePalette = QUERY_GDAT_ENTRY_DATA_PTR(iGDatCategory, iGDatItemId, dtRaw7, iGDatEntryId);	// bp04
+	for (U16 iPalIndex = 0; iPalIndex < palentcnt; iPalIndex++) {
+		localpal[iPalIndex] = xTranslatePalette[localpal[iPalIndex]];
 	}
-	//^0B36:0375
 	return localpal;
 }
 

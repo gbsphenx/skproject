@@ -353,12 +353,15 @@ Mix_Chunk* MakeMixChunkFromPCM(const U8* buffInt, Uint32 buffSize, int volume)
 Mix_Chunk* MakeMixChunkFromConvertedPCM(const U8* xSoundBuffer, Uint32 iBufferSize, int volume)
 {
 	SDL_AudioCVT cvt;
+	int iAudioFrequency = 6000; // PC-98xx V4
+	if (SkCodeParam::bDM2V5Mode)
+		iAudioFrequency = 11025;	// PC-DOS V5
 
 	SDL_BuildAudioCVT(
 		&cvt,
 		AUDIO_S8,        // source format (example: unsigned 8-bit)
 		1,               // source channels (mono)
-		6000,            // source frequency
+		iAudioFrequency, // source frequency
 		AUDIO_S16SYS,    // destination format
 		2,               // destination channels (stereo)
 		44100            // destination frequency

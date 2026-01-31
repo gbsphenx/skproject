@@ -657,7 +657,7 @@ namespace DMEncyclopaedia {
 	struct Creature {
 		ObjectID w0; // Next object ID.
 		ObjectID possession; // w2 Next possession object ID. Although not recommended, it is possible to
-		U8 b4; // Creature type. Her
+		U8 b4; // Creature type.
 		U8 iID; // Ingame-Internal Creature Index (was in DM1 Position of each c) // where &sk4ebe[b5]
 		U16 hp1; // w6 Hit points of creature 1
 		U16 iAnimSeq; // w8 Hit points of creature 2 // sk1c9a02c3::w0		--> DM2 anim sequence
@@ -1257,9 +1257,9 @@ namespace DM2Internal {
 	// 
 	struct mement {		// 18 bytes
 		i32 _dw0;		// @0 // length. negative if it directs from lower to upper. it contains this header size.
-		X16 _w4;		// @4
+		X16 _w4;		// @4 // w4 + w6 builds a mem address ?? !! for 64-bits compilation ?
 		X16 _w6;		// @6
-		X16 _w8;		// @8 // mement index for chain image?
+		X16 _w8;		// @8 // mement index for chain image? // w8 + w10 builds a mem address ??
 		X16 _w10;		// @10 // raw data index? (for chain image?)
 		X16 _w12;		// @12 // bpp ?
 		X16 _w14;		// @14 // width ?
@@ -2071,16 +2071,16 @@ namespace DM2Internal {
 	//	i16 w20;	// @20
 		U16 rectNo;		// @24 // (U16 w24) rectno
 		U16 w26;		// @26
-		i16 w28;	// @28 // x-offset
-		i16 w30;	// @30 // y-offset
+		i16 iXOffset;	// @28 // x-offset
+		i16 iYOffset;	// @30 // y-offset
 		i16 w32;	// @32 // x?
 		i16 w34;	// @34 // y?
 		SRECT rc36;		// @36
 		U8 *pb44;	// @44 // picture buffer
 		i16 colorKeyPassThrough;		// @48 // (i16 w48) color key
 		U16 mirrorFlip;		// @50 // (w50) mirror flip
-		U16 w52;		// @52 // horz stretch factor? (unstretch is 64)
-		U16 w54;		// @54 // vert stretch factor? (unstretch is 64)
+		U16 iXStretch;		// @52 // horz stretch factor? (unstretch is 64)
+		U16 iYStretch;		// @54 // vert stretch factor? (unstretch is 64)
 		U16 w56;		// @56 // palentcnt
 		U8 b58[256];	// @58 // local palette 16 colors
 	};

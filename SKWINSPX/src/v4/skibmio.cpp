@@ -293,7 +293,7 @@ void SkWinCore::IBMIO_STORE_KEYBOARD_INPUT(X16 iKeyboardVInput)
 {
 	ENTER(0);
 	if (glbUIKeyReadCount < 10) {
-		tlbUIKeyInput[glbKeyboardWriteRRIndex] = iKeyboardVInput;
+		tblUIKeyInput[glbKeyboardWriteRRIndex] = iKeyboardVInput;
 		glbKeyboardWriteRRIndex = (glbKeyboardWriteRRIndex + 1) % 10;
 		glbUIKeyReadCount++;
 	}

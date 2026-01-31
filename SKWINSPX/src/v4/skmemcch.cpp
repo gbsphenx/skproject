@@ -33,7 +33,7 @@ mement* SkWinCore::_3e74_48c9_MEMENT(U16 mementi)
 	if (si == 0) {
 		U16 di = xMement->w8();
 		if (di == 0xffff) {
-			_4976_5d90 = (xMement != _4976_5c8c) ? xMement : NULL;
+			glbMement2 = (xMement != _4976_5c8c) ? xMement : NULL;
 			xMement->w4(1);
 			return xMement;
 		}
@@ -68,21 +68,21 @@ mement* SkWinCore::_3e74_48c9_MEMENT(U16 mementi)
 		}
 		U16 bp0e = xMement->w6();
 		if (bp0e == 0xFFFF) {
-			_4976_5d90 = xMement3;
+			glbMement2 = xMement3;
 			_4976_5d5e = xMement3;
 			xMement3->w6(0xFFFF);
 		}
 		else {
-			if (xMement == _4976_5d90) {
-				_4976_5d90 = xMement3;
+			if (xMement == glbMement2) {
+				glbMement2 = xMement3;
 			}
 			xMement = tblMementsPointers[bp0e];
 			TEST_MEMENT(xMement);
 			xMement->w8(di);
 			xMement3->w6(bp0e);
 		}
-		if (_4976_5d90 == _4976_5c8c) {
-			_4976_5d90 = NULL;
+		if (glbMement2 == _4976_5c8c) {
+			glbMement2 = NULL;
 		}
 
 		while (true) {
@@ -171,7 +171,7 @@ void SkWinCore::_3e74_4549(U16 xx)
 				//^3E74:4599
 				if (si == 0xffff) {
 					//^3E74:459E
-					_4976_5d90 = NULL;
+					glbMement2 = NULL;
 					_4976_5c8c = NULL;
 					_4976_5d70 = NULL;
 					_4976_5d5e = NULL;
@@ -203,9 +203,9 @@ void SkWinCore::_3e74_4549(U16 xx)
 					}
 					else {
 						//^3E74:4633
-						if (bp04 == _4976_5d90) {
+						if (bp04 == glbMement2) {
 							//^3E74:4648
-							_4976_5d90 = NULL;
+							glbMement2 = NULL;
 						}
 					}
 					//^3E74:4654
@@ -220,15 +220,15 @@ void SkWinCore::_3e74_4549(U16 xx)
 				}
 				//^3E74:4682
 _4682:
-				if (bp04 == _4976_5d90) {
+				if (bp04 == glbMement2) {
 					//^3E74:4696
 					if (bp08 == _4976_5c8c) {
 						//^3E74:46AB
-						_4976_5d90 = NULL;
+						glbMement2 = NULL;
 					}
 					else {
 						//^3E74:46B9
-						_4976_5d90 = bp08;
+						glbMement2 = bp08;
 					}
 				}
 				else {
@@ -250,38 +250,28 @@ _4682:
 }
 
 //^3E74:0C8C
+// SPX: _3e74_0c8c renamed MEMENT_3e74_0c8c
 void SkWinCore::_3e74_0c8c(mement *ref)
 {
 	// cqOk @ 21:03 2007/02/21
 
-	//^3E74:0C8C
-	//^3E74:0C90
-	mement *bp08 = ref->pv4();
-	mement *bp04 = ref->pv8();
-	//^3E74:0CAF
-	if (bp08 == NULL) {
-		//^3E74:0CC0
-		if (bp04 == NULL) {
-			//^3E74:0CD1
-			_4976_5d94 = NULL;
+	mement* xMement1 = ref->pv4();	// bp08
+	mement* xMement2 = ref->pv8();	// bp04
+	if (xMement1 == NULL) {
+		if (xMement2 == NULL) {
+			glbMement1 = NULL;
 		}
 		else {
-			//^3E74:0CDF
-			_4976_5d94 = bp04;
-			//^3E74:0CEC
-			bp04->pv4(NULL);
+			glbMement1 = xMement2;
+			xMement2->pv4(NULL);
 		}
 	}
 	else {
-		//^3E74:0CFD
-		bp08->pv8(bp04);
-		//^3E74:0D0E
-		if (bp04 != NULL) {
-			//^3E74:0D1F
-			bp04->pv4(bp08);
+		xMement1->pv8(xMement2);
+		if (xMement2 != NULL) {
+			xMement2->pv4(xMement1);
 		}
 	}
-	//^3E74:0D30
 }
 
 //^3E74:0D32
@@ -293,9 +283,9 @@ void SkWinCore::_3e74_0d32(mement *ref)
 	//^3E74:0D37
 	mement *bp04 = ref;
 	//^3E74:0D43
-	if (_4976_5d94 == NULL) {
+	if (glbMement1 == NULL) {
 		//^3E74:0D55
-		_4976_5d94 = bp04;
+		glbMement1 = bp04;
 		//^3E74:0D62
 		bp04->pv8(NULL);
 		//^3E74:0D71
@@ -305,13 +295,13 @@ _0d71:
 		return;
 	}
 	//^3E74:0D7C
-	mement *bp08 = _4976_5d94;
+	mement *bp08 = glbMement1;
 	//^3E74:0D89
 	i32 bp0c = bp04->dw0();
 	//^3E74:0D99
 	if (bp08->dw0() <= bp0c) {
 		//^3E74:0DAF
-		_4976_5d94 = bp04;
+		glbMement1 = bp04;
 		//^3E74:0DBC
 		bp04->pv4(NULL);
 		//^3E74:0DCB
@@ -520,8 +510,8 @@ U16 SkWinCore::_3e74_4471_CACHE()	// find a temp cache index ?
 			} while (tblCacheToMement[glbCacheRecyclerCurrentIndex] != 0xFFFF);
 		}
 	}
-	printf("_3e74_4471_CACHE: previous = %d / nextmement = %d / current = %d / memcache = %d / max = %d\n", 
-		iPreviousCacheIndex, glbNextFreeMementIndex, glbCacheRecyclerCurrentIndex, cd.mc._4976_5c92_cache, glbCacheRecyclerMax);
+	//printf("_3e74_4471_CACHE: previous = %d / nextmement = %d / current = %d / memcache = %d / max = %d\n", 
+	//	iPreviousCacheIndex, glbNextFreeMementIndex, glbCacheRecyclerCurrentIndex, cd.mc._4976_5c92_cache, glbCacheRecyclerMax);
 	if (SkCodeParam::bUsePowerDebug && iPreviousCacheIndex < 0)	// like 0xFFFF
 		return 0xFFFF;	// bypass ASSERT for now ...
 	ATLASSERT(0 <= iPreviousCacheIndex && iPreviousCacheIndex < glbCacheRecyclerMax);
@@ -583,37 +573,28 @@ U16 SkWinCore::INSERT_CACHE_HASH_AT(Bit32u cacheHash, U16 ici)
 
 
 //^3E74:44AD
-void SkWinCore::_3e74_44ad()
+// SPX: _3e74_44ad renamed MEMENT_3e74_44ad
+void SkWinCore::MEMENT_3e74_44ad()
 {
 	// cqOk @ 21:03 2007/02/21
 
-	//^3E74:44AD
 	_4976_5d2a = glbGameTick;
-	_4976_5d90 = NULL;
+	glbMement2 = NULL;
 	mement *bp04 = _4976_5c8c;
-	//^3E74:44E6
 	if (bp04 == NULL) {
-		//^3E74:44E8
 		bp04 = _4976_5d70;
-		//^3E74:4502
 		if (bp04 == NULL)
 			return;
 	}
-	//^3E74:4504
 	while (bp04->w4() != 0) {
-		//^3E74:4506
 		if (bp04->w4() <= 0xfffd) {
-			//^3E74:4510
 			bp04->w4(0);
 		}
-		//^3E74:4516
 		U16 si = bp04->w6();
 		if (si == 0xffff)
 			return;
-		//^3E74:4524
 		bp04 = tblMementsPointers[si];
 		TEST_MEMENT(bp04);
-		//^3E74:453C
 	}
 }
 
@@ -643,7 +624,7 @@ U16 SkWinCore::ADD_CACHE_HASH(Bit32u cacheHash, U16 *piYaCacheIndex)
 {
 	// returns 0 if inserted new one, 1 if already exists.
 	if (glbGameTick != _4976_5d2a) {
-		_3e74_44ad();
+		MEMENT_3e74_44ad();
 	}
 	U16 bp02 = 0;
 	if (FIND_ICI_FROM_CACHE_HASH(cacheHash, &bp02) != 0) {
@@ -742,7 +723,7 @@ void SkWinCore::_3e74_2b30()
 
 	//^3E74:2B30
 	//^3E74:2B36
-	if (_4976_5d94 != NULL) {	// mement
+	if (glbMement1 != NULL) {	// mement
 		//^3E74:2B4B
 		mement *bp04 = _4976_5ce6;
 		mement *bp08 = _4976_5ce6;
@@ -784,9 +765,9 @@ void SkWinCore::_3e74_2b30()
 						_4976_5d70 = bp08;
 					}
 					//^3E74:2C30
-					if (_4976_5d90 == bp04) {
+					if (glbMement2 == bp04) {
 						//^3E74:2C44
-						_4976_5d90 = bp08;
+						glbMement2 = bp08;
 					}
 					//^3E74:2C53
 					else if (_4976_5c8c == bp04) {
@@ -806,7 +787,7 @@ void SkWinCore::_3e74_2b30()
 		//^3E74:2CAC
 		_4976_5cb2 = bp08;
 		//^3E74:2CB9
-		_4976_5d94 = NULL;
+		glbMement1 = NULL;
 	}
 	//^3E74:2CC5
 	return;
@@ -832,7 +813,7 @@ _2cfb:
 		PTR_PADA(_4976_5cb2,buffSize);
 	}
 	//^3E74:2D1B
-	else if (_4976_5d94->dw0() < buffSize) {
+	else if (glbMement1->dw0() < buffSize) {
 		//^3E74:2D32
 		_3e74_2b30();
 		//^3E74:2D36
@@ -840,7 +821,7 @@ _2cfb:
 	}
 	else {
 		//^3E74:2D38
-		bp04 = _4976_5d94;
+		bp04 = glbMement1;
 		//^3E74:2D45
 		U16 si = 0;
 		mement *bp08;
@@ -864,7 +845,7 @@ _2d5b:
 					goto _2da5;
 			}
 			//^3E74:2D96
-			bp04 = _4976_5d94;
+			bp04 = glbMement1;
 			//^3E74:2DA3
 			goto _2d5b;
 			//^3E74:2DA5
@@ -1078,7 +1059,7 @@ void SkWinCore::RECYCLE_MEMENTI(U16 mementi, U16 yy)
 		//^3E74:4754
 		bp04->w4(1);
 		//^3E74:475D
-		bp0c = _4976_5d90;
+		bp0c = glbMement2;
 		//^3E74:476A
 		bp10 = _4976_5c8c;
 		if (bp10 == NULL) {
@@ -1103,7 +1084,7 @@ void SkWinCore::RECYCLE_MEMENTI(U16 mementi, U16 yy)
 		goto _4822;
 	}
 	//^3E74:47D1
-	if (_4976_5d90 == NULL) {
+	if (glbMement2 == NULL) {
 		//^3E74:47E3
 		if (_4976_5c8c != NULL) {
 			//^3E74:47F5
@@ -1159,7 +1140,7 @@ _48a3:
 	}
 	else {
 		//^3E74:48B8
-		_4976_5d90 = bp04;
+		glbMement2 = bp04;
 	}
 	//^3E74:48C5
 	return;
@@ -1197,7 +1178,7 @@ X32 SkWinCore::_3e74_5673_CACHE(X32 cacheHash, U16 *piYaCacheIndex, X16 ifTryIns
 {
 	ENTER(2);
 	if (glbGameTick != _4976_5d2a) {
-		_3e74_44ad();
+		MEMENT_3e74_44ad();
 	}
 	U16 bp02;
 	if (FIND_ICI_FROM_CACHE_HASH(cacheHash, &bp02) == 0) {

@@ -1056,13 +1056,13 @@ AIDefinition dAITable[MAXAI];
 
 
 //{{SKVAL1
-U16 tlbUIKeyInput[10];	// _04bf_188e
+U16 tblUIKeyInput[10];	// _04bf_188e
 
 // "Rr" ... 変数項の占有メモリ領域を確認し，RCJを付与済み
 // "Rr`" ... "Rr"中，RCJを部分的に施した
 // "Rp" ... 変数項の占有メモリは追跡しないことを決定し，RCJを付与しない
 
-i8 _4976_0094[32]; //Rr
+i8 tbl32_4976_0094[32]; //Rr
 U8 _4976_00b4[8]; //Rr  // flags for 8 missiles. 2=can harm door
 X8 _4976_00e3[5]; //Rr
 U16 tRectnoOffsetsWallOrnates[16]; //Rr (_4976_019a) // recto offsets tables for wall ornates
@@ -1087,7 +1087,7 @@ i8 _4976_4172[23]; //Rr
 U8 tlbDistanceStretch[5]; //Rr (_4976_4189) // distance to creature scale factor
 U8 _4976_418e[6][4]; //Rr`
 U8 _4976_41a9[7]; //Rr
-U8 _4976_41b0[16][2]; //Rr
+U8 tblItemStackDisplace[16][2]; //Rr	(_4976_41b0)
 i8 _4976_41de[8]; //Rr
 U8 _4976_41e6[7]; //Rr
 U8 _4976_41ed[17]; //Rr

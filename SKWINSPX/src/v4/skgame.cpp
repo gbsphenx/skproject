@@ -3238,27 +3238,21 @@ U16 SkWinCore::PERFORM_MOVE(X16 xx)
 	//	xx = 4	move right
 	//	xx = 5	backward
 	//	xx = 6	move left
-	//^12B4:0300
 	ENTER(38);
-	//^12B4:0306
 	ObjectID bp14;
 	U16 iCurrentTile = GET_TILE_VALUE(glbSomePosX_4c2e, glbSomePosY_4c30); // bp06
 	X16 iIsStairs = ((iCurrentTile >> 5) == ttStairs) ? 1 : 0; // bp08
 	i16 bp26 = 1;
 	Champion *xChampion = glbChampionSquad;
 	int iFinalInterwallValue = 0;	// SPX: new
-	//^12B4:0338
 	U16 iChampionIndex = 0;	/// si
 	SkD((DLV_MOVE, "------------------------------------------------\n"));
 	for (iChampionIndex = 0; iChampionIndex < cd.pi.glbChampionsCount; xChampion++, iChampionIndex++) {
-		//^12B4:033C
 		if (xChampion->curHP() != 0) {
 			bp26 = max_value(bp26, CALC_PLAYER_WALK_DELAY(iChampionIndex));
 			SkD((DLV_MOVE, "Move: champion %d sets walk delay to %d\n", iChampionIndex, bp26));
 		}
-		//^12B4:035B
 	}
-	//^12B4:0367
 	U16 iDestTile = 0;	// bp0a
 	i16 bp0e = 0;	// bp0e
 	i16 playerDestPosX = 0; // bp1a
@@ -3281,7 +3275,6 @@ U16 SkWinCore::PERFORM_MOVE(X16 xx)
 #else // isn't the same ??
 	if (bp26 > 1 && cd.pi.glbIsPlayerMoving == 0 && (xx == 3 || (xx == 5 && _4976_4c08 == 0 && iIsStairs == 0) || glbTableToMove != OBJECT_NULL)) {
 #endif
-		//^12B4:0394
 		cd.pi.glbIsPlayerMoving = bp26 >> 1;
 		_4976_4c32 = cd.pi.glbPlayerPosX;
 		_4976_4c34 = cd.pi.glbPlayerPosY;
@@ -3295,67 +3288,49 @@ U16 SkWinCore::PERFORM_MOVE(X16 xx)
 			QUEUE_NOISE_GEN1(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, SOUND_CHAMPION_FOOTSTEP, 0x46, 0x80, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1);
 		goto _0768;
 	}
-	//^12B4:03D8
 	U16 bp10;
 	if (glbTableToMove != OBJECT_NULL) {
-		//^12B4:03E2
 		if (true
 			&& cd.pi.glbPlayerDir == _4976_4c40 && cd.pi.glbPlayerMap == glbMap_4976_4eaa && cd.pi.glbPlayerPosX == glbPosX_4976_4eae && cd.pi.glbPlayerPosY == glbPosY_4976_4eb0
 			&& GET_CREATURE_AT(glbTargetPosXTest, glbTargetPosYTest) == glbTableToMove
 		) {
-			//^12B4:0427
 			glbTableToMove = OBJECT_NULL;
 			bp10 = cd.pi.glbPlayerMap;
 			if (xx == 3) {
-				//^12B4:0439
 				_12b4_0d75_CREATURE(glbTargetPosXTest, glbTargetPosYTest, _4976_4eac, 0xfe);
 			}
-			//^12B4:0450
 			if (PERFORM_MOVE(xx) != 0) {
-				//^12B4:045C
 				PERFORM_TURN_SQUAD(_4976_4eb2);
 				if (xx != 3) {
-					//^12B4:046B
 					CHANGE_CURRENT_MAP_TO(bp10);
 					_12b4_0d75_CREATURE(glbTargetPosXTest, glbTargetPosYTest, _4976_4eac, 0xfe);
 				}
 			}
-			//^12B4:048B
 			CHANGE_CURRENT_MAP_TO(cd.pi.glbPlayerMap);
 		}
-		//^12B4:0495
 		glbTableToMove = OBJECT_NULL;
 		if (glbTryPushPullObject == 0)
 			glbTargetTypeMoveObject = 6;
-		//^12B4:04A8
 		return 1;
 	}
-	//^12B4:04AE
 	bp10 = glbCurrentMapIndex;
 	di = xx - 3;
-	//^12B4:04BC
 	if (_4976_4c08 != 0 && di == 2) {
 		CHANGE_CURRENT_MAP_TO(glbMap_4976_4c12);
 	}
-	//^12B4:04D2
 	playerDestPosX = glbSomePosX_4c2e;
 	playerDestPosY = glbSomePosY_4c30;
 	bp0e = _4976_4c2c;
-	//^12B4:04E4
 	CALC_VECTOR_W_DIR(bp0e, _4976_19b2[RCJ(4,di)], _4976_19b6[RCJ(4,di)], &playerDestPosX, &playerDestPosY);
-	//^12B4:0505
 	iDestTile = GET_TILE_VALUE(playerDestPosX, playerDestPosY);	// bp0a
 	cd.gg.glbRefreshViewport = 1;
 	xChampion = glbChampionSquad;
-	//^12B4:0525
 	for (iChampionIndex = 0; iChampionIndex < cd.pi.glbChampionsCount; xChampion++, iChampionIndex++) {
 		if (xChampion->curHP() != 0) {
 			ADJUST_STAMINA(iChampionIndex, ((GET_PLAYER_WEIGHT(iChampionIndex) * 3) / MAX_LOAD(xChampion)) +1);
 		}
 	}
-	//^12B4:056A
 	RESET_SQUAD_DIR();
-	//^12B4:056E
 	X16 bp12;
 	X16 bp24;
 	i16 bp16;
@@ -3378,15 +3353,13 @@ U16 SkWinCore::PERFORM_MOVE(X16 xx)
 #endif // XDMX_EXTENDED_FEATURES
 	//switch (_12b4_0881_CHECK_MOVE_BETWEEN_TILES(di, iCurrentTile, iDestTile, playerDestPosX, playerDestPosY, &bp14)) {	// original
 	switch (CHECK_MOVE_BETWEEN_TILES_AND_INTERWALLS(di, iFinalInterwallValue, iCurrentTile, iDestTile, playerDestPosX, playerDestPosY, &bp14)) {
-	case 2://^059A	// new tile is stairs
-		//^12B4:059A
+	case C2_CHECKMOVE_TILE_STAIRS://^059A	// new tile is stairs
 		MOVE_RECORD_TO(OBJECT_NULL, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, -1, 0);
 		cd.pi.glbPlayerPosX = playerDestPosX;
 		cd.pi.glbPlayerPosY = playerDestPosY;
 		iCurrentTile = iDestTile;
 		goto _05c2;
-	case 1://^05C2	// old tile is stairs
-		//^12B4:05C2
+	case C1_CHECKMOVE_OLD_TILE_STAIRS://^05C2	// old tile is stairs
 _05c2:
 		//_12b4_00af(iCurrentTile & 4); // original
 		_12b4_00af(iCurrentTile & 4, iCurrentTile & 8);
@@ -3411,22 +3384,18 @@ _05c2:
 			break;	
 		ATTACK_CREATURE(OBJECT_NULL, playerDestPosX, playerDestPosY, 0x4005, 5, 0);
 		break;
-	case 6://^0685	// any other case
-		//^12B4:0685
+	case C6_CHECKMOVE_TILE_PASSABLE://^0685	// any other case
 _0685:
 		if (_4976_4c08 != 0 && di == 2) {
-			//^12B4:0691
 			CHANGE_CURRENT_MAP_TO(bp10);
 			playerDestPosX = glbSomePosX_4c2e;
 			playerDestPosY = glbSomePosY_4c30;
 			CALC_VECTOR_W_DIR(bp0e = _4976_4c2c, -1, 0, &playerDestPosX, &playerDestPosY);
 		}
-		//^12B4:06C3
 		if (iIsStairs != 0) {
 			MOVE_RECORD_TO(OBJECT_NULL, -1, 0, playerDestPosX, playerDestPosY);
 			goto _0768;
 		}
-		//^12B4:06D6
 		TELE_inf bp22;
 		if (GET_TELEPORTER_DETAIL(&bp22, U8(playerDestPosX), U8(playerDestPosY)) != 0) {
 			if (((bp22.b1 +2) & 3) != bp0e) {
@@ -3439,49 +3408,38 @@ _0685:
 				goto _0768;
 			}
 		}
-		//^12B4:0750
 		MOVE_RECORD_TO(OBJECT_NULL, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, playerDestPosX, playerDestPosY);
-		//^12B4:0768
 _0768:
 		_4976_4c00 = bp26;
 		glbPlayerThrowCounter = 0;
 		// SPX addition for external script when player arrives on tile
 		LUA_CALL_SCRIPT(_EXP_SCRIPT__PLAYER_ON_TILE_, cd.pi.glbPlayerMap, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 0);
 		// SPX re-implementation of music trigger from CD.DAT when player arrives on certain tile
-		CHECK_TRIGGER_MUSIC_FROM_PLAYER_POSITION(cd.pi.glbPlayerMap, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
+		if (SkCodeParam::bDM2CDMusic && !SkCodeParam::bDM2V5Mode)
+			CHECK_TRIGGER_MUSIC_FROM_PLAYER_POSITION(cd.pi.glbPlayerMap, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
 	
-		//^12B4:0776
 		return 1;
-	case 3://^0779	// tile is blocked
-		//^12B4:0779
+	case C3_CHECKMOVE_TILE_BLOCKED://^0779	// tile is blocked
 		if (cd.pi.glbChampionsCount == 0)
 			break;
 		_12b4_023f_WOUND_RUNNING_INTO_CREATURE(playerDestPosX, playerDestPosY, &bp16, &bp18, bp0e, di);
-		//^12B4:079E
 		if ((iDestTile >> 5) != ttDoor || (iDestTile & 7) != 4)
 			break;
-		//^12B4:07B7
 		bp0c = 0;
 		if (bp16 != 0xFFFF) {
-			//^12B4:07C2
 			xChampion = &glbChampionSquad[bp16];
 			bp0c += STAMINA_ADJUSTED_ATTR(xChampion, GET_PLAYER_ABILITY(xChampion, abStr, 0) + (RAND() & 15));
 		}
-		//^12B4:0803
 		if (bp18 != bp16 && bp18 != 0xFFFF) {
-			//^12B4:0811
 			xChampion = &glbChampionSquad[bp18];
 			bp0c += STAMINA_ADJUSTED_ATTR(xChampion, GET_PLAYER_ABILITY(xChampion, abStr, 0) + (RAND() & 15));
 		}
-		//^12B4:084F
 		ATTACK_DOOR(playerDestPosX, playerDestPosY, bp0c, 0, 0);
 		break;
-	case 5://^0864
+	case C5_CHECKMOVE_STOP://^0864
 		break;
 	}
 
-
-	//^12B4:0864
 	_1031_098e();
 	cd.gg.glbRefreshViewport = 0;
 	return 0;
@@ -4415,8 +4373,8 @@ void SkWinCore::CHECK_TRIGGER_MUSIC_FROM_PLAYER_POSITION(U16 iMapPosition, U16 i
 	iAbsolutePositionX = xCurrentMapDef->MapOffsetX() + iPositionX;
 	iAbsolutePositionY = xCurrentMapDef->MapOffsetY() + iPositionY;
 	iMapAltitude = (U16) xCurrentMapDef->Level();
-	printf("position = (%d | %d, %d) => AG = (%d | %d, %d)\n", iMapPosition, iPositionX, iPositionY,
-		iMapAltitude, iAbsolutePositionX, iAbsolutePositionY);
+	//printf("position = (%d | %d, %d) => AG = (%d | %d, %d)\n", iMapPosition, iPositionX, iPositionY,
+	//	iMapAltitude, iAbsolutePositionX, iAbsolutePositionY);
 	
 	if (SkCodeParam::bDM2CDMusic && CheckSafePointer(cd.sc.glbTabCDMusicTriggers)) {
 		// Check if location is a music trigger point
@@ -4432,7 +4390,7 @@ void SkWinCore::CHECK_TRIGGER_MUSIC_FROM_PLAYER_POSITION(U16 iMapPosition, U16 i
 	}
 
 	if (iSelectedTrigger != 0xFFFF)
-		REQUEST_PLAY_MUSIC(iSelectedMusicID, 100);
+		REQUEST_PLAY_MUSIC(iSelectedMusicID, 25);
 	
 	//CHANGE_CURRENT_MAP_TO(iCurrentMapIndex);
 }

@@ -93,6 +93,7 @@ public:
 	static bool bDebugGFXNoCreatures;
 	static bool bDebugNoCreatures;
 	static bool bDebugTileset;
+	static bool bDebugNoCreatureCollision;
 
 	static bool bForceOrnateSound;
 

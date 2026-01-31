@@ -283,7 +283,7 @@ protected:
 	i16		glbMouseStateRingIndex;			// _4976_19a5 mouse state ring index
 	U16	_4976_19a7;
 	Bit32u	_4976_19a9;
-	U16	_4976_19ad;
+	U16	_4976_19ad;	// _4976_19ad
 	U16	_4976_19af;
 	ObjectID	glbTableToMove;	// (_4976_19ba) moving table. set oFFFF if no table.
 	U16	_4976_1a68;			// SPX: may it be some count of thinking creatures ? used for table _4976_4ebe
@@ -819,8 +819,8 @@ protected:
 	Bit32u	_4976_5d7a;		// size of 1st direntry rawdata
 	sk5d12	_4976_5d7e;
 	i32	glbFreeEMSMemPool;		// for allocmem. avail size of memory pool (#2). 540 byes avail when dosbox runs
-	mement	*_4976_5d90;	// mement#2
-	mement	*_4976_5d94;	// mement#1
+	mement*	glbMement2;	// (_4976_5d90) mement#2
+	mement*	glbMement1;	// (_4976_5d94) mement#1
 	U16	_4976_5d98;	// x?
 	U16	_4976_5d9a;	// y?
 	U16	_4976_5d9c;
@@ -1183,12 +1183,121 @@ protected:
 	GenericRecord *GET_ADDRESS_OF_TILE_RECORD(i16 xx, i16 yy);
 	U16 IS_TILE_PASSAGE(i16 xx, i16 yy);
 	U8 GET_TILE_VALUE(i16 xx, i16 yy);
+
+	//-------------- Creatures functions
+	ObjectID GET_CREATURE_AT(i16 xpos, i16 ypos);
+	ObjectID GET_CREATURE_1c9a_03cf(i16 *xx, i16 *yy, U16 dir);	// _1c9a_03cf
+	U16 CREATURE_4937_005c(U16 xx, U16 *yy); // _4937_005c
+	
 	AIDefinition *QUERY_CREATURE_AI_SPEC_FROM_TYPE(Bit8u creatureType);
 	U16 QUERY_GDAT_CREATURE_WORD_VALUE(Bit8u creatureType, Bit8u cls4);
-	//void _2066_1ea3(U16 xx, U16 yy, U16 zz);		// An interesting one about changing bits on tile (void/pit)
-	void SET_TILE_ATTRIBUTE_02(U16 xx, U16 yy, U16 map); // _2066_1ea3
 	sk1c9a02c3* GET_CREATURE_INFO_DATA(Creature *xCreature, AIDefinition *xAIDef); // _1c9a_02c3
 	U16 CREATURE_STEP_ANIMATION(U16 xx, U16 *yy, CreatureAnimationFrame **rref);	// _4937_01a9
+	Missile *GET_MISSILE_REF_OF_MINION(ObjectID rlCreature, ObjectID rlContainer);
+	i16 CREATURE_SEQUENCE_4937_000f(U16 xx, U16 *yy); // 4937_000f
+	U16 CREATURE_0cee_2df4(ObjectID recordLink);	// _0cee_2df4
+	ObjectID ALLOC_NEW_CREATURE(U16 creaturetype, U16 healthMultiplier_1to31_baseIs8, U16 dir, U16 xx, U16 yy);
+	ObjectID CREATE_MINION(U16 creatureType, U16 healthMultiplier_1to31_baseIs8, U16 creatureDir, U16 xx, U16 yy, U16 zz, ObjectID ww, i16 dir);
+	U16 CONFUSE_CREATURE(U16 ww, U16 xx, U16 yy);
+	void QUEUE_THINK_CREATURE(U16 xx, U16 yy);
+	void CREATURE_SET_NEW_COMMAND(ObjectID rlCreature, U16 xx, U16 yy, U8 iCommand, U16 tt);	// _13e4_0360
+	void RELEASE_MINION(ObjectID rlCreature);
+	U16 _48ae_05ae_CREATURE(i16 disit, U8 yy, U16 zz, U16 ss, U16 tt, i16 ww); // _48ae_05ae
+	i16 QUERY_CREATURE_BLIT_RECTI(U16 cellPos, i16 _5x5, U16 dir);
+	i16 CREATURE_GET_COLORKEY(U8 cls2); // _0cee_2e35
+	void QUERY_CREATURE_PICST(U16 xx, i16 dist, Creature *vv, CreatureInfoData *ww, ObjectID rl);
+	U16 CREATURE_121e_0222(U16 xx, U16 yy, U16 ww);	// _121e_0222
+	U16 QUERY_CREATURE_AI_W32_FROM_RECORD(ObjectID rl); // _0cee_2e09
+	i16 CREATURE_1c9a_1b16(X16 xx, X16 yy);	// _1c9a_1b16
+	i16 CREATURE_CHECK__1c9a_1a48(X16 xx, X16 yy);	// _1c9a_1a48
+	i16 CREATURE_GO_THERE(X16 aa, i16 xx, i16 yy, i16 ss, i16 tt, i16 ww);		// Big func
+	X16 CREATURE_CAN_HANDLE_IT(ObjectID rlTarget, U16 flags);	// Check it
+	U16 CREATURE_19f0_2813(U16 ww, i16 xx, i16 yy, i16 ss, i16 tt, i16 aa, U16 bb);	// _19f0_2813
+	X16 _12b4_0953(Creature *rec, U16 ww);
+	U16 _12b4_023f_WOUND_RUNNING_INTO_CREATURE(i16 xx, i16 yy, i16 *ss, i16 *tt, i16 ww, X16 vv); // _12b4_023f
+	X16 IS_CREATURE_MOVABLE_THERE(i16 xx, i16 yy, i16 dir, ObjectID *prlWhatsLying);
+	U16 GET_CREATURE_ANIMATION_FRAME(Bit8u ct, U16 command, U16 *pw08, U16 *pw0a, CreatureAnimationFrame **animframe, U16 vv);	
+	void CREATURE_SET_ANIM_FRAME(ObjectID recordLink); // _1c9a_09db
+	U16 QUERY_CREATURE_AI_SPEC_FLAGS(ObjectID rl);
+	AIDefinition *QUERY_CREATURE_AI_SPEC_FROM_RECORD(ObjectID rlCreature);
+	void ATTACK_CREATURE(ObjectID rl, i16 xx, i16 yy, U16 ss, i16 tt, U16 quantity);
+	U8 *PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timerType);
+	void CREATURE_THINK_FLUSH_POSITION(); // _14cd_0802
+	X32 CREATURE_GET_NEXT_THINK_GAMETICK();
+	void UNPREPARE_LOCAL_CREATURE_VAR(U8 *ww);
+	void ALLOC_CAII_TO_CREATURE(ObjectID rl, i16 xx, i16 yy);
+	void _12b4_0d75_CREATURE(i16 xx, i16 yy, i16 ss, i16 tt);	// _12b4_0d75
+	U16 QUERY_CREATURE_5x5_POS(Creature *ref, U16 dir);
+	U16 CREATURE_IS_JUMPING(Creature *ref);	// _1c9a_08bd renamed CREATURE_IS_JUMPING
+	U16 IS_CREATURE_FLOATING(ObjectID rl);
+	void DRAW_PUT_DOWN_ITEM(ObjectID rl, i16 cellPos, i16 dir, Creature *ref);
+	void DRAW_ITEMS_WITHIN_OBJECT(ObjectID rl, X16 xx, U32 yy, Creature *ref); // _32cb_3e08
+	void SUMMARY_DRAW_CREATURE(ObjectID rl, i16 cellPos, U32 ss);
+	void _1c9a_0247_FREE_CACHE_FROM_CREATURE(ObjectID rl); // _1c9a_0247
+	void DELETE_CREATURE_RECORD(i16 xpos, i16 ypos, U16 dropMode, U16 tt);
+	void DROP_CREATURE_POSSESSION(ObjectID recordLink, i16 xx, i16 yy, U16 dropMode, i16 tt);
+	void ROTATE_CREATURE(ObjectID recordLink, U16 rotationType, U16 rotation);
+	CreatureAnimationFrame* CREATURE_4937_0036(U16 xx, U16 *yy); // _4937_0036
+	U16 APPLY_CREATURE_POISON_RESISTANCE(ObjectID recordLink, U16 xx);
+	U16 CREATURE_1c9a_0958(ObjectID recordLink); // 1c9a_0958
+	void SET_MINION_RECENT_OPEN_DOOR_LOCATION(ObjectID recordLink, i16 xpos, i16 ypos, U16 curmap, U16 ww);
+	void RELEASE_CREATURE_TIMER(ObjectID recordLink);
+	U16 GET_CREATURE_WEIGHT(ObjectID recordLink);
+	U16 IS_CREATURE_ALLOWED_ON_LEVEL(ObjectID rlCreature, U16 curmap);
+	void __LOAD_CREATURE_FROM_DUNGEON();
+	X16 WOUND_CREATURE(i16 damage);
+	i16 SELECT_CREATURE_4EFE(const sk4efe *ref);
+	void SELECT_CREATURE_COUNT_AI_REFTAB();
+	void __SET_CURRENT_THINKING_CREATURE_WALK_PATH();
+	i16 CREATURE_THINK_381c(); // _1c9a_381c
+	ObjectID CREATURE_CAN_HANDLE_ITEM_IN(i16 flags, ObjectID rlFindFrom, i8 dir);
+	X8 CREATURE_THINK_0389(); // _14cd_0389
+	i8 SELECT_CREATURE_3672();
+	X16 CREATURE_CHECK_HANDLE_ITEM_AHEAD(i8 dir);	// _14cd_2662
+	U16 _14cd_2807_CREATURE(ObjectID *ref, skxxxi *pv); // _14cd_2807
+	i16 _14cd_2886_CREATURE(ObjectID *ref, X16 xx, i8 dir, X16 ss, X16 tt, X16 ww); // _14cd_2886
+	X16 CREATURE_THINK_08F5(i8 xx);	// _14cd_08f5
+	void CREATURE_THINK_09E2(); // _14cd_09e2
+
+	U16 CREATURE_WALK_NOW();
+	X16 CREATURE_CCM03();
+	X16 CREATURE_JUMPS();
+	void CREATURE_CCM06();
+	i16 CREATURE_ATTACKS_PLAYER(Creature *ref, U16 player);
+	i16 CREATURE_ATTACKS_CREATURE(X16 xx, X16 yy);
+	X16 CREATURE_ATTACKS_PARTY();
+	X16 CREATURE_CAST_SPELL();
+	X16 CREATURE_STEAL_FROM_CHAMPION();
+	X16 CREATURE_CCM0B();
+	X16 CREATURE_CCM0C();
+	X16 CREATURE_TAKES_ITEM();
+	X16 CREATURE_SHOOT_ITEM();
+	X16 CREATURE_PUTS_DOWN_ITEM();
+	void CREATURE_KILL_ON_TIMER_POSITION();
+	X16 CREATURE_ROTATES_TARGET_CREATURE();
+	X16 PLACE_MERCHANDISE();
+	X16 TAKE_MERCHANDISE();
+	X16 CREATURE_ACTIVATES_WALL();
+	X16 CREATURE_USES_LADDER_HOLE();
+	void CREATURE_TRANSFORM();
+	X16 CREATURE_EXPLODE_OR_SUMMON();
+	U16 PROCEED_CCM();
+	X16 CREATURE_4937_028a(U16 xx, U16 *yy, CreatureAnimationFrame **ref);	// _4937_028a
+	void CREATURE_THINK_0982(); // _13e4_0982
+	void CREATURE_13e4_071b(); // _13e4_071b
+	void CREATURE_13e4_0806();
+	void THINK_CREATURE(X8 xx, X8 yy, X16 timerType);
+	X16 _1c9a_09b9(ObjectID rlCreature, X16 xx);
+	void ACTIVATE_CREATURE_KILLER(X16 argLo, X16 argHi, X16 srcx, X16 srcy, X16 tarx, X16 tary, X16 actuatorType, X16 actionType); 
+	void ANIMATE_CREATURE(X16 iXPos, X16 iYPos, X16 ww);
+	// End of Creatures functions
+
+	//-------------- Items functions
+	void DRAW_ITEM(ObjectID rl, i16 xx, U16 yy, U16 zz, i16 iDisplaceShift, Creature *ref, U16 ww, U16 ss, U16 tt);
+
+	
+	//void _2066_1ea3(U16 xx, U16 yy, U16 zz);		// An interesting one about changing bits on tile (void/pit)
+	void SET_TILE_ATTRIBUTE_02(U16 xx, U16 yy, U16 map); // _2066_1ea3
 	void GRAPHICS_DATA_OPEN();
 		void ORIGINAL__GRAPHICS_DATA_OPEN();
 	i16 LOCATE_OTHER_LEVEL(U16 curmap, i16 zDelta, i16 *xx, i16 *yy, Bit8u **ss);
@@ -1206,7 +1315,7 @@ protected:
 	void FREE_INDEXED_MEMENT(U16 index);
 	U16 _3e74_4471_CACHE(); // _3e74_4471
 	U16 INSERT_CACHE_HASH_AT(Bit32u cacheHash, U16 ici);
-	void _3e74_44ad();
+	void MEMENT_3e74_44ad();	// _3e74_44ad
 	U16 QUERY_MEMENTI_FROM(U16 xx);
 	U16 ADD_CACHE_HASH(Bit32u cacheHash, U16 *piYaCacheIndex);
 	U8 *QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(U16 cacheIndex);
@@ -1273,7 +1382,7 @@ protected:
 	void DISPLAY_RIGHT_PANEL_SQUAD_HANDS();
 	U16 GET_MAX_CHARGE(ObjectID recordLink);
 	Bit8u GET_ITEM_ICON_ANIM_FRAME(ObjectID recordLink, i16 xx, i16 yy); // _2405_014a renamed GET_ITEM_ICON_ANIM_FRAME
-	Bit8u *TRANSLATE_PALETTE(Bit8u *localpal, Bit8u cls1, Bit8u cls2, Bit8u cls4, i16 palentcnt);
+	X8* TRANSLATE_PALETTE(X8* localpal, U8 iGDatCategory, U8 iGDatItemId, U8 iGDatEntryId, i16 palentcnt);
 	Bit8u *DRAW_ITEM_ON_WOOD_PANEL(U16 player, U16 possessionIndex, Picture *ref);
 	void FIRE_BLIT_TO_MEMORY_ROW_4TO8BPP(U16 offSrc, U16 offDst, U16 width, i16 colorkey);
 	void _44c8_1aca(Bit8u *buff, SRECT *rc, U16 xx, U16 yy);
@@ -1293,7 +1402,6 @@ protected:
 	Bit8u *SK_STRSTR(const Bit8u *xx, const Bit8u *yy);
 	U16 QUERY_CMDSTR_TEXT(const Bit8u *cmdStr, const Bit8u *name);
 	U16 QUERY_CMDSTR_ENTRY(Bit8u cls1, Bit8u cls2, Bit8u cls4, U16 cmdNum);
-	Missile *GET_MISSILE_REF_OF_MINION(ObjectID rlCreature, ObjectID rlContainer);
 	U16 _2759_01fe(U16 player, ObjectID recordLink, U16 cmdNum);
 	i16 FIND_POUCH_OR_SCABBARD_POSSESSION_POS(i16 player, i16 yy);	// yy = pouch or scabbard;
 	U16 QUERY_PLAYER_SKILL_LV(i16 player, U16 skill, U16 yy);
@@ -1317,7 +1425,7 @@ protected:
 	U16 _19f0_124b(i16 *xx, i16 *yy, U16 ww, i16 ss, U16 tt);
 	void _29ee_18eb(U16 xx, U16 yy, U16 zz);
 	void CALC_VECTOR_W_DIR(i16 dir, i16 xx, i16 yy, i16 *ss, i16 *tt);
-	U16 GET_WALL_ORNATE_ALCOVE_TYPE(Bit8u cls2);
+	U16 GET_WALL_ORNATE_ALCOVE_TYPE(U8 iGDatItemId);
 	U16 GET_RANDOM_ORNAMENT_INDEX(U16 iValue1, U16 iValue2, U16 iModulo); // _0cee_17e7 renamed GET_RANDOM_ORNAMENT_INDEX
 	Bit8u GET_RANDOM_ORNAMENT_ORDINAL(i16 xx, i16 yy, U16 ss, U16 tt, U16 uu); // _0cee_1815 renamed GET_RANDOM_ORNAMENT_ORDINAL
 	void SET_SQUARE_ASPECT_RANDOM_WALL_ORNAMENT_ORDINALS(ExtendedTileInfo *ref, U16 xx, U16 yy, U16 zz, U16 ww, U16 vv, i16 ss, i16 tt); // _0cee_185a renamed SET_SQUARE_ASPECT_RANDOM_WALL_ORNAMENT_ORDINALS
@@ -1326,8 +1434,6 @@ protected:
 	void SUMMARIZE_STONE_ROOM(ExtendedTileInfo *ref, U16 dir, U16 xx, U16 yy);
 	i16 QUERY_DUNGEON_MAP_CHIP_PICT(Bit8u cls1, Bit8u cls2, Bit8u **ppBuff, Bit8u *localpal);
 	void DRAW_CHIP_OF_MAGIC_MAP(const Bit8u *buff, U16 aa, U16 xx, U16 yy, U16 flipMirror, Bit8u *localpal);
-	i16 CREATURE_SEQUENCE_4937_000f(U16 xx, U16 *yy); // 4937_000f
-	U16 CREATURE_0cee_2df4(ObjectID recordLink);	// _0cee_2df4
 	U16 _48ae_011a(ObjectID recordLink);
 	void DRAW_MAP_CHIP(ObjectID recordLink, i16 ss, i16 tt, i16 ww, U16 xx, U16 yy, Bit8u cc, U16 flags);
 	void _29ee_1946(ObjectID recordLink, i16 xx, i16 yy, i16 zz, i16 dir, i16 ss, i16 tt, U16 flags);
@@ -1453,8 +1559,6 @@ protected:
 	void INTERFACE_CHAMPION(U16 xx); // _24a5_1798
 	void INIT_BACKBUFF();
 	SpellDefinition *FIND_SPELL_BY_RUNES(U8 *runes);
-	ObjectID ALLOC_NEW_CREATURE(U16 creaturetype, U16 healthMultiplier_1to31_baseIs8, U16 dir, U16 xx, U16 yy);
-	ObjectID CREATE_MINION(U16 creatureType, U16 healthMultiplier_1to31_baseIs8, U16 creatureDir, U16 xx, U16 yy, U16 zz, ObjectID ww, i16 dir);
 	i16 FIND_HAND_WITH_EMPTY_FLASK(Champion *ref);
 	void ADJUST_SKILLS(U16 player, U16 yy, U16 zz);
 	void SHOOT_ITEM(ObjectID rlItemThrown, U16 xx, U16 yy, U16 dir, U16 aa, U16 energyVal, U16 ene2Val, U16 dd);
@@ -1476,15 +1580,11 @@ protected:
 	U16 USE_LUCK_ATTRIBUTE(Champion *ref, U16 xx);
 	U16 CALC_PLAYER_ATTACK_DAMAGE(Champion *ref, U16 player, ObjectID rlEnemy, U16 xx, U16 yy, U16 valPb, U16 valDM, U16 valSk, U16 valAt);
 	U16 WIELD_WEAPON(U16 player, U16 valPa, U16 xx, U16 yy, U16 valSk, U16 valAt);
-	U16 CONFUSE_CREATURE(U16 ww, U16 xx, U16 yy);
 	i16 STAMINA_ADJUSTED_ATTR(Champion *ref, i16 quantity);
 	U16 COMPUTE_PLAYER_ATTACK_OR_THROW_STRENGTH(U16 xx, U16 yy, i16 zz);
 	U16 _2c1d_0e23(U16 xx);
 	U16 _2c1d_1de2_CHAMPION_SHOOT(U16 xx, i16 yy, U16 zz); // _2c1d_1de2
 	U16 SET_DESTINATION_OF_MINION_MAP(ObjectID rlContainer, i16 xx, i16 yy, U16 zz);
-	void QUEUE_THINK_CREATURE(U16 xx, U16 yy);
-	void CREATURE_SET_NEW_COMMAND(ObjectID rlCreature, U16 xx, U16 yy, U8 iCommand, U16 tt);	// _13e4_0360
-	void RELEASE_MINION(ObjectID rlCreature);
 	void TRANSFER_PLAYER(i16 xx, i16 yy, U16 zz, U16 dir);
 	i16 SEARCH_DUNGEON_FOR_SPECIAL_MARKER(U16 ss, U16 tt, U16 uu, i16 *xx, i16 *yy);
 	U16 ENGAGE_X_TELEPORTER();
@@ -1556,7 +1656,6 @@ protected:
 	ObjectID ALLOC_NEW_DBITEM_DEEPLY(U16 actuatorData);
 	U16 IS_DISTINCTIVE_ITEM_ON_ACTUATOR(Actuator *ref, U16 disit, U16 onTile);
 	void DRAW_TEXT_TO_BACKBUFF(i16 xx, i16 yy, U8 *str);
-	U16 _48ae_05ae_CREATURE(i16 disit, U8 yy, U16 zz, U16 ss, U16 tt, i16 ww); // _48ae_05ae
 	U16 _48ae_0767_MONEY_VALUE(i16 xx, i16 yy, U8 *zz, i16 *vv, i16 ww); // _48ae_0767
 	void _32cb_0f82_SHOP_GLASS(Actuator *ref, U8 cls4, i16 bb, i16 cellPos, U16 horzStretch, U16 vertStretch, U16 rectno, U16 gg, U16 colorkey1); // _32cb_0f82
 	void DRAW_ALCOVE_ITEMS(U16 xx);	// _32cb_3f0d
@@ -1568,18 +1667,12 @@ protected:
 	U16 _32cb_35c1(i16 *xx, i16 *yy, i16 zz, i16 ww);
 	i16 ROTATE_5x5_POS(i16 _5x5, U16 dir);
 	i16 QUERY_OBJECT_5x5_POS(ObjectID rl, U16 reldir);
-	i16 QUERY_CREATURE_BLIT_RECTI(U16 cellPos, i16 _5x5, U16 dir);
-	void DRAW_ITEM(ObjectID rl, i16 xx, U16 yy, U16 zz, i16 vv, Creature *ref, U16 ww, U16 ss, U16 tt);
 	ObjectID _32cb_03a6(U16 xx, U16 yy, U16 zz, U16 ww, U16 vv, ObjectID ss, U16 tt, U16 uu);
 	void _121e_013a(U16 xx, U16 yy, U16 zz);
 	U16 _121e_03ae(U16 aa, U16 bb, U16 xx, U16 yy, U16 cc, U16 dd, U16 ee);
 	U16 _098d_02a2(U16 rectno, i16 xx, i16 yy);
 	void PLAYER_TESTING_WALL(U16 ww, U16 xx, U16 yy);
-	i16 CREATURE_GET_COLORKEY(U8 cls2); // _0cee_2e35
-	void QUERY_CREATURE_PICST(U16 xx, i16 dist, Creature *vv, CreatureInfoData *ww, ObjectID rl);
 	U16 _32cb_01b6(U16 xx, U16 yy, U16 ss, U16 tt, U16 *ww);
-	U16 CREATURE_121e_0222(U16 xx, U16 yy, U16 ww);	// _121e_0222
-	U16 QUERY_CREATURE_AI_W32_FROM_RECORD(ObjectID rl); // _0cee_2e09
 	U16 _2c1d_1fb1_CHAMPION_LEADER_SHOOT_DIR(U16 dir); // _2c1d_1fb1
 	U16 _121e_0351_THROW_LEFT_OR_RIGHT(U16 xx, U16 yy); // _121e_0351
 	void CLICK_VWPT(i16 xx, i16 yy);
@@ -1636,20 +1729,15 @@ protected:
 	X16 _19f0_0547(ObjectID rl, X16 xx);
 	U16 _19f0_01d6(i16 xx, i16 yy);
 	i16 _19f0_05e8(X16 aa, DistMapTile (*bb)[1][32], Ax3 *cc, i16 xx, i16 yy, i16 zz, X16 ww);
-	i16 CREATURE_1c9a_1b16(X16 xx, X16 yy);	// _1c9a_1b16
-	i16 CREATURE_CHECK__1c9a_1a48(X16 xx, X16 yy);	// _1c9a_1a48
 	X16 IS_TILE_WALL(i16 xx, i16 yy); // _19f0_0081
 	X16 _19f0_1511(ObjectID rl);
 	X16 CALC_CLOUD_DAMAGE(ObjectID rlCloud, ObjectID rlTarget);
 	X16 _19f0_13aa(i16 xx, i16 yy);
-	i16 CREATURE_GO_THERE(X16 aa, i16 xx, i16 yy, i16 ss, i16 tt, i16 ww);		// Big func
 	ObjectID _19f0_050f();
-	X16 CREATURE_CAN_HANDLE_IT(ObjectID rlTarget, U16 flags);	// Check it
 	void _1c9a_19d4(ObjectID rl, i16 xx, i16 yy, U16 ww);
 	void ADD_BACKGROUND_LIGHT_FROM_TILE(i16 aa, U16 bb, i16 xx, i16 yy, U16 ww);
 	ObjectID _19f0_266c(ObjectID rl, U16 dir, U16 ww, U16 bb);
 	X16 _19f0_2723(ObjectID rl, U16 ww, U16 bb, X16 cc);
-	U16 CREATURE_19f0_2813(U16 ww, i16 xx, i16 yy, i16 ss, i16 tt, i16 aa, U16 bb);	// _19f0_2813
 	U16 _19f0_0d10(U16 ww,i16 xx,i16 yy,i16 ss,i16 tt,i16 aa);
 	X16 GET_DOOR_STAT_0D(U8 xx); // _0cee_3275
 	U16 _19f0_000a(i16 xx, i16 yy);
@@ -1666,11 +1754,8 @@ protected:
 
 	i16 CALC_PLAYER_WALK_DELAY(U16 player);
 	X16 IS_TILE_BLOCKED(U8 tile);
-	X16 _12b4_0953(Creature *rec, U16 ww);
 	X16 _12b4_0881_CHECK_MOVE_BETWEEN_TILES(X16 aa, U16 oldTile, U16 newTile, i16 xx, i16 yy, ObjectID *rl);	// _12b4_0881
 	X16 CHECK_MOVE_BETWEEN_TILES_AND_INTERWALLS(X16 aa, U16 iInterwall, U16 oldTile, U16 newTile, i16 xx, i16 yy, ObjectID *rl); // SPX: addition
-	U16 _12b4_023f_WOUND_RUNNING_INTO_CREATURE(i16 xx, i16 yy, i16 *ss, i16 *tt, i16 ww, X16 vv); // _12b4_023f
-	X16 IS_CREATURE_MOVABLE_THERE(i16 xx, i16 yy, i16 dir, ObjectID *prlWhatsLying);
 	X16 _12b4_099e(ObjectID rl);
 	U16 PERFORM_MOVE(X16 xx);
 	U16 HANDLE_UI_EVENT(MousePosition *ref);	// Important func
@@ -1784,9 +1869,6 @@ protected:
 	void GRAPHICS_DATA_CLOSE();
 	void PROCESS_ACTUATOR_TICK_GENERATOR();
 	U16 _RAND();
-	U16 GET_CREATURE_ANIMATION_FRAME(Bit8u ct, U16 command, U16 *pw08, U16 *pw0a, CreatureAnimationFrame **animframe, U16 vv);	
-
-	void CREATURE_SET_ANIM_FRAME(ObjectID recordLink); // _1c9a_09db
 	void ARRANGE_DUNGEON();
 	i16 FILE_OPEN(const U8 *filename);
 	U16 FILE_READ(U16 handle, Bit32u buffSize, void *buff);
@@ -1896,8 +1978,6 @@ protected:
 	Bit8u QUERY_CLS2_FROM_RECORD(ObjectID recordLink);
 	U16 GET_ITEMDB_OF_ITEMSPEC_ACTUATOR(U16 actuatorData);
 	Bit8u GET_ITEMTYPE_OF_ITEMSPEC_ACTUATOR(U16 actuatorData);
-	U16 QUERY_CREATURE_AI_SPEC_FLAGS(ObjectID rl);
-	AIDefinition *QUERY_CREATURE_AI_SPEC_FROM_RECORD(ObjectID rlCreature);
 	Bit8u QUERY_CLS1_FROM_RECORD(ObjectID recordLink);
 	tiamat _3e74_0756(Bit8u *xx, i32 size); // TODO: Unr
 	U16 TRY_PUSH_OBJECT_TO(ObjectID rl, i16 xpos, i16 ypos, i16 *xx, i16 *yy);
@@ -1907,12 +1987,6 @@ protected:
 	X16 ATTACK_PARTY(U16 quantity, U16 yy, U16 zz);
 	void PROCESS_POISON(i16 player, U16 yy);
 	U16 _0cee_06dc_GET_TILE_DIRECTION(i16 xx, i16 yy); // _0cee_06dc
-	void ATTACK_CREATURE(ObjectID rl, i16 xx, i16 yy, U16 ss, i16 tt, U16 quantity);
-	U8 *PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timerType);
-	void CREATURE_THINK_FLUSH_POSITION(); // _14cd_0802
-	X32 CREATURE_GET_NEXT_THINK_GAMETICK();
-	void UNPREPARE_LOCAL_CREATURE_VAR(U8 *ww);
-	void ALLOC_CAII_TO_CREATURE(ObjectID rl, i16 xx, i16 yy);
 	X16 _0cee_319e_ALCOVE_GET_GDAT_X13(ObjectID rl); // _0cee_319e
 	U16 ATTACK_WALL(i16 xTo, i16 yTo, i16 xFrm, i16 yFrm, U16 dirTo, ObjectID rlThrown);
 	i16 QUERY_DOOR_DAMAGE_RESIST(U8 cls2);
@@ -1925,13 +1999,8 @@ protected:
 	U16 WOUND_PLAYER(i16 play, i16 quantity, U16 ss, U16 tt);
 	void _075f_0182(ObjectID rl, X16 xx, X16 yy);
 	void CREATE_CLOUD(ObjectID rl, U16 ww, U16 xx, U16 yy, U16 ss);
-	void _12b4_0d75_CREATURE(i16 xx, i16 yy, i16 ss, i16 tt);	// _12b4_0d75
-	U16 QUERY_CREATURE_5x5_POS(Creature *ref, U16 dir);
 	void _098d_000f(i16 xx, i16 yy, U16 ww, U16 *x2, U16 *y2);
 	void DRAW_ARROW_PANEL(); // _29ee_000f renamed DRAW_ARROW_PANEL
-	U16 CREATURE_IS_JUMPING(Creature *ref);	// _1c9a_08bd renamed CREATURE_IS_JUMPING
-
-	U16 IS_CREATURE_FLOATING(ObjectID rl);
 	U16 IS_OBJECT_FLOATING(ObjectID rl);
 	void MARK_DYN_LOAD(U32 aa);
 	void MARK_DYN_EXCLUDE_RANGE(U32 ent4, U8 cls4);
@@ -1989,10 +2058,7 @@ protected:
 	void _32cb_5a8f();
 	U8 _48ae_01af(X16 xx, X16 yy);
 	void MAKE_PUT_DOWN_ITEM_CLICKABLE_ZONE(X16 xx, ObjectID rl, i16 yy, X16 zz);
-	void DRAW_PUT_DOWN_ITEM(ObjectID rl, i16 cellPos, i16 dir, Creature *ref);
 	X16 DIR_FROM_5x5_POS(X16 _5x5);
-	void DRAW_ITEMS_WITHIN_OBJECT(ObjectID rl, X16 xx, U32 yy, Creature *ref); // _32cb_3e08
-	void SUMMARY_DRAW_CREATURE(ObjectID rl, i16 cellPos, U32 ss);
 	void _32cb_2cf3(U8 cls2, U16 scale64, U16 mirrorFlip, U16 rectno);
 	void _32cb_2d8c(ObjectID rl, X16 yy, X32 aa);
 	void _32cb_3edd(i16 xx);
@@ -2023,12 +2089,11 @@ protected:
 	U16 MAX_LOAD(Champion *ref);
 	void SOUND_482b_05bf(U16 xx);	// _482b_05bf
 	X32 _3e74_5673_CACHE(X32 cacheHash, U16 *piYaCacheIndex, X16 ifTryInsert); // _3e74_5673
-	void _1c9a_0247_FREE_CACHE_FROM_CREATURE(ObjectID rl); // _1c9a_0247
 	void QUERY_MESSAGE_TEXT(U8 *str, ObjectID rl, U16 ww);
 	U16 IS_REBIRTH_ALTAR(ObjectID rl);
 	X16 _2fcf_164e(ObjectID xx, ObjectID yy);
 	U16 _2fcf_16ff(ObjectID rl);
-	U16 GET_TIMER_NEW_INDEX(U16 xx);
+	U16 GET_TIMER_NEW_INDEX(U16 iCurrentTimerIndex);
 	void BLEND_TO_SNDBUFF_TANDY(void *ref, U16 xx, U16 yy, U16 zz); // TODO: Unr
 	void _01b0_0ec3(X16 xx); // TODO: Unr
 	void BLEND_TO_SNDBUFF_GENERAL(U8 *buff, U16 buffSize, U16 volume, U16 caller, U16 ss, U16 tt);
@@ -2050,7 +2115,7 @@ protected:
 	U16 QUERY_SND_ENTRY_INDEX(Bit8u cls1, Bit8u cls2, Bit8u cls4);
 	void QUEUE_NOISE_GEN1(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u xx, Bit8u yy, i16 xpos, i16 ypos, i16 tickDelta);
 	void QUEUE_NOISE_GEN2(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u cls2alt, i16 xpos, i16 ypos, U16 tickDelta, Bit8u ss, Bit8u tt);
-	void DELETE_TIMER(U16 xx);
+	void DELETE_TIMER(U16 iTimerIndex);
 	void INVOKE_MESSAGE(i16 xpos, i16 ypos, U16 dir, U16 actionType, Bit32u tick);
 	void SET_ITEMTYPE(ObjectID recordLink, Bit8u itemType);
 	ObjectID ALLOC_NEW_DBITEM(U16 itemspec);
@@ -2062,37 +2127,24 @@ protected:
 	U16 _1c9a_0694(ObjectID *ref, void *pv);	
 	ObjectID *_1c9a_06bd(ObjectID recordLink, U16 ss, U16 dir);
 	void PLACE_OR_REMOVE_OBJECT_IN_ROOM(i16 xpos, i16 ypos, ObjectID recordLink, U16 ss, U16 place, U16 uu); // _2fcf_2444
-	void DELETE_CREATURE_RECORD(i16 xpos, i16 ypos, U16 dropMode, U16 tt);
-	void DROP_CREATURE_POSSESSION(ObjectID recordLink, i16 xx, i16 yy, U16 dropMode, i16 tt);
 	ObjectID ROTATE_RECORD_BY_TELEPORTER(Teleporter *ref, ObjectID recordLink);
-	void ROTATE_CREATURE(ObjectID recordLink, U16 rotationType, U16 rotation);
 	void ROTATE_SQUAD(U16 dir);
 	U16 _2fcf_0434(ObjectID recordLink, i16 xpos, i16 ypos, i16 xx, i16 yy, U16 zz);	// big funct
-	ObjectID _1c9a_03cf(i16 *xx, i16 *yy, U16 dir);
 	i16 ABS16(i16 val);
 	U16 CALC_VECTOR_DIR(i16 x1, i16 y1, i16 x2, i16 y2);
 	U16 CALC_SQUARE_DISTANCE(i16 x1, i16 y1, i16 x2, i16 y2);
-	U16 CREATURE_4937_005c(U16 xx, U16 *yy); // _4937_005c
-	CreatureAnimationFrame* CREATURE_4937_0036(U16 xx, U16 *yy); // _4937_0036
-	U16 APPLY_CREATURE_POISON_RESISTANCE(ObjectID recordLink, U16 xx);
 	void PROCESS_QUEUED_DEALLOC_RECORD();
 	void QUEUE_DEALLOC_RECORD(ObjectID recordLink);
 	void DEALLOC_RECORD(ObjectID recordLink);
 	U16 PROJECTILE_GET_IMPACT_ATTACK(Missile *ref, ObjectID recordLink);	// _075f_06bd
-	U16 CREATURE_1c9a_0958(ObjectID recordLink); // 1c9a_0958
 	U16 _RAND01();
 	U16 GET_DOOR_STAT_10(Bit8u cls2);
 	Bit8u GET_GRAPHICS_FOR_DOOR(Door *ref);
 	U16 MISSILE_HIT_075f_0af9(i16 u16tileType, i16 xpos, i16 ypos, U16 dir, ObjectID rlMissile); // 075f_0af9
 	void _2fcf_0234(i16 xposFrom, i16 yposFrom, i16 xposTo, i16 yposTo);
-	void SET_MINION_RECENT_OPEN_DOOR_LOCATION(ObjectID recordLink, i16 xpos, i16 ypos, U16 curmap, U16 ww);
-	void RELEASE_CREATURE_TIMER(ObjectID recordLink);
 	U16 _RAND16(U16 maxcnt);
-	U16 GET_CREATURE_WEIGHT(ObjectID recordLink);
 	void _1c9a_0fcb(U16 xx);
 	void LOAD_LOCALLEVEL_GRAPHICS_TABLE(U16 curmap);
-	ObjectID GET_CREATURE_AT(i16 xpos, i16 ypos);
-	U16 IS_CREATURE_ALLOWED_ON_LEVEL(ObjectID rlCreature, U16 curmap);
 
 	U16 MOVE_RECORD_TO(ObjectID rlWhatYouMove, i16 xposFrom, i16 yposFrom, i16 xposTo, i16 yposTo);
 
@@ -2170,7 +2222,6 @@ protected:
 	void DRAW_TITLE_MENU_SCREEN(); // _2481_0002
 	void DEALLOC_BIGPOOL_STRUCT_BEFORE(U8 *ref);	// _3e74_0a77
 	void SHOW_MENU_SCREEN();
-	void __LOAD_CREATURE_FROM_DUNGEON();
 	void _3e74_07b2();
 	void _3e74_0820();
 	X16 _38c8_0109(X8 **buff, X32 *xx, X16 *yy);
@@ -2184,18 +2235,12 @@ protected:
 	X16 IS_TIMER_TO_PROCEED();
 	void GET_AND_DELETE_NEXT_TIMER(Timer *ref);
 	X16 _1c9a_17c7(U8 xx, U8 yy, U8 zz);
-	X16 WOUND_CREATURE(i16 damage);
 	X8 _14cd_062e();
-	i16 SELECT_CREATURE_4EFE(const sk4efe *ref);
-	void SELECT_CREATURE_COUNT_AI_REFTAB();
-	void __SET_CURRENT_THINKING_CREATURE_WALK_PATH();
-	i16 CREATURE_THINK_381c(); // _1c9a_381c
 	U8 *_3e74_5788_CACHE(U16 xx, i32 yy); // _3e74_5788
 	void _14cd_0276(skxxx9 *ref);
 	void _14cd_0f0a_EXE_17(U8 func, U8 xx, U8 yy, sk1bf9 *ss); // _14cd_0f0a
 	void _14cd_0f3c(i8 aa, sk1bf9 *ss, sk1bf9 *tt, X8 ww, i8 vv, Ax3 uu, U8 xx, U8 yy);
 	void _14cd_18cc_PFN17_00(U8 xx, U8 yy, sk1bf9 *ss); // _14cd_18cc
-	ObjectID CREATURE_CAN_HANDLE_ITEM_IN(i16 flags, ObjectID rlFindFrom, i8 dir);
 	U16 _2c1d_09d9();
 	X16 CREATURE_THINK_1316(U8 xx, X16 yy, U8 zz); // _14cd_1316
 	void _14cd_18f2(i8 xx, U8 yy, sk1bf9 *ss, X8 ww, Ax3 vv); // _14cd_18f2
@@ -2227,10 +2272,8 @@ protected:
 	void _14cd_1fa7_PFN17_16(U8 xx, U8 yy, sk1bf9 *ss); // _14cd_1fa7
 	void _14cd_1f8b_PFN17_15(U8 xx, U8 yy, sk1bf9 *ss); // _14cd_1f8b
 	X16 _1c9a_38a8();
-	X8 CREATURE_THINK_0389(); // _14cd_0389
 	void _14cd_0550(skxxxh *ref, i8 xx, i8 yy, X16 ww);
 	void _14cd_0457();
-	i8 SELECT_CREATURE_3672();
 	i8 DECIDE_NEXT_XACT();
 	X8 PROCEED_XACT_56();
 	void PROCEED_XACT_57();
@@ -2240,10 +2283,7 @@ protected:
 	X8 PROCEED_XACT_63();
 	X8 PROCEED_XACT_64();
 	X8 PROCEED_XACT_65();
-	X16 CREATURE_CHECK_HANDLE_ITEM_AHEAD(i8 dir);	// _14cd_2662
 	X8 PROCEED_XACT_66();
-	U16 _14cd_2807_CREATURE(ObjectID *ref, skxxxi *pv); // _14cd_2807
-	i16 _14cd_2886_CREATURE(ObjectID *ref, X16 xx, i8 dir, X16 ss, X16 tt, X16 ww); // _14cd_2886
 	X8 PROCEED_XACT_67();
 	X8 PROCEED_XACT_68();
 	void PROCEED_XACT_69();
@@ -2270,40 +2310,10 @@ protected:
 	X8 PROCEED_XACT_91();
 	X8 PROCEED_XACT_70();
 	i8 PROCEED_XACT(i8 xact);
-	X16 CREATURE_THINK_08F5(i8 xx);	// _14cd_08f5
-	void CREATURE_THINK_09E2(); // _14cd_09e2
 	void _13e4_01a3();
 	void ADVANCE_TILES_TIME(X16 xx, X16 yy);
 	X16 OPERATE_PIT_TELE_TILE(X16 xx, X16 yy, X16 ww);
-	U16 CREATURE_WALK_NOW();
-	X16 CREATURE_CCM03();
-	X16 CREATURE_JUMPS();
-	void CREATURE_CCM06();
-	i16 CREATURE_ATTACKS_PLAYER(Creature *ref, U16 player);
-	i16 CREATURE_ATTACKS_CREATURE(X16 xx, X16 yy);
-	X16 CREATURE_ATTACKS_PARTY();
-	X16 CREATURE_CAST_SPELL();
 	U16 QUERY_ITEM_MONEY_VALUE(ObjectID xx);
-	X16 CREATURE_STEAL_FROM_CHAMPION();
-	X16 CREATURE_CCM0B();
-	X16 CREATURE_CCM0C();
-	X16 CREATURE_TAKES_ITEM();
-	X16 CREATURE_SHOOT_ITEM();
-	X16 CREATURE_PUTS_DOWN_ITEM();
-	void CREATURE_KILL_ON_TIMER_POSITION();
-	X16 CREATURE_ROTATES_TARGET_CREATURE();
-	X16 PLACE_MERCHANDISE();
-	X16 TAKE_MERCHANDISE();
-	X16 CREATURE_ACTIVATES_WALL();
-	X16 CREATURE_USES_LADDER_HOLE();
-	void CREATURE_TRANSFORM();
-	X16 CREATURE_EXPLODE_OR_SUMMON();
-	U16 PROCEED_CCM();
-	X16 CREATURE_4937_028a(U16 xx, U16 *yy, CreatureAnimationFrame **ref);	// _4937_028a
-	void CREATURE_THINK_0982(); // _13e4_0982
-	void CREATURE_13e4_071b(); // _13e4_071b
-	void CREATURE_13e4_0806();
-	void THINK_CREATURE(X8 xx, X8 yy, X16 timerType);
 	void STEP_MISSILE(Timer *ref);
 	X16 QUERY_DOOR_STRENGTH(X8 cls2);
 	void STEP_DOOR(Timer *ref);
@@ -2324,9 +2334,6 @@ protected:
 	void ACTIVATE_TEST_FLAG(Timer *ref, Actuator *pr4);
 	void ACTIVATE_SHOOTER(Actuator *pr4, Timer *ref);
 	void ACTUATE_WALL_MECHA(Timer *ref);
-	X16 _1c9a_09b9(ObjectID rlCreature, X16 xx);
-	void ACTIVATE_CREATURE_KILLER(X16 argLo, X16 argHi, X16 srcx, X16 srcy, X16 tarx, X16 tary, X16 actuatorType, X16 actionType); 
-	void ANIMATE_CREATURE(X16 xx, X16 yy, X16 ww);
 	void ACTUATE_FLOOR_MECHA(Timer *ref);
 	void ACTUATE_PITFALL(Timer *ref); 
 	void ACTUATE_DOOR(Timer *ref);

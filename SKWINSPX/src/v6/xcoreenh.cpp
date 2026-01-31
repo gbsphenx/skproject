@@ -992,20 +992,25 @@ void SkWinCore::REQUEST_PLAY_MUSIC_FROM_MAP(int iMapNumber)
 {
 	int iNextRequestedMusic = 0;
 
-	iNextRequestedMusic = tMusicMapsWAV[iMapNumber];
+	if (SkCodeParam::bDM2CDMusic && !SkCodeParam::bDM2V5Mode)
+		return;
 
-	REQUEST_PLAY_MUSIC(iNextRequestedMusic, 50);
+	iNextRequestedMusic = tMusicMapsWAV[iMapNumber];
+	REQUEST_PLAY_MUSIC(iNextRequestedMusic, 25);
 
 	return;
 }
 
-void SkWinCore::REQUEST_PLAY_MUSIC(int iMusicNumber, int iVolume = 100)
+void SkWinCore::REQUEST_PLAY_MUSIC(int iMusicNumber, int iVolume = 25)
 {
+	FILE* fpMusic = NULL;
 	int iNextRequestedMusic = 0;
 	char sDataRootFolder[64];
 	char sMusicRootFolder[128];
 	char sFullMusicPath[256];
-	sprintf(sMusicRootFolder, "DATA-DM2/COMMON/MUSICS");	// default
+	char sCDPrefix[] = "CD";
+	char sMusicExt[2][4] = { "mp3", "wav" }; // will try to load any mp3 or wav file for a filename
+	sprintf(sMusicRootFolder, "DATA-DM1/COMMON/MUSICS");	// default
 	iNextRequestedMusic = iMusicNumber;
 
 	if (iNextRequestedMusic == iCurrentWavMusic)
@@ -1014,22 +1019,26 @@ void SkWinCore::REQUEST_PLAY_MUSIC(int iMusicNumber, int iVolume = 100)
 	if (SkCodeParam::bNoAudio == true || SkCodeParam::bNoMusic == true)
 		return;
 
+	if (SkCodeParam::bDM2CDMusic && !SkCodeParam::bDM2V5Mode)
+		memcpy(sCDPrefix, (const char*) "CD", 2);
+	else
+		memset(sCDPrefix, 0, 2);
+
 	//sprintf(sDataRootFolder, "%s", GET_DATA_FOLDER_NAME(skwin.dung));
 	sprintf(sDataRootFolder, "%s", skWinApp->GET_DATA_FOLDER_NAME());
-	sprintf(sFullMusicPath, "./%s/%02x.wav", sMusicRootFolder, iNextRequestedMusic);
+	for (int iExtIndex = 0; iExtIndex < 2; iExtIndex++) {
+		sprintf(sFullMusicPath, "./%s/%s%02x.%s", sMusicRootFolder, sCDPrefix, iNextRequestedMusic, sMusicExt[iExtIndex]);
+		// Test if file exists, else continue with next extension
+		if (fpMusic = fopen(sFullMusicPath, "rb")) {
+			fclose(fpMusic);
+			break;
+		}
+	}
 	//sprintf(sFullMusicPath, "./%s/music/%02x.hmp.mid", sDataRootFolder, iNextRequestedMusic);
 	printf("MUSIC %02X = %s %s %s\n", iMusicNumber, sDataRootFolder, sMusicRootFolder, sFullMusicPath);
 	iCurrentWavMusic = iNextRequestedMusic;
 
-	//XAUDIO_SDL_PLAY_SOUND_FILE(sFullMusicPath, iVolume);
-
 	skWinApp->AudioPlayDirect(sFullMusicPath, iVolume);
-
-//	XAUDIO_SDL_PLAY_SOUND_FILE(NULL, 0);
-	//PLAY_DIRECT_SOUND(sFullMusicPath, 50);
-//		skWinApp->skwin_SndPlayFile(sFullMusicPath, iVolume);
-/////// XAUDIO MFC
-		;
 
 	return;
 }

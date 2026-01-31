@@ -771,10 +771,10 @@ void SkWinCore::LOG_FULL_DUNGEON_INFO()
 
 	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
 	printf("glbNumberOfMements      : %04d\n", glbNumberOfMements);
-	printf("tlbMementsPointers      : %08X\n", tlbMementsPointers);
+	printf("tblMementsPointers      : %08X\n", tblMementsPointers);
 
-	xMemEntPointer = (mement**) tlbMementsPointers;
-	xObjectPointer = (U8*) tlbMementsPointers;
+	xMemEntPointer = (mement**) tblMementsPointers;
+	xObjectPointer = (U8*) tblMementsPointers;
 
 	if (SkCodeParam::bCompilation64bits)
 		iPointerSize = 8;
@@ -816,7 +816,7 @@ void SkWinCore::LOG_FULL_DUNGEON_INFO()
 	printf("\n\n");
 
 	//--- Addresses / Pointers
-	xMemEntPointer = (mement**) tlbMementsPointers;
+	xMemEntPointer = (mement**) tblMementsPointers;
 	for (iMemEntIndex = 0; iMemEntIndex < glbNumberOfMements; iMemEntIndex++)
 	{
 		int c = 0;

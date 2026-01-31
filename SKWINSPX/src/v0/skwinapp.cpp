@@ -756,7 +756,7 @@ void SkWinApp::processMinput(U8 button, bool pressed, int x, int y)
 
 void SkWinApp::processKinput(U32 nChar, bool press)
 {
-	printf("processKinput %d %d\n", nChar, press);
+//	printf("processKinput %d %d\n", nChar, press);
 #if defined(__SDL__)
 /*	
 	if (press) {

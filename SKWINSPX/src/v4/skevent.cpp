@@ -777,7 +777,7 @@ _0476:
 			//^075F:04FC
 			if (bp16 != 0) {
 				//^075F:0502
-				di = _1c9a_03cf(&bp18, &bp1a, ss);
+				di = GET_CREATURE_1c9a_03cf(&bp18, &bp1a, ss);
 				if (di != OBJECT_NULL && (bp18 != bp0e || bp1a != bp10)) {
 					xx = bp18;
 					yy = bp18;
@@ -825,23 +825,19 @@ void SkWinCore::SET_TIMER_WEATHER(U32 tickDelta)
 //^3A15:0447
 // SPX: Count timers until timer number xx
 // SPX: _3a15_0447 renamed GET_TIMER_NEW_INDEX
-Bit16u SkWinCore::GET_TIMER_NEW_INDEX(Bit16u xx)
+Bit16u SkWinCore::GET_TIMER_NEW_INDEX(U16 iCurrentTimerIndex)
 {
-	//^3A15:0447
 	ENTER(4);
-	//^3A15:044C
-	U16 *bp04 = glbTimerNextEntries;
-	i16 si;
-	for (si = 0; si < glbTimersActiveCount; si++) {
-		//^3A15:045D
-		if (*(bp04++) == xx)
+	U16* pTimerNextIndex = glbTimerNextEntries;	// bp04
+	i16 iLocalTimerIndex;	// si
+	for (iLocalTimerIndex = 0; iLocalTimerIndex < glbTimersActiveCount; iLocalTimerIndex++) {
+		if (*(pTimerNextIndex++) == iCurrentTimerIndex)
 			break;
 	}
-	if (si >= glbTimersActiveCount) {
+	if (iLocalTimerIndex >= glbTimersActiveCount) {
 		RAISE_SYSERR(SYSTEM_ERROR__TIMER_BEYOND_MAX);
 	}
-	//^3A15:0481
-	return si;
+	return iLocalTimerIndex;
 }
 
 //^3A15:0696
@@ -886,21 +882,21 @@ Bit16u SkWinCore::QUEUE_TIMER(Timer *ref)
 
 //^3A15:061A
 // SPX: _3a15_061a renamed DELETE_TIMER
-void SkWinCore::DELETE_TIMER(Bit16u xx)
+void SkWinCore::DELETE_TIMER(U16 iTimerIndex)
 {
-	Bit16u si = xx;
+	U16 iLocalTimerIndex = iTimerIndex;	// si
 	if (glbTimer_4976_4762 >= 0) {
 		TIMER_3a15_0486(glbTimer_4976_4762);
 	}
-	glbTimersTable[si].TimerType(tty00);
-	glbTimersTable[si].w0_0_f(glbTimerIndexNextAvailable);
-	glbTimerIndexNextAvailable = si;
+	glbTimersTable[iLocalTimerIndex].TimerType(tty00);
+	glbTimersTable[iLocalTimerIndex].w0_0_f(glbTimerIndexNextAvailable);
+	glbTimerIndexNextAvailable = iLocalTimerIndex;
 	glbTimersCount--;
-	Bit16u di = glbTimersCount;
-	if (di != 0) {
-		si = GET_TIMER_NEW_INDEX(si);
-		if (si != di) {
-			glbTimerNextEntries[glbTimer_4976_4762 = si] = glbTimerNextEntries[di];
+	U16 iTimersCount = glbTimersCount;	// di
+	if (iTimersCount != 0) {
+		iLocalTimerIndex = GET_TIMER_NEW_INDEX(iLocalTimerIndex);
+		if (iLocalTimerIndex != iTimersCount) {
+			glbTimerNextEntries[glbTimer_4976_4762 = iLocalTimerIndex] = glbTimerNextEntries[iTimersCount];
 		}
 	}
 	return;
@@ -910,11 +906,28 @@ void SkWinCore::DELETE_TIMER(Bit16u xx)
 // SPX: _3a15_0763 renamed IS_TIMER_TO_PROCEED
 X16 SkWinCore::IS_TIMER_TO_PROCEED()
 {
+	// SPX: added something to prevent processing twice the same next timer thus entering infinite loop.
+	static U16 iLastNextTimer = -1;
+	static U16 iPenultimateTimer = -1;
 	ENTER(0);
 	if (glbTimer_4976_4762 >= 0) {
 		TIMER_3a15_0486(glbTimer_4976_4762);
 	}
 	if (glbTimersCount != 0) {
+		if (SkCodeParam::bUsePowerDebug) {
+			//if ((iLastNextTimer == *glbTimerNextEntries) || (iPenultimateTimer == *glbTimerNextEntries) ) {
+			if ((iLastNextTimer == *glbTimerNextEntries)) {
+				iLastNextTimer = -1;
+				return 0;
+			}
+			if (glbTimersTable[*glbTimerNextEntries].GetTick() <= glbGameTick) {
+				iPenultimateTimer = iLastNextTimer;
+				iLastNextTimer = *glbTimerNextEntries;
+				return 1;
+			}
+		}
+
+		else	// original code
 		if (glbTimersTable[*glbTimerNextEntries].GetTick() <= glbGameTick)
 			return 1;
 	}
@@ -2702,44 +2715,35 @@ void SkWinCore::CONTINUE_ORNATE_ANIMATOR(Timer *ref)
 //^3A15:341C
 void SkWinCore::CONTINUE_TICK_GENERATOR(Timer *ref)
 {
-	//^3A15:341C
 	ENTER(4);
-	//^3A15:3422
+	if (SkCodeParam::bUsePowerDebug && (ref->id6()).orif.db != dbActuator)
+		return;
 	Actuator *bp04 = GET_ADDRESS_OF_ACTU(ref->id6());
 	X16 si;
 	if (bp04->ActionType() == 3) {
-		//^3A15:3447
 		ref->b9_0_0(ref->b9_0_0() ^ 1);
 		si = ref->b9_0_0() | bp04->OnceOnlyActuator();
 		INVOKE_ACTUATOR(bp04, (ref->b9_0_0() != 0) ? 0 : 1, 0);
 	}
-	//^3A15:348C
 	else if ((si = bp04->OnceOnlyActuator()) != 0) {
-		//^3A15:349F
 		INVOKE_ACTUATOR(bp04, bp04->ActionType(), 0);
 	}
-	//^3A15:34BA
 	if (si != 0) {
-		//^3A15:34BE
 		ref->SetTick(ref->GetTick() + ref->Value2() * bp04->ActuatorData());
 		QUEUE_TIMER(ref);
 	}
 	else {
-		//^3A15:3505
 		bp04->b4_0_0(0);
 	}
-	//^3A15:350D
 	return;
 }
 //^3A15:374B
 // SPX: _3a15_374b renamed PROCESS_TIMER_RELEASE_DOOR_BUTTON
 void SkWinCore::PROCESS_TIMER_RELEASE_DOOR_BUTTON(Timer *ref) 
 {
-	//^3A15:374B
+	// timer ttyDoorButton
 	ENTER(0);
-	//^3A15:374E
 	GET_ADDRESS_OF_RECORD0(ref->id6())->SetButtonState(0);
-	//^3A15:3764
 	return;
 }
 //^3A15:3766
@@ -2768,31 +2772,24 @@ void SkWinCore::PROCESS_TIMER_59(Timer *ref)
 //^3A15:37A7
 void SkWinCore::CONTINUE_ORNATE_NOISE(Timer *ref) 
 {
-	//^3A15:37A7
 	ENTER(6);
-	//^3A15:37AC
 	Actuator *pActuator = GET_ADDRESS_OF_ACTU(ref->id8());	// bp04
 	if (pActuator->ActiveStatus() != 0 && ref->GetMap() == cd.pi.glbPlayerMap) {
-		//^3A15:37EA
 		X16 si = ((GET_TILE_VALUE(ref->XcoordB(), ref->YcoordB()) >> 5) == ttWall) ? 1 : 0;
 		U8 iCategory = 0;	// bp05
 		U8 iItemNumber = 0;	// bp06
 		if (si != 0) {
-			//^3A15:3818
 			iCategory = GDAT_CATEGORY_WALL_GFX;	// 09
 			iItemNumber = GET_WALL_DECORATION_OF_ACTUATOR(pActuator);
 		}
 		else {
-			//^3A15:3829
 			iCategory = GDAT_CATEGORY_FLOOR_GFX;	// 10
 			iItemNumber = GET_FLOOR_DECORATION_OF_ACTUATOR(pActuator);
 		}
-		//^3A15:383D
 		ref->SetTick(ref->GetTick() + GET_ORNATE_ANIM_LEN(pActuator, si));
 		QUEUE_TIMER(ref);
 		// SPX: Wall or floor activation sound
-		QUEUE_NOISE_GEN2(iCategory, iItemNumber, SOUND_STD_ACTIVATION, 0xfe, ref->XcoordB(), ref->YcoordB(), 1, 0x8c, 0x80);
-		
+		QUEUE_NOISE_GEN2(iCategory, iItemNumber, SOUND_STD_ACTIVATION, 0xFF, ref->XcoordB(), ref->YcoordB(), 1, 0x8C, 0x80);
 		
 		// SPX special block to try amplifier/fireball activation over lava crater 
 		if (SkCodeParam::bUseFixedMode)
@@ -2836,10 +2833,8 @@ void SkWinCore::CONTINUE_ORNATE_NOISE(Timer *ref)
 		// SPX End block / Amplifier / Poison Rift
 	}
 	else {
-		//^3A15:3893
 		pActuator->ActuatorData(pActuator->ActuatorData() & 255);
 	}
-	//^3A15:38B3
 	return;
 }
 
@@ -2912,6 +2907,8 @@ void SkWinCore::PROCESS_TIMER_AMBIENT_SOUND(Timer *ref)
 //^3A15:3A9E
 void SkWinCore::PROCEED_TIMERS()
 {
+	SkD((DLV_DBG_TIMER, "-------------------\n"	));
+	SkD((DLV_DBG_TIMER, "DBG: PROCEED_TIMERS\n"	));
 #if DLV_DBC
 	{
 		for (Bitu x=0; x<glbCreaturesCount; x++) {
@@ -2953,8 +2950,9 @@ void SkWinCore::PROCEED_TIMERS()
 	Timer *xCurrentTimer = &timer; // bp04
 	U16 iChampionIndex; // bp06
 	U16 iTimerCount = 0;
-	for (; IS_TIMER_TO_PROCEED() != 0; iTimerCount++) {
-		
+	for (; IS_TIMER_TO_PROCEED() != 0; iTimerCount++) {	// This kind of loop may lead to infinite loop.
+		if (SkCodeParam::bUsePowerDebug && iTimerCount >= glbTimersActiveCount)		
+			break;	// SPX: this is a way to get out of an infinite loop
 		//LOGX(("3A15:3AB0 %u %u %u %d", (U32)_4976_4e46, (U32)glbAbsoluteTickCounter, (U32)_4976_19a9, (i16)_4976_4e62, (U16)_4976_4e48, (U16)_4976_4e64));
 		IBMIO_USER_INPUT_CHECK();
 		GET_AND_DELETE_NEXT_TIMER(xCurrentTimer);
@@ -2973,7 +2971,6 @@ void SkWinCore::PROCEED_TIMERS()
 		switch (iTimerType) {
 			case tty21://^3AF4
 			case tty22://^3AF4 // TiTy22: 'think creature'
-				//^3A15:3AF4
 				THINK_CREATURE(timer.XcoordB(), timer.YcoordB(), iTimerType);
 				break;
 			case tty1D://^3B09
@@ -3110,7 +3107,7 @@ void SkWinCore::PROCEED_TIMERS()
 		}
 _3d93:
 		;
-	}
+	 }
 	CHANGE_CURRENT_MAP_TO(cd.pi.glbPlayerMap);
 	return;
 }

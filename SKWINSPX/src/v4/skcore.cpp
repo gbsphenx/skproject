@@ -2026,7 +2026,7 @@ U8 *SkWinCore::_1031_023b(sk1891 *xx)
 
 
 //^443C:06B4
-void SkWinCore::_443c_06b4(sk0cea *ref)
+void SkWinCore::_443c_06b4(sk0cea* ref)
 {
 	//^443C:06B4
 	ENTER(8);
@@ -2196,9 +2196,7 @@ void SkWinCore::_1031_0541(U16 xx) //#DS=4976
 //^1031:0667
 void SkWinCore::_1031_0667() //#DS=4976
 {
-	//^1031:0667
 	ENTER(0);
-	//^1031:066A
 	_1031_0541(_4976_19ad);
 }
 
@@ -5642,7 +5640,7 @@ U16 SkWinCore::_19f0_00b8(i16 xx, i16 yy)
 					goto _01cf;
 				//^19F0:0177
 				if (bp06 == dbCreature) {
-					ObjectID bp08 = _1c9a_03cf(&xx, &yy, 255);
+					ObjectID bp08 = GET_CREATURE_1c9a_03cf(&xx, &yy, 255);
 					if (bp08 != OBJECT_NULL) {
 						//^19F0:019A
 						U16 di = QUERY_CREATURE_AI_SPEC_FLAGS(bp08);
@@ -8812,39 +8810,35 @@ X16 SkWinCore::_12b4_0953(Creature *rec, U16 ww)
 // _12b4_0881
 X16 SkWinCore::_12b4_0881_CHECK_MOVE_BETWEEN_TILES(X16 aa, U16 oldTile, U16 newTile, i16 xx, i16 yy, ObjectID *rl)
 {
-	//^12B4:0881
 	ENTER(0);
-	//^12B4:0886
 	*rl = OBJECT_NULL;
-	X16 di = ((oldTile >> 5) == ttStairs) ? 1 : 0;
-	//^12B4:08A1
-	if (di != 0 && aa == 2)
-		return 1;
-	//^12B4:08B1
+	X16 iOldTileIsStairs = ((oldTile >> 5) == ttStairs) ? 1 : 0;	// di
+	if (iOldTileIsStairs != 0 && aa == 2)
+		return C1_CHECKMOVE_OLD_TILE_STAIRS;
 	if ((newTile >> 5) == ttStairs) {
-		return 2;
+		return C2_CHECKMOVE_TILE_STAIRS;
 	}
-	//^12B4:08C1
 	if (IS_TILE_BLOCKED(U8(newTile)) != 0) {
-		return 3;
+		return C3_CHECKMOVE_TILE_BLOCKED;
 	}
-    //^12B4:08D4
-	*rl = GET_CREATURE_AT(xx, yy);
-	if (*rl != OBJECT_NULL) {
-		//^12B4:08EC
-		if ((QUERY_CREATURE_AI_SPEC_FLAGS(*rl) & 0x8000) == 0) {
-			if (_12b4_0953(GET_ADDRESS_OF_RECORD4(*rl), cd.pi.glbPlayerDir) != 0)
-				return 5;
-			return 4;
+	if (!SkCodeParam::bDebugNoCreatureCollision) {
+		*rl = GET_CREATURE_AT(xx, yy);
+		if (*rl != OBJECT_NULL) {
+			if ((QUERY_CREATURE_AI_SPEC_FLAGS(*rl) & 0x8000) == 0) {
+				if (_12b4_0953(GET_ADDRESS_OF_RECORD4(*rl), cd.pi.glbPlayerDir) != 0)
+					return C5_CHECKMOVE_STOP;
+				return C4_CHECKMOVE_TILE_BLOCKED_CREATURE;
+			}
 		}
 	}
-	//^12B4:091F
-	ObjectID si = _1c9a_03cf(&xx, &yy, 255);
-	if (si != OBJECT_NULL) {
-		if ((QUERY_CREATURE_AI_SPEC_FLAGS(si) & 0x8000) == 0)
-			return 5;
+	if (!SkCodeParam::bDebugNoCreatureCollision) {
+		ObjectID si = GET_CREATURE_1c9a_03cf(&xx, &yy, 255);	// si
+		if (si != OBJECT_NULL) {
+			if ((QUERY_CREATURE_AI_SPEC_FLAGS(si) & 0x8000) == 0)
+				return C5_CHECKMOVE_STOP;
+		}
 	}
-	return 6;
+	return C6_CHECKMOVE_TILE_PASSABLE;
 }
 
 // SPX: new => check between tiles + interwalls
@@ -8852,7 +8846,7 @@ X16 SkWinCore::CHECK_MOVE_BETWEEN_TILES_AND_INTERWALLS(X16 aa, U16 iInterwall, U
 {
 	X16 iCheckResult = 0;
 	if (iInterwall == 1 )//|| iInterwall == 3)
-		return 3;	// consider tile is blocked (as wall)
+		return C3_CHECKMOVE_TILE_BLOCKED;	// consider tile is blocked (as wall)
 	iCheckResult = _12b4_0881_CHECK_MOVE_BETWEEN_TILES(aa, oldTile, newTile, xx, yy, rl);
 	return iCheckResult;
 }
@@ -12232,7 +12226,7 @@ U8* SkWinCore::QUERY_GDAT_IMAGE_ENTRY_BUFF(U8 iGDatCategory, U8 iGDatItemId, U8 
 	U8* xImageBuffer = NULL;
 
 	if (glbGameTick != _4976_5d2a) {
-		_3e74_44ad();
+		MEMENT_3e74_44ad();
 	}
 	RawEntry* pEntry = QUERY_GDAT_ENTRYPTR(iGDatCategory, iGDatItemId, 1, iGDatEntryId);
 	U16 iGDATItemID;
@@ -16848,9 +16842,7 @@ void SkWinCore::MAKE_PUT_DOWN_ITEM_CLICKABLE_ZONE(X16 xx, ObjectID rl, i16 yy, X
 //^48AE:07BF
 X16 SkWinCore::DIR_FROM_5x5_POS(X16 _5x5)
 {
-	//^48AE:07BF
 	ENTER(0);
-	//^48AE:07C3
 	X16 si = _5x5;
 	if (si == 6) // north west
 		return 0;
@@ -16862,77 +16854,12 @@ X16 SkWinCore::DIR_FROM_5x5_POS(X16 _5x5)
 		return 3;
 	if (si == 12) // center
 		return 4;
-	//^48AE:07F7
 	return -1;
 }
 
-//^32CB:3E08
-// SPX: DRAW_ITEMS_WITHIN_OBJECT renamed DRAW_ITEMS_WITHIN_OBJECT
-void SkWinCore::DRAW_ITEMS_WITHIN_OBJECT(ObjectID rl, X16 xx, U32 yy, Creature *ref)
-{
-	//^32CB:3E08
-	ENTER(12);
-	//^32CB:3E0E
-	i16 di = xx;
-	if (rl == OBJECT_END_MARKER || _4976_415b[RCJ(23,di)] == -1)
-		return;
-	//^32CB:3E24
-	_4976_421a = OBJECT_END_MARKER;
-	if (di > 15)
-		return;
-	//^32CB:3E32
-	X16 bp0a = _4976_4453[RCJ(16,di)];
-	if (bp0a == 3)
-		return;
-    //^32CB:3E43
-	U32 bp04 = 0;
-	i16 si;
-	for (si = 0; si < 4; si++) {
-		//^32CB:3E51
-		X16 bp0c = _4976_4447[RCJ(3,bp0a)][RCJ(4,si)];
-		U32 bp08 = U32(1) << bp0c;
-		if ((bp08 & yy) != 0) {
-			//^32CB:3E82
-			DRAW_PUT_DOWN_ITEM(rl, di, DIR_FROM_5x5_POS(bp0c), ref);
-			continue;
-		}
-		//^32CB:3E9F
-		bp04 |= bp08;
-		//^32CB:3EAB
-	}
-	//^32CB:3EB1
-	if (bp04 != 0) {
-		_4976_421a = rl;
-		_4976_5a8a = bp04;
-		_4976_5a8e = ref;
-	}
-	//^32CB:3ED9
-	return;
-}
 
-//^32CB:2CF3
-void SkWinCore::_32cb_2cf3(U8 cls2, U16 scale64, U16 mirrorFlip, U16 rectno)
-{
-	//^32CB:2CF3
-	ENTER(0);
-	//^32CB:2CF7
-	U16 si = scale64;
-	si = BETWEEN_VALUE(8, si & 0xfffe, 64);
-	QUERY_GDAT_SUMMARY_IMAGE(&glbTempPicture, 0xd, cls2, 0x41);
-	glbTempPicture.w32 = glbTempPicture.w28;
-	glbTempPicture.w34 = glbTempPicture.w30;
-	glbTempPicture.w30 = glbTempPicture.w28 = 0;
-	glbTempPicture.w26 = 0;
-	glbTempPicture.rectNo = rectno;
-	glbTempPicture.colorKeyPassThrough = 10;	// hard set color key!
-	glbTempPicture.pb44 = _4976_4c16;
-	glbTempPicture.mirrorFlip = mirrorFlip;
-	glbTempPicture.w54 = glbTempPicture.w52 = si;
-	_0b36_037e(glbTempPicture.b58, i8(_4976_5a88), 10, -1, glbTempPicture.w56);
-	QUERY_PICST_IT(&glbTempPicture);
-	//^32CB:2D89
-	return;
-}
+
+
 
 //^32CB:2D8C
 void SkWinCore::_32cb_2d8c(ObjectID rl, X16 yy, X32 aa)
@@ -18228,7 +18155,8 @@ U16 SkWinCore::_2fcf_0434(ObjectID recordLink, i16 xpos, i16 ypos, i16 xx, i16 y
 
 //^1C9A:03CF
 // TODO related creature size ? b35
-ObjectID SkWinCore::_1c9a_03cf(i16 *xx, i16 *yy, U16 dir)
+// SPX: _1c9a_03cf renamed GET_CREATURE_1c9a_03cf
+ObjectID SkWinCore::GET_CREATURE_1c9a_03cf(i16 *xx, i16 *yy, U16 dir)
 {
 	//^1C9A:03CF
 	//^1C9A:03D5
@@ -18738,7 +18666,7 @@ _0e37:
 				bp38 = xpos;
 				bp3a = ypos;
 				//^075F:0E43
-				ObjectID bp2e = _1c9a_03cf(&bp38, &bp3a, dir);
+				ObjectID bp2e = GET_CREATURE_1c9a_03cf(&bp38, &bp3a, dir);
 				//^075F:0E5B
 				if (bp2e == OBJECT_NULL) {
 					//^075F:0E60
@@ -19927,8 +19855,8 @@ U16 SkWinCore::ADD_MEM_TO_FREE_POOL(sk5d00 *pool, i32 size, X16 poolflag)
 	}
 	//^3E74:12E0
 	_4976_5d04 = ALLOC_MEMORY_RAM(TEMP_BUFF_SIZE, afUseUpper, 0x280);
-	_4976_5d94 = NULL;
-	_4976_5d90 = NULL;
+	glbMement1 = NULL;
+	glbMement2 = NULL;
 	_4976_5c8c = NULL;
 	_4976_5d70 = NULL;
 	_4976_5d5e = NULL;
@@ -20906,10 +20834,12 @@ void SkWinCore::LOAD_CD_DAT_FILE()
 	i16 hCDFileHandle = -1;
 	hCDFileHandle = FILE_OPEN((const U8*)"CD.DAT");
 	pDataTable = calloc(10, sizeof(tCDMusicMap));
-	FILE_READ(hCDFileHandle, 10*4, pDataTable);
-	FILE_CLOSE(hCDFileHandle);
+	if (hCDFileHandle != -1) {
+		FILE_READ(hCDFileHandle, 10*4, pDataTable);
+		FILE_CLOSE(hCDFileHandle);
+		SkCodeParam::bDM2CDMusic = true;
+	}
 	cd.sc.glbTabCDMusicTriggers = (tCDMusicMap*) pDataTable;
-	SkCodeParam::bDM2CDMusic = true;
 }
 
 //^4937:0320
@@ -21273,11 +21203,11 @@ void SkWinCore::SHOW_MENU_SCREEN()
 	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_RED, BLACK);
 	SkD((SkCodeParam::bEngineNoDisplay||DLV_DBG_INIT, "DISPLAY TITLE MENU SCREEN\n"));
 	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
-	if (SkCodeParam::bDM2CDMusic)
-		REQUEST_PLAY_MUSIC(5, 100);
+	if (SkCodeParam::bDM2CDMusic && !SkCodeParam::bDM2V5Mode)
+		REQUEST_PLAY_MUSIC(5, 50);
 		//REQUEST_PLAY_CD_MUSIC(5, 100);	// SPX: CD title music
 	else
-		REQUEST_PLAY_MUSIC(100, 100);	// SPX: title music
+		REQUEST_PLAY_MUSIC(100, 50);	// SPX: title music
 
 	SkD((DLV_DBG_INIT, "SHOW_MENU_SCREEN\n"));
 
@@ -22768,7 +22698,7 @@ void SkWinCore::STEP_MISSILE(Timer *ref)
 			if ((QUERY_CREATURE_AI_SPEC_FLAGS(bp24) & 2) != 0) {
 				if (bp08->GetMissileObject().IsMissile()) {
 					//^075F:126C
-					i16 bp26 = _4976_0094[RCJ(32, bp04->Direction() + (((bp0c->b15_0_1() & 1) << 4) + (si << 2)))];
+					i16 bp26 = tbl32_4976_0094[RCJ(32, bp04->Direction() + (((bp0c->b15_0_1() & 1) << 4) + (si << 2)))];
 					if (bp26 < 4) {
 						//^075F:12A9
 						bp04->Direction(U8(bp26));

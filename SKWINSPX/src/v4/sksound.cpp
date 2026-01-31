@@ -238,62 +238,38 @@ U16 SkWinCore::PLAY_SOUND(U16 xx, SoundStructure *ref)
 	SkD((DLV_DBG_SND_OUT, "SND: Play sound xx:%02X struct:%04X\n"
 		, U16(xx), ref));
 
-	//^47EB:014F
-	//^47EB:0155
 	if (xx == 0)
-		//^47EB:015B
 		return 0;
-	//^47EB:0160
 	U16 bp02 = 0;
 	SoundStructure* xSoundStruct = ref;	// bp06
-	//^47EB:0171
 	for (; bp02 < xx; bp02++, xSoundStruct++) {
-		//^47EB:0173
 		_47eb_0333(xSoundStruct);
-		//^47EB:0180
 		xSoundStruct->b11 = (Bit8u)bp02;
-		//^47EB:018A
 	}
 
 	U16 bp10 = 0;
 	do {
-		//^47EB:0199
 		xSoundStruct = ref;
-		//^47EB:01AA
 		U16 bp0c = xSoundStruct->b11;
-		//^47EB:01B6
 		for (xSoundStruct++, bp02++; bp02 < xx; bp02++, xSoundStruct++) {
-			//^47EB:01C1
 			U16 bp0e = xSoundStruct->b11;
-			//^47EB:01CD
 			if (_47eb_02e0(&ref[bp0c], &ref[bp0e]) == 0) {
-				//^47EB:01F8
 				WRITE_UI8(xSoundStruct,-1,(Bit8u)bp0e);
-				//^47EB:0202
 				xSoundStruct->b11 = (Bit8u)bp0c;
-				//^47EB:0209
 				bp10 = 1;
 			}
 			else {
-				//^47EB:0210
 				bp0c = bp0e;
 			}
-			//^47EB:0216
 		}
-		//^47EB:0225
 	} while (bp10 != 0);
-	//^47EB:022E
 	U16 si = 0;
 	U16 di = 0;
-	//^47EB:0232
 	while (di < _4976_49be) {
 		while (si < xx) {
-			//^47EB:0234
 			U16 bp0c = ref[si].b11;
 			si++;
-			//^47EB:024A
 			xSoundStruct = &ref[bp0c];
-			//^47EB:025D
 			Bit8u *bp0a = &xSoundStruct->b8;
 #if UseAltic
 			//skwin.SndPlayLo(_47eb_0048(xSoundStruct->pv0->ps0, 0), xSoundStruct->pv0->w4, xSoundStruct->b6, xSoundStruct->b7);
@@ -305,10 +281,8 @@ U16 SkWinCore::PLAY_SOUND(U16 xx, SoundStructure *ref)
 				return si;
 #endif
 		}
-		//^47EB:02AE
 		di++;
 	}
-	//^47EB:02B5
 	return si;
 }
 

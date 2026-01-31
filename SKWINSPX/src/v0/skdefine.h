@@ -710,10 +710,10 @@ enum SkillLevel {
 #define GDAT_WALL_ORNATE__DO_NOT_FLIP		0x07	// 1 = do not flip that graphics
 #define GDAT_WALL_ORNATE__0A				0x0A	// 0 (default) = non alcove / 1 = Alcove / 2 = shop glass / 3 = Passive device (cryocell : show champion portrait)
 
-	#define WALL_ORNATE_OBJECT__NONE			0x00
-	#define WALL_ORNATE_OBJECT__ALCOVE			0x01
-	#define WALL_ORNATE_OBJECT__SHOP_GLASS		0x02
-	#define WALL_ORNATE_OBJECT__CRYOCELL		0x03
+	#define C0_WALL_ORNATE_OBJECT__NONE				0x00
+	#define C1_WALL_ORNATE_OBJECT__ALCOVE			0x01
+	#define C2_WALL_ORNATE_OBJECT__SHOP_GLASS		0x02
+	#define C3_WALL_ORNATE_OBJECT__CRYOCELL			0x03
 
 
 #define GDAT_WALL_ORNATE__IS_WATER_SPRING	0x0B
@@ -743,7 +743,7 @@ enum SkillLevel {
 #define GDAT_WALL_ORNATE__DATA_F1			0xF1
 
 #define GDAT_WALL_ORNATE__DATA_F2			0xF2
-#define GDAT_WALL_ORNATE__DATA_FD			0xFD
+#define GDAT_WALL_ORNATE__ITEM_INSIDE_DISPLACEMENT		0xFD
 
 #define GDAT_WALL_IMAGE__VIEW_SIDE_LEFT			0x00
 #define GDAT_WALL_IMAGE__VIEW_FRONT				0x01
@@ -1548,6 +1548,20 @@ typedef enum
 
 
 //------------------------------------------------------------------------------
+
+#define MEM_CACHE_TABLE_MAX	4096	// original was 0x80 (128) and it led to many crashs, probably the recycling is not working normally
+// Is used for tblCacheToMement
+
+//------------------------------------------------------------------------------
+
+#define C1_CHECKMOVE_OLD_TILE_STAIRS			1
+#define C2_CHECKMOVE_TILE_STAIRS				2
+#define C3_CHECKMOVE_TILE_BLOCKED				3
+#define C4_CHECKMOVE_TILE_BLOCKED_CREATURE		4
+#define C5_CHECKMOVE_STOP						5
+#define C6_CHECKMOVE_TILE_PASSABLE				6
+
+//------------------------------------------------------------------------------
 // Defs from redmcsb/DEFS.H
 /* Creature info Attack types */
 #define C0_ATTACK_NORMAL    0 /* Caused when a champion is poisoned, lacks stamina or stands in a Poison Cloud and by creatures (Giggler). This attack type cannot cause wounds */
@@ -1558,10 +1572,19 @@ typedef enum
 #define C5_ATTACK_MAGIC     5 /* Caused by Poison Bolt explosions and creatures (Grey Lord, Lord Chaos, Lord Order, Materializer / Zytaz, Vexirk, Wizard Eye / Flying Eye) */
 #define C6_ATTACK_PSYCHIC   6 /* Caused by creatures (Ghost / Rive, Screamer) */
 #define C7_ATTACK_LIGHTNING 7 /* Caused by Lightning Bolt explosions */
-//------------------------------------------------------------------------------
 
-#define MEM_CACHE_TABLE_MAX	4096	// original was 0x80 (128) and it led to many crashs, probably the recycling is not working normally
-// Is used for tblCacheToMement
+/* Explosion types */
+#define C000_EXPLOSION_FIREBALL             0
+#define C001_EXPLOSION_SLIME                1
+#define C002_EXPLOSION_LIGHTNING_BOLT       2
+#define C003_EXPLOSION_HARM_NON_MATERIAL    3
+#define C004_EXPLOSION_OPEN_DOOR            4
+#define C006_EXPLOSION_POISON_BOLT          6
+#define C007_EXPLOSION_POISON_CLOUD         7
+#define C040_EXPLOSION_SMOKE               40
+#define C050_EXPLOSION_FLUXCAGE            50
+#define C100_EXPLOSION_REBIRTH_STEP1      100
+#define C101_EXPLOSION_REBIRTH_STEP2      101
 
 //------------------------------------------------------------------------------
 

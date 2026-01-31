@@ -59,7 +59,7 @@
 #define DLV_DBG_DIST	0		// Distant element
 #define DLV_DBG_THUNDER		0
 #define DLV_DBG_SND_CRE		0	// Sound requested by creature
-#define DLV_DBG_SND_OUT		0	// Sound played
+#define DLV_DBG_SND_OUT		1	// Sound played
 #define DLV_DBG_TICK		0	// Tick information
 #define DLV_DBG_DOOR		0
 #define DLV_DBG_GAME_LOAD	0

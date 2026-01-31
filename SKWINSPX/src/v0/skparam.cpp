@@ -26,7 +26,7 @@ bool SkCodeParam::bUseBigEnd = false;	// Default is little-end
 
 bool SkCodeParam::bNoAudio = false;
 bool SkCodeParam::bNoMusic = false;
-bool SkCodeParam::bChampionImmune = true;
+bool SkCodeParam::bChampionImmune = false;
 
 bool SkCodeParam::bUseAudioSDL = false;
 
@@ -74,7 +74,7 @@ bool SkCodeParam::bDebugGFXNoDoors = false;		// don't display doors
 bool SkCodeParam::bDebugGFXNoCreatures = false;	// don't display creature
 bool SkCodeParam::bDebugNoCreatures = false;		// drop all creatures -- don't generate creatures
 bool SkCodeParam::bDebugTileset = false;
-
+bool SkCodeParam::bDebugNoCreatureCollision = true;
 
 bool SkCodeParam::bMIDIMusicEnabled = true;
 bool SkCodeParam::bWAVMusicEnabled = false;

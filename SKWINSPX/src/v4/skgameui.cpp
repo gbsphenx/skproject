@@ -15,7 +15,7 @@ X16 SkWinCore::UI_READ_KEY_INPUT() //#DS=04BF
 	LOADDS(0x3083);
 	while (glbUIKeyReadCount == 0);
 
-	X16 iKeyboardVValue = tlbUIKeyInput[glbKeyboardReadRRIndex];
+	X16 iKeyboardVValue = tblUIKeyInput[glbKeyboardReadRRIndex];
 	glbKeyboardReadRRIndex = (glbKeyboardReadRRIndex + 1) % 10;
 	glbUIKeyReadCount--;
 	return iKeyboardVValue;
@@ -41,31 +41,36 @@ Bit16u SkWinCore::SPECIAL_UI_KEY_TRANSFORMATION()
 			iKeyVal = 0x4F; break;	// numpad 1 => move left
 		case 0x124D://^054D
 			iKeyVal = 0x51; break;	// numpad 3 => move right
-
+	}
 #if defined (XDMX_EXTENDED_KEYBOARD)
-// SPX convenient additions
-// Use AZE-QSD as move arrows / before of different keyboards
-		case 0x001E:	// q/a
-			iKeyVal = 0x4B; break;	// turn left
-		case 0x002C:	// w/z
-			iKeyVal = 0x4C; break;	// forward
-		case 0x0012:	// e
-			iKeyVal = 0x4D; break;	// turn right
-		case 0x0010:	// z/q
-			iKeyVal = 0x4F; break;	// move left
-		case 0x001F:	// s
-			iKeyVal = 0x50; break;	// backward
-		case 0x0020:	// d
-			iKeyVal = 0x51; break;	// move right
+	if (_4976_4e62 == 0) {	// not in the savegame panel to write a savegame name
+		switch (iKeyCheck) {
+	// SPX convenient additions
+	// Use AZE-QSD as move arrows / before of different keyboards
+			case 0x001E:	// q/a
+				iKeyVal = 0x4B; break;	// turn left
+			case 0x002C:	// w/z
+				iKeyVal = 0x4C; break;	// forward
+			case 0x0012:	// e
+				iKeyVal = 0x4D; break;	// turn right
+			case 0x0010:	// z/q
+				iKeyVal = 0x4F; break;	// move left
+			case 0x001F:	// s
+				iKeyVal = 0x50; break;	// backward
+			case 0x0020:	// d
+				iKeyVal = 0x51; break;	// move right
 
-// Use X as left click
-		case 0x002D:	// x
-			//iKeyVal = 0x51; break;	// move right
-			cd.mk.mice_btn = 1; // left button
-			(this->*_int33_mouse_callback)();
+	// Use X as left click
+			case 0x002D:	// x
+				//iKeyVal = 0x51; break;	// move right
+				cd.mk.mice_btn = 1; // left button
+				(this->*_int33_mouse_callback)();
+		}
+	}
 // SPX
 #endif // XDMX_EXTENDED_KEYBOARD
-	}
+
+
 	return iKeyVal;
 }
 
