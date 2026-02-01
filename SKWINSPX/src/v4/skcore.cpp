@@ -3953,9 +3953,7 @@ void SkWinCore::LOAD_NEWMAP(U8 newmap)
 // That should roll 1 row of old message
 void SkWinCore::SCROLLBOX_MESSAGE()
 {
-	//^44C8:1C99
 	ENTER(8);
-	//^44C8:1C9D
 	FIRE_HIDE_MOUSE_CURSOR();
 	SRECT bp08;
 	QUERY_EXPANDED_RECT(RECT_BOTTOM_MESSAGE_3_LINES, &bp08);
@@ -3976,32 +3974,22 @@ void SkWinCore::SCROLLBOX_MESSAGE()
 		NULL
 		);
 	FIRE_SHOW_MOUSE_CURSOR();
-	//^44C8:1D0F
 	return;
 }
 
 //^3929:07E1
 void SkWinCore::_3929_07e1(U16 xx, U16 yy)
 {
-	//^3929:07E1
 	ENTER(0);
-	//^3929:07E6
 	i16 di = xx;
 	U16 si = yy;
-	//^3929:07EC
 	if (di < 0)
-		//^3929:07F0
 		di = 0;
-	//^3929:07F2
 	_4976_475c = min_value(di * _4976_0126, _4976_013e - _4976_0126);
-	//^3929:080B
 	if (si < 0 || si >= 1)
-		//^3929:0816
 		si = 0;
-	//^3929:0818
 	glbTimerTickRemoveHintMessageIndex = si;
 	_4976_5c06 = 0;
-	//^3929:0822
 	return;
 }
 
@@ -4014,99 +4002,36 @@ void SkWinCore::_3929_07e1(U16 xx, U16 yy)
 //^32CB:06CF
 void SkWinCore::INIT_BACKBUFF()
 {
-	//^32CB:06CF
 	ENTER(0);
-	//^32CB:06D2
 	if (_4976_5be6 != 0) {
-		//^32CB:06D9
 		FIRE_FILL_BACKBUFF_RECT(&_4976_5938, glbPaletteT16[COLOR_BLACK]);
 	}
-	//^32CB:06EF
 	WRITE_UI16(_4976_4c16,-4,_4976_00f6); // width
-	//^32CB:06FA
 	WRITE_UI16(_4976_4c16,-2,_4976_00f8); // height
-	//^32CB:0701
 	WRITE_UI16(_4976_4c16,-6,8); // bpp
-	//^32CB:0707
 	_4976_022c = 0;
-	//^32CB:070D
 	return;
 }
-
-//^2759:213D
-SpellDefinition *SkWinCore::FIND_SPELL_BY_RUNES(U8 *runes)
-{
-	// CSBwinSimilarity: TAG01c88e,Incantation2Spell
-
-	//^2759:213D
-	ENTER(10);
-	if (runes[1] == 0)
-		return NULL;
-	i16 iBitShifter = 24; // bp06
-	i16 iSpellIndex = 0; // bp06 (was used for 2 different things)
-	U32 bp0a = 0;
-
-	do {
-		bp0a |= U32(*(runes++)) << iBitShifter;
-	} while (runes[0] != 0 && (iBitShifter -= 8) >= 0);
-	
-	SpellDefinition *xSpell = const_cast<SpellDefinition *>(dSpellsTable);	// bp04
-	U32 iLocalMaxSpell = MAXSPELL_ORIGINAL;	// SPX added this to prevent overflow when switching tables
-
-	// SPX : Use extended spells table read from GDAT if we are in custom mode
-	if (SkCodeParam::bUseCustomSpells)
-	{
-		xSpell = const_cast<SpellDefinition *>(dSpellsTableCustom);
-		iLocalMaxSpell = MAXSPELL_CUSTOM;
-	} // end SPX
-
-	for (iSpellIndex = iLocalMaxSpell; iSpellIndex-- != 0; xSpell++) {	// (bp06 = MAXSPELL; bp06-- != 0; bp04++)
-		if ((xSpell->symbols & 0xFF000000) != 0) {
-			if (xSpell->symbols != bp0a)
-				continue;
-			return xSpell;
-		}
-	    if ((bp0a & 0x00FFFFFF) == xSpell->symbols)
-			return xSpell;
-	}
-	return NULL;
-}
-
-
-
-
-
-
-
 
 
 //^2759:01E3
 U16 SkWinCore::QUERY_CUR_CMDSTR_ENTRY(U16 cmdNum)
 {
-	//^2759:01E3
 	ENTER(0);
-	//^2759:01E6
 	return QUERY_CMDSTR_ENTRY(glbItemGDATCategory, glbItemGDATIndex, glbItemGDATEntry, cmdNum);
 }
-
-
 
 
 
 //^2C1D:0E23
 U16 SkWinCore::_2c1d_0e23(U16 xx)
 {
-	//^2C1D:0E23
 	ENTER(0);
-	//^2C1D:0E28
 	i16 di;
 	U16 si = BETWEEN_VALUE(1, di = (QUERY_ITEM_WEIGHT(xx) >> 1), 10);
-	//^2C1D:0E44
 	while ((di -= 10) > 0) {
-		//^2C1D:0E46
 		si += di >> 1;
 	}
-	//^2C1D:0E51
 	return si;
 }
 
@@ -4226,14 +4151,10 @@ _0b01:
 // ornateOffsetPos between 0 and 24
 U16 SkWinCore::QUERY_RECTNO_FOR_WALL_ORNATE(i16 cellPos, U16 ornateOffsetPos, U16 zz) // (i16 xx, U16 yy, U16 zz)
 {
-	//^098D:0CD7
 	ENTER(0);
-	//^098D:0CDA
 	if (zz != 0) {	// taking side ornate
-		//^098D:0CE0
 		return tRectnoOffsetsWallOrnates[RCJ(16, cellPos)] + ornateOffsetPos;	// limiting cellpos to 16 means taking only Distance 0 to Distance 3
 	}
-	//^098D:0CEE
 	return cellPos * 25 + ornateOffsetPos + 3100;	// taking front ornate
 }
 
@@ -4296,46 +4217,12 @@ U8 SkWinCore::SKCHR_TO_SCRIPTCHR(U8 xx)
 
 
 
-//^32CB:0649
-// TODO: image related
-U8 *SkWinCore::_32cb_0649(U8 cls1, U8 cls2, U8 cls4, i16 colorkey)
-{
-	//^32CB:0649
-	ENTER(6);
-	//^32CB:064D
-	U8 *bp04 = QUERY_GDAT_IMAGE_LOCALPAL(cls1, cls2, cls4);
-	//^32CB:0667
-	i16 bp06;
-	if (bp04 == NULL) {
-		//^32CB:066B
-		if (_4976_5a88 == 63)
-			//^32CB:0672
-			return NULL;
-		//^32CB:0678
-		for (bp06 = 0; bp06 < 256; bp06++) {
-			//^32CB:067F
-			_4976_582a[bp06] = U8(bp06);
-			//^32CB:0689
-		}
-		//^32CB:0693
-		bp06 = 256;
-	}
-	else {
-		//^32CB:069A
-		COPY_MEMORY(bp04, _4976_582a, 16);
-		//^32CB:06B0
-		bp06 = 16;
-	}
-	//^32CB:06B5
-	return _0b36_037e(_4976_582a, U8(_4976_5a88), colorkey, -1, bp06);
-}
+
 
 //^44C8:1E1A
 U16 SkWinCore::_44c8_1e1a(U8 *xx, U16 yy)
 {
-	//^44C8:1E1A
 	ENTER(0);
-	//^44C8:1E1E
 	U8 *di = xx;
 	bool carry = (yy & 1) ? true : false;
 	{
@@ -4356,11 +4243,8 @@ U16 SkWinCore::_44c8_1e1a(U8 *xx, U16 yy)
 //^44C8:20A4
 void SkWinCore::_44c8_20a4(U8 *src, U8 *dst, U8 *zz, SRECT *prc, U16 ss, U16 tt, U16 oo, i16 pp, U8 *localpal)
 {
-	//^44C8:20A4
 	ENTER(0);
-	//^44C8:20A7
 	_44c8_1e43(src, dst, zz, prc, ss, tt, 0, 0, prc->cx, oo, pp, localpal);
-	//^44C8:20E3
 	return;
 }
 
@@ -4387,28 +4271,19 @@ LOGX(("%40s: C%02d=I%02X=E%02X=T%03d to %08X", "QUERY_GDAT_ENTRY_DATA_BUFF_FORCE
 U8 *SkWinCore::QUERY_GDAT_ENTRY_DATA_BUFF(U8 cls1, U8 cls2, U8 cls3, U8 cls4)
 {
 LOGX(("%40s: C%02d=I%02X=E%02X=T%03d to %08X", "QUERY_GDAT_ENTRY_DATA_BUFF from ", cls1, cls2, cls4, cls3 ));
-	//^3E74:5163
 	i16 si = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, cls3, cls4);
-	//^3E74:5181
 	if (si == -1) {
-		//^3E74:5186
 		return NULL;
 	}
-	//^3E74:518C
 	if (glbShelfMemoryTable[si].Absent()) {
-		//^3E74:51A9
 		//if (IS_CLS1_CRITICAL_FOR_LOAD(cls1) == 0 && (SkCodeParam::bUseFixedMode && cls3 != dtText)) {
 		if (IS_CLS1_CRITICAL_FOR_LOAD(cls1) == 0) {
-			//^3E74:51C7
-			//^3E74:5186
 			return NULL;
 		}
-		//^3E74:51B6
 		U16 bp02;
 		return QUERY_GDAT_DYN_BUFF(si, &bp02, 0);
 	}
 	else {
-		//^3E74:51C9
 		return REALIZE_GRAPHICS_DATA_MEMORY(glbShelfMemoryTable[si]);
 	}
 }
@@ -4477,7 +4352,7 @@ U16 SkWinCore::IS_DISTINCTIVE_ITEM_ON_ACTUATOR(Actuator *ref, U16 disit, U16 onT
 
 
 //^48AE:05AE
-// _48ae_05ae renamed _48ae_05ae_CREATURE
+// _48ae_05ae renamed _48ae_05ae_CREATURE, something about the MERCHANT
 U16 SkWinCore::_48ae_05ae_CREATURE(i16 disit, U8 yy, U16 zz, U16 ss, U16 tt, i16 ww)
 {
 	//^48AE:05AE
@@ -4493,7 +4368,7 @@ U16 SkWinCore::_48ae_05ae_CREATURE(i16 disit, U8 yy, U16 zz, U16 ss, U16 tt, i16
 	//^48AE:05F9
 	U16 bp0a = zz * 3 +18;
 	//^48AE:0607
-	U16 bp02 = QUERY_GDAT_CREATURE_WORD_VALUE(yy, U8(bp0a * 3 +0xa2));
+	U16 bp02 = QUERY_GDAT_CREATURE_WORD_VALUE(yy, U8(bp0a * 3 + 0xA2));
 	//^48AE:0620
 	if (true
 		&& bp02 != 0
@@ -4506,7 +4381,7 @@ U16 SkWinCore::_48ae_05ae_CREATURE(i16 disit, U8 yy, U16 zz, U16 ss, U16 tt, i16
 	//^48AE:0666
 	bp0a = zz * 3 +17;
 	//^48AE:0674
-	bp02 = QUERY_GDAT_CREATURE_WORD_VALUE(yy, zz *3 +0xa1);
+	bp02 = QUERY_GDAT_CREATURE_WORD_VALUE(yy, zz *3 +0xA1);
 	//^48AE:068D
 	if (true
 		&& bp02 != 0
@@ -4533,7 +4408,7 @@ U16 SkWinCore::_48ae_05ae_CREATURE(i16 disit, U8 yy, U16 zz, U16 ss, U16 tt, i16
 	//^48AE:0723
 	if (tt != 0) {
 		//^48AE:0729
-		U16 di = QUERY_GDAT_CREATURE_WORD_VALUE(yy, U8(zz * 3) +0xa0);
+		U16 di = QUERY_GDAT_CREATURE_WORD_VALUE(yy, U8(zz * 3) +0xA0);
 		//^48AE:0741
 		if (di == 0)
 			//^48AE:0745
@@ -4663,45 +4538,29 @@ U16 SkWinCore::_32cb_35c1(i16 *xx, i16 *yy, i16 zz, i16 ww)
 //^098D:0C50
 i16 SkWinCore::ROTATE_5x5_POS(i16 _5x5, U16 dir)
 {
-	//^098D:0C50
 	ENTER(0);
-	//^098D:0C55
 	i16 di = (_5x5 % 5) -2;
-	//^098D:0C63
 	i16 si = (_5x5 / 5) -2;
-	//^098D:0C6E
 	i16 cx;
 	switch (dir) {
 		case 2:
-			//^098D:0C82
 			di = -di;
-			//^098D:0C88
-			//^098D:0C9E
 			si = -si;
 
 			break;
 
 		case 3:
-			//^098D:0C8C
 			cx = di;
-			//^098D:0C8E
 			di = -si;
-			//^098D:0C94
 			si = cx;
-			//^098D:0C96
 			break;
 
 		case 1:
-			//^098D:0C98
 			cx = di;
-			//^098D:0C9A
 			di = si;
-			//^098D:0C9C
-			//^098D:0C9E
 			si = -cx;
 
 	}
-	//^098D:0CA2
 	return di +((si +2) * 5) +2;
 }
 
@@ -6134,9 +5993,7 @@ _088b:
 // SPX: _19f0_0081 renamed IS_TILE_WALL
 X16 SkWinCore::IS_TILE_WALL(i16 xx, i16 yy)
 {
-	//^19F0:0081
 	ENTER(0);
-	//^19F0:0086
 	U16 iTileValue = GET_TILE_VALUE(xx, yy);	// si
 	U16 iTileType = iTileValue >> 5;					// di
 	return (iTileType == ttWall || iTileType == ttTrickWall || (iTileValue & 5) == 0) ? 1 : 0;
@@ -6145,92 +6002,8 @@ X16 SkWinCore::IS_TILE_WALL(i16 xx, i16 yy)
 //^19F0:1511
 X16 SkWinCore::_19f0_1511(ObjectID rl)
 {
-	//^19F0:1511
 	ENTER(0);
-	//^19F0:1514
 	return CREATURE_CAN_HANDLE_IT(rl, 9);
-}
-
-//^075F:1791
-X16 SkWinCore::CALC_CLOUD_DAMAGE(ObjectID rlCloud, ObjectID rlTarget)
-{
-	//^075F:1791
-	ENTER(12);
-	//^075F:1797
-	Cloud *bp04 = GET_ADDRESS_OF_RECORDF(rlCloud);
-	i16 si = 0;
-	U16 bp0a = bp04->CloudType();
-	//^075F:17B5
-	if (bp0a >= 8)
-		return si;
-	//^075F:17BD
-	U8 bp0b = _4976_00b4[RCJ(8, bp0a)];
-	if (bp0b == 0)
-		return si;
-	//^075F:17D0
-	GenericRecord *bp08;
-	U16 di = 0; // defaulting to 0
-	if (rlTarget == OBJECT_NULL) {
-		if ((bp0b & 4) == 0)
-			return si;
-	}
-	else {
-		//^075F:17E4
-		di = rlTarget.DBType();
-		if (di == dbDoor && (bp0b & 2) != 0) {
-			//^075F:17F9
-			bp08 = GET_ADDRESS_OF_RECORD(rlTarget);
-		}
-		else {
-			//^075F:180A
-			if (di != dbCreature)
-				return si;
-			//^075F:1812
-			if ((bp0b & 8) == 0)
-				return si;
-		}
-	}
-	//^075F:1820
-	if (di == dbCreature && (QUERY_CREATURE_AI_SPEC_FROM_RECORD(rlTarget)->w24 & 0x1000) != 0 && bp0a != 0)
-		return si;
-	//^075F:1843
-	si = bp04->b3_0_f();
-	if ((bp0b & 1) != 0) {
-		//^075F:1855
-		si = (bp04->b3_0_f() >> 1) +1;
-		si = RAND16(si) +si +1;
-	}
-	//^075F:186D
-	switch (bp0a) {
-		case missileLightning: // 2
-			//^075F:187C
-			si >>= 1;
-			goto _187e;
-		case missileFireball: // 0
-			//^075F:187E
-_187e:
-			if (di == dbDoor && bp08->castToDoor()->DestroyablebyFireball() == 0)
-				si = 0;
-			break;
-		case missileDispell: // 3
-			//^075F:1897
-			if ((QUERY_CREATURE_AI_SPEC_FLAGS(rlTarget) & 0x20) == 0)
-				si = 0;
-			break;
-		case missilePoisonCloud: // 7
-			//^075F:18A9
-			si = max_value(1, min_value(bp04->b3_5_f(), 4) + RAND01());
-			if (di == 4) {
-				si = APPLY_CREATURE_POISON_RESISTANCE(rlTarget, si);
-			}
-		case missilePoisonBlob: // 1=
-		case missileZoSpell:	// 4: // 4=Zo Spell
-		case missileFuse:		// 5=
-		case missilePoisonBolt: // 6: // 6=Poison bolt
-			break;
-	}
-	//^075F:18E7
-	return si;
 }
 
 
@@ -6238,17 +6011,12 @@ _187e:
 //^19F0:050F
 ObjectID SkWinCore::_19f0_050f()
 {
-	//^19F0:050F
 	ENTER(0);
-	//^19F0:0513
 	ObjectID si = _4976_5222;
 	if (si == OBJECT_NULL) {
-		//^19F0:051D
 		for (si = _19f0_04bf(); si != OBJECT_END_MARKER && si.DBType() != dbCreature; si = GET_NEXT_RECORD_LINK(si));
-        //^19F0:053E
 		_4976_5222 = si;
 	}
-	//^19F0:0542
 	return si;
 }
 
@@ -16902,7 +16670,7 @@ void SkWinCore::_32cb_2d8c(ObjectID rl, X16 yy, X32 aa)
 				X16 bp26 = 0;
 				X16 bp0e = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_SPELL_MISSILES, bp15, dtWordValue, 0) & RAND02();
 				X16 bp14;
-				if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_SPELL_MISSILES, bp15, dtWordValue, 0x41) != 0) {
+				if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_SPELL_MISSILES, bp15, dtWordValue, C65_GDAT_IMG_SPELL_EXPLOSION_FRONT) != 0) {
 					//^32CB:2EA3
 					bp14 = 0xff;
 				}
@@ -16911,7 +16679,7 @@ void SkWinCore::_32cb_2d8c(ObjectID rl, X16 yy, X32 aa)
 					bp14 = bp08->b3_0_f();
 				}
 				//^32CB:2EB7
-				if (di == 0) {
+				if (di == 0) {	// if explosion/cloud is on the player's tile
 					//^32CB:2EBE
 					bp26 = 1;
 					if (bp15 == 0x30) {
@@ -16921,16 +16689,16 @@ void SkWinCore::_32cb_2d8c(ObjectID rl, X16 yy, X32 aa)
 					else {
 						//^32CB:2EDA
 _2eda:
-						X16 bp0a = 0;
+						X16 iCloudInsideVisualSize = 0;	// bp0a	(0 to 2)
 						bp18 = bp14 >> 5;
 						if (bp18 != 0) {
-							bp0a++;
+							iCloudInsideVisualSize++;
 							if (bp18 > 3)
-								bp0a++;
+								iCloudInsideVisualSize++;
 						}
 						//^32CB:2EF8
-						U8 *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_SPELL_MISSILES, bp15, U8(bp0a) +0x42);
-						ALLOC_IMAGE_MEMENT(GDAT_CATEGORY_SPELL_MISSILES, bp15, bp0a +0x42);
+						U8 *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_SPELL_MISSILES, bp15, U8(iCloudInsideVisualSize) + C66_GDAT_IMG_SPELL_EXPLOSION_INSIDE_LOW);
+						ALLOC_IMAGE_MEMENT(GDAT_CATEGORY_SPELL_MISSILES, bp15, iCloudInsideVisualSize + C66_GDAT_IMG_SPELL_EXPLOSION_INSIDE_LOW);
 						X16 bp24 = READ_UI16(bp04,-2) * READ_UI16(bp04,-4);
 						//^32CB:2F34
 						SRECT bp2e;
@@ -16943,7 +16711,7 @@ _2eda:
 							RAND16(bp24 -0x28),
 							_4976_00f6,
 							0,
-							_32cb_0649(0xd, bp15, bp0a +0x42, 0)
+							_32cb_0649(GDAT_CATEGORY_SPELL_MISSILES, bp15, iCloudInsideVisualSize + C66_GDAT_IMG_SPELL_EXPLOSION_INSIDE_LOW, 0)
 							);
 						continue;
 					}
@@ -16993,6 +16761,7 @@ _2eda:
 						glbTempPicture.w32 += bp0a;
 					}
 				}
+
 				//^32CB:30F3
 				glbTempPicture.w32 = CALC_STRETCHED_SIZE(glbTempPicture.w32, bp22);
 				glbTempPicture.w34 = CALC_STRETCHED_SIZE(glbTempPicture.w34, bp22);
@@ -22669,9 +22438,7 @@ _0062:
 //^075F:11BA
 void SkWinCore::STEP_MISSILE(Timer *ref)
 {
-	//^075F:11BA
 	ENTER(48);
-	//^075F:11C0
 	Timer bp30;
 	COPY_MEMORY(ref, &bp30, 10);
 	Timer *bp04 = &bp30;
@@ -22685,22 +22452,17 @@ void SkWinCore::STEP_MISSILE(Timer *ref)
 	X16 si;
 	U16 bp12;
 	if (bp04->TimerType() == tty1D) {
-		//^075F:121C
 		bp04->TimerType(tty1E);
 	}
 	else {
-		//^075F:1224
 		si = bp0e.Dir();
 		bp24 = GET_CREATURE_AT(di, bp10);
 		if (bp24 != OBJECT_NULL) {
-			//^075F:1242
 			Creature *bp0c = GET_ADDRESS_OF_RECORD4(bp24);
 			if ((QUERY_CREATURE_AI_SPEC_FLAGS(bp24) & 2) != 0) {
 				if (bp08->GetMissileObject().IsMissile()) {
-					//^075F:126C
 					i16 bp26 = tbl32_4976_0094[RCJ(32, bp04->Direction() + (((bp0c->b15_0_1() & 1) << 4) + (si << 2)))];
 					if (bp26 < 4) {
-						//^075F:12A9
 						bp04->Direction(U8(bp26));
 						glbTimersTable[bp08->TimerIndex()].Direction(bp26 & 3);
 					}
@@ -22708,7 +22470,6 @@ void SkWinCore::STEP_MISSILE(Timer *ref)
 				}
 			}
 		}
-		//^075F:12E3
 		if (glbCurrentMapIndex == glbMap_4c28) {
 			if (di == glbSomePosX_4c2e) {
 				if (bp10 == glbSomePosY_4c30) {
@@ -22718,29 +22479,22 @@ void SkWinCore::STEP_MISSILE(Timer *ref)
 				}
 			}
 		}
-		//^075F:1313
 		if (MISSILE_HIT_075f_0af9(-1, di, bp10, si, bp14) != 0)
 			return;
-		//^075F:132B
 _132b:
 		if (bp08->EnergyRemaining() <= (bp12 = bp04->b9_4_7())) {
-			//^075F:1349
 			CUT_RECORD_FROM(bp0e = bp14, NULL, di, bp10);
 			DELETE_MISSILE_RECORD(bp0e, NULL, di, bp10);
 			return;
 		}
-		//^075F:1375
 		bp08->EnergyRemaining(bp08->EnergyRemaining() -U8(bp12));
 		if (bp08->EnergyRemaining2() < bp12) {
-			//^075F:1391
 			bp08->EnergyRemaining2(0);
 		}
 		else {
-			//^075F:1398
 			bp08->EnergyRemaining2(bp08->EnergyRemaining2() -bp12);
 		}
 	}
-	//^075F:13A6
 	X16 bp1c = bp04->Direction();
 	bp0e = bp04->id6();
 	si = bp0e.Dir();
@@ -22748,7 +22502,6 @@ _132b:
 	X16 bp20;
 	X16 bp22;
 	if (bp1e != 0) {
-		//^075F:13DF
 		bp20 = di;
 		bp22 = bp10;
 		di += glbXAxisDelta[bp1c];
@@ -22756,43 +22509,32 @@ _132b:
 		bp12 = GET_TILE_VALUE(di, bp10);
 		//ATLASSERT((bp12 >> 5) != ttMapExit); // SPX: why not? turn off this assert and see if it's that bad
 		if ((bp12 >> 5) != ttWall) {
-			//^075F:1414
 			if ((bp12 >> 5) != ttTrickWall || (bp12 & 5) != 0) {
-				//^075F:1425
 				if ((bp12 >> 5) != ttStairs)
 					goto _146e;
-				//^075F:142F
 				if ((glbCurrentTileMap[bp20][bp22] >> 5) != ttStairs)
 					goto _146e;
 			}
 		}
-		//^075F:144D
 		if (MISSILE_HIT_075f_0af9(bp12 >> 5, bp20, bp22, si, bp0e) != 0)
 			return;
-		//^075F:146E
 _146e:
 		ObjectID bp1a = GET_WALL_TILE_ANYITEM_RECORD(di, bp10);
 		for (; bp1a != OBJECT_END_MARKER; bp1a = GET_NEXT_RECORD_LINK(bp1a)) {
-			//^075F:147C
 			if (bp1a.DBType() == dbCloud) {
-				//^075F:148D
 				Cloud *bp18 = GET_ADDRESS_OF_RECORDF(bp1a);
 				if (bp18->CloudType() == missileTeleporter) {	// missileTeleporter
-					//^075F:14AB
 					X16 bp26 = ((glbTimersTable[bp08->TimerIndex()].Direction() & 3) +2) & 3;
 					bp04->Direction(U8(bp26));
 					glbTimersTable[bp08->TimerIndex()].Direction(U8(bp26));
 					di = bp20;
 					bp10 = bp22;
 					bp1e = 0;
-					//^075F:1515
 					break;
 				}
 			}
-			//^075F:1517
 		}
 	}
-	//^075F:152C
 	bp12 = si;
 	if ((bp1c & 1) == (si & 1)) {
 		si--;
@@ -22800,15 +22542,12 @@ _146e:
 	else {
 		si++;
 	}
-	//^075F:1543
 	si &= 3;
 	if (bp1e != 0) {
-		//^075F:1550
 		MOVE_RECORD_TO(ObjectID(bp0e, si), bp20, bp22, di, bp10);
 		if (bp08->GetMissileObject() == OBJECT_EFFECT_FIREBALL && glbCurrentMapIndex == cd.pi.glbPlayerMap) {	// oFF80
 			glbDoLightCheck = 1;
 		}
-		//^075F:158A
 		bp04->w8_0_4(_4976_5826);
 		bp04->w8_5_9(_4976_5828);
 		bp04->w8_a_b(_4976_581e);
@@ -22818,52 +22557,40 @@ _146e:
 		if (di != _4976_581c) {
 			CHANGE_CURRENT_MAP_TO(_4976_581c);
 		}
-		//^075F:1616
 		_4976_5826 += glbXAxisDelta[_4976_581e];
 		_4976_5828 += glbYAxisDelta[_4976_581e];
 		bp24 = GET_CREATURE_AT(_4976_5826, _4976_5828);
 		if (bp24 != OBJECT_NULL) {
-			//^075F:1649
 			ATTACK_CREATURE(bp24, _4976_5826, _4976_5828, 0x2006, 0x64, 0);
 		}
-		//^075F:1663
 		bp12 = GET_TILE_VALUE(_4976_5826, _4976_5828);
 		si = bp12 >> 5;
 		if (si != ttWall) {
-			//^075F:1682
 			if (si == ttTrickWall || (bp12 & 4) != 0) {
-				//^075F:168E
 				if (si == ttDoor || (bp12 &= 7) == 5 || bp12 <= 1) {
-					//^075F:16A8
 					_4976_5826 += glbXAxisDelta[_4976_581e];
 					_4976_5828 += glbYAxisDelta[_4976_581e];
 					bp24 = GET_CREATURE_AT(_4976_5826, _4976_5828);
 					if (bp24 != OBJECT_NULL) {
-						//^075F:16DB
 						ATTACK_CREATURE(bp24, _4976_5826, _4976_5828, 0x2006, 0x64, 0);
 					}
 				}
 			}
 		}
-		//^075F:16F5
 		if (_4976_581c != di) {
 			CHANGE_CURRENT_MAP_TO(di);
 		}
 	}
 	else {
-		//^075F:1704
 		if ((GET_TILE_VALUE(di, bp10) >> 5) == ttDoor && MISSILE_HIT_075f_0af9(4, di, bp10, bp12, bp14) != 0)
 			return;
-		//^075F:172F
 		CUT_RECORD_FROM(bp0e, NULL, di, bp10);
 		bp0e.Dir(si);
 		APPEND_RECORD_TO(bp0e, NULL, di, bp10);
 	}
-	//^075F:1766
 	bp04->dw00 += 1;
 	bp04->id6(bp0e);
 	bp08->TimerIndex(QUEUE_TIMER(bp04));
-	//^075F:178D
 	return;
 }
 
@@ -23283,7 +23010,8 @@ SkWinCore::SkWinCore()
 
 	skWinApp = NULL;
 // SPX / DM1 special init
-	cd.dm1.bDM1PortraitsActivated[0] = false;
+	for (int p=0; p<4; p++)
+		cd.dm1.bDM1PortraitsActivated[p] = false;
 	zeroMem(cd.dm1.xDM1PortraitsData, sizeof(cd.dm1.xDM1PortraitsData));
 //
 

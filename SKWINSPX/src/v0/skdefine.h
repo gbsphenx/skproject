@@ -76,12 +76,33 @@ enum dtIndex
 	dtWordValueExt	= 15,	// SPX: Normally unused, proceed as Word
 };
 
-#if !defined(SPELL_TYPE_POTION)
-#define SPELL_TYPE_POTION	1
-#define SPELL_TYPE_MISSILE	2
-#define SPELL_TYPE_GENERAL	3
-#define SPELL_TYPE_SUMMON	4
+#if !defined(C1_SPELL_TYPE_POTION)
+#define C1_SPELL_TYPE_POTION	1
+#define C2_SPELL_TYPE_MISSILE	2
+#define C3_SPELL_TYPE_GENERAL	3
+#define C4_SPELL_TYPE_SUMMON	4
 #endif
+
+#define C00_SPELL_ENCHANTMENT_LONG_LIGHT		0
+#define C01_SPELL_ENCHANTMENT_DARKNESS		1
+#define C02_SPELL_ENCHANTMENT_SPELLSHIELD		2
+#define C03_SPELL_ENCHANTMENT_INVISIBILITY		3
+#define C04_SPELL_ENCHANTMENT_PARTY_SHIELD		4
+#define C05_SPELL_ENCHANTMENT_LIGHT			5
+
+#define C06_SPELL_ENCHANTMENT_AURA_WISDOM		6
+#define C07_SPELL_ENCHANTMENT_AURA_DEXTERITY		7
+#define C08_SPELL_ENCHANTMENT_FIRESHIELD			8
+
+#define C09_SPELL_ENCHANTMENT_AURA_VITALITY		9
+#define C10_SPELL_ENCHANTMENT_AURA_STRENGTH		10
+#define C11_SPELL_ENCHANTMENT_AURA_SPEED			11
+
+#define C12_SPELL_ENCHANTMENT_X		12
+#define C13_SPELL_ENCHANTMENT_X		13
+#define C14_SPELL_ENCHANTMENT_SPELL_REFLECTOR		14
+#define C15_SPELL_ENCHANTMENT_ITEM_CREATOR		15
+
 
 
 #define DIR_NORTH	0
@@ -538,6 +559,11 @@ enum SkillLevel {
 #define GDAT_IMG_DOOR_COLORKEY_2				0x12
 
 #define GDAT_IMG_MAP_CHIP						0xF9
+
+#define C65_GDAT_IMG_SPELL_EXPLOSION_FRONT					0x41
+#define C66_GDAT_IMG_SPELL_EXPLOSION_INSIDE_LOW				0x42
+#define C67_GDAT_IMG_SPELL_EXPLOSION_INSIDE_MEDIUM			0x43
+#define C68_GDAT_IMG_SPELL_EXPLOSION_INSIDE_STRONG			0x44
 
 //------------------------------------------------------------------------------
 //	WALLSET / GRAPHICSSET ATTRIBUTES or GRAPHICS
@@ -1546,6 +1572,16 @@ typedef enum
 //	OK
 //	Cancel
 
+//------------------------------------------------------------------------------
+// Extended GDAT
+
+#define C01_GDAT_SPELLDEF_RUNE_1			0x01
+#define C02_GDAT_SPELLDEF_RUNE_2			0x02
+#define C03_GDAT_SPELLDEF_RUNE_3			0x03
+#define C04_GDAT_SPELLDEF_DIFFICULTY		0x04
+#define C05_GDAT_SPELLDEF_REQ_SKILL			0x05
+#define C06_GDAT_SPELLDEF_CLASS_CATEGORY	0x06
+#define C07_GDAT_SPELLDEF_RESULT_TYPE		0x07
 
 //------------------------------------------------------------------------------
 

@@ -1558,7 +1558,7 @@ protected:
 	void REVIVE_CHAMPION(U16 xx, U16 yy, U16 dir, U16 zz, U16 ee); // _2f3f_04ea
 	void INTERFACE_CHAMPION(U16 xx); // _24a5_1798
 	void INIT_BACKBUFF();
-	SpellDefinition *FIND_SPELL_BY_RUNES(U8 *runes);
+	SpellDefinition* FIND_SPELL_BY_RUNES(U8* runes);
 	i16 FIND_HAND_WITH_EMPTY_FLASK(Champion *ref);
 	void ADJUST_SKILLS(U16 player, U16 yy, U16 zz);
 	void SHOOT_ITEM(ObjectID rlItemThrown, U16 xx, U16 yy, U16 dir, U16 aa, U16 energyVal, U16 ene2Val, U16 dd);

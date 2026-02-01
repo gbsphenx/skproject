@@ -380,7 +380,7 @@ Mix_Chunk* MakeMixChunkFromConvertedPCM(const U8* xSoundBuffer, Uint32 iBufferSi
 
 	chunk->abuf = resampledBuffer;
 	chunk->alen = resampledSize;
-	chunk->volume = MIX_MAX_VOLUME;
+	chunk->volume = volume;//MIX_MAX_VOLUME;
 	chunk->allocated = 1;   // mixer will free abuf
 
     return chunk;
@@ -394,7 +394,7 @@ UINT SkRendererSDL::AudioPlaySound(const U8* xSoundBuffer, U32 iBufferSize, i8 i
 #if !defined (__NO_SDL__)
 	static int cnt = 0;
 
-    Mix_Chunk* chunk = MakeMixChunkFromConvertedPCM(xSoundBuffer, iBufferSize, 128); // full volume
+    Mix_Chunk* chunk = MakeMixChunkFromConvertedPCM(xSoundBuffer, iBufferSize, (int)(MIX_MAX_VOLUME * (float)iSoundVolume / 16.f)); // full volume
 	int channel = Mix_PlayChannel(-1, chunk, 0); // play once
 
     cnt |= 1;

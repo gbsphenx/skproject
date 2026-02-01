@@ -50,30 +50,30 @@ SkWinCore::EXTENDED_LOAD_SPELLS_DEFINITION(void)
 {
 	X16 iExtendedResult = 0;
 	{
-		U8 gdatentry = 0;
-		U8 index = 0;
-		U8 category = GDAT_CATEGORY_SPELL_DEF;
-		for (index = 0; index < MAXSPELL_CUSTOM-1; index++)	// MAXSPELL_CUSTOM = 255, but the value 255 is kept for the default.
+		U8 iGDatEntryValue = 0;
+		U8 iGDatItemId = 0;
+		U8 iGDatCategory = GDAT_CATEGORY_SPELL_DEF;
+		for (iGDatItemId = 0; iGDatItemId < MAXSPELL_CUSTOM-1; iGDatItemId++)	// MAXSPELL_CUSTOM = 255, but the value 255 is kept for the default.
 		{
-			U8 spellname[0x80];
-			gdatentry = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 0x01); // Test if RUNE01 is used
-			if (gdatentry != 0)
+			U8 sSpellname[0x80];
+			iGDatEntryValue = QUERY_GDAT_ENTRY_DATA_INDEX(iGDatCategory, iGDatItemId, dtWordValue, C01_GDAT_SPELLDEF_RUNE_1); // Test if RUNE01 is used
+			if (iGDatEntryValue != 0)
 			{
-				U8 *rc = QUERY_GDAT_TEXT(category, index, 0x18, spellname);
-				U8 rune2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 0x02);
-				U8 rune3 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 0x03);
-				dSpellsTableCustom[index].symbols = (MkssymVal(gdatentry, rune2, rune3));
-				dSpellsTableCustom[index].difficulty = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 0x04);
-				dSpellsTableCustom[index].requiredSkill = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 0x05);
-				U8 type = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 0x06);
-				U8 result = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 0x07);
-				dSpellsTableCustom[index].w6 = 0x0000 + (type & 0x0F) + ((result & 0x3F)<<4);
+				U8 *rc = QUERY_GDAT_TEXT(iGDatCategory, iGDatItemId, 0x18, sSpellname);
+				U8 rune2 = QUERY_GDAT_ENTRY_DATA_INDEX(iGDatCategory, iGDatItemId, dtWordValue, C02_GDAT_SPELLDEF_RUNE_2);
+				U8 rune3 = QUERY_GDAT_ENTRY_DATA_INDEX(iGDatCategory, iGDatItemId, dtWordValue, C03_GDAT_SPELLDEF_RUNE_3);
+				dSpellsTableCustom[iGDatItemId].symbols = (MkssymVal(iGDatEntryValue, rune2, rune3));
+				dSpellsTableCustom[iGDatItemId].difficulty = QUERY_GDAT_ENTRY_DATA_INDEX(iGDatCategory, iGDatItemId, dtWordValue, C04_GDAT_SPELLDEF_DIFFICULTY);
+				dSpellsTableCustom[iGDatItemId].requiredSkill = QUERY_GDAT_ENTRY_DATA_INDEX(iGDatCategory, iGDatItemId, dtWordValue, C05_GDAT_SPELLDEF_REQ_SKILL);
+				U8 type = QUERY_GDAT_ENTRY_DATA_INDEX(iGDatCategory, iGDatItemId, dtWordValue, C06_GDAT_SPELLDEF_CLASS_CATEGORY);
+				U8 result = QUERY_GDAT_ENTRY_DATA_INDEX(iGDatCategory, iGDatItemId, dtWordValue, C07_GDAT_SPELLDEF_RESULT_TYPE);
+				dSpellsTableCustom[iGDatItemId].w6 = 0x0000 + (type & 0x0F) + ((result & 0x3F)<<4);
 
-				dSpellsTableCustom[index].spellValue = result;
+				dSpellsTableCustom[iGDatItemId].spellValue = result;
 
-				SkD((DLV_TWEET, "Tweet: Loading spell %d (%02X) with %s (t:%s, d:%d, s:%s, v:%d)\n", index, index, spellname,
-					getSpellTypeName(type), dSpellsTableCustom[index].difficulty, getSkillName(dSpellsTableCustom[index].requiredSkill),
-					dSpellsTableCustom[index].SpellCastIndex()));
+				SkD((DLV_TWEET, "Tweet: Loading spell %d (%02X) with %s (t:%s, d:%d, s:%s, v:%d)\n", iGDatItemId, iGDatItemId, sSpellname,
+					getSpellTypeName(type), dSpellsTableCustom[iGDatItemId].difficulty, getSkillName(dSpellsTableCustom[iGDatItemId].requiredSkill),
+					dSpellsTableCustom[iGDatItemId].SpellCastIndex()));
 				
 				iExtendedResult = 1;
 				SkCodeParam::bUseCustomSpells = true;
@@ -81,9 +81,9 @@ SkWinCore::EXTENDED_LOAD_SPELLS_DEFINITION(void)
 		}
 #ifdef XDM2_EXTENDED_SPELLS_TAB
 		//--- Note: Due to extended structure of SpellDefinition in extended mode, the original spell tables must be adapted to this value
-		for (index = 0; index < MAXSPELL_ORIGINAL-1; index++)
+		for (iGDatItemId = 0; iGDatItemId < MAXSPELL_ORIGINAL-1; iGDatItemId++)
 		{
-			dSpellsTable[index].spellValue = U8((dSpellsTable[index].w6 >> 4)&0x3F);
+			dSpellsTable[iGDatItemId].spellValue = U8((dSpellsTable[iGDatItemId].w6 >> 4)&0x3F);
 		}
 #endif
 		return iExtendedResult;

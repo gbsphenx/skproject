@@ -912,58 +912,37 @@ _0baa:
 //^2759:274D
 U16 SkWinCore::TRY_CAST_SPELL()
 {
-	//^2759:274D
 	ENTER(10);
-	//^2759:2753
-	U16 bp0a = cd.pi.glbChampionIndex - 1;
-	//^2759:275A
-	Champion *bp04 = &glbChampionSquad[bp0a];
-	//^2759:2768
-	SpellDefinition *bp08 = FIND_SPELL_BY_RUNES(bp04->GetRunes());
-	//^2759:277E
+	U16 iChampionIndex = cd.pi.glbChampionIndex - 1;	// bp0a
+	Champion* xChampion = &glbChampionSquad[iChampionIndex];	// bp04
+	SpellDefinition* xSpellDef = FIND_SPELL_BY_RUNES(xChampion->GetRunes()); // bp08
 	// SPX: then si = 32 means a "meaningless spell", not existing spell
-	U16 si = (bp08 == NULL) 
+	U16 si = (xSpellDef == NULL) 
 		? 32
-		: CAST_SPELL_PLAYER(bp0a, bp08, i16(bp04->GetRunes()[0]) -0x5f);
-	//^2759:27A5
+		: CAST_SPELL_PLAYER(iChampionIndex, xSpellDef, i16(xChampion->GetRunes()[0]) - 0x5F);	// (0x5F is first rune (0x60) - 1)
 	// SPX: di = 0 : spell ok / di = 1 : spell failed
 	U16 di = (si != 0) ? 1 : 0;
-	//^2759:27B2
 	if (di != 0)
-		//^2759:27B6
 		PROCEED_SPELL_FAILURE(si);
-	//^2759:27BD
 	si &= 0x00f0;
-	//^2759:27C1
 	if (si != 0x0030) {
-		//^2759:27C8
-		bp04->GetRunes()[0] = 0;
-		bp04->runesCount = 0;
-		//^2759:27D5
+		xChampion->GetRunes()[0] = 0;
+		xChampion->runesCount = 0;
 		DISPLAY_RIGHT_PANEL_SQUAD_HANDS();
 	}
-	//^2759:27D9
 	return di;
 }
 
 //^2759:289C
 void SkWinCore::REMOVE_RUNE_FROM_TAIL()
 {
-	//^2759:289C
 	ENTER(4);
-	//^2759:28A0
-	Champion *champion = &glbChampionTable[cd.pi.glbChampionIndex];	//*bp04
-	//^2759:28B1
-	champion->RuneCnt(champion->RuneCnt() -1);
-	//^2759:28BE
-	champion->GetRunes()[champion->RuneCnt()] = 0;
-	//^2759:28C7
+	Champion* xChampion = &glbChampionTable[cd.pi.glbChampionIndex];	//*bp04
+	xChampion->RuneCnt(xChampion->RuneCnt() -1);
+	xChampion->GetRunes()[xChampion->RuneCnt()] = 0;
 	glbSomeChampionPanelFlag = 1;
-	//^2759:28CD
 	UPDATE_RIGHT_PANEL(0);
-	//^2759:28D4
 	_1031_0667();
-	//^2759:28D9
 	return;
 }
 

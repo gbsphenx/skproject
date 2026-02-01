@@ -1720,6 +1720,10 @@ SRECT *SkWinCore::QUERY_EXPANDED_RECT(U16 rectno, SRECT *rc)
 //^0B36:1599
 void SkWinCore::DRAW_DIALOGUE_PICT(Bit8u *srcImage, Bit8u *dstImage, SRECT *rect, U16 srcx, U16 srcy, U16 colorkey, Bit8u localpal[16])
 {
+	if (SkCodeParam::bUsePowerDebug) {
+		if (!CheckSafePointer(srcImage) || !CheckSafePointer(dstImage))
+			return;
+	}
 	// draw the:
 	// a) pre rendered dialogue to screen
 
@@ -1761,11 +1765,8 @@ void SkWinCore::FREE_PICT_BUFF(Bit8u *buff)
 //^098D:0C13
 void SkWinCore::TRIM_BLIT_RECT(i16 xx, i16 yy, i16 ss, i16 tt)
 {
-	//^098D:0C13
 	ENTER(0);
-	//^098D:0C16
 	SET_SRECT(&_4976_4bca, xx, yy, _4976_00f6 -ss -xx, _4976_00f8 -tt -yy);
-	//^098D:0C43
 	return;
 }
 
@@ -1774,25 +1775,16 @@ void SkWinCore::TRIM_BLIT_RECT(i16 xx, i16 yy, i16 ss, i16 tt)
 // SPX: _00eb_05c7 renamed SET_GRAPHICS_RGB_PALETTE
 X16 SkWinCore::SET_GRAPHICS_RGB_PALETTE(U8 (*pal)[4], X16 yy) //#DS=04BF
 {
-	//^00EB:05C7
 	ENTER(0);
-	//^00EB:05CB
 	LOADDS(0x0C48);
 	i16 si;
 	for (si = 0; si < 0x100; si++) {
-		//^00EB:05D5
 		glbPaletteRGB[si][0] = pal[si][1] >> 2;
-		//^00EB:05F7
 		glbPaletteRGB[si][1] = pal[si][2] >> 2;
-		//^00EB:0619
 		glbPaletteRGB[si][2] = pal[si][3] >> 2;
-		//^00EB:063B
 	}
-	//^00EB:0642
 	if (glbUpdatePalette == 1)
-		//^00EB:0649
 		IBMIO_UPDATE_PALETTE_SET();
-	//^00EB:064E
 	return 1;
 }
 
@@ -1850,84 +1842,58 @@ X8* SkWinCore::QUERY_PICST_IMAGE(Picture *ref)
 //^3E74:0A77
 void SkWinCore::FREE_PICT6(SkImage *ref)
 {
-	//^3E74:0A77
 	ENTER(0);
-	//^3E74:0A7A
 	if (_4976_5d76 == 0) {
-		//^3E74:0A81
 		if (READ_UI16(ref,-6 +4) == afDefault) {
-			//^3E74:0A9D
 			DEALLOC_UPPER_MEMORY(READ_UI32(ref,-6 +0));
 		}
 		else {
-			//^3E74:0ABF
 			DEALLOC_LOWER_MEMORY(READ_UI32(ref,-6 +0));
 		}
 	}
-	//^3E74:0AE1
 	return;
 }
 
 //^3E74:52F4
 i16 SkWinCore::QUERY_GDAT_PICT_OFFSET(Bit8u cls1, Bit8u cls2, Bit8u cls4)
 {
-	//^3E74:52F4
 	ENTER(8);
-	//^3E74:52FA
 	U16 di = 0;
-	//^3E74:52FC
 	RawEntry *bp04 = QUERY_GDAT_ENTRYPTR(cls1, cls2, dtImage, cls4);
-	//^3E74:5317
 	if (bp04 == NULL) {
-		//^3E74:5325
 		return 0;
 	}
 	else {
-		//^3E74:532A
 		U16 si = bp04->data;
-		//^3E74:5331
 		SkImage *bp04;
 		if (glbShelfMemoryTable[si].Absent()) {
-			//^3E74:534E
 			di = 1;
-			//^3E74:5351
 			bp04 = reinterpret_cast<SkImage *>(QUERY_GDAT_ENTRY_DATA_PTR(cls1, cls2, dtImage, cls4));
 		}
 		else {
-			//^3E74:5368
 			bp04 = reinterpret_cast<SkImage *>(REALIZE_GRAPHICS_DATA_MEMORY(glbShelfMemoryTable[si]));
 		}
-		//^3E74:5386
 		i16 bp06 = bp04->Xoffset();
-		//^3E74:5392
 		i16 bp08;
 		if (bp06 == -32) {
-			//^3E74:5397
 			si = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, dtImageOffset, cls4);
 		}
 		else {
-			//^3E74:53AE
 			bp08 = bp04->Yoffset();
 #if DM2_EXTENDED_MODE == 1
 			if (bp08 == -32 || bp08 == 31) {
 				bp08 = 0;
 			}
 #else
-			//^3E74:53BB
 			if (bp08 == -32) {
-				//^3E74:53C0
 				bp08 = 0;
 			}
 #endif
-			//^3E74:53C5
 			si = (bp06 << 8) | Bit8u(bp08);
 		}
-		//^3E74:53D2
 		if (di != 0) {
-			//^3E74:53D8
 			FREE_PICT6(bp04);
 		}
-		//^3E74:53E4
 		return si;
 	}
 }
@@ -1939,11 +1905,8 @@ ExtendedPicture *SkWinCore::QUERY_GDAT_SUMMARY_IMAGE(ExtendedPicture *ref, Bit8u
 	SkD((DLV_DBG_GETPIC, "DBG: QUERY_GDAT_SUMMARY_IMAGE(%p,%02X,%02X,%02X)\n"
 		, ref, (Bitu)iCategory, (Bitu)iItemNo, (Bitu)iEntry));
 
-	//^0B36:0520
 	ENTER(8);
-    //^0B36:0524
 	ZERO_MEMORY(ref, 314);
-	//^0B36:0537
 	ref->w12 = -1;
 	ref->iGDatCategory = iCategory;
 	ref->iGDatItemId = iItemNo;
@@ -1955,50 +1918,32 @@ ExtendedPicture *SkWinCore::QUERY_GDAT_SUMMARY_IMAGE(ExtendedPicture *ref, Bit8u
 	ref->w26 = 0xffff;
 	ref->pb44 = _4976_4964;
 	ref->colorKeyPassThrough = -1;
-	//^0B36:0586
 	if (iCategory != 0xff) {
-		//^0B36:058F
 		ref->w6 = QUERY_GDAT_ENTRY_DATA_INDEX(iCategory, iItemNo, dtImage, iEntry);
-		//^0B36:05AC
 		i16 bp02 = QUERY_GDAT_ENTRY_DATA_INDEX(iCategory, iItemNo, dtImageOffset, 0xFE);
-		//^0B36:05C4
 		if (bp02 != 0) {
-			//^0B36:05C8
 			ref->iXOffset += i8(bp02 >> 8);
-			//^0B36:05D3
 			ref->iYOffset += i8(bp02);
 		}
-		//^0B36:05DB
 		bp02 = QUERY_GDAT_PICT_OFFSET(iCategory, iItemNo, iEntry);
 		if (bp02 != 0) {
 			ref->iXOffset += i8(bp02 >> 8);
 			ref->iYOffset += i8(bp02);
 		}
-		//^0B36:0609
 		Bit8u *bp06 = QUERY_GDAT_IMAGE_LOCALPAL(iCategory, iItemNo, iEntry);
-		//^0B36:0623
 		if (bp06 == NULL) {
-			//^0B36:062B
 			ref->w56 = 256;
-			//^0B36:0634
 			bp06 = ref->b58;
-			//^0B36:0643
 			i16 bp08 = 0;
-			//^0B36:0648
 			for (; bp08 < 256; bp08++) {
-				//^0B36:064A
 				bp06[bp08] = (Bit8u)bp08;
-				//^0B36:0656
 			}
 		}
 		else {
-			//^0B36:0662
 			ref->w56 = 16;
-			//^0B36:066B
 			COPY_MEMORY(bp06, ref->b58, 16);
 		}
 	}
-	//^0B36:0687
 	return ref;
 }
 
@@ -2006,48 +1951,31 @@ ExtendedPicture *SkWinCore::QUERY_GDAT_SUMMARY_IMAGE(ExtendedPicture *ref, Bit8u
 //^3E74:58BF
 void SkWinCore::ALLOC_IMAGE_MEMENT(Bit8u cls1, Bit8u cls2, Bit8u cls4)
 {
-	//^3E74:58BF
 	ENTER(4);
-	//^3E74:58C5
 	U16 si = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, dtImage, cls4);
-	//^3E74:58DC
 	if (si != 0xffff && glbShelfMemoryTable[si].Absent()) {
-		//^3E74:58FC
 		si = QUERY_GDAT_ENTRY_DATA_INDEX(0x15,0xfe,dtImage,0xfe);			
 	}
-	//^3E74:590F
 	if (si != 0xffff) {
-		//^3E74:5914
 		U16 di = QUERY_MEMENTI_FROM(si);
-		//^3E74:591C
 		if (di == 0xffff) {
 			if (glbShelfMemoryTable[si].Absent()) {
-				//^3E74:593C
 				return;
 			}
-			//^3E74:593E
 			SkImage *bp04 = reinterpret_cast<SkImage *>(REALIZE_GRAPHICS_DATA_MEMORY(glbShelfMemoryTable[si]));
-			//^3E74:595C
 			if (bp04->Yoffset() != -32) {
-				//^3E74:5969
 				return;
 			}
-			//^3E74:596B
 			if (bp04->BitsPixel() != 8) {
-				//^3E74:5980
 				return;
 			}
-			//^3E74:5982
 			_4976_4807 = si;
-			//^3E74:5986
 			return;
 		}
 		else {
-			//^3E74:5988
 			_3e74_4549(di);
 		}
 	}
-	//^3E74:598E
 	return;
 }
 
@@ -2074,32 +2002,20 @@ Bit32u SkWinCore::CALC_PICT_ENT_HASH(ExtendedPicture *ref)
 //^3E74:5992
 void SkWinCore::FREE_IMAGE_MEMENT(Bit8u cls1, Bit8u cls2, Bit8u cls4)
 {
-	//^3E74:5992
 	ENTER(0);
-	//^3E74:5997
 	U16 si = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, dtImage, cls4);
-	//^3E74:59AE
 	if (si == 0xffff || glbShelfMemoryTable[si].Absent()) {
-		//^3E74:59CE
 		si = QUERY_GDAT_ENTRY_DATA_INDEX(0x15,0xfe,dtImage,0xfe);
 	}
-	//^3E74:59E1
 	if (si == 0xffff)
-		//^3E74:59E4
 		return;
-	//^3E74:59E6
 	if (_4976_4807 == si) {
-		//^3E74:59EC
 		_4976_4807 = 0xffff;
 	}
-	//^3E74:59F2
 	U16 di = QUERY_MEMENTI_FROM(si);
-	//^3E74:59FA
 	if (di != 0xffff) {
-		//^3E74:59FF
 		RECYCLE_MEMENTI(di, 0);
 	}
-	//^3E74:5A08
 	return;
 }
 
@@ -2120,20 +2036,16 @@ void SkWinCore::FREE_PICT_MEMENT(Picture *ref)
 // TODO: related gfx ?
 void SkWinCore::_44c8_2307(X16 xx, X16 yy, X16 zz, X16 ww)
 {
-	//^44C8:2307
 	ENTER(4);
-	//^44C8:230D
 	U8 *bp04 = _4976_5e64 + xx;
 	U16 di = zz >> 1;
 	U16 cx = ww + yy;
 	U16 si = yy;
 	do {
-		//^44C8:2331
 		_4976_5e6a[si] = bp04[di >> 7];
 		di += zz;
 		si++;
 	} while (si < cx);
-	//^44C8:234D
 	return;
 }
 
@@ -2141,9 +2053,7 @@ void SkWinCore::_44c8_2307(X16 xx, X16 yy, X16 zz, X16 ww)
 //^44C8:2351
 void SkWinCore::_44c8_2351(Bit8u *xx, Bit8u *yy, U16 ss, U16 tt, U16 uu, U16 vv)
 {
-	//^44C8:2351
 	ENTER(10);
-	//^44C8:2357
 	U16 di = uu;
 	_4976_5e64 = xx;
 	_4976_5e6a = yy;
@@ -2154,30 +2064,23 @@ void SkWinCore::_44c8_2351(Bit8u *xx, Bit8u *yy, U16 ss, U16 tt, U16 uu, U16 vv)
 	X16 bp08 = 0; // defaulting to 0
 	X16 bp0a = 0; // defaulting to 0
 	for (; si < vv; bp0a = bp08, bp02 += bp06, si++) {
-		//^44C8:23B2
 		bp08 = bp02 >> 7;
 		if (bp0a == bp08 && si > 0) {
-			//^44C8:23C7
 			_4976_5e64 = yy;
 			_44c8_0b8d((si -1) * di, si * di, di);
 			_4976_5e64 = xx;
 		}
 		else {
-			//^44C8:23F6
 			_44c8_2307(bp08 * ss, si * di, bp04, di);
 		}
-		//^44C8:240D
 	}
-	//^44C8:241F
 	return;
 }
 
 //^44C8:000F
 void SkWinCore::FIRE_BLIT_TO_MEMORY_ROW_4TO4BPP(U16 offSrc, U16 offDst, U16 width)
 {
-	//^44C8:000F
 	ENTER(0);
-	//^44C8:0015
 	Bit8u *di = _4976_5e6a;
 	Bit8u *si = _4976_5e64;
 	U16 cx = width;
@@ -2186,65 +2089,45 @@ void SkWinCore::FIRE_BLIT_TO_MEMORY_ROW_4TO4BPP(U16 offSrc, U16 offDst, U16 widt
 	offSrc >>= 1;
 	bool carry2;
 	if (!carry1) {
-		//^44C8:0028
 		si += offSrc;
-		//^44C8:002D
 		carry2 = (offDst & 1) ? true : false;
 		offDst >>= 1;
 		if (!carry2) {
-			//^44C8:0034
 			di += offDst;
 
-			//^44C8:0036
 _0036:
 			bool carry3 = (cx & 1) ? true : false;
 			cx >>= 1;
 			{
-				//^44C8:0039
 				bool carry4 = (cx & 1) ? true : false;
 				cx >>= 1;
-				//^44C8:003B
 				if (carry4) {
-					//^44C8:003D
 					*di = *si; di++; si++;
 				}
-				//^44C8:003E
 				while (cx != 0) {
-					//^44C8:0043
 					*di = *si; di++; si++;
 					*di = *si; di++; si++;
 					cx--;
 				}
 			}
-			//^44C8:0049
 			if (carry3) {
 				*di = (*si & 0xf0) | (*di & 0x0f); si++; di++;
 			}
 		}
 		else {
-			//^44C8:00B5
 			di += offSrc;
-			//^44C8:00B7
 			Bit8u bh = *di;
-			//^44C8:00BA
 			cx++;
 			bool carry = (cx & 1) ? true : false;
 			cx >>= 1;
-			//^44C8:00BE
 			if (cx != 0) {
-				//^44C8:00C0
 				bool carry = (cx & 1) ? true : false;
-				//^44C8:00C2
 				if (carry) {
-					//^44C8:00C4
 					Bit8u al = *si; si++;
-					//^44C8:00C6
 					*di = (bh & 0xf0) | (al >> 4); di++;
 					bh = al << 4;
 				}
-				//^44C8:00D6
 				if (cx != 0) {
-					//^44C8:00D8
 					bh &= 0xf0;
 					do {
 						// AL   AH   BL   BH
@@ -2259,65 +2142,45 @@ _0036:
 						// ------------------
 						// m13  m45       m60
 
-						//^44C8:00DB
 						Bit8u al = *si; si++;
 						Bit8u ah = *si; si++;
 						*di =  bh       | (al >> 4); di++;
 						*di = (al << 4) | (ah >> 4); di++;
 						bh = ah << 4;
-						//^44C8:00EC
 					} while (--cx != 0);
 				}
 			}
-			//^44C8:00EE
 			if (carry) {
-				//^44C8:00F1
 				*di = (*di & 0x0f) | bh; di++;
 			}
 		}
 	}
 	else {
-		//^44C8:0068
         si += offSrc;
 		{
-			//^44C8:006A
 			bool carry = (offDst & 1) ? true : false;
 			offDst >>= 1;
-			//^44C8:006F
 			if (carry) {
-				//^44C8:0059
 				di += offDst;
-				//^44C8:005B
 				*di = (*si & 0x0f) | (*di & 0xf0); si++; di++;
-				//^44C8:0065
 				cx--;
-				//^44C8:0066
 				goto _0036;
 			}
 		}
-		//^44C8:0071
 		di += offDst;
-		//^44C8:0073
 		Bit8u bh = *si; si++;
 		{
-			//^44C8:0076
 			bool carry = (cx & 1) ? true : false;
 			cx >>= 1;
-			//^44C8:0079
 			if (cx != 0) {
-				//^44C8:007B
 				bool carry = (cx & 1) ? true : false;
 				cx >>= 1;
-				//^44C8:007D
 				if (carry) {
-					//^44C8:007F
 					Bit8u bl = *si;
 					*di = (*si >> 4) | (bh << 4); di++; si++;
 					bh = bl;
 				}
-				//^44C8:008C
 				if (cx != 0) {
-					//^44C8:008E
 					bh &= 0x0f;
 					do {
 						// AL   AH   BL   BH
@@ -2331,24 +2194,19 @@ _0036:
 						// ------------------
 						// m12  m34       m05
 
-						//^44C8:0091
 						Bit8u al = *si; si++;
 						Bit8u ah = *si; si++;
 						*di = (bh << 4) | (al >> 4); di++;
 						*di = (al << 4) | (ah >> 4); di++;
 						bh = ah & 0x0f;
-						//^44C8:00A2
 					} while (--cx != 0);
 				}
 			}
-			//^44C8:00A4
 			if (carry) {
-				//^44C8:00A7
 				*di = (*di & 0x0f) | (bh << 4);
 			}
 		}
 	}
-	//^44C8:00F9
 	return;
 }
 
@@ -2357,16 +2215,13 @@ void SkWinCore::_44c8_20e5(U16 srcOff, U16 dstOff, U16 srcWidth, U16 dstWidth)
 {
 	ATLASSERT(srcWidth != 0);
 
-	//^44C8:20E5
 	ENTER(0);
-	//^44C8:20EA
     Bit8u *di = _4976_5e6a + (dstOff >> 1);
 	U16 cx = srcWidth >> 1;
 	U16 dx = (dstWidth +1) >> 1;
 	Bit8u *si = _4976_5e64 + (srcOff >> 1);
 	Bit8u bh = 0;
 	do {
-		//^44C8:2111
 		Bit8u ah = si[cx >> 8];
 		if ((cx & 0x80) == 0) {
 			ah &= 0xf0;
@@ -2386,7 +2241,6 @@ void SkWinCore::_44c8_20e5(U16 srcOff, U16 dstOff, U16 srcWidth, U16 dstWidth)
 		*di = al | ah; di++;
 		cx += srcWidth;
 	} while (--dx != 0);
-	//^44C8:213E
 	return;
 }
 
@@ -2394,28 +2248,21 @@ void SkWinCore::_44c8_20e5(U16 srcOff, U16 dstOff, U16 srcWidth, U16 dstWidth)
 //^44C8:2143
 void SkWinCore::_44c8_2143(U16 xx, U16 yy, U16 ss, U16 tt)
 {
-	//^44C8:2143
 	ENTER(4);
-	//^44C8:2149
 	U16 si = ss >> 1;
 	U16 bp04 = ((tt +yy) +1) >> 1;
 	U16 di = yy >> 1;
-	//^44C8:2163
 	while (di < bp04) {
-		//^44C8:2166
 		U16 bp02 = (si >> 7) +xx;
 		U8 al;
 		U8 dl = al = _4976_5e64[bp02 >> 1];
 		si += ss;
 		if ((bp02 & 1) != 0) {
-			//^44C8:2188
 			al &= 0xF;
 		}
 		else {
-			//^44C8:218F
 			al >>= 4;
 		}
-		//^44C8:2196
 		al = _4976_5dbe[al];
 		al <<= 4;
 		U8 cl = al;
@@ -2424,20 +2271,15 @@ void SkWinCore::_44c8_2143(U16 xx, U16 yy, U16 ss, U16 tt)
 		dl = al;
 		si += ss;
 		if ((bp02 & 1) != 0) {
-			//^44C8:21C6
 			al &= 0xF;
 		}
 		else {
-			//^44C8:21CD
 			al >>= 4;
 		}
-		//^44C8:21D4
 		al = cl | _4976_5dbe[al];
 		_4976_5e6a[di] = al;
 		di++;
-		//^44C8:21E7
 	}
-	//^44C8:21EF
 	return;
 }
 
@@ -2595,7 +2437,7 @@ void SkWinCore::_32cb_2cf3(U8 cls2, U16 scale64, U16 mirrorFlip, U16 rectno)
 	ENTER(0);
 	U16 si = scale64;
 	si = BETWEEN_VALUE(8, si & 0xfffe, 64);
-	QUERY_GDAT_SUMMARY_IMAGE(&glbTempPicture, 0xd, cls2, 0x41);
+	QUERY_GDAT_SUMMARY_IMAGE(&glbTempPicture, GDAT_CATEGORY_SPELL_MISSILES, cls2, C65_GDAT_IMG_SPELL_EXPLOSION_FRONT);	// 0x0d, cls, 0x41
 	glbTempPicture.w32 = glbTempPicture.iXOffset;
 	glbTempPicture.w34 = glbTempPicture.iYOffset;
 	glbTempPicture.iYOffset = glbTempPicture.iXOffset = 0;
@@ -2605,8 +2447,23 @@ void SkWinCore::_32cb_2cf3(U8 cls2, U16 scale64, U16 mirrorFlip, U16 rectno)
 	glbTempPicture.pb44 = _4976_4c16;
 	glbTempPicture.mirrorFlip = mirrorFlip;
 	glbTempPicture.iYStretch = glbTempPicture.iXStretch = si;
+
+
+
 	_0b36_037e(glbTempPicture.b58, i8(_4976_5a88), 10, -1, glbTempPicture.w56);
 	QUERY_PICST_IT(&glbTempPicture);
+
+	// SPX: it seems to be missing the displacement from GDAT, else, a cloud/explosion appears on the floor
+	if (SkCodeParam::bUseFixedMode) {
+		glbTempPicture.iXOffset = 0;	// default
+		glbTempPicture.iYOffset = -55;	// default
+		X16 iDisplacementWord = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_SPELL_MISSILES, cls2, dtImageOffset, C65_GDAT_IMG_SPELL_EXPLOSION_FRONT);
+		if (iDisplacementWord != 0) {
+			glbTempPicture.iXOffset = ((i8)(iDisplacementWord>>8));
+			glbTempPicture.iYOffset = ((i8)(iDisplacementWord&0xFF));
+		}
+	}
+
 	return;
 }
 
