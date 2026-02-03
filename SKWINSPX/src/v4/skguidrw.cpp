@@ -4526,7 +4526,6 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 			if (!IS_OBJECT_VISIBLE_TEXT(xTextObject))
 				bDrawSideTextPanel = 0;
 		}
-		printf("DRAW_WALL_ORNATE 1\n");
 		if (bDrawSideTextPanel == 1) // SPX: added this condition
 			DRAW_TEMP_PICST();
 		if (yy != 0)
@@ -4542,7 +4541,6 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		i16 bp4aheight; // bp4a
 		QUERY_GDAT_IMAGE_METRICS(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, iTextPanelImageID, &bp48width, &bp4aheight);
 		U16 iTempCacheIndex = ALLOC_TEMP_CACHE_INDEX();	// bp26
-		printf("Alloc Temp Cache Index = %d\n", iTempCacheIndex);
 		U8 strWallText[80]; // bp009c
 		// TODO SPX protection : check that bp32 is of text cat
 		QUERY_MESSAGE_TEXT(strWallText, bp32, 2);	// str, rl
@@ -4565,7 +4563,6 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 			bp3a = _4976_012a;
 			bp3c = _4976_012c +2;
 		}
-		printf("DRAW_WALL_ORNATE 2\n");
 		U8* bp08 = ALLOC_NEW_PICT(iTempCacheIndex, bp48width, bp4aheight, 4);	// index, width, height (bp26, bp48, bp4a, 4);
 		FILL_ENTIRE_PICT(bp08, si);
 		SRECT rc44;
@@ -4590,7 +4587,6 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 			}
 		}
 		else {
-			printf("DRAW_WALL_ORNATE 3\n");
 			U8 *bp0c = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_x03_LETTERS);	// 0x08 .. 0x03
 			rc44.cx = bp3a;
 			rc44.cy = READ_I16(bp0c,-2);
@@ -4625,7 +4621,6 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 				rc44.y += bp3c;
 			} while (*(bp04++) != 0);
 		}
-		printf("DRAW_WALL_ORNATE 4\n");
 		QUERY_GDAT_SUMMARY_IMAGE(&bp01d6, 0xFF, 0x00, 0x00);
 		bp01d6.w12 = iTempCacheIndex;
 		bp01d6.w6 = 0xFFFF;
@@ -4636,7 +4631,6 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 			bp01d6.b58[2] = glbPaletteT16[COLOR_BROWN];
 		}
 		else {
-			printf("COPY PAL\n");
 			COPY_MEMORY(
 				QUERY_GDAT_IMAGE_LOCALPAL(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_x03_LETTERS),	// 08 .. 03
 				bp01d6.b58,
@@ -4651,16 +4645,11 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		bp01d6.iXOffset = bp2c;
 		bp01d6.iYOffset = bp2e;
 		bp01d6.colorKeyPassThrough = si;
-		printf("DRAW_PICST\n");
 		DRAW_PICST(QUERY_PICST_IT(&bp01d6));
-		printf("FREE_TEMP_CACHE_INDEX %d\n", iTempCacheIndex);
 		FREE_TEMP_CACHE_INDEX(iTempCacheIndex);
-		printf("DRAW_WALL_ORNATE 5\n");
-		printf("return si = %d\n", si);
 		return si;
 	}
 
-	printf("DRAW_WALL_ORNATE 6 - NO TEXT?\n");
 	U8 iImageEntry;	// U8 bp20; which image entry. 1 = front / 0 = side. Add default init to FRONT
 	if (yy == 0) {	// Front image
 		iImageEntry = GDAT_WALL_IMAGE__x01_VIEW_FRONT;	// = 1;	front view

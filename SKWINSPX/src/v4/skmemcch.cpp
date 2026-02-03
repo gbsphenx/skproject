@@ -32,7 +32,7 @@ mement* SkWinCore::_3e74_48c9_MEMENT(U16 mementi)
 	mement* xMement2 = xMement;	// bp0c
 	if (si == 0) {
 		U16 di = xMement->w8();
-		if (di == 0xffff) {
+		if (di == 0xFFFF) {
 			glbMement2 = (xMement != _4976_5c8c) ? xMement : NULL;
 			xMement->w4(1);
 			return xMement;
@@ -280,7 +280,6 @@ void SkWinCore::MEMENT_3e74_0c8c(mement *ref)
 void SkWinCore::MEMENT_3e74_0d32(mement* xMemEntRef)
 {
 	// cqOk @ 21:03 2007/02/21
-	printf("MEMENT-01\n");
 	mement* xMement1 = xMemEntRef;	// bp04
 	if (glbMement1 == NULL) {
 		glbMement1 = xMement1;
@@ -289,7 +288,6 @@ _0d71:
 		xMement1->pv4(NULL);	// glbMement1->pv4(NULL);
 		return;
 	}
-	printf("MEMENT-02\n");
 	mement* xMemEntry2 = glbMement1;	// bp08
 	i32 bp0c = xMement1->dw0();
 	if (xMemEntry2->dw0() <= bp0c) {
@@ -300,7 +298,6 @@ _0d71:
 		goto _0d71;
 	}
 
-	printf("MEMENT-03\n");
 	U16 si = 0;
 	while ((xMement1 = xMemEntry2->pv8()) != NULL) {
 		if (xMement1->dw0() <= bp0c) {
@@ -313,13 +310,11 @@ _0d71:
 		}
 		xMemEntry2 = xMement1;
 	}
-	printf("MEMENT-04\n");
 	if (si == 0) {
 		xMemEntry2->pv8(xMemEntRef);
 		xMemEntRef->pv4(xMemEntry2);
 		xMemEntRef->pv8(NULL);
 	}
-	printf("MEMENT-END\n");
 	return;
 }
 
@@ -372,7 +367,7 @@ void SkWinCore::FREE_INDEXED_MEMENT(U16 index)
 		_4976_4809 = 0xFFFF;
 	}
 	U16 iMemEntryIndex = QUERY_MEMENTI_FROM(iLocalCacheIndex);	// si
-	printf("MEMENTI %d from CACHIDX %d\n", iMemEntryIndex, iLocalCacheIndex);
+	//printf("MEMENTI %d from CACHIDX %d\n", iMemEntryIndex, iLocalCacheIndex);
 	if (iMemEntryIndex == 0xFFFF)
 		return;
 	if ((iLocalCacheIndex & 0x8000) == 0) {
@@ -397,7 +392,7 @@ void SkWinCore::FREE_INDEXED_MEMENT(U16 index)
 		glbNextFreeMementIndex = iMemEntryIndex;
 	}
 	i32 iMementSize = -(xMemEntry->dw0());// bp0c
-	printf("WHAT IS bp0c = %08x\n", iMementSize);
+//	printf("WHAT IS bp0c = %08x\n", iMementSize);
 	_4976_5cf8 += iMementSize;
 	SkD((DLV_CPX,"CPX: CPX Free  Ci#%02d Mi#%02d (%5u) = %p\n"
 		, (index & 0x8000) ? (index & 0x7FFF) : -1
@@ -405,10 +400,10 @@ void SkWinCore::FREE_INDEXED_MEMENT(U16 index)
 		, iMementSize
 		, xMemEntry));
 	if (xMemEntry != _4976_5ce6) {
-		printf("READ_I32 %p\n", xMemEntry);
+		//printf("READ_I32 %p\n", xMemEntry);
 		i32 iMemEntReadSize = READ_I32(xMemEntry,-4);	// bp10
-		printf("WHAT IS bp10 = %08x\n", iMemEntReadSize);
-		printf("AFTER READ_I32 %p\n", xMemEntry);
+//		printf("WHAT IS bp10 = %08x\n", iMemEntReadSize);
+//		printf("AFTER READ_I32 %p\n", xMemEntry);
 		ATLASSERT(-BUFF_SIZE_MAX < iMemEntReadSize && iMemEntReadSize < BUFF_SIZE_MAX);
 		//ATLASSERT(-60000 < bp10 && bp10 < 60000);
 		if (iMemEntReadSize > 0) {
@@ -430,11 +425,11 @@ void SkWinCore::FREE_INDEXED_MEMENT(U16 index)
 		iMementSize += iMemEnt2Size;
 	}
 	xMemEntry->dw0(iMementSize);
-	printf("WRITE_I32 %p\n", xMemEntry);
+//	printf("WRITE_I32 %p\n", xMemEntry);
 	WRITE_I32(xMemEntry, iMementSize - 4, iMementSize);	// -4, size of dw0/size
-	printf("AFTER WRITE_I32 %p\n", xMemEntry);
+//	printf("AFTER WRITE_I32 %p\n", xMemEntry);
 	MEMENT_3e74_0d32(xMemEntry);
-	printf("AFTER _3e74_0d32\n");
+//	printf("AFTER _3e74_0d32\n");
 	return;
 }
 
@@ -914,9 +909,7 @@ U16 SkWinCore::ALLOC_TEMP_CACHE_INDEX()
 void SkWinCore::FREE_TEMP_CACHE_INDEX(U16 iCacheIndex)
 {
 	ENTER(0);
-	printf("_3e74_585a_CACHE %d\n", iCacheIndex);
 	_3e74_585a_CACHE(iCacheIndex, 0);
-	printf("FREE_INDEXED_MEMENT %d\n", iCacheIndex);
 	FREE_INDEXED_MEMENT(iCacheIndex | 0x8000);
 	return;
 }
@@ -1105,7 +1098,7 @@ int SkWinCore::TEST_MEMENT(mement* xMemEntry)
 	//printf("TEST_MEMENT P:%p => DW0: %08X  DWA: %08X DWA-4(L): %08X P-L: %08X \n", xMemEntry, xMemEntry->dw0(), (abs(-xMemEntry->dw0())), iDW0ValLen, iMemEntSize);
 	//for (int i = 0; i < 16; i++)
 	//	printf("%02X.", READ_UI8(xMemEntry,-8+i));
-	printf("\n");
+	//printf("\n");
 	if (SkCodeParam::bUseFixedMode)	{
 		if (xMemEntry->dw0() != iMemEntSize) {
 			iMemEntSize = xMemEntry->dw0();

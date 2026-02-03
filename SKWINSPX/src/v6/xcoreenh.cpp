@@ -1010,7 +1010,8 @@ void SkWinCore::REQUEST_PLAY_MUSIC(int iMusicNumber, int iVolume = 25)
 	char sFullMusicPath[256];
 	char sCDPrefix[] = "CD";
 	char sMusicExt[2][4] = { "mp3", "wav" }; // will try to load any mp3 or wav file for a filename
-	sprintf(sMusicRootFolder, "DATA-DM1/COMMON/MUSICS");	// default
+	sprintf(sMusicRootFolder, "%s/MUSICS", GET_DATA_FOLDER_NAME());	// default
+	
 	iNextRequestedMusic = iMusicNumber;
 
 	if (iNextRequestedMusic == iCurrentWavMusic)

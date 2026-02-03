@@ -1261,17 +1261,18 @@ namespace DM2Internal {
 	// then i would remove direct access to these and manage with real pointers
 	struct mement {		// 18 bytes
 		i32 _dw0;		// @0 // length. negative if it directs from lower to upper. it contains this header size.
-		X16 _w4;		// @4 // w4 + w6 builds a mem address ??
+		X16 _w4;		// @4 // w4 + w6 builds a 32-bits pointer for mement1
 		X16 _w6;		// @6
-		X16 _w8;		// @8 // mement index for chain image? // w8 + w10 builds a mem address ??
+		X16 _w8;		// @8 // mement index for chain image? // w8 + w10 builds a 32-bits pointer for mement2
 		X16 _w10;		// @10 // raw data index? (for chain image?)
-		X16 _w12;		// @12 // bpp ?
-		X16 _w14;		// @14 // width ?
-		X16 _w16;		// @16 // height
 // SPX: pointers to replace w4+w6 and w8+w10 and allow 64 bits compilation / this addition breaks place assuming mement to be stricly 18 bytes long
-//		U8 pDummyPad1;	// just here to test non 18-bytes mement struct.
-//		mement* xMement1;
-//		mement* xMement2;
+		mement* xMementRef1;
+		mement* xMementRef2;
+		U8 pDummyPad1;	// just here to test non 18-bytes mement struct.
+// SPX: !!! these 6 bytes must remain at the end of structure !!! because these are the 6 bytes checked from an image buffer -6 !
+		X16 _w12;		// @12 // bpp
+		X16 _w14;		// @14 // width
+		X16 _w16;		// @16 // height
 
 		i32 dw0() const { return _dw0; }
 		void dw0(i32 val) { _dw0 = val; }
@@ -1292,14 +1293,18 @@ namespace DM2Internal {
 			U32ptr val = reinterpret_cast<U32ptr>(pv);
 			_w4 = U16(val);
 			_w6 = U16(val >> 16);
+			xMementRef1 = pv;	// SPX: real pointer to handle 64-bits
 		}
 		void pv8(mement *pv) {
 			U32ptr val = reinterpret_cast<U32ptr>(pv);
 			_w8 = U16(val);
 			_w10 = U16(val >> 16);
+			xMementRef2 = pv;	// SPX: real pointer to handle 64-bits
 		}
-		mement *pv4() { return reinterpret_cast<mement *>(_w4 | (_w6 << 16)); }
-		mement *pv8() { return reinterpret_cast<mement *>(_w8 | (_w10 << 16)); }
+//		mement *pv4() { return reinterpret_cast<mement *>(_w4 | (_w6 << 16)); }
+//		mement *pv8() { return reinterpret_cast<mement *>(_w8 | (_w10 << 16)); }
+		mement *pv4() { return reinterpret_cast<mement *>(xMementRef1); }
+		mement *pv8() { return reinterpret_cast<mement *>(xMementRef2); }
 	};
 	// 
 	struct IMG3 {	// 10 bytes
