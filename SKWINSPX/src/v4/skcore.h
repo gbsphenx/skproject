@@ -1305,12 +1305,12 @@ protected:
 	SRECT *ALLOC_TEMP_ORIGIN_RECT(U16 width, U16 height);
 	U16 FIND_ICI_FROM_CACHE_HASH(Bit32u cacheHash, U16 *ici);
 	void RECYCLE_MEMENTI(U16 mementi, U16 yy);
-	int TEST_MEMENT(mement *bp04);	// SPX: changed "void" to "int"
+	int TEST_MEMENT(mement* xMemEntry);	// SPX: changed "void" to "int"
 	mement *_3e74_48c9_MEMENT(U16 mementi); // _3e74_48c9
 	void FREE_CACHE_INDEX(U16 cacheIndex);
 	void _3e74_4549(U16 xx);
-	void _3e74_0c8c(mement *ref);
-	void _3e74_0d32(mement *ref);
+	void MEMENT_3e74_0c8c(mement *ref);	// _3e74_0c8c
+	void MEMENT_3e74_0d32(mement *ref);	// _3e74_0d32
 	virtual bool ValidateMements(bool display);
 	void FREE_INDEXED_MEMENT(U16 index);
 	U16 _3e74_4471_CACHE(); // _3e74_4471
@@ -1325,7 +1325,7 @@ protected:
 	void _3e74_2b30();
 	mement *ALLOC_LOWER_CPXHEAP(i32 buffSize);
 	Bit8u *ALLOC_CPXHEAP_MEM(U16 index, Bit32u buffSize);
-	void _3e74_585a_CACHE(U16 xx, U16 yy); // _3e74_585a
+	void _3e74_585a_CACHE(U16 iCacheIndex, U16 yy); // _3e74_585a
 	void FILL_ENTIRE_PICT(Bit8u *buff, U16 fill);
 	void FIRE_HIDE_MOUSE_CURSOR();
 	void _01b0_0adb();

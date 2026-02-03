@@ -4500,24 +4500,24 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		return -1;
 	if (bp2a != 0) {
 		U8 bDrawSideTextPanel = 1; // default for DM2 mode
-		U8 bp20;
+		U8 iTextPanelImageID;	// bp20
 		if (yy == 0) {
-			bp20 = 0xFC;	// front text panel
+			iTextPanelImageID = GDAT_GFXSET_xFC_TEXTPANEL_FRONT;	// 0xFC front text panel
 		}
 		else if (yy <= -1) {
-			bp20 = 0xFD;	// side text panel
+			iTextPanelImageID = GDAT_GFXSET_xFD_TEXTPANEL_LSIDE;	// 0xFD side text panel
 		}
 		else {
 			// xFD is the L-side text panel, then xFE would be the R-side text panel if they were not symmetric
 			if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dtImage, 0xFE) != 0) { // SPX: GDAT2 never has 0xFE image ???
-				bp20 = 0xFE;
+				iTextPanelImageID = GDAT_GFXSET_xFE_TEXTPANEL_RSIDE;	// 0xFE
 			}
 			else {
-				bp20 = 0xFD;
+				iTextPanelImageID = GDAT_GFXSET_xFD_TEXTPANEL_LSIDE;	// 0xFD
 				iFlipImage = 1;	// do flip
 			}
 		}
-		QUERY_TEMP_PICST(iFlipImage, iStretchHorizontal, iStretchVertical, 0, 0, iYDist, iRectno, iRefPoint, si, -1, GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, bp20);
+		QUERY_TEMP_PICST(iFlipImage, iStretchHorizontal, iStretchVertical, 0, 0, iYDist, iRectno, iRefPoint, si, -1, GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, iTextPanelImageID);
 		if (zz == 0)
 			glbTempPicture.colorKeyPassThrough = -2;
 		// SPX: this draws the text panel or default gibberish side text. In case of DM1, the gibberish must not be displayed if the text is not visible.
@@ -4526,7 +4526,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 			if (!IS_OBJECT_VISIBLE_TEXT(xTextObject))
 				bDrawSideTextPanel = 0;
 		}
-
+		printf("DRAW_WALL_ORNATE 1\n");
 		if (bDrawSideTextPanel == 1) // SPX: added this condition
 			DRAW_TEMP_PICST();
 		if (yy != 0)
@@ -4535,13 +4535,14 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		if (bp32 == OBJECT_NULL)
 			return si;
 		ExtendedPicture bp01d6;
-		QUERY_GDAT_SUMMARY_IMAGE(&bp01d6, GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, bp20);
+		QUERY_GDAT_SUMMARY_IMAGE(&bp01d6, GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, iTextPanelImageID);
 		i16 bp2c = bp01d6.iXOffset;
 		i16 bp2e = bp01d6.iYOffset;
 		i16 bp48width; // bp48
 		i16 bp4aheight; // bp4a
-		QUERY_GDAT_IMAGE_METRICS(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, bp20, &bp48width, &bp4aheight);
-		U16 bp26 = ALLOC_TEMP_CACHE_INDEX();
+		QUERY_GDAT_IMAGE_METRICS(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, iTextPanelImageID, &bp48width, &bp4aheight);
+		U16 iTempCacheIndex = ALLOC_TEMP_CACHE_INDEX();	// bp26
+		printf("Alloc Temp Cache Index = %d\n", iTempCacheIndex);
 		U8 strWallText[80]; // bp009c
 		// TODO SPX protection : check that bp32 is of text cat
 		QUERY_MESSAGE_TEXT(strWallText, bp32, 2);	// str, rl
@@ -4564,7 +4565,8 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 			bp3a = _4976_012a;
 			bp3c = _4976_012c +2;
 		}
-		U8* bp08 = ALLOC_NEW_PICT(bp26, bp48width, bp4aheight, 4);	// index, width, height (bp26, bp48, bp4a, 4);
+		printf("DRAW_WALL_ORNATE 2\n");
+		U8* bp08 = ALLOC_NEW_PICT(iTempCacheIndex, bp48width, bp4aheight, 4);	// index, width, height (bp26, bp48, bp4a, 4);
 		FILL_ENTIRE_PICT(bp08, si);
 		SRECT rc44;
 		rc44.y = (bp4aheight >> 1) - (bp3c * bp38 >> 1);
@@ -4577,9 +4579,9 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 				if (bp30 != 0) {
 					rc44.x = (bp48width >> 1) - (bp30 >> 1);
 					if (rc44.y >= 0 && rc44.x >= 0 && bp30 <= bp48width) {
-						DRAW_STRING(bp08, bp26, bp48width, rc44.x   , rc44.y + _4976_0130 +1, 1, 0x4000, bp0356, 4);
-						DRAW_STRING(bp08, bp26, bp48width, rc44.x +1, rc44.y + _4976_0130 +1, 1, 0x4000, bp0356, 4);
-						DRAW_STRING(bp08, bp26, bp48width, rc44.x   , rc44.y + _4976_0130   , 2, 0x4000, bp0356, 4);
+						DRAW_STRING(bp08, iTempCacheIndex, bp48width, rc44.x   , rc44.y + _4976_0130 +1, 1, 0x4000, bp0356, 4);
+						DRAW_STRING(bp08, iTempCacheIndex, bp48width, rc44.x +1, rc44.y + _4976_0130 +1, 1, 0x4000, bp0356, 4);
+						DRAW_STRING(bp08, iTempCacheIndex, bp48width, rc44.x   , rc44.y + _4976_0130   , 2, 0x4000, bp0356, 4);
 					}
 				}
 				if (strWallText[bp36] == vbLf)
@@ -4588,10 +4590,11 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 			}
 		}
 		else {
-			U8 *bp0c = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_LETTERS);	// 0x08 .. 0x03
+			printf("DRAW_WALL_ORNATE 3\n");
+			U8 *bp0c = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_x03_LETTERS);	// 0x08 .. 0x03
 			rc44.cx = bp3a;
 			rc44.cy = READ_I16(bp0c,-2);
-			U8 *bp08 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp26));
+			U8 *bp08 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(iTempCacheIndex));	// bp08
 			U8 *bp04 = strWallText;
 
 			do {
@@ -4613,7 +4616,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 								SKCHR_TO_SCRIPTCHR(*(bp04++)) * bp3a,
 								0,
 								si,
-								QUERY_GDAT_IMAGE_LOCALPAL(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_LETTERS)	// 0x08 .. 0x03
+								QUERY_GDAT_IMAGE_LOCALPAL(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_x03_LETTERS)	// 0x08 .. 0x03
 								);
 							rc44.x += bp3a;
 						}
@@ -4622,9 +4625,10 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 				rc44.y += bp3c;
 			} while (*(bp04++) != 0);
 		}
-		QUERY_GDAT_SUMMARY_IMAGE(&bp01d6, 0xff, 0x00, 0x00);
-		bp01d6.w12 = bp26;
-		bp01d6.w6 = 0xffff;
+		printf("DRAW_WALL_ORNATE 4\n");
+		QUERY_GDAT_SUMMARY_IMAGE(&bp01d6, 0xFF, 0x00, 0x00);
+		bp01d6.w12 = iTempCacheIndex;
+		bp01d6.w6 = 0xFFFF;
 		bp01d6.iXStretch = iStretchHorizontal;
 		bp01d6.iYStretch = iStretchVertical;
 		if (bp4c != 0) {
@@ -4632,8 +4636,9 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 			bp01d6.b58[2] = glbPaletteT16[COLOR_BROWN];
 		}
 		else {
+			printf("COPY PAL\n");
 			COPY_MEMORY(
-				QUERY_GDAT_IMAGE_LOCALPAL(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_LETTERS),	// 08 .. 03
+				QUERY_GDAT_IMAGE_LOCALPAL(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_x03_LETTERS),	// 08 .. 03
 				bp01d6.b58,
 				16
 				);
@@ -4646,14 +4651,19 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		bp01d6.iXOffset = bp2c;
 		bp01d6.iYOffset = bp2e;
 		bp01d6.colorKeyPassThrough = si;
+		printf("DRAW_PICST\n");
 		DRAW_PICST(QUERY_PICST_IT(&bp01d6));
-		FREE_TEMP_CACHE_INDEX(bp26);
+		printf("FREE_TEMP_CACHE_INDEX %d\n", iTempCacheIndex);
+		FREE_TEMP_CACHE_INDEX(iTempCacheIndex);
+		printf("DRAW_WALL_ORNATE 5\n");
+		printf("return si = %d\n", si);
 		return si;
 	}
 
+	printf("DRAW_WALL_ORNATE 6 - NO TEXT?\n");
 	U8 iImageEntry;	// U8 bp20; which image entry. 1 = front / 0 = side. Add default init to FRONT
 	if (yy == 0) {	// Front image
-		iImageEntry = GDAT_WALL_IMAGE__VIEW_FRONT;	// = 1;	front view
+		iImageEntry = GDAT_WALL_IMAGE__x01_VIEW_FRONT;	// = 1;	front view
 		if (iDoNotFlip == 0) {
 			if ((glbTabYAxisDistance[RCJ(23,cellPos)] & 1) != 0) {
 				iFlipImage = glbGeneralFlipGraphics;
@@ -4664,10 +4674,10 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		}
 	}
 	else {	// Side image
-		iImageEntry = GDAT_WALL_IMAGE__VIEW_SIDE_LEFT;	// = 0;	 side view on left
+		iImageEntry = GDAT_WALL_IMAGE__x00_VIEW_SIDE_LEFT;	// = 0;	 side view on left
 		if (yy >= 1) {
 			if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_WALL_GFX, bp1f, dtImage, U8(bp28) +2) != 0) {
-				iImageEntry = GDAT_WALL_IMAGE__VIEW_SIDE_RIGHT;	// = 2; side view on right
+				iImageEntry = GDAT_WALL_IMAGE__x02_VIEW_SIDE_RIGHT;	// = 2; side view on right
 			}
 			else {
 				iFlipImage = 1;	// flip image

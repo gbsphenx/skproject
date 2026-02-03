@@ -53,7 +53,7 @@ SKWIN_X_OBJ = $(SKWIN_X_PATH)/StdAfx.o $(SKWIN_X_PATH)/dme.o $(SKWIN_X_PATH)/skl
 #SKGAME V4
 SKWIN_CORE_PATH = v4
 SKWIN_CORE_H = $(SKWIN_CORE_PATH)/*.h
-SKWIN_CORE_OBJ = $(SKWIN_CORE_PATH)/skmemcch.o $(SKWIN_CORE_PATH)/skfileop.o $(SKWIN_CORE_PATH)/skaudio.o $(SKWIN_CORE_PATH)/sksound.o $(SKWIN_CORE_PATH)/skbkgrnd.o $(SKWIN_CORE_PATH)/skbltgfx.o $(SKWIN_CORE_PATH)/skchamp.o $(SKWIN_CORE_PATH)/skcore.o $(SKWIN_CORE_PATH)/skcrture.o $(SKWIN_CORE_PATH)/skdevui.o $(SKWIN_CORE_PATH)/skdoor.o $(SKWIN_CORE_PATH)/skdungn.o $(SKWIN_CORE_PATH)/skeditdn.o $(SKWIN_CORE_PATH)/skevent.o $(SKWIN_CORE_PATH)/skgame.o $(SKWIN_CORE_PATH)/skgameui.o $(SKWIN_CORE_PATH)/skgdat.o $(SKWIN_CORE_PATH)/skguidrw.o $(SKWIN_CORE_PATH)/skibmio.o $(SKWIN_CORE_PATH)/skitem.o $(SKWIN_CORE_PATH)/sktext.o $(SKWIN_CORE_PATH)/skuievnt.o $(SKWIN_CORE_PATH)/skweathr.o
+SKWIN_CORE_OBJ = $(SKWIN_CORE_PATH)/skmemcch.o $(SKWIN_CORE_PATH)/skfileop.o $(SKWIN_CORE_PATH)/skaudio.o $(SKWIN_CORE_PATH)/sksound.o $(SKWIN_CORE_PATH)/skbkgrnd.o $(SKWIN_CORE_PATH)/skbltgfx.o $(SKWIN_CORE_PATH)/skchamp.o $(SKWIN_CORE_PATH)/skcore.o $(SKWIN_CORE_PATH)/skcrture.o $(SKWIN_CORE_PATH)/skdevui.o $(SKWIN_CORE_PATH)/skdoor.o $(SKWIN_CORE_PATH)/skdungn.o $(SKWIN_CORE_PATH)/skeditdn.o $(SKWIN_CORE_PATH)/skevent.o $(SKWIN_CORE_PATH)/skgame.o $(SKWIN_CORE_PATH)/skgameui.o $(SKWIN_CORE_PATH)/skgdat.o $(SKWIN_CORE_PATH)/skguidrw.o $(SKWIN_CORE_PATH)/skibmio.o $(SKWIN_CORE_PATH)/skitem.o $(SKWIN_CORE_PATH)/skspell.o $(SKWIN_CORE_PATH)/sktext.o $(SKWIN_CORE_PATH)/skuievnt.o $(SKWIN_CORE_PATH)/skweathr.o
 
 
 #EXTENSION

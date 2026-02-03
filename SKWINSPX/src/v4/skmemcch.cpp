@@ -242,16 +242,16 @@ _4682:
 		}
 	}
 	//^3E74:46E9
-	bp04->w8(0xffff);
-	bp04->w6(0xffff);
-	bp04->w4(0xffff);
+	bp04->w8(0xFFFF);
+	bp04->w6(0xFFFF);
+	bp04->w4(0xFFFF);
 	//^3E74:46FD
 	return;
 }
 
 //^3E74:0C8C
 // SPX: _3e74_0c8c renamed MEMENT_3e74_0c8c
-void SkWinCore::_3e74_0c8c(mement *ref)
+void SkWinCore::MEMENT_3e74_0c8c(mement *ref)
 {
 	// cqOk @ 21:03 2007/02/21
 
@@ -274,77 +274,52 @@ void SkWinCore::_3e74_0c8c(mement *ref)
 	}
 }
 
+
 //^3E74:0D32
-void SkWinCore::_3e74_0d32(mement *ref)
+// SPX: _3e74_0d32 renamed MEMENT_3e74_0d32
+void SkWinCore::MEMENT_3e74_0d32(mement* xMemEntRef)
 {
 	// cqOk @ 21:03 2007/02/21
-
-	//^3E74:0D32
-	//^3E74:0D37
-	mement *bp04 = ref;
-	//^3E74:0D43
+	printf("MEMENT-01\n");
+	mement* xMement1 = xMemEntRef;	// bp04
 	if (glbMement1 == NULL) {
-		//^3E74:0D55
-		glbMement1 = bp04;
-		//^3E74:0D62
-		bp04->pv8(NULL);
-		//^3E74:0D71
+		glbMement1 = xMement1;
+		xMement1->pv8(NULL);
 _0d71:
-		bp04->pv4(NULL);
-		//^3E74:0D79
+		xMement1->pv4(NULL);	// glbMement1->pv4(NULL);
 		return;
 	}
-	//^3E74:0D7C
-	mement *bp08 = glbMement1;
-	//^3E74:0D89
-	i32 bp0c = bp04->dw0();
-	//^3E74:0D99
-	if (bp08->dw0() <= bp0c) {
-		//^3E74:0DAF
-		glbMement1 = bp04;
-		//^3E74:0DBC
-		bp04->pv4(NULL);
-		//^3E74:0DCB
-		bp04->pv8(bp08);
-		//^3E74:0DD9
-		bp08->pv4(bp04);
-		//^3E74:0DE2
+	printf("MEMENT-02\n");
+	mement* xMemEntry2 = glbMement1;	// bp08
+	i32 bp0c = xMement1->dw0();
+	if (xMemEntry2->dw0() <= bp0c) {
+		glbMement1 = xMement1;
+		xMement1->pv4(NULL);
+		xMement1->pv8(xMemEntry2);
+		xMemEntry2->pv4(xMement1);
 		goto _0d71;
 	}
 
-	//^3E74:0DE4
+	printf("MEMENT-03\n");
 	U16 si = 0;
-	//^3E74:0DE6
-	while ((bp04 = bp08->pv8()) != NULL) {
-		//^3E74:0DE8
-		if (bp04->dw0() <= bp0c) {
-			//^3E74:0DFE
-			bp04->pv4(ref);
-			//^3E74:0E0F
-			bp08->pv8(ref);
-			//^3E74:0E1A
-			ref->pv4(bp08);
-			//^3E74:0E2B
-			ref->pv8(bp04);
-			//^3E74:0E39
+	while ((xMement1 = xMemEntry2->pv8()) != NULL) {
+		if (xMement1->dw0() <= bp0c) {
+			xMement1->pv4(xMemEntRef);
+			xMemEntry2->pv8(xMemEntRef);
+			xMemEntRef->pv4(xMemEntry2);
+			xMemEntRef->pv8(xMement1);
 			si = 1;
-			//^3E74:0E3C
 			break;
 		}
-		//^3E74:0E3E
-		bp08 = bp04;
-		//^3E74:0E4A
+		xMemEntry2 = xMement1;
 	}
-	//^3E74:0E6D
+	printf("MEMENT-04\n");
 	if (si == 0) {
-		//^3E74:0E71
-		bp08->pv8(ref);
-		//^3E74:0E82
-		ref->pv4(bp08);
-		//^3E74:0E93
-		ref->pv8(NULL);
+		xMemEntry2->pv8(xMemEntRef);
+		xMemEntRef->pv4(xMemEntry2);
+		xMemEntRef->pv8(NULL);
 	}
-	//^3E74:0E9F
+	printf("MEMENT-END\n");
 	return;
 }
 
@@ -392,104 +367,74 @@ void SkWinCore::FREE_INDEXED_MEMENT(U16 index)
 
 	// cqOk @ 21:03 2007/02/21
 
-	//^3E74:28DE
-	//^3E74:28E4
-	U16 di = index;
-	//^3E74:28E7
-	if (di == _4976_4809) {
-		//^3E74:28ED
-		_4976_4809 = 0xffff;
+	U16 iLocalCacheIndex = index;	// di / index
+	if (iLocalCacheIndex == _4976_4809) {
+		_4976_4809 = 0xFFFF;
 	}
-	//^3E74:28F3
-	U16 si = QUERY_MEMENTI_FROM(di);
-	//^3E74:28FB
-	if (si == 0xffff)
-		//^3E74:2900
+	U16 iMemEntryIndex = QUERY_MEMENTI_FROM(iLocalCacheIndex);	// si
+	printf("MEMENTI %d from CACHIDX %d\n", iMemEntryIndex, iLocalCacheIndex);
+	if (iMemEntryIndex == 0xFFFF)
 		return;
-	//^3E74:2903
-	if ((di & 0x8000) == 0) {
-		//^3E74:2909
-		tblRawDataToMement[di] = 0xffff;
+	if ((iLocalCacheIndex & 0x8000) == 0) {
+		tblRawDataToMement[iLocalCacheIndex] = 0xFFFF;
 	}
 	else {
-		//^3E74:291A
-		di &= 0x7fff;
-		//^3E74:291E
-		ATLASSERT(di < glbCacheRecyclerMax);
-		tblCacheToMement[di] = 0xffff;
-		//^3E74:292D
+		iLocalCacheIndex &= 0x7FFF;
+		ATLASSERT(iLocalCacheIndex < glbCacheRecyclerMax);
+		tblCacheToMement[iLocalCacheIndex] = 0xFFFF;
 		if (cd.mc._4976_5c90_cache == 0) {
-			//^3E74:2934
-			FREE_CACHE_INDEX(di);
+			FREE_CACHE_INDEX(iLocalCacheIndex);
 		}
 	}
-	//^3E74:293B
-	_3e74_4549(si);
-	//^3E74:2942
-	mement *bp04 = tblMementsPointers[si];
-	if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(bp04))
+	_3e74_4549(iMemEntryIndex);
+	mement* xMemEntry = tblMementsPointers[iMemEntryIndex];	// bp04
+	if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(xMemEntry))
 		return;
-	TEST_MEMENT(bp04);
-	//^3E74:295A
-	tblMementsPointers[si] = NULL;
-	//^3E74:2970
+	TEST_MEMENT(xMemEntry);
+	tblMementsPointers[iMemEntryIndex] = NULL;
 	glbMementIndex_4976_5c9e--;
-	//^3E74:2974
-	if (si < glbNextFreeMementIndex || glbNextFreeMementIndex == 0xffff) {
-		//^3E74:2981
-		glbNextFreeMementIndex = si;
+	if (iMemEntryIndex < glbNextFreeMementIndex || glbNextFreeMementIndex == 0xFFFF) {
+		glbNextFreeMementIndex = iMemEntryIndex;
 	}
-	//^3E74:2985
-	i32 bp0c = -bp04->dw0();
-	//^3E74:299C
-	_4976_5cf8 += bp0c;
+	i32 iMementSize = -(xMemEntry->dw0());// bp0c
+	printf("WHAT IS bp0c = %08x\n", iMementSize);
+	_4976_5cf8 += iMementSize;
 	SkD((DLV_CPX,"CPX: CPX Free  Ci#%02d Mi#%02d (%5u) = %p\n"
-		, (index & 0x8000) ? (index & 0x7fff) : -1
-		, si
-		, bp0c
-		, bp04));
-	//^3E74:29A7
-	if (bp04 != _4976_5ce6) {
-		//^3E74:29BC
-		i32 bp10 = READ_I32(bp04,-4);
-		ATLASSERT(-BUFF_SIZE_MAX < bp10 && bp10 < BUFF_SIZE_MAX);
+		, (index & 0x8000) ? (index & 0x7FFF) : -1
+		, iMemEntryIndex
+		, iMementSize
+		, xMemEntry));
+	if (xMemEntry != _4976_5ce6) {
+		printf("READ_I32 %p\n", xMemEntry);
+		i32 iMemEntReadSize = READ_I32(xMemEntry,-4);	// bp10
+		printf("WHAT IS bp10 = %08x\n", iMemEntReadSize);
+		printf("AFTER READ_I32 %p\n", xMemEntry);
+		ATLASSERT(-BUFF_SIZE_MAX < iMemEntReadSize && iMemEntReadSize < BUFF_SIZE_MAX);
 		//ATLASSERT(-60000 < bp10 && bp10 < 60000);
-		//^3E74:29DE
-		if (bp10 > 0) {
-			//^3E74:29E8
-			PTR_PSBA(bp04,bp10);
-			TEST_MEMENT(bp04);
-			//^3E74:29F8
-			_3e74_0c8c(bp04);
-			//^3E74:2A04
-			bp0c += bp10;
+		if (iMemEntReadSize > 0) {
+			PTR_PSBA(xMemEntry,iMemEntReadSize);
+			TEST_MEMENT(xMemEntry);
+			MEMENT_3e74_0c8c(xMemEntry);
+			iMementSize += iMemEntReadSize;
 		}
 	}
-	//^3E74:2A10
-	if ((void *)PTR_PADD(bp04,bp0c) == (void *)_4976_5cb2) {
-		//^3E74:2A30
-		_4976_5cb2 = bp04;
+	if ((void *)PTR_PADD(xMemEntry,iMementSize) == (void *)_4976_5cb2) {
+		_4976_5cb2 = xMemEntry;
 		return;
 	}
-	//^3E74:2A40
-	mement *bp08 = reinterpret_cast<mement *>(PTR_PADD(bp04,bp0c));
-	TEST_MEMENT(bp08);
-	//^3E74:2A59
-	i32 bp10 = bp08->dw0();
-	//^3E74:2A68
-	if (bp10 > 0) {
-		//^3E74:2A72
-		_3e74_0c8c(bp08);
-		//^3E74:2A7E
-		bp0c += bp10;
+	mement* xMemEntry2 = reinterpret_cast<mement *>(PTR_PADD(xMemEntry,iMementSize));	// bp08
+	TEST_MEMENT(xMemEntry2);
+	i32 iMemEnt2Size = xMemEntry2->dw0();	// bp10
+	if (iMemEnt2Size > 0) {
+		MEMENT_3e74_0c8c(xMemEntry2);
+		iMementSize += iMemEnt2Size;
 	}
-	//^3E74:2A8A
-	bp04->dw0(bp0c);
-	//^3E74:2A9A
-	WRITE_I32(bp04,bp0c -4,bp0c);
-	//^3E74:2AC9
-	_3e74_0d32(bp04);
-	//^3E74:2AD5
+	xMemEntry->dw0(iMementSize);
+	printf("WRITE_I32 %p\n", xMemEntry);
+	WRITE_I32(xMemEntry, iMementSize - 4, iMementSize);	// -4, size of dw0/size
+	printf("AFTER WRITE_I32 %p\n", xMemEntry);
+	MEMENT_3e74_0d32(xMemEntry);
+	printf("AFTER _3e74_0d32\n");
 	return;
 }
 
@@ -640,7 +585,7 @@ U16 SkWinCore::ADD_CACHE_HASH(Bit32u cacheHash, U16 *piYaCacheIndex)
 //^3E74:5817
 U8* SkWinCore::QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(U16 cacheIndex)
 {
-	// SPX: break down, there was only 1 line (return reinterpret ...)
+	// SPX: break down, there was only 1 line in the "original" code (return reinterpret ...)
 	U8* pMementP1 = NULL;
 	mement* xMement = NULL;
 	U16 iMement = QUERY_MEMENTI_FROM(cacheIndex | 0x8000);
@@ -855,7 +800,7 @@ _2da5:
 		} while (si == 0);
 
 		//^3E74:2DB5
-		_3e74_0c8c(bp04);
+		MEMENT_3e74_0c8c(bp04);
 		//^3E74:2DC1
 		i32 bp0c = bp04->dw0() - buffSize;
 		//^3E74:2DD7
@@ -867,7 +812,7 @@ _2da5:
 			//^3E74:2E2A
 			bp08->dw0(bp0c);
 			//^3E74:2E3A
-			_3e74_0d32(bp08);
+			MEMENT_3e74_0d32(bp08);
 		}
 		else {
 			//^3E74:2E42
@@ -904,7 +849,7 @@ U8 *SkWinCore::ALLOC_CPXHEAP_MEM(U16 index, Bit32u buffSize)
 	if (SkCodeParam::bUsePowerDebug && index == 0xFFFF)
 		return NULL;
 
-	buffSize += sizeof(mement) + 4;
+	buffSize += (sizeof(mement) + 4);
 	if ((buffSize & 1) != 0) {
 		buffSize++;
 	}
@@ -928,19 +873,14 @@ U8 *SkWinCore::ALLOC_CPXHEAP_MEM(U16 index, Bit32u buffSize)
 
 //^3E74:585A
 // _3e74_585a renamed _3e74_585a_CACHE
-void SkWinCore::_3e74_585a_CACHE(U16 xx, U16 yy)
+void SkWinCore::_3e74_585a_CACHE(U16 iCacheIndex, U16 yy)
 {
-	//^3E74:585A
-	//^3E74:585E
-	U16 si = QUERY_MEMENTI_FROM(xx | 0x8000);
-	//^3E74:586C
-	if (si == 0xffff) {
-		//^3E74:5871
-		FREE_CACHE_INDEX(xx);
+	U16 iMementIndex = QUERY_MEMENTI_FROM(iCacheIndex | 0x8000);	// si
+	if (iMementIndex == 0xFFFF) {
+		FREE_CACHE_INDEX(iCacheIndex);
 	}
 	else {
-		//^3E74:587B
-		RECYCLE_MEMENTI(si, yy);
+		RECYCLE_MEMENTI(iMementIndex, yy);
 	}
 }
 
@@ -974,8 +914,10 @@ U16 SkWinCore::ALLOC_TEMP_CACHE_INDEX()
 void SkWinCore::FREE_TEMP_CACHE_INDEX(U16 iCacheIndex)
 {
 	ENTER(0);
+	printf("_3e74_585a_CACHE %d\n", iCacheIndex);
 	_3e74_585a_CACHE(iCacheIndex, 0);
-	FREE_INDEXED_MEMENT(iCacheIndex |0x8000);
+	printf("FREE_INDEXED_MEMENT %d\n", iCacheIndex);
+	FREE_INDEXED_MEMENT(iCacheIndex | 0x8000);
 	return;
 }
 
@@ -1147,28 +1089,29 @@ _48a3:
 }
 
 // SPX: changed "void" to "int" in order to allow more code on return
-int SkWinCore::TEST_MEMENT(mement *bp04)
+int SkWinCore::TEST_MEMENT(mement* xMemEntry)
 {
 	i32	iDW0ValLen = 0;
-	i32 len = 0;
+	i32 iMemEntSize = 0;	// len
 	//ATLASSERT(bp04 != NULL);
 	// SPX: use CheckSafePointer to trap more unexpected mem values so that it fails at ASSERT instead of crashing after.
-	if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(bp04))
+	if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(xMemEntry))
 		return 0;
-	ATLASSERT(CheckSafePointer(bp04));
-	iDW0ValLen = (abs(-bp04->dw0())) -4;
+	ATLASSERT(CheckSafePointer(xMemEntry));
+	iDW0ValLen = (abs(-xMemEntry->dw0())) -4;
 	if (iDW0ValLen >= 65536)
 		return 0;
-	len = READ_I32(bp04,iDW0ValLen);
-	if (SkCodeParam::bUseFixedMode)
-	{
-		if (bp04->dw0() != len)
-		{
-			len = bp04->dw0();
+	iMemEntSize = READ_I32(xMemEntry,iDW0ValLen);
+	//printf("TEST_MEMENT P:%p => DW0: %08X  DWA: %08X DWA-4(L): %08X P-L: %08X \n", xMemEntry, xMemEntry->dw0(), (abs(-xMemEntry->dw0())), iDW0ValLen, iMemEntSize);
+	//for (int i = 0; i < 16; i++)
+	//	printf("%02X.", READ_UI8(xMemEntry,-8+i));
+	printf("\n");
+	if (SkCodeParam::bUseFixedMode)	{
+		if (xMemEntry->dw0() != iMemEntSize) {
+			iMemEntSize = xMemEntry->dw0();
 		}
-
 	}
-	ATLASSERT(bp04->dw0() == len);
+	ATLASSERT(xMemEntry->dw0() == iMemEntSize);
 	return 1; // test passed
 }
 
@@ -1189,7 +1132,7 @@ X32 SkWinCore::_3e74_5673_CACHE(X32 cacheHash, U16 *piYaCacheIndex, X16 ifTryIns
 // SPX: Break down to catch and prevent NULL / crash
 	mement* xm = _3e74_48c9_MEMENT(QUERY_MEMENTI_FROM(*piYaCacheIndex | 0x8000));
 	if (CheckSafePointer(xm))
-		return *reinterpret_cast<i32 *>(xm) - 22;
+		return *reinterpret_cast<i32 *>(xm) - (sizeof(mement)) - 4;	// -22 = -sizeof(mement) - 4
 //	return *reinterpret_cast<i32 *>(_3e74_48c9_MEMENT(QUERY_MEMENTI_FROM(*piYaCacheIndex | 0x8000))) -22;	// SPX: -22 ?? -sizeof(mement) - 4 ?
 	return 0;
 }

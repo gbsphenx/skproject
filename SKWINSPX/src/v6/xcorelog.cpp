@@ -761,7 +761,7 @@ void SkWinCore::LOG_FULL_DUNGEON_INFO()
 	//--------------------------------------------------------------------------
 	// MEMENT
 	int iMemEntIndex = 0;
-	int iSizeofMementTable = glbNumberOfMements * 18;
+	int iSizeofMementTable = glbNumberOfMements * sizeof(mement);
 	int iPointerSize = 4;
 	mement** xMemEntPointer = NULL;
 	mement* xMemEntData = NULL;

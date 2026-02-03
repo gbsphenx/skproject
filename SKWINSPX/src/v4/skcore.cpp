@@ -11121,7 +11121,7 @@ U8 *SkWinCore::_3e74_0245(X16 xx, X16 yy)
 				FREE_INDEXED_MEMENT(_4976_4809);
 			//^3E74:0322
 			_4976_4809 = si;
-			mement *bp08 = ALLOC_LOWER_CPXHEAP(bp14 +16);
+			mement *bp08 = ALLOC_LOWER_CPXHEAP(bp14 + 16);	// +16 ?
 			X16 di = FIND_FREE_MEMENTI();
 			tblRawDataToMement[si] = di;
 			ATLASSERT(tblMementsPointers[di] == NULL);
@@ -15220,10 +15220,7 @@ tiamat SkWinCore::_3e74_32a2(sk5d12 *ref, i32 xx)
 //^3E74:33A4
 void SkWinCore::LOAD_DYN4(SkLoadEnt *ref, i16 aa)
 {
-	//printf("Entering LOAD_DYN4...\n"); getch();
-	//^3E74:33A4
 	ENTER(92);
-	//^3E74:33AA
 	X16 bp38 = 0;
 	X16 bp3a = 0;
 	U8 *bp04 = ALLOC_MEMORY_RAM(glbGDatNumberOfData, afZeroMem, 1024);
@@ -15240,7 +15237,6 @@ void SkWinCore::LOAD_DYN4(SkLoadEnt *ref, i16 aa)
 	SkEntIter bp5c;
 	X16 si;
 	X16 bp2e;
-	//printf("LOAD_DYN4 : MARK 1\n"); getch();
 	SkLoadEnt bp40; // @28 bp40 // smily :P
 	for (; bp12 < aa; bp12++) {
 		//^3E74:33F0
@@ -15315,8 +15311,6 @@ LOGX(("LOAD_DYN4: MASK: %s", DEBUG_SKLOADENT((U8*)bp08) ));
 		}
 		//^3E74:35D0
 	}
-	//printf("LOAD_DYN4 : MARK 2\n"); getch();
-	//^3E74:35DE
 	for (si = 0; si < glbGDatNumberOfData; si++) {
 		//^3E74:35E2
 		bp12 = bp04[si];
@@ -15333,11 +15327,8 @@ LOGX(("LOAD_DYN4: MASK: %s", DEBUG_SKLOADENT((U8*)bp08) ));
 	//^3E74:3647
 	bp08 = ref;
 	bp12 = 0;
-	//printf("LOAD_DYN4 : MARK 2 B\n"); getch();
 	//^3E74:3658
 	for (; bp12 < aa; bp08++, bp12++) {
-		//^3E74:365B
-		//printf("LOAD_DYN4 : MARK 2 B bp12/aa = %d/%d\n", bp12, aa); getch();
 		bp5c.w0 = 1;
 		bp5c.x2 = *bp08;
 		bp2e = bp5c.x2.w0();
@@ -15356,24 +15347,15 @@ LOGX(("LOAD_DYN4: MASK: %s", DEBUG_SKLOADENT((U8*)bp08) ));
 			continue;
 		//^3E74:36D3
 		bp5c.x2.x2.cls3(fmtSound);
-		//printf("LOAD_DYN4 : MARK 2 B bp12/aa = %d/%d - QUERY_NEXT_GDAT_ENTRY\n", bp12, aa); getch();
 		while (QUERY_NEXT_GDAT_ENTRY(&bp5c) != 0) {
-			//^3E74:36D9
 			si = bp5c.pv14->data & 0x7fff;
 			if ((bp04[si] & 1) == 0) {
-		//printf("LOAD_DYN4 : MARK 2 B bp12/aa = %d/%d - _482b_015c(%d)\n", bp12, aa, si); getch();
 				if (_482b_015c(si) == 0)
 					continue;
 			}
-			//^3E74:3709
-			//printf("LOAD_DYN4 : MARK 2 B bp12/aa = %d/%d - _482b_0624(cur)\n", bp12, aa); getch();
 			_482b_0624(bp5c.cls1cur(), bp5c.pv14->cls2, bp5c.pv14->cls4);
-			//^3E74:3721
 		}
-		//printf("LOAD_DYN4 : MARK 2 B bp12/aa = %d/%d - QUERY_NEXT_GDAT_ENTRY END LOOP\n", bp12, aa); getch();
-		//^3E74:3730
 	}
-	//printf("LOAD_DYN4 : MARK 2 C\n"); getch();
 	//^3E74:374D
 	if (_4976_5d78 != 0) {
 		for (si = 0; si < glbGDatNumberOfData; si++) {
@@ -15394,7 +15376,6 @@ LOGX(("LOAD_DYN4: MASK: %s", DEBUG_SKLOADENT((U8*)bp08) ));
 	}
 	goto _38db;
 
-	//printf("LOAD_DYN4 : MARK 2 D / FREE_INDEXED_MEMENT\n"); getch();
 	do {
 		//^3E74:37DC
 		FREE_INDEXED_MEMENT(_4976_5d5e->w10());
@@ -21306,7 +21287,7 @@ void SkWinCore::ALLOC_CPX_SETUP(X8 *xx)
 		}
 		SkD((DLV_DBG_INIT, "ALLOC_CPX_SETUP:tblMementsPointers\n"));
 		//tblMementsPointers = reinterpret_cast<mement **>(ALLOC_MEMORY_RAM(glbNumberOfMements << 2, afZeroMem|afUseUpper, 0x400));
-		tblMementsPointers = reinterpret_cast<mement **>(ALLOC_MEMORY_RAM(glbNumberOfMements * sizeof(void*), afZeroMem|afUseUpper, 0x400));	// 32/64-bits adaptation
+		tblMementsPointers = reinterpret_cast<mement **>(ALLOC_MEMORY_RAM(glbNumberOfMements * sizeof(mement*), afZeroMem|afUseUpper, 0x400));	// 32/64-bits adaptation
 		glbCacheRecyclerMax = MEM_CACHE_TABLE_MAX;	// original value = 0x80
 		tblCacheToMement = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(glbCacheRecyclerMax << 1, afUseUpper, 0x400));
 		FILL_U16(reinterpret_cast<i16 *>(tblCacheToMement), glbCacheRecyclerMax, -1, 2);

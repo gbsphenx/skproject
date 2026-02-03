@@ -47,6 +47,7 @@ export SOURCE_FOLDER=./v4
 ./xcomp.sh skdevui
 ./xcomp.sh skfileop
 ./xcomp.sh skgameui
+./xcomp.sh skspell
 ./xcomp.sh sklua -w
 
 export SOURCE_FOLDER=./v6

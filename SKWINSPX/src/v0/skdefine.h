@@ -572,7 +572,7 @@ enum SkillLevel {
 #define GDAT_GFXSET_FLOOR							0x00
 #define GDAT_GFXSET_CEIL							0x01
 
-#define GDAT_GFXSET_LETTERS							0x03
+#define GDAT_GFXSET_x03_LETTERS						0x03
 
 #define GDAT_GFXSET_DATA_05							0x05
 #define GDAT_GFXSET_DOOR_FRAME_FRONT_D1				0x06
@@ -641,6 +641,10 @@ enum SkillLevel {
 #define GDAT_GFXSET_SQUAD_SINGLE					0xF6
 
 #define GDAT_GFXSET_DATA_FD							0xFD
+
+#define GDAT_GFXSET_xFC_TEXTPANEL_FRONT				0xFC	// front text panel
+#define GDAT_GFXSET_xFD_TEXTPANEL_LSIDE				0xFD	// L-side text panel
+#define GDAT_GFXSET_xFE_TEXTPANEL_RSIDE				0xFE	// R-side text panel
 
 // Attributes
 #define GDAT_GFXSET_SCENE_COLORKEY					0x64
@@ -771,9 +775,9 @@ enum SkillLevel {
 #define GDAT_WALL_ORNATE__DATA_F2			0xF2
 #define GDAT_WALL_ORNATE__ITEM_INSIDE_DISPLACEMENT		0xFD
 
-#define GDAT_WALL_IMAGE__VIEW_SIDE_LEFT			0x00
-#define GDAT_WALL_IMAGE__VIEW_FRONT				0x01
-#define GDAT_WALL_IMAGE__VIEW_SIDE_RIGHT		0x02
+#define GDAT_WALL_IMAGE__x00_VIEW_SIDE_LEFT			0x00
+#define GDAT_WALL_IMAGE__x01_VIEW_FRONT				0x01
+#define GDAT_WALL_IMAGE__x02_VIEW_SIDE_RIGHT		0x02
 
 //#define GDAT_ORNATE_POSITION_TOP_RIGHT			8
 //#define GDAT_ORNATE_POSITION_CENTER				13

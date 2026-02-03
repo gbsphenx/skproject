@@ -46,6 +46,8 @@ CALL XCOMP SKUIEVNT
 CALL XCOMP SKWEATHR
 
 CALL XCOMP SKSOUND
+CALL XCOMP SKSPELL
+Rem Calls another batch file and then returns to current batch file to continue.
 CALL XCOMP SKLUA
 CALL XCOMP SKMIDI
 

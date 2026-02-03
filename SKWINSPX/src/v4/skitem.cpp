@@ -184,12 +184,9 @@ U16 SkWinCore::IS_CONTAINER_MAP(ObjectID recordLink)
 //^2405:0029
 U8 *SkWinCore::QUERY_GDAT_ITEM_NAME(U8 cls1, U8 cls2)
 {
-	//^2405:0029
 	ENTER(34);
-	//^2405:002D
 	U8 bp22[30];
 	U8 *bp04 = QUERY_GDAT_TEXT(cls1, cls2, 0x18, bp22);
-	//^2405:004A
 	return FORMAT_SKSTR(bp04, _4976_5290);
 }
 

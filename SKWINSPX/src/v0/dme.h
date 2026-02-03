@@ -1255,15 +1255,23 @@ namespace DM2Internal {
 	// 	U8 b11; // @11
 	// };
 	// 
+	// SPX: this mement clearly breaks in 64-bits compilation
+	// w4+w6 is a mement address
+	// w8+w10 is a mement address
+	// then i would remove direct access to these and manage with real pointers
 	struct mement {		// 18 bytes
 		i32 _dw0;		// @0 // length. negative if it directs from lower to upper. it contains this header size.
-		X16 _w4;		// @4 // w4 + w6 builds a mem address ?? !! for 64-bits compilation ?
+		X16 _w4;		// @4 // w4 + w6 builds a mem address ??
 		X16 _w6;		// @6
 		X16 _w8;		// @8 // mement index for chain image? // w8 + w10 builds a mem address ??
 		X16 _w10;		// @10 // raw data index? (for chain image?)
 		X16 _w12;		// @12 // bpp ?
 		X16 _w14;		// @14 // width ?
 		X16 _w16;		// @16 // height
+// SPX: pointers to replace w4+w6 and w8+w10 and allow 64 bits compilation / this addition breaks place assuming mement to be stricly 18 bytes long
+//		U8 pDummyPad1;	// just here to test non 18-bytes mement struct.
+//		mement* xMement1;
+//		mement* xMement2;
 
 		i32 dw0() const { return _dw0; }
 		void dw0(i32 val) { _dw0 = val; }
