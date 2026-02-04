@@ -1140,12 +1140,6 @@ protected:
 	U16 QUERY_CREATURES_ITEM_MASK(U8 cls2, U8 cls4, U8 itemflags[64], U16 isCreature);
 	void ZERO_MEMORY(void *buff, U32 size);
 	void PROCESS_TIMER_0E(Timer *v0, U16 v1);
-	U16 ADD_ITEM_CHARGE(ObjectID recordLink, i16 delta);
-	U16 IS_CONTAINER_MONEYBOX(ObjectID recordLink);
-	U16 QUERY_GDAT_DBSPEC_WORD_VALUE(ObjectID rl, Bit8u cls4);
-	i32 QUERY_ITEM_VALUE(ObjectID recordLink, Bit8u cls4);
-	i32 QUERY_ITEM_WEIGHT(ObjectID recordLink);
-	U16 IS_CONTAINER_CHEST(ObjectID recordLink);
 	void CALC_PLAYER_WEIGHT(U16 player);
 	void PROCEED_GLOBAL_EFFECT_TIMERS();
 	U16 _2066_1f37(ObjectID recordLink, U16 yy, U16 *zz);
@@ -1183,6 +1177,18 @@ protected:
 	GenericRecord *GET_ADDRESS_OF_TILE_RECORD(i16 xx, i16 yy);
 	U16 IS_TILE_PASSAGE(i16 xx, i16 yy);
 	U8 GET_TILE_VALUE(i16 xx, i16 yy);
+
+	//-------------- Items functions
+	U16 QUERY_ITEM_MONEY_VALUE(ObjectID oItem);
+	U16 ADD_ITEM_CHARGE(ObjectID recordLink, i16 delta);
+	U16 IS_CONTAINER_MONEYBOX(ObjectID recordLink);
+	U16 QUERY_GDAT_DBSPEC_WORD_VALUE(ObjectID rl, Bit8u cls4);
+	i32 QUERY_ITEM_VALUE(ObjectID recordLink, Bit8u cls4);
+	i32 QUERY_ITEM_WEIGHT(ObjectID recordLink);
+	U16 IS_CONTAINER_CHEST(ObjectID recordLink);
+	U16 GET_ITEM_MAX_CHARGE(ObjectID recordLink);
+	Bit8u GET_ITEM_ICON_ANIM_FRAME(ObjectID recordLink, i16 xx, i16 yy); // _2405_014a renamed GET_ITEM_ICON_ANIM_FRAME
+
 
 	//-------------- Creatures functions
 	ObjectID GET_CREATURE_AT(i16 xpos, i16 ypos);
@@ -1380,8 +1386,6 @@ protected:
 	void SHOW_ATTACK_RESULT(i16 yourValue);
 	void PUT_OBJECT_INTO_CONTAINER();
 	void DISPLAY_RIGHT_PANEL_SQUAD_HANDS();
-	U16 GET_MAX_CHARGE(ObjectID recordLink);
-	Bit8u GET_ITEM_ICON_ANIM_FRAME(ObjectID recordLink, i16 xx, i16 yy); // _2405_014a renamed GET_ITEM_ICON_ANIM_FRAME
 	X8* TRANSLATE_PALETTE(X8* localpal, U8 iGDatCategory, U8 iGDatItemId, U8 iGDatEntryId, i16 palentcnt);
 	Bit8u *DRAW_ITEM_ON_WOOD_PANEL(U16 player, U16 possessionIndex, Picture *ref);
 	void FIRE_BLIT_TO_MEMORY_ROW_4TO8BPP(U16 offSrc, U16 offDst, U16 width, i16 colorkey);
@@ -2313,7 +2317,8 @@ protected:
 	void _13e4_01a3();
 	void ADVANCE_TILES_TIME(X16 xx, X16 yy);
 	X16 OPERATE_PIT_TELE_TILE(X16 xx, X16 yy, X16 ww);
-	U16 QUERY_ITEM_MONEY_VALUE(ObjectID xx);
+
+
 	void STEP_MISSILE(Timer *ref);
 	X16 QUERY_DOOR_STRENGTH(X8 cls2);
 	void STEP_DOOR(Timer *ref);

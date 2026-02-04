@@ -1907,105 +1907,69 @@ LOGX(("%40s: C%02d=I%02X=E%02X=T%03d", "QUERY_GDAT_ENTRY_DATA_PTR for ", cls1, c
 // SPX: _2405_014a renamed GET_ITEM_ICON_ANIM_FRAME
 U8 SkWinCore::GET_ITEM_ICON_ANIM_FRAME(ObjectID recordLink, i16 xx, i16 yy)
 {
-	//^2405:014A
 	ENTER(8);
-	//^2405:0150
-	U8 bp01 = 0x18;	// base image is 0x18
-	//^2405:0154
+	U8 iImageID = 0x18;	// bp01 / base image is 0x18
 	if (yy != 0) {
-		//^2405:015D
-		U16 si = QUERY_GDAT_DBSPEC_WORD_VALUE(recordLink, 6); // get icon anim value from item
-		//^2405:016B
-		U16 di = si & 15;	// get number of different frames
-		//^2405:0170
-		if (di != 0) {
-			//^2405:0177
-			U16 bp04 = 0;
-			//^2405:017C
-			if ((si & 0x8000) == 0 || (bp04 = IS_ITEM_FIT_FOR_EQUIP(recordLink, xx, 1)) != 0) {
-				//^2405:019C
-				if ((si & 0x4000) != 0) {
-					//^2405:01A2
+		U16 iAnimBehaviour = QUERY_GDAT_DBSPEC_WORD_VALUE(recordLink, 6); // (si) get icon anim value from item
+		U16 iChargeVal = 0;
+		U16 iMaxFrames = iAnimBehaviour & 15;	// (di) get number of different frames
+		if (iMaxFrames != 0) {
+			U16 iActivated = 0;	// bp04 / is activated ?
+			if ((iAnimBehaviour & 0x8000) == 0 || (iActivated = IS_ITEM_FIT_FOR_EQUIP(recordLink, xx, 1)) != 0) {	// 0x8000 anim when item is equipped
+				if ((iAnimBehaviour & 0x4000) != 0) {	// 0x4000 anim when item is ready for action/command
 					if (cd.pi.glbChampionIndex == 0 || _4976_3de2[(cd.pi.glbChampionIndex << 1) + (glbSelectedHandAction)] != recordLink)
-						//^2405:01C3
 						goto _02d3;
-					//^2405:01C6
-                    bp04 = 1;						
+                    iActivated = 1;						
 				}
-				//^2405:01CB
-				if (bp04 != 0) {	// if fit for equip, get the next frame (0x19) which is basic activated icon frame
-					//^2405:01D1
-					bp01++;
-					di--;
+				if (iActivated != 0) {	// if fit for equip, get the next frame (0x19) which is basic activated icon frame
+					iImageID++;
+					iMaxFrames--;
 				}
-				//^2405:01D5
-				if (di != 0) {
-					//^2405:01DC
-					Bit32u bp08 = glbGameTick;
-					U8 nFramesPerAnim = (si & 0x00E0) >> 5; // SPX added
-					//^2405:01E9
-					switch ((si & 0x1f00) >> 8) {	// get anim type
+				if (iMaxFrames != 0) {
+					Bit32u iRandSeedTick = glbGameTick; // bp08
+					U8 nFramesPerAnim = (iAnimBehaviour & 0x00E0) >> 5; // SPX added
+					switch ((iAnimBehaviour & 0x1F00) >> 8) {	// get anim type
 						case 5:	// not sure ?
-							//^2405:0201
-							bp08 += recordLink.DBIndex();
+							iRandSeedTick += recordLink.DBIndex();
 
 							goto _020e;
 						case 0:	// always animated (i.e. potion)
-							//^2405:020E
 _020e:
-							bp01 = bp01 + U8(bp08 % di);
-							//^2405:0224
+							iImageID = iImageID + U8(iRandSeedTick % iMaxFrames);
 							break;
 						case 1: // random frame among remaining possible frames
-							//^2405:0227
-							bp01 = bp01 + U8(RAND16(di));
-							//^2405:0224
+							iImageID = iImageID + U8(RAND16(iMaxFrames));
 							break;
 						case 2:	// compass mode : choose from depending on direction
-							//^2405:0230
-							bp01 = bp01 + cd.pi.glbPlayerDir;
-							//^2405:023A
+							iImageID = iImageID + cd.pi.glbPlayerDir;
 							break;
 						case 3:	// charged rate (i.e. waterskin)
-							//^2405:023D
-							si = ADD_ITEM_CHARGE(recordLink, 0);
-							//^2405:0249
-							if (si == 0)
-								//^2405:024F
+							iChargeVal = ADD_ITEM_CHARGE(recordLink, 0);
+							if (iChargeVal == 0)
 								break;
-							//^2405:0252
-							bp01 = (di * si) / (GET_MAX_CHARGE(recordLink) +1) + bp01;
-							//^2405:026E
+							iImageID = ((iMaxFrames * iChargeVal) / GET_ITEM_MAX_CHARGE(recordLink)) + iImageID;
 							break;
 						case 6:	// SPX: added nFramesPerAnim which seemed to be missing
-							//^2405:0270
 							if (nFramesPerAnim == 0)
 								break;
-							bp08 += recordLink.DBIndex();
-							bp01 = bp01 + U8(bp08 % nFramesPerAnim); // SPX added
+							iRandSeedTick += recordLink.DBIndex();
+							iImageID = iImageID + U8(iRandSeedTick % nFramesPerAnim); // SPX added
 							goto _027d;
 						case 4:
-							//^2405:027D
 _027d:
-							xx = (si & 0x00e0) >> 5;
-							//^2405:0288
-							si = ADD_ITEM_CHARGE(recordLink, 0);
-							//^2405:0296
-							if (si == 0)
-								//^2405:0298
+							xx = (iAnimBehaviour & 0x00E0) >> 5;
+							iChargeVal = ADD_ITEM_CHARGE(recordLink, 0);
+							if (iChargeVal == 0)
 								break;
-							//^2405:029A
-							bp01 = (((di / xx) * si) / (GET_MAX_CHARGE(recordLink) +1)) * xx + (bp08 % yy) +bp01 +1;
-
+							iImageID = (((iMaxFrames / xx) * iChargeVal) / (GET_ITEM_MAX_CHARGE(recordLink) +1)) * xx + (iRandSeedTick % yy) + iImageID + 1;
 							break;
 					}
 				}
 			}
 		}
 	}
-	//^2405:02D3
 _02d3:
-	return bp01;
+	return iImageID;
 }
 
 
@@ -2015,11 +1979,9 @@ _02d3:
 
 
 //^1031:023B
-U8 *SkWinCore::_1031_023b(sk1891 *xx)
+U8* SkWinCore::_1031_023b(sk1891 *xx)
 {
-	//^1031:023B
 	ENTER(0);
-	//^1031:023E
     return &_4976_169c[xx->w2];
 }	
 
@@ -4396,7 +4358,7 @@ U16 SkWinCore::_48ae_05ae_CREATURE(i16 disit, U8 yy, U16 zz, U16 ss, U16 tt, i16
 	//^48AE:06DE
 	if (ww < 0) {
 		//^48AE:06E4
-		ww = GET_MAX_CHARGE(ObjectID(0, GET_ITEMDB_OF_ITEMSPEC_ACTUATOR(disit), 0));
+		ww = GET_ITEM_MAX_CHARGE(ObjectID(0, GET_ITEMDB_OF_ITEMSPEC_ACTUATOR(disit), 0));
 	}
 	//^48AE:06FA
 	si += QUERY_GDAT_ENTRY_DATA_INDEX(

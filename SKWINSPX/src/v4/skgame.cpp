@@ -4313,13 +4313,13 @@ void SkWinCore::MOVE_ITEM_TO(ObjectID rl, Actuator *pr4, i16 xposFrm, i16 yposFr
 		i16 di = 0;	// di	// SPX init this 0
 		switch (pr4->ActionType()) {
 			case 0: //^_1e05
-				di = GET_MAX_CHARGE(si);
+				di = GET_ITEM_MAX_CHARGE(si);
 				break;
 			case 1: //^_1e0d
 				di = 0;
 				break;
 			case 2: //^_1e11
-				di = RAND16(GET_MAX_CHARGE(si) + 1);
+				di = RAND16(GET_ITEM_MAX_CHARGE(si) + 1);
 				break;
 			default: //^_1e22 // di is still uninit. BUG?
 				break;

@@ -3203,7 +3203,7 @@ U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, U16 xx)
 			DRAW_ITEM_STATS_BAR(
 				bp0e.pos[bp10++],
 				di,
-				GET_MAX_CHARGE(si),
+				GET_ITEM_MAX_CHARGE(si),
 				RUNE_GOR,
 				COLOR_CYAN
 				);

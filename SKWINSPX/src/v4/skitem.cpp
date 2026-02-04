@@ -114,7 +114,7 @@ void SkWinCore::PUT_OBJECT_INTO_CONTAINER()
 
 
 //^0CEE:29B9
-U16 SkWinCore::GET_MAX_CHARGE(ObjectID recordLink)
+U16 SkWinCore::GET_ITEM_MAX_CHARGE(ObjectID recordLink)
 {
 	ENTER(0);
 	if (recordLink != OBJECT_NULL) {
@@ -168,13 +168,11 @@ void SkWinCore::__CHECK_ROOM_FOR_CONTAINER(ObjectID rl, Container *ref)
 //^0CEE:2EFB
 U16 SkWinCore::IS_CONTAINER_MAP(ObjectID recordLink)
 {
-	//^0CEE:2EFB
 	if (recordLink.DBType() == dbContainer) {
 		if (GET_ADDRESS_OF_RECORD9(recordLink)->ContainerType() == 1) {
 			return 1;
 		}
 	}
-	//^0CEE:2F2B
 	return 0;
 }
 
@@ -194,48 +192,33 @@ U8 *SkWinCore::QUERY_GDAT_ITEM_NAME(U8 cls1, U8 cls2)
 // _2405_005e renamed GET_ITEM_NAME
 U8 *SkWinCore::GET_ITEM_NAME(ObjectID recordLink)
 {
-	//^2405:005E
 	ENTER(6);
-	//^2405:0064
-	ObjectID di = recordLink;
-	//^2405:0067
-	U8 iCategory = QUERY_CLS1_FROM_RECORD(di);	// bp01
-	//^2405:0071
-	U8 iItemNumber = QUERY_CLS2_FROM_RECORD(di);	// bp02
-	//^2405:007B
-	glbChampionBonesIndex = 0xffff;
-	//^2405:0081
+	ObjectID oItemObject = recordLink;	// di
+	U8 iGDatCategory = QUERY_CLS1_FROM_RECORD(oItemObject);	// bp01
+	U8 iGDatItemId = QUERY_CLS2_FROM_RECORD(oItemObject);	// bp02
+	glbChampionBonesIndex = 0xFFFF;
 	// SPX: If item is CHAMPION'S BONES : I changed to function to get proper ID depending on DM1 or DM2 mode
-	if (iCategory == GDAT_CATEGORY_MISCELLANEOUS && iItemNumber == GET_CHAMPION_BONES_ITEM_ID()) { // (bp01 == 0x15 && bp02 == 0x00) ==> ITEM == BONES
-		//^2405:008D
-		Miscellaneous_item *bp06 = GET_ADDRESS_OF_RECORDA(di);
-		//^2405:009A
-		i16 si = bp06->Who();
-		//^2405:00A9
-		if (si >= 0 && si < cd.pi.glbChampionsCount) {
-			//^2405:00B3
-			glbChampionBonesIndex = si;
+	if (iGDatCategory == GDAT_CATEGORY_MISCELLANEOUS && iGDatItemId == GET_CHAMPION_BONES_ITEM_ID()) { // (bp01 == 0x15 && bp02 == 0x00) ==> ITEM == BONES
+		Miscellaneous_item* xMiscItem = GET_ADDRESS_OF_RECORDA(oItemObject);	// bp06
+		i16 iBonesID = xMiscItem->Who();	// si
+		if (iBonesID >= 0 && iBonesID < cd.pi.glbChampionsCount) {
+			glbChampionBonesIndex = iBonesID;
 		}
 	}
-	//^2405:00B7
-	return QUERY_GDAT_ITEM_NAME(iCategory, iItemNumber);
+	return QUERY_GDAT_ITEM_NAME(iGDatCategory, iGDatItemId);
 }
 
 
 //^0CEE:2773
 U16 SkWinCore::IS_MISCITEM_CURRENCY(ObjectID rl)
 {
-	//^0CEE:2773
 	ENTER(0);
-	//^0CEE:2776
 	if (true
 		&& rl.DBType() == dbMiscellaneous_item
 		&& (QUERY_GDAT_DBSPEC_WORD_VALUE(rl, GDAT_ITEM_STATS_GEN_FLAGS) & ITEM_FLAG_CURRENCY) != 0		// flags_currency = 0x4000
 	) {
-		//^0CEE:2794
 		return 1;
 	}
-	//^0CEE:2799
 	return 0;
 }
 
@@ -244,30 +227,18 @@ U16 SkWinCore::IS_MISCITEM_CURRENCY(ObjectID rl)
 //^0CEE:279D
 void SkWinCore::COUNT_BY_COIN_TYPES(ObjectID rlMoneybox, i16 *piCount)
 {
-	//^0CEE:279D
 	ENTER(2);
-	//^0CEE:27A3
 	ZERO_MEMORY(piCount, MONEY_ITEM_MAX*2);	// SPX: original 20 = 10*2
-	//^0CEE:27B5
 	for (ObjectID si = GET_ADDRESS_OF_RECORD9(rlMoneybox)->GetContainedObject(); si != OBJECT_END_MARKER; si = GET_NEXT_RECORD_LINK(si)) {
-		//^0CEE:27C7
 		if (IS_MISCITEM_CURRENCY(si) == 0)
-			//^0CEE:27CF
 			continue;
-		//^0CEE:27D1
 		U16 bp02 = GET_DISTINCTIVE_ITEMTYPE(si);
-		//^0CEE:27DA
 		for (i16 di = 0; di < glbCountMoneyItems; di++) {
-			//^0CEE:27DE
 			if (glbMoneyItemsIDTable[di] == bp02) {
-				//^0CEE:27EB
-				piCount[di] += GET_ADDRESS_OF_RECORDA(si)->Charge() +1;
+				piCount[di] += GET_ADDRESS_OF_RECORDA(si)->Charge() + 1;
 			}
-			//^0CEE:2809
 		}
-		//^0CEE:2810
 	}
-	//^0CEE:281D
 	return;
 }
 
@@ -707,12 +678,9 @@ U16 SkWinCore::GET_DISTINCTIVE_ITEMTYPE(ObjectID recordLink)
 }
 
 //^0CEE:2CD2
-U16 SkWinCore::QUERY_ITEM_MONEY_VALUE(ObjectID xx)
+U16 SkWinCore::QUERY_ITEM_MONEY_VALUE(ObjectID oItem)
 {
-	//^0CEE:2CD2
 	ENTER(4);
-	//^0CEE:2CD6
-	i32 bp04 = QUERY_ITEM_VALUE(xx, 2);
-	return (bp04 <= MONEY_MAX_VALUE) ? (U16)bp04 : MONEY_MAX_VALUE;	// 65535
-	//^0CEE:2CFD
+	i32 iMoneyValue = QUERY_ITEM_VALUE(oItem, 2);	// bp04
+	return (iMoneyValue <= MONEY_MAX_VALUE) ? (U16)iMoneyValue : MONEY_MAX_VALUE;	// 65535
 }
