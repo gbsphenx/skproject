@@ -906,7 +906,7 @@ namespace DMEncyclopaedia {
 		U16 w2; // Item attributes
 
 		U8 Who() const { return (U8)((w2 >> 14) & 0x03); }
-		U8 Compass() const { return (U8)((w2 >> 14) & 0x03); }
+		U8 Compass() const { return (U8)((w2 >> 14) & 0x03); }	// SPX: seems that "Compass" is used instead of "Charge"
 		void Compass(U16 newval) { w2 = (w2 & 0x3fff) | ((newval & 0x03) << 14); }
 		void Bone(U16 val) {
 			val &= 3;
@@ -920,7 +920,7 @@ namespace DMEncyclopaedia {
 			w2 |= val;
 		}
 		U8 Charge() const { return (U8)((w2 >> 8)&0x3f); } // M!3,0,3F
-		void Charge(U8 val) { // M!3,0,3F
+		void Charge(U8 val) { // M!3,0,3F	// SPX: If "Compass" is for "Charge", then what is this function for ?
 			val &= 0x3f;
 			w2 &= 0xc0ff;
 			w2 |= val << 8;

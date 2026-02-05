@@ -130,6 +130,49 @@ U16 SkWinCore::GET_ITEM_MAX_CHARGE(ObjectID recordLink)
 	return 0;
 }
 
+//^0CEE:29EC
+U16 SkWinCore::ADD_ITEM_CHARGE(ObjectID recordLink, i16 delta)
+{
+	U16 si = 0;
+	if (recordLink == OBJECT_NULL)
+		return si;
+	GenericRecord *bp04 = (GenericRecord *)GET_ADDRESS_OF_RECORD(recordLink);
+	U16 bp06 = recordLink.DBType();
+	U16 di;
+	switch (bp06) {
+		case dbWeapon:
+			si = reinterpret_cast<Weapon *>(bp04)->Charges();
+			di = 15;	// SPX: could call GET_ITEM_MAX_CHARGE for this
+			break;
+		case dbCloth:
+			si = reinterpret_cast<Cloth *>(bp04)->Charges();
+			di = 15;	// SPX: could call GET_ITEM_MAX_CHARGE for this
+			break;
+		case dbMiscellaneous_item:
+			si = reinterpret_cast<Miscellaneous_item *>(bp04)->Compass();
+			di = 3;		// SPX: could call GET_ITEM_MAX_CHARGE for this
+			break;
+		default:
+			return si;
+	}
+	si += delta;
+	si = BETWEEN_VALUE(0, si, di);
+	switch (bp06) {
+		case dbWeapon:
+			reinterpret_cast<Weapon *>(bp04)->Charges(si);
+			break;
+		case dbCloth:
+			reinterpret_cast<Cloth *>(bp04)->Charges(si);
+			break;
+		case dbMiscellaneous_item:
+			reinterpret_cast<Miscellaneous_item *>(bp04)->Compass(si);
+			break;
+		default:
+			return si;
+	}
+	return si;
+}
+
 
 //^24A5:0990
 // SPX: _24a5_0990 renamed __CHECK_ROOM_FOR_CONTAINER

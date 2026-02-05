@@ -54,65 +54,7 @@ void SkWinCore::LUA_CALL_SCRIPT(U8 iScriptEvent, i16 iPosMap, i16 iPosX, i16 iPo
 }
 
 
-//^0CEE:29EC
-U16 SkWinCore::ADD_ITEM_CHARGE(ObjectID recordLink, i16 delta)
-{
-	//^0CEE:29EC
-	U16 si = 0;
-	//^0CEE:29F4
-	if (recordLink == OBJECT_NULL)
-		return si;
-	//^0CEE:29FD
-	GenericRecord *bp04 = (GenericRecord *)GET_ADDRESS_OF_RECORD(recordLink);
-	//^0CEE:2A0B
-	U16 bp06 = recordLink.DBType();
-	//^0CEE:2A17
-	U16 di;
-	switch (bp06) {
-		case dbWeapon:
-			//^0CEE:2A29
-			si = reinterpret_cast<Weapon *>(bp04)->Charges();
-			di = 0x000F;
-			break;
-		case dbCloth:
-			//^0CEE:2A3D
-			si = reinterpret_cast<Cloth *>(bp04)->Charges();
-			di = 0x000F;
-			break;
-		case dbMiscellaneous_item:
-			//^0CEE:2A48
-			si = reinterpret_cast<Miscellaneous_item *>(bp04)->Compass();
-			di = 0x03;
-			break;
-		default:
-			//^0CEE:2AB6
-			return si;
-	}
-	//^0CEE:2A5A
-	si += delta;
-	//^0CEE:2A5D
-	si = BETWEEN_VALUE(0, si, di);
-	//^0CEE:2A6B
-	switch (bp06) {
-		case dbWeapon:
-			//^0CEE:2A7F
-			reinterpret_cast<Weapon *>(bp04)->Charges(si);
-			break;
-		case dbCloth:
-			//^0CEE:2A91
-			reinterpret_cast<Cloth *>(bp04)->Charges(si);
-			break;
-		case dbMiscellaneous_item:
-			//^0CEE:2AA2
-			reinterpret_cast<Miscellaneous_item *>(bp04)->Compass(si);
-			break;
-		default:
-			//^0CEE:2AB6
-			return si;
-	}
-	//^0CEE:2AB6
-	return si;
-}
+
 
 //^0CEE:26E5
 U16 SkWinCore::IS_CONTAINER_MONEYBOX(ObjectID recordLink)

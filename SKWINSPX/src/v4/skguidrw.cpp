@@ -3108,41 +3108,23 @@ U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, U16 xx)
 {
 	// You click eye icon with the item which you wanna know about, in item inventory.
 
-	//^24A5:0C35
 	ENTER(148);
-	//^24A5:0C3B
 	ObjectID si = recordLink;
-	//^24A5:0C3E
 	ItemStatBarPos bp0e = glbItemStatBarPos;
-	//^24A5:0C4F
 	if (si == OBJECT_NULL)
-		//^24A5:0C54
 		return 0;
-	//^24A5:0C59
 	GenericRecord *_bp04 = GET_ADDRESS_OF_RECORD(si);
-	//^24A5:0C66
 	DRAW_GUIDED_STR(_4976_3d7d);
-	//^24A5:0C70
 	U16 bp08 = si.DBType();
-	//^24A5:0C7B
 	if (bp08 == dbScroll) {
-		//^24A5:0C80
 		DRAW_SCROLL_TEXT(si);
-		//^24A5:0C86
-		//^24A5:0E7B
 		return 1;
 	}
-	//^24A5:0C89
 	glbInventorySubpanel = 3;
-	//^24A5:0C8F
 	if (xx == 0) {
-		//^24A5:0C95
-		//^24A5:0C54
 		return 0;
 	}
-	//^24A5:0C97
 	DRAW_STATIC_PIC(GDAT_CATEGORY_INTERFACE_CHARSHEET, 0x00, 0x01, 0x01ee, -1);
-	//^24A5:0CAA
 	U8 bp09;
 	U8 bp0a;
 	if (QUERY_GDAT_ENTRY_IF_LOADABLE(
@@ -3152,60 +3134,46 @@ U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, U16 xx)
 		0x11
 		) != 0
 	) {
-		//^24A5:0CD0
 		DRAW_STATIC_PIC(bp09, bp0a, 0x11, 0x01ee, 12);
 	}
-	//^24A5:0CE7
 	DRAW_STATIC_PIC(GDAT_CATEGORY_INTERFACE_CHARSHEET, 0x00, 0x05, 0x01f8, 12);
-	//^24A5:0CFA
 	DRAW_VP_RC_STR(0x1fa, glbPaletteT16[COLOR_LIGHTER_GRAY], GET_ITEM_NAME(si));
-	//^24A5:0D19
 	DRAW_ITEM_ICON(si, 0x2e, 0, 0, 0);
-	//^24A5:0D2A
 	U16 bp06 = QUERY_ITEM_WEIGHT(si);
-	//^24A5:0D34
 	glbItemWeightKg = bp06 / 10;
-	//^24A5:0D3E
 	glbItemWeightDg = bp06 % 10;
-	//^24A5:0D49
 	U8 bp0094[128];
     DRAW_GUIDED_STR(QUERY_GDAT_TEXT(GDAT_CATEGORY_INTERFACE_CHARSHEET, 0x00, 0x1f, bp0094));			
-	//^24A5:0D65
 	if (bp08 == dbContainer) {
-		//^24A5:0D6B
 		if (IS_CONTAINER_CHEST(si) != 0) {
-			//^24A5:0D76
 			DRAW_CONTAINER_SURVEY(_bp04->castToContainer());
-			//^24A5:0D82
-			//^24A5:0E7B
 			return 1;
 		}
-		//^24A5:0D85
 		if (IS_CONTAINER_MONEYBOX(si) == 0) {
-			//^24A5:0D90
-			//^24A5:0E7B
 			return 1;
 		}
-		//^24A5:0D93
 		MONEY_BOX_SURVEY(si);	//
-		//^24A5:0D99
 		return 1;
 	}
-	//^24A5:0D9C
-	U16 bp10 = 0;
-	//^24A5:0DA1
+	U16 iDisplayRow = 0;	// bp10
+	U8 rune;		// bp11 This holds the rune to be displayed along the power bar
+	U16 color = COLOR_CYAN;
+
 	if (_2759_0155(si) != 0) {
-		//^24A5:0DAC
-		i16 di = ADD_ITEM_CHARGE(si, 0);
-		//^24A5:0DB8
-		if (di != 0) {
-			//^24A5:0DBC
+		i16 iNbCharges = ADD_ITEM_CHARGE(si, 0);	/// di
+		if (iNbCharges != 0) {
+			rune = RUNE_GOR;
+			// SPX addition for hard coded waterskin and tankard
+			if (si.orif.db == dbMiscellaneous_item) {
+				rune = RUNE_VI;
+				color = COLOR_BLUE;
+			}
 			DRAW_ITEM_STATS_BAR(
-				bp0e.pos[bp10++],
-				di,
+				bp0e.pos[iDisplayRow++],
+				iNbCharges,
 				GET_ITEM_MAX_CHARGE(si),
-				RUNE_GOR,
-				COLOR_CYAN
+				rune,
+				color
 				);
 		}
 	}
@@ -3218,8 +3186,6 @@ U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, U16 xx)
 //	An item with charges will have a CYAN GOR bar with the number of remaining charges
 
 
-	//^24A5:0DE0
-	U8 rune;		// bp11 This holds the rune to be displayed along the power bar
 	U16 max;	//bp14
 	i16 value;		//di
 	switch (si.DBType()) {
@@ -3258,17 +3224,16 @@ U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, U16 xx)
 				//return 1;
 			}
 	}
-	//^24A5:0E59
 	// SPX: Original behaviour
 	if (!SkCodeParam::bUseDM2ExtendedMode) {
 		if (value != 0) {
-			DRAW_ITEM_STATS_BAR(bp0e.pos[bp10], value, max, rune, COLOR_BROWN);
+			DRAW_ITEM_STATS_BAR(bp0e.pos[iDisplayRow], value, max, rune, COLOR_BROWN);
 		}
 	}
 	// SPX: little modif to have different colors
 	else if (SkCodeParam::bUseDM2ExtendedMode && value != 0)
 	{
-		U16 color = COLOR_BROWN;
+		color = COLOR_BROWN;
 		switch (rune)
 		{
 			case RUNE_KU:	// Hand to hand weapon
@@ -3281,7 +3246,7 @@ U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, U16 xx)
 				color = COLOR_BLUE;
 				break;
 		}
-		DRAW_ITEM_STATS_BAR(bp0e.pos[bp10], value, max, rune, color);
+		DRAW_ITEM_STATS_BAR(bp0e.pos[iDisplayRow], value, max, rune, color);
 	}
 
 //--- NEW CODE -------------------------------------
@@ -3320,9 +3285,9 @@ U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, U16 xx)
 			strMoneyValue
 			);
 
-		if ( bp10 != 0 || value != 0)
+		if ( iDisplayRow != 0 || value != 0)
 			yy += 2;
-		yy += ((bp10 + (value != 0 ? 1 : 0))*12);
+		yy += ((iDisplayRow + (value != 0 ? 1 : 0))*12);
 		
 		// Number of charges
 		if (iNbCharges != 0)
@@ -3375,7 +3340,6 @@ U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, U16 xx)
 		}
 	} // SPX: End of hidden stats block
 
-	//^24A5:0E7B
 	return 1;
 }
 
@@ -3493,17 +3457,13 @@ void SkWinCore::DRAW_LOCAL_TEXT(U16 rectno, U16 clr1, U16 clr2, U8 *str)
 	// draw local positioned text.
 	// a) health, mana and stamina: "770/770"
 
-	//^3929:0C37
 	ENTER(12);
-	//^3929:0C3B
 	i16 bp02;
 	i16 bp04;
 	if (QUERY_STR_METRICS(str, &bp02, &bp04) != 0) {
-		//^3929:0C56
 		SRECT bp0c;
 		if (QUERY_BLIT_RECT(NULL, &bp0c, rectno, &bp02, &bp04, -1) != 0)
 		{
-			//^3929:0C7A
 			// SPX: Note, the bp0c.y does not match exactly the character sheet. (for static texts)
 			// The charsheet image can be changed.
 			bp0c.y -= 1;
@@ -3512,14 +3472,13 @@ void SkWinCore::DRAW_LOCAL_TEXT(U16 rectno, U16 clr1, U16 clr2, U8 *str)
 				-1,
 				_4976_00f6,
 				bp0c.x,
-				bp0c.y +bp0c.cy,
+				bp0c.y + bp0c.cy,
 				clr1,
 				clr2,
 				str
 				);
 		}
 	}
-	//^3929:0CA6
 	return;
 }
 
@@ -3527,8 +3486,6 @@ void SkWinCore::DRAW_LOCAL_TEXT(U16 rectno, U16 clr1, U16 clr2, U8 *str)
 //^0CD5:0018
 void SkWinCore::FILL_STR(U8 *buff, U16 count, U8 value, U16 delta)
 {
-	//^0CD5:0018
-	//^0CD5:0021
 	for (U16 si = 0, di = 0; di < count; si += delta, di++) {
 		buff[si] = value;
 	}
@@ -3592,21 +3549,14 @@ U8 *SkWinCore::SK_STRCAT(U8 *strTo, const U8 *strFrom) {
 // SPX: _24a5_1532 replaced by DRAW_SKILL_PANEL
 void SkWinCore::DRAW_SKILL_PANEL()
 {
-	//^24A5:1532
 	ENTER(144);
-	//^24A5:1538
 	U16 di = glbChampionInventory -1;
-	//^24A5:153E
 	Champion *bp04 = &glbChampionSquad[di];
-	//^24A5:154C
 	glbInventorySubpanel = 2;
-	//^24A5:1552
 	DRAW_STATIC_PIC(GDAT_CATEGORY_INTERFACE_CHARSHEET, 0x00, 0x01, 494, -1);	// blank stone panel
-	//^24A5:1565
 	i16 bp0c;
 	i16 bp10;
 	QUERY_TOPLEFT_OF_RECT(557, &bp0c, &bp10);
-	//^24A5:157A
 	U8 bp0090[128];
 	U16 bp06;
 
@@ -3616,29 +3566,19 @@ void SkWinCore::DRAW_SKILL_PANEL()
 	}
 
 	for (bp06 = 0; bp06 <= 3; bp06++) {
-		//^24A5:1582
 		i16 si = min_value(SkLvlArchmaster, QUERY_PLAYER_SKILL_LV(di, bp06, 1));	// skill level caped 16
-		//^24A5:159C
 		if (si != SkLvlNone) {	// (si != 1)
-			//^24A5:15A1
 			_4976_52e4 = bp06;
-			//^24A5:15A7
 			QUERY_GDAT_TEXT(GDAT_CATEGORY_INTERFACE_CHARSHEET, 0x00
 				, tSkillLevelNameGDAT2Entry[RCJ(15,si -SkLvlNeophyte)], bp0090);	// [RCJ(15,si -2)]
-			//^24A5:15BE
 			DRAW_VP_STR(bp0c, bp10, glbPaletteT16[(glbChampionMajorSkillsLevel[di][bp06] != 0) ? COLOR_LIGHT_GREEN : COLOR_LIGHTER_GRAY], bp0090);
-			//^24A5:15F5
 			glbChampionTable->lastName[9 +bp06] = glbChampionMajorSkillsLevel[di][bp06];
-			//^24A5:1608
 			bp10 += glbPanelStatsYDelta;
 		}
-		//^24A5:160E
 	}
 
-	//^24A5:161A
 	i16 bp0e;
 	QUERY_TOPLEFT_OF_RECT(559, &bp0e, &bp10);
-	//^24A5:162F
 	// SPX: Display attributes (STR, DEX, WIS, VIT, AF, AM)
 	// SPX: The first is luck; the GDAT2 resource 07-00 20-00-00 (TXT) must be defined as "LUCK".
 	U16 attributeStart = ATTRIBUTE_FIRST+1;	// Start at 1=STR
@@ -3648,44 +3588,33 @@ void SkWinCore::DRAW_SKILL_PANEL()
 	}
 
 	for (bp06 = attributeStart; bp06 <= ATTRIBUTE_LAST; bp06++) {
-		//^24A5:1637
 		DRAW_VP_STR(
 			bp0c,
 			bp10,
 			glbPaletteT16[COLOR_LIGHTER_GRAY],
 			QUERY_GDAT_TEXT(GDAT_CATEGORY_INTERFACE_CHARSHEET, 0x00, bp06 +0x20, bp0090)
 			);
-		//^24A5:166A
 		U16 si = GET_PLAYER_ABILITY(bp04, bp06, 0);			// Current
-		//^24A5:167F
 		U16 bp0a = GET_PLAYER_ABILITY(bp04, bp06, 1);		// Max
-		//^24A5:1695
 		U16 bp08 = (si < bp0a) ? 8 : ((si > bp0a) ? 7 : 13);
 		// SPX: 8 = red, 7 = green, 13 = grey
-		//^24A5:16B2
 		DRAW_VP_STR(
 			bp0e,
 			bp10,
 			glbPaletteT16[bp08],
 			FMT_NUM(si, 1, 3)
 			);
-		//^24A5:16DC
 		//SK_STRCPY(bp0090, &_4976_3d7f);	// SPX: What's this? We do want to concat /
 		SK_STRCPY(bp0090, strSlash);		// SPX: Fixed version with /
-		//^24A5:16EE
 		SK_STRCAT(bp0090, FMT_NUM(bp0a, 1, 3));
-		//^24A5:170D
         DRAW_VP_STR(
 			_4976_0126 * 3 +bp0e,
 			bp10,
 			glbPaletteT16[COLOR_LIGHTER_GRAY],
 			bp0090
 			);
-		//^24A5:1737
 		bp10 += glbPanelStatsYDelta;
-		//^24A5:173D
 	}
-	//^24A5:1749
 	return;
 }
 
@@ -3693,46 +3622,30 @@ void SkWinCore::DRAW_SKILL_PANEL()
 //^2E62:0670
 void SkWinCore::REFRESH_PLAYER_STAT_DISP(i16 player)
 {
-	//^2E62:0670
 	ENTER(164);
-	//^2E62:0676
 	U16 bp14 = 0;
 	U16 bp16 = 0;
 	U16 bp18 = 0;
 	U16 bp1a = 0;
 	U16 bp1c = 0;
-	//^2E62:068F
 	Champion *champion = &glbChampionSquad[player];	//*bp04
-	//^2E62:06A0
 	U16 si = champion->heroFlag;
-	//^2E62:06A7
 	U16 bp08 = (player +1 == glbChampionInventory) ? 1 : 0; // 1=draw entire inventory panel
-	//^2E62:06BB
 	if (bp08 != 0 && _4976_022c != 0)
-		//^2E62:06C6
 		si |= 0x8000;
-	//^2E62:06CA
 	if (glbChampionInventory != glbLastChampionInventory || (si & 0x8000) != 0) {
-		//^2E62:06D9
 		if (bp08 != 0) {
-			//^2E62:06DF
 			DRAW_STATIC_PIC(GDAT_CATEGORY_INTERFACE_CHARSHEET, 0x00, 0x00, 0x04, -1);	// char sheet general screen
-			//^2E62:06F1
 			bp1c = 1;
 			bp18 = 1;
-			//^2E62:06FB
 			glbLastChampionInventory = glbChampionInventory;
-			//^2E62:0701
 			bp14 = 15;
-			//^2E62:0706
 			si |= 0x7c00;
 		}
 		else {
-			//^2E62:070C
 			glbLastChampionInventory = 0;
 		}
 	}
-	//^2E62:0714
 	else if (bp08 != 0) {
 		bp14 = _4976_581a ^ _4976_5804;
 	}
@@ -3752,35 +3665,23 @@ void SkWinCore::REFRESH_PLAYER_STAT_DISP(i16 player)
 			DRAW_CHARSHEET_OPTION_ICON(GDAT_INTERFACE_CANCEL_BUTTON, 0x0236, 0x0002);		// 0x000B: Cancel red cross
 
 		}
-		//^2E62:0789
 		bp18 = 1;
-		//^2E62:078E
 		_4976_5804 = _4976_581a;
 	}
-	//^2E62:0794
 	if ((si & 0x4000) != 0) {
-		//^2E62:079A
 		DRAW_PLAYER_3STAT_PANE(player, 1);
-		//^2E62:07A5
 		bp1a = 1;
-		//^2E62:07AA
 		if (champion->curHP() != 0) {
-			//^2E62:07B4
 			if (bp08 != 0) {
-				//^2E62:07BA
 				DRAW_CHAMPION_PICTURE(player);
-				//^2E62:07C2
 				si |= 0x0800;
 			}
 			else {
-				//^2E62:07C8
 				si |= 0x0c00;
 			}
-			//^2E62:07CC
 			bp16 = 1;
 		}
 		else {
-			//^2E62:07D3
 			DRAW_NAME_STR(
 				&_4976_3ff0,
 				player +165,
@@ -3790,27 +3691,17 @@ void SkWinCore::REFRESH_PLAYER_STAT_DISP(i16 player)
 				);
 		}
 	}
-	//^2E62:0801
 	if (champion->curHP() != 0) {
-		//^2E62:080E
 		if ((si & 0x0800) != 0) {	// Refresh stats bar
-			//^2E62:0817
 			DRAW_PLAYER_3STAT_PANE(player, 0);
-			//^2E62:0822
 			bp1a = 1;
-			//^2E62:0827
 			DRAW_PLAYER_3STAT_HEALTH_BAR(player);
-			//^2E62:082F
 			if (champion->timerIndex != TIMER_NONE) {
-				//^2E62:0839
 				DRAW_PLAYER_DAMAGE(player);
 			}
-			//^2E62:0841
 			if (bp08 != 0) {
-				//^2E62:084A
 				SRECT bp24;
 				QUERY_EXPANDED_RECT(549, &bp24);
-				//^2E62:085A
 				DRAW_DIALOGUE_PICT(
 					QUERY_GDAT_IMAGE_ENTRY_BUFF(0x07, 0x00, 0x00),
 					_4976_4c16,
@@ -3820,9 +3711,7 @@ void SkWinCore::REFRESH_PLAYER_STAT_DISP(i16 player)
 					-1,
 					QUERY_GDAT_IMAGE_LOCALPAL(0x07, 0x00, 0x00)
 					);
-				//^2E62:0897
 				DRAW_PLAYER_3STAT_TEXT(champion);
-				//^2E62:08A3
 				// SPX: bp0d holds the color number (rectangle?) around the mouth or eye.
 				U8 colorRectangle; //bp0d;
 #if (XDMX_EXTENDED_FEATURES == 0) // original
@@ -3830,14 +3719,11 @@ void SkWinCore::REFRESH_PLAYER_STAT_DISP(i16 player)
 #elif (XDMX_EXTENDED_FEATURES == 1)
 				if (champion->curFood() < 0 || champion->curWater() < 0 || champion->PoisonValue != 0 || champion->PlagueValue != 0) {
 #endif
-					//^2E62:08BB
 					colorRectangle = 5; // i am hunger! or poisoned!
 				}
 				else {
-					//^2E62:08C1
 					colorRectangle = 4;
 				}
-				//^2E62:08C5
 				// SPX: Display colored rectangle around mouth
 				DRAW_EYE_MOUTH_COLORED_RECTANGLE(colorRectangle, 545);
 				colorRectangle = 4;
@@ -3854,25 +3740,17 @@ void SkWinCore::REFRESH_PLAYER_STAT_DISP(i16 player)
 				bp18 = 1;
 			}
 		}
-		//^2E62:0915
 		ObjectID bp12;
 		if (bp08 != 0) {
-			//^2E62:091E
 			if (glbShowItemStats != 0) {
-				//^2E62:0925
 				bp12 = cd.pi.glbLeaderHandPossession.object;
 			}
-			//^2E62:092A
 			else if (_4976_4bfe != 0) {
-				//^2E62:0931
 				bp12 = OBJECT_NULL;
 			}
 			else {
-				//^2E62:0938
 				bp12 = champion->Possess(INVENTORY_HAND_LEFT);
 			}
-			//^2E62:0940
-			//^2E62:0943
 			if (false
 				|| _4976_3d30 != bp12 
 				|| _4976_4bfe != _4976_5806 
@@ -3892,105 +3770,73 @@ void SkWinCore::REFRESH_PLAYER_STAT_DISP(i16 player)
 				}
 
 				
-				//^2E62:0998
 				if (glbShowItemStats != 0) {
-					//^2E62:099F
 					if (bp12 == OBJECT_NULL) {
-						//^2E62:09A5
 						DRAW_SKILL_PANEL();
 					}
 					else {
-						//^2E62:09AC
 						DRAW_ITEM_SURVEY(bp12, 1);
 					}
 				}
 				else {
-					//^2E62:09BA
 					if (cd.pi.glbNextChampionNumber != 0) {
-						//^2E62:09C1
 						if (_4976_4bfe == 0) {
-							//^2E62:09CA
 							DRAW_CRYOCELL_LEVER(0);
 						}
 						else {
-							//^2E62:09C8
 							goto _09e4;
 						}
 					}
-					//^2E62:09D4
 					else if (DRAW_ITEM_SURVEY(bp12, 0) == 0) {
-						//^2E62:09E4
 _09e4:
 						DRAW_FOOD_WATER_POISON_PANEL();
 					}
 				}
-				//^2E62:09E9
 				_4976_3d30 = bp12;
 				_4976_5808 = glbShowItemStats;
 				_4976_5806 = _4976_4bfe;
-				//^2E62:09FB
 				goto _0a25;
 			}
 			else if (_4976_3d30 != OBJECT_NULL) {
-				//^2E62:0A04
 				if ((QUERY_GDAT_DBSPEC_WORD_VALUE(_4976_3d30, 0x00) & 0x0020) != 0) {
-					//^2E62:0A16
 					DRAW_ITEM_SURVEY(_4976_3d30, glbShowItemStats);
-					//^2E62:0A25
 _0a25:
 					bp18 = 1;
 				}
 			}
-			//^2E62:0A2A
 			for (i16 bp0c = 0; bp0c < 30; bp0c++) {
-				//^2E62:0A31
 				bp18 |= _2e62_03b5(player, bp0c, bp1c);
-				//^2E62:0A44
 			}
 		}
 		else {
-			//^2E62:0A4F
 			for (i16 bp0c = 0; bp0c <= 1; bp0c++) {
-				//^2E62:0A56
 				bp1a |= _2e62_03b5(player, bp0c, bp16);
-				//^2E62:0A69
 			}
 		}
-		//^2E62:0A72
 		U16 di;
 		U8 bp00a4[128];
 		if ((si & 0x0400) != 0) {
-			//^2E62:0A7B
 			di = glbPaletteT16[(player == glbChampionLeader && cd.pi.glbNextChampionNumber == 0) ? COLOR_ORANGE : COLOR_WHITE];
 			if (SkCodeParam::bDM1Mode)
 				di = glbPaletteT16[(player == glbChampionLeader && cd.pi.glbNextChampionNumber == 0) ? COLOR_YELLOW : COLOR_ORANGE];
-			//^2E62:0AA0
 			if (bp08 != 0) {
-				//^2E62:0AA9
 				SK_STRCPY(bp00a4, &champion->firstName[0]);
-				//^2E62:0ABD
 				U8 bp09 = champion->lastName[0];
 				if (bp09 != '.' && bp09 != ';' && bp09 != '-') {
-					//^2E62:0AD9
 					SK_STRCAT(bp00a4, _4976_4756);
 				}
-				//^2E62:0AEF
 				SK_STRCAT(bp00a4, &champion->firstName[8]);
 				DRAW_LOCAL_TEXT(553, di, (cd.pi.glbNextChampionNumber != 0) ? glbPaletteT16[COLOR_DARK_GRAY] : 0x4000, bp00a4);
 			}
 			else {
-				//^2E62:0B37
 				DRAW_PLAYER_3STAT_PANE(player, 0);
 				bp1a = 1;
 				DRAW_NAME_STR(&_4976_3ff0, player +165, di, glbPaletteT16[COLOR_DARK_GRAY] | 0x4000, champion->firstName);
 			}
 		}
-		//^2E62:0B6F
 		if (bp08 != 0 && (si & 0x1000) != 0) {
-			//^2E62:0B81
 			SRECT bp24;
 			QUERY_EXPANDED_RECT(554, &bp24);
-			//^2E62:0B91
 			DRAW_DIALOGUE_PICT(
 				QUERY_GDAT_IMAGE_ENTRY_BUFF(0x07, 0x00, 0x00),
 				_4976_4c16,
@@ -4000,49 +3846,31 @@ _0a25:
 				-1,
 				QUERY_GDAT_IMAGE_LOCALPAL(0x07, 0x00, 0x00)
 				);
-			//^2E62:0BCE
 			U16 bp10 = GET_PLAYER_WEIGHT(player);
-			//^2E62:0BDA
 			di = MAX_LOAD(champion);
-			//^2E62:0BE9
 			U16 bp06;
 			if (di < bp10) {
-				//^2E62:0BEE
 				bp06 = 8;
 			}
 			else {
-				//^2E62:0BF5
 				bp06 = ((i32(bp10) << 3) > (i16(di) * i32(5))) ? 11 : 13;
 			}
-			//^2E62:0C2C
 			_4976_52e0 = di = bp10 / 10;
-			//^2E62:0C3B
 			_4976_52fa = bp10 - di * 10;
-			//^2E62:0C4B
 			_4976_52f6 = MAX_LOAD(champion) / 10;
-			//^2E62:0C62
             QUERY_GDAT_TEXT(0x07, 0x00, 0x2a, bp00a4);
-			//^2E62:0C76
 			DRAW_LOCAL_TEXT(555, glbPaletteT16[bp06], glbPaletteT16[COLOR_DARK_GRAY] | 0x4000, bp00a4);
-			//^2E62:0C9E
 			bp18 = 1;
 		}
 	}
-	//^2E62:0CA3
 	if (bp1a != 0) {
-		//^2E62:0CA9
 		_0b36_0cbe(&_4976_3ff0, 1);
 	}
-	//^2E62:0CB7
 	if (bp18 != 0) {
-		//^2E62:0CBD
 		_4976_022c = 0;
-		//^2E62:0CC3
  		CHANGE_VIEWPORT_TO_INVENTORY(0);
 	}
-	//^2E62:0CCB
 	champion->heroFlag &= 0x03ff;	// 0x03FF
-	//^2E62:0CD4
 	return;
 }
 
