@@ -1456,6 +1456,7 @@ int SkWinCore::INIT_BLANK_DUNGEON(X16 isNewGame, int iMaps)
 	
 		dunMapsHeaders[iMapIndex].bGfxFlags = MAPGFX_FLAG__PIT_UPPER_ROOF | MAPGFX_FLAG__PIT_LOWER_GROUND | MAPGFX_FLAG__STAIRS_GOING_UP | MAPGFX_FLAG__STAIRS_GOING_DOWN | MAPGFX_FLAG__TELEPORTER | MAPGFX_FLAG__DOOR_0 | MAPGFX_FLAG__DOOR_1;
 		dunMapsHeaders[iMapIndex].w14 = (3 << 4) + (dunMapsHeaders[iMapIndex].w14 & 0xFF00); // tileset = 3 (keep)
+		//dunMapsHeaders[iMapIndex].w14 = (0 << 4) + (dunMapsHeaders[iMapIndex].w14 & 0xFF00); // tileset = 0 (normal)
 	}
 	_4976_4cb4 = nColumnCounter; // that one is super important: it defines the offset of columns when adding/remove object from columns item counts. If not set, any item add/remove will crash the game
 

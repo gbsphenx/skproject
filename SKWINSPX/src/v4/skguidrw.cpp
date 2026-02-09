@@ -2658,30 +2658,20 @@ i16 SkWinCore::QUERY_3STAT_BAR_COLOR(U8 cls4, i16 def_color) {
 // SPX: _24a5_0fb8 renamed DRAW_FOOD_WATER_POISON_PANEL
 void SkWinCore::DRAW_FOOD_WATER_POISON_PANEL()
 {
-	//^24A5:0FB8
 	ENTER(4);
-	//^24A5:0FBC
 	Champion *pChampion = &glbChampionTable[glbChampionInventory];
-	//^24A5:0FCD
 	glbInventorySubpanel = 1;
-	//^24A5:0FD3
 	DRAW_STATIC_PIC(GDAT_CATEGORY_INTERFACE_CHARSHEET, 0x00, GDAT_INTERFACE_CHAR_FOOD_WATER_PANEL, 494, -1);
 #if DM2_EXTENDED_MODE == 1
 	DRAW_POWER_STAT_BAR(pChampion->curFood(), 496, QUERY_FOOD_WATER_BAR_COLOR(0x06, COLOR_BROWN), -1024, 0);
 	DRAW_POWER_STAT_BAR(pChampion->curWater(), 497, QUERY_FOOD_WATER_BAR_COLOR(0x07, COLOR_BLUE), -1024, 0);
 #else
-	//^24A5:0FE6
 	DRAW_POWER_STAT_BAR(pChampion->curFood(), 496, COLOR_BROWN, -1024, 0);
-	//^24A5:0FFE
 	DRAW_POWER_STAT_BAR(pChampion->curWater(), 497, COLOR_BLUE, -1024, 0);
 #endif
-	//^24A5:1016
 	DRAW_STATIC_PIC(GDAT_CATEGORY_INTERFACE_CHARSHEET, 0x00, GDAT_INTERFACE_FOOD_TEXT, 500, 12);	// food
-	//^24A5:1029
 	DRAW_STATIC_PIC(GDAT_CATEGORY_INTERFACE_CHARSHEET, 0x00, GDAT_INTERFACE_WATER_TEXT, 501, 12);	// water
-	//^24A5:103C
 	if (pChampion->PoisonValue != 0) {
-		//^24A5:1046
 		DRAW_STATIC_PIC(GDAT_CATEGORY_INTERFACE_CHARSHEET, 0x00, GDAT_INTERFACE_POISON_TEXT, 502, 12); // poison
 		
 		// TODO SPX: In PC-DM2, the POISON value has its power bar.
@@ -2695,7 +2685,6 @@ void SkWinCore::DRAW_FOOD_WATER_POISON_PANEL()
 		DRAW_STATIC_PIC(GDAT_CATEGORY_INTERFACE_CHARSHEET, 0x00, GDAT_INTERFACE_PLAGUED_TEXT, 502, 12); // plagued
 	}
 #endif
-	//^24A5:1059
 	return;
 }
 
@@ -5364,14 +5353,11 @@ void SkWinCore::DRAW_DIALOGUE_PROGRESS(X32 xx)
 //^32CB:076E
 void SkWinCore::DRAW_DUNGEON_GRAPHIC(U8 cls1, U8 cls2, U8 cls4, X16 rectno, i16 colorkey, U16 mirrorflip)
 {
-	//^32CB:076E
 	ENTER(314);
-	//^32CB:0773
 	X16 si = rectno;
 	ExtendedPicture bp013a;
 	QUERY_GDAT_SUMMARY_IMAGE(&bp013a, U8(cls1), U8(cls2), U8(cls4));
 	_0b36_037e(bp013a.b58, U8(_4976_5a88), colorkey, -1, bp013a.w56);
-	//^32CB:07AB
 	bp013a.colorKeyPassThrough = colorkey;
 	bp013a.rectNo = si;
 	bp013a.pb44 = _4976_4c16;
@@ -5384,14 +5370,11 @@ void SkWinCore::DRAW_DUNGEON_GRAPHIC(U8 cls1, U8 cls2, U8 cls4, X16 rectno, i16 
 			bp013a.w34 += _4976_00fc;
 		}
 	}
-	// SPX : special fix DM1
 	if (SkCodeParam::bGFXFixModeDM1 && rectno == 754) // roof door slit D1
 		bp013a.iYOffset -= 3;
 	if (SkCodeParam::bDM2V5Mode && cls1 == GDAT_CATEGORY_GRAPHICSSET && cls4 == GDAT_GFXSET_DOOR_FRAME_FRONT_D1)
 		bp013a.iYOffset += 3;
-	//^32CB:07EB
 	DRAW_PICST(QUERY_PICST_IT(&bp013a));
-	//^32CB:0801
 	return;
 }
 
@@ -5554,9 +5537,7 @@ void SkWinCore::DRAW_DEFAULT_DOOR_BUTTON(U8 cls1, U8 cls2, U8 cls4, i16 iViewpor
 // SPX: _32cb_4715 renamed DRAW_DOOR_FRAMES
 void SkWinCore::DRAW_DOOR_FRAMES(i16 iViewportCell, X16 iDoorFrameDisplayFlags)	// i16 xx, X16 yy
 {
-	//^32CB:4715
 	ENTER(16);
-	//^32CB:471B
 	//i16 si = iViewportCell; // si
 	X8 gfxset = glbMapGraphicsSet;	// bp0f
 	X16 colorkey = glbSceneColorKey;		// di
@@ -5565,44 +5546,49 @@ void SkWinCore::DRAW_DOOR_FRAMES(i16 iViewportCell, X16 iDoorFrameDisplayFlags)	
 	Door *door = GET_ADDRESS_OF_RECORD0(bp0e);	//*bp04
 	// SPX: 0x40 = GDAT_DOOR_NO_FRAMES entry. Only used for the ROOTS door type (BETA)
 	if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, glbMapDoorType[door->DoorType()], dtWordValue, GDAT_DOOR_NO_FRAMES) == 0) {
-		//^32CB:4770
 		if ((iDoorFrameDisplayFlags & DRAW_DOOR_FLAG_CEILING_SLIT) != 0) { // (0x01) ceiling slit
-			//^32CB:4777
 			X8 bp05 = tlbGraphicsDoorRoofSlits[RCJ(14,iViewportCell)];	// 0x12 to 0x17 is door ceiling slit
-			if (bp05 != 0xff) {
-				//^32CB:4782
+			if (bp05 != 0xFF) {
 				// tlbRectnoDoorRoofSlits
 				DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_GRAPHICSSET, gfxset, bp05, tlbRectnoDoorRoofSlits[RCJ(14,iViewportCell)], colorkey, DRAW_FLAG_FLIP_NONE);
 			}
 		}
-		//^32CB:479B
 		X16 iLocalCell;	// X16 bp0c
 		X16 iFrameLeft;	// X16 bp08
 		X16 iFrameRight;	// X16 bp0a
 		if (glbGeneralFlipGraphics != 0) {
-			//^32CB:47A2
 			iLocalCell = tlbDoorSideFramesReorder[RCJ(23,iViewportCell)];
 			iFrameLeft = 1;	// 1 = right
 			iFrameRight = 0;	// 0 = left
 		}
 		else {
-			//^32CB:47B6
 			iLocalCell = iViewportCell;
 			iFrameLeft = 0;	// 0 = left
 			iFrameRight = 1;	// 1 = right
 		}
-		//^32CB:47C3
 		if ((iDoorFrameDisplayFlags & DRAW_DOOR_FLAG_LEFT_FRAME) != 0) {	// (0x02) left door frame
-			//^32CB:47CA
 			// X8 bp05 = tlbGraphicsDoorSideFrames[RCJ(14,bp0c)][RCJ(2,bp08)]
 			X8 iDoorFrameGfx = tlbGraphicsDoorSideFrames[RCJ(14,iLocalCell)][RCJ(2,iFrameLeft)];	// door side frames (28 slots divided into 2 parts (2 * 14))
 			if (iDoorFrameGfx != 0xFF) {
-				//^32CB:47DD
 				QUERY_TEMP_PICST(0, 64, 64, 0, 0, 0, QUERY_CREATURE_BLIT_RECTI(iViewportCell, 10, 0), 4, colorkey, -1, GDAT_CATEGORY_GRAPHICSSET, gfxset, iDoorFrameGfx); // door frame left
 				// SPX: DM1 frame adjustment for pixel perfect
 				if (SkCodeParam::bGFXFixModeDM1) {
-					glbTempPicture.iXOffset -= 2;
-					glbTempPicture.iYOffset += 4;
+					if (iDoorFrameGfx == 0xD3 || iDoorFrameGfx == 0xD4) {
+						glbTempPicture.iXOffset -= 2;
+						glbTempPicture.iYOffset += 2;	// ?
+					}
+					else if (iDoorFrameGfx == 0x07 || iDoorFrameGfx == 0x08)	{ // Distance 1
+						glbTempPicture.iXOffset -= 2;
+						glbTempPicture.iYOffset += 2;
+					}
+					else if (iDoorFrameGfx == 0x09 || iDoorFrameGfx == 0x0A)	{ // Distance 2
+						glbTempPicture.iXOffset -= 3;
+						glbTempPicture.iYOffset += 3;
+					}
+					else {
+						glbTempPicture.iXOffset -= 2;
+						glbTempPicture.iYOffset += 2;
+					}
 				}
 				else if (SkCodeParam::bDM2V5Mode) { // DM2 V5 adjustment
 					if (iDoorFrameGfx == 0x0B || iDoorFrameGfx == 0x0C)	{ // Distance 3
@@ -5625,18 +5611,29 @@ void SkWinCore::DRAW_DOOR_FRAMES(i16 iViewportCell, X16 iDoorFrameDisplayFlags)	
 				DRAW_TEMP_PICST();
 			}
 		}
-		//^32CB:480E
 		if ((iDoorFrameDisplayFlags & DRAW_DOOR_FLAG_RIGHT_FRAME) != 0) {	// (0x04) right door frame (holding button)
-			//^32CB:4818
 			// X8 bp05 = tlbGraphicsDoorSideFrames[RCJ(14,bp0c)][RCJ(2,bp0a)];
 			X8 iDoorFrameGfx = tlbGraphicsDoorSideFrames[RCJ(14,iLocalCell)][RCJ(2,iFrameRight)];
 			if (iDoorFrameGfx != 0xFF) {
-				//^32CB:482E
 				QUERY_TEMP_PICST(1, 64, 64, 0, 0, 0, QUERY_CREATURE_BLIT_RECTI(iViewportCell, 14, 0), 3, colorkey, -1, GDAT_CATEGORY_GRAPHICSSET, gfxset, iDoorFrameGfx); // door frame right
 				// SPX: DM1 frame adjustment for pixel perfect
 				if (SkCodeParam::bGFXFixModeDM1) {
-					glbTempPicture.iXOffset += 2;
-					glbTempPicture.iYOffset += 4;
+					if (iDoorFrameGfx == 0xD3 || iDoorFrameGfx == 0xD4) {
+						glbTempPicture.iXOffset += 2;
+						glbTempPicture.iYOffset += 2;	// ?
+					}
+					else if (iDoorFrameGfx == 0x07 || iDoorFrameGfx == 0x08)	{ // Distance 1
+						glbTempPicture.iXOffset += 2;
+						glbTempPicture.iYOffset += 2;
+					}
+					else if (iDoorFrameGfx == 0x09 || iDoorFrameGfx == 0x0A)	{ // Distance 2
+						glbTempPicture.iXOffset += 3;
+						glbTempPicture.iYOffset += 3;
+					}
+					else {
+						glbTempPicture.iXOffset += 2;
+						glbTempPicture.iYOffset += 2;
+					}
 				}
 				else if (SkCodeParam::bDM2V5Mode) { // DM2 V5 adjustment
 					if (iDoorFrameGfx == 0x0B || iDoorFrameGfx == 0x0C)	{ // Distance 3
@@ -5673,31 +5670,24 @@ void SkWinCore::DRAW_DOOR_FRAMES(i16 iViewportCell, X16 iDoorFrameDisplayFlags)	
 					// Image for pushed button is 5 because there are 5 rectnos for buttons depending on distance.
 				}
 				else {
-					//^32CB:4887
 					// In case there is a custom button (from wall ornates gfx)
 					if (tblCellTilesRoom[iViewportCell].xsrd.tfoi[2] != 0xFF) {
-						//^32CB:489C
 						DRAW_DEFAULT_DOOR_BUTTON(GDAT_CATEGORY_WALL_GFX, U8(tblCellTilesRoom[iViewportCell].xsrd.tfoi[2]) & 0xFF, U8(tblCellTilesRoom[iViewportCell].xsrd.tfoi[2] >> 8) +1, iViewportCell);
 					}
 				}
 			}
 		}
 	}
-	//^32CB:48D1
 	return;
 }
 
 //^32CB:48D5
 X16 SkWinCore::_32cb_48d5(U16 xx, i16 yy) 
 {
-	//^32CB:48D5
 	ENTER(0);
-	//^32CB:48D9
-	i16 si = (((xx << 7) +64) / yy) >> 1;
+	i16 si = (((xx << 7) + 64) / yy) >> 1;
 	if (CALC_STRETCHED_SIZE(si, yy) < xx)
-		//^32CB:48FB
-		return si +1;
-	//^32CB:4900
+		return si + 1;
 	return si;
 }
 
@@ -5705,39 +5695,29 @@ X16 SkWinCore::_32cb_48d5(U16 xx, i16 yy)
 // SPX: _32cb_4905 renamed DRAW_DOOR
 void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 yy, X16 zz, X32 aa
 {
-	//^32CB:4905
 	ENTER(348);
 
 	if (SkCodeParam::bDebugGFXNoDoors)
 		return;
 
-	//^32CB:490B
 	if (yy != 0) {
-		//^32CB:4911
 		DRAW_DOOR_FRAMES(iCellPos, yy);	// Note, D0 door side (gfx 0x06) displayed on the same tile is not drawn here
 	}
-	//^32CB:491D
 	if (aa != 0) {
-		//^32CB:4925
-	//	DRAW_STATIC_OBJECT(iCellPos, aa, 0);
+		DRAW_STATIC_OBJECT(iCellPos, aa, 0);
 	}
 	
-	//^32CB:4937
 	U16 iDoorState = tblCellTilesRoom[iCellPos].xsrd.tfoi[0];	// U16 bp06
 	X16 iStretchDual;	// X16 si
 	
 	if (iDoorState != 0) {	// 0 = open. 1 - 3 = intermediate state. 4 = closed. 5 = destroyed
-		//^32CB:4955
 		ObjectID bp0c = tblCellTilesRoom[iCellPos].xsrd.tfoi[1];
 		i16 iYDist = glbTabYAxisDistance[RCJ(23,iCellPos)];	// i16 bp08
 		if (iYDist <= 3) {
-			//^32CB:497D
 			i16 iInvertedYDist = tlbInvertedDoorDistance[RCJ(5,iYDist)];	// i16 bp18
 			if (iInvertedYDist >= 0) {
-				//^32CB:498F
 				i16 iDoorPosRectno = tlbRectnoDoorPosition[RCJ(16,iCellPos)];	// i16 bp1a
 				if (iDoorPosRectno >= 0) {
-					//^32CB:49A2
 					Door *xDoor = GET_ADDRESS_OF_RECORD0(bp0c);	// Door *bp04
 					U8 iDoorGDATIndex = glbMapDoorType[xDoor->DoorType()];	// U8 bp0e
 					//printf("DRAW DOOR : type to draw : %02d => %02d\n", xDoor->DoorType(), glbMapDoorType[xDoor->DoorType()] );
@@ -5759,26 +5739,20 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 						}
 						// SPX END
 
-						//^32CB:49DE
 						U8 iDoorImg = U8(iYDist) -1;	// U8 bp0f / Check image no from distance; note: distance 0 would give image 0xFF.
 						// Door at Y=1 uses image 0 ; Y=2 => image 1 ; Y=3 => image 2 ; Y=0 has normally no specific image, it is image 0 streched.
 						iStretchDual = 0x40;	// si = 0x40 = 64 <=> 100%
 						X16 iLightPalette = 0;	// X16 bp0a	// 0 = light -> 4 = dark
 						if (iYDist == 0 || QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtImage, iDoorImg) == 0) {	// 0xe
-							//^32CB:4A09
 							if (iYDist != 0) {
-								//^32CB:4A0F
 								iLightPalette = iYDist;
 								iStretchDual = tlbDistanceStretch[RCJ(5,iLightPalette)];	// SPX: iLightPalette is used whereas mostly iYDist is used instead. Aren't they just the same?
 							}
 							else {
-								//^32CB:4A21
 								iStretchDual = 0x71;	// si = 0x71 = 113 <=> 176%
 							}
-							//^32CB:4A24
 							iDoorImg = 0;
 						}
-						//^32CB:4A28
 						X16 iOrnateIndex = xDoor->OrnateIndex();	// X16 di
 						i16 iCacheNo;	// i16 bp16
 #if (XDM1_EXTENDED_SEETHRUWALLS == 1)
@@ -5786,7 +5760,6 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 #else
 						if (iOrnateIndex != 0 || iDoorState == _DOOR_STATE__DESTROYED_) {	// If there is any ornate or door is destroyed
 #endif
-							//^32CB:4A43
 							ExtendedPicture xPicture;	// ExtendedPicture bp015c;
 							// Get door graphics
 							//bp16 = QUERY_MULTILAYERS_PIC(&bp015c, GDAT_CATEGORY_DOORS, bp0e, bp0f, si, si, bp0a, 0, bp12, -1);	// 0xe
@@ -5796,7 +5769,6 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 							X16 iStretchHorizontal;	// X16 bp20
 							X16 iStretchVertical;	// X16 bp22
 							if (iStretchDual == 0x40) {
-								//^32CB:4A88
 								i16 bp1c;
 								i16 bp1e;
 								
@@ -5806,22 +5778,17 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 								
 							}
 							else {
-								//^32CB:4AC4
 								iStretchVertical = iStretchHorizontal = iStretchDual;
 							}
-							//^32CB:4ACC
 							// If there is an ornate on the door ...
 							if (iOrnateIndex != 0) {
-								//^32CB:4AD0
 								iOrnateIndex--;
 								U8 iOrnateGDATIndex = glbMapDoorOrnatesList[iOrnateIndex];	// (bp0d) Get the real ornate gfx from the current map door ornate list.
 								// SPX: Get ornate
 								X16 iColorTransparencyOverlay = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOOR_GFX, iOrnateGDATIndex, dtWordValue, GDAT_IMG_COLORKEY_1);	// X16 bp14
 								if (iColorTransparencyOverlay == 0) {
-									//^32CB:4AEE
 									iColorTransparencyOverlay = 9;	// SPX: This is the "colorkey" index (generally not set in any GDAT2).
 								}
-								//^32CB:4AF3
 								// SPX: draw the ornate over the door // added for 
 								//QUERY_TEMP_PICST(0, bp20, bp22, 0, 0, bp08, 
 								
@@ -5845,9 +5812,7 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 								glbTempPicture.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(iCacheNo));
 								DRAW_TEMP_PICST();
 							}
-							//^32CB:4B45
 							if (iDoorState == _DOOR_STATE__DESTROYED_) {	// (iDoorState == 5) If door is destroyed .. then draw destroyed mask over any ornate
-								//^32CB:4B4B
 								X16 iColorTransparencyOverlay = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, iDoorGDATIndex, dtWordValue, GDAT_IMG_DOOR_COLORKEY_2);	// X16 bp14
 								if (iColorTransparencyOverlay == 0)
 									iColorTransparencyOverlay = 9;	// 9 is standard CYAN
@@ -5898,7 +5863,6 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 								DRAW_TEMP_PICST();
 							}
 #endif // XDM1_EXTENDED_SEETHRUWALLS
-							//^32CB:4BBC
 							xPicture.colorKeyPassThrough = xPicture.b58[iDoorColorPassThrough];
 							xPicture.w56 = 0;
 							QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(iCacheNo, &xPicture);
@@ -5907,20 +5871,16 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 							glbTempPicture.pb44 = _4976_4c16;
 						}
 						else {
-							//^32CB:4C0C
 							iCacheNo = -1;
 							//QUERY_TEMP_PICST(0, si, si, 0, 0, bp0a, -1, -1, bp12, -1, 0xe, bp0e, bp0f);
 							QUERY_TEMP_PICST(mirroredDoor, iStretchDual, iStretchDual, 0, 0, iLightPalette, -1, -1, iDoorColorPassThrough, -1, GDAT_CATEGORY_DOORS, iDoorGDATIndex, iDoorImg);
 						}
-						//^32CB:4C36
 						// SPX: this part change position of door when in intermediate state
 						if (iDoorState < 4) {	// 4 = closed. < 4 => intermediate state. 0 = opened
-							//^32CB:4C3C
 							iDoorPosRectno = iDoorPosRectno + iDoorState;
 							if (xDoor->OpeningDir() == 0) // 0 = horizontal
 							{
 								X16 iWidth = 0;	// SPX: added this to not reuse "di" variable, already used for ornate index
-								//^32CB:4C56
 								glbTempPicture.width >>= 1;
 								iWidth = glbTempPicture.width;
 								glbTempPicture.w4 |= 0x10;
@@ -5936,12 +5896,10 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 						// 1 - 3 = vertical positions (¼, ½, ¾ closed)
 						// 4 - 6 = horizontal left positions (¼, ½, ¾ closed)	=> hence +3 on rectno for horizontal opening
 						// 7 - 9 = horizontal right positions (¼, ½, ¾ closed)	=> hence +6 on rectno for horizontal opening
-						//^32CB:4C86
 						glbTempPicture.rectNo = iDoorPosRectno;
 						glbTempPicture.iYOffset;
 						DRAW_TEMP_PICST();	// draw the FULL door or LEFT part (for horizontal opening)
 						if (iCacheNo >= 0) {
-							//^32CB:4C96
 							FREE_TEMP_CACHE_INDEX(iCacheNo);
 						}
 					}
@@ -5949,17 +5907,12 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 			}
 		}
 	}
-	//^32CB:4C9F
 	if (zz != 0) {
-		//^32CB:4CA5
 		DRAW_DOOR_FRAMES(iCellPos, zz);
 	}
-	//^32CB:4CB1
 	if (aa != 0) {
-		//^32CB:4CB9
 		_32cb_2d8c(tblCellTilesRoom[iCellPos].xsrd.w4, iCellPos, aa);
 	}
-	//^32CB:4CDB
 	return;
 }
 
@@ -6053,22 +6006,17 @@ _4dc0:
 // SPX: _32cb_4ecc renamed DRAW_STAIRS_SIDE
 void SkWinCore::DRAW_STAIRS_SIDE(i16 xx)
 {
-	//^32CB:4ECC
 	ENTER(4);
-	//^32CB:4ED2
 	i16 di = xx;
 	U8 gfxset = glbMapGraphicsSet;	// bp02
 	i16 bp04 = glbSceneColorKey;
 	if (di > 8)
 		return;
-	//^32CB:4EE6
 	X16 si = (tblCellTilesRoom[di].xsrd.tfoi[0] != 0) ? 1 : 0;
 	X8 bp01 = tlbGraphicsStairsSide[RCJ(9,di)][RCJ(2,si)];	// bp01	, table containing 0xC7 to 0xD2 = side stairs (wood ramp)
 	if (bp01 != 0xff) {
-		//^32CB:4F12
 		DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_GRAPHICSSET, gfxset, bp01, _4976_4600[RCJ(9,di)][RCJ(2,si)], bp04, 0);
 	}
-	//^32CB:4F37
 	return;
 }
 
@@ -6077,9 +6025,7 @@ void SkWinCore::DRAW_STAIRS_SIDE(i16 xx)
 // SPX: _32cb_245a renamed DRAW_PIT_TILE
 void SkWinCore::DRAW_PIT_TILE(i16 xx)
 {
-	//^32CB:245A
 	ENTER(6);
-	//^32CB:2460
 	i16 si = xx;
 	X8 bp03 = glbMapGraphicsSet;
 	X16 bp06 = glbSceneColorKey;
@@ -6087,17 +6033,13 @@ void SkWinCore::DRAW_PIT_TILE(i16 xx)
 	if (bp02 < 0)
 		return;
 	if (si < 11 || tblCellTilesRoom[si].xsrd.tfoi[0] == 0) {
-		//^32CB:2497
 		X16 di = tlbGraphicsFlip[RCJ(16,si)];	// di
 		if (si == 0) {
-			//^32CB:24A3
 			di = (SET_GRAPHICS_FLIP_FROM_POSITION(1, _4976_5aa0, _4976_5a9c, _4976_5a9e) != 0) ? 1 : 0;
 		}
-		//^32CB:24C4
 		DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_GRAPHICSSET, bp03
 			, (tblCellTilesRoom[si].xsrd.tfoi[0] != 0) ? tlbGraphicsPitHidden[RCJ(16,si)] : tlbGraphicsPitNormal[RCJ(16,si)], bp02, bp06, di);
 	}
-	//^32CB:24F7
 	return;
 }
 //^32CB:1F3E

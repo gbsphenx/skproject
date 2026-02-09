@@ -12837,7 +12837,8 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 
 	//^2066:25B8
 	U16 bp04 = 0;
-	U16 si = 0;
+	U16 iMapIndex = 0;	// si
+	U16 si;	// another
 	i16 di;
 	U8 bp01 = 0;
 	U8 iSwapEndian = 0;	// SPX: added to handle non-PC dungeons in big endian
@@ -12976,22 +12977,23 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	//^2066:26C5
 	U16 bp0e = 0;	// total map column
 	//^2066:26CC
-	for (si = 0; si < nMaps; si++) {
+	for (iMapIndex = 0; iMapIndex < nMaps; iMapIndex++) {
 		//^2066:26CE
-		dunMapColumnsSumArray[si] = bp0e;
+		dunMapColumnsSumArray[iMapIndex] = bp0e;
 		//^2066:26DE
-		bp0e += dunMapsHeaders[si].Column();
+		bp0e += dunMapsHeaders[iMapIndex].Column();
 		//^2066:26F7
 	
 		// SPX: adjustment for DM1 mode : put flags for activating gfx for pits, doors, etc ...
 		if (SkCodeParam::bDM1Mode == true)
 		{
-			dunMapsHeaders[si].bGfxFlags = MAPGFX_FLAG__PIT_UPPER_ROOF | MAPGFX_FLAG__PIT_LOWER_GROUND | MAPGFX_FLAG__STAIRS_GOING_UP | MAPGFX_FLAG__STAIRS_GOING_DOWN | MAPGFX_FLAG__TELEPORTER | MAPGFX_FLAG__DOOR_0 | MAPGFX_FLAG__DOOR_1;
-			dunMapsHeaders[si].w14 = (3 << 4) + (dunMapsHeaders[si].w14 & 0xFF00); // tileset = 3 (keep)
+			dunMapsHeaders[iMapIndex].bGfxFlags = MAPGFX_FLAG__PIT_UPPER_ROOF | MAPGFX_FLAG__PIT_LOWER_GROUND | MAPGFX_FLAG__STAIRS_GOING_UP | MAPGFX_FLAG__STAIRS_GOING_DOWN | MAPGFX_FLAG__TELEPORTER | MAPGFX_FLAG__DOOR_0 | MAPGFX_FLAG__DOOR_1;
+			//dunMapsHeaders[iMapIndex].w14 = (3 << 4) + (dunMapsHeaders[iMapIndex].w14 & 0xFF00); // tileset = 3 (keep)
+			dunMapsHeaders[iMapIndex].w14 = (0 << 4) + (dunMapsHeaders[iMapIndex].w14 & 0xFF00); // tileset = 0 (normal)
 		}
 
 		if (SkCodeParam::bDebugTileset)
-			dunMapsHeaders[si].w14 = (0x0F << 4) + (dunMapsHeaders[si].w14 & 0xFF00);
+			dunMapsHeaders[iMapIndex].w14 = (0x0F << 4) + (dunMapsHeaders[iMapIndex].w14 & 0xFF00);
 	}
 	//^2066:26FD
 	_4976_4cb4 = bp0e;
@@ -22684,7 +22686,11 @@ void SkWinCore::GAME_LOOP()
 
 		//DISPLAY_HINT_TEXT(COLOR_YELLOW, message);
 		// SPX get speed from window menu
-		stdTickBalance = skWinApp->spfact*4;
+		//stdTickBalance = skWinApp->spfact*4;
+#if defined (__DJGPP__)
+		SkCodeParam::iTickSpeedFactor = 1;
+#endif
+		stdTickBalance = SkCodeParam::iTickSpeedFactor*4;
 		//stdTickBalance = 1;
 		glbTickSpeed = stdTickBalance;
 		// SPX
