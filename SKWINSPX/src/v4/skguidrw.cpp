@@ -5362,9 +5362,15 @@ void SkWinCore::DRAW_DUNGEON_GRAPHIC(U8 cls1, U8 cls2, U8 cls4, X16 rectno, i16 
 			bp013a.w34 += _4976_00fc;
 		}
 	}
+
+	// SPX: hard fixes
 	if (SkCodeParam::bGFXFixModeDM1 && rectno == 754) // roof door slit D1
 		bp013a.iYOffset -= 3;
-	if (SkCodeParam::bDM2V5Mode && cls1 == GDAT_CATEGORY_x08_GRAPHICSSET && cls4 == GDAT_GFXSET_DOOR_FRAME_FRONT_D1)
+	if (SkCodeParam::bGFXFixModeDM1 && rectno == 751) // roof door slit D2
+		bp013a.iYOffset -= 1;
+	if (SkCodeParam::bGFXFixModeDM1 && cls1 == GDAT_CATEGORY_x08_GRAPHICSSET && cls4 == GDAT_GFXSET_x06_DOOR_FRAME_FRONT_D1)
+		bp013a.iYOffset += 3;
+	if (SkCodeParam::bDM2V5Mode && cls1 == GDAT_CATEGORY_x08_GRAPHICSSET && cls4 == GDAT_GFXSET_x06_DOOR_FRAME_FRONT_D1)
 		bp013a.iYOffset += 3;
 	DRAW_PICST(QUERY_PICST_IT(&bp013a));
 	return;
@@ -5503,15 +5509,19 @@ void SkWinCore::DRAW_DEFAULT_DOOR_BUTTON(U8 cls1, U8 cls2, U8 cls4, i16 iViewpor
 	ENTER(4);
 	X16 iViewportCellLocal = iViewportCell;	// X16 di = ww
 	i16 iButtonRectno = tlbRectnoDoorButton[RCJ(14,iViewportCellLocal)]; // i16 si
-	if (iButtonRectno < 0 || cls2 == 0xff)
+	if (iButtonRectno < 0 || cls2 == 0xFF)
 		return;
     X16 iYDistance = glbTabYAxisDistance[RCJ(23,iViewportCellLocal)]; // X16 bp04
 	X16 iStretchScale = tlbDistanceStretch[RCJ(5,iYDistance)];	// X16 bp02
 	QUERY_TEMP_PICST(0, iStretchScale, iStretchScale, 0, 0, iYDistance, 
-		QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, dtWordValue, 8) * 5 + iButtonRectno +1950,	// SPX: replaced hardcoded class with cls1 to allow more control from caller
+		QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, dtWordValue, 8) * 5 + iButtonRectno + 1950,	// SPX: replaced hardcoded class with cls1 to allow more control from caller
 		//QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0C_DOOR_BUTTONS, cls2, dtWordValue, 8) * 5 + iButtonRectno +1950,
 		-1, glbSceneColorKey, -1, cls1, cls2, cls4
 		);
+	if (SkCodeParam::bGFXFixModeDM1) {
+		glbTempPicture.iXOffset -= 2;
+		glbTempPicture.iYOffset -= 1;
+	}
 	DRAW_TEMP_PICST();
 	if (iButtonRectno == 3 || iButtonRectno == 4) {	// 3 is D1, 4 is D0
 		MAKE_BUTTON_CLICKABLE(&glbTempPicture.rc36, 4, U8(iViewportCellLocal));
@@ -5536,6 +5546,7 @@ void SkWinCore::DRAW_DOOR_FRAMES(i16 iViewportCell, X16 iDoorFrameDisplayFlags)	
 			X8 bp05 = tlbGraphicsDoorRoofSlits[RCJ(14,iViewportCell)];	// 0x12 to 0x17 is door ceiling slit
 			if (bp05 != 0xFF) {
 				// tlbRectnoDoorRoofSlits
+				//printf("Slit: Rectno: %d\n", tlbRectnoDoorRoofSlits[RCJ(14,iViewportCell)]);
 				DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_x08_GRAPHICSSET, gfxset, bp05, tlbRectnoDoorRoofSlits[RCJ(14,iViewportCell)], colorkey, DRAW_FLAG_FLIP_NONE);
 			}
 		}
@@ -5559,15 +5570,18 @@ void SkWinCore::DRAW_DOOR_FRAMES(i16 iViewportCell, X16 iDoorFrameDisplayFlags)	
 				QUERY_TEMP_PICST(0, 64, 64, 0, 0, 0, QUERY_CREATURE_BLIT_RECTI(iViewportCell, 10, 0), 4, colorkey, -1, GDAT_CATEGORY_x08_GRAPHICSSET, gfxset, iDoorFrameGfx); // door frame left
 				// SPX: DM1 frame adjustment for pixel perfect
 				if (SkCodeParam::bGFXFixModeDM1) {
-					if (iDoorFrameGfx == 0xD3 || iDoorFrameGfx == 0xD4) {
+					if (iDoorFrameGfx == GDAT_GFXSET_x06_DOOR_FRAME_SIDE_D0_L 
+						|| iDoorFrameGfx == GDAT_GFXSET_x06_DOOR_FRAME_SIDE_D0_R) {	// D3 & D4 distance 0
 						glbTempPicture.iXOffset -= 2;
-						glbTempPicture.iYOffset += 2;	// ?
+						glbTempPicture.iYOffset -= 3;
 					}
-					else if (iDoorFrameGfx == 0x07 || iDoorFrameGfx == 0x08)	{ // Distance 1
+					else if (iDoorFrameGfx == GDAT_GFXSET_x07_DOOR_FRAME_SIDE_D1_L 
+						|| iDoorFrameGfx == GDAT_GFXSET_x08_DOOR_FRAME_SIDE_D1_R)	{ // 07 & 08 Distance 1
 						glbTempPicture.iXOffset -= 2;
 						glbTempPicture.iYOffset += 2;
 					}
-					else if (iDoorFrameGfx == 0x09 || iDoorFrameGfx == 0x0A)	{ // Distance 2
+					else if (iDoorFrameGfx == GDAT_GFXSET_x09_DOOR_FRAME_SIDE_D2_L 
+						|| iDoorFrameGfx == GDAT_GFXSET_x0A_DOOR_FRAME_SIDE_D2_R)	{ // 09 & 0A Distance 2
 						glbTempPicture.iXOffset -= 3;
 						glbTempPicture.iYOffset += 3;
 					}
@@ -5604,15 +5618,18 @@ void SkWinCore::DRAW_DOOR_FRAMES(i16 iViewportCell, X16 iDoorFrameDisplayFlags)	
 				QUERY_TEMP_PICST(1, 64, 64, 0, 0, 0, QUERY_CREATURE_BLIT_RECTI(iViewportCell, 14, 0), 3, colorkey, -1, GDAT_CATEGORY_x08_GRAPHICSSET, gfxset, iDoorFrameGfx); // door frame right
 				// SPX: DM1 frame adjustment for pixel perfect
 				if (SkCodeParam::bGFXFixModeDM1) {
-					if (iDoorFrameGfx == 0xD3 || iDoorFrameGfx == 0xD4) {
-						glbTempPicture.iXOffset += 2;
-						glbTempPicture.iYOffset += 2;	// ?
+					if (iDoorFrameGfx == GDAT_GFXSET_x06_DOOR_FRAME_SIDE_D0_L 
+						|| iDoorFrameGfx == GDAT_GFXSET_x06_DOOR_FRAME_SIDE_D0_R) {	// D3 & D4 distance 0
+						glbTempPicture.iXOffset -= 2;
+						glbTempPicture.iYOffset -= 3;
 					}
-					else if (iDoorFrameGfx == 0x07 || iDoorFrameGfx == 0x08)	{ // Distance 1
+					else if (iDoorFrameGfx == GDAT_GFXSET_x07_DOOR_FRAME_SIDE_D1_L 
+						|| iDoorFrameGfx == GDAT_GFXSET_x08_DOOR_FRAME_SIDE_D1_R)	{ // 07 & 08 Distance 1
 						glbTempPicture.iXOffset += 2;
 						glbTempPicture.iYOffset += 2;
 					}
-					else if (iDoorFrameGfx == 0x09 || iDoorFrameGfx == 0x0A)	{ // Distance 2
+					else if (iDoorFrameGfx == GDAT_GFXSET_x09_DOOR_FRAME_SIDE_D2_L 
+						|| iDoorFrameGfx == GDAT_GFXSET_x0A_DOOR_FRAME_SIDE_D2_R)	{ // 09 & 0A Distance 2
 						glbTempPicture.iXOffset += 3;
 						glbTempPicture.iYOffset += 3;
 					}
@@ -5724,7 +5741,7 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 						}
 						// SPX END
 
-						U8 iDoorImg = U8(iYDist) -1;	// U8 bp0f / Check image no from distance; note: distance 0 would give image 0xFF.
+						U8 iDoorImg = U8(iYDist) - 1;	// U8 bp0f / Check image no from distance; note: distance 0 would give image 0xFF.
 						// Door at Y=1 uses image 0 ; Y=2 => image 1 ; Y=3 => image 2 ; Y=0 has normally no specific image, it is image 0 streched.
 						iStretchDual = 0x40;	// si = 0x40 = 64 <=> 100%
 						X16 iLightPalette = 0;	// X16 bp0a	// 0 = light -> 4 = dark
@@ -5779,7 +5796,7 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 								
 								if (!SkCodeParam::bUseDM2ExtendedMode)
 									QUERY_TEMP_PICST(mirroredDoor, iStretchHorizontal, iStretchVertical, 0, 0, iYDist, 
-										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0B_DOOR_GFX, iOrnateGDATIndex, dtWordValue, GDAT_DOOR_ORNATE__POSITION) << 2) + iInvertedYDist +0x7d0,
+										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0B_DOOR_GFX, iOrnateGDATIndex, dtWordValue, GDAT_DOOR_x08_ORNATE__POSITION) << 2) + iInvertedYDist +0x7d0,
 										-1, iColorTransparencyOverlay, -1, GDAT_CATEGORY_x0B_DOOR_GFX, iOrnateGDATIndex, GDAT_DOOR_DECORATION_MASK
 										);
 								else if (SkCodeParam::bUseDM2ExtendedMode)
@@ -5789,7 +5806,7 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 									if (iColorPassThrough == 0)
 										iColorPassThrough = 10;
 									QUERY_TEMP_PICST(mirroredDoor, iStretchHorizontal, iStretchVertical, 0, 0, iYDist, 
-										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0B_DOOR_GFX, iOrnateGDATIndex, dtWordValue, GDAT_DOOR_ORNATE__POSITION) << 2) + iInvertedYDist +0x7d0,
+										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0B_DOOR_GFX, iOrnateGDATIndex, dtWordValue, GDAT_DOOR_x08_ORNATE__POSITION) << 2) + iInvertedYDist +0x7d0,
 										-1, iColorTransparencyOverlay, iColorPassThrough, GDAT_CATEGORY_x0B_DOOR_GFX, iOrnateGDATIndex, GDAT_DOOR_DECORATION_MASK
 										);
 								}
@@ -5872,8 +5889,9 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 								glbTempPicture.w14 = glbTempPicture.w14 + iWidth;
 								glbTempPicture.rectNo = iDoorPosRectno + 6;
 								DRAW_TEMP_PICST();	// will draw RIGHT part of the door
-								glbTempPicture.w14 = glbTempPicture.w14 + iWidth;
-								iDoorPosRectno += 3;
+								glbTempPicture.w32 = 0; // reset pos for left part
+								glbTempPicture.w14 = glbTempPicture.w14; //+ iWidth;	// that will be the left part
+								iDoorPosRectno += 3;	// change the rectno to left part I assume
 							}
 						}
 						// Explanation on door rectno offsets:
@@ -5883,6 +5901,11 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 						// 7 - 9 = horizontal right positions (¼, ½, ¾ closed)	=> hence +6 on rectno for horizontal opening
 						glbTempPicture.rectNo = iDoorPosRectno;
 						glbTempPicture.iYOffset;
+
+						if (SkCodeParam::bGFXFixModeDM1) {
+							glbTempPicture.iYOffset += 1;
+						}
+
 						DRAW_TEMP_PICST();	// draw the FULL door or LEFT part (for horizontal opening)
 						if (iCacheNo >= 0) {
 							FREE_TEMP_CACHE_INDEX(iCacheNo);
@@ -6979,24 +7002,21 @@ void SkWinCore::DRAW_PLAYER_TILE()
 	switch (bp0e) {
 		case 0x10://^536D
 			{
-				//^32CB:536D
 				Door *door = GET_ADDRESS_OF_RECORD0(tblCellTilesRoom->xsrd.tfoi[1]);	//*bp04
 				if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0E_DOORS, glbMapDoorType[door->DoorType()], dtWordValue, GDAT_DOOR_NO_FRAMES) != 0)
 					break;
-				//^32CB:53A6
-				DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_DOOR_FRAME_FRONT_D1, QUERY_CREATURE_BLIT_RECTI(0, 2, 0), glbSceneColorKey, glbGeneralFlipGraphics);
+				DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_x06_DOOR_FRAME_FRONT_D1, QUERY_CREATURE_BLIT_RECTI(0, 2, 0), glbSceneColorKey, glbGeneralFlipGraphics);
 				break;
 			}
 		case 0x13://^53CE	// on stairs tile (coming from stairs)
-			//^32CB:53CE
 			si = tblCellTilesRoom->xsrd.tfoi[0];
 			DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet
 //					, (si != 0) ? 0x39 : 0x4D
-				, (si != 0) ? GDAT_GFXSET_STAIRS_RAMP_UP_S0_L : GDAT_GFXSET_STAIRS_RAMP_DOWN_S0_L
+				, (si != 0) ? GDAT_GFXSET_x39_STAIRS_RAMP_UP_S0_L : GDAT_GFXSET_x4D_STAIRS_RAMP_DOWN_S0_L
 				, (si != 0) ? 0x32B : 0x338, glbSceneColorKey, 0);
 			DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet
 //					, (si != 0) ? 0x3a : 0x4e
-				, (si != 0) ? GDAT_GFXSET_STAIRS_RAMP_UP_S0_R : GDAT_GFXSET_STAIRS_RAMP_DOWN_S0_R
+				, (si != 0) ? GDAT_GFXSET_x3A_STAIRS_RAMP_UP_S0_R : GDAT_GFXSET_x4E_STAIRS_RAMP_DOWN_S0_R
 				, (si != 0) ? 0x32C : 0x339, glbSceneColorKey, 0);
 			break;
 		case 0x02://^542E

@@ -575,8 +575,13 @@ enum SkillLevel {
 #define GDAT_GFXSET_x03_LETTERS						0x03
 
 #define GDAT_GFXSET_DATA_05							0x05
-#define GDAT_GFXSET_DOOR_FRAME_FRONT_D1				0x06
-
+#define GDAT_GFXSET_x06_DOOR_FRAME_FRONT_D1			0x06
+#define GDAT_GFXSET_x07_DOOR_FRAME_SIDE_D1_L		0x07
+#define GDAT_GFXSET_x08_DOOR_FRAME_SIDE_D1_R		0x08
+#define GDAT_GFXSET_x09_DOOR_FRAME_SIDE_D2_L		0x09
+#define GDAT_GFXSET_x0A_DOOR_FRAME_SIDE_D2_R		0x0A
+#define GDAT_GFXSET_x0B_DOOR_FRAME_SIDE_D3_L		0x0B
+#define GDAT_GFXSET_x0C_DOOR_FRAME_SIDE_D3_R		0x0C
 
 #define GDAT_GFXSET_WALL_D0_START_MARKER			0x22 // not used as GFX but first value for player tile (cell = 0)
 
@@ -602,8 +607,8 @@ enum SkillLevel {
 #define GDAT_GFXSET_WALL_D3_FRONT					0x32
 
 
-#define GDAT_GFXSET_STAIRS_RAMP_UP_S0_L				0x39
-#define GDAT_GFXSET_STAIRS_RAMP_UP_S0_R				0x3A
+#define GDAT_GFXSET_x39_STAIRS_RAMP_UP_S0_L				0x39
+#define GDAT_GFXSET_x3A_STAIRS_RAMP_UP_S0_R				0x3A
 
 #define GDAT_GFXSET_STAIRS_FRONT_UP_D0				0x3B
 #define GDAT_GFXSET_STAIRS_FRONT_UP_D0_ASIDE		0x3C
@@ -616,8 +621,8 @@ enum SkillLevel {
 
 #define GDAT_GFXSET_STAIRS_FRONT_UP_D2_ASIDE_FAR	0x44
 
-#define GDAT_GFXSET_STAIRS_RAMP_DOWN_S0_L			0x4D
-#define GDAT_GFXSET_STAIRS_RAMP_DOWN_S0_R			0x4E
+#define GDAT_GFXSET_x4D_STAIRS_RAMP_DOWN_S0_L			0x4D
+#define GDAT_GFXSET_x4E_STAIRS_RAMP_DOWN_S0_R			0x4E
 
 #define GDAT_GFXSET_STAIRS_FRONT_DOWN_D0			0x4F
 #define GDAT_GFXSET_STAIRS_FRONT_DOWN_D0_ASIDE		0x50
@@ -633,6 +638,8 @@ enum SkillLevel {
 
 #define GDAT_GFXSET_PIT_DOWN_D1_L1					0x72
 
+#define GDAT_GFXSET_x06_DOOR_FRAME_SIDE_D0_L		0xD3
+#define GDAT_GFXSET_x06_DOOR_FRAME_SIDE_D0_R		0xD4
 
 
 #define GDAT_GFXSET_SEE_THRU						0xF1	// CUSTOM, for SEE THRU WALLS
@@ -802,7 +809,7 @@ enum SkillLevel {
 #define GDAT_DOOR_X0D						0x0D	// vision bypass ?
 #define GDAT_DOOR_X10						0x10	// some spell bypass ?
 
-#define GDAT_DOOR_ORNATE__POSITION			0x08	// 0 = upper, 1 = centered, 2 = low/right
+#define GDAT_DOOR_x08_ORNATE__POSITION		0x08	// 0 = upper, 1 = centered, 2 = low/right
 
 #define _DOOR_STATE__OPENED_				0x00
 #define _DOOR_STATE__ONE_QUARTER_CLOSED_	0x01
