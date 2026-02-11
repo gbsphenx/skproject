@@ -486,22 +486,22 @@ const X8 glbByte01[1] = {0x01};
 // SPX: _4976_0caa renamed glbGDAT2CatPerDB
 // this seems to refer to the GDAT2 category for each database item type.
 const X8 glbGDAT2CatPerDB[16] = {
-	GDAT_CATEGORY_DOORS, // 0x0E door
-	GDAT_CATEGORY_TELEPORTERS, // 0x18 tele
+	GDAT_CATEGORY_x0E_DOORS, // 0x0E door
+	GDAT_CATEGORY_x18_TELEPORTERS, // 0x18 tele
 	0xFF, // 0xFF text
 	0xFF, // 0xFF actu
-	GDAT_CATEGORY_CREATURES, // 0x0F mons
-	GDAT_CATEGORY_WEAPONS, // 0x10 weap
-	GDAT_CATEGORY_CLOTHES, // 0x11 clot
-	GDAT_CATEGORY_SCROLLS, // 0x12 scro
-	GDAT_CATEGORY_POTIONS, // 0x13 poti
-	GDAT_CATEGORY_CONTAINERS, // 0x14 ches
-	GDAT_CATEGORY_MISCELLANEOUS, // 0x15 misc
+	GDAT_CATEGORY_x0F_CREATURES, // 0x0F mons
+	GDAT_CATEGORY_x10_WEAPONS, // 0x10 weap
+	GDAT_CATEGORY_x11_CLOTHES, // 0x11 clot
+	GDAT_CATEGORY_x12_SCROLLS, // 0x12 scro
+	GDAT_CATEGORY_x13_POTIONS, // 0x13 poti
+	GDAT_CATEGORY_x14_CONTAINERS, // 0x14 ches
+	GDAT_CATEGORY_x15_MISCELLANEOUS, // 0x15 misc
 	0xFF, // 0xFF 11
 	0xFF, // 0xFF 12
 	0xFF, // 0xFF 13
 	0xFF, // 0xFF missile
-	GDAT_CATEGORY_SPELL_MISSILES, // 0x0D cloud
+	GDAT_CATEGORY_x0D_SPELL_MISSILES, // 0x0D cloud
 };
 
 // SPX: 44 values of ... ?

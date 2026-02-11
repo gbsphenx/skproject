@@ -430,8 +430,8 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 		di += glbPrecomputedLight;	// SPX: is some sort of precalculed light level (depending on door and such?)
 		di += glbGlobalSpellEffects.Light;
 		//^24A5:02AA
-		di = di + QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_AMBIANT_LIGHT);
-		// SPX: GDAT_CATEGORY_GRAPHICSSET is 0x08
+		di = di + QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_x67_AMBIANT_LIGHT);
+		// SPX: GDAT_CATEGORY_x08_GRAPHICSSET is 0x08
 		//^24A5:02C2
 		if (glbRainFlagSomething != 0) {
 			//^24A5:02C9
@@ -449,7 +449,7 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 		}
 		//^24A5:030A
 		// SPX: Get the highest default light (from wallset type)
-		i16 bp0a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_HIGHEST_LIGHT_LEVEL);
+		i16 bp0a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_x68_HIGHEST_LIGHT_LEVEL);
 		if (SkCodeParam::bAutoDefaultMaxLight)
 			bp0a = 0;
 		//^24A5:031F
@@ -836,7 +836,7 @@ void SkWinCore::PROCEED_SPELL_FAILURE(U16 xx)
 		case 0x0030:	// need flask in hand 
 			//^29EE:0B92
 			//DRAW_TRANSPARENT_STATIC_PIC(0x01, 0x05, 0x0B, 0x5c, -1);
-			DRAW_TRANSPARENT_STATIC_PIC(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_CLASS_SPELLING, GDAT_IMG_NEED_FLASK, 0x5c, -1);
+			DRAW_TRANSPARENT_STATIC_PIC(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_CLASS_SPELLING, GDAT_IMG_NEED_FLASK, 0x5c, -1);
 			//^29EE:0BA4
 			si = 0x44;
 			di = 0x03;
@@ -1113,7 +1113,7 @@ _194a:
 							TRANSFER_PLAYER(bp08, bp0a, destMap, cd.pi.glbPlayerDir);
 							//^2FCF:198B
 							// SPX: This is used by the special teleporter ground cross		
-							QUEUE_NOISE_GEN2(GDAT_CATEGORY_FLOOR_GFX, bp04->TextIndex() & 0xff, SOUND_STD_ACTIVATION, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0x8c, 0x80);
+							QUEUE_NOISE_GEN2(GDAT_CATEGORY_x0A_FLOOR_GFX, bp04->TextIndex() & 0xff, SOUND_STD_ACTIVATION, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0x8c, 0x80);
 							//^2FCF:19BB
 							if (di == SDFSM_CMD_X_TELEPORTER) {	// di == 4
 								//^2FCF:19C0
@@ -1299,7 +1299,7 @@ U16 SkWinCore::ENGAGE_COMMAND(U16 player, i16 cmdSlot)
 				//^2759:19AD
 				// SPX: Sound made by the door when hit?
 				QUEUE_NOISE_GEN2(
-					GDAT_CATEGORY_DOORS,
+					GDAT_CATEGORY_x0E_DOORS,
 					GET_GRAPHICS_FOR_DOOR(bp12),
 					SOUND_OBJECT_GETHIT,
 					0xfe,
@@ -1342,7 +1342,7 @@ U16 SkWinCore::ENGAGE_COMMAND(U16 player, i16 cmdSlot)
 					break;
 			}
 			//^2759:1A3D
-			QUEUE_NOISE_GEN1(GDAT_CATEGORY_CREATURES, bp35, SOUND_OBJECT_GETHIT, 0x3c, 0xc8, bp1e, bp20, bp38 +1);
+			QUEUE_NOISE_GEN1(GDAT_CATEGORY_x0F_CREATURES, bp35, SOUND_OBJECT_GETHIT, 0x3c, 0xc8, bp1e, bp20, bp38 +1);
 			//^2759:1A5E
 			break;
 
@@ -2022,7 +2022,7 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 				}
 				//^2FCF:1B40
 				// SPX: Sound when drinking from wall
-				QUEUE_NOISE_GEN2(GDAT_CATEGORY_CHAMPIONS, glbChampionSquad[glbChampionLeader].HeroType(), SOUND_CHAMPION_EAT_DRINK, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 0, 0x96, 0x80);
+				QUEUE_NOISE_GEN2(GDAT_CATEGORY_x16_CHAMPIONS, glbChampionSquad[glbChampionLeader].HeroType(), SOUND_CHAMPION_EAT_DRINK, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 0, 0x96, 0x80);
 				//^2FCF:1B6F
 				break;
 			}
@@ -2170,7 +2170,7 @@ _1cb6:
 					//di = (bp04->RevertEffect() == bp2c) ? 1 : 0;
 					di = 0; // allow actuator invoke further
 					if (bp04->SoundEffect() != 0 || SkCodeParam::bDM1TQMode == 1) {	// SPX: in TQ, wall trigger do sound, no matter sound flag
-						QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0x8C, 0x80);
+						QUEUE_NOISE_GEN2(GDAT_CATEGORY_x09_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0x8C, 0x80);
 					}
 					
 					if (bp44 == ACTUATOR_TYPE_DM1_ITEM_EATER && bp04->OnceOnlyActuator() == 1)
@@ -2218,7 +2218,7 @@ _1cb6:
 						if (iInvokeActuator)
 						{
 							if (bp04->SoundEffect() != 0 || SkCodeParam::bDM1TQMode == 1) {	// SPX: in TQ, wall trigger do sound, no matter sound flag
-								QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0x8C, 0x80);
+								QUEUE_NOISE_GEN2(GDAT_CATEGORY_x09_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0x8C, 0x80);
 							}
 							INVOKE_ACTUATOR(bp04, bp04->ActionType(), 0);
 						}
@@ -2249,7 +2249,7 @@ _1cb6:
 						ObjectID rlCreature = GET_CREATURE_AT(bp04->Xcoord(), bp04->Ycoord());
 						if (rlCreature != OBJECT_NULL && rlCreature != OBJECT_END_MARKER) {
 							DELETE_CREATURE_RECORD(bp04->Xcoord(), bp04->Ycoord(), 0, 1);
-							QUEUE_NOISE_GEN2(GDAT_CATEGORY_CREATURES, 0x7F, SOUND_CREATURE_DEATH, 0xFE, bp04->Xcoord(), bp04->Ycoord(), 1, 0x8c, 0x80);
+							QUEUE_NOISE_GEN2(GDAT_CATEGORY_x0F_CREATURES, 0x7F, SOUND_CREATURE_DEATH, 0xFE, bp04->Xcoord(), bp04->Ycoord(), 1, 0x8c, 0x80);
 						}
 						if (bp04->OnceOnlyActuator() == 1)
 						{
@@ -2278,7 +2278,7 @@ _1cb6:
 						bDelayedActuatorsRotation = 1;
 						iWallSideToRotate = bp10;
 						if (bp04->SoundEffect() != 0 || SkCodeParam::bDM1TQMode == 1) {	// SPX: in TQ, wall trigger do sound, no matter sound flag
-							QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0x8C, 0x80);
+							QUEUE_NOISE_GEN2(GDAT_CATEGORY_x09_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0x8C, 0x80);
 						}
 					}
 
@@ -2287,7 +2287,7 @@ _1cb6:
 					//	break;
 					bp26 = 1;
 					if (bp04->SoundEffect() != 0) {
-						QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0x8C, 0x80);
+						QUEUE_NOISE_GEN2(GDAT_CATEGORY_x09_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0x8C, 0x80);
 					}
 					// Note: if the push button is in ROTATE mode (which shares the INACTIVE bit), then do not trigger a target effect.
 					if (bp04->ActuatorToggler() == 0)
@@ -2333,7 +2333,7 @@ _1d4d:
 					//^2FCF:1DC8
 					if (bp04->SoundEffect() != 0) {
 						//^2FCF:1DD6
-						QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0x8C, 0x80);
+						QUEUE_NOISE_GEN2(GDAT_CATEGORY_x09_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0x8C, 0x80);
 					}
 					//^2FCF:1DFA
 					INVOKE_ACTUATOR(bp04, 0, 0);
@@ -2382,7 +2382,7 @@ _1d4d:
 
 				case ACTUATOR_TYPE_KEY_HOLE: // 0x1A -> 'Activator, key hole'
 					//^2FCF:1EB0
-					bp1e = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp23, dtWordValue, GDAT_WALL_ORNATE__IS_ITEM_TRIGGERED);
+					bp1e = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x09_WALL_GFX, bp23, dtWordValue, GDAT_WALL_ORNATE__IS_ITEM_TRIGGERED);
 					//^2FCF:1EC5
 					if (bp04->OnceOnlyActuator() != 0) {
 						//^2FCF:1ED6
@@ -2430,7 +2430,7 @@ _1d4d:
 						//^2FCF:1F9C
 						continue;
 					//^2FCF:1F9F
-					bp1e = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp23, dtWordValue, 0x0e);
+					bp1e = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x09_WALL_GFX, bp23, dtWordValue, 0x0e);
 					//^2FCF:1FB4
 					if (GET_DISTINCTIVE_ITEMTYPE(si) != bp1e)
 						//^2FCF:1FC0
@@ -2487,7 +2487,7 @@ _1d4d:
 			//^2FCF:209F
 			if (bp04->SoundEffect() != 0) {
 				//^2FCF:20B0
-				QUEUE_NOISE_GEN2(GDAT_CATEGORY_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0x8c, 0x80);
+				QUEUE_NOISE_GEN2(GDAT_CATEGORY_x09_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0x8c, 0x80);
 			}
 			//^2FCF:20D4
 			INVOKE_ACTUATOR(bp04, bp1a, 0);
@@ -2522,7 +2522,7 @@ _1d4d:
 				case  4: // Holder (Torch holder)
 				case  8: // Recharge (Blue gem crop)
 					//^2FCF:2161
-					bp1e = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp23, dtWordValue, GDAT_WALL_ORNATE__SWITCH_ITEM);
+					bp1e = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x09_WALL_GFX, bp23, dtWordValue, GDAT_WALL_ORNATE__SWITCH_ITEM);
 					//^2FCF:2176
 					if (bp0c->TextVisibility() != 0) {
 						//^2FCF:2187
@@ -2563,7 +2563,7 @@ _1d4d:
 						Timer bp40;
 						bp40.SetMap(glbCurrentMapIndex);
 						// SPX: 0x12 is the RESPAWN value, then trigger a timer to setup again the ornate (gem)
-						bp40.SetTick(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp23, dtWordValue, GDAT_WALL_ORNATE__RESPAWN_COOLDOWN) + glbGameTick +2);
+						bp40.SetTick(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x09_WALL_GFX, bp23, dtWordValue, GDAT_WALL_ORNATE__RESPAWN_COOLDOWN) + glbGameTick +2);
 						//^2FCF:224A
 						bp40.TimerType(ttySimpleActuTurnOn);
 						bp40.actor = TIMER_ACTOR__00;
@@ -2619,7 +2619,7 @@ _22ca:
 						//^2FCF:22CF
 						continue;
 					//^2FCF:22D2
-					bp36 = (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp23, dtWordValue, GDAT_WALL_ORNATE__IS_LADDER_UP) != 0) ? -1 : 1;
+					bp36 = (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x09_WALL_GFX, bp23, dtWordValue, GDAT_WALL_ORNATE__IS_LADDER_UP) != 0) ? -1 : 1;
 					//^2FCF:22F4
 					bp20 = cd.pi.glbPlayerPosX;
 					bp22 = cd.pi.glbPlayerPosY;
@@ -2982,7 +2982,7 @@ void SkWinCore::CHECK_RECOMPUTE_LIGHT(i16 xx, i16 yy)
 	// ROOF => 3
 	// MISTY => 3
 	// DEBUG => 8
-	i16 bp0c = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_AMBIANT_DARKNESS);
+	i16 bp0c = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_x6D_AMBIANT_DARKNESS);
 	//^1C9A:0312
 	if (bp0c == 0) {
 		//^1C9A:0318
@@ -3091,7 +3091,7 @@ void SkWinCore::END_GAME(U16 xx)
 		U8 bp01 = (cd.pi.glbChampionsCount > 0) ? glbChampionSquad[0].HeroType() : 0xFE;
 		//^101B:002A
 		// SPX: Sound when dying
-		QUEUE_NOISE_GEN2(GDAT_CATEGORY_CHAMPIONS, bp01, SOUND_CHAMPION_SCREAM, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 0, 255, 255);
+		QUEUE_NOISE_GEN2(GDAT_CATEGORY_x16_CHAMPIONS, bp01, SOUND_CHAMPION_SCREAM, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 0, 255, 255);
 		//^101B:004E
 		SLEEP_SEVERAL_TIME(240);
 	}
@@ -3136,7 +3136,7 @@ void SkWinCore::END_GAME(U16 xx)
 	FIRE_SELECT_PALETTE_SET(0);
 	//^101B:00DB
 	//DRAW_TRANSPARENT_STATIC_PIC(0x06, 0x00, 0x01, 2, 0xffff);
-	DRAW_TRANSPARENT_STATIC_PIC(GDAT_CATEGORY_CREDITS, 0x00, GDAT_IMG_CREDITS_TOMBSTONE, 2, 0xffff);
+	DRAW_TRANSPARENT_STATIC_PIC(GDAT_CATEGORY_x06_CREDITS, 0x00, GDAT_IMG_CREDITS_TOMBSTONE, 2, 0xffff);
 	//^101B:00ED
 	FIRE_SELECT_PALETTE_SET(1);
 	//^101B:00F5
@@ -3205,8 +3205,8 @@ U16 SkWinCore::PERFORM_MOVE(X16 xx)
 			CALC_VECTOR_W_DIR(cd.pi.glbPlayerDir, -1, 0, &_4976_4c32, &_4976_4c34);
 		}
 		if (SkCodeParam::bUsePlayerWalkSound)	// Use ROCKY walk sound
-			//QUEUE_NOISE_GEN1(GDAT_CATEGORY_CREATURES, 0x0C, 0x00, 0x46, 0x80, glbPlayerPosX, glbPlayerPosY, 1);
-			QUEUE_NOISE_GEN1(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, SOUND_CHAMPION_FOOTSTEP, 0x46, 0x80, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1);
+			//QUEUE_NOISE_GEN1(GDAT_CATEGORY_x0F_CREATURES, 0x0C, 0x00, 0x46, 0x80, glbPlayerPosX, glbPlayerPosY, 1);
+			QUEUE_NOISE_GEN1(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, SOUND_CHAMPION_FOOTSTEP, 0x46, 0x80, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1);
 		goto _0768;
 	}
 	U16 bp10;
@@ -3750,7 +3750,7 @@ _23de:
 					//^2066:23EA
 					// SPX: The item 0x6A is 1 only for VOID. It does not exist for other tilesets.
 					// Beware! if this is not set to a map expecting it, it will crash the map loading!
-					if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, dunMapsHeaders[iMapIndex].MapGraphicsStyle(), dtWordValue, GDAT_GFXSET_VOID_RANDOM_FALL) == 0) {	// 0x6A
+					if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, dunMapsHeaders[iMapIndex].MapGraphicsStyle(), dtWordValue, GDAT_GFXSET_x6A_VOID_RANDOM_FALL) == 0) {	// 0x6A
 						//^2066:2412
 						i16 xx = bp2a; //i16 bp38 = bp2a;
 						i16 yy = bp2c; //i16 bp3a = bp2c;

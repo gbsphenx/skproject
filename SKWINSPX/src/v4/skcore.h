@@ -612,7 +612,7 @@ protected:
 	U16	_4976_5316;
 	i16	_4976_5318; // a map?
 	U16	_4976_531a;
-	U16	_4976_531c;
+	U16	_4976_531c;	// _4976_531c
 	i16	glbSomeChampionIndex;	// SPX: somewhat a champion index (leader ??)
 	i16	_4976_5320;	// a x2?
 	i16	_4976_5322; // a y2?
@@ -2270,7 +2270,7 @@ protected:
 
 	void _14cd_1e36_PFN17_12(U8 xx, U8 yy, sk1bf9 *ss); //_14cd_1e36
 	void _14cd_1e52_PFN17_13(U8 xx, U8 yy, sk1bf9 *ss); // _14cd_1e52 TODO: Unr
-	U16 IS_MAP_INSIDE(U16 mapno);
+	U16 IS_MAP_INSIDE(U16 iMapNo);
 	void _14cd_1e6e_PFN17_14(U8 xx, U8 yy, sk1bf9 *ss); // _14cd_1e6e
 	void _14cd_1eec(U8 xx, U8 yy, sk1bf9 *ss, X8 ww); // _14cd_1eec
 	void _14cd_1fa7_PFN17_16(U8 xx, U8 yy, sk1bf9 *ss); // _14cd_1fa7

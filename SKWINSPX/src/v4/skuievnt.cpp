@@ -680,7 +680,7 @@ void SkWinCore::CLICK_VWPT(i16 xx, i16 yy)
 						if (rlHandPossession == OBJECT_NULL) {
 							//^121E:0526
 							// SPX: This plays the TICK sound when activating a door button
-							QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES, 0x00, SOUND_STD_ACTIVATION_MESSAGE, 0x8C, 0x80, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1);
+							QUEUE_NOISE_GEN1(GDAT_CATEGORY_x03_MESSAGES, 0x00, SOUND_STD_ACTIVATION_MESSAGE, 0x8C, 0x80, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1);
 							//^121E:0545
 							Timer bp22;
 							INVOKE_MESSAGE(bp16, bp18, 0, 2, glbGameTick +1);
@@ -789,7 +789,7 @@ void SkWinCore::CLICK_VWPT(i16 xx, i16 yy)
 								DISPLAY_HINT_TEXT(COLOR_LIGHT_GREEN, (const U8*) "THE DOOR IS LOCKED\n");
 						}
 						if (iSwitchResult == 0)
-							QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES, 0x00, SOUND_STD_INTERWALL_DOOR, 0x8C, 0x80, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1);
+							QUEUE_NOISE_GEN1(GDAT_CATEGORY_x03_MESSAGES, 0x00, SOUND_STD_INTERWALL_DOOR, 0x8C, 0x80, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1);
 
 						break;
 					}
@@ -852,7 +852,7 @@ void SkWinCore::CLICK_VWPT(i16 xx, i16 yy)
 		}
 		//^121E:07DB
 		// SPX: A default sound like punch.
-		QUEUE_NOISE_GEN2(GDAT_CATEGORY_CREATURES, QUERY_CLS2_FROM_RECORD(bp10), SOUND_STD_DEFAULT, 0xFE, bp0c, bp0e, 0, 0x8C, 0x80);
+		QUEUE_NOISE_GEN2(GDAT_CATEGORY_x0F_CREATURES, QUERY_CLS2_FROM_RECORD(bp10), SOUND_STD_DEFAULT, 0xFE, bp0c, bp0e, 0, 0x8C, 0x80);
 		//^121E:0803
 		return;
 	}

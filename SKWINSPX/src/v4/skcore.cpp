@@ -175,7 +175,7 @@ X16 SkWinCore::EXTENDED_LOAD_AI_DEFINITION(void)
 	//if (SkCodeParam::bUseDM2ExtendedMode)
 	{
 		U16 value = 0;
-		U8 category = GDAT_CATEGORY_CREATURE_AI;
+		U8 category = GDAT_CATEGORY_x19_CREATURE_AI;
 		U8 text[128] = {0};
 
 		// Do the default init -- until all data is put into GDAT.
@@ -190,7 +190,7 @@ X16 SkWinCore::EXTENDED_LOAD_AI_DEFINITION(void)
 			{
 				U8	byte1;
 				U8	byte2;
-				QUERY_GDAT_TEXT(GDAT_CATEGORY_CREATURE_AI
+				QUERY_GDAT_TEXT(GDAT_CATEGORY_x19_CREATURE_AI
 								,index
 								,0x18
 								,text);
@@ -1148,7 +1148,7 @@ U16 SkWinCore::QUERY_CREATURES_ITEM_MASK(U8 cls2, U8 cls4, U8 itemflags[64], U16
 	ZERO_MEMORY(itemflags, 64);
 	//^48AE:0299
 	U8 bp008e[128];
-	U8 *bp04 = QUERY_GDAT_TEXT(GDAT_CATEGORY_CREATURES, cls2, cls4 +0x10, bp008e);
+	U8 *bp04 = QUERY_GDAT_TEXT(GDAT_CATEGORY_x0F_CREATURES, cls2, cls4 +0x10, bp008e);
 	//^48AE:02BB
 	if (*bp04 == 0)
 		//^48AE:02C3
@@ -1877,7 +1877,7 @@ LOGX(("%40s: C%02d=I%02X=E%02X=T%03d", "QUERY_GDAT_ENTRY_DATA_PTR for ", cls1, c
 		//^3E74:509C
 		if (si == 0xffff || glbShelfMemoryTable[si].Absent()) {
 			//^3E74:50BE
-			si = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_MISCELLANEOUS, GDAT_ITEM_DEFAULT_INDEX, dtImage, 0xFE);	// yukman face
+			si = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x15_MISCELLANEOUS, GDAT_ITEM_DEFAULT_INDEX, dtImage, 0xFE);	// yukman face
 		}
 	}
 #if UseAltic
@@ -3643,13 +3643,13 @@ U16 SkWinCore::GET_ORNATE_ANIM_LEN(Actuator *ref, U16 isWall)
 	U8 iItemNumber = 0;	// bp06
 	if (isWall != 0) {
 		//^3A15:0F12
-		iCategory = GDAT_CATEGORY_WALL_GFX; // 9
+		iCategory = GDAT_CATEGORY_x09_WALL_GFX; // 9
 		//^3A15:0F16
 		iItemNumber = GET_WALL_DECORATION_OF_ACTUATOR(ref);
 	}
 	else {
 		//^3A15:0F23
-		iCategory = GDAT_CATEGORY_FLOOR_GFX;	// 10
+		iCategory = GDAT_CATEGORY_x0A_FLOOR_GFX;	// 10
 		//^3A15:0F27
 		iItemNumber = GET_FLOOR_DECORATION_OF_ACTUATOR(ref);
 	}
@@ -3692,11 +3692,11 @@ void SkWinCore::TRY_ORNATE_NOISE(Actuator *ref, ObjectID rl, U16 xx, U16 yy, U16
 	U8 iGDatCategory = 0;	// bp0b
 	U8 iGDatItemId = 0;	// bp0c
 	if (isWall != 0) {
-		iGDatCategory = GDAT_CATEGORY_WALL_GFX;	// 9
+		iGDatCategory = GDAT_CATEGORY_x09_WALL_GFX;	// 9
 		iGDatItemId = GET_WALL_DECORATION_OF_ACTUATOR(ref);
 	}
 	else {
-		iGDatCategory = GDAT_CATEGORY_FLOOR_GFX;	// 10
+		iGDatCategory = GDAT_CATEGORY_x0A_FLOOR_GFX;	// 10
 		iGDatItemId = GET_FLOOR_DECORATION_OF_ACTUATOR(ref);
 	}
 	U16 si = ((ref->ActuatorData() & 0xFF) + glbGameTick + QUERY_GDAT_ENTRY_DATA_INDEX(iGDatCategory, iGDatItemId, dtWordValue, SOUND_STD_ACTIVATION)) % animLen;
@@ -4085,7 +4085,7 @@ _0b01:
 				if (bp02 == glbChampionLeader || RAND02() == 0) {
 					//^12B4:0B7C
 					// SPX: Sound made by champion when moving large object
-					QUEUE_NOISE_GEN2(GDAT_CATEGORY_CHAMPIONS, U8(bp02), SOUND_CHAMPION_GETHIT, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0x69, 0xc8);
+					QUEUE_NOISE_GEN2(GDAT_CATEGORY_x16_CHAMPIONS, U8(bp02), SOUND_CHAMPION_GETHIT, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0x69, 0xc8);
 				}
 			}
 			//^12B4:0B9F
@@ -4939,7 +4939,8 @@ void SkWinCore::PLAYER_TESTING_WALL(U16 ww, U16 xx, U16 yy)
 	else {
 		//^121E:0110
 		// SPX: Probably sound when testing a wall
-		QUEUE_NOISE_GEN2(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, SOUND_STD_DEFAULT, 0xfe, xx, yy, 0, 140, 200);
+		//QUEUE_NOISE_GEN2(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, SOUND_STD_DEFAULT, 0xFE, xx, yy, 0, 140, 200);
+		QUEUE_NOISE_GEN2(GDAT_CATEGORY_x08_GRAPHICSSET, 0xFE, SOUND_STD_DEFAULT, 0xFE, xx, yy, 0, 140, 200);	// original is default sound for all tilesets
 	}
 	//^121E:0132
 	cd.gg.glbRefreshViewport = 1;
@@ -5011,7 +5012,7 @@ void SkWinCore::DRAW_WAKE_UP_TEXT()
 	DRAW_VP_RC_STR(
 		6, 
 		glbPaletteT16[COLOR_CYAN], 
-		QUERY_GDAT_TEXT(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, 0x11, bp28)
+		QUERY_GDAT_TEXT(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, 0x11, bp28)
 		);
 	//^1031:194F
 	return;
@@ -5882,7 +5883,7 @@ i16 SkWinCore::_19f0_05e8(X16 aa, DistMapTile (*bb)[1][32], Ax3 *cc, i16 xx, i16
 								U8 bp0e = QUERY_CLS2_FROM_RECORD(bp10);
 								if (bp0e != 0xff) {
 									//^19F0:06DB
-									if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp0e, dtWordValue, GDAT_WALL_ORNATE__DATA_F0) == aa)
+									if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x09_WALL_GFX, bp0e, dtWordValue, GDAT_WALL_ORNATE__DATA_F0) == aa)
 										goto _0783;
 								}
 							}
@@ -8612,7 +8613,7 @@ U16 SkWinCore::_12b4_023f_WOUND_RUNNING_INTO_CREATURE(i16 xx, i16 yy, i16 *ss, i
 			if (WOUND_PLAYER(bp02, 1, 0x18, 2) != 0) {
 				//^12B4:02C5
 				di = 1;
-				QUEUE_NOISE_GEN2(GDAT_CATEGORY_CHAMPIONS, glbChampionSquad[bp02].HeroType(), SOUND_CHAMPION_BUMP, 0xFE, xx, yy, 1, 0x64, 0xC8);
+				QUEUE_NOISE_GEN2(GDAT_CATEGORY_x16_CHAMPIONS, glbChampionSquad[bp02].HeroType(), SOUND_CHAMPION_BUMP, 0xFE, xx, yy, 1, 0x64, 0xC8);
 			}
 		}
 		//^12B4:02F4
@@ -10672,16 +10673,13 @@ U16 SkWinCore::QUERY_GDAT_RAW_DATA_LENGTH(U16 index)
 //^3E74:1586
 U16 SkWinCore::IS_CLS1_CRITICAL_FOR_LOAD(U8 cls1)
 {
-	//^3E74:1586
 	switch (cls1) {
-		case 0x1B: // ?
-		case GDAT_CATEGORY_CREDITS: // 0x06: // Credits
-		case GDAT_CATEGORY_JAPANESE_FONT: // 0x1C: // Kanji table
-		case GDAT_CATEGORY_TITLE: // 0x05: // Main Menu and Credits
-			//^3E74:15A0
+		case GDAT_CATEGORY_x1B_UNUSED: // 0x1B ?
+		case GDAT_CATEGORY_x06_CREDITS: // 0x06: // Credits
+		case GDAT_CATEGORY_x1C_JAPANESE_FONT: // 0x1C: // Kanji table
+		case GDAT_CATEGORY_x05_TITLE: // 0x05: // Main Menu and Credits
 			return 1;
 	}
-	//^3E74:15A5
 	return 0;
 }
 
@@ -10713,16 +10711,7 @@ i32 SkWinCore::QUERY_GDAT_RAW_DATA_FILE_POS(U16 index)
 	return bp04;
 }
 
-//^476D:0005
-U16 SkWinCore::FILE_SEEK(U16 handle, Bit32u pos) {
-	if (fset.fileSeekTo(handle, pos) == pos)
-		return 1;
-	return 0;
-}
 
-U32 SkWinCore::FILE_TELL(U16 handle) {
-	return fset.fileTell(handle);
-}
 
 //^476D:05E3
 void SkWinCore::_476d_05e3(U8 *str) { // TODO: Unr
@@ -11052,9 +11041,9 @@ U8 *SkWinCore::QUERY_GDAT_IMAGE_LOCALPAL(U8 cls1, U8 cls2, U8 cls4)
 _5276:
 	//^3E74:5276
 	// SPX: Go fetch from the Yukman face (in MISC 0xFE entry) but .. if it does not exist we can get into an infinite loop, fix this!
-	if (SkCodeParam::bUseFixedMode && cls1 == GDAT_CATEGORY_MISCELLANEOUS && cls2 == GDAT_ITEM_DEFAULT_INDEX && cls4 == GDAT_ITEM_DEFAULT_INDEX)
+	if (SkCodeParam::bUseFixedMode && cls1 == GDAT_CATEGORY_x15_MISCELLANEOUS && cls2 == GDAT_ITEM_DEFAULT_INDEX && cls4 == GDAT_ITEM_DEFAULT_INDEX)
 		return NULL;
-	return QUERY_GDAT_IMAGE_LOCALPAL(GDAT_CATEGORY_MISCELLANEOUS, GDAT_ITEM_DEFAULT_INDEX, GDAT_ITEM_DEFAULT_INDEX);
+	return QUERY_GDAT_IMAGE_LOCALPAL(GDAT_CATEGORY_x15_MISCELLANEOUS, GDAT_ITEM_DEFAULT_INDEX, GDAT_ITEM_DEFAULT_INDEX);
 	// return QUERY_GDAT_IMAGE_LOCALPAL(0x0015, 0x00fe, 0x00fe);
 }
 
@@ -11979,7 +11968,7 @@ U8* SkWinCore::QUERY_GDAT_IMAGE_ENTRY_BUFF(U8 iGDatCategory, U8 iGDatItemId, U8 
 	// SPX: the default image (yukman) is located as default image from MISC ITEM category
 	// If that default image is not here, it is very likely to crash thereafter (anytime the default is required)
 
-	iGDATItemID = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_MISCELLANEOUS, GDAT_ITEM_DEFAULT_INDEX, 0x01, 0xFE); // (0x15, 0xfe, 0x01, 0xfe) // the Yukman :P icon
+	iGDATItemID = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x15_MISCELLANEOUS, GDAT_ITEM_DEFAULT_INDEX, 0x01, 0xFE); // (0x15, 0xfe, 0x01, 0xfe) // the Yukman :P icon
 	xImageBuffer = EXTRACT_GDAT_IMAGE(iGDATItemID, 0);
 	return xImageBuffer;
 }
@@ -16019,8 +16008,8 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 	//^2676:07E9
 	U8 bp03 = dunMapLocalHeader->MapGraphicsStyle();
 	glbMapGraphicsSet = bp03;
-	glbMistyMap = QUERY_GDAT_ENTRY_DATA_INDEX(0x8, bp03, dtWordValue, 0x69);
-	si = QUERY_GDAT_ENTRY_DATA_INDEX(0x8, dunMapLocalHeader->MapGraphicsStyle(), dtWordValue, 0x6b);
+	glbMistyMap = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, bp03, dtWordValue, GDAT_GFXSET_x69_ALTERNATE_FOG_PALETTES);
+	si = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, dunMapLocalHeader->MapGraphicsStyle(), dtWordValue, GDAT_GFXSET_x6B_ANIMATED_FLOOR);
 	if (si != 0) {
 		bp1c[si & 0xff] = 1;
 	}
@@ -16067,7 +16056,7 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 	
 	SkD((DLV_DBG_INIT, "LOAD_LOCALLEVEL_DYN: Part 6\n"));
 	//^2676:09DC
-	glbRainSceneType = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_SCENE_RAIN);	// 0x66
+	glbRainSceneType = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_x66_SCENE_RAIN);	// 0x66
 	if (_4976_5bee[0] == 0 && tlbRainScene[RCJ(5,glbRainSceneType)][0] != 0) {
 		MARK_DYN_LOAD(0x0d30ffff); // Mark: Missiles, thunder, all, all
 	}
@@ -16168,12 +16157,12 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 		LOAD_MISCITEM();
 	
 	//^2676:0CBB
-	glbRainHasThunderImage = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_THUNDER_1)); // 0x64 thunder
-	glbRainHasWetGround = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_WETGROUND_1)); // 0x6a wet floor
-	glbRainHasCloudSky = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_CLOUDSKY_1)); // 0x67 ceil cloud
-	glbRainHasRainFall = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_RAINFALL_STRAIGHT_1)); // 0x71 vertical direct rain fall
-	glbSceneColorKey = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_SCENE_COLORKEY); // colorkey
-    glbSceneFlags = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_SCENE_FLAGS);
+	glbRainHasThunderImage = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_THUNDER_1)); // 0x64 thunder
+	glbRainHasWetGround = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_WETGROUND_1)); // 0x6a wet floor
+	glbRainHasCloudSky = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_CLOUDSKY_1)); // 0x67 ceil cloud
+	glbRainHasRainFall = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_RAINFALL_STRAIGHT_1)); // 0x71 vertical direct rain fall
+	glbSceneColorKey = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_x64_SCENE_COLORKEY); // colorkey
+    glbSceneFlags = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_x65_SCENE_FLAGS);
     
 	SkD((DLV_DBG_INIT, "LOAD_LOCALLEVEL_DYN: Part 8: DEALLOC\n"));
 	//^2676:0D39
@@ -16186,12 +16175,12 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 	//^2676:0D73
 	i16 bp38;
 	i16 bp3a;
-	QUERY_GDAT_IMAGE_METRICS(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_FLOOR, &bp38, &bp3a); // floor
+	QUERY_GDAT_IMAGE_METRICS(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_FLOOR, &bp38, &bp3a); // floor
 	U16 bp32 = (bp38 & 0xffff) * bp3a;
 	//^2676:0D99
 	i16 bp34;
 	i16 bp36;
-	QUERY_GDAT_IMAGE_METRICS(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_CEIL, &bp34, &bp36); // ceil
+	QUERY_GDAT_IMAGE_METRICS(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_CEIL, &bp34, &bp36); // ceil
 	U16 bp30 = (bp34 & 0xffff) * bp36;
 	//^2676:0DBF
 	_4976_5be6 = _4976_00f4 -bp30;
@@ -16602,9 +16591,9 @@ void SkWinCore::_32cb_2d8c(ObjectID rl, X16 yy, X32 aa)
 				i16 bp18 = rl.Dir();
 				Cloud *bp08 = GET_ADDRESS_OF_RECORDF(rl);
 				X8 bp15 = bp08->CloudType();
-				if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_SPELL_MISSILES, bp15, dtImage, 0x14) != 0) {	// specifically to handle "reflector" haze
+				if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x0D_SPELL_MISSILES, bp15, dtImage, 0x14) != 0) {	// specifically to handle "reflector" haze
 					if (si == 4) {
-						DRAW_TELEPORTER_TILE(di, GDAT_CATEGORY_SPELL_MISSILES, bp15);
+						DRAW_TELEPORTER_TILE(di, GDAT_CATEGORY_x0D_SPELL_MISSILES, bp15);
 					}
 					continue;
 				}
@@ -16613,9 +16602,9 @@ void SkWinCore::_32cb_2d8c(ObjectID rl, X16 yy, X32 aa)
 					continue;
 				//^32CB:2E6A
 				X16 bp26 = 0;
-				X16 bp0e = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_SPELL_MISSILES, bp15, dtWordValue, 0) & RAND02();
+				X16 bp0e = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0D_SPELL_MISSILES, bp15, dtWordValue, 0) & RAND02();
 				X16 bp14;
-				if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_SPELL_MISSILES, bp15, dtWordValue, C65_GDAT_IMG_SPELL_EXPLOSION_FRONT) != 0) {
+				if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0D_SPELL_MISSILES, bp15, dtWordValue, C65_GDAT_IMG_SPELL_EXPLOSION_FRONT) != 0) {
 					//^32CB:2EA3
 					bp14 = 0xff;
 				}
@@ -16642,8 +16631,8 @@ _2eda:
 								iCloudInsideVisualSize++;
 						}
 						//^32CB:2EF8
-						U8 *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_SPELL_MISSILES, bp15, U8(iCloudInsideVisualSize) + C66_GDAT_IMG_SPELL_EXPLOSION_INSIDE_LOW);
-						ALLOC_IMAGE_MEMENT(GDAT_CATEGORY_SPELL_MISSILES, bp15, iCloudInsideVisualSize + C66_GDAT_IMG_SPELL_EXPLOSION_INSIDE_LOW);
+						U8 *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x0D_SPELL_MISSILES, bp15, U8(iCloudInsideVisualSize) + C66_GDAT_IMG_SPELL_EXPLOSION_INSIDE_LOW);
+						ALLOC_IMAGE_MEMENT(GDAT_CATEGORY_x0D_SPELL_MISSILES, bp15, iCloudInsideVisualSize + C66_GDAT_IMG_SPELL_EXPLOSION_INSIDE_LOW);
 						X16 bp24 = READ_UI16(bp04,-2) * READ_UI16(bp04,-4);
 						//^32CB:2F34
 						SRECT bp2e;
@@ -16656,7 +16645,7 @@ _2eda:
 							RAND16(bp24 -0x28),
 							_4976_00f6,
 							0,
-							_32cb_0649(GDAT_CATEGORY_SPELL_MISSILES, bp15, iCloudInsideVisualSize + C66_GDAT_IMG_SPELL_EXPLOSION_INSIDE_LOW, 0)
+							_32cb_0649(GDAT_CATEGORY_x0D_SPELL_MISSILES, bp15, iCloudInsideVisualSize + C66_GDAT_IMG_SPELL_EXPLOSION_INSIDE_LOW, 0)
 							);
 						continue;
 					}
@@ -17605,7 +17594,7 @@ U16 SkWinCore::_2fcf_0434(ObjectID recordLink, i16 xpos, i16 ypos, i16 xx, i16 y
 					// SPX: TODO More in the spirit, it should call the 0x18 (teleporter) category instead of 0x03 (messages),
 					// and use the index of teleporter (is it possible?)
 					//if (!SkCodeParam::bUseDM2ExtendedMode)
-						QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES,0x00,SOUND_STD_TELEPORT_MESSAGE,0x61,0x80,cd.pi.glbPlayerPosX,cd.pi.glbPlayerPosY,-1);
+						QUEUE_NOISE_GEN1(GDAT_CATEGORY_x03_MESSAGES,0x00,SOUND_STD_TELEPORT_MESSAGE,0x61,0x80,cd.pi.glbPlayerPosX,cd.pi.glbPlayerPosY,-1);
 					//else
 					//	QUEUE_NOISE_GEN1(GDAT_CATEGORY_TELEPORTERS,0x00,SOUND_STD_TELEPORT,0x61,0x80,glbPlayerPosX,glbPlayerPosY,-1);
 				}
@@ -17622,7 +17611,7 @@ U16 SkWinCore::_2fcf_0434(ObjectID recordLink, i16 xpos, i16 ypos, i16 xx, i16 y
 				//^2FCF:068C
 				if (bp04->Sound() != 0) {
 					//^2FCF:069D
-					QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES,0x00,SOUND_STD_TELEPORT_MESSAGE,0x61,0x80,xx,yy,0x01);
+					QUEUE_NOISE_GEN1(GDAT_CATEGORY_x03_MESSAGES,0x00,SOUND_STD_TELEPORT_MESSAGE,0x61,0x80,xx,yy,0x01);
 				}
 				//^2FCF:06B9
 				ROTATE_CREATURE(si, bp04->RotationType(), bp04->Rotation());
@@ -17649,7 +17638,7 @@ U16 SkWinCore::_2fcf_0434(ObjectID recordLink, i16 xpos, i16 ypos, i16 xx, i16 y
 		if (bp18 == ttPit && bp28 == 0 && (bp16 & 8) != 0 && (bp16 & 1) == 0 && !SkCodeParam::bWalkOverPits) {
 			//^2FCF:075F
 			// SPX: Retrieving 1 (only for VOID set) tells to do special treatment when falling into a pit
-			U16 bp2a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, dunMapLocalHeader->MapGraphicsStyle(), dtWordValue, GDAT_GFXSET_VOID_RANDOM_FALL);
+			U16 bp2a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, dunMapLocalHeader->MapGraphicsStyle(), dtWordValue, GDAT_GFXSET_x6A_VOID_RANDOM_FALL);
 			//^2FCF:077F
 			if (bp2a != 0 && bp1e == dbCreature) {
 				//^2FCF:078B
@@ -17762,7 +17751,7 @@ U16 SkWinCore::_2fcf_0434(ObjectID recordLink, i16 xpos, i16 ypos, i16 xx, i16 y
 								//^2FCF:09E9
 								// SPX: Noise when falling a pit
 								QUEUE_NOISE_GEN2(
-									GDAT_CATEGORY_CHAMPIONS,
+									GDAT_CATEGORY_x16_CHAMPIONS,
 									bp08->HeroType(),
 									SOUND_CHAMPION_SCREAM,
 									0xFE,
@@ -19962,7 +19951,7 @@ X16 SkWinCore::LANG_FILTER(U16 entryIndex)
 				return 1;
 			}
 			if (SkCodeParam::bUseMultilanguageExtended 
-				&& cls1 == GDAT_CATEGORY_CHAMPIONS) {
+				&& cls1 == GDAT_CATEGORY_x16_CHAMPIONS) {
 				s_textLangSel[cls1][cls2][cls4] = cls5;
 				return 0;	// don't return 1 or it will crash because the standard text is already here with cls5 = 0x00
 			}
@@ -19973,7 +19962,7 @@ X16 SkWinCore::LANG_FILTER(U16 entryIndex)
 	// SPX: manages also localized images only for char interface
 #if DM2_EXTENDED_LOCALIZED_IMAGES == 1
 	if (SkCodeParam::bUseMultilanguageExtended) {
-		if (cls3 == fmtImage && (cls1 == GDAT_CATEGORY_INTERFACE_CHARSHEET || cls1 == GDAT_CATEGORY_TITLE)) {
+		if (cls3 == fmtImage && (cls1 == GDAT_CATEGORY_x07_INTERFACE_CHARSHEET || cls1 == GDAT_CATEGORY_x05_TITLE)) {
 			U8 iLangSelect = (cls5 & 0xF0);	// Do not take variation 0x08 into account
 
 			if (iLangSelect == s_imageLangSel[cls1][cls2][cls4]) {
@@ -20469,7 +20458,7 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_0A()
 	ENTER(4);
 	U32 bp04 = 0;
 
-	iItemSize = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt07, 0x0A);
+	iItemSize = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt07, 0x0A);
 	if (iItemSize <= 0) {
 		i16 hAnimFrameTabHandle = -1;
 		iItemSize = 1652;
@@ -20482,8 +20471,8 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_0A()
 	}
 	else {
 	// SPX: This points to a 1652 bytes file .. seems to have struct of 14 bytes => 118 records. creature/objects anim frame size info and such
-	tblCreatureFrameInfo14 = reinterpret_cast<U8 (*)[14]>(ALLOC_MEMORY_RAM(bp04 = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt07, 0x0A), afUseUpper, 0x400));
-	LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt07, 0x0A, reinterpret_cast<U8 *>(tblCreatureFrameInfo14));
+	tblCreatureFrameInfo14 = reinterpret_cast<U8 (*)[14]>(ALLOC_MEMORY_RAM(bp04 = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt07, 0x0A), afUseUpper, 0x400));
+	LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt07, 0x0A, reinterpret_cast<U8 *>(tblCreatureFrameInfo14));
 	}
 	/*
 	if (SkCodeParam::bUsePowerDebug) {
@@ -20511,8 +20500,8 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_02()
 	//^0B36:020E
 	ENTER(6);
 	//^0B36:0214
-	U8 *bp04 = ALLOC_MEMORY_RAM(QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt07, 0x2), afUseUpper, 0x400);
-	LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt07, 0x2, bp04);
+	U8 *bp04 = ALLOC_MEMORY_RAM(QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt07, 0x2), afUseUpper, 0x400);
+	LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt07, 0x2, bp04);
 	X8 bp05 = *bp04++;
 	_4976_4bde = reinterpret_cast<sk4bde *>(ALLOC_MEMORY_RAM(bp05 * 9UL, afUseUpper, 0x400));
 	i16 si;
@@ -20573,7 +20562,7 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_00()
 	X8* pDataTable = NULL;	// bp04
 	bool bSwap32 = false;	// SPX: addition of U32 swap when reading some special gdat
 
-	iItemSize = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt06, 0x0);
+	iItemSize = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt06, 0x0);
 	if (iItemSize <= 0) {
 		i16 hCreatureTabHandle = -1;
 		iItemSize = 5092;
@@ -20592,7 +20581,7 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_00()
 		pDataTable = ALLOC_MEMORY_RAM(
 			iItemSize,
 			afUseUpper, 0x400);
-		LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt06, 0x0, pDataTable);
+		LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dt06, 0x0, pDataTable);
 	}
 
 	// First sequence : 16 80 F1 02 0A FF .. 18 00 F1 0e 01 FF .. 1A ..
@@ -20684,16 +20673,16 @@ void SkWinCore::KANJI_FONT_LOAD(X8 cls2)
 	skxxxf *bp08 = bp0294;
 	U8 bp0b;
 	U8 *bp04;
-	for (bp0b = 0; (bp04 = QUERY_GDAT_ENTRY_DATA_BUFF(GDAT_CATEGORY_JAPANESE_FONT, cls2, dtImage, bp0b)) != NULL; ) {
+	for (bp0b = 0; (bp04 = QUERY_GDAT_ENTRY_DATA_BUFF(GDAT_CATEGORY_x1C_JAPANESE_FONT, cls2, dtImage, bp0b)) != NULL; ) {
 		//^3929:0CCC
-		X16 bp0a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_JAPANESE_FONT, cls2, dtWordValue, bp0b);
+		X16 bp0a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x1C_JAPANESE_FONT, cls2, dtWordValue, bp0b);
 		if (bp0a != 0) {
 			//^3929:0CE7
 			bp0e = bp0a >> 8;
 			bp10 = U8(bp0a);
 		}
 		//^3929:0CF5
-		bp0a = QUERY_GDAT_PICT_OFFSET(GDAT_CATEGORY_JAPANESE_FONT, cls2, bp0b);
+		bp0a = QUERY_GDAT_PICT_OFFSET(GDAT_CATEGORY_x1C_JAPANESE_FONT, cls2, bp0b);
 		bp08->b0 = X8(bp0e);
 		bp08->b1 = X8(bp10);
 		bp08->w6 = i8(bp0a >> 8);
@@ -20926,16 +20915,16 @@ void SkWinCore::SHOW_MENU_SCREEN()
 	SkD((DLV_DBG_INIT, "SHOW_MENU_SCREEN\n"));
 
 	//^2481:0080
-	cd.mo.glbImageCreditScreen = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_TITLE, 0x0, 0x1);		// Credit screen (tombstone)
-	if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_TITLE, 0x0, dt07, 0x4) != 0xFFFF)	// 64000 bytes raw data for menu screen ?
+	cd.mo.glbImageCreditScreen = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x05_TITLE, 0x0, 0x1);		// Credit screen (tombstone)
+	if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x05_TITLE, 0x0, dt07, 0x4) != 0xFFFF)	// 64000 bytes raw data for menu screen ?
 	{
 		//^2481:00AA
 		_4976_3d2c = 1;
-		cd.mo.glbImageMenuScreen = QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_TITLE, 0x0, dt07, 4);
+		cd.mo.glbImageMenuScreen = QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_x05_TITLE, 0x0, dt07, 4);
 	}
 	else {
 		//^2481:00C9
-		cd.mo.glbImageMenuScreen = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_TITLE, 0x0, 0x4);
+		cd.mo.glbImageMenuScreen = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x05_TITLE, 0x0, 0x4);
 		_4976_52ba = cd.mo.glbImageMenuScreen + (
 			(READ_UI16(cd.mo.glbImageMenuScreen,-6) == 4)
 				? (((READ_UI16(cd.mo.glbImageMenuScreen,-4) +1) & 0xFFFE) >> 1)
@@ -21314,14 +21303,14 @@ UINT SkWinCore::INIT()
 	LOAD_GDAT_INTERFACE_00_0A(); // game will fail if this item is not loaded, but it does not exist in PC-DOS version
 	U8 *bp04 = ALLOC_MEMORY_RAM(0x400, afUseLower, 1024);
 //DEBUG_DUMP_ULP();
-	LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dtPalIRGB, 0xFE, bp04);	// C01=I00=EFE=T009 palette IRGB (0x1, 0x0, dt09, 0xFE, bp04)
+	LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dtPalIRGB, 0xFE, bp04);	// C01=I00=EFE=T009 palette IRGB (0x1, 0x0, dt09, 0xFE, bp04)
 	// SPX: Beta GDAT contains palette in raw7 data; if dtPalIRGB is not found, we should then look for raw7.
-	//LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_INTERFACE_GENERAL, 0x0, dtRaw7, 0xFE, bp04); // test for beta
+	//LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 0x0, dtRaw7, 0xFE, bp04); // test for beta
 	SET_RGB_PALETTE_FROM_DATA(bp04);
 	DEALLOC_LOWER_MEMORY(0x400);
 	LOAD_GDAT_INTERFACE_00_02();
 	//glbPaletteT16 = QUERY_GDAT_ENTRY_DATA_PTR(0x1, 0x0, dt0d, 0xfe);
-	glbPaletteT16 = QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dtPalette16, 0xFE);
+	glbPaletteT16 = QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dtPalette16, 0xFE);
 	_098d_1208();
 
 	SkD((DLV_DBG_INIT, "EXTENDED_LOAD_AI_DEFINITION\n"));
@@ -21356,7 +21345,7 @@ UINT SkWinCore::INIT()
 	_4976_4748 = 1;
 	_1031_07d6_SOME_INIT();
 
-	cd.gg.glbCreaturesMaxCount = _3e74_2439_GET_ENTRIES_NUMBER(GDAT_CATEGORY_CREATURES, fmtWordVal);	// 0xf, 0xb
+	cd.gg.glbCreaturesMaxCount = _3e74_2439_GET_ENTRIES_NUMBER(GDAT_CATEGORY_x0F_CREATURES, fmtWordVal);	// 0xf, 0xb
 	X16 iDefaultCreaturesMaxAllocation = (cd.gg.glbCreaturesMaxCount +1) * 3;	// si
 	cd.gg.glbSomeCreatureTable = ALLOC_MEMORY_RAM(iDefaultCreaturesMaxAllocation, afUseUpper, 1024);
 	FILL_STR(cd.gg.glbSomeCreatureTable, iDefaultCreaturesMaxAllocation, 0xFF, 1);
@@ -21915,12 +21904,10 @@ void SkWinCore::_14cd_1e52_PFN17_13(U8 xx, U8 yy, sk1bf9 *ss) { // TODO: Unr
 }
 
 //^32CB:00BF
-U16 SkWinCore::IS_MAP_INSIDE(U16 mapno)
+U16 SkWinCore::IS_MAP_INSIDE(U16 iMapNo)
 {
-	//^32CB:00BF
 	ENTER(0);
-	//^32CB:00C2
-	return !(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, dunMapsHeaders[mapno].MapGraphicsStyle(), dtWordValue, GDAT_GFXSET_SCENE_FLAGS) & 0x20);
+	return !(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, dunMapsHeaders[iMapNo].MapGraphicsStyle(), dtWordValue, GDAT_GFXSET_x65_SCENE_FLAGS) & 0x20);
 
 	// MapGraphicsStyle = [0x65]
 	// 00=0018 ;Void

@@ -358,9 +358,9 @@ void SkWinCore::_32cb_0804(U8 *localpal, i16 cls4, U16 colorkey1, i16 colorkey2,
 		si = _4976_4226[RCJ(5,cls4)];
 	}
 	//^32CB:0854	// SPX: That part is for translating palette in case of 'fog'
-	if (!SkCodeParam::bDisableFogEffect && QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dt07, U8(cls4)) != 0) {
+	if (!SkCodeParam::bDisableFogEffect && QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dt07, U8(cls4)) != 0) {
 		//^32CB:086C
-		TRANSLATE_PALETTE(localpal, GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, U8(cls4), di);
+		TRANSLATE_PALETTE(localpal, GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, U8(cls4), di);
 		//^32CB:0885
 		_0b36_037e(localpal, i8(_4976_5a88), colorkey1, colorkey2, di);
 	}
@@ -812,12 +812,12 @@ void SkWinCore::QUERY_CREATURE_PICST(U16 xx, i16 iDistToPlayer, Creature *xCreat
 		iCreatureType, xInfoData->iAnimSeq, xInfoData->iAnimInfo, iFrameID, xCreature->iAnimSeq, xCreature->iAnimFrame, iImageID));
 	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
 
-	if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, iCreatureType, dtImage, iImageID) == 0) {
+	if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x0F_CREATURES, iCreatureType, dtImage, iImageID) == 0) {
 		iImageID = (iFaceDirImg +2) & 3;
 		if ((iImageID & 1) != 0)
 			iVFlip = 1;
 		iImageID = tblCreatureFrameInfo14[iFrameID][iImageID + 2];
-		if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, iCreatureType, dtImage, iImageID) == 0) {
+		if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x0F_CREATURES, iCreatureType, dtImage, iImageID) == 0) {
 			iVFlip = 0;
 			iImageID = tblCreatureFrameInfo14[iFrameID][4];
 		}
@@ -831,15 +831,15 @@ void SkWinCore::QUERY_CREATURE_PICST(U16 xx, i16 iDistToPlayer, Creature *xCreat
 		iVFlip = 1;
 	}
 	//^32CB:2A19
-	if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, iCreatureType, dtImage, iImageID) == 0) {
+	if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x0F_CREATURES, iCreatureType, dtImage, iImageID) == 0) {
 		//^32CB:2A31
 		iImageID = iFaceDirImg - 6; // Standard iFaceDirImg = 2; then -6 goes to 0xFA, to fetch the "shadow" image
 		//^32CB:2A39
-		if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, iCreatureType, dtImage, iImageID) == 0) { // try to get 0xFC ?
+		if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x0F_CREATURES, iCreatureType, dtImage, iImageID) == 0) { // try to get 0xFC ?
 			//^32CB:2A4E
 			if (true
 				&& iImageID == 0xFB
-				&& QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_CREATURES, iCreatureType, dtImage, iImageID + 2) != 0
+				&& QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x0F_CREATURES, iCreatureType, dtImage, iImageID + 2) != 0
 			) {
 				//^32CB:2A6E
 				iVFlip = 1;
@@ -1825,7 +1825,7 @@ X8* SkWinCore::QUERY_PICST_IMAGE(Picture *ref)
 	ENTER(4);
 	X8* xImageDataBuff = QUERY_GDAT_IMAGE_ENTRY_BUFF(ref->iGDatCategory, ref->iGDatItemId, ref->iGDatEntryId);	// bp04
 	if (SkCodeParam::bUseFixedMode && xImageDataBuff == NULL)
-		xImageDataBuff = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_MISCELLANEOUS, GDAT_ITEM_DEFAULT_INDEX, GDAT_ITEM_DEFAULT_INDEX); // Get Yukman!
+		xImageDataBuff = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x15_MISCELLANEOUS, GDAT_ITEM_DEFAULT_INDEX, GDAT_ITEM_DEFAULT_INDEX); // Get Yukman!
 	if (SkCodeParam::bUseFixedMode && xImageDataBuff == NULL)
 		return NULL;
 	ref->pb0 = xImageDataBuff;
@@ -2437,7 +2437,7 @@ void SkWinCore::_32cb_2cf3(U8 cls2, U16 scale64, U16 mirrorFlip, U16 rectno)
 	ENTER(0);
 	U16 si = scale64;
 	si = BETWEEN_VALUE(8, si & 0xfffe, 64);
-	QUERY_GDAT_SUMMARY_IMAGE(&glbTempPicture, GDAT_CATEGORY_SPELL_MISSILES, cls2, C65_GDAT_IMG_SPELL_EXPLOSION_FRONT);	// 0x0d, cls, 0x41
+	QUERY_GDAT_SUMMARY_IMAGE(&glbTempPicture, GDAT_CATEGORY_x0D_SPELL_MISSILES, cls2, C65_GDAT_IMG_SPELL_EXPLOSION_FRONT);	// 0x0d, cls, 0x41
 	glbTempPicture.w32 = glbTempPicture.iXOffset;
 	glbTempPicture.w34 = glbTempPicture.iYOffset;
 	glbTempPicture.iYOffset = glbTempPicture.iXOffset = 0;
@@ -2457,7 +2457,7 @@ void SkWinCore::_32cb_2cf3(U8 cls2, U16 scale64, U16 mirrorFlip, U16 rectno)
 	if (SkCodeParam::bUseFixedMode) {
 		glbTempPicture.iXOffset = 0;	// default
 		glbTempPicture.iYOffset = -55;	// default
-		X16 iDisplacementWord = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_SPELL_MISSILES, cls2, dtImageOffset, C65_GDAT_IMG_SPELL_EXPLOSION_FRONT);
+		X16 iDisplacementWord = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0D_SPELL_MISSILES, cls2, dtImageOffset, C65_GDAT_IMG_SPELL_EXPLOSION_FRONT);
 		if (iDisplacementWord != 0) {
 			glbTempPicture.iXOffset = ((i8)(iDisplacementWord>>8));
 			glbTempPicture.iYOffset = ((i8)(iDisplacementWord&0xFF));

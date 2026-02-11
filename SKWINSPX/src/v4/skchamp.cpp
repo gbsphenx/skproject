@@ -660,7 +660,7 @@ U16 SkWinCore::IS_ITEM_HAND_ACTIVABLE(U16 player, ObjectID recordLink, i16 yy)
 	Bit8u iItemIndex;	// bp02
 	if (recordLink == OBJECT_NULL) {
 		//^2759:02E4
-		iCategory = GDAT_CATEGORY_CHAMPIONS;	// 0x16
+		iCategory = GDAT_CATEGORY_x16_CHAMPIONS;	// 0x16
         iItemIndex = glbChampionSquad[player].HeroType();
 	}
 	else {
@@ -1045,7 +1045,7 @@ void SkWinCore::REVIVE_CHAMPION(U16 xx, U16 yy, U16 dir, U16 zz, U16 iEventCode)
 			DISPLAY_HINT_NEW_LINE();
 			U8 sTxtChampionAwakened[128];	// bp008e
 			// SPX: Text 0x0E: AWAKENED / RESURRECTED
-			DISPLAY_HINT_TEXT(glbChampionColor[iChampionNumber], QUERY_GDAT_TEXT(GDAT_CATEGORY_INTERFACE_GENERAL, 0x00, 0x0E, sTxtChampionAwakened));
+			DISPLAY_HINT_TEXT(glbChampionColor[iChampionNumber], QUERY_GDAT_TEXT(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 0x00, 0x0E, sTxtChampionAwakened));
 			if (glbChampionInventory != 0) {
 				INTERFACE_CHAMPION(4);
 				_38c8_0060();
@@ -1410,7 +1410,7 @@ _0d3a:
 	glbChampionBonesIndex = player;
 	//^2C1D:0DED
 	U8 bp008e[128];
-	DISPLAY_HINT_TEXT(glbChampionColor[player], QUERY_GDAT_TEXT(GDAT_CATEGORY_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, bp0d, bp008e));
+	DISPLAY_HINT_TEXT(glbChampionColor[player], QUERY_GDAT_TEXT(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, bp0d, bp008e));
 	//^2C1D:0E17
 	return;
 }
@@ -1971,7 +1971,7 @@ void SkWinCore::PLAYER_CONSUME_OBJECT(U16 player, ObjectID rlConsume, i16 posses
 			FIRE_HIDE_MOUSE_CURSOR();
 			REMOVE_OBJECT_FROM_HAND();
 			for (iMouthAnimCounter = 5; (--iMouthAnimCounter) != 0; ) {
-				DRAW_STATIC_PIC(GDAT_CATEGORY_INTERFACE_CHARSHEET, 0x00, ((iMouthAnimCounter & 1) != 0) ? 0x25 : 0x26, 545, -1);	// mouth icon
+				DRAW_STATIC_PIC(GDAT_CATEGORY_x07_INTERFACE_CHARSHEET, 0x00, ((iMouthAnimCounter & 1) != 0) ? 0x25 : 0x26, 545, -1);	// mouth icon
 				CHANGE_VIEWPORT_TO_INVENTORY(0);
 				SLEEP_SEVERAL_TIME(8);
 			}
@@ -2153,7 +2153,7 @@ _14a9:
 		// SPX: Sound made when eating/drinking
 		// 0x16 = Champion category, 0x83 = sound for eat/drink, 0xFE = default index
 		// So there could be a sound for eat and one for drink
-		QUEUE_NOISE_GEN2(GDAT_CATEGORY_CHAMPIONS, champion->HeroType(), SOUND_CHAMPION_EAT_DRINK, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 0, 0x96, 0x80);
+		QUEUE_NOISE_GEN2(GDAT_CATEGORY_x16_CHAMPIONS, champion->HeroType(), SOUND_CHAMPION_EAT_DRINK, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 0, 0x96, 0x80);
 		//^24A5:14FC
 		champion->heroFlag |= CHAMPION_FLAG_3800;	// 0x3800
 		//^24A5:1505
@@ -2209,7 +2209,7 @@ void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 
 	U8 sChampionNameBuffer[0x80];	// bp0094
 	// SPX: get HERO NAME
-	U8* pChampionTextBuffer = QUERY_GDAT_TEXT(GDAT_CATEGORY_CHAMPIONS, U8(heroType), 0x18, sChampionNameBuffer);	// bp0c
+	U8* pChampionTextBuffer = QUERY_GDAT_TEXT(GDAT_CATEGORY_x16_CHAMPIONS, U8(heroType), 0x18, sChampionNameBuffer);	// bp0c
 	X16 cNameCurChar = 0;	// bp10
 	for (iLocalIndex = 0; (cNameCurChar = i8(*(pChampionTextBuffer++))) != 0x20 && cNameCurChar != 0 && iLocalIndex < 7; iLocalIndex++) {
 		xChampion->firstName[iLocalIndex] = U8(cNameCurChar);
@@ -2227,7 +2227,7 @@ void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 	}
 	xChampion->lastName[iLocalIndex] = 0;
 //DEBUG_DUMP_ULP();
-	TSKHero* xChampionData = reinterpret_cast<TSKHero *>(QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_CHAMPIONS, U8(heroType), dt08, 0x00));	// bp08
+	TSKHero* xChampionData = reinterpret_cast<TSKHero *>(QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_x16_CHAMPIONS, U8(heroType), dt08, 0x00));	// bp08
 #if DM2_EXTENDED_MODE == 1	// TODO To be replaced with fixedmode + checkmem
 	if (xChampionData == NULL)
 		RAISE_SYSERR(SYSTEM_ERROR__NO_PLAYER_DATA);
@@ -3108,7 +3108,7 @@ void SkWinCore::CHAMPION_DEFEATED(X16 player)
 #if (DM2_EXTENDED_MODE == 1)
 	if (SkCodeParam::bUseExtendedSound == true) {	// SPX: Play the champion own scream sound if dead
 		printf("champion dead: %d\n", champion->HeroType());
-		QUEUE_NOISE_GEN1(GDAT_CATEGORY_CHAMPIONS, champion->HeroType(), SOUND_CHAMPION_SCREAM, 0x61, 0x80, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1);
+		QUEUE_NOISE_GEN1(GDAT_CATEGORY_x16_CHAMPIONS, champion->HeroType(), SOUND_CHAMPION_SCREAM, 0x61, 0x80, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1);
 	}
 #endif
 

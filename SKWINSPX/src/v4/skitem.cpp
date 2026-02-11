@@ -241,7 +241,7 @@ U8 *SkWinCore::GET_ITEM_NAME(ObjectID recordLink)
 	U8 iGDatItemId = QUERY_CLS2_FROM_RECORD(oItemObject);	// bp02
 	glbChampionBonesIndex = 0xFFFF;
 	// SPX: If item is CHAMPION'S BONES : I changed to function to get proper ID depending on DM1 or DM2 mode
-	if (iGDatCategory == GDAT_CATEGORY_MISCELLANEOUS && iGDatItemId == GET_CHAMPION_BONES_ITEM_ID()) { // (bp01 == 0x15 && bp02 == 0x00) ==> ITEM == BONES
+	if (iGDatCategory == GDAT_CATEGORY_x15_MISCELLANEOUS && iGDatItemId == GET_CHAMPION_BONES_ITEM_ID()) { // (bp01 == 0x15 && bp02 == 0x00) ==> ITEM == BONES
 		Miscellaneous_item* xMiscItem = GET_ADDRESS_OF_RECORDA(oItemObject);	// bp06
 		i16 iBonesID = xMiscItem->Who();	// si
 		if (iBonesID >= 0 && iBonesID < cd.pi.glbChampionsCount) {
@@ -298,7 +298,7 @@ i16 SkWinCore::GET_ITEM_ORDER_IN_CONTAINER(ObjectID rl, i16 xx)
 	ENTER(142);
 	//^48AE:04BD
 	U8 bp008e[128];
-	U8 *bp0e = QUERY_GDAT_TEXT(GDAT_CATEGORY_CONTAINERS, QUERY_CLS2_FROM_RECORD(rl), 0x40, bp008e);
+	U8 *bp0e = QUERY_GDAT_TEXT(GDAT_CATEGORY_x14_CONTAINERS, QUERY_CLS2_FROM_RECORD(rl), 0x40, bp008e);
     //^48AE:04E3
 	if (*bp0e == 0)
 		//^48AE:04E9
@@ -574,9 +574,9 @@ void SkWinCore::LOAD_MISCITEM()
 		max = ITEM_LOAD_MAX_EXTEND_1;
 	for (X8 item = 0; item < max; item++) {
 		//^48AE:03FB
-		if ((QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_MISCELLANEOUS, item, dtWordValue, GDAT_ITEM_STATS_GEN_FLAGS) & ITEM_FLAG_CURRENCY) == 0)
+		if ((QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x15_MISCELLANEOUS, item, dtWordValue, GDAT_ITEM_STATS_GEN_FLAGS) & ITEM_FLAG_CURRENCY) == 0)
 			continue;
-		U16 moneyValue = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_MISCELLANEOUS, item, dtWordValue, GDAT_ITEM_STATS_MONEY_VALUE);
+		U16 moneyValue = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x15_MISCELLANEOUS, item, dtWordValue, GDAT_ITEM_STATS_MONEY_VALUE);
 		//^48AE:0429
 		i16 si;
 		for (si = 0; si < glbCountMoneyItems; si++) {

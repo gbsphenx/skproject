@@ -46,7 +46,7 @@
 #define DLV_DBG_SED3	0
 #define DLV_FSM 0	// Find special marker (for x teleport and void fall)
 #define DLV_XP	0	// Display info about XP gain
-#define DLV_DBG_INIT	0	// Display steps from the init
+#define DLV_DBG_INIT	1	// Display steps from the init
 #define DLV_DBG_GETPIC	0
 #define DLV_DBG_CELL	0
 #define DLV_DBG_EXTRACT 0

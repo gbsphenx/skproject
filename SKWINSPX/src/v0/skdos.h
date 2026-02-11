@@ -41,6 +41,8 @@ public:
 	UINT AudioPlaySound(const U8 *xSoundBuffer, U32 iBufferSize, i8 iSoundVolume, U16 iPlaybackFrequency);
 };
 
+void SKDOS_GET_MOUSE_POS_BUTTONS(U16 *x, U16 *y, U16 *buttons);
+
 //------------------------------------------------------------------------------
 
 #endif // _SKCODE_DOS_H_

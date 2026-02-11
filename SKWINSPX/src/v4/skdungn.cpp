@@ -247,7 +247,7 @@ i16 SkWinCore::FIND_LADDER_AROUND(i16 xx, i16 yy, i16 isupper, Actuator **ref)
 					) {
 						//^0CEE:0810
 						Bit16u	isLadderUp = 0;
-						isLadderUp = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp04->OrnateIndex(), dtWordValue, GDAT_WALL_ORNATE__IS_LADDER_UP);	// 0x11
+						isLadderUp = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x09_WALL_GFX, bp04->OrnateIndex(), dtWordValue, GDAT_WALL_ORNATE__IS_LADDER_UP);	// 0x11
 						//^0CEE:0830
 						if ((isupper == -1 && isLadderUp != 0) || (isupper == 1 && isLadderUp == 0)) {
 							//^0CEE:0844
@@ -282,7 +282,7 @@ Bit16u SkWinCore::GET_WALL_ORNATE_ALCOVE_TYPE(U8 iGDatItemId)
 	if (iGDatItemId == 0xFF) {
 		return C0_WALL_ORNATE_OBJECT__NONE;
 	}
-	return QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, iGDatItemId, dtWordValue, GDAT_WALL_ORNATE__0A);	// 0x09 .. .. 0x0A
+	return QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x09_WALL_GFX, iGDatItemId, dtWordValue, GDAT_WALL_ORNATE__0A);	// 0x09 .. .. 0x0A
 }
 
 //^0CEE:17E7
@@ -652,7 +652,7 @@ _1ad5:
 				//^0CEE:1D14
 				if (si != 0) {
 					//^0CEE:1D18
-					di = QUERY_ORNATE_ANIM_FRAME(GDAT_CATEGORY_WALL_GFX, bp13, bp0c, bp10);
+					di = QUERY_ORNATE_ANIM_FRAME(GDAT_CATEGORY_x09_WALL_GFX, bp13, bp0c, bp10);
 				}
 				//^0CEE:1D33
 				ref->tfoi[bp06 -3] = (di << 10) | bp13;
@@ -825,7 +825,7 @@ _1efc:
 			{
 				//^0CEE:2000
 _2000:
-				bp14 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, dunMapLocalHeader->MapGraphicsStyle(), dtWordValue, GDAT_GFXSET_ANIMATED_FLOOR);
+				bp14 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, dunMapLocalHeader->MapGraphicsStyle(), dtWordValue, GDAT_GFXSET_x6B_ANIMATED_FLOOR);
 				//^0CEE:2020
 				if (bp14 != 0) {	// SPX: That value is only used for VOID and is 0x8028; 0x28 is the floor animated blue cloud
 					//^0CEE:2027
@@ -833,7 +833,7 @@ _2000:
 					//^0CEE:202D
 					if ((bp14 & 0x8000) != 0) {
 						//^0CEE:2034
-						bp12 = QUERY_ORNATE_ANIM_FRAME(GDAT_CATEGORY_FLOOR_GFX, bp15, glbGameTick, 0);
+						bp12 = QUERY_ORNATE_ANIM_FRAME(GDAT_CATEGORY_x0A_FLOOR_GFX, bp15, glbGameTick, 0);
 						//^0CEE:204D
 						ref->tfoi[2] = (((bp12 * 10) << 8) | bp15);
 						//^0CEE:2063
@@ -963,7 +963,7 @@ _212a:
 _21f4:
 									if (bp1c != 0) {
 										//^0CEE:21FA
-										bp12 = QUERY_ORNATE_ANIM_FRAME(GDAT_CATEGORY_FLOOR_GFX, bp15, bp20, bp24);
+										bp12 = QUERY_ORNATE_ANIM_FRAME(GDAT_CATEGORY_x0A_FLOOR_GFX, bp15, bp20, bp24);
 									}
 									//^0CEE:2216
 									ref->tfoi[2] = (((bp12 * 10) << 8) | bp15);
@@ -1272,7 +1272,7 @@ U16 SkWinCore::IS_WALL_ORNATE_SPRING(ObjectID rl)
 	U8 iGDatItemId = QUERY_CLS2_FROM_RECORD(rl);	// bp01
 	if (iGDatItemId == 0xFF)
 		return 0;
-	return QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, iGDatItemId, dtWordValue, GDAT_WALL_ORNATE__IS_WATER_SPRING);
+	return QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x09_WALL_GFX, iGDatItemId, dtWordValue, GDAT_WALL_ORNATE__IS_WATER_SPRING);
 }
 
 
@@ -1650,7 +1650,7 @@ X16 SkWinCore::_0cee_319e_ALCOVE_GET_GDAT_X13(ObjectID rl)
 	if (bp01 == 0xff)
 		return 0;
 	//^0CEE:31C3
-	return QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp01, dtWordValue, GDAT_WALL_ORNATE__DATA_13);
+	return QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x09_WALL_GFX, bp01, dtWordValue, GDAT_WALL_ORNATE__DATA_13);
 }
 
 
@@ -1865,7 +1865,7 @@ Bit16u SkWinCore::IS_REBIRTH_ALTAR(ObjectID rl)
 		return 0;
 	//^0CEE:3219
 	// SPX: This value was present in no wall graphics since VI ALTAR has been dropped in DM2; however, it works!
-	isViAltar = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, wallOrnateNo, dtWordValue, GDAT_WALL_ORNATE__IS_REBIRTH_ALTAR); //0x0c
+	isViAltar = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x09_WALL_GFX, wallOrnateNo, dtWordValue, GDAT_WALL_ORNATE__IS_REBIRTH_ALTAR); //0x0c
 	return isViAltar;
 }
 
@@ -2103,7 +2103,7 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(i16 xpos, i16 ypos, ObjectID reco
 		//^2FCF:26FC
 		if (bp1e != 0xffff	// SPX: FIX: changed to "!=" instead of "==" => bp1e = direction on wall (and 0xffff on ground...) so it must not be 0xffff
 			&& IS_REBIRTH_ALTAR(si) != 0
-			&& QUERY_CLS1_FROM_RECORD(recordLink) == GDAT_CATEGORY_MISCELLANEOUS
+			&& QUERY_CLS1_FROM_RECORD(recordLink) == GDAT_CATEGORY_x15_MISCELLANEOUS
 			&& QUERY_CLS2_FROM_RECORD(recordLink) == GET_CHAMPION_BONES_ITEM_ID()) {	// Was Misc 0 = someone's bones in DM2 / SPX: I changed to function to get the proper Bones ID depending on DM2 or DM1 mode
 			//^2FCF:2730
 			i16 bp2e = ADD_ITEM_CHARGE(recordLink, 0);
@@ -2265,7 +2265,7 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(i16 xpos, i16 ypos, ObjectID reco
 								{
 									if (xActuator->SoundEffect() != 0) {
 										QUEUE_NOISE_GEN2(
-											(bp1e == 0xffff) ? GDAT_CATEGORY_FLOOR_GFX : GDAT_CATEGORY_WALL_GFX,
+											(bp1e == 0xffff) ? GDAT_CATEGORY_x0A_FLOOR_GFX : GDAT_CATEGORY_x09_WALL_GFX,
 											(bp1e == 0xffff) ? GET_FLOOR_DECORATION_OF_ACTUATOR(xActuator) : GET_WALL_DECORATION_OF_ACTUATOR(xActuator),
 											SOUND_STD_ACTIVATION, 0xfe, xpos, ypos, 0x01, 0x8c, 0x80);
 									}
@@ -2305,7 +2305,7 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(i16 xpos, i16 ypos, ObjectID reco
 							//^2FCF:296D
 							continue;
 						//^2FCF:2970
-						if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, GET_WALL_DECORATION_OF_ACTUATOR(xActuator), dtWordValue, 0x0e) != di)
+						if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x09_WALL_GFX, GET_WALL_DECORATION_OF_ACTUATOR(xActuator), dtWordValue, 0x0e) != di)
 							//^2FCF:2990
 							continue;
 						//^2FCF:2993
@@ -2330,7 +2330,7 @@ _29a8:
 						if (xActuator->SoundEffect() != 0) {
 							//^2FCF:29FB
 							QUEUE_NOISE_GEN2(
-								(bp1e == 0xffff) ? GDAT_CATEGORY_FLOOR_GFX : GDAT_CATEGORY_WALL_GFX,
+								(bp1e == 0xffff) ? GDAT_CATEGORY_x0A_FLOOR_GFX : GDAT_CATEGORY_x09_WALL_GFX,
 //									(bp1e == 0xffff) ? 0x0a : 0x09,
 								(bp1e == 0xffff)
 									? GET_FLOOR_DECORATION_OF_ACTUATOR(xActuator)
@@ -2410,7 +2410,7 @@ _29a8:
 
 						if (xActuator->SoundEffect() != 0) {
 							QUEUE_NOISE_GEN2(
-								(bp1e == 0xffff) ? GDAT_CATEGORY_FLOOR_GFX : GDAT_CATEGORY_WALL_GFX,
+								(bp1e == 0xffff) ? GDAT_CATEGORY_x0A_FLOOR_GFX : GDAT_CATEGORY_x09_WALL_GFX,
 								(bp1e == 0xffff)
 									? GET_FLOOR_DECORATION_OF_ACTUATOR(xActuator)
 									: GET_WALL_DECORATION_OF_ACTUATOR(xActuator),
@@ -2462,7 +2462,7 @@ _29a8:
 
 						if (xActuator->SoundEffect() != 0) {
 							QUEUE_NOISE_GEN2(
-								(bp1e == 0xffff) ? GDAT_CATEGORY_FLOOR_GFX : GDAT_CATEGORY_WALL_GFX,
+								(bp1e == 0xffff) ? GDAT_CATEGORY_x0A_FLOOR_GFX : GDAT_CATEGORY_x09_WALL_GFX,
 								(bp1e == 0xffff)
 									? GET_FLOOR_DECORATION_OF_ACTUATOR(xActuator)
 									: GET_WALL_DECORATION_OF_ACTUATOR(xActuator),
@@ -2554,7 +2554,7 @@ _29a8:
 							}
 							//^2FCF:2C98
 							QUEUE_NOISE_GEN2(
-								GDAT_CATEGORY_CHAMPIONS,
+								GDAT_CATEGORY_x16_CHAMPIONS,
 								glbChampionSquad[bp30].HeroType(),
 								SOUND_CHAMPION_GETHIT,
 								0xfe,
@@ -2569,7 +2569,7 @@ _29a8:
 						}
 						//^2FCF:2CC9
 						QUEUE_NOISE_GEN1(
-							GDAT_CATEGORY_FLOOR_GFX,
+							GDAT_CATEGORY_x0A_FLOOR_GFX,
 							((Bit8u)bp18->TextIndex()) & 0xff,
 							SOUND_STD_ACTIVATION,
 							0x8c,
@@ -2643,7 +2643,7 @@ _29a8:
 				continue;
 			//^2FCF:2D36
 			//if (QUERY_GDAT_ENTRY_DATA_INDEX(0x09, ((Bit8u)bp18->TextIndex()) & 0xff, dtWordValue, 0x0e) != di)
-			if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, ((Bit8u)bp18->TextIndex()) & 0xff, dtWordValue, GDAT_WALL_ORNATE__IS_ITEM_TRIGGERED) != di)
+			if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x09_WALL_GFX, ((Bit8u)bp18->TextIndex()) & 0xff, dtWordValue, GDAT_WALL_ORNATE__IS_ITEM_TRIGGERED) != di)
 				//^2FCF:2D56
 				continue;
 			//^2FCF:2D58
@@ -3045,7 +3045,7 @@ _11a3:
 					ATTACK_PARTY(bp1a, 4, 2);
 					//^2FCF:1234
 					// SPX: Bumping sound
-					QUEUE_NOISE_GEN2(GDAT_CATEGORY_CHAMPIONS, 0xfe, SOUND_CHAMPION_BUMP, 0xfe, xposTo, yposTo, 1, 100, 200);
+					QUEUE_NOISE_GEN2(GDAT_CATEGORY_x16_CHAMPIONS, 0xfe, SOUND_CHAMPION_BUMP, 0xfe, xposTo, yposTo, 1, 100, 200);
 					//^2FCF:1254
 					MOVE_RECORD_TO(0xffff, xposTo, yposTo, bp16, bp18);
 				}

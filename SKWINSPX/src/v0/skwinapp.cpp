@@ -648,8 +648,8 @@ bool SkWinApp::skwin_ML() {
 	bool bMessageLoopResult = true;
 	if (SkCodeParam::bRenderingEngineSDL || SkCodeParam::bRenderingEngineMFC)
 		bMessageLoopResult = xSkWinRenderer->ML();
-	else
-		this->skwin_Sleep(1);
+	//else
+	//	this->skwin_Sleep(1);
 
 	if (bMessageLoopResult == false)
 		return false;
@@ -694,6 +694,19 @@ void SkWinApp::GetMousePosButtons(U16 *x, U16 *y, U16 *buttons)
 		*x = U16(iDeviceMouseX)/SkCodeParam::iVideoScale;
 		*y = U16(iDeviceMouseY)/(SkCodeParam::iVideoScale*SkCodeParam::fVideoYScale);
 	}
+	else if (SkCodeParam::bRenderingEngineDOS) {
+#if defined (__DJGPP__)
+		SKDOS_GET_MOUSE_POS_BUTTONS((U16*)&iDeviceMouseX, (U16*)&iDeviceMouseY, (U16*)&iDeviceButtons);
+		if (iDeviceButtons & 1)
+			*buttons |= 1; // left
+		if (iDeviceButtons & 2)
+			*buttons |= 2; // right
+		if (iDeviceButtons & 4)
+			*buttons |= 4; // middle
+		*x = U16(iDeviceMouseX);	// DOS screen is 1:1, there is no rescaling
+		*y = U16(iDeviceMouseY);
+#endif
+	}
 
 	// For MFC, get the intern values
 	if (SkCodeParam::bRenderingEngineMFC) {
@@ -701,7 +714,7 @@ void SkWinApp::GetMousePosButtons(U16 *x, U16 *y, U16 *buttons)
 		iDeviceMouseY = (int)iCallbackMouseY;
 		iDeviceButtons = (U32)iCallbackMouseButton;
 		*x = U16(iDeviceMouseX);
-		*y = U16(iDeviceMouseY);
+		*y = U16(iDeviceMouseY);																
 		*buttons = U16(iDeviceButtons);
 	}
 
@@ -756,7 +769,7 @@ void SkWinApp::processMinput(U8 button, bool pressed, int x, int y)
 
 void SkWinApp::processKinput(U32 nChar, bool press)
 {
-//	printf("processKinput %d %d\n", nChar, press);
+	printf("processKinput %d %d\n", nChar, press);
 #if defined(__SDL__)
 /*	
 	if (press) {
@@ -769,20 +782,31 @@ void SkWinApp::processKinput(U32 nChar, bool press)
 	}
 */
 	
-	if (press && nChar == SDLK_F1) {
+	if (press && nChar == SDLK_F3) {
 		switch (SkCodeParam::iVideoScale) {
-			case 1: SkCodeParam::iVideoScale = 2; break;
-			case 2: SkCodeParam::iVideoScale = 3; break;
-			case 3: SkCodeParam::iVideoScale = 4; break;
-			case 4: SkCodeParam::iVideoScale = 5; break;
-			default: SkCodeParam::iVideoScale = 1; break;
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+				SkCodeParam::iVideoScale--;
+				break;
 		}
-		//CreateSurface();
-		//printf("New scale : %d\n", SkCodeParam::iVideoScale);
 		xSkWinRenderer->ResizeWindow();
 		return;
 	}
 	else if (press && nChar == SDLK_F4) {
+		switch (SkCodeParam::iVideoScale) {
+			case 1: 
+			case 2:
+			case 3:
+			case 4:
+				SkCodeParam::iVideoScale++;
+				break;
+		}
+		xSkWinRenderer->ResizeWindow();
+		return;
+	}
+	else if (press && nChar == SDLK_F5) {
 		if (SkCodeParam::fVideoYScale != 1)
 			SkCodeParam::fVideoYScale = 1.0f;
 		else
@@ -790,22 +814,20 @@ void SkWinApp::processKinput(U32 nChar, bool press)
 		xSkWinRenderer->ResizeWindow();
 		xSkWinRenderer->Render();
 	}
-	else if (press && nChar == SDLK_F2) {
-		// make slow
-		switch (spfact) {
+	else if (press && nChar == SDLK_F1) {
+		// make slower
+		switch (SkCodeParam::iTickSpeedFactor) {
 			case 0: case 1: case 2: case 3: case 4:
-				spfact++;
-				//UpdateTitle();
+				SkCodeParam::iTickSpeedFactor++;
 				break;
 		}
 		return;
 	}
-	else if (press && nChar == SDLK_F3) {
-		// make fast
-		switch (spfact) {
+	else if (press && nChar == SDLK_F2) {
+		// make faster
+		switch (SkCodeParam::iTickSpeedFactor) {
 			case 1: case 2: case 3: case 4: case 5:
-				spfact--;
-				//UpdateTitle();
+				SkCodeParam::iTickSpeedFactor--;
 				break;
 		}
 		return;

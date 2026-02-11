@@ -23,7 +23,7 @@ X16 SkWinCore::RETRIEVE_ENVIRONMENT_CMD_CD_FW(DistantEnvironment *ref)
 	ENTER(128);
 	//^3DF7:0763
 	U8 bp80[128];
-	if (QUERY_GDAT_TEXT(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, ref->envImg, bp80)[0] == 0)
+	if (QUERY_GDAT_TEXT(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, ref->envImg, bp80)[0] == 0)
 		return 0;
 	//^3DF7:078B
 	ref->cmCD = QUERY_CMDSTR_TEXT(bp80, reinterpret_cast<const Bit8u *>(EnvCM_CD));
@@ -100,7 +100,7 @@ void SkWinCore::ENVIRONMENT_DRAW_DISTANT_ELEMENT(DistantEnvironment *ref, X16 di
 		, iElementRecto
 		));
 	//^32CB:57E1
-	QUERY_TEMP_PICST(bp02, bp04, bp06, 0, 0, 0, iElementRecto, -1, glbSceneColorKey, -1, GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, ref->envImg);
+	QUERY_TEMP_PICST(bp02, bp04, bp06, 0, 0, 0, iElementRecto, -1, glbSceneColorKey, -1, GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, ref->envImg);
 	glbTempPicture.w32 += di;
 	glbTempPicture.w34 += si;
 	DRAW_TEMP_PICST();        
@@ -228,10 +228,10 @@ void SkWinCore::ENVIRONMENT_DISPLAY_ELEMENTS(X16 dir, X16 xx, X16 yy)
 		//^32CB:5888
 		for (bp05 = 0; bp05 <= 0x63; bp05++) {
 			//^32CB:588E
-			if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, dtImage, bp05) == 0)
+			if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, dtImage, bp05) == 0)
 				continue;
 			//^32CB:58A6
-			if (QUERY_GDAT_TEXT(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, bp05, bp0086)[0] == 0)
+			if (QUERY_GDAT_TEXT(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, bp05, bp0086)[0] == 0)
 				continue;
 			//^32CB:58C8
 			_4976_592b[bp05 >> 3] = _4976_592b[bp05 >> 3] | (1 << (bp05 & 7));
@@ -252,7 +252,7 @@ void SkWinCore::ENVIRONMENT_DISPLAY_ELEMENTS(X16 dir, X16 xx, X16 yy)
 		if ((_4976_592b[bp05 >> 3] & (1 << (bp05 & 7))) == 0)
 			continue;
 		//^32CB:5939
-		QUERY_GDAT_TEXT(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, bp05, bp0086);
+		QUERY_GDAT_TEXT(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, bp05, bp0086);
 		//^32CB:5951
 		if (ENVIRONMENT_SET_DISTANT_ELEMENT(bp04, bp0086, dir, di, si) == 0)
 			continue;

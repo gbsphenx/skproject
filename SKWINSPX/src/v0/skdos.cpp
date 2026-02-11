@@ -93,33 +93,36 @@ void SKDOS_RESET_VIDEO_MODE()
 }
 
 //..............................................................................
-/*
-void SKDOS_UPDATE_VRAM_STATIC()
+
+void SKDOS_INIT_MOUSE()
 {
-	X8* xVideoData = NULL;
-	X8* pVideoRAM = (X8*) (DOS_VGA_SEGMENT + __djgpp_conventional_base);	// DOS VRAM address
-	UINT iNbPixels = DOS_SCREEN_HEIGHT * DOS_SCREEN_WIDTH;
-	UINT ip = 0;
-	UINT ix = 0;
-	UINT iy = 0;
-	UINT z = 0;
+#ifdef __DJGPP__
+    union REGS regs;
+    regs.x.ax = 0x0000;					// Initialize the mouse driver
+    int86(0x33, &regs, &regs);
 
-	xVideoData = (X8*) calloc(320*200, sizeof(X8));
-
-    // Fill screen with a gradient
-    for (int y = 0; y < 200; y++) {
-		z = y * 320;
-        for (int x = 0; x < 320; x++) {
-			xVideoData[z] = (X8)((x + y) % 256);
-			z++;
-        }
-    }
-
-	memcpy(pVideoRAM, xVideoData, 320*200);	// this works when __djgpp_nearptr_enable is enabled
-
-	free(xVideoData);
+    /*if (regs.x.ax == 0) {
+        printf("Mouse not installed\n");
+    } else {
+        printf("Mouse is installed with %d buttons\n", regs.x.bx);
+    }*/
+#endif // __DJGPP__
 }
-*/
+
+void SKDOS_GET_MOUSE_POS_BUTTONS(U16 *x, U16 *y, U16 *buttons) 
+{
+#ifdef __DJGPP__	
+    union REGS regs;
+    regs.x.ax = 0x0003;		// Get mouse position and button status
+    int86(0x33, &regs, &regs);
+    *x = regs.x.cx;			// X-coordinate of the mouse
+    *y = regs.x.dx;			// Y-coordinate of the mouse
+    *buttons = regs.x.bx;	// Mouse button status
+#endif // __DJGPP__
+}
+
+//..............................................................................
+
 void SKDOS_SET_VGA_PALETTE(X8 *xVGAPalette) {
 #ifdef __DJGPP__
     outp(0x3C8, 0);  // Start writing at color index 0
@@ -132,45 +135,7 @@ void SKDOS_SET_VGA_PALETTE(X8 *xVGAPalette) {
 #endif // __DJGPP__
 }
 
-/*
-void SKDOS_UPDATE_VRAM_TEST_TITLE()
-{
-	X8* xVideoData = NULL;
-	X8* pVideoRAM = (X8*) (DOS_VGA_SEGMENT + __djgpp_conventional_base);	// DOS VRAM address
-	UINT iNbPixels = DOS_SCREEN_HEIGHT * DOS_SCREEN_WIDTH;
-	X8 xPalette[4*256];
 
-    {
-		FILE *file = fopen("dm2sk.raw", "rb");
-		if (!file) {
-			perror("Error opening file");
-			return;
-		}
-
-		fseek(file, 0x32, SEEK_SET);
-
-		// Read palette (256 x RGB)
-		if (fread(xPalette, 1, 4*256, file) != (4*256)) {
-			fprintf(stderr, "Error reading palette data.\n");
-			fclose(file);
-			return;
-		}
-		SKDOS_SET_VGA_PALETTE(xPalette);
-
-		xVideoData = (X8*) calloc(320*200, sizeof(X8));
-
-		if (fread(xVideoData, 1, 320 * 175, file) != (320 * 175)) {
-			fprintf(stderr, "Error reading image data.\n");
-			fclose(file);
-			return;
-		}
-	}
-
-	memcpy(pVideoRAM, xVideoData, 320*200);
-
-	free(xVideoData);
-}
-*/
 //------------------------------------------------------------------------------
 
 
@@ -195,6 +160,7 @@ UINT SkRendererDOS::Init(SkVRAM* xVRAM)
 //	iScreenHeight = 200;
 //	ATLASSERT(iScreenWidth == 320);
 //	ATLASSERT(iScreenHeight == 200);
+	SKDOS_INIT_MOUSE();
 	return 0;
 }
 

@@ -211,7 +211,7 @@ CSkWinMFC::CSkWinMFC()
 	ptfrm.y = GetPrivateProfileInt(_skwin, "framey", 0, GetSkwinini());
 	sbdsbf = GetPrivateProfileInt(_skwin, "sbdsbf", 0, GetSkwinini());
 	sbdsaf = GetPrivateProfileInt(_skwin, "sbdsaf", 0, GetSkwinini());
-	spfact = GetPrivateProfileInt(_skwin, "spfact", 2, GetSkwinini());
+	SkCodeParam::iTickSpeedFactor = GetPrivateProfileInt(_skwin, "spfact", 2, GetSkwinini());
 //	lang = GetPrivateProfileInt(_skwin, "lang", _GDAT_LANG_ENGLISH_, GetSkwinini());
 }
 
@@ -434,7 +434,9 @@ void CSkWinMFC::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 void CSkWinMFC::processKinput(UINT nChar, bool press)
 {
+	printf("CSkWinMFC::processKinput %d %d\n", nChar, press);
 	CSkKinput *p = allocKinput();
+	printf("p = %p\n", p);
 	if (p != NULL) {
 		BYTE v = 0;
 		switch (nChar) {
@@ -536,12 +538,12 @@ void CSkWinMFC::OnVideo1x(UINT nID) {
 		case ID_MIDI_MUSIC_ENABLED: SkCodeParam::bMIDIMusicEnabled = true; SkCodeParam::bWAVMusicEnabled = false; break;
 		case ID_WAV_MUSIC_ENABLED: SkCodeParam::bWAVMusicEnabled = true; SkCodeParam::bMIDIMusicEnabled = false; break;
 
-		case ID_SPEED_1ULTRAFAST: spfact = 0; break;
-		case ID_SPEED_2FAST: spfact = 1; break;
-		case ID_SPEED_3NORMAL: spfact = 2; break;
-		case ID_SPEED_4SLOW: spfact = 3; break;
-		case ID_SPEED_5VERYSLOW: spfact = 4; break;
-		case ID_SPEED_6GLACIAL: spfact = 5; break;
+		case ID_SPEED_1ULTRAFAST: SkCodeParam::iTickSpeedFactor = 0; break;
+		case ID_SPEED_2FAST: SkCodeParam::iTickSpeedFactor = 1; break;
+		case ID_SPEED_3NORMAL: SkCodeParam::iTickSpeedFactor = 2; break;
+		case ID_SPEED_4SLOW: SkCodeParam::iTickSpeedFactor = 3; break;
+		case ID_SPEED_5VERYSLOW: SkCodeParam::iTickSpeedFactor = 4; break;
+		case ID_SPEED_6GLACIAL: SkCodeParam::iTickSpeedFactor = 5; break;
 
 		case ID_LANG_ENGLISH: lang = 0x10; break;
 		case ID_LANG_JAPANESE: lang = 0x20; break;
@@ -614,10 +616,10 @@ void CSkWinMFC::OnVideo1x(UINT nID) {
 		CString str;
 		str.Format("%d", sbdsaf); WritePrivateProfileString(_skwin, "sbdsaf", str, GetSkwinini());
 	}
-	if (spfact != -1) {
-		this->spfact = spfact;
+	if (SkCodeParam::iTickSpeedFactor != -1) {
+		this->spfact = SkCodeParam::iTickSpeedFactor;
 		CString str;
-		str.Format("%d", spfact); WritePrivateProfileString(_skwin, "spfact", str, GetSkwinini());
+		str.Format("%d", SkCodeParam::iTickSpeedFactor); WritePrivateProfileString(_skwin, "spfact", str, GetSkwinini());
 	}
 	if (lang != -1) {
 		this->lang = lang;
@@ -656,12 +658,12 @@ void CSkWinMFC::OnUpdateVideo1x(CCmdUI *pCmdUI) {
 		case ID_MIDI_MUSIC_ENABLED: pCmdUI->SetRadio(SkCodeParam::bMIDIMusicEnabled); break;
 		case ID_WAV_MUSIC_ENABLED: pCmdUI->SetRadio(SkCodeParam::bWAVMusicEnabled); break;
 
-		case ID_SPEED_1ULTRAFAST: pCmdUI->SetRadio(spfact == 0); break;
-		case ID_SPEED_2FAST: pCmdUI->SetRadio(spfact == 1); break;
-		case ID_SPEED_3NORMAL: pCmdUI->SetRadio(spfact == 2); break;
-		case ID_SPEED_4SLOW: pCmdUI->SetRadio(spfact == 3); break;
-		case ID_SPEED_5VERYSLOW: pCmdUI->SetRadio(spfact == 4); break;
-		case ID_SPEED_6GLACIAL: pCmdUI->SetRadio(spfact == 5); break;
+		case ID_SPEED_1ULTRAFAST: pCmdUI->SetRadio(SkCodeParam::iTickSpeedFactor == 0); break;
+		case ID_SPEED_2FAST: pCmdUI->SetRadio(SkCodeParam::iTickSpeedFactor == 1); break;
+		case ID_SPEED_3NORMAL: pCmdUI->SetRadio(SkCodeParam::iTickSpeedFactor == 2); break;
+		case ID_SPEED_4SLOW: pCmdUI->SetRadio(SkCodeParam::iTickSpeedFactor == 3); break;
+		case ID_SPEED_5VERYSLOW: pCmdUI->SetRadio(SkCodeParam::iTickSpeedFactor == 4); break;
+		case ID_SPEED_6GLACIAL: pCmdUI->SetRadio(SkCodeParam::iTickSpeedFactor == 5); break;
 
 		case ID_LANG_ENGLISH: pCmdUI->SetRadio(lang == 0x10); break;
 		case ID_LANG_JAPANESE: pCmdUI->SetRadio(lang == 0x20); break;

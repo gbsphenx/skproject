@@ -599,12 +599,12 @@ const Bit8u *SkWinCore::DRAW_MBCS_STR(
 	//^3929:0170
 	// SPX: add protection here : if the graphics.dat does not contain japanese font, replacing the missing font with default image (yukman) will lead into a crash
 	// Therefore, we check if the font exist; if not, just leave for now.
-	int iItemSize = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_INTERFACE_GENERAL, 0x01, dtImage, 0x00);
+	int iItemSize = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 0x01, dtImage, 0x00);
 	if (iItemSize <= 0)
 	//	return (const Bit8u*) "?";	// this will lead to an infinite loop when displaying HIT damage
 		return str;
 
-	Bit8u *bp08 = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_INTERFACE_GENERAL, *ww, bp0d);	// 0x1C
+	Bit8u *bp08 = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x01_INTERFACE_GENERAL, *ww, bp0d);	// 0x1C
 	//^3929:018B
 	Bit8u bp2a[16]; // 2a-1b
 	Bit16u bp0a;
@@ -929,7 +929,7 @@ _1678:
 				}
 				else // normal DM2 mode
 				// SPX: text message stored in GDAT and not DUNGEON.DAT
-					bp04 += SK_STRLEN(QUERY_GDAT_TEXT(GDAT_CATEGORY_MESSAGES, 0x00, bp19, bp04));
+					bp04 += SK_STRLEN(QUERY_GDAT_TEXT(GDAT_CATEGORY_x03_MESSAGES, 0x00, bp19, bp04));
 			}
 			else {
 				//^0CEE:16C7

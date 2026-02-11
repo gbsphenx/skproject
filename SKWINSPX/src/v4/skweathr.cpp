@@ -199,13 +199,13 @@ void SkWinCore::UPDATE_WEATHER(U16 aa)	// aa = 1 when called from timer, aa = 0 
 			//^3DF7:0462
 			bp0e = 8;
 			// SPX: 0x6C only found in ROOF set
-			X16 bp16 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_THUNDER_POSITION);	// 0x6C
+			X16 bp16 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_x6C_THUNDER_POSITION);	// 0x6C
 			if (bp16 != 0) {
 				//^3DF7:0480
 				// SPX: Will animate the Lightning Rod machine
 				INVOKE_MESSAGE(di = (bp16 >> 8), si = (bp16 & 0xff), 0, 0, glbGameTick +1);
 				// SPX: and get sound of thunder
-				QUEUE_NOISE_GEN2(GDAT_CATEGORY_SPELL_MISSILES, missileThunderBolt, SOUND_STD_EXPLOSION, 0xfe, di, si, 1, 0x6c, U8(RAND16(0x20)));
+				QUEUE_NOISE_GEN2(GDAT_CATEGORY_x0D_SPELL_MISSILES, missileThunderBolt, SOUND_STD_EXPLOSION, 0xfe, di, si, 1, 0x6c, U8(RAND16(0x20)));
 			}
 			else {
 				do {
@@ -298,7 +298,7 @@ void SkWinCore::UPDATE_WEATHER(U16 aa)	// aa = 1 when called from timer, aa = 0 
 				//^3DF7:070A
 				bp0c = BETWEEN_VALUE(1, bp0c, 15);
 				//SPX: Get sound of distant thunder
-				QUEUE_NOISE_GEN1(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, SOUND_DEFAULT_STORM, 0x19, 0x40, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, bp0c);
+				QUEUE_NOISE_GEN1(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, SOUND_DEFAULT_STORM, 0x19, 0x40, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, bp0c);
 				SkD((DLV_DBG_THUNDER, "Thunder at distance %d!\n", bp0c));
 				glbThunderJustCast = 1;
 			}

@@ -52,7 +52,7 @@ SkWinCore::EXTENDED_LOAD_SPELLS_DEFINITION(void)
 	{
 		U8 iGDatEntryValue = 0;
 		U8 iGDatItemId = 0;
-		U8 iGDatCategory = GDAT_CATEGORY_SPELL_DEF;
+		U8 iGDatCategory = GDAT_CATEGORY_x02_SPELL_DEF;
 		for (iGDatItemId = 0; iGDatItemId < MAXSPELL_CUSTOM-1; iGDatItemId++)	// MAXSPELL_CUSTOM = 255, but the value 255 is kept for the default.
 		{
 			U8 sSpellname[0x80];
@@ -121,7 +121,7 @@ U16 SkWinCore::QUERY_GDAT_WATER_VALUE_FROM_RECORD(ObjectID rl)
 //SPX: NEW FUNCTION, MIRROR VALUE FOR DOOR
 U16 SkWinCore::QUERY_GDAT_DOOR_IS_MIRRORED(U8 doortype)
 {
-	return QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_DOORS, doortype, dtWordValue, GDAT_DOOR_MIRRORED);
+	return QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0E_DOORS, doortype, dtWordValue, GDAT_DOOR_MIRRORED);
 }
 
 
@@ -269,14 +269,14 @@ void SkWinCore::CREATE_NEW_ITEM_FOR_PLAYER(int iDBItem, const char* sItemName, i
 	char sLocalItemName[128];
 	bool bMatch = false;
 	int iItemID = 1;
-	int iGDATDB = GDAT_CATEGORY_MISCELLANEOUS;
+	int iGDATDB = GDAT_CATEGORY_x15_MISCELLANEOUS;
 
 	if (iDBItem == DB_CATEGORY_CLOTHING)
-		iGDATDB = GDAT_CATEGORY_CLOTHES;
+		iGDATDB = GDAT_CATEGORY_x11_CLOTHES;
 	else if (iDBItem == DB_CATEGORY_WEAPON)
-		iGDATDB = GDAT_CATEGORY_WEAPONS;
+		iGDATDB = GDAT_CATEGORY_x10_WEAPONS;
 	else if (iDBItem == DB_CATEGORY_MISC_ITEM)
-		iGDATDB = GDAT_CATEGORY_MISCELLANEOUS;
+		iGDATDB = GDAT_CATEGORY_x15_MISCELLANEOUS;
 
 	// Search from GDAT for this item
 	for (iItemID = 0; iItemID < 0xFE; iItemID++) {

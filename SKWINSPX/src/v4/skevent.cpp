@@ -708,7 +708,7 @@ void SkWinCore::CREATE_CLOUD(ObjectID rl, U16 ww, U16 xx, U16 yy, U16 ss)
 		bp14 = min_value(255, (si >> 1) +0x80);
 	}
 	//^075F:0332
-	QUEUE_NOISE_GEN2(GDAT_CATEGORY_SPELL_MISSILES, bp04->CloudType(), SOUND_STD_EXPLOSION, 0xfe, xx, yy, 1, 0x6c, U8(bp14));
+	QUEUE_NOISE_GEN2(GDAT_CATEGORY_x0D_SPELL_MISSILES, bp04->CloudType(), SOUND_STD_EXPLOSION, 0xfe, xx, yy, 1, 0x6c, U8(bp14));
 	APPEND_RECORD_TO(di, NULL, xx, yy);
 	U16 bp12;
 	if (rl == OBJECT_EFFECT_CLOUD_REBIRTH) {	// oFFE4
@@ -1023,7 +1023,7 @@ void SkWinCore::PROCESS_CLOUD(Timer *ref)
 		case 0x64: //^_1a2e
 			//^075F:1A2E
 			// SPX: Explosion spell sound
-			QUEUE_NOISE_GEN2(GDAT_CATEGORY_SPELL_MISSILES, bp04->CloudType(), SOUND_STD_EXPLOSION, 0xfe, di, si, 1, 0x6c, 0xc8);
+			QUEUE_NOISE_GEN2(GDAT_CATEGORY_x0D_SPELL_MISSILES, bp04->CloudType(), SOUND_STD_EXPLOSION, 0xfe, di, si, 1, 0x6c, 0xc8);
 			bp04->CloudType(bp04->CloudType() +1);
 			goto _1aae;
 		case missileDustCloud: // 0x28: //^_1a6b
@@ -1191,12 +1191,12 @@ void SkWinCore::ACTIVATE_ORNATE_ANIMATOR(Timer *ref, Actuator *pr4, ObjectID rl,
 			X8 bp0c;
 			if (isWall != 0) {
 				//^3A15:1346
-				bp0b = GDAT_CATEGORY_WALL_GFX;	// 9
+				bp0b = GDAT_CATEGORY_x09_WALL_GFX;	// 9
 				bp0c = GET_WALL_DECORATION_OF_ACTUATOR(pr4);
 			}
 			else {
 				//^3A15:1357
-				bp0b = GDAT_CATEGORY_FLOOR_GFX;	// 10
+				bp0b = GDAT_CATEGORY_x0A_FLOOR_GFX;	// 10
 				bp0c = GET_FLOOR_DECORATION_OF_ACTUATOR(pr4);
 			}
 			//^3A15:136B
@@ -1362,7 +1362,7 @@ void SkWinCore::ACTIVATE_ITEM_TELEPORT(Timer *ref, Actuator *pr4, ObjectID rl, X
 						//^3A15:20CD
 						if (pr4->OnceOnlyActuator() == 0) {
 							//^3A15:20DB
-							if (QUERY_CLS1_FROM_RECORD(si) == GDAT_CATEGORY_MISCELLANEOUS && QUERY_CLS2_FROM_RECORD(si) == 0) {
+							if (QUERY_CLS1_FROM_RECORD(si) == GDAT_CATEGORY_x15_MISCELLANEOUS && QUERY_CLS2_FROM_RECORD(si) == 0) {
 								//^3A15:20F1
 								ObjectID bp0e;
 								bp0e = si;
@@ -1588,7 +1588,7 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 				if (bp10 != 7)
 					continue;
 				//^3A15:22EA
-				i16 bp2e = (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, bp08->OrnateIndex(), dtWordValue, GDAT_WALL_ORNATE__IS_LADDER_UP) != 0) ? -1 : 1;
+				i16 bp2e = (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x09_WALL_GFX, bp08->OrnateIndex(), dtWordValue, GDAT_WALL_ORNATE__IS_LADDER_UP) != 0) ? -1 : 1;
 				i16 bp2a = ref->XcoordB();
 				i16 bp2c = ref->YcoordB();
 				bp2e = LOCATE_OTHER_LEVEL(cd.pi.glbPlayerMap, bp2e, &bp2a, &bp2c, NULL);
@@ -1683,7 +1683,7 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 				if (bp04->SoundEffect() == 0)
 					break;
 				//^3A15:25E7
-				QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES, 0, SOUND_STD_TELEPORT_MESSAGE, 0x61, 0x80, bp2a, bp2c, 1);
+				QUEUE_NOISE_GEN1(GDAT_CATEGORY_x03_MESSAGES, 0, SOUND_STD_TELEPORT_MESSAGE, 0x61, 0x80, bp2a, bp2c, 1);
 				break;
 			case ACTUATOR_TYPE_DM1_BITFIELDS_TRIGGER: // SPX: retrocompatibility, DM1 BitFields Trigger
 				{
@@ -2091,7 +2091,7 @@ void SkWinCore::ACTUATE_FLOOR_MECHA(Timer *ref)
 					if (bp04->SoundEffect() == 0)
 						break;
 					//^3A15:25E7
-					QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES, 0, SOUND_STD_TELEPORT_MESSAGE, 0x61, 0x80, iLocationX, iLocationY, 1);
+					QUEUE_NOISE_GEN1(GDAT_CATEGORY_x03_MESSAGES, 0, SOUND_STD_TELEPORT_MESSAGE, 0x61, 0x80, iLocationX, iLocationY, 1);
 					break;
 				}
 			case ACTUATOR_FLOOR_TYPE__PARTY_TELEPORTER://^1958 // 0x2E -> '-'
@@ -2364,7 +2364,7 @@ void SkWinCore::STEP_DOOR(Timer *ref)
 							continue;
 						//^3A15:0901
 						// SPX: Bump sound when door closing on champions
-						QUEUE_NOISE_GEN2(GDAT_CATEGORY_CHAMPIONS, glbChampionSquad[bp16].HeroType(), SOUND_CHAMPION_BUMP, 0xfe, di, si, 1, 0x64, 0xc8);
+						QUEUE_NOISE_GEN2(GDAT_CATEGORY_x16_CHAMPIONS, glbChampionSquad[bp16].HeroType(), SOUND_CHAMPION_BUMP, 0xfe, di, si, 1, 0x64, 0xc8);
 						//^3A15:0929
 					}
 				}
@@ -2382,9 +2382,9 @@ void SkWinCore::STEP_DOOR(Timer *ref)
 					ATTACK_CREATURE(bp0c, di, si, 0x2006, 0x64, (QUERY_CREATURE_AI_SPEC_FROM_RECORD(bp0c)->w24_c_c() != 0) ? 0 : bp14);
 					iOpenCloseState = (iOpenCloseState == 0) ? 0 : (iOpenCloseState -1);
 					*xTileValue = *xTileValue & 0xF8 | iOpenCloseState; // write new state on tile
-					QUEUE_NOISE_GEN2(GDAT_CATEGORY_CREATURES, QUERY_CLS2_FROM_RECORD(bp0c), SOUND_OBJECT_GETHIT, 0xfe,
+					QUEUE_NOISE_GEN2(GDAT_CATEGORY_x0F_CREATURES, QUERY_CLS2_FROM_RECORD(bp0c), SOUND_OBJECT_GETHIT, 0xfe,
 						di, si, 1, 0x46, 0x80);
-					QUEUE_NOISE_GEN2(GDAT_CATEGORY_MISCELLANEOUS, 0xFE, SOUND_STD_KNOCK, 0xFE, di, si, 1, 0x46, 0x80);
+					QUEUE_NOISE_GEN2(GDAT_CATEGORY_x15_MISCELLANEOUS, 0xFE, SOUND_STD_KNOCK, 0xFE, di, si, 1, 0x46, 0x80);
 					bp1a = 1;
 				}
 			}
@@ -2409,11 +2409,11 @@ void SkWinCore::STEP_DOOR(Timer *ref)
 		iOpenCloseState += (bp08->DoorBit09() != 0) ? -1 : 1;
 		*xTileValue = (*xTileValue & 0xF8) | U8(iOpenCloseState); // write new state on tile
 		// SPX: Door step sound
-		QUEUE_NOISE_GEN2(GDAT_CATEGORY_DOORS, GET_GRAPHICS_FOR_DOOR(bp08), SOUND_DOOR_STEP, 0xfe, di, si, 1, 0x5f, 0x80);
+		QUEUE_NOISE_GEN2(GDAT_CATEGORY_x0E_DOORS, GET_GRAPHICS_FOR_DOOR(bp08), SOUND_DOOR_STEP, 0xfe, di, si, 1, 0x5f, 0x80);
 		if (SkCodeParam::bUseDM2ExtendedMode && iOpenCloseState == 4) // Special sound for door totally closed (exists in V5)
-			QUEUE_NOISE_GEN2(GDAT_CATEGORY_DOORS, GET_GRAPHICS_FOR_DOOR(bp08), SOUND_DOOR_CLOSE, 0xfe, di, si, 1, 0x5f, 0x80);
+			QUEUE_NOISE_GEN2(GDAT_CATEGORY_x0E_DOORS, GET_GRAPHICS_FOR_DOOR(bp08), SOUND_DOOR_CLOSE, 0xfe, di, si, 1, 0x5f, 0x80);
 		else if (SkCodeParam::bUseDM2ExtendedMode && iOpenCloseState == 0) // Special sound for totally door opened
-			QUEUE_NOISE_GEN2(GDAT_CATEGORY_DOORS, GET_GRAPHICS_FOR_DOOR(bp08), SOUND_DOOR_OPENED, 0xfe, di, si, 1, 0x5f, 0x80);
+			QUEUE_NOISE_GEN2(GDAT_CATEGORY_x0E_DOORS, GET_GRAPHICS_FOR_DOOR(bp08), SOUND_DOOR_OPENED, 0xfe, di, si, 1, 0x5f, 0x80);
 
 		if (bp08->DoorBit09() != 0) {
 			if (iOpenCloseState != 0)
@@ -2504,14 +2504,14 @@ void SkWinCore::ACTUATE_TRICKWALL(Timer *ref)
 			*uTileValue &= 0xfb;
 		}
 		if (glbCurrentMapIndex == glbMap_4c28 && oldTileValue != *uTileValue)
-			QUEUE_NOISE_GEN1(GDAT_CATEGORY_GRAPHICSSET, 0xFE, SOUND_WALL_CLOSE, 0x61, 0x80, bp06, bp08, 1);
+			QUEUE_NOISE_GEN1(GDAT_CATEGORY_x08_GRAPHICSSET, 0xFE, SOUND_WALL_CLOSE, 0x61, 0x80, bp06, bp08, 1);
 	}
 	else {	// di == 0 == ACTMSG_OPEN_SET
 		//^3A15:0CF6
 		*uTileValue |= 4;
 		// SPX Extra sound for wall opening
 		if (glbCurrentMapIndex == glbMap_4c28 && oldTileValue != *uTileValue)
-			QUEUE_NOISE_GEN1(GDAT_CATEGORY_GRAPHICSSET, 0xFE, SOUND_WALL_OPEN, 0x61, 0x80, bp06, bp08, 1);
+			QUEUE_NOISE_GEN1(GDAT_CATEGORY_x08_GRAPHICSSET, 0xFE, SOUND_WALL_OPEN, 0x61, 0x80, bp06, bp08, 1);
 	}
 	//^3A15:0CFD
 	if (glbCurrentMapIndex == cd.pi.glbPlayerMap)
@@ -2533,7 +2533,7 @@ void SkWinCore::PROCESS_TIMER_3D(Timer *ref)
 		//^3A15:3019
 		if (ref->TimerType() == tty3D) {
 			//^3A15:3023
-			QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES, 0, SOUND_STD_TELEPORT_MESSAGE, 0x61, 0x80, x, y, 1); // teleport noise
+			QUEUE_NOISE_GEN1(GDAT_CATEGORY_x03_MESSAGES, 0, SOUND_STD_TELEPORT_MESSAGE, 0x61, 0x80, x, y, 1); // teleport noise
 		}
 	}
 	//^3A15:303B
@@ -2661,7 +2661,7 @@ void SkWinCore::PROCESS_TIMER_RESURRECTION(Timer *ref)
 				//^3A15:30FD
 				if (true
 					&& si.Dir() == bonesPos 
-					&& QUERY_CLS1_FROM_RECORD(si) == GDAT_CATEGORY_MISCELLANEOUS
+					&& QUERY_CLS1_FROM_RECORD(si) == GDAT_CATEGORY_x15_MISCELLANEOUS
 					&& QUERY_CLS2_FROM_RECORD(si) == GET_CHAMPION_BONES_ITEM_ID()	// bones item (SPX: was hard coded 0, for DM1 compatibility, I changed using a function to get the correct item ID)
 					&& ADD_ITEM_CHARGE(si, 0) == championNo
 				) {
@@ -2779,11 +2779,11 @@ void SkWinCore::CONTINUE_ORNATE_NOISE(Timer *ref)
 		U8 iCategory = 0;	// bp05
 		U8 iItemNumber = 0;	// bp06
 		if (si != 0) {
-			iCategory = GDAT_CATEGORY_WALL_GFX;	// 09
+			iCategory = GDAT_CATEGORY_x09_WALL_GFX;	// 09
 			iItemNumber = GET_WALL_DECORATION_OF_ACTUATOR(pActuator);
 		}
 		else {
-			iCategory = GDAT_CATEGORY_FLOOR_GFX;	// 10
+			iCategory = GDAT_CATEGORY_x0A_FLOOR_GFX;	// 10
 			iItemNumber = GET_FLOOR_DECORATION_OF_ACTUATOR(pActuator);
 		}
 		ref->SetTick(ref->GetTick() + GET_ORNATE_ANIM_LEN(pActuator, si));
@@ -2795,7 +2795,7 @@ void SkWinCore::CONTINUE_ORNATE_NOISE(Timer *ref)
 		if (SkCodeParam::bUseFixedMode)
 		{
 			// Is the ornate a lava crater ?
-			if (iCategory == GDAT_CATEGORY_FLOOR_GFX &&
+			if (iCategory == GDAT_CATEGORY_x0A_FLOOR_GFX &&
 				iItemNumber == 0x08) // lava crater
 			{
 				X16 iSpellPower = 128;
@@ -2819,7 +2819,7 @@ void SkWinCore::CONTINUE_ORNATE_NOISE(Timer *ref)
 						0, iDirection, iSpellPower, iSpellPower, 0);
 				}
 			} // End block / Amplifier
-			if (iCategory == GDAT_CATEGORY_FLOOR_GFX &&
+			if (iCategory == GDAT_CATEGORY_x0A_FLOOR_GFX &&
 				iItemNumber == 0x0D) // poison rift
 			{
 				X16 iSpellPower = 128;
@@ -2875,7 +2875,7 @@ void SkWinCore::PROCESS_TIMER_AMBIENT_SOUND(Timer *ref)
 	
 	// Generate sound
 	if (SkCodeParam::bUseExtendedSound)
-		QUEUE_NOISE_GEN1(GDAT_CATEGORY_ENVIRONMENT, glbMapGraphicsSet, iSoundID, 0x96, 0x80, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 0);
+		QUEUE_NOISE_GEN1(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, iSoundID, 0x96, 0x80, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 0);
 	//iRainSoundCount = (iRainSoundCount+1)%20;
 	
 	// Issue a new timer

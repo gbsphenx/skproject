@@ -10,6 +10,17 @@
 #include <skcore.h>
 
 
+//^476D:0005
+U16 SkWinCore::FILE_SEEK(U16 handle, Bit32u pos) {
+	if (fset.fileSeekTo(handle, pos) == pos)
+		return 1;
+	return 0;
+}
+
+U32 SkWinCore::FILE_TELL(U16 handle) {
+	return fset.fileTell(handle);
+}
+
 //^476D:00B1
 void SkWinCore::FILE_DELETE(const U8 *curf)
 {

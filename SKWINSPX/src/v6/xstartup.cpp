@@ -135,10 +135,6 @@ int SKWIN_START_MAIN(int iEngine, int argc, char **argv)
 		skWinApplication->MemInfo();
 		skWinApplication->runSplashTitle();
 		skWinApplication->skwin_Sleep(1000);
-		if (SkCodeParam::bRenderingEngineDOS) {
-			skWinApplication->runSplashTitle();
-			skWinApplication->skwin_Sleep(4000);
-		}
 #if defined(SK9821V4) || defined (SKWINSPX)
 	// IBMIO_BOOTSTRAP => IBMIO_MAIN => IBMIO_EXEC (FIRE.EXE) => FIRE_BOOTSTRAP => FIRE_MAIN => INIT then GAME_LOOP
 		r = a.IBMIO_BOOTSTRAP();

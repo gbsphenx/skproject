@@ -460,37 +460,37 @@ enum SkillLevel {
 //	RESOURCES CATEGORIES IN GRAPHICS.DAT
 //------------------------------------------------------------------------------
 
-#define GDAT_CATEGORY_TECHDATA				0x00
-#define GDAT_CATEGORY_INTERFACE_GENERAL		0x01
-#define GDAT_CATEGORY_MESSAGES				0x03
-#define GDAT_CATEGORY_MUSICS				0x04
-#define GDAT_CATEGORY_TITLE					0x05
-#define GDAT_CATEGORY_CREDITS				0x06
-#define GDAT_CATEGORY_INTERFACE_CHARSHEET	0x07
-#define GDAT_CATEGORY_GRAPHICSSET			0x08
-#define GDAT_CATEGORY_WALL_GFX				0x09
-#define GDAT_CATEGORY_FLOOR_GFX				0x0A
-#define GDAT_CATEGORY_DOOR_GFX				0x0B
-#define GDAT_CATEGORY_DOOR_BUTTONS			0x0C
-#define GDAT_CATEGORY_SPELL_MISSILES		0x0D
-#define GDAT_CATEGORY_DOORS					0x0E
-#define GDAT_CATEGORY_CREATURES				0x0F
-#define GDAT_CATEGORY_WEAPONS				0x10
-#define GDAT_CATEGORY_CLOTHES				0x11
-#define GDAT_CATEGORY_SCROLLS				0x12
-#define GDAT_CATEGORY_POTIONS				0x13
-#define GDAT_CATEGORY_CONTAINERS			0x14
-	#define GDAT_CATEGORY_MAGICAL_MAPS			0x14
-#define GDAT_CATEGORY_MISCELLANEOUS			0x15
-#define GDAT_CATEGORY_CHAMPIONS				0x16
-#define GDAT_CATEGORY_ENVIRONMENT			0x17
-#define GDAT_CATEGORY_TELEPORTERS			0x18
-#define GDAT_CATEGORY_DIALOG_BOXES			0x1A
-#define GDAT_CATEGORY_JAPANESE_FONT			0x1C
+#define GDAT_CATEGORY_x00_TECHDATA				0x00
+#define GDAT_CATEGORY_x01_INTERFACE_GENERAL		0x01
+#define GDAT_CATEGORY_x02_SPELL_DEF				0x02	// SPX: new custom category
+#define GDAT_CATEGORY_x03_MESSAGES				0x03
+#define GDAT_CATEGORY_x04_MUSICS				0x04
+#define GDAT_CATEGORY_x05_TITLE					0x05
+#define GDAT_CATEGORY_x06_CREDITS				0x06
+#define GDAT_CATEGORY_x07_INTERFACE_CHARSHEET	0x07
+#define GDAT_CATEGORY_x08_GRAPHICSSET			0x08
+#define GDAT_CATEGORY_x09_WALL_GFX				0x09
+#define GDAT_CATEGORY_x0A_FLOOR_GFX				0x0A
+#define GDAT_CATEGORY_x0B_DOOR_GFX				0x0B
+#define GDAT_CATEGORY_x0C_DOOR_BUTTONS			0x0C
+#define GDAT_CATEGORY_x0D_SPELL_MISSILES		0x0D
+#define GDAT_CATEGORY_x0E_DOORS					0x0E
+#define GDAT_CATEGORY_x0F_CREATURES				0x0F
+#define GDAT_CATEGORY_x10_WEAPONS				0x10
+#define GDAT_CATEGORY_x11_CLOTHES				0x11
+#define GDAT_CATEGORY_x12_SCROLLS				0x12
+#define GDAT_CATEGORY_x13_POTIONS				0x13
+#define GDAT_CATEGORY_x14_CONTAINERS			0x14
+	#define GDAT_CATEGORY_x14_MAGICAL_MAPS			0x14
+#define GDAT_CATEGORY_x15_MISCELLANEOUS			0x15
+#define GDAT_CATEGORY_x16_CHAMPIONS				0x16
+#define GDAT_CATEGORY_x17_ENVIRONMENT			0x17
+#define GDAT_CATEGORY_x18_TELEPORTERS			0x18
+#define GDAT_CATEGORY_x19_CREATURE_AI			0x19	// SPX: new custom category
+#define GDAT_CATEGORY_x1A_DIALOG_BOXES			0x1A
+#define GDAT_CATEGORY_x1B_UNUSED				0x1B
+#define GDAT_CATEGORY_x1C_JAPANESE_FONT			0x1C
 
-// These are new categories
-#define GDAT_CATEGORY_SPELL_DEF				0x02
-#define GDAT_CATEGORY_CREATURE_AI			0x19
 	#define GDAT_CATEGORY_MAX					0x1C
 
 // Some SubCategories -- mainly for interfaces
@@ -647,8 +647,8 @@ enum SkillLevel {
 #define GDAT_GFXSET_xFE_TEXTPANEL_RSIDE				0xFE	// R-side text panel
 
 // Attributes
-#define GDAT_GFXSET_SCENE_COLORKEY					0x64
-#define GDAT_GFXSET_SCENE_FLAGS						0x65	// Some graphicsset flags
+#define GDAT_GFXSET_x64_SCENE_COLORKEY					0x64
+#define GDAT_GFXSET_x65_SCENE_FLAGS						0x65	// Some graphicsset flags
 	// 0x0001	: Has ceiling and can display ceiling pit (up)
 	// 0x0002	: Use some random flip from	map coordinates		 (case 0x20)
 	// 0x0004	: Use some random flip from game tick			 (case 0x20)
@@ -657,16 +657,16 @@ enum SkillLevel {
 	// 0x0020	: Outside +  flip from player's direction		 (case 0x20)
 	// 0x0040	: Use some random flip from player's direction	 (case 0x01)
 	// 0x0080	:
-#define GDAT_GFXSET_SCENE_RAIN						0x66	// An index a rain status. In table static mode, 1 and 4 will make rain
-#define GDAT_GFXSET_AMBIANT_LIGHT					0x67	// A value possibly between 0 and 100
-#define GDAT_GFXSET_HIGHEST_LIGHT_LEVEL				0x68	// Maximum light level (between 0 and 5) (the lower the brighter)
-
-#define GDAT_GFXSET_VOID_RANDOM_FALL				0x6A	// Used for void, falling in pit will make search a random target marker
+#define GDAT_GFXSET_x66_SCENE_RAIN						0x66	// An index a rain status. In table static mode, 1 and 4 will make rain
+#define GDAT_GFXSET_x67_AMBIANT_LIGHT					0x67	// A value possibly between 0 and 100
+#define GDAT_GFXSET_x68_HIGHEST_LIGHT_LEVEL				0x68	// Maximum light level (between 0 and 5) (the lower the brighter)
+#define GDAT_GFXSET_x69_ALTERNATE_FOG_PALETTES			0x69
+#define GDAT_GFXSET_x6A_VOID_RANDOM_FALL				0x6A	// Used for void, falling in pit will make search a random target marker
 													// 0x80.. : use animated floor
 													// 0x..YY : floor id to use instead of normal ground
-#define GDAT_GFXSET_ANIMATED_FLOOR					0x6B	// Used for void, animated blue floor clouds
-#define GDAT_GFXSET_THUNDER_POSITION				0x6C	// Map position (XXYY) for Thunder (will be the same for all maps with that graphicsset)
-#define GDAT_GFXSET_AMBIANT_DARKNESS				0x6D
+#define GDAT_GFXSET_x6B_ANIMATED_FLOOR					0x6B	// Used for void, animated blue floor clouds
+#define GDAT_GFXSET_x6C_THUNDER_POSITION				0x6C	// Map position (XXYY) for Thunder (will be the same for all maps with that graphicsset)
+#define GDAT_GFXSET_x6D_AMBIANT_DARKNESS				0x6D
 
 #define GDAT_GFXSET_x72								0x72	// Unknown ?
 
@@ -1589,8 +1589,12 @@ typedef enum
 
 //------------------------------------------------------------------------------
 
+#if defined (__DJGPP__)
+#define MEM_CACHE_TABLE_MAX	0x80
+#else
 #define MEM_CACHE_TABLE_MAX	4096	// original was 0x80 (128) and it led to many crashs, probably the recycling is not working normally
 // Is used for tblCacheToMement
+#endif
 
 //------------------------------------------------------------------------------
 

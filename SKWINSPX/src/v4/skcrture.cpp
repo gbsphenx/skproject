@@ -62,13 +62,13 @@ U16 SkWinCore::QUERY_GDAT_CREATURE_WORD_VALUE(U8 creatureType, U8 cls4)
 			X8 iCreatureInfoValue = *ptblCreatureByteInfo; // U16? bp08
 			if (iCreatureInfoValue == 0xFF) { // table is initialized with 0xFF: if so, we want to overwrite by the value from GDAT
 				//^0CEE:2DA5
-				iCreatureInfoValue = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_CREATURES, creatureType, dtWordValue, cls4);
+				iCreatureInfoValue = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0F_CREATURES, creatureType, dtWordValue, cls4);
 				*ptblCreatureByteInfo = (X8) iCreatureInfoValue; // replace the 0xFF by the value found
 			}
 			return iCreatureInfoValue;
 		}
 	}
-	return QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_CREATURES, creatureType, dtWordValue, cls4);
+	return QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0F_CREATURES, creatureType, dtWordValue, cls4);
 }
 
 
@@ -87,7 +87,7 @@ Bit16u SkWinCore::CREATURE_STEP_ANIMATION_V5(U8 iCreatureType, Bit16u iAnimOffse
 {
 	CreatureAnimationFrameInfoFC_V5* xCAnimFrameSeqTable = NULL;
 	// Get the FC data from creature
-	xCAnimFrameSeqTable = reinterpret_cast<CreatureAnimationFrameInfoFC_V5*> (QUERY_GDAT_ENTRY_DATA_BUFF_FORCE(GDAT_CATEGORY_CREATURES, iCreatureType, dtRaw7, GDAT_CREATURE_ANIM_INFO_SEQUENCE));
+	xCAnimFrameSeqTable = reinterpret_cast<CreatureAnimationFrameInfoFC_V5*> (QUERY_GDAT_ENTRY_DATA_BUFF_FORCE(GDAT_CATEGORY_x0F_CREATURES, iCreatureType, dtRaw7, GDAT_CREATURE_ANIM_INFO_SEQUENCE));
 
 	SkD((DLV_DBG_CANIM, "DBG: CREATURE_STEP_ANIMATION_V5 %04X %04X \n", (Bitu)iAnimOffset, (Bitu)*pAnimFrame));
 	Bit16u iFrameIndex = *pAnimFrame; // si
@@ -1354,7 +1354,7 @@ X16 SkWinCore::CREATURE_CAN_HANDLE_IT(ObjectID rlTarget, U16 flags)
 			case ACTUATOR_TYPE_KEY_HOLE: // 0x1a -> 'Activator, key hole'
 				//^1C9A:01D1
 _01d1:
-				bp0c = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_WALL_GFX, GET_WALL_DECORATION_OF_ACTUATOR(bp08), dtWordValue, GDAT_WALL_ORNATE__IS_ITEM_TRIGGERED);
+				bp0c = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x09_WALL_GFX, GET_WALL_DECORATION_OF_ACTUATOR(bp08), dtWordValue, GDAT_WALL_ORNATE__IS_ITEM_TRIGGERED);
 				goto _0219;
 			default:
 				//^1C9A:01EF
@@ -1666,12 +1666,12 @@ X32 SkWinCore::CREATURE_GET_NEXT_THINK_GAMETICK()
 	if (iSoundID != SOUND_NONE) {	// != 0xFF
 		if (SkCodeParam::bUsePowerDebug) { 
 			U8 sCreatureName[32];
-			QUERY_GDAT_TEXT(GDAT_CATEGORY_CREATURES, U8(iCreatureType), 0x00, sCreatureName);
+			QUERY_GDAT_TEXT(GDAT_CATEGORY_x0F_CREATURES, U8(iCreatureType), 0x00, sCreatureName);
 			SkD((DLV_DBG_SND_CRE, "SND: Creature sound > idx:%02X (%s) snd:%02X xx:%02X yy:%02X x:%02d y:%02d tick:%02d\n"
 				, U8(iCreatureType), sCreatureName, iSoundID, 0x46, 0x80, glbCreatureTimer.XcoordB(), glbCreatureTimer.YcoordB(), 1));
 		}
 		// SPX: this correspond to create any useful sounds for a creature : walk, attack, growl ...
-		QUEUE_NOISE_GEN1(GDAT_CATEGORY_CREATURES, U8(iCreatureType), iSoundID, 0x46, 0x80, glbCreatureTimer.XcoordB(), glbCreatureTimer.YcoordB(), 1);
+		QUEUE_NOISE_GEN1(GDAT_CATEGORY_x0F_CREATURES, U8(iCreatureType), iSoundID, 0x46, 0x80, glbCreatureTimer.XcoordB(), glbCreatureTimer.YcoordB(), 1);
 	}
 	X32 iNextRethinkTick = 0; // bp0a
 	i16 iDeltaTicks = 0;	// si
@@ -1850,7 +1850,7 @@ void SkWinCore::_12b4_0d75_CREATURE(i16 xx, i16 yy, i16 ss, i16 tt)
 		if (bp04->curHP() != 0  && RAND02() == 0) {
 			//^12B4:0F2D
 			// SPX: Creature has just bumped back the player
-			QUEUE_NOISE_GEN2(GDAT_CATEGORY_CHAMPIONS, bp04->HeroType(), SOUND_CHAMPION_BUMP, 0xfe, xx, yy, 1, 0x64, 0xc8);
+			QUEUE_NOISE_GEN2(GDAT_CATEGORY_x16_CHAMPIONS, bp04->HeroType(), SOUND_CHAMPION_BUMP, 0xfe, xx, yy, 1, 0x64, 0xc8);
 			di = (GET_PLAYER_WEIGHT(bp0e) / 10) +di;
 			si++;
 		}
@@ -1874,7 +1874,7 @@ CreatureCommandAnimation* SkWinCore::GET_CREATURE_COMMAND_ANIMATION_V5(Bit8u iCr
 	CreatureCommandAnimation* xCCAnim = NULL;
 
 	// Get the FB data from creature
-	xCCAnim = reinterpret_cast<CreatureCommandAnimation*> (QUERY_GDAT_ENTRY_DATA_BUFF_FORCE(GDAT_CATEGORY_CREATURES, iCreatureType, dtRaw8, GDAT_CREATURE_ANIM_ATTRIBUTION));
+	xCCAnim = reinterpret_cast<CreatureCommandAnimation*> (QUERY_GDAT_ENTRY_DATA_BUFF_FORCE(GDAT_CATEGORY_x0F_CREATURES, iCreatureType, dtRaw8, GDAT_CREATURE_ANIM_ATTRIBUTION));
 	if (xCCAnim == NULL)
 		return NULL;
 
@@ -1888,7 +1888,7 @@ CreatureCommandAnimation* SkWinCore::GET_CREATURE_COMMAND_ANIMATION_V5(Bit8u iCr
 CreatureAnimationFrameInfoFC_V5* SkWinCore::GET_ANIM_SEQUENCE_INFO_V5(U8 iCreatureType, U16 iAnimSeqOffset, U16 iCurrentFrameInfo)
 {
 	CreatureAnimationFrameInfoFC_V5* xCCAnimInfo = NULL;
-	xCCAnimInfo = reinterpret_cast<CreatureAnimationFrameInfoFC_V5*> (QUERY_GDAT_ENTRY_DATA_BUFF_FORCE(GDAT_CATEGORY_CREATURES, iCreatureType, dtRaw7, GDAT_CREATURE_ANIM_INFO_SEQUENCE));
+	xCCAnimInfo = reinterpret_cast<CreatureAnimationFrameInfoFC_V5*> (QUERY_GDAT_ENTRY_DATA_BUFF_FORCE(GDAT_CATEGORY_x0F_CREATURES, iCreatureType, dtRaw7, GDAT_CREATURE_ANIM_INFO_SEQUENCE));
 	xCCAnimInfo += (iAnimSeqOffset + iCurrentFrameInfo);
 	return xCCAnimInfo;
 }
@@ -1897,7 +1897,7 @@ void SkWinCore::PREPARE_CREATURE_ANIMATION_INFO_V5(U8 iCreatureType, U16 iAnimOf
 {
 	U8 iNbFrames = 1;
 	CreatureAnimationFrameInfoFC_V5* xCCAnimInfo = NULL;
-	xCCAnimInfo = reinterpret_cast<CreatureAnimationFrameInfoFC_V5*> (QUERY_GDAT_ENTRY_DATA_BUFF_FORCE(GDAT_CATEGORY_CREATURES, iCreatureType, dtRaw7, GDAT_CREATURE_ANIM_INFO_SEQUENCE));
+	xCCAnimInfo = reinterpret_cast<CreatureAnimationFrameInfoFC_V5*> (QUERY_GDAT_ENTRY_DATA_BUFF_FORCE(GDAT_CATEGORY_x0F_CREATURES, iCreatureType, dtRaw7, GDAT_CREATURE_ANIM_INFO_SEQUENCE));
 	if (xCCAnimInfo == NULL) {
 		*iAnimInfo = 0x8000;
 		return;
@@ -2001,7 +2001,7 @@ U8 SkWinCore::GET_CREATURE_ANIMATION_IMAGE_ID_V5(U8 iCreatureType, U16 iAnimSeq,
 	CreatureAnimationFrameInfoFD_V5* xCAnimFrameSeqTable = NULL;
 	U8 iImgID = 0x12;	// default to standard front image
 	// Get the FD data from creature
-	xCAnimFrameSeqTable = reinterpret_cast<CreatureAnimationFrameInfoFD_V5*> (QUERY_GDAT_ENTRY_DATA_BUFF_FORCE(GDAT_CATEGORY_CREATURES, iCreatureType, dtRaw7, GDAT_CREATURE_ANIM_FRAME_SEQUENCE));
+	xCAnimFrameSeqTable = reinterpret_cast<CreatureAnimationFrameInfoFD_V5*> (QUERY_GDAT_ENTRY_DATA_BUFF_FORCE(GDAT_CATEGORY_x0F_CREATURES, iCreatureType, dtRaw7, GDAT_CREATURE_ANIM_FRAME_SEQUENCE));
 	if (iAnimInfo == 0xFFFF)
 		iAnimInfo = 0;
 	//xCAnimFrameSeqTable += (iAnimSeq + iAnimInfo);
@@ -2015,7 +2015,7 @@ U16 SkWinCore::CREATURE_GET_ANIMATION_OFFSET_POS_V5(U8 iCreatureType, U16 iFrame
 	CreatureAnimationFrameInfoFD_V5* xCAnimFrameSeqTable = NULL;
 	U8 iOffsetPos = 0x0C; // default to 0x0C
 	// Get the FD data from creature
-	xCAnimFrameSeqTable = reinterpret_cast<CreatureAnimationFrameInfoFD_V5*> (QUERY_GDAT_ENTRY_DATA_BUFF_FORCE(GDAT_CATEGORY_CREATURES, iCreatureType, dtRaw7, GDAT_CREATURE_ANIM_FRAME_SEQUENCE));
+	xCAnimFrameSeqTable = reinterpret_cast<CreatureAnimationFrameInfoFD_V5*> (QUERY_GDAT_ENTRY_DATA_BUFF_FORCE(GDAT_CATEGORY_x0F_CREATURES, iCreatureType, dtRaw7, GDAT_CREATURE_ANIM_FRAME_SEQUENCE));
 	xCAnimFrameSeqTable += (iFrameID);
 	iOffsetPos = xCAnimFrameSeqTable->b4;
 	return iOffsetPos;
@@ -4941,7 +4941,7 @@ i16 SkWinCore::CREATURE_ATTACKS_PLAYER(Creature *ref, U16 player)
 			//^075F:1EBF
 			// SPX: Champion "oof" sound when hit
 			// => it would be possible to have several oof sounds using a random
-			QUEUE_NOISE_GEN2(GDAT_CATEGORY_CHAMPIONS, champion->HeroType(), SOUND_CHAMPION_GETHIT, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 2, 0x69, 0xc8);
+			QUEUE_NOISE_GEN2(GDAT_CATEGORY_x16_CHAMPIONS, champion->HeroType(), SOUND_CHAMPION_GETHIT, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 2, 0x69, 0xc8);
 			di = AIdef->PoisonDamage;
 			if (di != 0 && RAND01() != 0 && (di = USE_ABILITY_ATTRIBUTE(champion, abVit, di)) > 0) {
 				//^075F:1F16
@@ -4952,8 +4952,8 @@ i16 SkWinCore::CREATURE_ATTACKS_PLAYER(Creature *ref, U16 player)
 			{
 				U16 iPlagueDamage = 0;
 				// Get plague damage from creature if any
-				//iPlagueDamage = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_CREATURES, ref->CreatureType(), dtWordValueExt, GDAT_AI_PLAGUE_DAMAGE);
-				iPlagueDamage = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_CREATURES, ref->CreatureType(), dtWordValue, GDAT_AI_PLAGUE_DAMAGE);
+				//iPlagueDamage = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0F_CREATURES, ref->CreatureType(), dtWordValueExt, GDAT_AI_PLAGUE_DAMAGE);
+				iPlagueDamage = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0F_CREATURES, ref->CreatureType(), dtWordValue, GDAT_AI_PLAGUE_DAMAGE);
 				if (iPlagueDamage > 0 && iPlagueDamage < 255)
 					PROCESS_PLAGUE(player, iPlagueDamage);
 			
@@ -5689,7 +5689,7 @@ void SkWinCore::CREATURE_TRANSFORM()
 		}
 		//^1887:130C
 		if (bp07 < 3) {
-			QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES, 0, SOUND_MINION_TRANSFORMS, 0x6C, 0xC8, di, si, 1);
+			QUEUE_NOISE_GEN1(GDAT_CATEGORY_x03_MESSAGES, 0, SOUND_MINION_TRANSFORMS, 0x6C, 0xC8, di, si, 1);
 		}
 		else {
 			//^1887:1321
@@ -5708,13 +5708,13 @@ void SkWinCore::CREATURE_TRANSFORM()
 				glbCreatureActionProceeded = 1;
 			}
 			//^1887:13D4
-			QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES, 0, SOUND_STD_EXPLOSION, 0x6C, 0xC8, di, si, 1);
+			QUEUE_NOISE_GEN1(GDAT_CATEGORY_x03_MESSAGES, 0, SOUND_STD_EXPLOSION, 0x6C, 0xC8, di, si, 1);
 		}
 	}
 	else {
 		//^1887:13EE
 		CREATE_CLOUD(OBJECT_EFFECT_CLOUD, 255, di, si, 255);	// oFFA8
-		QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES, 0, SOUND_STD_EXPLOSION, 0x6C, 0xC8, di, si, 1);
+		QUEUE_NOISE_GEN1(GDAT_CATEGORY_x03_MESSAGES, 0, SOUND_STD_EXPLOSION, 0x6C, 0xC8, di, si, 1);
 	}
 	//^1887:1418
 	return;
