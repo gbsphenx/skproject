@@ -3825,26 +3825,16 @@ void SkWinCore::LOAD_NEWMAP_3a15_38b6(U16 xx)
 //^1C9A:3A6E
 void SkWinCore::FILL_CAII_CUR_MAP()
 {
-	//^1C9A:3A6E
 	ENTER(16);
-//#ifndef __DJGPP__
-	//^1C9A:3A74
 	U8 *bp04 = *glbCurrentTileMap;
-	//^1C9A:3A85
 	OID_T *bp08 = &dunGroundStacks[*_4976_4c52];	// U16 *bp08 
-	//^1C9A:3A9E
 	for (U16 bp0e = 0; bp0e < glbCurrentMapWidth; bp0e++) {
-		//^1C9A:3AA6
 		for (U16 di = 0; di < glbCurrentMapHeight; di++) {
-			//^1C9A:3AAB
 			if ((*(bp04++) & 0x10) != 0) {
-				//^1C9A:3ABA
 				ObjectID si = *(bp08++);
 				
 				do {
-					//^1C9A:3AC4
 					if (si.DBType() == dbCreature && !SkCodeParam::bDebugNoCreatures) {
-						//^1C9A:3AD1
 						Creature* xCreature = GET_ADDRESS_OF_RECORD4(si); // bp0c
 						if (xCreature->iID != 0xFF)
 							break;
@@ -3862,18 +3852,12 @@ void SkWinCore::FILL_CAII_CUR_MAP()
 						}
 						break;
 					}
-					//^1C9A:3B46
 					si = GET_NEXT_RECORD_LINK(si);
-					//^1C9A:3B4F
 				//} while (si != OBJECT_END_MARKER);
 				} while (si != OBJECT_END_MARKER && si != OBJECT_NULL); // SPX prevent also from object_null
 			}
-			//^1C9A:3B57
 		}
-		//^1C9A:3B61
 	}
-	//^1C9A:3B70
-//#endif // __DJGPP__	
 	return;
 }
 
@@ -3918,7 +3902,7 @@ void SkWinCore::SCROLLBOX_MESSAGE()
 	ENTER(8);
 	FIRE_HIDE_MOUSE_CURSOR();
 	SRECT bp08;
-	QUERY_EXPANDED_RECT(RECT_BOTTOM_MESSAGE_3_LINES, &bp08);
+	QUERY_EXPANDED_RECT(RECT_015_BOTTOM_MESSAGE_3_LINES, &bp08);
 	VIDEO_MEM_MOVE(&bp08, _4976_0140) INDIRECT_CALL;
 	bp08.y = bp08.y +bp08.cy -1 - _4976_0130 +1;
 	FIRE_BLIT_PICTURE(
@@ -5253,28 +5237,14 @@ void SkWinCore::_1c9a_3bab()
 //^1C9A:3B74
 void SkWinCore::FILL_ORPHAN_CAII()
 {
-	//printf("FILL_ORPHAN_CAII\n"); getch();
-	//^1C9A:3B74
 	ENTER(2);
-	//^1C9A:3B7A
 	U16 di = glbCurrentMapIndex;
-	//^1C9A:3B7E
 	U16 bp02 = dunHeader->nMaps;
-	//^1C9A:3B8B
 	for (i16 si = 0; si < bp02; si++) {
-		//printf("FILL_ORPHAN_CAII %d < %d \n", si, bp02); getch();
-		//^1C9A:3B8F
-		//printf("CHANGE_CURRENT_MAP_TO %d\n", si); getch();
 		CHANGE_CURRENT_MAP_TO(si);
-		//^1C9A:3B96
-		//printf("FILL_CAII_CUR_MAP\n"); getch();
 		FILL_CAII_CUR_MAP();
 	}
-	//^1C9A:CHANGE_CURRENT_MAP_TO
-	//printf("CHANGE_CURRENT_MAP_TO %d\n", di); getch();
 	CHANGE_CURRENT_MAP_TO(di);
-	//^1C9A:3BA7
-	//printf("FILL_ORPHAN_CAII\n"); getch();
 	return;
 }
 
@@ -17215,72 +17185,6 @@ ObjectID *SkWinCore::OVERSEE_RECORD(ObjectID *ref, U8 dir, ObjectID **recordMatc
 	return NULL;
 }
 
-//^3A15:0381
-// SPX _3a15_0381 renamed TIMER_COMPARE
-int SkWinCore::TIMER_COMPARE(Timer* xTimer1, Timer* xTimer2)
-{
-	if (xTimer1->GetTick() >= xTimer2->GetTick()) {
-		U16 si =  (xTimer1->GetTick() == xTimer2->GetTick()) ? 1 : 0;
-		if (si != 0 && (xTimer1->TimerType() > xTimer2->TimerType()))
-			return 1;
-		if (si != 0) {
-			si = (xTimer1->TimerType() == xTimer2->TimerType()) ? 1 : 0;
-			if (si != 0) {
-				if (xTimer1->actor > xTimer2->actor) {
-					return 1;
-				}
-			}
-		}
-		if (si == 0)
-			return 0;
-		//if ((U16)xx <= (U16)yy) // loose conversion
-		if ((void*) xTimer1 <= (void*) xTimer2)
-			return 1;
-		return 0;
-	}
-	return 1;
-}
-
-//^3A15:0486
-// SPX _3a15_0486 renamed TIMER_3a15_0486
-void SkWinCore::TIMER_3a15_0486(U16 xx)
-{
-	U16 di = xx;
-	glbTimer_4976_4762 = -1;
-	U16 bp06 = glbTimersCount -1;
-	if (bp06 == 0)
-		return;
-	U16 bp0a = glbTimerNextEntries[di];
-	Timer *bp04 = &glbTimersTable[bp0a];
-	U16 bp08 = 0;
-	for (; di > 0; ) {
-		U16 si = (di -1) >> 1;
-		if (TIMER_COMPARE(bp04, &glbTimersTable[glbTimerNextEntries[si]]) == 0)
-			break;
-		glbTimerNextEntries[di] = glbTimerNextEntries[si];
-		di = si;
-		bp08 = 1;
-	}
-	if (bp08 == 0) {
-		bp06 = (bp06 -1) >> 1;
-		while (di <= bp06) {
-			U16 si = (di << 1) +1;
-			if ((si +1) < glbTimersCount) {
-				if (TIMER_COMPARE(&glbTimersTable[glbTimerNextEntries[si +1]], &glbTimersTable[glbTimerNextEntries[si]]) != 0) {
-					si++;
-				}
-			}
-			if (TIMER_COMPARE(&glbTimersTable[glbTimerNextEntries[si]], bp04) == 0)
-				break;
-			glbTimerNextEntries[di] = glbTimerNextEntries[si];
-			di = si;
-		}
-	}
-	glbTimerNextEntries[di] = bp0a;
-	return;
-}
-
-
 
 //^2FCF:1587
 void SkWinCore::INVOKE_MESSAGE(i16 xpos, i16 ypos, U16 dir, U16 actionType, Bit32u tick)
@@ -20730,28 +20634,22 @@ void SkWinCore::_470a_0003()
 //^3929:0E16
 void SkWinCore::_3929_0e16_FONT_LOAD()
 {
-	//^3929:0E16
 	ENTER(8);
-	//^3929:0E1B
 	_3929_07e1(0, 0);
 	_4976_5c08 = ALLOC_PICT_BUFF(_4976_013e, _4976_0140, afUseUpper, 8);
 	_4976_5c0e = ALLOC_MEMORY_RAM(0x300, afUseUpper, 0x400);
-	LOAD_GDAT_ENTRY_DATA_TO(0x1, 0x0, dt07, 0x0, _4976_5c0e);	// default font
-	U16 si;
-	for (si = 0; si < 1; si++) {
-		//^3929:0E75
-		//tlbTimerTickRemoveHintMessage[si] = 0xffffffff;
-		tlbTimerTickRemoveHintMessage[si] = -1;
-		//^3929:0E86
+	LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 0x0, dt07, 0x0, _4976_5c0e);	// default font
+	U16 iMessageNo = 0; // si
+	for (iMessageNo = 0; iMessageNo < 1; iMessageNo++) {
+		//tlbTimerTickRemoveHintMessage[iMessageNo] = 0xffffffff;
+		tblTimerTickRemoveHintMessage[iMessageNo] = -1;
 	}
-	//^3929:0E8C
 	SRECT bp08;
-	QUERY_EXPANDED_RECT(RECT_BOTTOM_MESSAGE_3_LINES, &bp08); // 00 00|B4 00|40 01|14 00 (0,180,320,20)
+	QUERY_EXPANDED_RECT(RECT_015_BOTTOM_MESSAGE_3_LINES, &bp08); // 00 00|B4 00|40 01|14 00 (0,180,320,20)
 	_4976_5c12 = (bp08.cy - (_4976_013a - _4976_0134)) >> 1;
 	KANJI_FONT_LOAD(1);
 	_470a_0003();
 	_4976_4750 = 1;
-	//^3929:0EBF
 	return;
 }
 //^2405:0009
@@ -22535,50 +22433,40 @@ void SkWinCore::TIMER_3a15_05f7(X16 xx)
 {
 	ENTER(0);
 	if (glbTimer_4976_4762 >= 0) 
-		TIMER_3a15_0486(glbTimer_4976_4762);
-	TIMER_3a15_0486(GET_TIMER_NEW_INDEX(xx));
+		TIMER_SORT_EXCHANGE(glbTimer_4976_4762);
+	TIMER_SORT_EXCHANGE(GET_TIMER_NEW_INDEX(xx));
 	return;
 }
 
 //^44C8:1DFC
 void SkWinCore::_44c8_1dfc(SRECT *prc, U8 colorkey)
 {
-	//^44C8:1DFC
 	ENTER(0);
-	//^44C8:1DFF
 	FIRE_FILL_RECT_ANY(NULL, prc, colorkey, 0x140, 8);
-	//^44C8:1E18
 	return;
 }
 //^3929:086F
 void SkWinCore::_3929_086f()
 {
-	//^3929:086F
 	ENTER(12);
-	//^3929:0875
-	SRECT bp0c;
-	QUERY_EXPANDED_RECT(RECT_BOTTOM_MESSAGE_3_LINES, &bp0c);
-	X16 di = bp0c.y;
-	U16 si = 0;
-	for (; si < 1; si++) {
-		//^3929:088B
-		U32 bp04 = tlbTimerTickRemoveHintMessage[si];	// get the tick at which the text message has to disappear
-		if (bp04 == 0xffffffff)
+	SRECT sRect;	// bp0c
+	QUERY_EXPANDED_RECT(RECT_015_BOTTOM_MESSAGE_3_LINES, &sRect);
+	X16 iYPos = sRect.y;	// di
+	U16 iMessageNo = 0;	// si
+	for (iMessageNo = 0; iMessageNo < 1; iMessageNo++) {
+		U32 bp04 = tblTimerTickRemoveHintMessage[iMessageNo];	// get the tick at which the text message has to disappear
+		if (bp04 == 0xFFFFFFFF)
 			continue;
-		//^3929:08AA
 		if (bp04 > glbGameTick)
 			continue;
-		//^3929:08BE
-		X16 bp0a = di +(si * _4976_013a) + _4976_5c12;
+		X16 bp0a = iYPos +(iMessageNo * _4976_013a) + _4976_5c12;
 		X16 bp06 = _4976_0130;
 		FIRE_HIDE_MOUSE_CURSOR();
-		_44c8_1dfc(&bp0c, glbPaletteT16[COLOR_BLACK]);	// SPX: Fill low text panel with BLACK
+		_44c8_1dfc(&sRect, glbPaletteT16[COLOR_BLACK]);	// SPX: Fill low text panel with BLACK
 		FIRE_SHOW_MOUSE_CURSOR();
-		//tlbTimerTickRemoveHintMessage[si] = 0xffffffff;
-		tlbTimerTickRemoveHintMessage[si] = -1;
-		//^3929:0907
+		//tlbTimerTickRemoveHintMessage[iMessageNo] = 0xffffffff;
+		tblTimerTickRemoveHintMessage[iMessageNo] = -1;
 	}
-	//^3929:0910
 	return;
 }
 //^0CEE:04E5

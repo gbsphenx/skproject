@@ -41,8 +41,8 @@
 #define DLV_DBG_UI	0
 #define DLV_MOUSE 0	// Mouse
 #define DLV_CAI 0	// Creature AI / CCM
-#define DLV_CCM 0	// Creature command
-#define DLV_DBG_CANIM	0			// Creature animation
+#define DLV_CCM 1	// Creature command
+#define DLV_DBG_CANIM	1			// Creature animation
 #define DLV_DBG_SED3	0
 #define DLV_FSM 0	// Find special marker (for x teleport and void fall)
 #define DLV_XP	0	// Display info about XP gain
@@ -50,7 +50,7 @@
 #define DLV_DBG_GETPIC	0
 #define DLV_DBG_CELL	0
 #define DLV_DBG_EXTRACT 0
-#define DLV_DBG_TIMER	0
+#define DLV_DBG_TIMER	1
 #define DLV_DBG_CAI		0
 #define DLV_DBG_RAND	0
 #define DLV_DBG_CEL2	0

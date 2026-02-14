@@ -74,7 +74,7 @@ bool SkCodeParam::bDebugGFXNoDoors = false;		// don't display doors
 bool SkCodeParam::bDebugGFXNoCreatures = false;	// don't display creature
 bool SkCodeParam::bDebugNoCreatures = false;		// drop all creatures -- don't generate creatures
 bool SkCodeParam::bDebugTileset = false;
-bool SkCodeParam::bDebugNoCreatureCollision = true;
+bool SkCodeParam::bDebugNoCreatureCollision = false;
 
 bool SkCodeParam::bMIDIMusicEnabled = true;
 bool SkCodeParam::bWAVMusicEnabled = false;

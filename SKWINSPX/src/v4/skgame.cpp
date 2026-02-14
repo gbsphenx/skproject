@@ -3985,7 +3985,7 @@ U8 *SkWinCore::PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timer
 	//^13E4:0004
 	ENTER(14);
 	//^13E4:0008
-	U8 *bp04 = NULL;
+	U8* xLocalThinkCreatureData = NULL;	// bp04
 	i16 bp0e = glbCurrentMapIndex;
 	glbCurrentMapIndex = -1;
 	_1c9a_0648(bp0e);
@@ -3993,10 +3993,10 @@ U8 *SkWinCore::PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timer
 	if (_4976_5160 != 0) {
 		// reach here when DRAGOTH creates DRAGOTH ATTACK MINION.
 
-		bp04 = ALLOC_MEMORY_RAM(SIZE_LOCAL_CREATURE_VAR, afDefault, 1024); // 0x34e in DM2
+		xLocalThinkCreatureData = ALLOC_MEMORY_RAM(SIZE_LOCAL_CREATURE_VAR, afDefault, 1024); // 0x34e in DM2
 		// TODO: fixme
 		//ATLASSERT(false);
-		COPY_MEMORY(&glbCurrentThinkingCreatureID, bp04, SIZE_LOCAL_CREATURE_VAR);
+		COPY_MEMORY(&glbCurrentThinkingCreatureID, xLocalThinkCreatureData, SIZE_LOCAL_CREATURE_VAR);
 	}
 	_4976_5160 = 1;
 	_4976_5161 = 0;
@@ -4055,7 +4055,7 @@ U8 *SkWinCore::PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timer
 		glbCurrentThinkingCreatureData->Command2, getCreatureCommandName(glbCurrentThinkingCreatureData->Command2)));
 	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
 	//^13E4:019B
-	return bp04;
+	return xLocalThinkCreatureData;
 }
 
 

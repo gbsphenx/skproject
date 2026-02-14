@@ -16,23 +16,14 @@
 //^3929:0826
 void SkWinCore::_3929_0826()
 {
-	//^3929:0826
 	ENTER(0);
-	//^3929:082A
 	FIRE_HIDE_MOUSE_CURSOR();
-	//^3929:082F
-	FIRE_FILL_SCREEN_RECT(RECT_BOTTOM_MESSAGE_3_LINES, glbPaletteT16[COLOR_BLACK]);
-	//^3929:0842
+	FIRE_FILL_SCREEN_RECT(RECT_015_BOTTOM_MESSAGE_3_LINES, glbPaletteT16[COLOR_BLACK]);
 	FIRE_SHOW_MOUSE_CURSOR();
-	//^3929:0847
 	_3929_07e1(0, 0);
-	//^3929:0851
 	for (U16 si = 0; si < 1; si++) {
-		//^3929:0855
-		tlbTimerTickRemoveHintMessage[si] = -1;
-		//^3929:0866
+		tblTimerTickRemoveHintMessage[si] = -1;
 	}
-	//^3929:086C
 	return;
 }
 
@@ -40,13 +31,9 @@ void SkWinCore::_3929_0826()
 //^3929:0914
 void SkWinCore::_3929_0914_HINT_TEXT()
 {
-	//^3929:0914
 	ENTER(0);
-	//^3929:0917
 	_3929_0826();
-	//^3929:091B
-	tlbTimerTickRemoveHintMessage[0] = -1;
-	//^3929:0927
+	tblTimerTickRemoveHintMessage[0] = -1;
 	return;
 }
 /*
@@ -84,7 +71,6 @@ void DM2_gfxmain_3929_0914(void)
 //^3929:0BA6
 void SkWinCore::PRINT_SYSERR_TEXT(Bit16u dstx, Bit16u dsty, Bit16u clr1, Bit16u clr2, Bit8u *str)
 {
-	//^3929:0BA6
 	DRAW_STRING(_4976_4964, -1, glbScreenWidth, dstx, dsty+1, clr1, clr2, str, 8);
 }
 
@@ -92,14 +78,10 @@ void SkWinCore::PRINT_SYSERR_TEXT(Bit16u dstx, Bit16u dsty, Bit16u clr1, Bit16u 
 // SPX _3929_0929 renamed DRAW_HINT_TEXT
 void SkWinCore::DRAW_HINT_TEXT(U16 clr1, U8 *str)
 {
-	//^3929:0929
 	ENTER(8);
-	//^3929:092D
 	SRECT bp08;
-	QUERY_EXPANDED_RECT(RECT_BOTTOM_MESSAGE_3_LINES, &bp08);
-	//^3929:093C
+	QUERY_EXPANDED_RECT(RECT_015_BOTTOM_MESSAGE_3_LINES, &bp08);
 	if (_4976_5c06 != 0) {
-		//^3929:0943
 		DRAW_STRING(
 			_4976_5c08,
 			-1,
@@ -113,9 +95,7 @@ void SkWinCore::DRAW_HINT_TEXT(U16 clr1, U8 *str)
 			);
 	}
 	else {
-		//^3929:0996
 		FIRE_HIDE_MOUSE_CURSOR();
-		//^3929:099B
 		PRINT_SYSERR_TEXT(
 			bp08.x + _4976_475c,
 			glbTimerTickRemoveHintMessageIndex * _4976_013a +bp08.y + _4976_0130 - _4976_0136 + _4976_5c12 -1,
@@ -123,12 +103,9 @@ void SkWinCore::DRAW_HINT_TEXT(U16 clr1, U8 *str)
             glbPaletteT16[COLOR_BLACK],
 			str
 			);
-		//^3929:09D8
 		FIRE_SHOW_MOUSE_CURSOR();
 	}
-	//^3929:09DD
-	tlbTimerTickRemoveHintMessage[glbTimerTickRemoveHintMessageIndex] = glbGameTick + 70;	// is it a clock before message disappear ?
-	//^3929:09F9
+	tblTimerTickRemoveHintMessage[glbTimerTickRemoveHintMessageIndex] = glbGameTick + 70;	// is it a clock before message disappear ?
 	return;
 }
 

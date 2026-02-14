@@ -721,10 +721,10 @@ protected:
 	U16	_4976_5bf6;
 	Bit8u	_4976_5bf8[2];	// cnt kanji entries in each cls2
 	skxxxf	*_4976_5bfa[2];	// skxxxf *
-	U32		tlbTimerTickRemoveHintMessage[1];	// (_4976_5c02)
+	U32		tblTimerTickRemoveHintMessage[1];	// (_4976_5c02)
 	U16		_4976_5c06;
 	U8		*_4976_5c08;
-	U16		glbTimerTickRemoveHintMessageIndex;		// index for _4976_5c02 (tlbTimerTickRemoveHintMessage), but must be always 0, since the table has only 1 slot
+	U16		glbTimerTickRemoveHintMessageIndex;		// index for _4976_5c02 (tblTimerTickRemoveHintMessage), but must be always 0, since the table has only 1 slot
 	Bit8u	*_4976_5c0e;	// font-bitmap at 01-00-07-00-00-00
 	U16		_4976_5c12;
 	U16	glbTimersActiveCount;				// (_4976_5c14) active timer count
@@ -1205,7 +1205,7 @@ protected:
 	ObjectID ALLOC_NEW_CREATURE(U16 creaturetype, U16 healthMultiplier_1to31_baseIs8, U16 dir, U16 xx, U16 yy);
 	ObjectID CREATE_MINION(U16 creatureType, U16 healthMultiplier_1to31_baseIs8, U16 creatureDir, U16 xx, U16 yy, U16 zz, ObjectID ww, i16 dir);
 	U16 CONFUSE_CREATURE(U16 ww, U16 xx, U16 yy);
-	void QUEUE_THINK_CREATURE(U16 xx, U16 yy);
+	void QUEUE_THINK_CREATURE(U16 iXPos, U16 iYPos);
 	void CREATURE_SET_NEW_COMMAND(ObjectID rlCreature, U16 xx, U16 yy, U8 iCommand, U16 tt);	// _13e4_0360
 	void RELEASE_MINION(ObjectID rlCreature);
 	U16 _48ae_05ae_CREATURE(i16 disit, U8 yy, U16 zz, U16 ss, U16 tt, i16 ww); // _48ae_05ae
@@ -2109,7 +2109,7 @@ protected:
 	i16 _19f0_2165(X16 aa, i16 xx, i16 yy, i16 ss, i16 tt, i16 vv, i16 ww);	
 	ObjectID *OVERSEE_RECORD(ObjectID *ref, Bit8u dir, ObjectID **recordMatched, U16 (SkWinCore::*pfnFinder)(ObjectID *ref, void *pvUser), void *pvUser, U16 alsoCreaturePossessions, U16 alsoContainedObjects);
 	int TIMER_COMPARE(Timer* xTimer1, Timer* xTimer2);	// _3a15_0381
-	void TIMER_3a15_0486(U16 xx); // _3a15_0486
+	void TIMER_SORT_EXCHANGE(U16 xx); // _3a15_0486
 	U16 QUEUE_TIMER(Timer *ref);	// _3a15_061a
 	void _01b0_1c8d(U16 xx);
 	U16 IBMIO_SBLASTER_BLEND_TO_SNDBUFF(Bit8u *buff, U16 buffSize, i8 volume, U16 caller);

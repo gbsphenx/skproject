@@ -2996,7 +2996,7 @@ namespace DM2Internal {
 		//					-2 : When a monster is damaged
 		//					-1 : When a monster is attacked. When we bump into a monster
 		tty00 = 0,			// csbwin: empty
-		ttyDoorStep			= 0x01, // tty01 step door
+		tty01DoorStep		= 0x01, // tty01 step door
 		ttyDoorDestroy		= 0x02,		// tty02 CSBWin => Bash door
 		tty04 = 0x04, // activation for tile record (such as floor/wall/pitfall/door/trickwall/teleporter)
 		// csbwin: 0x0B (11) reenable character attack

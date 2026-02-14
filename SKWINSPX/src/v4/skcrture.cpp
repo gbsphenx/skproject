@@ -445,29 +445,29 @@ ObjectID SkWinCore::CREATE_MINION(U16 creatureType, U16 healthMultiplier_1to31_b
 
 
 //^1C9A:0CF7
-void SkWinCore::QUEUE_THINK_CREATURE(U16 xx, U16 yy)
+void SkWinCore::QUEUE_THINK_CREATURE(U16 iXPos, U16 iYPos)
 {
 	// force call THINK_CREATURE by timer system.
 	ENTER(14);
-	ObjectID rlCreature = GET_CREATURE_AT(xx, yy); // si
+	ObjectID rlCreature = GET_CREATURE_AT(iXPos, iYPos); // si
 	Creature* xCreature = GET_ADDRESS_OF_RECORD4(rlCreature); // bp04
 	if (glbTabCreaturesInfo[xCreature->InternalID()].TimerIndex() != 0xFFFF) {
 		RELEASE_CREATURE_TIMER(rlCreature);
 	}
 
-	Timer bp0e;
-	bp0e.SetMap(glbCurrentMapIndex);
-	bp0e.SetTick(glbGameTick +1);
-	bp0e.TimerType((xCreature->iAnimSeq == 0xFFFF) ? tty21 : tty22);
-	bp0e.actor = xCreature->CreatureType();
-	bp0e.XcoordB(U8(xx));
-	bp0e.YcoordB(U8(yy));
+	Timer tNewTimer;	// bp0e
+	tNewTimer.SetMap(glbCurrentMapIndex);
+	tNewTimer.SetTick(glbGameTick +1);
+	tNewTimer.TimerType((xCreature->iAnimSeq == 0xFFFF) ? tty21 : tty22);
+	tNewTimer.actor = xCreature->CreatureType();
+	tNewTimer.XcoordB(U8(iXPos));
+	tNewTimer.YcoordB(U8(iYPos));
 
 #if UseAltic
-	bp0e.Value2(0);
-	bp0e.ActionType(0);
+	tNewTimer.Value2(0);
+	tNewTimer.ActionType(0);
 #endif
-	glbTabCreaturesInfo[xCreature->InternalID()].TimerIndex(QUEUE_TIMER(&bp0e));
+	glbTabCreaturesInfo[xCreature->InternalID()].TimerIndex(QUEUE_TIMER(&tNewTimer));
 	return;
 }
 
@@ -1486,9 +1486,7 @@ X16 SkWinCore::IS_CREATURE_MOVABLE_THERE(i16 xx, i16 yy, i16 dir, ObjectID *prlW
 //^2066:0569
 void SkWinCore::ADD_MINION_ASSOC(ObjectID recordLink)
 {
-	//^2066:0569
 	glbMinionsObjectIDTable[glbMinionsAssocCount] = recordLink;
-	//^2066:057D
 	glbMinionsAssocCount++;
 }
 
@@ -1707,18 +1705,14 @@ _0cd1:
 //^13E4:0329
 void SkWinCore::UNPREPARE_LOCAL_CREATURE_VAR(U8 *ww)
 {
-	//^13E4:0329
 	ENTER(0);
-	//^13E4:032C
 	if (ww == NULL) {
 		_4976_5160 = 0;
 		return;
 	}
-	//^13E4:033B
 	//ATLASSERT(false);
 	COPY_MEMORY(ww, &glbCurrentThinkingCreatureID, SIZE_LOCAL_CREATURE_VAR);
 	DEALLOC_UPPER_MEMORY(SIZE_LOCAL_CREATURE_VAR);
-	//^13E4:035E
 	return;
 }
 
@@ -1726,66 +1720,55 @@ void SkWinCore::UNPREPARE_LOCAL_CREATURE_VAR(U8 *ww)
 //^1C9A:0E14
 void SkWinCore::ALLOC_CAII_TO_CREATURE(ObjectID rl, i16 xx, i16 yy)
 {
-	//^1C9A:0E14
 	ENTER(14);
-	//^1C9A:0E1A
 	X16 si = 0;
 	Creature* xCreature = GET_ADDRESS_OF_RECORD4(rl); // bp08
 	if (xCreature->iID != 0xFF)
 		return;
-	//^1C9A:0E38
 	si = xCreature->b15_2_2();
 	xCreature->b15_2_2(1);
-	CreatureInfoData *bp04;
+	CreatureInfoData* pCreatureData;	// bp04
 	U16 bp0e;
 	do {
-		//^1C9A:0E4C
-		bp04 = glbTabCreaturesInfo;
-		for (bp0e = 0; bp0e < glbCreaturesCount; bp04++, bp0e++) {
-			if (bp04->CreatureIndex() < 0)
+		pCreatureData = glbTabCreaturesInfo;
+		for (bp0e = 0; bp0e < glbCreaturesCount; pCreatureData++, bp0e++) {
+			if (pCreatureData->CreatureIndex() < 0)
 				goto _0ea0;
 		}
-		//^1C9A:0E79
 		for (U16 di = _4976_1a68; _4976_1a68 >= di; ) {
-			if (RECYCLE_A_RECORD_FROM_THE_WORLD(dbCreature, 0xff) == OBJECT_NULL) {
+			if (RECYCLE_A_RECORD_FROM_THE_WORLD(dbCreature, 0xFF) == OBJECT_NULL) {
 				RAISE_SYSERR(SYSTEM_ERROR__CREATURE_ASSOC_FULL);
 			}
 		}
 	} while (true);
-	//^1C9A:0EA0
 _0ea0:
 	xCreature->b15_2_2(U8(si));
 	_4976_1a68++;
-	ZERO_MEMORY(bp04, sizeof(CreatureInfoData));
-	bp04->CreatureIndex(rl.DBIndex());
+	ZERO_MEMORY(pCreatureData, sizeof(CreatureInfoData));
+	pCreatureData->CreatureIndex(rl.DBIndex());
 	xCreature->iID = U8(bp0e);
-	bp04->TimerIndex(0xFFFF);
-	bp04->Command = ccmFF_Idle;
-	U8 *bp0c = PREPARE_LOCAL_CREATURE_VAR(rl, xx, yy, 0x22);
+	pCreatureData->TimerIndex(0xFFFF);
+	pCreatureData->Command = ccmFF_Idle;
+	U8* xLocalCreatureData = PREPARE_LOCAL_CREATURE_VAR(rl, xx, yy, 0x22); // bp0c
 	CREATURE_THINK_FLUSH_POSITION();
-	bp04->b6_ = U8(glbGameTick >> 2) -1;
-	bp04->b4 = U8(glbGameTick) - 0x7F;
+	pCreatureData->b6_ = U8(glbGameTick >> 2) -1;
+	pCreatureData->b4 = U8(glbGameTick) - 0x7F;
 	//^1C9A:0F2C
-	bp04->w12.SetX(glbCreatureTimer.XcoordB());
-	bp04->w12.SetY(glbCreatureTimer.YcoordB());
-	bp04->w12.SetMap(glbCurrentMapIndex);
+	pCreatureData->w12.SetX(glbCreatureTimer.XcoordB());
+	pCreatureData->w12.SetY(glbCreatureTimer.YcoordB());
+	pCreatureData->w12.SetMap(glbCurrentMapIndex);
 	_4976_514e.b1 = 0;
-	bp04->b22 = -1;
-	bp04->Command2 = ccmFF_Idle;
-	bp04->b7 = 0;
-	//^1C9A:0F78
+	pCreatureData->b22 = -1;
+	pCreatureData->Command2 = ccmFF_Idle;
+	pCreatureData->b7 = 0;
 	QUEUE_THINK_CREATURE(xx, yy);
-	//^1C9A:0F84
-	bp04->Command = (xCreature->iAnimSeq == 0xFFFF) ? ccm11_Spawn : ccm00_Neutral;
-	//^1C9A:0F9B
+	pCreatureData->Command = (xCreature->iAnimSeq == 0xFFFF) ? ccm11_Spawn : ccm00_Neutral;
 	if (glbAIDef->IsStaticObject() == 0) {
 		glbCurrentThinkingCreatureRec->iAnimFrame |= 0x8000;
 		glbCurrentThinkingCreatureRec->iAnimFrame &= 0xBFFF;
 		CREATURE_GET_NEXT_THINK_GAMETICK();
 	}
-	//^1C9A:0FBA
-	UNPREPARE_LOCAL_CREATURE_VAR(bp0c);
-	//^1C9A:0FC7
+	UNPREPARE_LOCAL_CREATURE_VAR(xLocalCreatureData);
 	return;
 }
 
@@ -1920,7 +1903,6 @@ void SkWinCore::PREPARE_CREATURE_ANIMATION_INFO_V5(U8 iCreatureType, U16 iAnimOf
 // _4937_00cc renamed GET_CREATURE_ANIMATION_FRAME
 Bit16u SkWinCore::GET_CREATURE_ANIMATION_FRAME(Bit8u iCreatureType, Bit16u command, Bit16u *iAnimSeq, Bit16u *iAnimInfo, CreatureAnimationFrame **animframe, Bit16u vv)
 {
-	//^4937:00CC
 	SkD((DLV_DBG_CANIM, "DBG: GET_CREATURE_ANIMATION_FRAME %02X ccm:%04X (%s) %04X %04X %04X \n", (Bitu)iCreatureType, (Bitu)command, getCreatureCommandName((Bitu)command), (Bitu)*iAnimSeq, (Bitu)*iAnimInfo, (Bitu)vv));
 	// Note: at this point, iAnimSeq holds the previous animation (ended) that is going to be replaced
 	if (tlbCreaturesActionsGroupOffsets == NULL || tlbCreaturesActionsGroupSets == NULL || tlbCreaturesAnimationSequences == NULL) {
@@ -1943,32 +1925,24 @@ Bit16u SkWinCore::GET_CREATURE_ANIMATION_FRAME(Bit8u iCreatureType, Bit16u comma
 			xCCAnim++;
 		}
 	}
-	//^4937:0114
-	Bit16u iAnimOffset = xCCAnim->animSeqOffset;	// di
+	U16 iAnimOffset = xCCAnim->animSeqOffset;	// di
 	*iAnimSeq = iAnimOffset;	// Is the base anim offset
-	//^4937:0123
 	if (QUERY_CREATURE_AI_SPEC_FROM_TYPE(iCreatureType)->IsStaticObject() != 0) {
 		if (SkCodeParam::bDM2V5Mode)
 			PREPARE_CREATURE_ANIMATION_INFO_V5(iCreatureType, iAnimOffset, iAnimInfo);
 		else {
-			//^4937:0138
-			Bit16u si = 0;
-			CreatureAnimationFrame *bp08 = &tlbCreaturesAnimationSequences[iAnimOffset];
-			//^4937:0151
+			U16 iAnimFramesValue = 0;	// si
+			CreatureAnimationFrame* xAnimSeqData = &tlbCreaturesAnimationSequences[iAnimOffset];	// bp08
 			do {
-				si++;
-			} while((bp08++)->w2_0_3() != 0); // count the number of frame within the sequence offset
-			//^4937:0161
+				iAnimFramesValue++;
+			} while((xAnimSeqData++)->w2_0_3() != 0); // count the number of frame within the sequence offset
 			if (vv != 0) {
-				//^4937:0167
-				si |= 0x8000 | ((vv & 0x003f) << 6);
+				iAnimFramesValue |= 0x8000 | ((vv & 0x003f) << 6);
 			}
 			else {	// vv == 0
-				//^4937:0179
-				si |= 0x9000;
+				iAnimFramesValue |= 0x9000;
 			}
-			//^4937:017D
-			*iAnimInfo = si;	// would be the number of frames within animation
+			*iAnimInfo = iAnimFramesValue;	// would be the number of frames within animation
 		}
 		return 1;
 	}
@@ -2109,23 +2083,15 @@ U16 SkWinCore::IS_CREATURE_FLOATING(ObjectID rl)
 // dropMode = 0 => GEN + POSSESS / dropMode = 2 => NOTHING
 void SkWinCore::DROP_CREATURE_POSSESSION(ObjectID recordLink, i16 xx, i16 yy, Bit16u dropMode, i16 tt)
 {
-	//^1C9A:1374
-	//^1C9A:137A
 	if (dropMode == CREATURE_NO_DROP)	// dropMode == 2
 		return;
-	//^1C9A:1383
 	Creature *bp04 = GET_ADDRESS_OF_RECORDX4(recordLink);
-	//^1C9A:1392
 	ObjectID si;
 	Bit16u di;
 	if (dropMode == CREATURE_GENERATED_DROPS) {	// dropMode == 0
-		//^1C9A:139B
 		for (Bit16u bp0a = CREATURE_STAT_DROP_FIRST; bp0a <= CREATURE_STAT_DROP_LAST; bp0a++) { // for (Bit16u bp0a = 10; bp0a <= 20; bp0a++) {
-			//^1C9A:13A3
 			Bit16u bp06 = QUERY_GDAT_CREATURE_WORD_VALUE(bp04->CreatureType(), (Bit8u)bp0a);
-			//^1C9A:13B9
 			if (bp06 == 0)
-				//^1C9A:13BF
 				continue;
 
 			// bp0c -> battle prize: base item count. 1 or 2 items.
@@ -2258,20 +2224,13 @@ void SkWinCore::DROP_CREATURE_POSSESSION(ObjectID recordLink, i16 xx, i16 yy, Bi
 Bit16u SkWinCore::APPLY_CREATURE_POISON_RESISTANCE(ObjectID recordLink, Bit16u iPoisonDamage)
 {
 	//CSBWin:Code11f52.cpp/TAG00bbbe/DeterminePoisonDamage
-	//^1C9A:198E
-	//^1C9A:1992
 	if (iPoisonDamage != 0) {
-		//^1C9A:1998
 		Bit16u iPoisonResistance = QUERY_CREATURE_AI_SPEC_FROM_RECORD(recordLink)->GetPoisonResistance(); // si
-		//^1C9A:19B1
 		if (iPoisonResistance == 15) { // 15 == immune
-			//^1C9A:19B6
 			return 0;
 		}
-		//^1C9A:19BA
 		return ((iPoisonDamage + RAND02()) << 3) / (iPoisonResistance + 2);
 	}
-	//^1C9A:19B6
 	return 0;
 }
 
@@ -2320,8 +2279,6 @@ void SkWinCore::RELEASE_CREATURE_TIMER(ObjectID recordLink)
 // SPX: _0cee_2e1e renamed GET_CREATURE_WEIGHT
 Bit16u SkWinCore::GET_CREATURE_WEIGHT(ObjectID recordLink)
 {
-	//^0CEE:2E1E
-	//^0CEE:2E21
 	return QUERY_CREATURE_AI_SPEC_FROM_RECORD(recordLink)->Weight;
 }
 
@@ -2358,18 +2315,11 @@ ObjectID SkWinCore::GET_CREATURE_AT(i16 xpos, i16 ypos)
 	//
 	// return OBJECT_NULL if no creature found.
 
-	//^1C9A:0397
-	//^1C9A:039B
 	ObjectID si = GET_TILE_RECORD_LINK(xpos, ypos);
-	//^1C9A:03A8
 	for (; si != OBJECT_END_MARKER; si = GET_NEXT_RECORD_LINK(si)) {
-		//^1C9A:03AA
 		if (si.DBType() == dbCreature)
-			//^1C9A:03B7
 			return si;
-		//^1C9A:03BB
 	}
-	//^1C9A:03C9
 	return OBJECT_NULL;
 }
 
@@ -2377,30 +2327,19 @@ ObjectID SkWinCore::GET_CREATURE_AT(i16 xpos, i16 ypos)
 //^0CEE:2E53
 Bit16u SkWinCore::IS_CREATURE_ALLOWED_ON_LEVEL(ObjectID rlCreature, Bit16u curmap)
 {
-	//^0CEE:2E53
-	//^0CEE:2E59
 	if ((QUERY_CREATURE_AI_SPEC_FLAGS(rlCreature) & 0x4000) != 0) {
 		//^0CEE:2E66
 		return 1;
 	}
-	//^0CEE:2E6C
 	Bit8u bp09 = QUERY_CLS2_FROM_RECORD(rlCreature);
-	//^0CEE:2E77
 	Map_definitions *bp08 = &dunMapsHeaders[curmap];
-	//^0CEE:2E8D
 	Bit8u *bp04 = &glbMapTileValue[curmap][bp08->RawColumn()][bp08->RawRow() +1];
-	//^0CEE:2ECE
 	i16 si = bp08->CreaturesTypes();
-	//^0CEE:2EDD
 	for (; si > 0; --si) {
-		//^0CEE:2EDF
 		if (*(bp04++) == bp09)
 			return 1;
-		//^0CEE:2EF0
 	}
-	//^0CEE:2EF5
 	return 0;
-	//^0CEE:2EF7
 }
 
 //^1C9A:184C

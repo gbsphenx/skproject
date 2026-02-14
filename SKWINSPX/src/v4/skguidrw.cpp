@@ -2320,7 +2320,7 @@ void SkWinCore::DRAW_CHAMPION_PICTURE(U16 iChampionIndex)
 		glbChampionSquad[iChampionIndex].HeroType(),
 		0x00,
         &_4976_3ff0,
-		iChampionIndex + RECT_CHAMPION_PORTRAIT_1,	// index + 173
+		iChampionIndex + RECT_173_CHAMPION_PORTRAIT_1,	// index + 173
 		-1
 		);
 	}
@@ -2330,7 +2330,7 @@ void SkWinCore::DRAW_CHAMPION_PICTURE(U16 iChampionIndex)
 		i16 iSourceY = 0;
 		i16 iSourceX = 0;
 		X8* xImageBuffer = ((X8*)(&cd.dm1.xDM1PortraitsData[iChampionIndex])+6);
-		U16 iRectNo = iChampionIndex + RECT_CHAMPION_PORTRAIT_1;
+		U16 iRectNo = iChampionIndex + RECT_173_CHAMPION_PORTRAIT_1;
 		sk3f6c* ss = &_4976_3ff0;
 		i16 iColorKey = -1;
 		SRECT xRectResult;

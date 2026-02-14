@@ -1551,12 +1551,12 @@ typedef enum
 //	INTERFACE RECTANGLES
 //------------------------------------------------------------------------------
 
-#define RECT_BOTTOM_MESSAGE_3_LINES				15
+#define RECT_015_BOTTOM_MESSAGE_3_LINES				15
 
-#define RECT_CHAMPION_PORTRAIT_1				173
-#define RECT_CHAMPION_PORTRAIT_2				174
-#define RECT_CHAMPION_PORTRAIT_3				175
-#define RECT_CHAMPION_PORTRAIT_4				176
+#define RECT_173_CHAMPION_PORTRAIT_1				173
+#define RECT_174_CHAMPION_PORTRAIT_2				174
+#define RECT_175_CHAMPION_PORTRAIT_3				175
+#define RECT_176_CHAMPION_PORTRAIT_4				176
 
 
 //------------------------------------------------------------------------------

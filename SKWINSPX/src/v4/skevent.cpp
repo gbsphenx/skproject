@@ -822,6 +822,79 @@ void SkWinCore::SET_TIMER_WEATHER(U32 tickDelta)
 
 
 
+
+
+//^3A15:0381
+// SPX _3a15_0381 renamed TIMER_COMPARE
+int SkWinCore::TIMER_COMPARE(Timer* xTimer1, Timer* xTimer2)
+{
+	// returns 1 if timer1 is "<" than timer2
+	if (xTimer1->GetTick() >= xTimer2->GetTick()) {
+		U16 si =  (xTimer1->GetTick() == xTimer2->GetTick()) ? 1 : 0;
+		if (si != 0 && (xTimer1->TimerType() > xTimer2->TimerType()))
+			return 1;
+		if (si != 0) {
+			si = (xTimer1->TimerType() == xTimer2->TimerType()) ? 1 : 0;
+			if (si != 0) {
+				if (xTimer1->actor > xTimer2->actor) {
+					return 1;
+				}
+			}
+		}
+		if (si == 0)
+			return 0;
+		//if ((U16)xx <= (U16)yy) // loose conversion
+		if ((void*) xTimer1 <= (void*) xTimer2)
+			return 1;
+		return 0;
+	}
+	return 1;
+}
+
+//^3A15:0486
+// SPX _3a15_0486 renamed TIMER_SORT_EXCHANGE
+void SkWinCore::TIMER_SORT_EXCHANGE(U16 xx)
+{
+	U16 iNextTimerId = xx;	// di
+	glbTimer_4976_4762 = -1;
+	U16 bp06 = glbTimersCount - 1;
+	if (bp06 == 0)
+		return;
+	U16 iTimerIdx = glbTimerNextEntries[iNextTimerId];	// bp0a
+	Timer* xTimer = &glbTimersTable[iTimerIdx]; // bp04
+	U16 iTimersExchanged = 0;	// bp08
+	for (; iNextTimerId > 0; ) {
+		U16 iLowerNextTimerId = (iNextTimerId - 1) >> 1;	// si
+		if (TIMER_COMPARE(xTimer, &glbTimersTable[glbTimerNextEntries[iLowerNextTimerId]]) == 0)
+			break;
+		glbTimerNextEntries[iNextTimerId] = glbTimerNextEntries[iLowerNextTimerId];
+		iNextTimerId = iLowerNextTimerId;
+		iTimersExchanged = 1;
+	}
+	if (iTimersExchanged == 0) {
+		bp06 = (bp06 -1) >> 1;	// bp06
+		while (iNextTimerId <= bp06) {
+			U16 iHigherTimerId = (iNextTimerId << 1) + 1;	// si
+			if ((iHigherTimerId + 1) < glbTimersCount) {
+				if (TIMER_COMPARE(&glbTimersTable[glbTimerNextEntries[iHigherTimerId + 1]], &glbTimersTable[glbTimerNextEntries[iHigherTimerId]]) != 0) {
+					iHigherTimerId++;
+				}
+			}
+			if (TIMER_COMPARE(&glbTimersTable[glbTimerNextEntries[iHigherTimerId]], xTimer) == 0)
+				break;
+			glbTimerNextEntries[iNextTimerId] = glbTimerNextEntries[iHigherTimerId];
+			iNextTimerId = iHigherTimerId;
+		}
+	}
+	glbTimerNextEntries[iNextTimerId] = iTimerIdx;
+	return;
+}
+
+
+
+
+
+
 //^3A15:0447
 // SPX: Count timers until timer number xx
 // SPX: _3a15_0447 renamed GET_TIMER_NEW_INDEX
@@ -854,18 +927,18 @@ Bit16u SkWinCore::QUEUE_TIMER(Timer *ref)
 	if (glbTimersCount == glbTimersMaximumCount) {
 		RAISE_SYSERR(SYSTEM_ERROR__TIMER_MAX_REACHED);
 	}
-	Bit16u si = glbTimerIndexNextAvailable;
-	glbTimerIndexNextAvailable = glbTimersTable[si].w0_0_f();
-	glbTimersTable[si] = *ref;
+	U16 iNextId = glbTimerIndexNextAvailable;	// si
+	glbTimerIndexNextAvailable = glbTimersTable[iNextId].w0_0_f();
+	glbTimersTable[iNextId] = *ref;
 
 	SkD((DLV_DBG_TIMER, "DBG: Timer#%03d(%6u,%2u,%02X,%02X,%04X,%04X) Added.\n"
-		, (Bitu)si
+		, (Bitu)iNextId
 		, (Bitu)ref->GetTick(), (Bitu)ref->GetMap(), (Bitu)ref->TimerType()
 		, (Bitu)ref->actor, (Bitu)ref->value, (Bitu)ref->w8
 		));
 
-	if (glbTimersActiveCount <= si) {
-		glbTimersActiveCount = si + 1;
+	if (glbTimersActiveCount <= iNextId) {
+		glbTimersActiveCount = iNextId + 1;
 	}
 	i16 di = glbTimer_4976_4762;
 	if (di < 0) {
@@ -873,9 +946,9 @@ Bit16u SkWinCore::QUEUE_TIMER(Timer *ref)
 	}
 	glbTimer_4976_4762 = -1;
 	glbTimersCount++;
-	glbTimerNextEntries[di] = si;
-	TIMER_3a15_0486(di);
-	return si;
+	glbTimerNextEntries[di] = iNextId;
+	TIMER_SORT_EXCHANGE(di);
+	return iNextId;
 }
 
 
@@ -886,7 +959,7 @@ void SkWinCore::DELETE_TIMER(U16 iTimerIndex)
 {
 	U16 iLocalTimerIndex = iTimerIndex;	// si
 	if (glbTimer_4976_4762 >= 0) {
-		TIMER_3a15_0486(glbTimer_4976_4762);
+		TIMER_SORT_EXCHANGE(glbTimer_4976_4762);
 	}
 	glbTimersTable[iLocalTimerIndex].TimerType(tty00);
 	glbTimersTable[iLocalTimerIndex].w0_0_f(glbTimerIndexNextAvailable);
@@ -911,7 +984,7 @@ X16 SkWinCore::IS_TIMER_TO_PROCEED()
 	static U16 iPenultimateTimer = -1;
 	ENTER(0);
 	if (glbTimer_4976_4762 >= 0) {
-		TIMER_3a15_0486(glbTimer_4976_4762);
+		TIMER_SORT_EXCHANGE(glbTimer_4976_4762);
 	}
 	if (glbTimersCount != 0) {
 		if (SkCodeParam::bUsePowerDebug) {
@@ -2302,7 +2375,7 @@ void SkWinCore::ACTUATE_DOOR(Timer *ref)
 	if (door->DoorBit09() == DOORACTION_CLOSING)	// 0
 		door->DoorBit12(0);
 	//^3A15:0C0F
-	ref->TimerType(ttyDoorStep);
+	ref->TimerType(tty01DoorStep);
 	QUEUE_TIMER(ref);
 	//^3A15:0C23
 	return;
@@ -2977,7 +3050,7 @@ void SkWinCore::PROCEED_TIMERS()
 			case tty1E://^3B09
 				STEP_MISSILE(xCurrentTimer);
 				break;
-			case ttyDoorStep://^3B17
+			case tty01DoorStep://^3B17
 				STEP_DOOR(xCurrentTimer);
 				break;
 
