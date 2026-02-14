@@ -526,7 +526,7 @@ _1ad5:
 									//^0CEE:1BF1
 									break;
 								}
-							case ACTUATOR_TYPE_CHAMPION_MIRROR: // SPX: Add for DM1 retrocompatibility / 0x7F: Activator, champion mirror
+							case ACTUATOR_x7F_TYPE_CHAMPION_MIRROR: // SPX: Add for DM1 retrocompatibility / 0x7F: Activator, champion mirror
 								{
 									if (bp04->ActiveStatus() == 0) {
 										if (bp06 == 5) {
@@ -540,21 +540,15 @@ _1ad5:
 										// this has to be done else ref->xvalue remains at 0, and portrait displayed is number 0 (i.e. Elija)
 									break;
 								}
-							case ACTUATOR_TYPE_RESURECTOR: // 0x7e: 'Activator, resuscitation'
+							case ACTUATOR_x7E_TYPE_RESURECTOR: // 0x7e: 'Activator, resuscitation'
 								{
-									//^0CEE:1BF4
 									if (bp04->OnceOnlyActuator() != 0) {
-										//^0CEE:1C08
 										if (bp06 == 5) {
-											//^0CEE:1C0E
 											ref->xvalue = (bp04->ActuatorData());
 										}
-										//^0CEE:1C1F
 										bp16 |= 1 << bp12;
-										//^0CEE:1C2A
 										si = 1;
 									}
-									//^0CEE:1C2D
 									break;
 								}
 							case ACTUATOR_TYPE_2_STATE_WALL_SWITCH: // 0x17: 'Activator, 2 state wall switch'
@@ -1416,7 +1410,7 @@ ObjectID SkWinCore::GET_OBJECT_INDEX_FROM_TILE(i16 xx, i16 yy)
 	if ((bp04[di] & 0x10) == 0) // tile has not object flag on it
 		return OBJECT_NULL;
 	//^0CEE:0A90
-	U16 si = _4976_4c52[cx];
+	U16 si = glbIndexOfTilesWithObjects[cx];
 	while (--di >= 0) {
 		//^0CEE:0A9F
 		if ((*(bp04++) & 0x10) != 0)
@@ -1474,7 +1468,7 @@ void SkWinCore::CUT_RECORD_FROM(ObjectID recordLink, ObjectID *recordLinkLookFor
 			//^0CEE:0D77
 			dunGroundStacks[di] = 0xffff;
 			//^0CEE:0D86
-			bp04 = &_4976_4c52[xposLookFor +1];
+			bp04 = &glbIndexOfTilesWithObjects[xposLookFor +1];
 			//^0CEE:0D9D
 			di = _4976_4cb4 - (dunMapColumnsSumArray[glbCurrentMapIndex] + xposLookFor) -1;
 			//^0CEE:0DB7
@@ -2249,16 +2243,16 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(i16 xpos, i16 ypos, ObjectID reco
 								Bit16u iActuatorEffectType = xActuator->ActionType();
 
 								if (place == FCT_PLACE_ON &&
-									(iActuatorEffectType == ACTEFFECT_STEP_ON__OPEN_SET ||
-									iActuatorEffectType == ACTEFFECT_STEP_ON__CLOSE_CLEAR ||
-									iActuatorEffectType == ACTEFFECT_STEP_ON__TOGGLE ||
-									iActuatorEffectType == ACTEFFECT_STEP_CONSTANT__CLOSE))
+									(iActuatorEffectType == C00_ACTEFFECT_STEP_ON__OPEN_SET ||
+									iActuatorEffectType == C01_ACTEFFECT_STEP_ON__CLOSE_CLEAR ||
+									iActuatorEffectType == C02_ACTEFFECT_STEP_ON__TOGGLE ||
+									iActuatorEffectType == C03_ACTEFFECT_STEP_CONSTANT__OPEN))
 									iActuatorTriggers = 1;
 								else if (place == FCT_REMOVE_OFF &&
-									(iActuatorEffectType == ACTEFFECT_STEP_CLOSE__OPEN_SET ||
-									iActuatorEffectType == ACTEFFECT_STEP_CLOSE__CLOSE_CLEAR ||
-									iActuatorEffectType == ACTEFFECT_STEP_CLOSE__TOGGLE ||
-									iActuatorEffectType == ACTEFFECT_STEP_CONSTANT__OPEN))
+									(iActuatorEffectType == C04_ACTEFFECT_STEP_CLOSE__OPEN_SET ||
+									iActuatorEffectType == C05_ACTEFFECT_STEP_CLOSE__CLOSE_CLEAR ||
+									iActuatorEffectType == C06_ACTEFFECT_STEP_CLOSE__TOGGLE ||
+									iActuatorEffectType == C07_ACTEFFECT_STEP_CONSTANT__CLOSE))
 									iActuatorTriggers = 1;
 
 								if (iActuatorTriggers == 1)
@@ -2267,7 +2261,7 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(i16 xpos, i16 ypos, ObjectID reco
 										QUEUE_NOISE_GEN2(
 											(bp1e == 0xffff) ? GDAT_CATEGORY_x0A_FLOOR_GFX : GDAT_CATEGORY_x09_WALL_GFX,
 											(bp1e == 0xffff) ? GET_FLOOR_DECORATION_OF_ACTUATOR(xActuator) : GET_WALL_DECORATION_OF_ACTUATOR(xActuator),
-											SOUND_STD_ACTIVATION, 0xfe, xpos, ypos, 0x01, 0x8c, 0x80);
+											SOUND_STD_ACTIVATION, 0xfe, xpos, ypos, 0x01, 0x8C, 0x80);
 									}
 									INVOKE_ACTUATOR(xActuator, iActuatorEffectType, 0);
 								}
@@ -2391,8 +2385,8 @@ _29a8:
 						// The actuator should be an alcove -- this may need to be checked
 						Bit16u iRevertEffect = bp10 ^ xActuator->RevertEffect();
 						Bit16u iActionType = xActuator->ActionType();
-						if ((iActionType & 3) == ACTEFFECT_STEP_CONSTANT__OPEN) {
-							iActionType = (iRevertEffect != 0) ? ACTMSG_OPEN_SET : ACTMSG_CLOSE_CLEAR;
+						if ((iActionType & 3) == C03_ACTEFFECT_STEP_CONSTANT__OPEN) {
+							iActionType = (iRevertEffect != 0) ? C00_ACTMSG_OPEN_SET : C01_ACTMSG_CLOSE_CLEAR;
 						}
 						else {
 							if (iRevertEffect == 0)
@@ -2433,8 +2427,8 @@ _29a8:
 						// The actuator should be an alcove -- this may need to be checked
 						Bit16u iRevertEffect = bp10 ^ xActuator->RevertEffect();
 						Bit16u iActionType = xActuator->ActionType();
-						if ((iActionType & 3) == ACTEFFECT_STEP_CONSTANT__OPEN) {
-							iActionType = (iRevertEffect != 0) ? ACTMSG_OPEN_SET : ACTMSG_CLOSE_CLEAR;
+						if ((iActionType & 3) == C03_ACTEFFECT_STEP_CONSTANT__OPEN) {
+							iActionType = (iRevertEffect != 0) ? C00_ACTMSG_OPEN_SET : C01_ACTMSG_CLOSE_CLEAR;
 						}
 						else {
 							if (iRevertEffect == 0)
@@ -2923,7 +2917,7 @@ Bit16u SkWinCore::MOVE_RECORD_TO(ObjectID rlWhatYouMove, i16 xposFrom, i16 yposF
 				//^2FCF:1021
 				if (bp06 != 255) {
 					//^2FCF:1026
-					_1c9a_0fcb(bp06);
+					CREATURE_1c9a_0fcb(bp06);
 				}
 			}
 		}
@@ -3131,12 +3125,9 @@ _1359:
 _13a5:
 		{
 			if (bp06 != 255) {
-				//^2FCF:13AC
-				_1c9a_0fcb(bp06);
+				CREATURE_1c9a_0fcb(bp06);
 			}
-			//^2FCF:13B5
 			SET_TIMER_3C_OR_3D(si, xposTo, yposTo, di, _4976_5822);
-			//^2FCF:13CB
 			return 2;
 		}
 

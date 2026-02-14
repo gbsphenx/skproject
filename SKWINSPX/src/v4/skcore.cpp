@@ -1325,8 +1325,8 @@ void SkWinCore::APPEND_RECORD_TO(ObjectID recordLink_whatYouAppend, ObjectID *re
 			//^0CEE:0B98
 			*bp08 |= 0x10;
 			//^0CEE:0B9F
-			//U16 *bp04 = &_4976_4c52[di +1];
-			OID_T *bp04 = &_4976_4c52[di +1];	// Bit32u *bp04
+			//U16 *bp04 = &glbIndexOfTilesWithObjects[di +1];
+			OID_T *bp04 = &glbIndexOfTilesWithObjects[di +1];	// Bit32u *bp04
 			//^0CEE:0BB5
 			U16 si = _4976_4cb4 -(dunMapColumnsSumArray[glbCurrentMapIndex] +di) -1;
 			ATLASSERT(si < (32*256)); // SPX: suppose 256 of 32 columns each, making a value not above 8192. If not, it might be a negative value hidden by the unsigned U16 si; then an issue with _4976_4cb4 value.
@@ -1341,7 +1341,7 @@ void SkWinCore::APPEND_RECORD_TO(ObjectID recordLink_whatYouAppend, ObjectID *re
 			U16 bp10 = 0;
 			bp08 -= ypos_newParent;
 			//^0CEE:0BEC
-			si = _4976_4c52[di];
+			si = glbIndexOfTilesWithObjects[di];
 
 			//^0CEE:0C08
 			for (; bp10++ != ypos_newParent; ) {
@@ -3827,7 +3827,7 @@ void SkWinCore::FILL_CAII_CUR_MAP()
 {
 	ENTER(16);
 	U8 *bp04 = *glbCurrentTileMap;
-	OID_T *bp08 = &dunGroundStacks[*_4976_4c52];	// U16 *bp08 
+	OID_T *bp08 = &dunGroundStacks[*glbIndexOfTilesWithObjects];	// U16 *bp08 
 	for (U16 bp0e = 0; bp0e < glbCurrentMapWidth; bp0e++) {
 		for (U16 di = 0; di < glbCurrentMapHeight; di++) {
 			if ((*(bp04++) & 0x10) != 0) {
@@ -5217,22 +5217,6 @@ i16 SkWinCore::_2066_33e7()
 	return si;
 }
 
-//^1C9A:3BAB
-void SkWinCore::_1c9a_3bab()
-{
-	//^1C9A:3BAB
-	ENTER(0);
-	//^1C9A:3BAF
-	for (U16 si = 0; _4976_1a68 > 0; si++) {
-		//^1C9A:3BB3
-		if (glbTabCreaturesInfo[si].CreatureIndex() >= 0) {
-			//^1C9A:3BC6
-			_1c9a_0fcb(si);
-		}
-	}
-	//^1C9A:3BD4
-	return;
-}
 
 //^1C9A:3B74
 void SkWinCore::FILL_ORPHAN_CAII()
@@ -5252,7 +5236,7 @@ void SkWinCore::FILL_ORPHAN_CAII()
 void SkWinCore::RESET_CAII()
 {
 	ENTER(4);
-	_4976_1a68 = 0;
+	glbCreature_4976_1a68 = 0;
 	U16 iCreatureIndex;
 	for (iCreatureIndex = 0; iCreatureIndex < glbCreaturesCount; iCreatureIndex++) {
 		glbTabCreaturesInfo[iCreatureIndex].CreatureIndex(-1);
@@ -7958,36 +7942,23 @@ void SkWinCore::_1c9a_0648(U16 mapno)
 //^2066:0D09
 void SkWinCore::GAME_SAVE_MENU()
 {
-	//^2066:0D09
 	ENTER(132);
-	//^2066:0D0F
 	U16 bp18 = 0;
 	U8 bp21 = 0;
-	//^2066:0D18
 	DISPLAY_RIGHT_PANEL_SQUAD_HANDS();
-	//^2066:0D1D
 	UPDATE_RIGHT_PANEL(0);
-	//^2066:0D25
 	_38c8_0002();
-	//^2066:0D2A
 	FIRE_HIDE_MOUSE_CURSOR();
-	//^2066:0D2F
 	REARRANGE_TIMERLIST();
-	//^2066:0D34
 	if (_4976_49a0 == 0 && _4976_5eb0 != 0)
-		//^2066:0D42
 		_476d_04e8(2);
-	//^2066:0D4A
 	_4976_52f4 = 2;
 
-	//^2066:0D50
 _0d50:
 	_4976_5258 = 0;
-	//^2066:0D5C
 	_4976_5246 = NULL;
 	_4976_5240 = NULL;
 	glbMinionsObjectIDTable = NULL;
-	//^2066:0D7A
 	U8 bp13 = 0;
 	U16 bp16 = 0;
 	U8 *bp08;
@@ -7998,78 +7969,50 @@ _0d50:
 	U16 bp20;
 
 	do {
-		//^2066:0D83
 		if (_4976_49a0 == 0 && bp13 != 0)
-			//^2066:0D90
 			_476d_04e8(2);
-		//^2066:0D98
-		U16 bp0e = _0aaf_0067(_0aaf_02f8_DIALOG_BOX((_4976_49a0 != 0) ? 0x12 : 0x0b, bp13));
-		//^2066:0DBB
+		U16 bp0e = DIALOG_BOX_0aaf_0067(_0aaf_02f8_DIALOG_BOX((_4976_49a0 != 0) ? DIALOGBOX_x12_SAVE_GAME : DIALOGBOX_x0B_SAVE_GAME_FLOPPY, bp13));
 		if (bp0e == 3)
-			//^2066:0DC1
 			goto _1523;
-		//^2066:0DC4
 		if (bp0e == 2) {
-			//^2066:0DCA
 			_2066_046d();
-			//^2066:0DCE
 			bp13 = 0;
 		}
-		//^2066:0DD5
 		else if (bp0e == 1) {
-			//^2066:0DDB
 			if (true
 				&& _4976_4c1a +100 < glbGameTick 
 				&& _4976_523c +100 < glbGameTick
-				&& _0aaf_0067(_0aaf_02f8_DIALOG_BOX(0x0c, 0x00)) == 3
+				&& DIALOG_BOX_0aaf_0067(_0aaf_02f8_DIALOG_BOX(DIALOGBOX_x0C_QUIT_GAME_NOT_SAVED, 0x00)) == 3
 			) {
-				//^2066:0E28
-				//^2066:0DCE
 				bp13 = 0;
 			}
 			else {
-				//^2066:0E2A
 				FIRE_SHOW_MOUSE_CURSOR();
-				//^2066:0E2F
 				_4976_5bf6 = 0;
-				//^2066:0E35
 				bp18 = 1;
-				//^2066:0E3A
 				goto _1523;
 			}
 		}
-		//^2066:0E3D
 		else if (bp0e == 0) {
-			//^2066:0E43
 			if (_4976_49a0 != 0 || _476d_04af(0) == 1) {
-				//^2066:0E57
 				bp16 = 1;
 			}
 			else {
-				//^2066:0E5E
 				bp16 = 0;
-				//^2066:0E63
 				switch (_4976_5eb8) {
 					case 0:
-						//^2066:0E73
 						bp13 = 0x15;
-						//^2066:0E77
 						break;
 
 					case 2:
-						//^2066:0E79
 						bp13 = 0x16;
-						//^2066:0E7D
 						break;
 
 					case 4:
-						//^2066:0E7F
 						bp13 = 0x17;
-						//^2066:0E83
 						break;
 
 					case 3:
-						//^2066:0E85
 						bp13 = 0x1a;
 
 						break;
@@ -8080,124 +8023,74 @@ _0d50:
 				}
 			}
 		}
-		//^2066:0E89
 	} while (bp16 == 0);
 
-	//^2066:0E92
 	bp1c = ALLOC_MEMORY_RAM(1024, afDefault, 128);
-	//^2066:0EAA
 	bp20 = 1;
 	bp1e = 3;
-	//^2066:0EB4
 	goto _100f;
-	//^2066:0EB7
 _0eb7:
 	goto _1045;
 
-	//^2066:100F
 _100f:
 	if (bp1e >= 0)
-		//^2066:1015
 		goto _0eb7;
-	//^2066:1018
 	DEALLOC_UPPER_MEMORY(1024);
-	//^2066:1024
 	if (bp20 != 0) {
-		//^2066:102A
-		_0aaf_0067(_0aaf_02f8_DIALOG_BOX(0x13, bp21));
-        //^2066:103E
+		DIALOG_BOX_0aaf_0067(_0aaf_02f8_DIALOG_BOX(DIALOGBOX_x13_PUT_THE_DISK, bp21));
 		bp21 = 0x14;
-		//^2066:1042
 		goto _0d50;
 	}
-	//^2066:1045
 _1045:
 	bp0e = _2066_33e7();
-	//^2066:104D
 	if (bp0e < 0)
-		//^2066:1051
 		goto _0d50;
-	//^2066:1054
 	glbSKSaveNum = bp0e;
 	glbSKSaveDigitAlpha = U8(glbSKSaveNum) +0x30;
-	//^2066:1062
-	_0aaf_02f8_DIALOG_BOX(0x0d, 0x00);
-	//^2066:106D
+	_0aaf_02f8_DIALOG_BOX(DIALOGBOX_x0D_SAVING_GAME, 0x00);
 	bp08 = FORMAT_SKSTR(ptrSKSave_dat, NULL);
-	//^2066:1087
 	bp0c = FORMAT_SKSTR(ptrSKSave_bak, NULL);
-	//^2066:10A1
 	DELETE_FILE(bp0c);
-	//^2066:10AE
 	FILE_RENAME(bp08, bp0c);
-	//^2066:10C2
 	glbDataFileHandle = FILE_CREATE(bp08);
-	//^2066:10D2
 	i16 bp10;
 	if (glbDataFileHandle < 0)
-		//^2066:10D6
 		goto _14fa;
-	//^2066:10D9
 	bp10 = FILE_OPEN(bp0c);
-	//^2066:10E9
 	sksave_header_asc bp4c;
 	if (bp10 >= 0) {
-		//^2066:10ED
 		READ_FILE(bp10, 42, &bp4c);
-		//^2066:1101
 		CLOSE_FILE(bp10);
 	}
 	else {
-		//^2066:110C
 		bp4c.w38 = 0;
 	}
-	//^2066:1116
 	bp4c.wTimerFlag = 1;
-	//^2066:111B
 	SK_STRCPY(bp4c.sSavegameName, _4976_5268);
-	//^2066:112C
 	WRITE_FILE(glbDataFileHandle, 42, &bp4c);
-	//^2066:1141
 	if (SKSAVE_WRITE(dunHeader, 44) == 0)
-		//^2066:1156
 		goto _14fa;
-	//^2066:1159
 	if (SKSAVE_WRITE(dunMapsHeaders, dunHeader->nMaps << 4) == 0)
-		//^2066:117A
 		goto _14fa;
-    //^2066:117D
 	if (SKSAVE_WRITE(dunMapTilesObjectIndexPerColumn, _4976_4cb4 << 1) == 0)
-		//^2066:1196
 		goto _14fa;
 
-	//^2066:1199
 	if (SKSAVE_WRITE(dunGroundStacks, dunHeader->cwListSize << 1) == 0)
 		goto _14fa;
-	//^2066:11BA
 	if (SKSAVE_WRITE(dunTextData, dunHeader->cwTextData << 1) == 0)
 		goto _14fa;
 
-	//^2066:11DB
 	for (bp0e = 0; bp0e < 16; bp0e++) {
-		//^2066:11E2
 		if (SKSAVE_WRITE(glbDBObjectData[bp0e], dbSize[bp0e] * dunHeader->nRecords[bp0e]) == 0)
-			//^2066:1214
 			goto _14fa;
-		//^2066:1217
 	}
-	//^2066:1220
 	if (SKSAVE_WRITE(dunMapData, dunHeader->cbMapData) == 0)
-		//^2066:123B
 		goto _14fa;
 
-	//^2066:123E
-	_1c9a_3bab();
-	//^2066:1243
+	CREATURE_LOOP_1c9a_3bab();
 	COMPACT_TIMERLIST();
-	//^2066:1248
 	skload_table_60 sGameVar; // bp0084
 	ZERO_MEMORY(&sGameVar, 56);
-	//^2066:125A
 	sGameVar.dwGameTick = glbGameTick;
 	sGameVar.dwRandomSeed = glbRandomSeed;
 	sGameVar.wChampionsCount = cd.pi.glbChampionsCount;
@@ -8227,120 +8120,78 @@ _1045:
 
 	s_testSKSave.StartWrite(FILE_TELL(glbDataFileHandle));
 
-	//^2066:1317
+
 	SUPPRESS_INIT();
 
 	DEBUG_HELP_WRITER("Global Game Variables", &sGameVar, 56, 1);
-	//^2066:131B
 	if (SUPPRESS_WRITER(&sGameVar, _4976_395a, 56, 1) != 0)
 		goto _14fa;
 	DEBUG_HELP_WRITER("Ingame Global Flags", glbIngameGlobVarFlags, 1, 8);
-	//^2066:1339
 	if (SUPPRESS_WRITER(glbIngameGlobVarFlags, _4976_3956, 1, 8) != 0)
 		goto _14fa;
 	DEBUG_HELP_WRITER("Ingame Global Bytes", glbIngameGlobVarBytes, 1, 64);
-	//^2066:1355
 	if (SUPPRESS_WRITER(glbIngameGlobVarBytes, _4976_3956, 1, 64) != 0)
 		goto _14fa;
 	DEBUG_HELP_WRITER("Ingame Global Words", glbIngameGlobVarWords, 2, 64);
-	//^2066:1371
 	if (SUPPRESS_WRITER(glbIngameGlobVarWords, _4976_3956, 2, 64) != 0)
 		goto _14fa;
 	DEBUG_HELP_WRITER("Champion Squad", glbChampionSquad, 261, cd.pi.glbChampionsCount);
-	//^2066:138D
 	if (SUPPRESS_WRITER(glbChampionSquad, _4976_3992, 261, cd.pi.glbChampionsCount) != 0)
 		goto _14fa;
 	DEBUG_HELP_WRITER("Global Spell Effects", &glbGlobalSpellEffects, 6, 1);
-	//^2066:13AC
 	if (SUPPRESS_WRITER(&glbGlobalSpellEffects, _4976_3a97, 6, 1) != 0)
 		goto _14fa;
 	DEBUG_HELP_WRITER("Timers Table", glbTimersTable, 10, glbTimersCount);
-	//^2066:13C8
 	if (SUPPRESS_WRITER(glbTimersTable, _4976_3a9d, 10, glbTimersCount) != 0)
 		goto _14fa;
-	//^2066:13EA
 	_4976_5240 = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(dunHeader->nRecords[dbContainer] << 1, afDefault, 1024));
-	//^2066:140E
 	_4976_5246 = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(dunHeader->nRecords[dbCreature] << 1, afDefault, 1024)); // dbCreature or dbMissile ??? (check WRITE_MINION_ASSOC)
-	//^2066:1432
 	glbMinionsObjectIDTable = reinterpret_cast<ObjectID *>(ALLOC_MEMORY_RAM(200, afDefault, 1024));
-	//^2066:144B
 	glbMinionsAssocCount = _4976_3952 = _4976_3950 = 0;
-	//^2066:1456
 	_4976_5258 = 0;
-	//^2066:1462
 	for (bp0e = 0; bp0e < cd.pi.glbChampionsCount; bp0e++) {
-		//^2066:1469
 		ObjectID *bp04 = glbChampionSquad[bp0e].inventory;
-		//^2066:147A
 		for (i16 bp12 = 0; bp12 < 30; bp12++) {
-			//^2066:1481
 			if (WRITE_RECORD_CHECKCODE(*(bp04++), 0, 0) != 0)
 				goto _14fa;
-			//^2066:149A
 		}
-		//^2066:14A3
 	}
 	DEBUG_HELP_WRITER("Leader Hand Object Ref", &cd.pi.glbLeaderHandPossession.object, 2, 1);
-	//^2066:14AF
 	if (WRITE_RECORD_CHECKCODE(cd.pi.glbLeaderHandPossession.object, 0, 0) != 0)
 		goto _14fa;
-	//^2066:14C3
 	if (STORE_EXTRA_DUNGEON_DATA() == 0)
 		goto _14fa;
-	//^2066:14CA
 	if (WRITE_MINION_ASSOC() != 0)
 		goto _14fa;
-	//^2066:14D2
 	if (SUPPRESS_FLUSH() != 0)
 		goto _14fa;
-	//^2066:14DA
 	CLOSE_FILE(glbDataFileHandle);
-	//^2066:14E4
 	_4976_5bf6 = 1;
-	//^2066:14EA
 	_4976_523c = glbGameTick;
-	//^2066:14F8
 	goto _1523;
 
-	//^2066:14FA
 _14fa:
 	CLOSE_FILE(glbDataFileHandle);
-	//^2066:1504
 	DELETE_FILE(bp08);
-	//^2066:1511
-	_0aaf_0067(_0aaf_02f8_DIALOG_BOX(0x00, 0x1b));
+	DIALOG_BOX_0aaf_0067(_0aaf_02f8_DIALOG_BOX(DIALOGBOX_x00_GENERAL_ISSUE, DBOX_ISSUE__SUBMESSAGE_x1B_UNABLE_TO_SAVE));
 
 _1523:
-	//^2066:1523
 	if (glbMinionsObjectIDTable != NULL) {
-		//^2066:152C
 		DEALLOC_UPPER_MEMORY(200);
 	}
-	//^2066:1538
 	if (_4976_5246 != NULL) {
-		//^2066:1541
 		DEALLOC_UPPER_MEMORY(U32(dunHeader->nRecords[dbCreature]) << 1);
 	}
-	//^2066:1558
 	if (_4976_5240 != NULL) {
-		//^2066:1561
 		DEALLOC_UPPER_MEMORY(U32(dunHeader->nRecords[dbContainer] << 1));
 	}
-	//^2066:1578
 	FILL_ORPHAN_CAII();
-	//^2066:157D
 	if (bp18 != 0) {
-		//^2066:1583
 		END_GAME(0);
 	}
-	//^2066:158B
-	_2066_03e0(0);
-	//^2066:1592
+	DIALOG_BOX_2066_03e0(0);
 	_38c8_0060();
-	//^2066:1597
 	FIRE_SHOW_MOUSE_CURSOR();
-	//^2066:159C
 	return;
 }
 
@@ -8492,18 +8343,15 @@ i16 SkWinCore::CALC_PLAYER_WALK_DELAY(U16 player)
 }
 
 //^12B4:0953
-X16 SkWinCore::_12b4_0953(Creature *rec, U16 ww)
+X16 SkWinCore::CREATURE_12b4_0953(Creature* xCreature, U16 ww)
 {
-	//^12B4:0953
 	ENTER(0);
-	//^12B4:0958
-	U16 si = (rec->b15_0_1() +ww) & 3;
+	U16 si = (xCreature->b15_0_1() + ww) & 3;
 	if (si == 1 || si == 3) {
-		i16 di = QUERY_CREATURE_5x5_POS(rec, si);
+		i16 di = QUERY_CREATURE_5x5_POS(xCreature, si);
 		if (((di / 5) -2) != 0)
 			return 1;
 	}
-	//^12B4:0998
 	return 0;
 }
 
@@ -8526,7 +8374,7 @@ X16 SkWinCore::_12b4_0881_CHECK_MOVE_BETWEEN_TILES(X16 aa, U16 oldTile, U16 newT
 		*rl = GET_CREATURE_AT(xx, yy);
 		if (*rl != OBJECT_NULL) {
 			if ((QUERY_CREATURE_AI_SPEC_FLAGS(*rl) & 0x8000) == 0) {
-				if (_12b4_0953(GET_ADDRESS_OF_RECORD4(*rl), cd.pi.glbPlayerDir) != 0)
+				if (CREATURE_12b4_0953(GET_ADDRESS_OF_RECORD4(*rl), cd.pi.glbPlayerDir) != 0)
 					return C5_CHECKMOVE_STOP;
 				return C4_CHECKMOVE_TILE_BLOCKED_CREATURE;
 			}
@@ -8730,11 +8578,8 @@ U16 SkWinCore::_476d_04af(U16 xx) { // TODO: Unr
 //^1031:06A5
 void SkWinCore::_1031_06a5()
 {
-	//^1031:06A5
 	ENTER(0);
-	//^1031:06A8
 	_1031_0541(_4976_4ea8);
-	//^1031:06B1
 	return;
 }
 
@@ -8790,24 +8635,18 @@ void SkWinCore::_2fcf_0b8b(U16 xx, U16 yy, U16 zz)
 //^443C:06AF
 void SkWinCore::_443c_06af(sk0cea *ref)
 {
-	//^443C:06AF
+	// No code ?
 	ENTER(0);
-	//^443C:06B2
 	return;
 }
 
 //^1031:096A
 void SkWinCore::_1031_096a()
 {
-	//^1031:096A
 	ENTER(0);
-	//^1031:096E
 	for (i16 si = 0; si < 18; si++) {
-		//^1031:0972
 		_443c_06af(&_4976_0ce0[1 +si]);
-		//^1031:0985
 	}
-	//^1031:098B
 	return;
 }
 
@@ -12083,10 +11922,7 @@ void SkWinCore::CHANGE_PLAYER_POS(U16 squadPos)
 //^38C8:0002
 void SkWinCore::_38c8_0002()
 {
-	//^38C8:0002
-	//^38C8:0005
 	if (_4976_5bec == 0 && cd.gg.glbGameHasEnded == 0) {
-		//^38C8:0013
 		_4976_5bec = 1;
 		if (_4976_5dbc != 0) {
 			CHAMPION_SQUAD_RECOMPUTE_POSITION();
@@ -12147,140 +11983,10 @@ U8 *SkWinCore::QUERY_GDAT_TEXT(U8 cls1, U8 cls2, U8 cls4, U8 *buff)
 	return buff;
 }
 
-//^0AAF:0067
-U8 SkWinCore::_0aaf_0067(U8 cls2)
-{
-	//^0AAF:0067
-	U16 di = 0;
-	U16 si = 0xffff;
-	U16 bp08 = 0;
-	//^0AAF:0077
-	U16 bp38[21];
-	ZERO_MEMORY(&bp38[1], 2*20);
-	//^0AAF:0088
-	U8 bp5e[38];
-	for (U8 bp0d = 0; bp0d < 0x14; bp0d++) {
-		//^0AAF:008F
-		if (*QUERY_GDAT_TEXT(0x1a, cls2, bp0d, (U8 *)bp5e) != 0) {
-			//^0AAF:00B0
-			U16 bp0a = QUERY_GDAT_ENTRY_DATA_INDEX(0x1a, cls2, dtWordValue, bp0d);
-			//^0AAF:00C7
-			U8 *bp04 = (U8 *)&bp38[1 + di];
-			*bp04 = (U8)bp0a;
-			//^0AAF:00E2
-			if (*bp04 == 0) {
-				//^0AAF:00E6
-				*bp04 = bp0d;
-			}
-			//^0AAF:00EF
-			bp04[1] = (U8)(bp0a >> 8);
-			//^0AAF:00FC
-			if (bp04[1] != 0) {
-				//^0AAF:0100
-				si = bp04[1];
-				bp08 = bp04[0];
-			}
-			//^0AAF:0110
-			di++;
-		}
-		//^0AAF:0111
-	}
-	//^0AAF:011D
-	_4976_4bd2 = di;
-	//^0AAF:0121
-	if (si == 0xffff && di == 1) {
-		//^0AAF:012B
-		si = 1;
-	}
-	//^0AAF:012E
-	_1031_0675(4);
-	//^0AAF:0136
-	U16 bp06;
-	for (bp06 = 0; glbMouseVisibility > 0; bp06++) {
-		//^0AAF:013D
-		FIRE_SHOW_MOUSE_CURSOR();
-		//^0AAF:0142
-	}
-	//^0AAF:014C
-	_4976_4dfc = 0x00ff;
-
-	do {
-		MessageLoop(false);
-
-		//^0AAF:0152
-		MAIN_LOOP();
-		WAIT_SCREEN_REFRESH();
-		//^0AAF:015C
-		if (si != 0xffff) {
-			//^0AAF:0161
-			if (_476d_04ed_DOES_NOTHING(si) != 0) {
-				//^0AAF:016C
-				_1031_0781(bp08 + 0x00db);
-			}
-		}
-		if (_4976_4dfc == 0x00FF && IS_THERE_KEY_INPUT_2() != 0 && SPECIAL_UI_KEY_TRANSFORMATION() == 0x001C) {
-			_1031_0781(0x00DB);
-		}
-		//^0AAF:019D
-	} while (_4976_4dfc == 0x00FF);
-
-	//^0AAF:01A5
-	U8 bp0c = (U8)bp38[_4976_4dfc];
-	//^0AAF:01B8
-	while ((bp06--) != 0) {
-		//^0AAF:01BA
-		FIRE_HIDE_MOUSE_CURSOR();
-		//^0AAF:01BF
-	}
-	//^0AAF:01C9
-	_4976_022c = 1;
-	//^0AAF:01CF
-	_1031_06a5();
-	//^0AAF:01D4
-	return bp0c;
-}
-
-//^2066:03E0
-U16 SkWinCore::_2066_03e0(U16 xx)
-{
-	//^2066:03E0
-	U16 di = xx;
-	U8 bp01 = 0;
-	//^2066:03ED
-	if (_4976_499e != 0) {
-		//^2066:03F4
-		return 1;
-	}
-	//^2066:03F9
-	U16 si = 1;
-	//^2066:03FC
-	if (_476d_030a(1) == 0) {
-		//^2066:0408
-		if (di != 2)
-			return si;
-	}
-	//^2066:040D
-	_4976_52f4 = 1;
-	//^2066:0413
-	while (di != 0 || _476d_030a(1) != 0) {
-		//^2066:0415
-		_38c8_0002();
-		//^2066:041A
-		di = si = 0;
-		//^2066:0420
-		_0aaf_0067(_0aaf_02f8_DIALOG_BOX((glbFloppyDiskFlag != 0) ? ((glbGDatFloppyFlag != 0) ? (0x13) : (0x14)) : (0x07), bp01 = _476d_04e8(1)));
-		//^2066:0453
-		bp01 = 0x14;
-		//^2066:0457
-	}
-	//^2066:0467
-	return si;
-}
 
 //^2066:0002
 void SkWinCore::SUPPRESS_INIT()
 {
-	//^2066:0002
 	_4976_524e = _4976_5254 = 0;
 }
 
@@ -13831,7 +13537,7 @@ i16 SkWinCore::GAME_LOAD()
 	if (cd.mo.glbSpecialScreen != _MENU_SCREEN__RESUME_GAME_SELECT) {
 		//^2066:2DB4
 _2db4:
-		bp04 = !_2066_03e0(0);
+		bp04 = !DIALOG_BOX_2066_03e0(0);
 		//^2066:2DC6
 		if (LOAD_NEW_DUNGEON() == 0) {
 			//^2066:2DCE
@@ -13867,11 +13573,11 @@ _2db4:
 				_476d_04e8(2);
 			}
 			//^2066:2E1C
-			U16 di = _0aaf_0067(_0aaf_02f8_DIALOG_BOX(15, bp01));
+			U16 di = DIALOG_BOX_0aaf_0067(_0aaf_02f8_DIALOG_BOX(DIALOGBOX_x0F_LOAD_PANEL, bp01));
 			//^2066:2E32
 			if (di == 1) {
 				//^2066:2E37
-				_2066_03e0(0);
+				DIALOG_BOX_2066_03e0(0);
 				//^2066:2E3E
 				//^2066:32B2
 				di = -1;
@@ -13883,7 +13589,7 @@ _2db4:
 			//^2066:2E41
 			if (bp01 != 0) {
 				//^2066:2E47
-				_0aaf_0067(_0aaf_02f8_DIALOG_BOX(0, bp01));
+				DIALOG_BOX_0aaf_0067(_0aaf_02f8_DIALOG_BOX(DIALOGBOX_x00_GENERAL_ISSUE, bp01));
 			}
 		}
 		//^2066:2E5B
@@ -14105,7 +13811,7 @@ _31b8:		// we jump there from loading a dungeon from new game
 				//^2066:31E1
 				//^2066:31E3
 				//^2066:3227
-				_2066_03e0(0);
+				DIALOG_BOX_2066_03e0(0);
 			}
 			else {
 				//^2066:31E5
@@ -14116,11 +13822,11 @@ _31b8:		// we jump there from loading a dungeon from new game
 					FILE_RENAME(FORMAT_SKSTR(ptrSKSave_bak, NULL), FORMAT_SKSTR(ptrSKSave_dat, NULL));
 				}
 				//^2066:3225
-				_2066_03e0(1);
+				DIALOG_BOX_2066_03e0(1);
 			}
 
 			//^2066:322C
-			_0aaf_02f8_DIALOG_BOX(0x000E, 0x0000);
+			_0aaf_02f8_DIALOG_BOX(DIALOGBOX_x0E_LOADING_GAME, 0x0000);
 			//^2066:3237
 			_4976_4bd8 = 0x0001;
 			cd.pi.glbPlayerDefeated = 0x0000;
@@ -14275,16 +13981,16 @@ _31b8:		// we jump there from loading a dungeon from new game
 				if (bp04 != 0) {
 					WAIT_SCREEN_REFRESH();
 				}
-				_2066_03e0(0);
+				DIALOG_BOX_2066_03e0(0);
 			}
 			else {
 				_4976_5bf6 = 1;
 				if (bp08 != 0) {
 					FILE_RENAME(FORMAT_SKSTR(ptrSKSave_bak, NULL), FORMAT_SKSTR(ptrSKSave_dat, NULL));
 				}
-				_2066_03e0(1);
+				DIALOG_BOX_2066_03e0(1);
 			}
-			_0aaf_02f8_DIALOG_BOX(0x000E, 0x0000);
+			_0aaf_02f8_DIALOG_BOX(DIALOGBOX_x0E_LOADING_GAME, 0x0000);
 			_4976_4bd8 = 0x0001;
 			cd.pi.glbPlayerDefeated = 0x0000;
 			_2fcf_0b8b(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerMap);
@@ -14308,16 +14014,11 @@ _3262:
 	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
 	//LOG_FULL_DUNGEON_INFO();
 
-	//^2066:3272
-	_0aaf_0067(_0aaf_02f8_DIALOG_BOX((_4976_5bf2 == 0) ? 0 : ((glbFloppyDiskFlag != 0) ? ((glbGDatFloppyFlag != 0) ? 0x13 : 0x14) : (0x07)), 0x001F));
-	//^2066:32A6
+	DIALOG_BOX_0aaf_0067(_0aaf_02f8_DIALOG_BOX((_4976_5bf2 == 0) ? 0 : ((glbFloppyDiskFlag != 0) ? ((glbGDatFloppyFlag != 0) ? DIALOGBOX_x13_PUT_THE_DISK : DIALOGBOX_x14_PUT_THE_DISK_MULTI) : (DIALOGBOX_x07_PUT_THE_DISK_HASH)), 0x001F));
 	if (_4976_5bf2 == 0) {
-		//^2066:32AD
 		SK_PREPARE_EXIT();
 	}
-	//^2066:32B2
 	U16 di = -1;
-	//^2066:32B5
 	return di;
 }
 
@@ -15615,7 +15316,7 @@ _4173:
 			//^3E74:4380
 			WRITE_UI16(t2ptr(bp08),-2,bp30);
 			if (bp34 == 0) {
-				_2066_03e0(0);
+				DIALOG_BOX_2066_03e0(0);
 				GRAPHICS_DATA_OPEN();
 				bp34 = 1;
 			}
@@ -15809,13 +15510,13 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 	SkD((DLV_DBG_INIT, "LOAD_LOCALLEVEL_DYN: pCurrentTileMap :%08X\n", glbCurrentTileMap));
 	
 	SkD((DLV_DBG_INIT, "LOAD_LOCALLEVEL_DYN: MARK_DYN done\n"));
-	SkD((DLV_DBG_INIT, "LOAD_LOCALLEVEL_DYN: pGroundStack :%04X (#%04d) %08X\n", dunGroundStacks[*_4976_4c52], *_4976_4c52, &dunGroundStacks[*_4976_4c52]));
+	SkD((DLV_DBG_INIT, "LOAD_LOCALLEVEL_DYN: pGroundStack :%04X (#%04d) %08X\n", dunGroundStacks[*glbIndexOfTilesWithObjects], *glbIndexOfTilesWithObjects, &dunGroundStacks[*glbIndexOfTilesWithObjects]));
 
 	//^2676:03E1
 	_4976_52fc[_4976_5300 -1].MarkIncluded();
 	SkD((DLV_DBG_INIT, "LOAD_LOCALLEVEL_DYN: pCurrentTileMap :%08X\n", glbCurrentTileMap));
 	X8* pTile = *glbCurrentTileMap;	// bp08
-	OID_T* pObjRef = &dunGroundStacks[*_4976_4c52]; // U16 *bp10
+	OID_T* pObjRef = &dunGroundStacks[*glbIndexOfTilesWithObjects]; // U16 *bp10
 	i16 iTileX = 0; // bp26
 	i16 si; // si
 	for (; iTileX < glbCurrentMapWidth; iTileX++) {
@@ -15842,8 +15543,8 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 										break;
 									bp14[xActuator->ActuatorData()] = 1;
 									break;
-								case ACTUATOR_TYPE_CHAMPION_MIRROR: // SPX: Add for DM1 retrocompatibility / 0x7F: Activator, champion mirror
-								case ACTUATOR_TYPE_RESURECTOR: // 0x7E: Activator, resuscitation
+								case ACTUATOR_x7F_TYPE_CHAMPION_MIRROR: // SPX: Add for DM1 retrocompatibility / 0x7F: Activator, champion mirror
+								case ACTUATOR_x7E_TYPE_RESURECTOR: // 0x7E: Activator, resuscitation
 									MARK_DYN_LOAD((U8(xActuator->ActuatorData()) << 16) + 0x1600ffff); // Mark: Champions, xxx, all, all
 									break;
 								case ACTUATOR_FLOOR_TYPE__CROSS_SCENE: // 0x27: Cross scene
@@ -21089,7 +20790,7 @@ X16 SkWinCore::LOAD_MAPS_PROGRESS_BAR(X16 xx, i32 yy)
 			//^38C8:0360
 			_4976_4742 = bp04;
 			_4976_4746 = di;
-			_0aaf_0067(_0aaf_02f8_DIALOG_BOX(2, 0));
+			DIALOG_BOX_0aaf_0067(_0aaf_02f8_DIALOG_BOX(DIALOGBOX_x02_OUT_OF_MEM_LEVEL, 0));
 			SK_PREPARE_EXIT();
 		}
 	}
@@ -22576,7 +22277,6 @@ void SkWinCore::GAME_LOOP()
 		while (true)
 		{
 			LOAD_NEWMAP(U8(glbMapToLoad));
-			printf("MOVE_RECORD_TO\n");
 			MOVE_RECORD_TO(OBJECT_NULL, -1, 0, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
 			glbMapToLoad = 0xFFFF;
 _00a4:
@@ -22585,7 +22285,6 @@ _00a4:
 				continue;
 			break;
 		}
-		//printf("UPDATE_WEATHER\n");
 		UPDATE_WEATHER(0);
 		
 		SkD((DLV_DBG_RAIN, "Loop (Rain) >> lvl=%03d / strm=%03d / wet=%03d (r2:%d r3:%d mlt:%d) / tick=%d\n"
@@ -22641,26 +22340,20 @@ _00a4:
 			//printf("GAME_LOOP: IBMIO_USER_INPUT_CHECK\n"); getch();
 			IBMIO_USER_INPUT_CHECK();
 		}
-		//printf("UPDATES\n");
-		//printf("GAME_LOOP: updates\n"); getch();
-		//^13AE:015B
 		CHOOSE_HIGHLIGHT_ARROW_PANEL();
 		SOUND_482b_05bf(0);
 		PROCESS_PLAYERS_DAMAGE();
 		if (glbGlobalSpellEffects.AuraOfSpeed != 0)
-			//^13AE:0174
 			glbGlobalSpellEffects.AuraOfSpeed--;
 		/// SPX: glbGameTick is a general tick counter : each 16 or 64 then do update
 		if ((X16(glbGameTick) & ((cd.pi.glbIsPlayerSleeping != 0) ? 15 : 0x3f)) == 0)
 			UPDATE_CHAMPIONS_STATS();
-		//^13AE:0192
 		GLOBAL_UPDATE_UNKNOW1();
 		_2e62_0cfa(1);
 		if (cd.pi.glbPlayerDefeated != 0)
 			return;
 		glbGameTick++;
 		//ATLASSERT(ValidateMements());
-		//printf("DEALLOC\n");
 		PROCESS_QUEUED_DEALLOC_RECORD();
 		//^13AE:01B3
 		SkD((DLV_SYS,"SYS: Tick increased to %u ------------------------------\n", (Bitu)glbGameTick));
@@ -22714,22 +22407,16 @@ _01f7:
 					FIRE_SHOW_MOUSE_CURSOR();
 				}
 			}
-			//^13AE:025D
-			//printf("MAIN LOOP\n");
 			MAIN_LOOP();
-			//^13AE:0262
 
 			MessageLoop(false); // in game
 
 		} while (glbTickStepReached == 0 || _4976_4c02 == 0);
-		//printf("END OF LOOP\n");
-		//^13AE:0270
 		iLocalMap = glbMapToLoad;
 		if (iLocalMap != 0xFFFF) {
 			iLocalMap = glbCurrentMapIndex;
 			CHANGE_CURRENT_MAP_TO(glbMapToLoad);
 		}
-		//^13AE:0288
 		_2759_12e6();
 		if (iLocalMap != 0xFFFF) {
 			CHANGE_CURRENT_MAP_TO(iLocalMap);
@@ -22738,7 +22425,6 @@ _01f7:
 		REQUEST_PLAY_MUSIC_FROM_MAP(cd.pi.glbPlayerMap);
 		continue;
 	}
-	//^13AE:029F
 	return;
 }
 

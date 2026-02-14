@@ -5,6 +5,7 @@
 // These could also be declared as enums or constants
 // This DEFINES.H is to be used with both V4 and V5 codes.
 
+/*
 #define _OPTION_DUNGEON_NO_SPECIFIC_		0	// to be used with original DATA folder
 #define _OPTION_DUNGEON_DM1_KID_			1	// DM1 engine
 #define _OPTION_DUNGEON_DM1_DM_				2
@@ -21,6 +22,7 @@
 #define _OPTION_DUNGEON_BWY_BW_				12	// Bloodwych Engine
 #define _OPTION_DUNGEON_EOB_EOB1_			13	// Eye of the Beholder Engine
 #define _OPTION_DUNGEON_DMX_				14	// DM Xtended
+*/
 
 #define _OPTION_CLI_TITLE_NEW_GAME				1
 #define _OPTION_CLI_TITLE_RESUME_SCREEN			2
@@ -33,6 +35,91 @@
 #define _GDAT_LANG_FRENCH_					0x40
 #define _GDAT_LANG_SPANISH_					0x50	// SPX: Additional value
 #define _GDAT_LANG_ITALIAN_					0x60	// SPX: Additional value
+
+
+//------------------------------------------------------------------------------
+//	DATABASE / CATEGORIES
+//------------------------------------------------------------------------------
+
+// DB size
+#define DB_SIZE_DOOR					0x04
+#define DB_SIZE_TELEPORTER				0x06
+#define DB_SIZE_TEXT					0x04
+	#define DB_SIZE_SIMPLE_ACTUATOR			0x04
+#define DB_SIZE_ACTUATOR				0x08
+#define DB_SIZE_CREATURE				0x10
+#define DB_SIZE_WEAPON					0x04
+#define DB_SIZE_CLOTHING				0x04
+#define DB_SIZE_SCROLL					0x04
+#define DB_SIZE_POTION					0x04
+#define DB_SIZE_CONTAINER				0x08
+#define DB_SIZE_MISC_ITEM				0x04
+#define DB_SIZE_UNUSED					0x00
+#define DB_SIZE_MISSILE					0x08
+#define DB_SIZE_CLOUD					0x04
+
+#define DB_CATEGORY_DOOR				0x00
+#define DB_CATEGORY_TELEPORTER			0x01
+#define DB_CATEGORY_TEXT				0x02
+#define DB_CATEGORY_SIMPLE_ACTUATOR		0x02
+#define DB_CATEGORY_ACTUATOR			0x03
+#define DB_CATEGORY_CREATURE			0x04
+#define DB_CATEGORY_WEAPON				0x05
+#define DB_CATEGORY_CLOTHING			0x06
+#define DB_CATEGORY_SCROLL				0x07
+#define DB_CATEGORY_POTION				0x08
+#define DB_CATEGORY_CONTAINER			0x09
+#define DB_CATEGORY_MISC_ITEM			0x0A
+#define DB_CATEGORY_MISSILE				0x0E
+#define DB_CATEGORY_CLOUD				0x0F
+
+
+//------------------------------------------------------------------------------
+//	RESOURCES CATEGORIES IN GRAPHICS.DAT
+//------------------------------------------------------------------------------
+
+#define GDAT_CATEGORY_x00_TECHDATA				0x00
+#define GDAT_CATEGORY_x01_INTERFACE_GENERAL		0x01
+#define GDAT_CATEGORY_x02_SPELL_DEF				0x02	// SPX: new custom category
+#define GDAT_CATEGORY_x03_MESSAGES				0x03
+#define GDAT_CATEGORY_x04_MUSICS				0x04
+#define GDAT_CATEGORY_x05_TITLE					0x05
+#define GDAT_CATEGORY_x06_CREDITS				0x06
+#define GDAT_CATEGORY_x07_INTERFACE_CHARSHEET	0x07
+#define GDAT_CATEGORY_x08_GRAPHICSSET			0x08
+#define GDAT_CATEGORY_x09_WALL_GFX				0x09
+#define GDAT_CATEGORY_x0A_FLOOR_GFX				0x0A
+#define GDAT_CATEGORY_x0B_DOOR_GFX				0x0B
+#define GDAT_CATEGORY_x0C_DOOR_BUTTONS			0x0C
+#define GDAT_CATEGORY_x0D_SPELL_MISSILES		0x0D
+#define GDAT_CATEGORY_x0E_DOORS					0x0E
+#define GDAT_CATEGORY_x0F_CREATURES				0x0F
+#define GDAT_CATEGORY_x10_WEAPONS				0x10
+#define GDAT_CATEGORY_x11_CLOTHES				0x11
+#define GDAT_CATEGORY_x12_SCROLLS				0x12
+#define GDAT_CATEGORY_x13_POTIONS				0x13
+#define GDAT_CATEGORY_x14_CONTAINERS			0x14
+	#define GDAT_CATEGORY_x14_MAGICAL_MAPS			0x14
+#define GDAT_CATEGORY_x15_MISCELLANEOUS			0x15
+#define GDAT_CATEGORY_x16_CHAMPIONS				0x16
+#define GDAT_CATEGORY_x17_ENVIRONMENT			0x17
+#define GDAT_CATEGORY_x18_TELEPORTERS			0x18
+#define GDAT_CATEGORY_x19_CREATURE_AI			0x19	// SPX: new custom category
+#define GDAT_CATEGORY_x1A_DIALOG_BOXES			0x1A
+#define GDAT_CATEGORY_x1B_UNUSED				0x1B
+#define GDAT_CATEGORY_x1C_JAPANESE_FONT			0x1C
+
+	#define GDAT_CATEGORY_MAX					0x1C
+
+// Some SubCategories -- mainly for interfaces
+#define GDAT_INTERFACE_SUBCAT_BASE_DATA					0x00
+#define GDAT_INTERFACE_SUBCAT_CHAMPION_TOPSLAB			0x02
+#define GDAT_INTERFACE_SUBCAT_MOVE_ARROWS				0x03
+#define GDAT_INTERFACE_SUBCAT_CHAMPION					0x04
+#define GDAT_INTERFACE_SUBCAT_SPELLMENU					0x05
+#define GDAT_INTERFACE_SUBCAT_CHAMPION_FACING			0x06
+#define GDAT_INTERFACE_SUBCAT_CHAMPION_AURA				0x07
+
 
 //------------------------------------------------------------------------------
 // SCRIPT EVENTS (expansion)
@@ -418,89 +505,6 @@ enum SkillLevel {
 #define SOUND_CREATURE_DEATH			0x11
 #define SOUND_CREATURE_ATTACK_2			0x12	// Thorn Demon
 
-
-//------------------------------------------------------------------------------
-//	DATABASE / CATEGORIES
-//------------------------------------------------------------------------------
-
-// DB size
-#define DB_SIZE_DOOR					0x04
-#define DB_SIZE_TELEPORTER				0x06
-#define DB_SIZE_TEXT					0x04
-	#define DB_SIZE_SIMPLE_ACTUATOR			0x04
-#define DB_SIZE_ACTUATOR				0x08
-#define DB_SIZE_CREATURE				0x10
-#define DB_SIZE_WEAPON					0x04
-#define DB_SIZE_CLOTHING				0x04
-#define DB_SIZE_SCROLL					0x04
-#define DB_SIZE_POTION					0x04
-#define DB_SIZE_CONTAINER				0x08
-#define DB_SIZE_MISC_ITEM				0x04
-#define DB_SIZE_UNUSED					0x00
-#define DB_SIZE_MISSILE					0x08
-#define DB_SIZE_CLOUD					0x04
-
-#define DB_CATEGORY_DOOR				0x00
-#define DB_CATEGORY_TELEPORTER			0x01
-#define DB_CATEGORY_TEXT				0x02
-#define DB_CATEGORY_SIMPLE_ACTUATOR		0x02
-#define DB_CATEGORY_ACTUATOR			0x03
-#define DB_CATEGORY_CREATURE			0x04
-#define DB_CATEGORY_WEAPON				0x05
-#define DB_CATEGORY_CLOTHING			0x06
-#define DB_CATEGORY_SCROLL				0x07
-#define DB_CATEGORY_POTION				0x08
-#define DB_CATEGORY_CONTAINER			0x09
-#define DB_CATEGORY_MISC_ITEM			0x0A
-#define DB_CATEGORY_MISSILE				0x0E
-#define DB_CATEGORY_CLOUD				0x0F
-
-
-//------------------------------------------------------------------------------
-//	RESOURCES CATEGORIES IN GRAPHICS.DAT
-//------------------------------------------------------------------------------
-
-#define GDAT_CATEGORY_x00_TECHDATA				0x00
-#define GDAT_CATEGORY_x01_INTERFACE_GENERAL		0x01
-#define GDAT_CATEGORY_x02_SPELL_DEF				0x02	// SPX: new custom category
-#define GDAT_CATEGORY_x03_MESSAGES				0x03
-#define GDAT_CATEGORY_x04_MUSICS				0x04
-#define GDAT_CATEGORY_x05_TITLE					0x05
-#define GDAT_CATEGORY_x06_CREDITS				0x06
-#define GDAT_CATEGORY_x07_INTERFACE_CHARSHEET	0x07
-#define GDAT_CATEGORY_x08_GRAPHICSSET			0x08
-#define GDAT_CATEGORY_x09_WALL_GFX				0x09
-#define GDAT_CATEGORY_x0A_FLOOR_GFX				0x0A
-#define GDAT_CATEGORY_x0B_DOOR_GFX				0x0B
-#define GDAT_CATEGORY_x0C_DOOR_BUTTONS			0x0C
-#define GDAT_CATEGORY_x0D_SPELL_MISSILES		0x0D
-#define GDAT_CATEGORY_x0E_DOORS					0x0E
-#define GDAT_CATEGORY_x0F_CREATURES				0x0F
-#define GDAT_CATEGORY_x10_WEAPONS				0x10
-#define GDAT_CATEGORY_x11_CLOTHES				0x11
-#define GDAT_CATEGORY_x12_SCROLLS				0x12
-#define GDAT_CATEGORY_x13_POTIONS				0x13
-#define GDAT_CATEGORY_x14_CONTAINERS			0x14
-	#define GDAT_CATEGORY_x14_MAGICAL_MAPS			0x14
-#define GDAT_CATEGORY_x15_MISCELLANEOUS			0x15
-#define GDAT_CATEGORY_x16_CHAMPIONS				0x16
-#define GDAT_CATEGORY_x17_ENVIRONMENT			0x17
-#define GDAT_CATEGORY_x18_TELEPORTERS			0x18
-#define GDAT_CATEGORY_x19_CREATURE_AI			0x19	// SPX: new custom category
-#define GDAT_CATEGORY_x1A_DIALOG_BOXES			0x1A
-#define GDAT_CATEGORY_x1B_UNUSED				0x1B
-#define GDAT_CATEGORY_x1C_JAPANESE_FONT			0x1C
-
-	#define GDAT_CATEGORY_MAX					0x1C
-
-// Some SubCategories -- mainly for interfaces
-#define GDAT_INTERFACE_SUBCAT_BASE_DATA					0x00
-#define GDAT_INTERFACE_SUBCAT_CHAMPION_TOPSLAB			0x02
-#define GDAT_INTERFACE_SUBCAT_MOVE_ARROWS				0x03
-#define GDAT_INTERFACE_SUBCAT_CHAMPION					0x04
-#define GDAT_INTERFACE_SUBCAT_SPELLMENU					0x05
-#define GDAT_INTERFACE_SUBCAT_CHAMPION_FACING			0x06
-#define GDAT_INTERFACE_SUBCAT_CHAMPION_AURA				0x07
 
 //------------------------------------------------------------------------------
 //	INTERFACE / MESSAGE / CHARACTERS
@@ -1022,22 +1026,22 @@ enum SkillLevel {
 #define TIMER_ACTOR__02			2
 #define TIMER_ACTOR__03			3
 
-#define ACTMSG_OPEN_SET			0
-#define ACTMSG_CLOSE_CLEAR		1
-#define ACTMSG_TOGGLE			2
+#define C00_ACTMSG_OPEN_SET			0
+#define C01_ACTMSG_CLOSE_CLEAR		1
+#define C02_ACTMSG_TOGGLE			2
 
-#define DOORACTION_CLOSING		0
-#define DOORACTION_OPENING		1
+#define C0_DOORACTION_CLOSING		0
+#define C1_DOORACTION_OPENING		1
 
-#define ACTEFFECT_STEP_ON__OPEN_SET		0
-#define ACTEFFECT_STEP_ON__CLOSE_CLEAR	1
-#define ACTEFFECT_STEP_ON__TOGGLE		2
-#define ACTEFFECT_STEP_CONSTANT__OPEN	3	// STEP ON => OPEN / STEP OUT => CLOSE
+#define C00_ACTEFFECT_STEP_ON__OPEN_SET		0
+#define C01_ACTEFFECT_STEP_ON__CLOSE_CLEAR	1
+#define C02_ACTEFFECT_STEP_ON__TOGGLE		2
+#define C03_ACTEFFECT_STEP_CONSTANT__OPEN	3	// STEP ON => OPEN / STEP OUT => CLOSE
 
-#define ACTEFFECT_STEP_CLOSE__OPEN_SET		4
-#define ACTEFFECT_STEP_CLOSE__CLOSE_CLEAR	5
-#define ACTEFFECT_STEP_CLOSE__TOGGLE		6
-#define ACTEFFECT_STEP_CONSTANT__CLOSE		7	// STEP OUT => OPEN / STEP ON => CLOSE
+#define C04_ACTEFFECT_STEP_CLOSE__OPEN_SET		4
+#define C05_ACTEFFECT_STEP_CLOSE__CLOSE_CLEAR	5
+#define C06_ACTEFFECT_STEP_CLOSE__TOGGLE		6
+#define C07_ACTEFFECT_STEP_CONSTANT__CLOSE		7	// STEP OUT => OPEN / STEP ON => CLOSE
 
 
 //------------------------------------------------------------------------------
@@ -1426,8 +1430,8 @@ enum SkillLevel {
 
 
 
-#define ACTUATOR_TYPE_RESURECTOR						0x7E	// 126 - DM2 Champion Cell
-#define ACTUATOR_TYPE_CHAMPION_MIRROR					0x7F	// 127 - DM1 Champion Mirror
+#define ACTUATOR_x7E_TYPE_RESURECTOR						0x7E	// 126 - DM2 Champion Cell
+#define ACTUATOR_x7F_TYPE_CHAMPION_MIRROR					0x7F	// 127 - DM1 Champion Mirror
 
 
 #define ACTUATOR_FLOOR_TYPE__EVERYTHING					0x01	// 01
@@ -1575,6 +1579,25 @@ typedef enum
 //	Save
 //	Quit - Resume
 
+#define DIALOGBOX_x00_GENERAL_ISSUE			0x00
+
+#define DBOX_ISSUE__SUBMESSAGE_x1B_UNABLE_TO_SAVE		0x1B
+
+#define DIALOGBOX_x02_OUT_OF_MEM_LEVEL		0x02
+
+#define DIALOGBOX_x06_GAME_LOADED			0x06
+#define DIALOGBOX_x07_PUT_THE_DISK_HASH		0x07
+#define DIALOGBOX_x0B_SAVE_GAME_FLOPPY		0x0B
+#define DIALOGBOX_x0C_QUIT_GAME_NOT_SAVED	0x0C
+#define DIALOGBOX_x0D_SAVING_GAME			0x0D
+#define DIALOGBOX_x0E_LOADING_GAME			0x0E
+#define DIALOGBOX_x0F_LOAD_PANEL			0x0F
+#define DIALOGBOX_x10_RESTART_GAME			0x10
+#define DIALOGBOX_x12_SAVE_GAME				0x12
+#define DIALOGBOX_x13_PUT_THE_DISK			0x13
+#define DIALOGBOX_x14_PUT_THE_DISK_MULTI	0x14
+
+#define DIALOGBOX_x59						0x59
 
 // 0x0E - Loading game...
 //	+ progression bar

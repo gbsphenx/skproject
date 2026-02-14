@@ -221,7 +221,7 @@ void SkWinCore::CHANGE_CURRENT_MAP_TO(U16 new_map)
 	glbCurrentMapWidth = dunMapLocalHeader->Column();
 	glbCurrentMapHeight = dunMapLocalHeader->Row();
 	//SkD((DLV_DBG_INIT, "CHANGE_CURRENT_MAP_TO: pCurrentTileMap :%08X\n", glbCurrentTileMap));
-	_4976_4c52 = &dunMapTilesObjectIndexPerColumn[dunMapColumnsSumArray[iLocalMap]];
+	glbIndexOfTilesWithObjects = &dunMapTilesObjectIndexPerColumn[dunMapColumnsSumArray[iLocalMap]];
 	if (_4976_4c08 != 0) {
 		if (iLocalMap == glbMap_4976_4c12) {
 			glbSomePosX_4c2e = glbSomePosX_4976_4c04;
@@ -2074,7 +2074,7 @@ checkactuator:
 			//printf("Clicking on wall Actuator %04X (dir=%d) ACT=%02d (1=%d DIS=%d) action=%04x (R=%d) data=%04x status=%d toggler=%d\n", bp0e, bp10, bp16, iOnce, iDisabled, bp1a, iRevert, bp18, iStatus, iToggler);
 			//^2FCF:1C04
 			//if (glbChampionLeader == -1 && bp16 != 0x7e)
-			if (glbChampionLeader == -1 && (bp16 != ACTUATOR_TYPE_RESURECTOR && bp16 != ACTUATOR_TYPE_CHAMPION_MIRROR)) // SPX : Add 0x7F
+			if (glbChampionLeader == -1 && (bp16 != ACTUATOR_x7E_TYPE_RESURECTOR && bp16 != ACTUATOR_x7F_TYPE_CHAMPION_MIRROR)) // SPX : Add 0x7F
 				//^2FCF:1C11
 				continue;
 			//^2FCF:1C14
@@ -2355,7 +2355,7 @@ _1d4d:
 					//^2FCF:1E67
 					break;
 
-				case ACTUATOR_TYPE_RESURECTOR: // 0x7E -> 'Activator, resuscitation'
+				case ACTUATOR_x7E_TYPE_RESURECTOR: // 0x7E -> 'Activator, resuscitation'
 					//^2FCF:1E6A
 					if (bp04->OnceOnlyActuator() == 0 || ((cd.pi.glbPlayerDir + 2) & 3) != dir)
 						//^2FCF:1E8B
@@ -2370,7 +2370,7 @@ _1d4d:
 					break;
 
 				// SPX: addition for DM1 retrocompatibility
-				case ACTUATOR_TYPE_CHAMPION_MIRROR: // 0x7F -> DM1 'Activator, resuscitation'
+				case ACTUATOR_x7F_TYPE_CHAMPION_MIRROR: // 0x7F -> DM1 'Activator, resuscitation'
 
 					if (bp04->ActiveStatus() == 1 || ((cd.pi.glbPlayerDir +2) & 3) != dir) // for DM1, just take condition of direction
 						break;
@@ -2704,26 +2704,20 @@ _22ca:
 //^2066:0B96
 U16 SkWinCore::STORE_EXTRA_DUNGEON_DATA()
 {
-	//^2066:0B96
 	_4976_5258 = 0;
 	if (_2066_0b44_WRITE_TIMERS() != 0)
 		return 0;
 	U16 bp10 = glbCurrentMapIndex;
 	U16 currentMap = 0;
-	//^2066:0BBB
 	while (currentMap < dunHeader->nMaps) {
 		CHANGE_CURRENT_MAP_TO(currentMap);
 		Bit8u *bp04 = *glbCurrentTileMap;
-		OID_T *bp08 = &dunGroundStacks[*_4976_4c52];	// U16 *bp08
+		OID_T *bp08 = &dunGroundStacks[*glbIndexOfTilesWithObjects];	// U16 *bp08
 		U16 xpos = 0; // word [bp-0C]
-        //^2066:0BF4
 		while (!(xpos >= glbCurrentMapWidth)) {
-			//^2066:0BF7
 			U16 ypos = 0; // di
-			//^2066:0BF9
 			while (!(ypos >= glbCurrentMapHeight)) {
 				Bit8u tileValue = *bp04; // [bp-0D]
-				//^2066:0BFC
 				bp04++;
 				U16 skipSaveRecord = 0; // word [bp-18]
 				Bit8u bp0e;
@@ -2733,70 +2727,50 @@ U16 SkWinCore::STORE_EXTRA_DUNGEON_DATA()
 					case ttFloor:
 					case ttStairs:
 					case ttMapExit:
-						//^2066:0C22
 						bp0e = 0x00;
 						break;
 					case ttPit:
-						//^2066:0C28
 						bp0e = 0x08;
 						break;
 					case ttDoor:
-						//^2066:0C2E
 						bp0e = 0x07;
 						break;
 					case ttTeleporter:
-						//^2066:0C34
 						if (GET_TELEPORTER_DETAIL(&bp16, (Bit8u)xpos, (Bit8u)ypos) != 0) {
-							//^2066:0C49
 							bp0e = 0x00;
 							if (bp16.target_z() >= currentMap)
 								break;
-							//^2066:0C56
 							skipSaveRecord = 0x01;
 							break;
 						}
-						//^2066:0C5D
 						bp0e = 0x08;
 						break;
 					case ttTrickWall:
-						//^2066:0C63
 						bp0e = 0x04;
 						break;
 				}
-				//^2066:0C67
 				if (!(bp0e == 0)) {
-					//^2066:0C6D
 					if (SUPPRESS_WRITER(&tileValue, &bp0e, 1, 1) != 0)
 						return 0;
 				}
-				//^2066:0C88
 				U16 tileRecord; // [bp-0A]
 				if ((tileValue & 0x10) != 0) {
-					//^2066:0C8E
 					tileRecord = *bp08;
 					bp08++;
 				}
 				else {
-					//^2066:0C9D
 					tileRecord = 0xFFFE;
 				}
-				//^2066:0CA2
 				if (skipSaveRecord == 0) {
 					if (WRITE_RECORD_CHECKCODE(tileRecord, 1, 1) != 0)
 						return 0;
 				}
-				//^2066:0CBA
 				ypos++;
-				//^2066:0CBB
 			}
-			//^2066:0CC4
 			xpos++;
-			//^2066:0CC7
 		}
 		currentMap++;
-		//^2066:0CD4
 	}
-	//^2066:0CE5
 	CHANGE_CURRENT_MAP_TO(bp10);
 	return 1;
 }
@@ -3053,13 +3027,13 @@ void SkWinCore::__INIT_GAME_38c8_03ad()
 	_4976_4bd8 = 0;
 	if (cd.mo.glbSpecialScreen == _MENU_SCREEN__RESUME_GAME_SELECT) {
 		FIRE_FILL_SCREEN_RECT(2, 0);
-		_0aaf_0067(_0aaf_02f8_DIALOG_BOX(6, 0));
+		DIALOG_BOX_0aaf_0067(_0aaf_02f8_DIALOG_BOX(DIALOGBOX_x06_GAME_LOADED, 0));
 		U16 iGDatFlag = glbGDatOpenCloseFlag;
 		if (iGDatFlag != 0) {
 			glbGDatOpenCloseFlag = 1;
 			GRAPHICS_DATA_CLOSE();
 		}
-		_2066_03e0(0);
+		DIALOG_BOX_2066_03e0(0);
 		if (iGDatFlag != 0) {
 			GRAPHICS_DATA_OPEN();
 			glbGDatOpenCloseFlag = iGDatFlag;
@@ -3096,7 +3070,7 @@ void SkWinCore::END_GAME(U16 xx)
 		SLEEP_SEVERAL_TIME(240);
 	}
 	//^101B:0057
-	_2066_03e0(0);
+	DIALOG_BOX_2066_03e0(0);
 	//^101B:005F
 	cd.gg.glbGameHasEnded = 1;
 #if DM2_EXTENDED_MODE == 1
@@ -3109,7 +3083,7 @@ void SkWinCore::END_GAME(U16 xx)
 		//^101B:0076
 		if (_4976_5bf6 != 0) {
 			//^101B:007D
-			_4976_5bf2 = (_0aaf_0067(_0aaf_02f8_DIALOG_BOX(16, 0)) == 0) ? 1 : 0;
+			_4976_5bf2 = (DIALOG_BOX_0aaf_0067(_0aaf_02f8_DIALOG_BOX(DIALOGBOX_x10_RESTART_GAME, 0)) == 0) ? 1 : 0;
 			//^101B:009D
 			if (_4976_5bf2 != 0) {
 				//^101B:00A1

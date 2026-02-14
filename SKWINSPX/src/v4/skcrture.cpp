@@ -1735,7 +1735,7 @@ void SkWinCore::ALLOC_CAII_TO_CREATURE(ObjectID rl, i16 xx, i16 yy)
 			if (pCreatureData->CreatureIndex() < 0)
 				goto _0ea0;
 		}
-		for (U16 di = _4976_1a68; _4976_1a68 >= di; ) {
+		for (U16 di = glbCreature_4976_1a68; glbCreature_4976_1a68 >= di; ) {
 			if (RECYCLE_A_RECORD_FROM_THE_WORLD(dbCreature, 0xFF) == OBJECT_NULL) {
 				RAISE_SYSERR(SYSTEM_ERROR__CREATURE_ASSOC_FULL);
 			}
@@ -1743,7 +1743,7 @@ void SkWinCore::ALLOC_CAII_TO_CREATURE(ObjectID rl, i16 xx, i16 yy)
 	} while (true);
 _0ea0:
 	xCreature->b15_2_2(U8(si));
-	_4976_1a68++;
+	glbCreature_4976_1a68++;
 	ZERO_MEMORY(pCreatureData, sizeof(CreatureInfoData));
 	pCreatureData->CreatureIndex(rl.DBIndex());
 	xCreature->iID = U8(bp0e);
@@ -2282,61 +2282,64 @@ Bit16u SkWinCore::GET_CREATURE_WEIGHT(ObjectID recordLink)
 	return QUERY_CREATURE_AI_SPEC_FROM_RECORD(recordLink)->Weight;
 }
 
+//^1C9A:3BAB
+// SPX: _1c9a_3bab renamed CREATURE_LOOP_1c9a_3bab
+void SkWinCore::CREATURE_LOOP_1c9a_3bab()
+{
+	ENTER(0);
+	for (U16 si = 0; glbCreature_4976_1a68 > 0; si++) {
+		if (glbTabCreaturesInfo[si].CreatureIndex() >= 0) {
+			CREATURE_1c9a_0fcb(si);
+		}
+	}
+	return;
+}
+
+
 //^1C9A:0FCB
 // TODO : release creature ?
-void SkWinCore::_1c9a_0fcb(Bit16u xx)
+// _1c9a_0fcb renamed CREATURE_1c9a_0fcb
+void SkWinCore::CREATURE_1c9a_0fcb(U16 iCreatureNo)
 {
-	//^1C9A:0FCB
-	//^1C9A:0FD1
-	Bit16u di = xx;
-	//^1C9A:0FD4
-	if (di <= glbCreaturesCount) {
-		//^1C9A:0FDA
-		CreatureInfoData *bp04 = &glbTabCreaturesInfo[di];
-		//^1C9A:1004
-		ObjectID si(0, dbCreature, bp04->CreatureIndex());
-		//^1C9A:100F
-		Creature *bp08 = GET_ADDRESS_OF_RECORD(si)->castToCreature();
-		//^1C9A:101C
-		RELEASE_CREATURE_TIMER(si);
-		//^1C9A:1022
-		_4976_1a68--;
-		//^1C9A:1026
-		bp08->SetInternalID(0xFF);
-		bp04->CreatureIndex(-1);
+	U16 iLocalCreatureNo = iCreatureNo;	// di
+	if (iLocalCreatureNo <= glbCreaturesCount) {
+		CreatureInfoData* xCreatureData = &glbTabCreaturesInfo[iLocalCreatureNo];	// bp04
+		ObjectID oCreature(0, dbCreature, xCreatureData->CreatureIndex());	// si
+		Creature* xCreature = GET_ADDRESS_OF_RECORD(oCreature)->castToCreature();	// bp08
+		RELEASE_CREATURE_TIMER(oCreature);
+		glbCreature_4976_1a68--;
+		xCreature->SetInternalID(0xFF);
+		xCreatureData->CreatureIndex(-1);
 	}
-	//^1C9A:1036
 }
 
 //^1C9A:0397
-ObjectID SkWinCore::GET_CREATURE_AT(i16 xpos, i16 ypos)
+ObjectID SkWinCore::GET_CREATURE_AT(i16 iXPos, i16 iYPos)
 {
 	// find a creature at (xpos,ypos).
-	//
 	// return OBJECT_NULL if no creature found.
 
-	ObjectID si = GET_TILE_RECORD_LINK(xpos, ypos);
-	for (; si != OBJECT_END_MARKER; si = GET_NEXT_RECORD_LINK(si)) {
-		if (si.DBType() == dbCreature)
-			return si;
+	ObjectID rlObject = GET_TILE_RECORD_LINK(iXPos, iYPos);	// si
+	for (; rlObject != OBJECT_END_MARKER; rlObject = GET_NEXT_RECORD_LINK(rlObject)) {
+		if (rlObject.DBType() == dbCreature)
+			return rlObject;
 	}
 	return OBJECT_NULL;
 }
 
 
 //^0CEE:2E53
-Bit16u SkWinCore::IS_CREATURE_ALLOWED_ON_LEVEL(ObjectID rlCreature, Bit16u curmap)
+U16 SkWinCore::IS_CREATURE_ALLOWED_ON_LEVEL(ObjectID rlCreature, U16 iMapNo)
 {
 	if ((QUERY_CREATURE_AI_SPEC_FLAGS(rlCreature) & 0x4000) != 0) {
-		//^0CEE:2E66
 		return 1;
 	}
-	Bit8u bp09 = QUERY_CLS2_FROM_RECORD(rlCreature);
-	Map_definitions *bp08 = &dunMapsHeaders[curmap];
-	Bit8u *bp04 = &glbMapTileValue[curmap][bp08->RawColumn()][bp08->RawRow() +1];
-	i16 si = bp08->CreaturesTypes();
-	for (; si > 0; --si) {
-		if (*(bp04++) == bp09)
+	U8 iGDatItemId = QUERY_CLS2_FROM_RECORD(rlCreature);	// bp09
+	Map_definitions* xMapDef = &dunMapsHeaders[iMapNo];	// bp08
+	U8* xAllowedCreatureIds = &glbMapTileValue[iMapNo][xMapDef->RawColumn()][xMapDef->RawRow() + 1];	// bp04
+	i16 iNbMapCreatures = xMapDef->CreaturesTypes();	// si
+	for (; iNbMapCreatures > 0; --iNbMapCreatures) {
+		if (*(xAllowedCreatureIds++) == iGDatItemId)
 			return 1;
 	}
 	return 0;
@@ -2707,7 +2710,7 @@ _1470:
 			//^14CD:1795
 			bp0e = si = 0;
 			bp18 = glbCurrentTileMap[0];
-			bp1c = &dunGroundStacks[_4976_4c52[0]];
+			bp1c = &dunGroundStacks[glbIndexOfTilesWithObjects[0]];
 			for (bp12 = 0; bp12 < glbCurrentMapWidth; bp12++) {
 				//^14CD:17CD
 				for (bp14 = 0; bp14 < glbCurrentMapHeight; bp14++) {
@@ -6191,7 +6194,7 @@ void SkWinCore::THINK_CREATURE(X8 xx, X8 yy, X16 timerType)
 			CREATURE_13e4_0806();
 		}
 		if (xCreatureData->TimerIndex() == 0xFFFF) {
-			_1c9a_0fcb(glbCurrentThinkingCreatureRec->iID);
+			CREATURE_1c9a_0fcb(glbCurrentThinkingCreatureRec->iID);
 		}
 	}
 _0e89:
@@ -6392,7 +6395,7 @@ ObjectID SkWinCore::ALLOC_NEW_CREATURE(U16 creaturetype, U16 healthMultiplier_1t
 		}
 	}
 	ObjectID oCreature = ALLOC_NEW_RECORD(dbCreature);	// di
-	if (oCreature == OBJECT_NULL || _4976_1a68 >= glbCreaturesCount) {
+	if (oCreature == OBJECT_NULL || glbCreature_4976_1a68 >= glbCreaturesCount) {
 		if (bp0c != 0)
 			DEALLOC_RECORD(bp0a);
 		return OBJECT_NULL;

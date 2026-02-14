@@ -4950,8 +4950,6 @@ void SkWinCore::DRAW_DIALOGUE_PARTS_PICT(U8 *buffsrc, SRECT *rc, i16 colorkey, U
 	// b) dialogue button
 	// c) 18x18 bevelled icon frame
 
-	//^0B36:1647
-	//^0B36:164A
 	FIRE_BLIT_PICTURE(
 		buffsrc,
 		_4976_4c16,
@@ -4966,14 +4964,100 @@ void SkWinCore::DRAW_DIALOGUE_PARTS_PICT(U8 *buffsrc, SRECT *rc, i16 colorkey, U
 		8,
 		localpal
 		);
-	//^0B36:1686
 	return;
 }
+
+//^2066:03E0
+U16 SkWinCore::DIALOG_BOX_2066_03e0(U16 xx)
+{
+	U16 di = xx;
+	U8 bp01 = 0;
+	if (_4976_499e != 0) {
+		return 1;
+	}
+	U16 si = 1;
+	if (_476d_030a(1) == 0) {
+		if (di != 2)
+			return si;
+	}
+	_4976_52f4 = 1;
+	while (di != 0 || _476d_030a(1) != 0) {
+		_38c8_0002();
+		di = si = 0;
+		DIALOG_BOX_0aaf_0067(_0aaf_02f8_DIALOG_BOX((glbFloppyDiskFlag != 0) ? ((glbGDatFloppyFlag != 0) ? (DIALOGBOX_x13_PUT_THE_DISK) : (DIALOGBOX_x14_PUT_THE_DISK_MULTI)) : (DIALOGBOX_x07_PUT_THE_DISK_HASH), bp01 = _476d_04e8(1)));
+		bp01 = 0x14;
+	}
+	return si;
+}
+
+
+//^0AAF:0067
+// _0aaf_0067
+U8 SkWinCore::DIALOG_BOX_0aaf_0067(U8 iDialogBoxID)
+{
+	U16 di = 0;
+	U16 si = 0xffff;
+	U16 bp08 = 0;
+	U16 bp38[21];
+	ZERO_MEMORY(&bp38[1], 2*20);
+	U8 bp5e[38];
+	for (U8 bp0d = 0; bp0d < 0x14; bp0d++) {
+		if (*QUERY_GDAT_TEXT(GDAT_CATEGORY_x1A_DIALOG_BOXES, iDialogBoxID, bp0d, (U8 *)bp5e) != 0) {
+			U16 bp0a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x1A_DIALOG_BOXES, iDialogBoxID, dtWordValue, bp0d);
+			U8 *bp04 = (U8 *)&bp38[1 + di];
+			*bp04 = (U8)bp0a;
+			if (*bp04 == 0) {
+				*bp04 = bp0d;
+			}
+			bp04[1] = (U8)(bp0a >> 8);
+			if (bp04[1] != 0) {
+				si = bp04[1];
+				bp08 = bp04[0];
+			}
+			di++;
+		}
+	}
+	_4976_4bd2 = di;
+	if (si == 0xffff && di == 1) {
+		si = 1;
+	}
+	_1031_0675(4);
+	U16 bp06;
+	for (bp06 = 0; glbMouseVisibility > 0; bp06++) {
+		FIRE_SHOW_MOUSE_CURSOR();
+	}
+	_4976_4dfc = 0x00ff;
+
+	do {
+		MessageLoop(false);
+
+		MAIN_LOOP();
+		WAIT_SCREEN_REFRESH();
+		if (si != 0xffff) {
+			if (_476d_04ed_DOES_NOTHING(si) != 0) {
+				_1031_0781(bp08 + 0x00db);
+			}
+		}
+		if (_4976_4dfc == 0x00FF && IS_THERE_KEY_INPUT_2() != 0 && SPECIAL_UI_KEY_TRANSFORMATION() == 0x001C) {
+			_1031_0781(0x00DB);
+		}
+	} while (_4976_4dfc == 0x00FF);
+
+	U8 bp0c = (U8)bp38[_4976_4dfc];
+	while ((bp06--) != 0) {
+		FIRE_HIDE_MOUSE_CURSOR();
+	}
+	_4976_022c = 1;
+	_1031_06a5();
+	return bp0c;
+}
+
+
 
 //^0AAF:02F8
 // _0aaf_02f8 renamed _0aaf_02f8_DIALOG_BOX
 // Dialog box for new game
-U8 SkWinCore::_0aaf_02f8_DIALOG_BOX(U8 xx, U8 yy) //#DS=4976
+U8 SkWinCore::_0aaf_02f8_DIALOG_BOX(U8 iDialogBoxID, U8 yy) //#DS=4976
 {
 	U16 si;
 	skxxx1 bp04e4[2];
@@ -5003,23 +5087,21 @@ U8 SkWinCore::_0aaf_02f8_DIALOG_BOX(U8 xx, U8 yy) //#DS=4976
 
 	//^0AAF:02F8
 	//^0AAF:02FE
-	if (xx == 0x07 || xx == 0x13) {
+	if (iDialogBoxID == DIALOGBOX_x07_PUT_THE_DISK_HASH || iDialogBoxID == DIALOGBOX_x13_PUT_THE_DISK) {
 		//^0AAF:030A
-		if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x1A_DIALOG_BOXES, 0x0059, 0x0001, 0x0000) != 0) {
+		if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x1A_DIALOG_BOXES, DIALOGBOX_x59, 0x0001, 0x0000) != 0) {
 			//^0AAF:031E
-			xx = 0x59;
+			iDialogBoxID = 0x59;
 		}
 	}
 	//^0AAF:0322
 	bp28[0] = glbPaletteT16[COLOR_YELLOW];
 	bp28[1] = glbPaletteT16[COLOR_ORANGE];
 	//^0AAF:0338
-	if (yy != 0 && xx != 0) {
+	if (yy != 0 && iDialogBoxID != 0) {
 		//^0AAF:0344
-		if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x1A_DIALOG_BOXES, 0x0000, 0x0001, 0x0000) != 0) {
-			//^0AAF:0358
-			_0aaf_0067(_0aaf_02f8_DIALOG_BOX(0, yy));
-			//^0AAF:036A
+		if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x1A_DIALOG_BOXES, DIALOGBOX_x00_GENERAL_ISSUE, 0x0001, 0x0000) != 0) {
+			DIALOG_BOX_0aaf_0067(_0aaf_02f8_DIALOG_BOX(DIALOGBOX_x00_GENERAL_ISSUE, yy));
 			yy = 0x00;
 		}
 	}
@@ -5028,7 +5110,7 @@ U8 SkWinCore::_0aaf_02f8_DIALOG_BOX(U8 xx, U8 yy) //#DS=4976
 	//^0AAF:0377
 	for (bp17=0; bp17 < 0x14; bp17++) {
 		//^0AAF:0379
-		bp00b4[bp0c] = QUERY_GDAT_TEXT(GDAT_CATEGORY_x1A_DIALOG_BOXES, xx, bp17, bp03d4[bp0c]);
+		bp00b4[bp0c] = QUERY_GDAT_TEXT(GDAT_CATEGORY_x1A_DIALOG_BOXES, iDialogBoxID, bp17, bp03d4[bp0c]);
 		//^0AAF:03B6
 		if (bp00b4[bp0c][0] != 0) {
 			//^0AAF:03C0
@@ -5039,11 +5121,11 @@ U8 SkWinCore::_0aaf_02f8_DIALOG_BOX(U8 xx, U8 yy) //#DS=4976
 	//^0AAF:03CC
 	if ((_4976_5cb0_GDatFlag != 0) && ((_4976_5d76 != 0) || (_4976_00f4 +8 <= glbFreeRAMMemPool))) {
 		//^0AAF:03F9
-		bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x1A_DIALOG_BOXES, xx, 0x00);
+		bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x1A_DIALOG_BOXES, iDialogBoxID, 0x00);
 		//^0AAF:040F
 		if (_4976_5d76 != 0) {
 			//^0AAF:0416
-			bp08 = QUERY_GDAT_IMAGE_LOCALPAL(GDAT_CATEGORY_x1A_DIALOG_BOXES, xx, 0);
+			bp08 = QUERY_GDAT_IMAGE_LOCALPAL(GDAT_CATEGORY_x1A_DIALOG_BOXES, iDialogBoxID, 0);
 		}
 		else {
 			//^0AAF:042B
@@ -5128,13 +5210,13 @@ U8 SkWinCore::_0aaf_02f8_DIALOG_BOX(U8 xx, U8 yy) //#DS=4976
 	bp12 = bp20.cx;
 	bp14 = bp20.cy;
 	//^0AAF:05C3
-	if (yy != 0 && xx == 0) {
+	if (yy != 0 && iDialogBoxID == 0) {
 		//^0AAF:05CF
-		bp04e4[0].pb0 = QUERY_GDAT_TEXT(GDAT_CATEGORY_x1A_DIALOG_BOXES, xx, yy, bp0454);
+		bp04e4[0].pb0 = QUERY_GDAT_TEXT(GDAT_CATEGORY_x1A_DIALOG_BOXES, iDialogBoxID, yy, bp0454);
 	}
 	else {
 		//^0AAF:05F1
-		bp04e4[0].pb0 = QUERY_GDAT_TEXT(GDAT_CATEGORY_x1A_DIALOG_BOXES, xx, 0x14, bp0454);
+		bp04e4[0].pb0 = QUERY_GDAT_TEXT(GDAT_CATEGORY_x1A_DIALOG_BOXES, iDialogBoxID, 0x14, bp0454);
 		//^0AAF:060F
 		if (yy != 0) {
 			//^0AAF:0615
@@ -5222,7 +5304,7 @@ _0641:
 	//^0AAF:080E
 	_4976_022c = 1;
 	//^0AAF:0814
-	return xx;
+	return iDialogBoxID;
 }
 
 

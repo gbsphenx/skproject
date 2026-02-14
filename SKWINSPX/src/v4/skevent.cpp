@@ -1294,7 +1294,7 @@ void SkWinCore::ACTIVATE_CONTINUOUS_ORNATE_ANIMATOR(ObjectID rl, Timer *ref, Act
 	ENTER(12);
 	//^3A15:10E2
 	X16 bp02 = pr4->OnceOnlyActuator();
-	pr4->OnceOnlyActuator(_3a15_1da8(ref->ActionType(), pr4->OnceOnlyActuator()));
+	pr4->OnceOnlyActuator(TOGGLE_ACTUATOR_MESSAGE(ref->ActionType(), pr4->OnceOnlyActuator()));
 	i16 di;
 	if (pr4->OnceOnlyActuator() != bp02) {
 		//^3A15:1132
@@ -1636,7 +1636,8 @@ _1d1b:
 void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 {
 	// activate wall mechanics (like text/actuators)
-
+	// SPX: it has been seen that some maps may be broken with cross-maps actuators that reference maps that don't exist.
+	//	In that case, it is best to check that actuator targets an existing map instead of crashing
 	//^3A15:220C
 	ENTER(54);
 	//^3A15:2212
@@ -1657,7 +1658,7 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 					continue;
 				//^3A15:22A6
 				// bp08->TextVisibility((ref->ActionType() == 2 [TOGGLE] ) ? !bp08->TextVisibility() : ((ref->ActionType() == 0 [OPEN] ) ? 1 [VISIBLE] : 0 [NOT VISIBLE]));
-				bp08->TextVisibility((ref->ActionType() == ACTMSG_TOGGLE) ? !bp08->TextVisibility() : ((ref->ActionType() == ACTMSG_OPEN_SET) ? 1 : 0));
+				bp08->TextVisibility((ref->ActionType() == C02_ACTMSG_TOGGLE) ? !bp08->TextVisibility() : ((ref->ActionType() == C00_ACTMSG_OPEN_SET) ? 1 : 0));
 				if (bp10 != 7)
 					continue;
 				//^3A15:22EA
@@ -1764,7 +1765,7 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 					U8 iOldBitFields = iBitFields;
 					U8 iChangeableBit = 0;
 					U8 iEffectType = bp04->ActionType();
-					U8 iActionType = ACTMSG_OPEN_SET; // default
+					U8 iActionType = C00_ACTMSG_OPEN_SET; // default
 					U8 iBitOperation = ref->ActionType();
 
 					U8 iTargetBitfield = bp04->BitfieldTarget();
@@ -1775,11 +1776,11 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 					iChangeableBit = 1<<ref->Value2(); // power of 2 of the target face/dir
 					iBitFields = iBitFields ^ iChangeableBit;
 
-					if (iBitOperation == ACTMSG_OPEN_SET)
+					if (iBitOperation == C00_ACTMSG_OPEN_SET)
 						iCurrentBitfield = iCurrentBitfield | iChangeableBit; // add bit
-					else if (iBitOperation == ACTMSG_TOGGLE)
+					else if (iBitOperation == C02_ACTMSG_TOGGLE)
 						iCurrentBitfield = iCurrentBitfield ^ iChangeableBit;	// toggle bit
-					else // clear bit ACTMSG_CLOSE_CLEAR
+					else // clear bit C01_ACTMSG_CLOSE_CLEAR
 						iCurrentBitfield = iCurrentBitfield & ~(iChangeableBit);	// clear bit
 
 					//bp04->ActuatorData((iBitFields<<4) + (bp04->ActuatorData()%16));
@@ -1790,23 +1791,23 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 					//if (iOldBitFields != iBitFields && iBitFields == 0) // trigger actuator
 					if (iCurrentBitfield == iTargetBitfield) // trigger actuator
 					{
-						if (iEffectType == ACTEFFECT_STEP_CONSTANT__OPEN || iEffectType == ACTEFFECT_STEP_ON__OPEN_SET)
-							iActionType = ACTMSG_OPEN_SET;
-						else if (iEffectType == ACTEFFECT_STEP_ON__CLOSE_CLEAR)
-							iActionType = ACTMSG_CLOSE_CLEAR;
-						else if (iEffectType == ACTEFFECT_STEP_ON__TOGGLE)
-							iActionType = ACTMSG_TOGGLE;
+						if (iEffectType == C03_ACTEFFECT_STEP_CONSTANT__OPEN || iEffectType == C00_ACTEFFECT_STEP_ON__OPEN_SET)
+							iActionType = C00_ACTMSG_OPEN_SET;
+						else if (iEffectType == C01_ACTEFFECT_STEP_ON__CLOSE_CLEAR)
+							iActionType = C01_ACTMSG_CLOSE_CLEAR;
+						else if (iEffectType == C02_ACTEFFECT_STEP_ON__TOGGLE)
+							iActionType = C02_ACTMSG_TOGGLE;
 
 						INVOKE_ACTUATOR(bp04, iActionType, 0);
 					}
 					else if (iOldBitFields == 0 && iBitFields != 0)
 					{
-						if (iEffectType == ACTEFFECT_STEP_CONSTANT__OPEN || iEffectType == ACTEFFECT_STEP_CLOSE__OPEN_SET)
-							iActionType = ACTMSG_OPEN_SET;
-						else if (iEffectType == ACTEFFECT_STEP_CLOSE__CLOSE_CLEAR)
-							iActionType = ACTMSG_CLOSE_CLEAR;
-						else if (iEffectType == ACTEFFECT_STEP_CLOSE__TOGGLE)
-							iActionType = ACTMSG_TOGGLE;
+						if (iEffectType == C03_ACTEFFECT_STEP_CONSTANT__OPEN || iEffectType == C04_ACTEFFECT_STEP_CLOSE__OPEN_SET)
+							iActionType = C00_ACTMSG_OPEN_SET;
+						else if (iEffectType == C05_ACTEFFECT_STEP_CLOSE__CLOSE_CLEAR)
+							iActionType = C01_ACTMSG_CLOSE_CLEAR;
+						else if (iEffectType == C06_ACTEFFECT_STEP_CLOSE__TOGGLE)
+							iActionType = C02_ACTMSG_TOGGLE;
 
 						INVOKE_ACTUATOR(bp04, iActionType, 0);
 					}
@@ -1816,10 +1817,10 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 				// DM1 counter does not work the same as DM2 counter
 				printf("COUNTER VALUE = %d with EFFECT %d\n", bp04->ActuatorData(), ref->ActionType());
 				bp0c = (bp04->ActuatorData() == 0 || (bp04->ActuatorData() & 256) != 0) ? 1 : 0; // not sure what this is
-				if (ref->ActionType() == ACTMSG_CLOSE_CLEAR) { // close
+				if (ref->ActionType() == C01_ACTMSG_CLOSE_CLEAR) { // close
 					bp04->ActuatorData(bp04->ActuatorData()  - 1);
 				}
-				else if (ref->ActionType() == ACTMSG_OPEN_SET) { // open
+				else if (ref->ActionType() == C00_ACTMSG_OPEN_SET) { // open
 					if (bp04->OnceOnlyActuator() == 0 || bp04->ActuatorData() != 0) {
 						bp04->ActuatorData(bp04->ActuatorData() + 1);
 					}
@@ -1894,7 +1895,7 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 			case ACTUATOR_TYPE_X36_V064://^2810 // 0x36 -> '-'
 			case ACTUATOR_TYPE_X37_V128://^2810 // 0x37 -> '-'
 				//^3A15:2810
-				bp04->OnceOnlyActuator(_3a15_1da8(ref->ActionType(), bp04->OnceOnlyActuator()));
+				bp04->OnceOnlyActuator(TOGGLE_ACTUATOR_MESSAGE(ref->ActionType(), bp04->OnceOnlyActuator()));
 				if (bp04->ActiveStatus() != 0 || bp04->OnceOnlyActuator() == 0)
 					break;
 				//^3A15:285F
@@ -1925,6 +1926,7 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 				bp20.actor = ref->actor;
 				bp20.XcoordB(bp04->Xcoord());
 				bp20.YcoordB(bp04->Ycoord());
+				// SPX: add contrat that target map exists, else do nothing
 				bp12 = glbMapTileValue[bp0a & 63][bp20.XcoordB()][bp20.YcoordB()] >> 5;
 				bp20.Value2((bp12 == 0) ? ((bp0a >> 6)&3) : 0);
 				bp20.TimerType(tty04);
@@ -1953,7 +1955,7 @@ void SkWinCore::ACTUATE_WALL_MECHA(Timer *ref)
 				break;
 			case ACTUATOR_TYPE_SWITCH_SIGN_FOR_CREATURE://^29FB // 0x26 -> 'Switch sign for creature' or 'Activator, missile explosion'
 				//^3A15:29FB
-				bp04->OnceOnlyActuator(_3a15_1da8(ref->ActionType(), bp04->OnceOnlyActuator()));
+				bp04->OnceOnlyActuator(TOGGLE_ACTUATOR_MESSAGE(ref->ActionType(), bp04->OnceOnlyActuator()));
 				break;
 			case ACTUATOR_TYPE_PLACED_ITEM_TELEPORTER://^2A2E // 0x3b -> 'Item teleporter (placed item)'
 				//^3A15:2A2E
@@ -2111,7 +2113,7 @@ void SkWinCore::ACTUATE_FLOOR_MECHA(Timer *ref)
 			switch (bp14) {
 			case ACTUATOR_FLOOR_TYPE__CROSS_SCENE://^187D // 0x27 -> 'Cross scene'
 				//^3A15:187D
-				bp04->b4_0_0(U8(_3a15_1da8(ref->ActionType(), bp04->b4_0_0())));
+				bp04->b4_0_0(U8(TOGGLE_ACTUATOR_MESSAGE(ref->ActionType(), bp04->b4_0_0())));
 				break;
 			case ACTUATOR_FLOOR_TYPE__INFINITE_ORNATE_ANIMATOR://^18AB // 0x2c -> 'Continuous ornate animator'
 				//^3A15:18AB
@@ -2285,27 +2287,17 @@ void SkWinCore::ACTUATE_PITFALL(Timer *ref)
 // SPX: interesting ... If xx = 0 => 1, if xx = 2
 // Called from DOOR to change opening direction
 // xx = new action direction, yy = current door direction
-X16 SkWinCore::_3a15_1da8(X8 iNewDirection, X8 iCurrentDirection)
+// SPX: _3a15_1da8 renamed TOGGLE_ACTUATOR_MESSAGE
+X16 SkWinCore::TOGGLE_ACTUATOR_MESSAGE(X8 iNewMessageDirection, X8 iCurrentMessageDirection)
 {
-	// SPX: Here is the original code from conversion, but it misses case 1 for door to switch opening direction when asked. Careful to check with other actuators actions.
-	// SPX: to be checked: for door it was rather outside this function.
-	/*
-	ENTER(0);
-	switch (xx) {
-	case 0: //^_1db9
-		return 1;
-	case 2: //^_1dc2
-		return yy ^1;
+	switch (iNewMessageDirection) {
+	case C00_ACTMSG_OPEN_SET:
+		return C01_ACTMSG_CLOSE_CLEAR;
+	case C02_ACTMSG_TOGGLE:
+		return iCurrentMessageDirection ^ 1;
 	}
-	return 0;
-	*/
-	switch (iNewDirection) {
-	case ACTMSG_OPEN_SET:
-		return 1;
-	case ACTMSG_TOGGLE:
-		return iCurrentDirection ^ 1;
-	}
-	return 0;
+	// default is case 1 = C01_ACTMSG_CLOSE_CLEAR
+	return C00_ACTMSG_OPEN_SET;
 }
 
 //^3A15:0ACD
@@ -2314,15 +2306,11 @@ X16 SkWinCore::_3a15_1da8(X8 iNewDirection, X8 iCurrentDirection)
 // The other function to do that is STEP_DOOR
 void SkWinCore::ACTUATE_DOOR(Timer *ref)
 {
-	//^3A15:0ACD
 	ENTER(4);
-	//^3A15:0AD3
-
 
 	X16 iOpenCloseState = glbCurrentTileMap[ref->XcoordB()][ref->YcoordB()] & 7; // state of door : 0 is open, 4 is fully closed, 2 is mid-opened
 	if (iOpenCloseState == _DOOR_STATE__DESTROYED_) // 5, destroyed, can't operate
 		return;
-	//^3A15:0B0B
 	Door *door = GET_ADDRESS_OF_TILE_RECORD(ref->XcoordB(), ref->YcoordB())->castToDoor();	//*bp04
 	Door_Info* xDoorInfo = (Door_Info*) door;
 
@@ -2333,51 +2321,38 @@ void SkWinCore::ACTUATE_DOOR(Timer *ref)
 	}
 #endif // XDMX_EXTENDED_FEATURES
 
-
 	if (door->DoorBit10() != 0) { // door is currently moving
-		//^3A15:0B3A
 		//door->DoorBit10(U8(_3a15_1da8(ref->ActionType(), door->DoorBit09())));
-		door->DoorBit09(U8(_3a15_1da8(ref->ActionType(), door->DoorBit09()))); // SPX using Bit09 instead of Bit10 seems correct to change the door direction
+		door->DoorBit09(U8(TOGGLE_ACTUATOR_MESSAGE(ref->ActionType(), door->DoorBit09()))); // SPX using Bit09 instead of Bit10 seems correct to change the door direction
 		if (door->DoorBit10() != 0)
 			return;
-		//^3A15:0B6F
 		door->DoorBit12(0);
 		return;
 	}
-	//^3A15:0B77
 	X16 iNewDoorTimer = 0; // will issue a timer again if 1
 	if (iOpenCloseState == 0) {	// totally open
-		//^3A15:0B7D
-		if (ref->ActionType() == ACTMSG_CLOSE_CLEAR || ref->ActionType() == ACTMSG_TOGGLE) {	// 1 or 2
-			//^3A15:0B8E
-			door->DoorBit09(DOORACTION_CLOSING); // 0 => closing
+		if (ref->ActionType() == C01_ACTMSG_CLOSE_CLEAR || ref->ActionType() == C02_ACTMSG_TOGGLE) {	// 1 or 2
+			door->DoorBit09(C0_DOORACTION_CLOSING); // 0 => closing
 			iNewDoorTimer = 1;
 		}
 	}
-	//^3A15:0B9B
 	else if (iOpenCloseState == 4) { // totally closed
-		//^3A15:0BA0
-		if (ref->ActionType() == ACTMSG_OPEN_SET || ref->ActionType() == ACTMSG_TOGGLE) { // 0 or 2
-			door->DoorBit09(DOORACTION_OPENING); // 1 => opening
+		if (ref->ActionType() == C00_ACTMSG_OPEN_SET || ref->ActionType() == C02_ACTMSG_TOGGLE) { // 0 or 2
+			door->DoorBit09(C1_DOORACTION_OPENING); // 1 => opening
 			iNewDoorTimer = 1;
 		}
 	}
 	else {
-		//^3A15:0BBE
-		door->DoorBit09((ref->ActionType() == ACTMSG_OPEN_SET) ? DOORACTION_OPENING : DOORACTION_CLOSING);	// ? 1 : 0
+		door->DoorBit09((ref->ActionType() == C00_ACTMSG_OPEN_SET) ? C1_DOORACTION_OPENING : C0_DOORACTION_CLOSING);	// ? 1 : 0
 		iNewDoorTimer = 1;
 	}
-	//^3A15:0BE3
 	door->DoorBit10(U8(iNewDoorTimer));
 	if (door->DoorBit10() == 0)
 		return;
-	//^3A15:0BFD
-	if (door->DoorBit09() == DOORACTION_CLOSING)	// 0
+	if (door->DoorBit09() == C0_DOORACTION_CLOSING)	// 0
 		door->DoorBit12(0);
-	//^3A15:0C0F
 	ref->TimerType(tty01DoorStep);
 	QUEUE_TIMER(ref);
-	//^3A15:0C23
 	return;
 }
 
@@ -2555,11 +2530,11 @@ void SkWinCore::ACTUATE_TRICKWALL(Timer *ref)
 	U8 *uTileValue = &glbCurrentTileMap[bp06][bp08];	// bp04
 	oldTileValue = *uTileValue;
 	X16 di = ref->ActionType();
-	if (di == ACTMSG_TOGGLE) {	// di == 2
+	if (di == C02_ACTMSG_TOGGLE) {	// di == 2
 		di = ((*uTileValue & 4) != 0) ? 1 : 0;
 	}
 	//^3A15:0C82
-	if (di == ACTMSG_CLOSE_CLEAR) {	// di == 1
+	if (di == C01_ACTMSG_CLOSE_CLEAR) {	// di == 1
 		if (glbCurrentMapIndex == glbMap_4c28 && bp06 == glbSomePosX_4c2e && bp08 == glbSomePosY_4c30)
 			si = 1;
 		//^3A15:0CA5

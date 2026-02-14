@@ -1021,12 +1021,12 @@ void SkWinCore::REVIVE_CHAMPION(U16 xx, U16 yy, U16 dir, U16 zz, U16 iEventCode)
 			while (true) {
 				if (tObject.DBType() == dbActuator) {
 					Actuator* xActuator = GET_ADDRESS_OF_ACTU(tObject);	// bp08
-					if (xActuator->ActuatorType() == ACTUATOR_TYPE_RESURECTOR)	// DM2
+					if (xActuator->ActuatorType() == ACTUATOR_x7E_TYPE_RESURECTOR)	// DM2
 					{
 						xActuator->OnceOnlyActuator(0);
 						break;
 					}
-					else if (xActuator->ActuatorType() == ACTUATOR_TYPE_CHAMPION_MIRROR) // SPX: handle DM1 Champion Mirror too
+					else if (xActuator->ActuatorType() == ACTUATOR_x7F_TYPE_CHAMPION_MIRROR) // SPX: handle DM1 Champion Mirror too
 					{
 						xActuator->ActiveStatus(1); // change to "inactive", different from the "once only" status
 						break;
@@ -2411,80 +2411,59 @@ void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 //^2F3F:0343
 // SPX: _2f3f_0343 renamed SELECT_CHAMPION. Called when clicking on "mirror/cell" or at the beginning for
 // automatic selection of Thoram
-X16 SkWinCore::SELECT_CHAMPION(U16 xx, U16 yy, U16 dir, U16 mm)
+X16 SkWinCore::SELECT_CHAMPION(U16 iXPos, U16 iYPos, U16 iDir, U16 iMapNo)
 {
-	//^2F3F:0343
 	ENTER(10);
-	//^2F3F:0349
 	U16 iChampionNumber = 0;	// di
 	if (cd.pi.glbLeaderHandPossession.object != OBJECT_NULL || (iChampionNumber = cd.pi.glbChampionsCount) >= MAX_CHAMPIONS)
-		//^2F3F:035A
 		return 0;
-	//^2F3F:035F
 	X16 iCurrentMap = glbCurrentMapIndex;	// bp08
-	CHANGE_CURRENT_MAP_TO(mm);
-	xx += glbXAxisDelta[dir];
-	yy += glbYAxisDelta[dir];
-	//^2F3F:0386
-	ObjectID xObject; // si
+	CHANGE_CURRENT_MAP_TO(iMapNo);
+	iXPos += glbXAxisDelta[iDir];
+	iYPos += glbYAxisDelta[iDir];
+	ObjectID oObject; // si
 	X16 iHeroType = 0; // bp0a
-	for (xObject = GET_TILE_RECORD_LINK(xx, yy); xObject != OBJECT_END_MARKER; xObject = GET_NEXT_RECORD_LINK(xObject)) {
-		//^2F3F:0395
+	for (oObject = GET_TILE_RECORD_LINK(iXPos, iYPos); oObject != OBJECT_END_MARKER; oObject = GET_NEXT_RECORD_LINK(oObject)) {
 		Actuator *refActuator; // bp04
-		if (xObject.DBType() == dbActuator && (refActuator = GET_ADDRESS_OF_ACTU(xObject))->ActuatorType() == ACTUATOR_TYPE_RESURECTOR) { // 0x7E
-			//^2F3F:03BE
+		if (oObject.DBType() == dbActuator && (refActuator = GET_ADDRESS_OF_ACTU(oObject))->ActuatorType() == ACTUATOR_x7E_TYPE_RESURECTOR) { // 0x7E
 			iHeroType = refActuator->ActuatorData();
 			break;
 		}
 		// SPX: Add for 0x7F :Activator, champion mirror
-		else if (xObject.DBType() == dbActuator && (refActuator = GET_ADDRESS_OF_ACTU(xObject))->ActuatorType() == ACTUATOR_TYPE_CHAMPION_MIRROR) { // 0x7F
-			//^2F3F:03BE
+		else if (oObject.DBType() == dbActuator && (refActuator = GET_ADDRESS_OF_ACTU(oObject))->ActuatorType() == ACTUATOR_x7F_TYPE_CHAMPION_MIRROR) { // 0x7F
 			iHeroType = refActuator->ActuatorData();
 			break;
 		}
-		//^2F3F:03CD
 	}
-	//^2F3F:03DB
-	xx += glbXAxisDelta[(dir +2) & 3];
-	yy += glbYAxisDelta[(dir +2) & 3];
-	REVIVE_PLAYER(iHeroType, iChampionNumber, dir);
+	iXPos += glbXAxisDelta[(iDir + 2) & 3];
+	iYPos += glbYAxisDelta[(iDir + 2) & 3];
+	REVIVE_PLAYER(iHeroType, iChampionNumber, iDir);
 	if (iChampionNumber != 0) {
-		//^2F3F:0412
 		DISPLAY_RIGHT_PANEL_SQUAD_HANDS();
 		UPDATE_RIGHT_PANEL(0);
 	}
-	//^2F3F:041F
 	cd.pi.glbNextChampionNumber = iChampionNumber + 1;
 	cd.pi.glbChampionsCount++;
 	if (iChampionNumber == 0)	// First champion, then select it as leader
-		//^2F3F:042D
 		SELECT_CHAMPION_LEADER(0);
-	//^2F3F:0435
-	X16 iWallDir = (dir +2) & 3; // bp06
-	xx += glbXAxisDelta[dir];
-	yy += glbYAxisDelta[dir];
+	X16 iWallDir = (iDir + 2) & 3; // bp06
+	iXPos += glbXAxisDelta[iDir];
+	iYPos += glbYAxisDelta[iDir];
 	// Take items from wall and add them to player
-	for (xObject = GET_TILE_RECORD_LINK(xx, yy); xObject != OBJECT_END_MARKER; xObject = GET_NEXT_RECORD_LINK(xObject)) {
-		//^2F3F:0467
-		if (xObject.DBType() > dbActuator && xObject.Dir() == iWallDir) {
-			//^2F3F:047E
-			ADD_ITEM_TO_PLAYER(iChampionNumber, xObject);
+	for (oObject = GET_TILE_RECORD_LINK(iXPos, iYPos); oObject != OBJECT_END_MARKER; oObject = GET_NEXT_RECORD_LINK(oObject)) {
+		if (oObject.DBType() > dbActuator && oObject.Dir() == iWallDir) {
+			ADD_ITEM_TO_PLAYER(iChampionNumber, oObject);
 		}
-		//^2F3F:0486
 	}
-	//^2F3F:0494
-	xx += glbXAxisDelta[(dir +2) & 3];
-	yy += glbYAxisDelta[(dir +2) & 3];
+	iXPos += glbXAxisDelta[(iDir + 2) & 3];
+	iYPos += glbYAxisDelta[(iDir + 2) & 3];
 	if (glbChampionShowResurrect == 0) {
-		//^2F3F:04BF
 		INTERFACE_CHAMPION(iChampionNumber);
 		_1031_0541(7);
 		_38c8_0002();
 	}
-	//^2F3F:04D3
 	CHANGE_CURRENT_MAP_TO(iCurrentMap);
 	CALC_PLAYER_WEIGHT(iChampionNumber);
-	//^2F3F:04E3
 	return iChampionNumber + 1;
 }
 
@@ -2583,7 +2562,7 @@ void SkWinCore::SEARCH_STARTER_CHAMPION() // _2f3f_0789
 	for (tObject = GET_TILE_RECORD_LINK(0, 0); tObject != OBJECT_END_MARKER; tObject = GET_NEXT_RECORD_LINK(tObject)) {
 		if (tObject.DBType() == dbActuator) {
 			Actuator* xActuator = GET_ADDRESS_OF_ACTU(tObject);	// bp08
-			if (xActuator->ActuatorType() == ACTUATOR_TYPE_RESURECTOR) { // 0x007E
+			if (xActuator->ActuatorType() == ACTUATOR_x7E_TYPE_RESURECTOR) { // 0x007E
 				glbChampionShowResurrect = 1;
 				// SPX: Automatic selection of champion (Thoram)
 				SELECT_CHAMPION(0, 1, DIR_NORTH, cd.pi.glbPlayerMap);	// player is imaginarily at 0,1 facing north
@@ -2603,7 +2582,7 @@ void SkWinCore::SEARCH_STARTER_CHAMPION() // _2f3f_0789
 		for (tObject = GET_TILE_RECORD_LINK(1, 0); tObject != OBJECT_END_MARKER; tObject = GET_NEXT_RECORD_LINK(tObject)) {
 			if (tObject.DBType() == dbActuator) {
 				Actuator* xActuator = GET_ADDRESS_OF_ACTU(tObject);	// bp08
-				if (xActuator->ActuatorType() == ACTUATOR_TYPE_CHAMPION_MIRROR) { // 0x007F
+				if (xActuator->ActuatorType() == ACTUATOR_x7F_TYPE_CHAMPION_MIRROR) { // 0x007F
 					glbChampionShowResurrect = 1;
 					SELECT_CHAMPION(0, 0, DIR_EAST, cd.pi.glbPlayerMap);	// player is really at 0,0 facing east
 					REVIVE_CHAMPION(0, 0, DIR_EAST, cd.pi.glbPlayerMap, UI_EVENTCODE_REVIVE_CHAMPION);

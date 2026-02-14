@@ -286,7 +286,7 @@ protected:
 	U16	_4976_19ad;	// _4976_19ad
 	U16	_4976_19af;
 	ObjectID	glbTableToMove;	// (_4976_19ba) moving table. set oFFFF if no table.
-	U16	_4976_1a68;			// SPX: may it be some count of thinking creatures ? used for table _4976_4ebe
+	U16	glbCreature_4976_1a68;			// SPX: may it be some count of thinking creatures ? used for table _4976_4ebe
 
 	U16		glbPreviousPrecompLight;	// (_4976_38f0)
 	U16		glbPreviousLightModifier;	// (_4976_38f2)
@@ -427,7 +427,7 @@ protected:
 	U16	_4976_4c3e;
 	U16		_4976_4c40;	// dir?
 	U8		_4976_4c42[16];
-	OID_T	*_4976_4c52;			// U16* [LOCAL] Index of tiles with objects on them (per column)
+	OID_T	*glbIndexOfTilesWithObjects;			// (_4976_4c52) U16* [LOCAL] Index of tiles with objects on them (per column)
 	//Bit8u	glbCreaturesMaxCount;				// (_4976_4c56) creatures cnt in GRAPHICS.dat
 	//U8		*glbSomeCreatureTable;			// (_4976_4c58) 3 values per creature type
 	Bit8u	*_4976_4c5c;			// default dungeon graphics set (outside map) per level (6=ground floor)
@@ -1191,10 +1191,15 @@ protected:
 
 
 	//-------------- Creatures functions
-	ObjectID GET_CREATURE_AT(i16 xpos, i16 ypos);
+	ObjectID GET_CREATURE_AT(i16 iXPos, i16 iYPos);
 	ObjectID GET_CREATURE_1c9a_03cf(i16 *xx, i16 *yy, U16 dir);	// _1c9a_03cf
 	U16 CREATURE_4937_005c(U16 xx, U16 *yy); // _4937_005c
 	
+	void CREATURE_LOOP_1c9a_3bab();	// _1c9a_3bab
+	void FILL_ORPHAN_CAII();
+	void RESET_CAII();
+	void CREATURE_1c9a_0fcb(U16 iCreatureNo); // _1c9a_0fcb
+
 	AIDefinition *QUERY_CREATURE_AI_SPEC_FROM_TYPE(Bit8u creatureType);
 	U16 QUERY_GDAT_CREATURE_WORD_VALUE(Bit8u creatureType, Bit8u cls4);
 	sk1c9a02c3* GET_CREATURE_INFO_DATA(Creature *xCreature, AIDefinition *xAIDef); // _1c9a_02c3
@@ -1219,7 +1224,7 @@ protected:
 	i16 CREATURE_GO_THERE(X16 aa, i16 xx, i16 yy, i16 ss, i16 tt, i16 ww);		// Big func
 	X16 CREATURE_CAN_HANDLE_IT(ObjectID rlTarget, U16 flags);	// Check it
 	U16 CREATURE_19f0_2813(U16 ww, i16 xx, i16 yy, i16 ss, i16 tt, i16 aa, U16 bb);	// _19f0_2813
-	X16 _12b4_0953(Creature *rec, U16 ww);
+	X16 CREATURE_12b4_0953(Creature* xCreature, U16 ww);
 	U16 _12b4_023f_WOUND_RUNNING_INTO_CREATURE(i16 xx, i16 yy, i16 *ss, i16 *tt, i16 ww, X16 vv); // _12b4_023f
 	X16 IS_CREATURE_MOVABLE_THERE(i16 xx, i16 yy, i16 dir, ObjectID *prlWhatsLying);
 	U16 GET_CREATURE_ANIMATION_FRAME(Bit8u ct, U16 command, U16 *pw08, U16 *pw0a, CreatureAnimationFrame **animframe, U16 vv);	
@@ -1249,7 +1254,7 @@ protected:
 	void SET_MINION_RECENT_OPEN_DOOR_LOCATION(ObjectID recordLink, i16 xpos, i16 ypos, U16 curmap, U16 ww);
 	void RELEASE_CREATURE_TIMER(ObjectID recordLink);
 	U16 GET_CREATURE_WEIGHT(ObjectID recordLink);
-	U16 IS_CREATURE_ALLOWED_ON_LEVEL(ObjectID rlCreature, U16 curmap);
+	U16 IS_CREATURE_ALLOWED_ON_LEVEL(ObjectID rlCreature, U16 iMapNo);
 	void __LOAD_CREATURE_FROM_DUNGEON();
 	X16 WOUND_CREATURE(i16 damage);
 	i16 SELECT_CREATURE_4EFE(const sk4efe *ref);
@@ -1300,6 +1305,12 @@ protected:
 
 	//-------------- Items functions
 	void DRAW_ITEM(ObjectID rl, i16 xx, U16 yy, U16 zz, i16 iDisplaceShift, Creature *ref, U16 ww, U16 ss, U16 tt);
+
+
+	//-------------- Dialog Box
+	U8 DIALOG_BOX_0aaf_0067(U8 iDialogBoxID); //cls2
+	U8 _0aaf_02f8_DIALOG_BOX(U8 iDialogBoxID, Bit8u yy);	// _0aaf_02f8
+	U16 DIALOG_BOX_2066_03e0(U16 xx);
 
 	
 	//void _2066_1ea3(U16 xx, U16 yy, U16 zz);		// An interesting one about changing bits on tile (void/pit)
@@ -1714,9 +1725,6 @@ protected:
 	U8 _476d_05b6_KEYBOARD(U16 xx);
 	void _2066_37f2();
 	i16 _2066_33e7();
-	void _1c9a_3bab();
-	void FILL_ORPHAN_CAII();
-	void RESET_CAII();
 	void SET_PARTY_HERO_FLAG(U16 flagvalue);
 	void SEARCH_STARTER_CHAMPION(); // _2f3f_0789
 	void FILL_U16(i16 *buff, X16 cnt, i16 val, i16 delta);
@@ -1869,7 +1877,6 @@ protected:
 	void QUERY_TOPLEFT_OF_RECT(U16 rectno, i16 *xpos, i16 *ypos);
 	void SLEEP_SEVERAL_TIME(U16 count);
 	void _0aaf_01db(U16 rectno, U16 yy);
-	Bit8u _0aaf_02f8_DIALOG_BOX(Bit8u xx, Bit8u yy);	// _0aaf_02f8
 	void GRAPHICS_DATA_CLOSE();
 	void PROCESS_ACTUATOR_TICK_GENERATOR();
 	U16 _RAND();
@@ -1953,8 +1960,6 @@ protected:
 	void CHAMPION_SQUAD_RECOMPUTE_POSITION();
 	void _38c8_0002();
 	Bit8u *QUERY_GDAT_TEXT(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u *buff);
-	Bit8u _0aaf_0067(Bit8u cls2);
-	U16 _2066_03e0(U16 xx);
 	void SUPPRESS_INIT();
 	void REARRANGE_TIMERLIST();
 	void __SORT_TIMERS();
@@ -2147,7 +2152,6 @@ protected:
 	U16 MISSILE_HIT_075f_0af9(i16 u16tileType, i16 xpos, i16 ypos, U16 dir, ObjectID rlMissile); // 075f_0af9
 	void _2fcf_0234(i16 xposFrom, i16 yposFrom, i16 xposTo, i16 yposTo);
 	U16 _RAND16(U16 maxcnt);
-	void _1c9a_0fcb(U16 xx);
 	void LOAD_LOCALLEVEL_GRAPHICS_TABLE(U16 curmap);
 
 	U16 MOVE_RECORD_TO(ObjectID rlWhatYouMove, i16 xposFrom, i16 yposFrom, i16 xposTo, i16 yposTo);
@@ -2324,7 +2328,7 @@ protected:
 	void STEP_DOOR(Timer *ref);
 	void PROCESS_CLOUD(Timer *ref);
 	void PROCESS_TIMER_DESTROY_DOOR(Timer *ref);
-	X16 _3a15_1da8(X8 xx, X8 yy);
+	X16 TOGGLE_ACTUATOR_MESSAGE(X8 iNewMessageDirection, X8 iCurrentMessageDirection);	// _3a15_1da8
 	void ACTIVATE_RELAY1(Timer *ref, Actuator *pr4, X16 delayAsMult);
 	void ACTIVATE_RELAY2(Timer *ref, Actuator *pr4, X16 xx);
 	void _3a15_0d5c(Timer *ref, Actuator *pr4); // TODO: Unr
