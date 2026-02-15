@@ -15,35 +15,264 @@
 #include <sklua.h>
 #include <skcnsole.h>
 #include <xsfxsdl.h>
+
+#include <kaitable.h>	// for dAITableGenuine (hard coded AI table)
+
 #include <string.h>
-
-//--- Common part with A.cpp
-//using namespace DMEncyclopaedia;
-//using namespace DM2Internal;
-//using namespace kkBitBlt;
-
-//#if defined(_USE_MFC80) || defined(_USE_MFC60)
-//#include <SKMFC.h>
-//#include <resource.h>
-//#endif // defined(_USE_MFC80) || defined(_USE_MFC60)
-
-
-//#ifdef _USE_SDL
-//#include <SKSDL.h>
-//#endif // _USE_SDL
-
-//#if defined(__LINUX__)
-//#include <SKSDL2.h>
-//#include <stdlib.h>
-//#elif defined(__DJGPP__) || defined(__MINGW__)
-//#include <SKDOS.h>
-//#include <stdlib.h> // rand note: putting stdlib here and not right after stdafx prevents a bunch of conflicts with min/max macros
-//#endif // __DJGPP__
 #include <stdlib.h>
 
-//#include <kaitable.h>	// for dAITableGenuine (hard coded AI table)
 
 //==============================================================================
+
+// SPX: New procedures here
+
+const X8* SkWinCore::GET_DATA_FOLDER_ZNAME()
+{
+	const X8* sFolderData = NULL;
+
+	if (skWinApp->sCustomDataFolder != NULL && skWinApp->sCustomDataFolder[0])
+		return (const X8*) skWinApp->sCustomDataFolder;
+#ifdef __LINUX__
+	sFolderData = (const X8*) ".Z008DATA/";
+#else
+	sFolderData = (const X8*) ".Z008DATA\\";
+#endif
+	return sFolderData;
+}
+
+
+const X8* SkWinCore::GET_DATA_FOLDER_NAME()
+{
+	const X8* sFolderData = NULL;
+
+	if (skWinApp->sCustomDataFolder != NULL && skWinApp->sCustomDataFolder[0])
+		return (const X8*) skWinApp->sCustomDataFolder;
+#ifdef __LINUX__
+	sFolderData = (const X8*) "DATA/";
+#else
+	sFolderData = (const X8*) "DATA\\";
+#endif
+	return sFolderData;
+}
+
+
+X16 SkWinCore::EXTENDED_LOAD_AI_DEFINITION(void)
+{
+	int rc = 0;
+	U8 iAIIndex = 0;
+	// SPX: If not extended, load the default table from static data / OR if dungeon selected is skullkeep (security because AI is not in GDAT currently)
+	// 2023-07-26 : removed the test : in all cases, firstly, setup the AI table with default DM2 values, then overwrite with what's from GDAT if any
+	{
+		//&_4976_03a2[res * 0x0024]
+		memcpy(dAITable, dAITableGenuine, 62 * 36);
+
+		//int r = memcmp(_4976_03a2, dAITableGenuine, 36 * 62);
+		//ATLASSERT(r == 0);
+		rc = 0;
+
+		// SPX: Add the cast FIREBALL to the Amplifier AI
+		if (SkCodeParam::bUseFixedMode)
+		{
+			dAITable[51].AttacksSpells |= AI_ATTACK_FLAGS__FIREBALL;
+			//dAITable[51].w0 = 0x40;
+			// Amplifier must remain static object, or it loses its moveable ability.
+		}
+
+	}
+	//if (0)
+	//if (SkCodeParam::bUseDM2ExtendedMode)
+	{
+		U16 value = 0;
+		U8 category = GDAT_CATEGORY_x19_CREATURE_AI;
+		U8 text[128] = {0};
+
+		// Do the default init -- until all data is put into GDAT.
+		//memcpy(dAITable, _4976_03a2, 62 * 36);
+		//memcpy(dAITable, dAITableGenuine, 62 * 36);
+
+		for (iAIIndex = 0; iAIIndex < 254; iAIIndex++)
+		{
+			// SPX : TODO => COMPLETE LOADING OF VALUES HERE
+			value = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, GDAT_AI_STAT_HIT_POINTS);	// Test HP
+			if (value != 0)	
+			{
+				U8	byte1;
+				U8	byte2;
+				QUERY_GDAT_TEXT(GDAT_CATEGORY_x19_CREATURE_AI
+								,iAIIndex
+								,0x18
+								,text);
+				// Bunch load
+				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 0);
+				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 1);
+				dAITable[iAIIndex].w0AIFlags = byte1 + byte2*256;
+
+				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 2);
+				dAITable[iAIIndex].ArmorClass = byte1;
+
+				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 3);
+				dAITable[iAIIndex].b3 = byte1;
+
+				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 4);
+				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 5);
+				dAITable[iAIIndex].BaseHP = byte1 + byte2*256;
+
+				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 6);
+				dAITable[iAIIndex].AttackStrength = byte1;
+
+				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 7);
+				dAITable[iAIIndex].PoisonDamage = byte1;
+
+				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 8);
+				dAITable[iAIIndex].Defense = byte1;
+
+				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 9);
+				dAITable[iAIIndex].b9x = byte1;
+
+				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 10);
+				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 11);
+				dAITable[iAIIndex].w10 = byte1 + byte2*256;
+
+				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 12);
+				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 13);
+				dAITable[iAIIndex].w12 = byte1 + byte2*256;
+
+				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 14);
+				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 15);
+				dAITable[iAIIndex].AttacksSpells = byte1 + byte2*256;
+
+				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 16);
+				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 17);
+				dAITable[iAIIndex].w16 = byte1 + byte2*256;
+
+				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 18);
+				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 19);
+				dAITable[iAIIndex].w18 = byte1 + byte2*256;
+
+				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 20);
+				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 21);
+				dAITable[iAIIndex].w20 = byte1 + byte2*256;
+
+				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 22);
+				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 23);
+				dAITable[iAIIndex].w22 = byte1 + byte2*256;
+
+				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 24);
+				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 25);
+				dAITable[iAIIndex].w24 = byte1 + byte2*256;
+
+				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 26);
+				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 27);
+				dAITable[iAIIndex].w26 = byte1 + byte2*256;
+
+				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 28);
+				dAITable[iAIIndex].b28 = byte1;
+
+				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 29);
+				dAITable[iAIIndex].Weight = byte1;
+
+				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 30);
+				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 31);
+				dAITable[iAIIndex].wc30 = byte1 + byte2*256;
+
+				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 32);
+				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 33);
+				dAITable[iAIIndex].w32 = byte1 + byte2*256;
+
+				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 34);
+				dAITable[iAIIndex].b34 = byte1;
+
+				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, 35);
+				dAITable[iAIIndex].b35 = byte1;
+
+				// Flags (w0)
+				dAITable[iAIIndex].ArmorClass = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, GDAT_AI_STAT_ARMOR_CLASS);
+				//b3
+				dAITable[iAIIndex].BaseHP = value;
+
+				// Is there more than just attack here ?
+				dAITable[iAIIndex].AttackStrength = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, GDAT_AI_STAT_ATTACK_STRENGTH);
+
+				dAITable[iAIIndex].PoisonDamage = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, GDAT_AI_STAT_ATTACK_POISON);
+				dAITable[iAIIndex].Defense = QUERY_GDAT_ENTRY_DATA_INDEX(category, iAIIndex, dtWordValue, GDAT_AI_STAT_DEFENSE);
+				//b9
+				//dAITable[index].b9x = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, GDAT_AI_STAT_FLAGS_B9);
+				// attack commands & spell commands
+				// can switch triggers
+				// fire resistance
+				// poison resistance
+				// weight (push resistance)
+				SkD((DLV_TWEET, "Tweet: Loading AI %d (%02X) named %s (hp:%d, ac:%d, def:%d, str:%d, ps:%d)\n", iAIIndex, iAIIndex
+					,text
+					,dAITable[iAIIndex].BaseHP
+					,dAITable[iAIIndex].ArmorClass
+					,dAITable[iAIIndex].Defense
+					,dAITable[iAIIndex].AttackStrength
+					,dAITable[iAIIndex].PoisonDamage));
+			}
+		}
+		rc = 1;
+	}
+
+	//--- Write info about AI values
+	if (0) // write log or not
+	{
+		Write2LOGX("CREATURE/OBJECT AI INFO:\nNumber of AI : %d", MAXAI);
+		for (iAIIndex = 0; iAIIndex < MAXAI; iAIIndex++)
+		{
+			Write2LOGX("#%03d) <%24s>\n\tHit Points: %4d",
+				iAIIndex,
+				getAIName(iAIIndex),
+				dAITable[iAIIndex].BaseHP);
+			if (dAITable[iAIIndex].ArmorClass == 255)
+				Write2LOGX("\tArmor: Indestructible (255)");	
+			else
+				Write2LOGX("\tArmor: %d", dAITable[iAIIndex].ArmorClass);	
+			if (dAITable[iAIIndex].Defense != 0)
+				Write2LOGX("\tDefense: %d", dAITable[iAIIndex].Defense);	
+			if (dAITable[iAIIndex].AttackStrength != 0)
+				Write2LOGX("\tAttack Strength: %d", dAITable[iAIIndex].AttackStrength);	
+			if (dAITable[iAIIndex].PoisonDamage != 0)
+				Write2LOGX("\tPoison Damage: %d", dAITable[iAIIndex].PoisonDamage);	
+
+			if (dAITable[iAIIndex].AttacksSpells != 0)
+			{
+				if (dAITable[iAIIndex].AttacksSpells & AI_ATTACK_FLAGS__PUSH_BACK)
+					Write2LOGX("\tCan knock back.");	
+				if (dAITable[iAIIndex].AttacksSpells & AI_ATTACK_FLAGS__MELEE)
+					Write2LOGX("\tCan do melee attack.");	
+				if (dAITable[iAIIndex].AttacksSpells & AI_ATTACK_FLAGS__STEAL)
+					Write2LOGX("\tCan steal.");	
+				if (dAITable[iAIIndex].AttacksSpells & AI_ATTACK_FLAGS__FIREBALL)
+					Write2LOGX("\tCan cast Fireball.");	
+				if (dAITable[iAIIndex].AttacksSpells & AI_ATTACK_FLAGS__DISPELL)
+					Write2LOGX("\tCan cast Dispell.");	
+				if (dAITable[iAIIndex].AttacksSpells & AI_ATTACK_FLAGS__LIGHTNING)
+					Write2LOGX("\tCan cast Lightning.");	
+				if (dAITable[iAIIndex].AttacksSpells & AI_ATTACK_FLAGS__POISON_CLOUD)
+					Write2LOGX("\tCan cast Poison Cloud.");	
+				if (dAITable[iAIIndex].AttacksSpells & AI_ATTACK_FLAGS__POISON_BOLT)
+					Write2LOGX("\tCan cast Poison Bolt.");	
+				if (dAITable[iAIIndex].AttacksSpells & AI_ATTACK_FLAGS__PUSH_SPELL)
+					Write2LOGX("\tCan cast Push.");	
+				if (dAITable[iAIIndex].AttacksSpells & AI_ATTACK_FLAGS__PULL_SPELL)
+					Write2LOGX("\tCan cast Pull.");	
+				if (dAITable[iAIIndex].AttacksSpells & AI_ATTACK_FLAGS__POISON_BLOB)
+					Write2LOGX("\tCan can Poison Blob.");	
+				if (dAITable[iAIIndex].AttacksSpells & AI_ATTACK_FLAGS__SHOOT)
+					Write2LOGX("\tCan shoot items.");	
+			}
+
+
+			Write2LOGX("\n");
+		}
+	}
+
+	return rc;
+}
+// SPX: End of new procedures
+
+
 
 X16
 SkWinCore::EXTENDED_LOAD_SPELLS_DEFINITION(void)
@@ -898,7 +1127,7 @@ U16 SkWinCore::EXT_PROCEED_DCS_GENERIC_COMMAND(const char* sCommandName, const c
 			xActuator->GraphicNumber(iGfxMapID);
 			xActuator->SoundEffect(1);
 			xActuator->ActuatorType(ACTUATOR_FLOOR_TYPE__PARTY);
-			xActuator->ActionType(ACTEFFECT_STEP_ON__OPEN_SET);
+			xActuator->ActionType(C00_ACTEFFECT_STEP_ON__OPEN_SET);
 		}
 	}
 	else if (!strcmp(sCommandName, "create") && !strcmp(sObjectScope, "actuator.wall.champion"))
@@ -918,8 +1147,8 @@ U16 SkWinCore::EXT_PROCEED_DCS_GENERIC_COMMAND(const char* sCommandName, const c
 			xActuator->SetTarget(iArgMap, iArgX, iArgY);
 			xActuator->GraphicNumber(iGfxMapID);
 			xActuator->SoundEffect(1);
-			xActuator->ActuatorType(ACTUATOR_TYPE_RESURECTOR);
-			xActuator->ActionType(ACTEFFECT_STEP_ON__OPEN_SET);
+			xActuator->ActuatorType(ACTUATOR_x7E_TYPE_RESURECTOR);
+			xActuator->ActionType(C00_ACTEFFECT_STEP_ON__OPEN_SET);
 			xActuator->ActuatorData(iChampionID);
 		}
 	}

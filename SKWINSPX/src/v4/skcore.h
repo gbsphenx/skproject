@@ -1312,6 +1312,22 @@ protected:
 	U8 _0aaf_02f8_DIALOG_BOX(U8 iDialogBoxID, Bit8u yy);	// _0aaf_02f8
 	U16 DIALOG_BOX_2066_03e0(U16 xx);
 
+	//-------------- Door
+	i16 QUERY_DOOR_DAMAGE_RESIST(U8 iDoorType);
+	U16 ATTACK_DOOR(i16 x, i16 y, U16 damage, U16 isSpellAttack, U16 delay);
+	U16 GET_DOOR_STAT_10(U8 iDoorType);
+	Bit8u GET_GRAPHICS_FOR_DOOR(Door* xDoor);
+	X16 QUERY_DOOR_STRENGTH(U8 iDoorType);
+	void STEP_DOOR(Timer *ref);
+	void DRAW_DEFAULT_DOOR_BUTTON(U8 cls1, U8 cls2, U8 cls4, i16 ww);
+	void DRAW_DOOR_FRAMES(i16 xx, X16 yy);
+	void DRAW_DOOR(i16 xx, X16 yy, X16 zz, X32 aa);
+	void DRAW_DOOR_TILE(i16 xx);
+	void PROCESS_TIMER_DESTROY_DOOR(Timer *ref);
+
+	X16 _32cb_48d5(U16 xx, i16 yy);
+
+
 	
 	//void _2066_1ea3(U16 xx, U16 yy, U16 zz);		// An interesting one about changing bits on tile (void/pit)
 	void SET_TILE_ATTRIBUTE_02(U16 xx, U16 yy, U16 map); // _2066_1ea3
@@ -1998,8 +2014,6 @@ protected:
 	U16 _0cee_06dc_GET_TILE_DIRECTION(i16 xx, i16 yy); // _0cee_06dc
 	X16 _0cee_319e_ALCOVE_GET_GDAT_X13(ObjectID rl); // _0cee_319e
 	U16 ATTACK_WALL(i16 xTo, i16 yTo, i16 xFrm, i16 yFrm, U16 dirTo, ObjectID rlThrown);
-	i16 QUERY_DOOR_DAMAGE_RESIST(U8 cls2);
-	U16 ATTACK_DOOR(i16 x, i16 y, U16 damage, U16 isSpellAttack, U16 delay);
 	X16 _2c1d_132c(i16 ss, U16 tt);
 	X16 _2c1d_135d(i16 play, U16 ww);
 	i16 _0cd5_0176(U16 val, U16 rshift, U16 multiplier);
@@ -2071,11 +2085,6 @@ protected:
 	void _32cb_2cf3(U8 cls2, U16 scale64, U16 mirrorFlip, U16 rectno);
 	void _32cb_2d8c(ObjectID rl, X16 yy, X32 aa);
 	void _32cb_3edd(i16 xx);
-	void DRAW_DEFAULT_DOOR_BUTTON(U8 cls1, U8 cls2, U8 cls4, i16 ww);
-	void DRAW_DOOR_FRAMES(i16 xx, X16 yy);
-	X16 _32cb_48d5(U16 xx, i16 yy);
-	void DRAW_DOOR(i16 xx, X16 yy, X16 zz, X32 aa);
-	void DRAW_DOOR_TILE(i16 xx);
 	void DRAW_STAIRS_SIDE(i16 xx);
 	void DRAW_STAIRS_FRONT(i16 xx);
 	void DRAW_PIT_TILE(i16 xx);
@@ -2147,8 +2156,6 @@ protected:
 	void DEALLOC_RECORD(ObjectID recordLink);
 	U16 PROJECTILE_GET_IMPACT_ATTACK(Missile *ref, ObjectID recordLink);	// _075f_06bd
 	U16 _RAND01();
-	U16 GET_DOOR_STAT_10(Bit8u cls2);
-	Bit8u GET_GRAPHICS_FOR_DOOR(Door *ref);
 	U16 MISSILE_HIT_075f_0af9(i16 u16tileType, i16 xpos, i16 ypos, U16 dir, ObjectID rlMissile); // 075f_0af9
 	void _2fcf_0234(i16 xposFrom, i16 yposFrom, i16 xposTo, i16 yposTo);
 	U16 _RAND16(U16 maxcnt);
@@ -2324,10 +2331,7 @@ protected:
 
 
 	void STEP_MISSILE(Timer *ref);
-	X16 QUERY_DOOR_STRENGTH(X8 cls2);
-	void STEP_DOOR(Timer *ref);
 	void PROCESS_CLOUD(Timer *ref);
-	void PROCESS_TIMER_DESTROY_DOOR(Timer *ref);
 	X16 TOGGLE_ACTUATOR_MESSAGE(X8 iNewMessageDirection, X8 iCurrentMessageDirection);	// _3a15_1da8
 	void ACTIVATE_RELAY1(Timer *ref, Actuator *pr4, X16 delayAsMult);
 	void ACTIVATE_RELAY2(Timer *ref, Actuator *pr4, X16 xx);

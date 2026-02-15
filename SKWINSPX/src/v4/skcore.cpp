@@ -116,254 +116,6 @@ int getdrive() { return 3; }
 
 
 
-// SPX: New procedures here
-
-const X8* SkWinCore::GET_DATA_FOLDER_ZNAME()
-{
-	const X8* sFolderData = NULL;
-
-	if (skWinApp->sCustomDataFolder != NULL && skWinApp->sCustomDataFolder[0])
-		return (const X8*) skWinApp->sCustomDataFolder;
-#ifdef __LINUX__
-	sFolderData = (const X8*) ".Z008DATA/";
-#else
-	sFolderData = (const X8*) ".Z008DATA\\";
-#endif
-	return sFolderData;
-}
-
-
-const X8* SkWinCore::GET_DATA_FOLDER_NAME()
-{
-	const X8* sFolderData = NULL;
-
-	if (skWinApp->sCustomDataFolder != NULL && skWinApp->sCustomDataFolder[0])
-		return (const X8*) skWinApp->sCustomDataFolder;
-#ifdef __LINUX__
-	sFolderData = (const X8*) "DATA/";
-#else
-	sFolderData = (const X8*) "DATA\\";
-#endif
-	return sFolderData;
-}
-
-
-X16 SkWinCore::EXTENDED_LOAD_AI_DEFINITION(void)
-{
-	int rc = 0;
-	U8 index = 0;
-	// SPX: If not extended, load the default table from static data / OR if dungeon selected is skullkeep (security because AI is not in GDAT currently)
-	// 2023-07-26 : removed the test : in all case, first setup the AI table with default DM2 values, then overwrite with what's from GDAT if any
-	{
-		//&_4976_03a2[res * 0x0024]
-		memcpy(dAITable, dAITableGenuine, 62 * 36);
-
-		//int r = memcmp(_4976_03a2, dAITableGenuine, 36 * 62);
-		//ATLASSERT(r == 0);
-		rc = 0;
-
-		// SPX: Add the cast FIREBALL to the Amplifier AI
-		if (SkCodeParam::bUseFixedMode)
-		{
-			dAITable[51].AttacksSpells |= AI_ATTACK_FLAGS__FIREBALL;
-			//dAITable[51].w0 = 0x40;
-			// Amplifier must remain static object, or it loses its moveable ability.
-		}
-
-	}
-	if (0)
-	//if (SkCodeParam::bUseDM2ExtendedMode)
-	{
-		U16 value = 0;
-		U8 category = GDAT_CATEGORY_x19_CREATURE_AI;
-		U8 text[128] = {0};
-
-		// Do the default init -- until all data is put into GDAT.
-		//memcpy(dAITable, _4976_03a2, 62 * 36);
-		//memcpy(dAITable, dAITableGenuine, 62 * 36);
-
-		for (index = 0; index < 254; index++)
-		{
-			// SPX : TODO => COMPLETE LOADING OF VALUES HERE
-			value = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, GDAT_AI_STAT_HIT_POINTS);	// Test HP
-			if (value != 0)	
-			{
-				U8	byte1;
-				U8	byte2;
-				QUERY_GDAT_TEXT(GDAT_CATEGORY_x19_CREATURE_AI
-								,index
-								,0x18
-								,text);
-				// Bunch load
-				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 0);
-				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 1);
-				dAITable[index].w0AIFlags = byte1 + byte2*256;
-
-				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 2);
-				dAITable[index].ArmorClass = byte1;
-
-				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 3);
-				dAITable[index].b3 = byte1;
-
-				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 4);
-				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 5);
-				dAITable[index].BaseHP = byte1 + byte2*256;
-
-				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 6);
-				dAITable[index].AttackStrength = byte1;
-
-				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 7);
-				dAITable[index].PoisonDamage = byte1;
-
-				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 8);
-				dAITable[index].Defense = byte1;
-
-				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 9);
-				dAITable[index].b9x = byte1;
-
-				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 10);
-				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 11);
-				dAITable[index].w10 = byte1 + byte2*256;
-
-				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 12);
-				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 13);
-				dAITable[index].w12 = byte1 + byte2*256;
-
-				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 14);
-				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 15);
-				dAITable[index].AttacksSpells = byte1 + byte2*256;
-
-				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 16);
-				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 17);
-				dAITable[index].w16 = byte1 + byte2*256;
-
-				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 18);
-				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 19);
-				dAITable[index].w18 = byte1 + byte2*256;
-
-				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 20);
-				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 21);
-				dAITable[index].w20 = byte1 + byte2*256;
-
-				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 22);
-				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 23);
-				dAITable[index].w22 = byte1 + byte2*256;
-
-				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 24);
-				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 25);
-				dAITable[index].w24 = byte1 + byte2*256;
-
-				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 26);
-				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 27);
-				dAITable[index].w26 = byte1 + byte2*256;
-
-				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 28);
-				dAITable[index].b28 = byte1;
-
-				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 29);
-				dAITable[index].Weight = byte1;
-
-				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 30);
-				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 31);
-				dAITable[index].wc30 = byte1 + byte2*256;
-
-				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 32);
-				byte2 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 33);
-				dAITable[index].w32 = byte1 + byte2*256;
-
-				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 34);
-				dAITable[index].b34 = byte1;
-
-				byte1 = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, 35);
-				dAITable[index].b35 = byte1;
-
-				// Flags (w0)
-				dAITable[index].ArmorClass = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, GDAT_AI_STAT_ARMOR_CLASS);
-				//b3
-				dAITable[index].BaseHP = value;
-
-				// Is there more than just attack here ?
-				dAITable[index].AttackStrength = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, GDAT_AI_STAT_ATTACK_STRENGTH);
-
-				dAITable[index].PoisonDamage = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, GDAT_AI_STAT_ATTACK_POISON);
-				dAITable[index].Defense = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, GDAT_AI_STAT_DEFENSE);
-				//b9
-				//dAITable[index].b9x = QUERY_GDAT_ENTRY_DATA_INDEX(category, index, dtWordValue, GDAT_AI_STAT_FLAGS_B9);
-				// attack commands & spell commands
-				// can switch triggers
-				// fire resistance
-				// poison resistance
-				// weight (push resistance)
-				SkD((DLV_TWEET, "Tweet: Loading AI %d (%02X) named %s (hp:%d, ac:%d, def:%d, str:%d, ps:%d)\n", index, index
-					,text
-					,dAITable[index].BaseHP
-					,dAITable[index].ArmorClass
-					,dAITable[index].Defense
-					,dAITable[index].AttackStrength
-					,dAITable[index].PoisonDamage));
-			}
-		}
-		rc = 1;
-	}
-
-	//--- Write info about AI values
-	if (0) // write log or not
-	{
-		Write2LOGX("CREATURE/OBJECT AI INFO:\nNumber of AI : %d", MAXAI);
-		for (index = 0; index < MAXAI; index++)
-		{
-			Write2LOGX("#%03d) <%24s>\n\tHit Points: %4d",
-				index,
-				getAIName(index),
-				dAITable[index].BaseHP);
-			if (dAITable[index].ArmorClass == 255)
-				Write2LOGX("\tArmor: Indestructible (255)");	
-			else
-				Write2LOGX("\tArmor: %d", dAITable[index].ArmorClass);	
-			if (dAITable[index].Defense != 0)
-				Write2LOGX("\tDefense: %d", dAITable[index].Defense);	
-			if (dAITable[index].AttackStrength != 0)
-				Write2LOGX("\tAttack Strength: %d", dAITable[index].AttackStrength);	
-			if (dAITable[index].PoisonDamage != 0)
-				Write2LOGX("\tPoison Damage: %d", dAITable[index].PoisonDamage);	
-
-			if (dAITable[index].AttacksSpells != 0)
-			{
-				if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__PUSH_BACK)
-					Write2LOGX("\tCan knock back.");	
-				if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__MELEE)
-					Write2LOGX("\tCan do melee attack.");	
-				if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__STEAL)
-					Write2LOGX("\tCan steal.");	
-				if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__FIREBALL)
-					Write2LOGX("\tCan cast Fireball.");	
-				if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__DISPELL)
-					Write2LOGX("\tCan cast Dispell.");	
-				if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__LIGHTNING)
-					Write2LOGX("\tCan cast Lightning.");	
-				if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__POISON_CLOUD)
-					Write2LOGX("\tCan cast Poison Cloud.");	
-				if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__POISON_BOLT)
-					Write2LOGX("\tCan cast Poison Bolt.");	
-				if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__PUSH_SPELL)
-					Write2LOGX("\tCan cast Push.");	
-				if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__PULL_SPELL)
-					Write2LOGX("\tCan cast Pull.");	
-				if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__POISON_BLOB)
-					Write2LOGX("\tCan can Poison Blob.");	
-				if (dAITable[index].AttacksSpells & AI_ATTACK_FLAGS__SHOOT)
-					Write2LOGX("\tCan shoot items.");	
-			}
-
-
-			Write2LOGX("\n");
-		}
-	}
-
-	return rc;
-}
-// SPX: End of new procedures
-
 //{{DEBUG_HELPER
 const char *SkWinCore::getXActrName(int x)
 {
@@ -5222,13 +4974,13 @@ i16 SkWinCore::_2066_33e7()
 void SkWinCore::FILL_ORPHAN_CAII()
 {
 	ENTER(2);
-	U16 di = glbCurrentMapIndex;
-	U16 bp02 = dunHeader->nMaps;
-	for (i16 si = 0; si < bp02; si++) {
-		CHANGE_CURRENT_MAP_TO(si);
+	U16 iPreviousMapNo = glbCurrentMapIndex;	// di
+	U16 iNbMaps = dunHeader->nMaps;	// bp02
+	for (i16 iMapIndex = 0; iMapIndex < iNbMaps; iMapIndex++) {
+		CHANGE_CURRENT_MAP_TO(iMapIndex);
 		FILL_CAII_CUR_MAP();
 	}
-	CHANGE_CURRENT_MAP_TO(di);
+	CHANGE_CURRENT_MAP_TO(iPreviousMapNo);
 	return;
 }
 
@@ -20892,13 +20644,10 @@ UINT SkWinCore::INIT()
 	_476d_018a();
 	_2636_03d4();
 
-	SkD((DLV_DBG_INIT, "READ_GRAPHICS_STRUCTURE\n"));
 	READ_GRAPHICS_STRUCTURE();
-	SkD((DLV_DBG_INIT, "_482b_0004\n"));
 	_482b_0004();
 
 
-	SkD((DLV_DBG_INIT, "LOAD_GDAT_INTERFACE_00_0A\n"));
 	LOAD_GDAT_INTERFACE_00_0A(); // game will fail if this item is not loaded, but it does not exist in PC-DOS version
 	U8 *bp04 = ALLOC_MEMORY_RAM(0x400, afUseLower, 1024);
 //DEBUG_DUMP_ULP();
@@ -20912,7 +20661,6 @@ UINT SkWinCore::INIT()
 	glbPaletteT16 = QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_BASE_DATA, dtPalette16, 0xFE);
 	_098d_1208();
 
-	SkD((DLV_DBG_INIT, "EXTENDED_LOAD_AI_DEFINITION\n"));
 	// SPX: Added extended load here (requires the GDAT to be initialized, but must be before dungeon loading)
 	EXTENDED_LOAD_AI_DEFINITION();
 	// SPX: Read compatibility mode value (none = standard DM2)

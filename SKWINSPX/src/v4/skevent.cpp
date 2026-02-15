@@ -2309,7 +2309,7 @@ void SkWinCore::ACTUATE_DOOR(Timer *ref)
 	ENTER(4);
 
 	X16 iOpenCloseState = glbCurrentTileMap[ref->XcoordB()][ref->YcoordB()] & 7; // state of door : 0 is open, 4 is fully closed, 2 is mid-opened
-	if (iOpenCloseState == _DOOR_STATE__DESTROYED_) // 5, destroyed, can't operate
+	if (iOpenCloseState == _DOOR_STATE_C05_DESTROYED) // 5, destroyed, can't operate
 		return;
 	Door *door = GET_ADDRESS_OF_TILE_RECORD(ref->XcoordB(), ref->YcoordB())->castToDoor();	//*bp04
 	Door_Info* xDoorInfo = (Door_Info*) door;
@@ -2376,7 +2376,7 @@ void SkWinCore::STEP_DOOR(Timer *ref)
 	X16 si = ref->YcoordB();
 	U8 *xTileValue = &glbCurrentTileMap[di][si];	// bp04
 	X16 iOpenCloseState = *xTileValue & 7; // bp0a
-	if (iOpenCloseState == _DOOR_STATE__DESTROYED_) // 5, destroyed, can't operate
+	if (iOpenCloseState == _DOOR_STATE_C05_DESTROYED) // 5, destroyed, can't operate
 		return;
 	//^3A15:0807
 	if (glbCurrentMapIndex == cd.pi.glbPlayerMap)

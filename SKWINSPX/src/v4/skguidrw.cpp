@@ -1241,7 +1241,7 @@ _1025:
 					bp0a += 2;
 				}
 				//^29EE:1057
-				if (bp4c.tfoi[0] == _DOOR_STATE__OPENED_ || bp4c.tfoi[0] == _DOOR_STATE__DESTROYED_) {	// (bp4c.w6[0] == 0 || bp4c.w6[0] == 5) if door is opend or destroyed
+				if (bp4c.tfoi[0] == _DOOR_STATE_C00_OPENED || bp4c.tfoi[0] == _DOOR_STATE_C05_DESTROYED) {	// (bp4c.w6[0] == 0 || bp4c.w6[0] == 5) if door is opend or destroyed
 					//^29EE:1063
 					bp0a += 4;
 				}
@@ -5840,9 +5840,9 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 						X16 iOrnateIndex = xDoor->OrnateIndex();	// X16 di
 						i16 iCacheNo;	// i16 bp16
 #if (XDM1_EXTENDED_SEETHRUWALLS == 1)
-						if (iOrnateIndex != 0 || iDoorState == _DOOR_STATE__DESTROYED_ || glbGlobalSpellEffects.SeeThruWalls > 0) {	// + window spell effect
+						if (iOrnateIndex != 0 || iDoorState == _DOOR_STATE_C05_DESTROYED || glbGlobalSpellEffects.SeeThruWalls > 0) {	// + window spell effect
 #else
-						if (iOrnateIndex != 0 || iDoorState == _DOOR_STATE__DESTROYED_) {	// If there is any ornate or door is destroyed
+						if (iOrnateIndex != 0 || iDoorState == _DOOR_STATE_C05_DESTROYED) {	// If there is any ornate or door is destroyed
 #endif
 							ExtendedPicture xPicture;	// ExtendedPicture bp015c;
 							// Get door graphics
@@ -5896,7 +5896,7 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 								glbTempPicture.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(iCacheNo));
 								DRAW_TEMP_PICST();
 							}
-							if (iDoorState == _DOOR_STATE__DESTROYED_) {	// (iDoorState == 5) If door is destroyed .. then draw destroyed mask over any ornate
+							if (iDoorState == _DOOR_STATE_C05_DESTROYED) {	// (iDoorState == 5) If door is destroyed .. then draw destroyed mask over any ornate
 								X16 iColorTransparencyOverlay = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0E_DOORS, iDoorGDATIndex, dtWordValue, GDAT_IMG_DOOR_COLORKEY_2);	// X16 bp14
 								if (iColorTransparencyOverlay == 0)
 									iColorTransparencyOverlay = 9;	// 9 is standard CYAN
@@ -5904,7 +5904,7 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 								// SPX: (2016-10-30) Get the destroyed door mask and use default one if available
 								if (!SkCodeParam::bUseFixedMode)
 								QUERY_TEMP_PICST(0, iStretchHorizontal, iStretchVertical, 0, 0, iYDist, 
-									(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0E_DOORS, iDoorGDATIndex, dtWordValue, GDAT_DOOR_DESTROYED_MASK_POSITION) << 2) + iInvertedYDist +0x7d0,
+									(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0E_DOORS, iDoorGDATIndex, dtWordValue, GDAT_DOOR_x0A_DESTROYED_MASK_POSITION) << 2) + iInvertedYDist +0x7d0,
 									-1, iColorTransparencyOverlay, iDoorColorPassThrough, GDAT_CATEGORY_x0E_DOORS, iDoorGDATIndex, GDAT_DOOR_DESTROYED_MASK
 									);
 								else if (SkCodeParam::bUseFixedMode)
@@ -5915,7 +5915,7 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 									if (iDoorDestroyedMask == (U16)-1) // not found, get the default one
 										iDoorDestroyedGDATIndex = GDAT_ITEM_DEFAULT_INDEX;
 									QUERY_TEMP_PICST(0, iStretchHorizontal, iStretchVertical, 0, 0, iYDist, 
-										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0E_DOORS, iDoorGDATIndex, dtWordValue, GDAT_DOOR_DESTROYED_MASK_POSITION) << 2) + iInvertedYDist +0x7d0,
+										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0E_DOORS, iDoorGDATIndex, dtWordValue, GDAT_DOOR_x0A_DESTROYED_MASK_POSITION) << 2) + iInvertedYDist +0x7d0,
 										-1, iColorTransparencyOverlay, iDoorColorPassThrough, GDAT_CATEGORY_x0E_DOORS, iDoorDestroyedGDATIndex, GDAT_DOOR_DESTROYED_MASK
 										);								
 								}
@@ -5938,7 +5938,7 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 									if (iDoorSeeThruMask == (U16)-1) // not found, get the default one
 										iDoorSeeThruGDATIndex = GDAT_ITEM_DEFAULT_INDEX;
 									QUERY_TEMP_PICST(0, iStretchHorizontal, iStretchVertical, 0, 0, iYDist, 
-										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0E_DOORS, iDoorGDATIndex, dtWordValue, GDAT_DOOR_DESTROYED_MASK_POSITION) << 2) + iInvertedYDist +0x7d0,
+										(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0E_DOORS, iDoorGDATIndex, dtWordValue, GDAT_DOOR_x0A_DESTROYED_MASK_POSITION) << 2) + iInvertedYDist +0x7d0,
 										-1, iColorTransparencyOverlay, iDoorColorPassThrough, GDAT_CATEGORY_x0E_DOORS, iDoorSeeThruGDATIndex, GDAT_DOOR_SEE_THRU_MASK
 										);								
 								}

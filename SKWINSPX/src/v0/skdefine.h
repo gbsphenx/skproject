@@ -807,20 +807,20 @@ enum SkillLevel {
 #define GDAT_DOOR_DESTROYED_MASK			0x41
 #define GDAT_DOOR_SEE_THRU_MASK				0x42	// CUSTOM, for SEE THRU WALLS
 
-#define GDAT_DOOR_DESTROYED_MASK_POSITION	0x0A	// 0 = upper, 1 = centered, 2 = low/right -- should always be centered
-#define GDAT_DOOR_DEFENSE					0x0E
-#define GDAT_DOOR_STRENGTH					0x0F
-#define GDAT_DOOR_X0D						0x0D	// vision bypass ?
-#define GDAT_DOOR_X10						0x10	// some spell bypass ?
+#define GDAT_DOOR_x0A_DESTROYED_MASK_POSITION	0x0A	// 0 = upper, 1 = centered, 2 = low/right -- should always be centered
+#define GDAT_DOOR_x0E_DEFENSE					0x0E
+#define GDAT_DOOR_x0F_STRENGTH					0x0F
+#define GDAT_DOOR_x0D							0x0D	// vision bypass ?
+#define GDAT_DOOR_x10							0x10	// some spell bypass ?
 
 #define GDAT_DOOR_x08_ORNATE__POSITION		0x08	// 0 = upper, 1 = centered, 2 = low/right
 
-#define _DOOR_STATE__OPENED_				0x00
-#define _DOOR_STATE__ONE_QUARTER_CLOSED_	0x01
-#define _DOOR_STATE__MID_CLOSED_			0x02
-#define _DOOR_STATE__THREE_QUARTERS_CLOSED_	0x03
-#define _DOOR_STATE__CLOSED_				0x04
-#define _DOOR_STATE__DESTROYED_				0x05	// ingame, doorstate = 5 => door is destroyed
+#define _DOOR_STATE_C00_OPENED					0x00
+#define _DOOR_STATE_C01_ONE_QUARTER_CLOSED		0x01
+#define _DOOR_STATE_C02_MID_CLOSED				0x02
+#define _DOOR_STATE_C03_THREE_QUARTERS_CLOSED	0x03
+#define _DOOR_STATE_C04_CLOSED					0x04
+#define _DOOR_STATE_C05_DESTROYED				0x05	// ingame, doorstate = 5 => door is destroyed
 
 #define DRAW_DOOR_FLAG_CEILING_SLIT			0x01
 #define DRAW_DOOR_FLAG_LEFT_FRAME			0x02

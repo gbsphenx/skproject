@@ -4126,56 +4126,7 @@ U16 SkWinCore::ATTACK_WALL(i16 xTo, i16 yTo, i16 xFrm, i16 yFrm, U16 dirTo, Obje
 }
 
 
-//^0CEE:32A3
-i16 SkWinCore::QUERY_DOOR_DAMAGE_RESIST(U8 cls2)
-{
-	//^0CEE:32A3
-	ENTER(0);
-	//^0CEE:32A6
-	return QUERY_GDAT_ENTRY_DATA_INDEX(0x0e, cls2, dtWordValue, 0x0e);
-	//^0CEE:32B8
-}
 
-//^075F:2205
-U16 SkWinCore::ATTACK_DOOR(i16 x, i16 y, U16 damage, U16 isSpellAttack, U16 delay)
-{
-	//^075F:2205
-	ENTER(18);
-	//^075F:2209
-	Door *door = GET_ADDRESS_OF_TILE_RECORD(U8(x), U8(y))->castToDoor();	//*bp04
-	// SPX: Disable door controls if "weak door" mode is activated. Controls within are original code
-	if (!SkCodeParam::bWeakDoors) {
-		if (isSpellAttack != 0 && door->DestroyablebyFireball() == 0)
-			return 0;
-		//^075F:2233
-		if (isSpellAttack == 0 && door->BashablebyChopping() == 0)
-			return 0;
-		//^075F:224A
-		if (QUERY_DOOR_DAMAGE_RESIST(GET_GRAPHICS_FOR_DOOR(door)) <= damage)
-			return 0;
-	} // End of "weak door"	
-	//^075F:2266
-	U8 *bp08 = &glbCurrentTileMap[x][y];
-	if ((*bp08 & 7) != _DOOR_STATE__CLOSED_)	// ((*bp08 & 7) != 4) not closed
-		return 0;
-	//^075F:228E
-	if (delay != 0) {
-		//^075F:2294
-		Timer bp12;
-		bp12.SetMap(glbCurrentMapIndex);
-		bp12.SetTick(glbGameTick +delay);
-		bp12.TimerType(ttyDoorDestroy);
-		bp12.actor = TIMER_ACTOR__00;
-		bp12.XcoordB(U8(x));
-		bp12.YcoordB(U8(y));
-		QUEUE_TIMER(&bp12);
-	}
-	else {
-		//^075F:22D9
-		*bp08 = (*bp08 & 0xf8) | _DOOR_STATE__DESTROYED_; // (*bp08 = (*bp08 & 0xf8) | 5;) Destroyed or bashed
-	}
-	return 1;
-}
 
 
 
