@@ -524,3 +524,22 @@ void SkWinCore::READ_SAVEGAMES_FILENAMES()
 	return;
 }
 
+
+//^2066:033C
+// _2066_033c renamed 
+U16 SkWinCore::FILE_READ_FROM_CURRENT_FILE(void *buff, int size)
+{
+	Bit32u bp04 = size;
+	if (bp04 == 0)
+		return 1;
+	return FILE_READ(glbDataFileHandle, bp04, buff);
+}
+
+//^2066:03A0
+int SkWinCore::SKLOAD_READ(void *buff, int size)
+{
+	if (FILE_READ_FROM_CURRENT_FILE(buff, size) == 0)
+		return 0;
+	return 1;
+}
+

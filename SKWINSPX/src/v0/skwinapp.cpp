@@ -562,7 +562,8 @@ void SkWinApp::skwin_Sleep(U32 millisecs)
 #elif defined (__LINUX__)
 	usleep(millisecs*1000);
 #elif defined (__DJGPP__)
-	delay(millisecs);
+	//delay(millisecs);
+	delay(10);
 #endif
 }
 
@@ -814,20 +815,22 @@ void SkWinApp::processKinput(U32 nChar, bool press)
 		xSkWinRenderer->ResizeWindow();
 		xSkWinRenderer->Render();
 	}
-	else if (press && nChar == SDLK_F1) {
+	else if (press && nChar == SDLK_F1) {	// slow down
 		// make slower
 		switch (SkCodeParam::iTickSpeedFactor) {
 			case 0: case 1: case 2: case 3: case 4:
 				SkCodeParam::iTickSpeedFactor++;
+				printf("Speed Factor: %d\n", SkCodeParam::iTickSpeedFactor);
 				break;
 		}
 		return;
 	}
-	else if (press && nChar == SDLK_F2) {
+	else if (press && nChar == SDLK_F2) {	// speed up
 		// make faster
 		switch (SkCodeParam::iTickSpeedFactor) {
 			case 1: case 2: case 3: case 4: case 5:
 				SkCodeParam::iTickSpeedFactor--;
+				printf("Speed Factor: %d\n", SkCodeParam::iTickSpeedFactor);
 				break;
 		}
 		return;

@@ -1980,8 +1980,10 @@ protected:
 	void REARRANGE_TIMERLIST();
 	void __SORT_TIMERS();
 	Bit8u *FORMAT_SKSTR(const Bit8u *format, Bit8u *output);	// Z00* replacement
-	U16 _2066_033c(void *buff, int size);
+
+	U16 FILE_READ_FROM_CURRENT_FILE(void *buff, int size);	// _2066_033c
 	int SKLOAD_READ(void *buff, int size);
+
 	void INIT_TIMERS(); // _3a15_0002 renamed INIT_TIMERS
 	void DECIDE_DEFAULT_DUNGEON_MAP_CHIP_SET();
 	int READ_DUNGEON_STRUCTURE(X16 isNewGame);

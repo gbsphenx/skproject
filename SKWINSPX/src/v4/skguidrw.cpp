@@ -692,7 +692,7 @@ void SkWinCore::DRAW_SQUAD_POS_INTERFACE()
 		//^29EE:04C3
 		ExtendedPicture bp014e;
 		// SPX: Check in INTERFACE (0x01) 07 => Party protection animations
-		QUERY_PICST_IT(QUERY_GDAT_SUMMARY_IMAGE(&bp014e, GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_CHAMPION_AURA, glbChampionSquad[si].enchantmentAura));
+		QUERY_PICST_IT(QUERY_GDAT_SUMMARY_IMAGE(&bp014e, GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x07_CHAMPION_AURA, glbChampionSquad[si].enchantmentAura));
 		//^29EE:04EC
 		bp014e.w4 |= 0x10;
 		bp014e.width >>= 2;
@@ -797,13 +797,9 @@ void SkWinCore::DRAW_NAME_STR(sk3f6c *ref, U16 rectno, U16 clr1, U16 fill, U8 *s
 //^29EE:0713
 void SkWinCore::DRAW_PLAYER_NAME_AT_CMDSLOT()
 {
-	//^29EE:0713
 	ENTER(0);
-	//^29EE:0716
-	DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_CHAMPION, 0x14, &_4976_3f6c, 60, -1);
-	//^29EE:072C
-	DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_CHAMPION, 0x0e, &_4976_3f6c, 59, -1);
-	//^29EE:0742
+	DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x04_CHAMPION, 0x14, &_4976_3f6c, 60, -1);
+	DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x04_CHAMPION, 0x0E, &_4976_3f6c, 59, -1);
 	DRAW_NAME_STR(
 		&_4976_3f6c, 
 		61, 
@@ -813,7 +809,6 @@ void SkWinCore::DRAW_PLAYER_NAME_AT_CMDSLOT()
 		);
 	// SPX: This (9 : 15) controls the color of the char name in the cast spell panel.
 	// However, 9 is dark brown for leader, and that was wrong. Leader is to be orange. Non-leader is white
-	//^29EE:0789
 	return;
 }
 
@@ -839,7 +834,7 @@ void SkWinCore::DRAW_SPELL_TO_BE_CAST(U16 xx)
 	// SPX: Cyan rectangles to be put over spell line
 	if (xx != 0) {
 		//^29EE:0951
-		DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_SPELLMENU, 0x09, &_4976_3f6c, 252, -1);
+		DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x05_SPELLMENU, 0x09, &_4976_3f6c, 252, -1);
 	}
 	//^29EE:0968
 	Champion *champion = &glbChampionTable[cd.pi.glbChampionIndex];
@@ -875,7 +870,7 @@ void SkWinCore::DRAW_SPELL_PANEL()
 	U16 bp06 = champion->runesCount;
 	//^29EE:09F7
 	// SPX: rune class interface
-	DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_SPELLMENU, bp06 +1, &_4976_3f6c, 92, -1);
+	DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x05_SPELLMENU, bp06 +1, &_4976_3f6c, 92, -1);
 	//^29EE:0A11
 	if (bp06 < 4) {
 		//^29EE:0A17
@@ -948,20 +943,13 @@ U8 *SkWinCore::SK_STRSTR(const U8 *xx, const U8 *yy)
 //^29EE:0A7B
 void SkWinCore::DRAW_CMD_SLOT(U16 cmdSlot, U8 ww)
 {
-	//^29EE:0A7B
-	//^29EE:0A7F
 	U16 si = cmdSlot;
-	//^29EE:0A82
 	_29ee_00a3(0);
-	//^29EE:0A89
 	if (glbMagicalMapFlags != 0) {
-		//^29EE:0A90
 		DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x14_CONTAINERS, glbHoldedContainerType, ((glbItemSelected[si].entry +0xf8) << 1) +ww +0x41, &_4976_3f6c, si +110, -1);
 	}
 	else {
-		//^29EE:0ABC
-		DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_CHAMPION, ww +0x15, &_4976_3f6c, si +63, -1);
-		//^29EE:0ADA
+		DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x04_CHAMPION, ww +0x15, &_4976_3f6c, si +63, -1);
 		DRAW_NAME_STR(
 			&_4976_3f6c,
 			si +66,
@@ -970,65 +958,41 @@ void SkWinCore::DRAW_CMD_SLOT(U16 cmdSlot, U8 ww)
 			QUERY_CMDSTR_NAME(glbItemSelected[si].category, glbItemSelected[si].index, glbItemSelected[si].entry)
 			);
 	}
-	//^29EE:0B25
-	//^29EE:0B28
 	return;
 }
 
 //^29EE:0B2B
 void SkWinCore::_29ee_0b2b()
 {
-	//^29EE:0B2B
-	//^29EE:0B2F
 	for (U16 si = 0; si < _4976_53a4; si++) {
-		//^29EE:0B33
 		DRAW_CMD_SLOT(si, 0);
-		//^29EE:0B3C
 	}
-	//^29EE:0B43
 	DRAW_PLAYER_ATTACK_DIR();
-	//^29EE:0B47
 }
 
 //^29EE:1D03
 void SkWinCore::_29ee_1d03(U16 xx)
 {
-	//^29EE:1D03
 	ENTER(6);
-	//^29EE:1D08
 	U16 si = xx;
-	//^29EE:1D0B
 	_29ee_00a3(0);
-	//^29EE:1D12
 	if (cd.pi.glbChampionIndex > 0 && (glbMagicalMapFlags & 0x0800) != 0) {
-		//^29EE:1D24
 		si ^= glbMagicalMapFlags;
 		si &= 15;
-		//^29EE:1D2C
 		U8 bp06[2];
 		bp06[1] = 0;
 		U16 bp02 = 0;
-		//^29EE:1D35
 		for (; bp02 < 4; bp02++) {
-			//^29EE:1D37
 			U8 bp03 = 0x49;
-			//^29EE:1D3B
 			if ((si & 0x0001) != 0) {
-				//^29EE:1D41
 				bp03++;
 			}
-			//^29EE:1D44
 			si >>= 1;
-			//^29EE:1D46
 			DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x14_MAGICAL_MAPS, glbHoldedContainerType, bp03, &_4976_3f6c, bp02 +101, -1);
-			//^29EE:1D65
 			bp06[0] = bp02 +0x72;
-			//^29EE:1D6D
 			DRAW_SIMPLE_STR(&_4976_3f6c, bp02 +105, glbPaletteT16[COLOR_BLACK], glbPaletteT16[COLOR_GRAY] | 0x4000, bp06);
-			//^29EE:1D99
 		}
 	}
-	//^29EE:1DA2
 	return;
 }
 
@@ -1887,8 +1851,8 @@ void SkWinCore::DRAW_PLAYER_ATTACK_DIR()
 	}
 	//^29EE:0901
 	FREE_PICT_BUFF(bp04);
-	DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_CHAMPION, 0x10, &_4976_3f6c, 96, -1);	// arrow to rotate-left champion
-	DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_CHAMPION, 0x12, &_4976_3f6c, 97, -1);	// arrow to rotate-right champion
+	DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x04_CHAMPION, 0x10, &_4976_3f6c, 96, -1);	// arrow to rotate-left champion
+	DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x04_CHAMPION, 0x12, &_4976_3f6c, 97, -1);	// arrow to rotate-right champion
 	return;
 }
 
@@ -1896,27 +1860,23 @@ void SkWinCore::DRAW_PLAYER_ATTACK_DIR()
 //^12B4:000D
 void SkWinCore::HIGHLIGHT_ARROW_PANEL(U16 cls4, U16 rectno, U16 bright)
 {
-	//^12B4:000D
 	return;
 	ENTER(52);
-	printf("HIGHLIGHT\n");
-	//^12B4:0012
 	X16 si = rectno;
 	_4976_4eb6 = U8(cls4);
 	_4976_4ebc = si;
 	glbHighlightArrowPanel = bright;
 	if (glbHighlightArrowPanel != 0)
 		cls4++;
-	//^12B4:002C
 	FIRE_HIDE_MOUSE_CURSOR();
 	sk3f6c bp34;
 	_0b36_0c52(&bp34, si, 1);
 	FILL_ENTIRE_PICT(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp34.w0), glbPaletteT16[COLOR_BLACK]);
-	DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_MOVE_ARROWS, U8(cls4), &bp34, si, -1);
+	DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x03_MOVE_ARROWS, U8(cls4), &bp34, si, -1);
 	_0b36_0cbe(&bp34, 1);
 	FIRE_SHOW_MOUSE_CURSOR();
 	WAIT_SCREEN_REFRESH();
-	//^12B4:008F
+	printf("HIGHLIGHT ARROW PANEL\n");
 	return;
 }
 
@@ -2294,7 +2254,7 @@ void SkWinCore::DRAW_PLAYER_3STAT_PANE(U16 player, U16 xx)
 	//^2E62:00F0
 	DRAW_ICON_PICT_ENTRY(
 		GDAT_CATEGORY_x01_INTERFACE_GENERAL,
-		GDAT_INTERFACE_SUBCAT_CHAMPION_TOPSLAB,
+		GDAT_INTERFACE_SUBCAT_x02_CHAMPION_TOPSLAB,
 		bp01,
 		&_4976_3ff0,
 		si + 161,
@@ -2429,7 +2389,7 @@ void SkWinCore::DRAW_PLAYER_DAMAGE(U16 player)
 	//^2E62:0579
 	DRAW_ICON_PICT_ENTRY(
 		GDAT_CATEGORY_x01_INTERFACE_GENERAL,
-		GDAT_INTERFACE_SUBCAT_CHAMPION_TOPSLAB,
+		GDAT_INTERFACE_SUBCAT_x02_CHAMPION_TOPSLAB,
 		0x03,
 		&_4976_3ff0,
 		si +177,
@@ -5368,13 +5328,14 @@ void SkWinCore::DRAW_GAMELOAD_DIALOGUE_TO_SCREEN(U8 *buffsrc, U16 rectno, i16 co
 
 //^29EE:000F
 // 29ee_000f renamed DRAW_ARROW_PANEL
+// SPX: This is actually called when the whole panel needs to be redraw, mainly after inventory view. Clicking on arrows does not call this function.
 void SkWinCore::DRAW_ARROW_PANEL()
 {
 	ENTER(54);
 
 	// Standard move arrows are 0x02 to 0x0D
 	// Yellow arrows to move objects are 0x0E to 0x19
-	U8 iStartArrowID = (glbTryPushPullObject != 0) ? 0x0E : 0x02;	// bp01
+	U8 iStartArrowID = (glbTryPushPullObject != 0) ? 0x0E : 0x02;	// bp01	0x02 => standard arrows, 0x0E => "move object" arrows
 	sk3f6c bp36; 
 	bp36.w0 = 0;
 	bp36.w10 = 0;
@@ -5388,9 +5349,8 @@ void SkWinCore::DRAW_ARROW_PANEL()
 	
 	i16 iRectNo = 0x28; // si
 	for (; iRectNo < 0x2E; iStartArrowID += 2, iRectNo++) {
-		DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_MOVE_ARROWS, iStartArrowID, &bp36, iRectNo, -1);
+		DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x03_MOVE_ARROWS, iStartArrowID, &bp36, iRectNo, -1);
 	}
-	//^29EE:007E
 	_0b36_0cbe(&bp36, 1);
 	if (glbTryPushPullObject != 0) {
 		_1031_0541(6);
@@ -5398,7 +5358,6 @@ void SkWinCore::DRAW_ARROW_PANEL()
 	else {
 		_1031_0541(5);
 	}
-	//^29EE:00A0
 	return;
 }
 

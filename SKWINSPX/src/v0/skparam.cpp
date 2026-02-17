@@ -87,7 +87,7 @@ bool SkCodeParam::bFullLight = false;
 bool SkCodeParam::bForceSaveGameReadOK = true;
 
 float SkCodeParam::fDebugRainSpeed = 1;
-short int SkCodeParam::iTickSpeedFactor = 3;
+short int SkCodeParam::iTickSpeedFactor = 2;
 
 UINT SkCodeParam::iVideoScale = 3;
 float SkCodeParam::fVideoYScale = 1.20f;
