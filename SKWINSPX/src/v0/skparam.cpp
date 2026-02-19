@@ -61,13 +61,13 @@ bool SkCodeParam::bShowLuck = false;
 
 bool SkCodeParam::bEnableDoubleStepMove = true;
 bool SkCodeParam::bDisableFogEffect = false;
-bool SkCodeParam::bWeakDoors = true;
+bool SkCodeParam::bWeakDoors = false;
 bool SkCodeParam::bWalkOverPits = false;
 bool SkCodeParam::bUseCustomSpells = false;	// Start FALSE. This is automatically put to TRUE if graphics.dat contains custom spell definitions
 bool SkCodeParam::bUnlimitedCharges = false;
 bool SkCodeParam::bNoTimer = false;
 
-bool SkCodeParam::bDebugInfiniteSpells = true;
+bool SkCodeParam::bDebugInfiniteSpells = false;
 bool SkCodeParam::bDebugGFXNoWalls = false;			// don't display solid walls
 bool SkCodeParam::bDebugGFXNoInterWalls = false;	// don't display interwalls
 bool SkCodeParam::bDebugGFXNoDoors = false;		// don't display doors
@@ -81,7 +81,7 @@ bool SkCodeParam::bWAVMusicEnabled = false;
 
 bool SkCodeParam::bUseScrollIDType = false;
 
-bool SkCodeParam::bForceOrnateSound = true;
+bool SkCodeParam::bForceOrnateSound = false;
 
 bool SkCodeParam::bFullLight = false;
 bool SkCodeParam::bForceSaveGameReadOK = true;

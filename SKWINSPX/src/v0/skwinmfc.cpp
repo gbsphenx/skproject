@@ -434,7 +434,7 @@ void CSkWinMFC::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 void CSkWinMFC::processKinput(UINT nChar, bool press)
 {
-	printf("CSkWinMFC::processKinput %d %d\n", nChar, press);
+	//printf("CSkWinMFC::processKinput %d %d\n", nChar, press);
 	CSkKinput *p = allocKinput();
 	printf("p = %p\n", p);
 	if (p != NULL) {
