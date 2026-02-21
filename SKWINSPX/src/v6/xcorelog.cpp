@@ -954,6 +954,7 @@ void SkWinCore::DEBUG_HELP_WRITER(const char* sinfo, const void* xdata, unsigned
 
 void SkWinCore::DEBUG_HELP_DISPLAY_STACK(i16 iMapX, i16 iMapY, i16 iMapLevel)
 {
+#if defined(_DEBUG) && !defined(__DJGPP__)
 	U16 xGroundItem = 0;
 	U32 index = (GET_OBJECT_INDEX_FROM_TILE(iMapX, iMapY)).w;
 	ObjectID xFirstObject = GET_TILE_RECORD_LINK(iMapX, iMapY);
@@ -963,7 +964,7 @@ void SkWinCore::DEBUG_HELP_DISPLAY_STACK(i16 iMapX, i16 iMapY, i16 iMapLevel)
 
 	if (index != -1)
 		xGroundItem = dunGroundStacks[index];
-#ifndef __DJGPP__
+
 	printf("--------------------------------------------\n");
 	printf("Object stack at %02d,%02d\n", iMapX, iMapY);
 	printf("Ground Item is %04X\n", xGroundItem);
@@ -976,6 +977,6 @@ void SkWinCore::DEBUG_HELP_DISPLAY_STACK(i16 iMapX, i16 iMapY, i16 iMapLevel)
 		index++;
 	}
 	printf("--------------------------------------------\n");
-#endif // __DJGPP__
+#endif
 
 }

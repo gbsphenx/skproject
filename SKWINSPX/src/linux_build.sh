@@ -20,7 +20,7 @@ make -f makefile_linux_skwinv0 clean
 make -f makefile_linux_skwinv4 skwinv4-linux
 ##make -f makefile_linux_skwinv4 clean
 
-make -f makefile_linux_skwinv5 skwinv5-linux
+##make -f makefile_linux_skwinv5 skwinv5-linux
 
 ## Put builds into skgame folder 
 mv ../build/SKWinV0_Linux_Release/skwinv0-linux ../skgame/

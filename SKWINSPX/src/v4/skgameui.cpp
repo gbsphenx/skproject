@@ -42,12 +42,12 @@ Bit16u SkWinCore::SPECIAL_UI_KEY_TRANSFORMATION()
 		case 0x124D://^054D
 			iKeyVal = 0x51; break;	// numpad 3 => move right
 	}
-#if defined (XDMX_EXTENDED_KEYBOARD)
+#if defined (XDMX_EXTENDED_KEYBOARD)	// WASD
 	if (_4976_4e62 == 0) {	// not in the savegame panel to write a savegame name
 		switch (iKeyCheck) {
 	// SPX convenient additions
 	// Use AZE-QSD as move arrows / before of different keyboards
-			case 0x001E:	// q/a
+/*			case 0x001E:	// q/a
 				iKeyVal = 0x4B; break;	// turn left
 			case 0x002C:	// w/z
 				iKeyVal = 0x4C; break;	// forward
@@ -59,7 +59,7 @@ Bit16u SkWinCore::SPECIAL_UI_KEY_TRANSFORMATION()
 				iKeyVal = 0x50; break;	// backward
 			case 0x0020:	// d
 				iKeyVal = 0x51; break;	// move right
-
+*/
 	// Use X as left click
 			case 0x002D:	// x
 				//iKeyVal = 0x51; break;	// move right

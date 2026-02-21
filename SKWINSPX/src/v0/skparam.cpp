@@ -87,7 +87,11 @@ bool SkCodeParam::bFullLight = false;
 bool SkCodeParam::bForceSaveGameReadOK = true;
 
 float SkCodeParam::fDebugRainSpeed = 1;
+#ifdef __LINUX__
+short int SkCodeParam::iTickSpeedFactor = 4;
+#else
 short int SkCodeParam::iTickSpeedFactor = 2;
+#endif
 
 UINT SkCodeParam::iVideoScale = 3;
 float SkCodeParam::fVideoYScale = 1.20f;
