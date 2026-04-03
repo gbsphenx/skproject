@@ -98,7 +98,7 @@ int SkWinCore::HANDLE_KEY_ON_DOOR_BUTTON(Door* xDoor, ObjectID rlHandObject, U16
 	if (iCanUnlock == 1) {
 		xDoorInfo->locked = 0;
 		// SPX: This plays the TICK sound when activating a door button
-		QUEUE_NOISE_GEN1(GDAT_CATEGORY_MESSAGES, 0x00, SOUND_STD_ACTIVATION_MESSAGE, 0x8C, 0x80, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1);
+		QUEUE_NOISE_GEN1(GDAT_CATEGORY_x03_MESSAGES, 0x00, SOUND_STD_ACTIVATION_MESSAGE, 0x8C, 0x80, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1);
 		Timer bp22;
 		INVOKE_MESSAGE(iPosX, iPosY, 0, 2, glbGameTick +1);
 		bp22.SetMap(glbCurrentMapIndex);
@@ -240,7 +240,7 @@ void SkWinCore::DRAW_EXTENDED_INTERWALLS_DIRECT_FACE(i16 iDisplayCell, U8 iWallF
 	X16 si = 0;	// si
 	X16 iRectX = 0;	// di
 
-	U16 bp0a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, iWallGFXID);
+	U16 bp0a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, iWallGFXID);
 	// SPX: in case gfxset (custom dungeon) is >= 6, bypass these values.
 	if (SkCodeParam::bUseFixedMode && glbMapGraphicsSet >= 0 && glbMapGraphicsSet < 6) {
 		if (iYDist > 1) { // dist 2,3,4
@@ -277,7 +277,7 @@ void SkWinCore::DRAW_EXTENDED_INTERWALLS_DIRECT_FACE(i16 iDisplayCell, U8 iWallF
 	/*
 	else if (glbGeneralFlipGraphics != 0) {
 		iWallGFXID = tlbDoorSideFramesReorder[RCJ(23,iDisplayViewportCell)] - 80;
-		if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_GRAPHICSSET, iMapGfx, dtImage, iWallGFXID) == 0) {
+		if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x08_GRAPHICSSET, iMapGfx, dtImage, iWallGFXID) == 0) {
 			if (iXDist == 0) {
 				bFlip = 1;	// right
 			}
@@ -322,7 +322,7 @@ void SkWinCore::DRAW_EXTENDED_INTERWALLS_DIRECT_FACE(i16 iDisplayCell, U8 iWallF
 	SkD((0, "Cell %02d @ R(%02d, %02d) (Display %02d) => WGFX-ID = %02X CK=%02X\n", 
 		iDisplayViewportCell, iXDist, iYDist, iDisplayViewportCell, iWallGFXID, iColorkey1));
 	//SkD((DLV_DBG_CELL, "Cell %02d (Display %02d) => WallGfxSet = %02d   WGFX = %02X\n", iDisplayViewportCell, iDisplayViewportCell, iMapGfx, bp01));
-	QUERY_TEMP_PICST(bFlip, 0x40, 0x40, 0, 0, (cd.pi.glbIsPlayerMoving != 0) ? -iYDist : 0, iDisplayViewportCell + 0x2be, 0xffff, iColorkey1, -1, GDAT_CATEGORY_GRAPHICSSET, iMapGfx, iWallGFXID);
+	QUERY_TEMP_PICST(bFlip, 0x40, 0x40, 0, 0, (cd.pi.glbIsPlayerMoving != 0) ? -iYDist : 0, iDisplayViewportCell + 0x2be, 0xffff, iColorkey1, -1, GDAT_CATEGORY_x08_GRAPHICSSET, iMapGfx, iWallGFXID);
 	DRAW_TEMP_PICST(); // draw wall
 
 	if (iWallGFXID == 0xB3 || iWallGFXID == 0x93)
@@ -399,7 +399,7 @@ void SkWinCore::DRAW_EXTENDED_FLOOR_INTERWALLS(i16 iViewportCell)	// i16 xx
 		return;
 
 	glbMapGraphicsSet = 2;	// special gfxset only for redwood interwalls
-	glbSceneColorKey = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_SCENE_COLORKEY); // colorkey
+	glbSceneColorKey = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_x64_SCENE_COLORKEY); // colorkey
 	DRAW_EXTENDED_INTERWALLS(iLocalViewportCell);
 	glbMapGraphicsSet = iMapGraphicsSet;
 	glbSceneColorKey = iMapSceneColorKey;

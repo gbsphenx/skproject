@@ -1667,7 +1667,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE_BW(X16 isNewGame)
 						{
 							xActuator = DUNGEON_PUT_FLOOR_ACTUATOR(0x0C, iMapIndex, i, j);	// rlActuator created here
 							xActuator->ActuatorType(ACTUATOR_FLOOR_TYPE__PARTY);
-							xActuator->ActionType(ACTMSG_OPEN_SET);
+							xActuator->ActionType(C00_ACTMSG_OPEN_SET);
 							if (iTriggerFunctionType == 11) {
 							//	xActuator->ActuatorType(ACTUATOR_FLOOR_TYPE__CREATURE_KILLER);
 							}
@@ -1689,7 +1689,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE_BW(X16 isNewGame)
 								Actuator* xActuatorRemovePillar = NULL;
 								xActuatorRemovePillar = DUNGEON_PUT_FLOOR_ACTUATOR(0x0C, iMapIndex, pFloorPadData[2], pFloorPadData[3]);
 								xActuatorRemovePillar->ActuatorType(ACTUATOR_FLOOR_TYPE__CREATURE_KILLER);
-								xActuatorRemovePillar->ActionType(ACTMSG_OPEN_SET);
+								xActuatorRemovePillar->ActionType(C00_ACTMSG_OPEN_SET);
 								xActuatorRemovePillar->Delay(0);
 								xActuatorRemovePillar->OnceOnlyActuator(1);
 								xActuatorRemovePillar->SoundEffect(1);
@@ -2318,7 +2318,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE_BW(X16 isNewGame)
 									xActuator->w0 = OBJECT_NULL;
 									xActuator->ActuatorType(ACTUATOR_TYPE_DM1_WALL_SWITCH);
 									xActuator->SetTarget(iMapIndex, iTargetPosX, iTargetPosY);
-									xActuator->ActionType(ACTMSG_OPEN_SET);
+									xActuator->ActionType(C00_ACTMSG_OPEN_SET);
 									xActuator->Delay(0);
 									xActuator->GraphicNumber(iGfxLocalIndex);
 									xActuator->SoundEffect(1);
@@ -2341,7 +2341,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE_BW(X16 isNewGame)
 									xActuator->w0 = OBJECT_NULL;
 									xActuator->ActuatorType(ACTUATOR_TYPE_CREATURE_KILLER);
 									xActuator->SetTarget(iMapIndex, iTargetPosX, iTargetPosY);
-									xActuator->ActionType(ACTMSG_OPEN_SET);
+									xActuator->ActionType(C00_ACTMSG_OPEN_SET);
 									xActuator->Delay(0);
 									xActuator->OnceOnlyActuator(1);
 									xActuator->GraphicNumber(iGfxLocalIndex);
@@ -2366,7 +2366,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE_BW(X16 isNewGame)
 									xActuator->w0 = OBJECT_NULL;
 									xActuator->ActuatorType(ACTUATOR_TYPE_DM1_WALL_SWITCH);
 									xActuator->SetTarget(iMapIndex, iTargetPosX, iTargetPosY);
-									xActuator->ActionType(ACTMSG_TOGGLE);
+									xActuator->ActionType(C02_ACTMSG_TOGGLE);
 									xActuator->Delay(0);
 									xActuator->GraphicNumber(iGfxLocalIndex);
 									xActuator->SoundEffect(1);

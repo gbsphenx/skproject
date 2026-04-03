@@ -13,6 +13,8 @@
 #include <StdAfx.h>	// Required for MSVC6 compilation
 #endif
 
+#include <skapi.h>
+
 #include <skver.h>
 #include <skparam.h>
 #include <skdebug.h>
@@ -45,6 +47,13 @@
 #endif
 
 //==============================================================================
+
+SK_API int SK_MainFromCommandLine(const char* sCommandLine)
+{
+	int iResult = 0;
+	printf("SK WIN DLL MAIN\n");
+	return iResult;
+}
 
 //==============================================================================
 
