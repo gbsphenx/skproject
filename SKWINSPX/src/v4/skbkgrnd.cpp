@@ -3,8 +3,6 @@
 //	Manages the distant graphics, like towers and skullkeep castle
 //------------------------------------------------------------------------------
 
-//#include <StdAfx.h>	// Required for MVC6 compilation
-
 #include <skcore.h>
 #include <skdebug.h>
 #include <skglobal.h>

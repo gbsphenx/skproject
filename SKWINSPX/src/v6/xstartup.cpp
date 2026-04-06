@@ -10,7 +10,9 @@
 
 // MSVC6 note: uncheck "use precompiled header file .pch" else expect "unexpected #endif" there.
 #if defined (SKWINSPX) || defined (SK9821V4)
-#include <StdAfx.h>	// Required for MSVC6 compilation
+	#if defined (SKDLL_EXPORTS) || defined (LIBSKWINDLL_EXPORTS)
+	#include <StdAfx.h>
+	#endif // LIBSKWINDLL_EXPORTS
 #endif
 
 #include <skapi.h>
@@ -31,6 +33,10 @@
 
 #include <skwinapp.h>
 
+#include <vector>
+#include <string>
+#include <sstream>
+
 //==============================================================================
 
 #if defined (SKDOSV5)
@@ -46,14 +52,6 @@
 	int SKWIN_V5BITDOS_MAIN(SkWinApp* skWinApplication) { return (int)1; }
 #endif
 
-//==============================================================================
-
-SK_API int SK_MainFromCommandLine(const char* sCommandLine)
-{
-	int iResult = 0;
-	printf("SK WIN DLL MAIN\n");
-	return iResult;
-}
 
 //==============================================================================
 
@@ -103,7 +101,7 @@ int main(int argc, char* argv[])
 
 int SKWIN_START_MAIN(int iEngine, int argc, char **argv)
 {
-	int r = 1;
+	int iGameRC = 1;
 
 	SkWinApp*	skWinApplication = NULL;
 
@@ -135,8 +133,8 @@ int SKWIN_START_MAIN(int iEngine, int argc, char **argv)
 
 	{
 #if defined(SK9821V4) || defined (SKWINSPX)
-		SkWinCore a;
-		a.skWinApp = skWinApplication;
+		SkWinCore skApp;
+		skApp.skWinApp = skWinApplication;
 #endif // SK9821V4
 		skWinApplication->setVideoMode();
 		skWinApplication->StartMessage();
@@ -146,7 +144,7 @@ int SKWIN_START_MAIN(int iEngine, int argc, char **argv)
 		skWinApplication->skwin_Sleep(500);
 #if defined(SK9821V4) || defined (SKWINSPX)
 	// IBMIO_BOOTSTRAP => IBMIO_MAIN => IBMIO_EXEC (FIRE.EXE) => FIRE_BOOTSTRAP => FIRE_MAIN => INIT then GAME_LOOP
-		r = a.IBMIO_BOOTSTRAP();
+		iGameRC = skApp.IBMIO_BOOTSTRAP();
 #endif // SK9821V4
 #ifdef SKDOSV5
 	//skWinApplication->runWindowTest();
@@ -160,7 +158,7 @@ int SKWIN_START_MAIN(int iEngine, int argc, char **argv)
 	free(skWinApplication);
 	
 
-	return r;
+	return iGameRC;
 }
 
 //==============================================================================
@@ -169,5 +167,89 @@ int SKWIN_V5BIT_MAIN(SkWinApp* skWinApplication)
 {
 	return SKWIN_V5BITDOS_MAIN(skWinApplication);	// goes into DM2 V5 Bit's Code
 }
+
+//==============================================================================
+//==============================================================================
+//	 LIBRARY CALL
+//==============================================================================
+
+
+int SKWIN_START_MAIN_HEADLESS(tSKWinContext* xSKWinContext, int iEngine, int argc, char **argv)
+{
+	int iGameRC = 1;
+
+	SkWinApp*	skWinApplication = NULL;
+
+	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
+
+	SkCodeParam::bUseAudioSDL = true;
+
+	skWinApplication = new SkWinApp();
+
+	SkCodeParam::bRenderingEngineSDL = false;
+	SkCodeParam::bRenderingEngineDOS = false;
+	SkCodeParam::bRenderingEngineMFC = false;
+
+	skWinApplication->ProcessArgs(argc, argv);
+	if (SkCodeParam::bRenderingEngineDOS)
+		skWinApplication->setRenderer(GFX_RENDERER_DOS);
+	else if (SkCodeParam::bRenderingEngineSDL)
+		skWinApplication->setRenderer(GFX_RENDERER_SDL);
+	else if (SkCodeParam::bRenderingEngineMFC)
+		skWinApplication->setRenderer(GFX_RENDERER_MFC);
+
+	{
+		xSKWinContext->xSkCore = new SkWinCore();
+//
+//		SkWinCore skApp;
+//		skApp.skWinApp = skWinApplication;
+		xSKWinContext->xSkCore->skWinApp = skWinApplication;
+
+		skWinApplication->setVideoMode();
+		skWinApplication->StartMessage();
+		skWinApplication->ProcessArgs(argc, argv); // just to display again
+		skWinApplication->MemInfo();
+
+		iGameRC = xSKWinContext->xSkCore->SK_INIT();
+	}
+
+	skWinApplication->resetVideoMode();
+	skWinApplication->ExitMessage();
+	free(skWinApplication);
+	
+	return iGameRC;
+}
+
+SK_API int SK_MainFromCommandLine(const char* sCommandLine)
+{
+	int iResult = 0;
+	//char* argv[] = {"-sdl", "-en", "-data", "DATA-DM2", "-gdat", "DATA-DM2\\DM2V52PC\\G2SKV52C.DAT", "-dungeon", "DATA-DM2\\DM2V52PC\\DNGSK52D.DAT"};
+	char* argv[] = {"-sdl", "-en", "-data", "DATA", "-new"};
+	int argc = 5;
+	printf("SK WIN DLL MAIN\n");
+
+
+    return SKWIN_START_MAIN(__SK_ENGINE_V4_, argc, argv);
+//	return iResult;
+}
+
+SK_API int SK_MainStartHeadless(tSKWinContext* xSKWinContext, const char* sCommandLine)
+{
+	int iResult = 0;
+	//char* argv[] = {"-sdl", "-en", "-data", "DATA-DM2", "-gdat", "DATA-DM2\\DM2V52PC\\G2SKV52C.DAT", "-dungeon", "DATA-DM2\\DM2V52PC\\DNGSK52D.DAT"};
+	char* argv[] = {"-sdl", "-en", "-data", "DATA", "-new"};
+	int argc = 5;
+    return SKWIN_START_MAIN_HEADLESS(xSKWinContext, __SK_ENGINE_V4_, argc, argv);
+//	return iResult;
+}
+
+
+SK_API int SK_GameLoad(tSKWinContext* xSKWinContext)
+{
+	int iResult = 0;
+
+    return xSKWinContext->xSkCore->SK_GAMELOAD();
+}
+
 
 //==============================================================================

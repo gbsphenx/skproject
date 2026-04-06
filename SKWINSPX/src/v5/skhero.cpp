@@ -984,7 +984,7 @@ static void DM2_REVIVE_PLAYER(i8 htype, i8 direction)
     //m_393A5:
     hero->item[i] = -1;
 
-  t_text* tp = DM2_QUERY_GDAT_TEXT(GDAT_CATEGORY_CHAMPIONS, htype, 24, tbuffer);
+  t_text* tp = DM2_QUERY_GDAT_TEXT(GDAT_CATEGORY_x16_CHAMPIONS, htype, 24, tbuffer);
 
   //m_393EF:
   t_text c1;
@@ -1014,7 +1014,7 @@ static void DM2_REVIVE_PLAYER(i8 htype, i8 direction)
   }
 
   //m_3945D:
-  i16* dp = UPCAST(i16, DM2_QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_CHAMPIONS, htype, 8, 0));
+  i16* dp = UPCAST(i16, DM2_QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_x16_CHAMPIONS, htype, 8, 0));
   hero->curHP = hero->maxHP = dp[0]*10;
   hero->curStamina = hero->maxStamina = dp[1]*10;
   hero->curMP = hero->maxMP = dp[2]*10;

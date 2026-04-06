@@ -2,8 +2,6 @@
 // SK-BLIT-GFX
 //------------------------------------------------------------------------------
 
-//#include <StdAfx.h>	// Required for MVC6 compilation
-
 #include <skver.h>
 
 #include <skcore.h>

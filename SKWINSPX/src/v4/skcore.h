@@ -1080,6 +1080,8 @@ protected:
 	void _sys_intr();
 public:
 	UINT IBMIO_BOOTSTRAP();
+	UINT SK_INIT();	// New Init (no start game)
+	UINT SK_GAMELOAD();
 protected:
 	//--------------------------------------------------------------------------
 

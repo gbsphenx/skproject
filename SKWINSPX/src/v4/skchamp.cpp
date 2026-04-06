@@ -2,7 +2,7 @@
 // SK-CHAMPION
 //------------------------------------------------------------------------------
 
-#include <StdAfx.h>	// Required for MVC6 compilation
+//#include <StdAfx.h>	// Required for MVC6 compilation
 
 //#include <conio.h> // getch
 

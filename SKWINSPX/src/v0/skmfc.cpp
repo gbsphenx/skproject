@@ -1,5 +1,7 @@
 #if (_MSC_VER >= 1200) || defined(_USE_MFC80) || defined(_USE_MFC60)
-	#include <stdafx.h>	// Required for MSVC6 compilation
+	#if defined (SKDLL_EXPORTS) || defined (LIBSKWINDLL_EXPORTS)
+	#include <StdAfx.h>
+	#endif // LIBSKWINDLL_EXPORTS
 	//#include <windows.h>
 	#include <afxwin.h>
 	#include <objbase.h>

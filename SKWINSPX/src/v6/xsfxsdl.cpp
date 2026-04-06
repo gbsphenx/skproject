@@ -1,4 +1,6 @@
+#if defined (SKDLL_EXPORTS) || defined (LIBSKWINDLL_EXPORTS)
 #include <StdAfx.h>
+#endif // LIBSKWINDLL_EXPORTS
 #include <xsfxsdl.h>
 #include <skdebug.h>
 #include <skglobal.h>	// mvalid

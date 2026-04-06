@@ -1,7 +1,9 @@
 //--- SkWinCoreBW -------------------------------------
 //SPX: Experimental code about Bloodwych dungeon reading
 
-#include <StdAfx.h>	// Required for MVC6 compilation
+#if defined (SKDLL_EXPORTS) || defined (LIBSKWINDLL_EXPORTS)
+#include <StdAfx.h>
+#endif // LIBSKWINDLL_EXPORTS
 
 #include <skparam.h>
 #include <skdebug.h>

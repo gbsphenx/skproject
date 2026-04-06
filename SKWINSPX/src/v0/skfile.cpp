@@ -1,5 +1,7 @@
 #ifndef __LINUX__
-#include <stdafx.h>
+	#if defined (SKDLL_EXPORTS) || defined (LIBSKWINDLL_EXPORTS)
+	#include <StdAfx.h>
+	#endif // LIBSKWINDLL_EXPORTS
 #endif // __LINUX__
 #include <skfile.h>
 #include <skdebug.h>

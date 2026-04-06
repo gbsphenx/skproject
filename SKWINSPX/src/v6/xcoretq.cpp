@@ -2,7 +2,9 @@
 //SPX: This part of code contains:
 // - Special code for reading original TQ's data
 
-#include <StdAfx.h>	// Required for MVC6 compilation
+#if defined (SKDLL_EXPORTS) || defined (LIBSKWINDLL_EXPORTS)
+#include <StdAfx.h>
+#endif // LIBSKWINDLL_EXPORTS
 
 #include <skver.h>
 

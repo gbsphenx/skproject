@@ -1,4 +1,7 @@
-#include <StdAfx.h>
+//#if defined (SKDLL_EXPORTS) || defined (LIBSKWINDLL_EXPORTS)
+//#include <StdAfx.h>
+//#endif // LIBSKWINDLL_EXPORTS
+
 #include <sktypes.h>
 #include <sklua.h>
 

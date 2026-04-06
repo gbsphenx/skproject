@@ -173,7 +173,7 @@ extern int __GlobalOption_DM2Skull_MusicMode;	// from main.cpp
 	//i32 longrg1 = DM2_QUERY_GDAT_ENTRY_IF_LOADABLE(lcon(0x4), vb_00, CUTLX8(lcon(0x3)), 0) ? 1 : 0;
     i32 longrg1 = 1;	// default to 1 to make it pass the 0 test
 if (__GlobalOption_DM2Skull_MusicMode == 0 && bForceMusic == false)	// check if HMP exists only when music mode is for HMP
-	longrg1 = DM2_QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_MUSICS, vb_00, dtHMP, 0) ? 1 : 0;
+	longrg1 = DM2_QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x04_MUSICS, vb_00, dtHMP, 0) ? 1 : 0;
 #if 1 // TODO
     dm2sound.stop_music();
 #endif

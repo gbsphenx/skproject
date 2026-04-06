@@ -236,6 +236,7 @@ void SkWinApp::ProcessArgs(int argc, char** argv)
 			{
 				unsigned int iArgLength = 0;
 				iArgLength = strlen(argv[iArgIndex]);
+				printf("Option: ressources file = %s\n", argv[iArgIndex]);
 				if (iArgLength > 0)
 				{
 					sCustomGraphicsDatFilename = (char*) calloc(iArgLength+1, sizeof(char));
@@ -252,6 +253,7 @@ void SkWinApp::ProcessArgs(int argc, char** argv)
 			{
 				unsigned int iArgLength = 0;
 				iArgLength = strlen(argv[iArgIndex]);
+				printf("Option: dungeon file = %s\n", argv[iArgIndex]);
 				if (iArgLength > 0)
 				{
 					sCustomDungeonDatFilename = (char*) calloc(iArgLength+1, sizeof(char));
@@ -269,6 +271,7 @@ void SkWinApp::ProcessArgs(int argc, char** argv)
 			{
 				unsigned int iArgLength = 0;
 				iArgLength = strlen(argv[iArgIndex]);
+				printf("Option: data folder = %s\n", argv[iArgIndex]);
 				if (iArgLength > 0)
 				{
 					sCustomDataFolder = (char*) calloc(iArgLength+1, sizeof(char));

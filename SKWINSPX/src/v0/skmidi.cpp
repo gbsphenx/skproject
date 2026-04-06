@@ -1,6 +1,8 @@
 
 
+//#if defined (SKDLL_EXPORTS) || defined (LIBSKWINDLL_EXPORTS)
 #include <StdAfx.h>
+//#endif // LIBSKWINDLL_EXPORTS
 #include <skmidi.h>
 
 #if !defined(__DJGPP__) && !defined(__LINUX__)

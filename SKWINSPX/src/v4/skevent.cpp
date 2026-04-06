@@ -2,7 +2,7 @@
 // SK-EVENT
 //------------------------------------------------------------------------------
 
-#include <StdAfx.h>	// Required for MVC6 compilation
+//#include <StdAfx.h>	// Required for MVC6 compilation
 /*
 #ifndef __LINUX__
 	#include <conio.h>

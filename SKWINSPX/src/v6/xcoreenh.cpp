@@ -3,7 +3,9 @@
 // - Enhanced code for expanding DM2
 // - Some utility functions
 
-#include <StdAfx.h>	// Required for MVC6 compilation
+#if defined (SKDLL_EXPORTS) || defined (LIBSKWINDLL_EXPORTS)
+#include <StdAfx.h>
+#endif // LIBSKWINDLL_EXPORTS
 
 #include <skver.h>
 

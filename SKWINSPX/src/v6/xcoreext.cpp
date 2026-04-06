@@ -3,7 +3,9 @@
 // - Retrocompatibility with DM1
 // - New code for expanding DM2
 
-#include <StdAfx.h>	// Required for MVC6 compilation
+#if defined (SKDLL_EXPORTS) || defined (LIBSKWINDLL_EXPORTS)
+#include <StdAfx.h>
+#endif // LIBSKWINDLL_EXPORTS
 
 #include <skver.h>
 

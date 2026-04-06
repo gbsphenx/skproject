@@ -46,7 +46,7 @@
 #define DLV_DBG_SED3	0
 #define DLV_FSM 0	// Find special marker (for x teleport and void fall)
 #define DLV_XP	0	// Display info about XP gain
-#define DLV_DBG_INIT	0	// Display steps from the init
+#define DLV_DBG_INIT	1	// Display steps from the init
 #define DLV_DBG_GETPIC	0
 #define DLV_DBG_CELL	0
 #define DLV_DBG_EXTRACT 0
@@ -70,7 +70,7 @@
 #ifdef __DJGPP__
 #define DLV_DBG_DOS			1
 #else
-#define DLV_DBG_DOS			0
+#define DLV_DBG_DOS			1
 #endif // __DJGPP__
 
 #ifndef __DJGPP__	// won't allow these debugs for DOS version
@@ -110,6 +110,9 @@ void SkwinDEBUG (int lv, const char* psz, ...);
 	void Unreachable(const char *funct, const char *file, int line);
 #elif defined(__DJGPP__) || defined(__MINGW__) || defined(__LINUX__)
 	#define Unr() Unreachable(__FUNCTION__, __FILE__, __LINE__)
+	void Unreachable(const char *funct, const char *file, int line);
+#else
+	#define Unr() Unreachable("?", __FILE__, __LINE__)
 	void Unreachable(const char *funct, const char *file, int line);
 #endif
 

@@ -3,7 +3,7 @@
 //	Main base core code for running DM2
 //------------------------------------------------------------------------------
 
-#include <StdAfx.h>	// Required for MVC6 compilation
+//#include <StdAfx.h>	// Required for MVC6 compilation
 
 #include <skver.h>
 //#include <conio.h> // getch
@@ -19388,7 +19388,7 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_00()
 
 	
 	/// DUMP Level 1 tlbCreaturesActionsGroupOffsets (from GDAT value 0F-xx-00-00
-	
+	/*
 	FILE* fp = NULL;
 	fp = fopen("creature-anims.txt", "wt+");
 	int i = 0;
@@ -19419,7 +19419,7 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_00()
 		CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
 	}
 	fclose(fp);
-	
+	*/
 	
 
 	return;
@@ -20048,6 +20048,108 @@ void SkWinCore::ALLOC_CPX_SETUP(X8 *xx)
 	return;
 }
 
+// SPX Special lib callable INIT
+UINT SkWinCore::SK_INIT()
+{
+	U16 iCompatibilityFlag = 0;
+	U16 iSpecialItem = 0;
+
+	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_YELLOW, BLACK);
+	printf("SK GAME INIT\n");
+	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
+
+	INIT_CRAM_EMS_MEM();
+	_4976_474a = 1;
+	_4976_474c = 1;
+	_476d_018a();
+	_2636_03d4();
+
+	READ_GRAPHICS_STRUCTURE();
+	_482b_0004();
+
+
+	LOAD_GDAT_INTERFACE_00_0A(); // game will fail if this item is not loaded, but it does not exist in PC-DOS version
+	U8 *bp04 = ALLOC_MEMORY_RAM(0x400, afUseLower, 1024);
+
+	LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x00_BASE_DATA, dtPalIRGB, 0xFE, bp04);	// C01=I00=EFE=T009 palette IRGB (0x1, 0x0, dt09, 0xFE, bp04)
+	// SPX: Beta GDAT contains palette in raw7 data; if dtPalIRGB is not found, we should then look for raw7.
+	//LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 0x0, dtRaw7, 0xFE, bp04); // test for beta
+	SET_RGB_PALETTE_FROM_DATA(bp04);
+	DEALLOC_LOWER_MEMORY(0x400);
+	LOAD_GDAT_INTERFACE_00_02();
+	glbPaletteT16 = QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x00_BASE_DATA, dtPalette16, 0xFE);
+	_098d_1208();
+
+	// SPX: Added extended load here (requires the GDAT to be initialized, but must be before dungeon loading)
+	EXTENDED_LOAD_AI_DEFINITION();
+	// SPX: Read compatibility mode value (none = standard DM2)
+	iCompatibilityFlag = QUERY_GDAT_ENTRY_DATA_INDEX(0, 0, dtWordValue, 0x10);
+	if (iCompatibilityFlag == 3) { // DM1 TQ
+		SkCodeParam::bDM1Mode = true;
+		SkCodeParam::bGFXFixModeDM1 = true;
+		SkCodeParam::bDM1TQMode = true;
+	}
+	// SPX: added LOAD_CD_DAT_FILE to read CD.DAT file (if existing)
+	LOAD_CD_DAT_FILE();
+
+	// SPX: Check item 00-00-01. If existing, it would be a V5, else a V4
+	iSpecialItem = QUERY_GDAT_ENTRY_DATA_INDEX(0, 0, dtWordValue, 0x01);
+	//-- Set sound playback base frequency depending on GDAT version
+	if (iSpecialItem == 6)
+		skWinApp->skwin_SndSetFrequency(11025);
+	else
+		skWinApp->skwin_SndSetFrequency(6000); // or 5500 ?
+
+	
+	SkD((DLV_DBG_INIT, "LOAD_GDAT_INTERFACE_00_00\n"));
+	LOAD_GDAT_INTERFACE_00_00();
+	_38c8_00c8_ALLOC_PICT();
+	_3929_0e16_FONT_LOAD();
+	glbTextEntryEncoded = QUERY_GDAT_ENTRY_DATA_INDEX(0x0, 0x0, dtWordValue, 0) & 8;	// Value is 0B ..
+	_2405_0009_ALLOC_ITEM_HAND_PICT();
+	IBMIO_INIT_CURSORS_MOUSE();
+	_4976_4748 = 1;
+	_1031_07d6_SOME_INIT();
+
+	cd.gg.glbCreaturesMaxCount = _3e74_2439_GET_ENTRIES_NUMBER(GDAT_CATEGORY_x0F_CREATURES, fmtWordVal);	// 0xf, 0xb
+	X16 iDefaultCreaturesMaxAllocation = (cd.gg.glbCreaturesMaxCount +1) * 3;	// si
+	cd.gg.glbSomeCreatureTable = ALLOC_MEMORY_RAM(iDefaultCreaturesMaxAllocation, afUseUpper, 1024);
+	FILL_STR(cd.gg.glbSomeCreatureTable, iDefaultCreaturesMaxAllocation, 0xFF, 1);
+
+	printf("INIT COMPLETE\n");
+
+	return 0;
+}
+
+// SPX Special lib callable INIT
+UINT SkWinCore::SK_GAMELOAD()
+{
+	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_YELLOW, BLACK);
+	printf("SK GAME LOAD\n");
+	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
+
+	GAME_LOAD();
+	GRAPHICS_DATA_OPEN();
+	__LOAD_CREATURE_FROM_DUNGEON();
+	ALLOC_CPX_SETUP(_4976_4736);
+	__INIT_GAME_38c8_03ad();
+	GRAPHICS_DATA_CLOSE();
+
+	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_RED, BLACK);
+	SkD((SkCodeParam::bEngineNoDisplay||DLV_DBG_INIT, "NEW GAME LOADED.\n"));
+	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
+
+	LOG_FULL_DUNGEON_INFO();
+
+	if (cd.mo.glbSpecialScreen != _MENU_SCREEN__RESUME_GAME_SELECT) {
+		MOVE_RECORD_TO(OBJECT_NULL, -1, 0, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
+	}
+
+	FIRE_SHOW_MOUSE_CURSOR();
+	_1031_098e();
+
+	return 0;
+}
 
 
 //^38C8:04AA
@@ -20144,10 +20246,8 @@ UINT SkWinCore::INIT()
 	//LOG_FULL_DUNGEON_INFO();
 
 	if (cd.mo.glbSpecialScreen != _MENU_SCREEN__RESUME_GAME_SELECT) {
-		//^38C8:05FC
 		MOVE_RECORD_TO(OBJECT_NULL, -1, 0, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
 	}
-	//^38C8:0612
 	SkD((DLV_DBG_INIT, "INIT:FIRE_SHOW_MOUSE_CURSOR\n"));
 	FIRE_SHOW_MOUSE_CURSOR();
 	SkD((DLV_DBG_INIT, "INIT:_1031_098e\n"));
