@@ -790,29 +790,22 @@ void SkWinCore::_0759_0126()
 }
 
 //^0759:06C2
-void SkWinCore::_0759_06c2()
+// _0759_06c2 renamed TICK_STEP_SUBTRACT
+void SkWinCore::TICK_STEP_SUBTRACT()
 {
-	//^0759:06C2
 	ENTER(0);
-	//^0759:06C5
 	LOADDS(0x0704);
 	_089c_0344 -= _089c_0352;
-	//^0759:06D9
 	return;
 }
 
 //^0759:06DB
 void SkWinCore::_0759_06db()
 {
-	//^0759:06DB
 	ENTER(0);
-	//^0759:06DE
 	_089c_025c = _crt_getvect(254);
 	_089c_0340 = _089c_025c;
-	//^0759:06FC
-	//^0759:0706
-	_089c_0352 = _01b0_0e80(&SkWinCore::_0759_06c2);
-	//^0759:0719
+	_089c_0352 = SET_FUNC_TICK_STEP(&SkWinCore::TICK_STEP_SUBTRACT);
 	return;
 }
 
@@ -8268,10 +8261,13 @@ sk0d9e *SkWinCore::_1031_06b3(sk1891 *ref, X16 xx)
 // _4726_0383 renamed TICK_STEP_CHECK
 void SkWinCore::TICK_STEP_CHECK()
 {
-	//^4726:0383
 	ENTER(0);
-	//^4726:0386
-	LOADDS(0x0433);
+	//LOADDS(0x0433);
+
+	SkD((DLV_DBG_GAME_LOOP, "TICK_STEP_CHECK: GameTick:%06d, TStep:%02d, TAbsolute:%03d, TCurrent:%03d, TSpeed:%03d, Reached:%d\n"
+		, glbGameTick, glbTickStepValue, glbAbsoluteTickCounter, glbIntermediateTickCounter, glbTickSpeed, glbTickStepReached
+		));
+
 	glbAbsoluteTickCounter += glbTickStepValue;
 	glbIntermediateTickCounter += glbTickStepValue;
 	if (i16(glbIntermediateTickCounter) >= i16(glbTickSpeed))
@@ -8289,7 +8285,6 @@ void SkWinCore::TICK_STEP_CHECK()
 			));
 		SkD((DLV_DBG_TICK, "==================================================================\n"));
 	}
-	//^4726:03B0
 	return;
 }
 
@@ -18162,17 +18157,15 @@ int SkWinCore::_01b0_2b1b()
 }
 
 //^01B0:0E80
-X16 SkWinCore::_01b0_0e80(void (SkWinCore::*pfn)()) //#DS=04BF
+// SPX: _01b0_0e80 replaced by SET_FUNC_TICK_STEP
+X16 SkWinCore::SET_FUNC_TICK_STEP(void (SkWinCore::*pfn)()) //#DS=04BF
 {
-	//^01B0:0E80
 	ENTER(0);
-	//^01B0:0E83
 	LOADDS(0x3083);
-	_04bf_18ae = pfn;
-	_04bf_0284 = 1;
+	glbFncTickStep = pfn;
+	glbTickStepActive = 1;
 
 	SkD((DLV_DBG_TICK, "Tick step value = %03d\n", 1));
-	//^01B0:0EA0
 	return 1;
 }
 
@@ -18186,9 +18179,9 @@ void SkWinCore::_4726_03b2()
 #if UseAltic
 	_4976_5e90 = _4976_5e98 = _4976_5e88 = _4976_5e8c = 0;
 #else
-	_4976_5e90 = _crt_getvect(0xfe);
+	_4976_5e90 = _crt_getvect(0xFE);
 	_4976_5e98 = _4976_5e90;
-	_4976_5e88 = _crt_getvect(0xff);
+	_4976_5e88 = _crt_getvect(0xFF);
 	_4976_5e8c = _4976_5e88;
 #endif
 	//^4726:03F1
@@ -18199,7 +18192,7 @@ void SkWinCore::_4726_03b2()
 	_00eb_0bc4();
 	IBMIO_SELECT_PALETTE_SET(0);
 	_01b0_2b1b();
-	glbTickStepValue = _01b0_0e80(&SkWinCore::TICK_STEP_CHECK);
+	glbTickStepValue = SET_FUNC_TICK_STEP(&SkWinCore::TICK_STEP_CHECK);
 	//^4726:0446
 	return;
 }
@@ -20121,13 +20114,14 @@ UINT SkWinCore::SK_INIT()
 	return 0;
 }
 
-// SPX Special lib callable INIT
+// SPX Special lib callable GAME LOAD
 UINT SkWinCore::SK_GAMELOAD()
 {
 	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_YELLOW, BLACK);
 	printf("SK GAME LOAD\n");
 	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
 
+	cd.mo.glbSpecialScreen = _MENU_SCREEN__LOAD_NEW_GAME;
 	GAME_LOAD();
 	GRAPHICS_DATA_OPEN();
 	__LOAD_CREATURE_FROM_DUNGEON();
@@ -20139,7 +20133,7 @@ UINT SkWinCore::SK_GAMELOAD()
 	SkD((SkCodeParam::bEngineNoDisplay||DLV_DBG_INIT, "NEW GAME LOADED.\n"));
 	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
 
-	LOG_FULL_DUNGEON_INFO();
+	//LOG_FULL_DUNGEON_INFO();
 
 	if (cd.mo.glbSpecialScreen != _MENU_SCREEN__RESUME_GAME_SELECT) {
 		MOVE_RECORD_TO(OBJECT_NULL, -1, 0, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
@@ -21528,8 +21522,9 @@ void SkWinCore::GAME_LOOP()
 	U16 iLocalMap = 0; // si
 	while (true)
 	{
+		SkD((DLV_DBG_GAME_LOOP, "-----------------------------------------------------------\n"));
 		if (iLoopCount%10 == 0 || iLoopCount <= 10)
-			SkD((SkCodeParam::bEngineNoDisplay||DLV_DBG_INIT, "GAME_LOOP (%08d)\n", iLoopCount));
+			SkD((SkCodeParam::bEngineNoDisplay||DLV_DBG_GAME_LOOP, "GAME_LOOP (%08d)\n", iLoopCount));
 		iLoopCount++,
 
 		//DISPLAY_HINT_TEXT(COLOR_YELLOW, message);
@@ -21557,6 +21552,8 @@ _00a4:
 				continue;
 			break;
 		}
+
+		SkD((DLV_DBG_GAME_LOOP, "GL (%08d) - AFTER TIMERS\n", iLoopCount));
 		UPDATE_WEATHER(0);
 		
 		SkD((DLV_DBG_RAIN, "Loop (Rain) >> lvl=%03d / strm=%03d / wet=%03d (r2:%d r3:%d mlt:%d) / tick=%d\n"
@@ -21661,7 +21658,9 @@ _01f7:
 			_1031_0d36_KEYBOARD(0x20, SPECIAL_UI_KEY_TRANSFORMATION());
 		}
 
+		SkD((DLV_DBG_GAME_LOOP, "GL (%08d) - BEFORE MESSAGE LOOP\n", iLoopCount));
 		MessageLoop(true); // in game
+		SkD((DLV_DBG_GAME_LOOP, "GL (%08d) - AFTER MESSAGE LOOP\n", iLoopCount));
 		do {
 			if (IS_THERE_KEY_INPUT_2() != 0) {
 				goto _01f7;
@@ -21679,11 +21678,15 @@ _01f7:
 					FIRE_SHOW_MOUSE_CURSOR();
 				}
 			}
+			SkD((DLV_DBG_GAME_LOOP, "GL (%08d) - BEFORE MAIN LOOP\n", iLoopCount));
 			MAIN_LOOP();
+			SkD((DLV_DBG_GAME_LOOP, "GL (%08d) - AFTER MAIN LOOP\n", iLoopCount));
 
 			MessageLoop(false); // in game
+			SkD((DLV_DBG_GAME_LOOP, "GL (%08d) - TICK STEP = %d / _4976_4c02 = %d\n", iLoopCount, glbTickStepReached, _4976_4c02));
 
 		} while (glbTickStepReached == 0 || _4976_4c02 == 0);
+		SkD((DLV_DBG_GAME_LOOP, "GL (%08d) - AFTER TICK REACHED\n", iLoopCount));
 		iLocalMap = glbMapToLoad;
 		if (iLocalMap != 0xFFFF) {
 			iLocalMap = glbCurrentMapIndex;
@@ -21695,13 +21698,22 @@ _01f7:
 		}
 		//DM2DOS_R_BA7(ddata.v1e0266);
 		REQUEST_PLAY_MUSIC_FROM_MAP(cd.pi.glbPlayerMap);
+		SkD((DLV_DBG_GAME_LOOP, "GL (%08d) - END OF LOOP\n", iLoopCount));
 		continue;
 	}
 	return;
 }
 
 
-
+// 
+UINT SkWinCore::SK_GAMELOOP()
+{
+	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_YELLOW, BLACK);
+	printf("GAME LOOP\n");
+	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
+	GAME_LOOP();
+	return 0;
+}
 
 
 
@@ -21883,7 +21895,7 @@ SkWinCore::SkWinCore()
 	glbMouseCursorVisible = 0;
 	glbUIKeyReadCount = 0; //?
 	glbDMode = 0;
-	_04bf_0284 = 0;
+	glbTickStepActive = 0;
 	_04bf_0280 = 0;
 	_04bf_03d4 = 0;
 	_01b0_0933 = 0;
@@ -21899,7 +21911,7 @@ SkWinCore::SkWinCore()
 	glbCounterZero_0517 = 0;
 	glbSomeCounter_0519 = 0;
 	_01b0_13c6 = 0;
-	_04bf_18ae = NULL;
+	glbFncTickStep = NULL;
 	_04bf_179e = NULL;
 	_4976_4ea6 = 0;
 	_4976_4e00 = 0;

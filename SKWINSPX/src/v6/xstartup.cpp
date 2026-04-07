@@ -212,10 +212,6 @@ int SKWIN_START_MAIN_HEADLESS(tSKWinContext* xSKWinContext, int iEngine, int arg
 
 		iGameRC = xSKWinContext->xSkCore->SK_INIT();
 	}
-
-	skWinApplication->resetVideoMode();
-	skWinApplication->ExitMessage();
-	free(skWinApplication);
 	
 	return iGameRC;
 }
@@ -238,7 +234,7 @@ SK_API int SK_MainStartHeadless(tSKWinContext* xSKWinContext, const char* sComma
 	int iResult = 0;
 	//char* argv[] = {"-sdl", "-en", "-data", "DATA-DM2", "-gdat", "DATA-DM2\\DM2V52PC\\G2SKV52C.DAT", "-dungeon", "DATA-DM2\\DM2V52PC\\DNGSK52D.DAT"};
 	char* argv[] = {"-sdl", "-en", "-data", "DATA", "-new"};
-	int argc = 5;
+	int argc = 6;
     return SKWIN_START_MAIN_HEADLESS(xSKWinContext, __SK_ENGINE_V4_, argc, argv);
 //	return iResult;
 }
@@ -249,6 +245,14 @@ SK_API int SK_GameLoad(tSKWinContext* xSKWinContext)
 	int iResult = 0;
 
     return xSKWinContext->xSkCore->SK_GAMELOAD();
+}
+
+
+SK_API int SK_StartGameLoop(tSKWinContext* xSKWinContext)
+{
+	int iResult = 0;
+
+    return xSKWinContext->xSkCore->SK_GAMELOOP();
 }
 
 

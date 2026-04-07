@@ -46,7 +46,7 @@
 #define DLV_DBG_SED3	0
 #define DLV_FSM 0	// Find special marker (for x teleport and void fall)
 #define DLV_XP	0	// Display info about XP gain
-#define DLV_DBG_INIT	1	// Display steps from the init
+#define DLV_DBG_INIT	0	// Display steps from the init
 #define DLV_DBG_GETPIC	0
 #define DLV_DBG_CELL	0
 #define DLV_DBG_EXTRACT 0
@@ -63,6 +63,7 @@
 #define DLV_DBG_TICK		0	// Tick information
 #define DLV_DBG_DOOR		0
 #define DLV_DBG_GAME_LOAD	0
+#define DLV_DBG_GAME_LOOP	1
 #define DLV_DBG_LUA			0
 #define DLV_DBG_SND			0
 #define DLV_USE_LOGX		0
@@ -70,7 +71,7 @@
 #ifdef __DJGPP__
 #define DLV_DBG_DOS			1
 #else
-#define DLV_DBG_DOS			1
+#define DLV_DBG_DOS			0
 #endif // __DJGPP__
 
 #ifndef __DJGPP__	// won't allow these debugs for DOS version

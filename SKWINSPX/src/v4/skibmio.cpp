@@ -807,12 +807,12 @@ void SkWinCore::_01b0_0fa3()
 void SkWinCore::_01b0_180c() {
 	//^01B0:180C
 	LOADDS(0x3083);
-	if (glbDMode == 0 || _04bf_0284 != 0) {
+	if (glbDMode == 0 || glbTickStepActive != 0) {
 		//^01B0:1823
 		_01b0_14d8++;
 		if ((_01b0_14d8 & 3) == 0) {
 			//^01B0:1830
-			(this->*_04bf_18ae)(); INDIRECT_CALL
+			(this->*glbFncTickStep)(); INDIRECT_CALL
 		}
 	}
 	//^01B0:1834
@@ -895,7 +895,7 @@ void SkWinCore::IBMIO_INIT_TIMER()
 void SkWinCore::IBMIO_UNINIT_TIMER()
 {
 	ENTER(0);
-	_04bf_0284 = 0;
+	glbTickStepActive = 0;
 	while (sndLockSoundBuffer != 0) {
 #if UseAltic
 		sndLockSoundBuffer = 0;
@@ -2666,7 +2666,7 @@ U16 SkWinCore::IBMIO_IS_THERE_KEY_INPUT() //#DS=04BF
 {
 	ENTER(0);
 	LOADDS(0x3083);
-	if (glbDMode != 0 && _04bf_0284 != 0) {
+	if (glbDMode != 0 && glbTickStepActive != 0) {
 		TICK_STEP_CHECK() INDIRECT_CALL;
 	}
 	return (glbUIKeyReadCount != 0) ? 1 : 0;

@@ -140,7 +140,7 @@ protected:
 	X16		glbZMode;		// (_04bf_027e)
 	i16		_04bf_0280;
 	U16	glbDMode;		// (_04bf_0282)
-	U16	_04bf_0284;		// timer running
+	U16	glbTickStepActive;		// (_04bf_0284) timer running
 	X16		glbPType;		// (_04bf_0286)
 //	U16	glbSoundBlasterBasePort;		// (_04bf_0288) sblaster base port #
 //	U16	glbSoundCardType;		// (_04bf_028a) sndcard type: sblaster=6
@@ -215,7 +215,7 @@ protected:
 	X16 _04bf_18a8;
 	i16	_04bf_18aa;
 	U16	_04bf_18ac;
-	void (SkWinCore::*_04bf_18ae)();
+	void (SkWinCore::*glbFncTickStep)();	// _04bf_18ae
 	U16	_04bf_18b2;		// mouse availability 0=n/a, 1=avail
 	U16	_04bf_1934;		// mouse push state (previous)
 	U16	_04bf_1936;
@@ -1081,7 +1081,8 @@ protected:
 public:
 	UINT IBMIO_BOOTSTRAP();
 	UINT SK_INIT();	// New Init (no start game)
-	UINT SK_GAMELOAD();
+	UINT SK_GAMELOAD();	// Call from lib
+	UINT SK_GAMELOOP(); // Call from lib
 protected:
 	//--------------------------------------------------------------------------
 
@@ -1103,7 +1104,7 @@ protected:
 	char *ANIM_STRCPY(char *xx, const char *yy);
 
 	void _0759_0126();
-	void _0759_06c2();
+	void TICK_STEP_SUBTRACT();	// _0759_06c2
 	void _0759_06db();
 	X16 IS_THERE_KEY_INPUT_1();	// _0759_072c
 	void UI_CONSUME_KEYBOARD_INPUT();	// _0759_071b
@@ -2180,7 +2181,7 @@ protected:
 
 	int _01b0_2b1b();	// X16 RETURNS 0
 
-	X16 _01b0_0e80(void (SkWinCore::*pfn)());
+	X16 SET_FUNC_TICK_STEP(void (SkWinCore::*pfn)());	// _01b0_0e80
 
 	void _4726_03b2();
 
