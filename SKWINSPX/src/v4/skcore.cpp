@@ -18165,6 +18165,7 @@ X16 SkWinCore::SET_FUNC_TICK_STEP(void (SkWinCore::*pfn)()) //#DS=04BF
 	glbFncTickStep = pfn;
 	glbTickStepActive = 1;
 
+	printf("SET_FUNC_TICK_STEP\n");
 	SkD((DLV_DBG_TICK, "Tick step value = %03d\n", 1));
 	return 1;
 }
@@ -18173,9 +18174,8 @@ X16 SkWinCore::SET_FUNC_TICK_STEP(void (SkWinCore::*pfn)()) //#DS=04BF
 // TODO: related to some init ?
 void SkWinCore::_4726_03b2()
 {
-	//^4726:03B2
+	printf("_4726_03b2\n");
 	ENTER(0);
-	//^4726:03B5
 #if UseAltic
 	_4976_5e90 = _4976_5e98 = _4976_5e88 = _4976_5e8c = 0;
 #else
@@ -18184,7 +18184,6 @@ void SkWinCore::_4726_03b2()
 	_4976_5e88 = _crt_getvect(0xFF);
 	_4976_5e8c = _4976_5e88;
 #endif
-	//^4726:03F1
 	glbRandomSeed = _01b0_20ef() CALL_IBMIO * 0x7AE3;
 #if UseAltic
 	glbRandomSeed = 12345;
@@ -18193,7 +18192,6 @@ void SkWinCore::_4726_03b2()
 	IBMIO_SELECT_PALETTE_SET(0);
 	_01b0_2b1b();
 	glbTickStepValue = SET_FUNC_TICK_STEP(&SkWinCore::TICK_STEP_CHECK);
-	//^4726:0446
 	return;
 }
 
@@ -20047,6 +20045,8 @@ UINT SkWinCore::SK_INIT()
 	U16 iCompatibilityFlag = 0;
 	U16 iSpecialItem = 0;
 
+	SK_IBMIO_INIT();	// IBMIO must be called first to set up some callback functions used for timers/tick steps, etc ..., but it must not call the game INIT() from there.
+
 	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_YELLOW, BLACK);
 	printf("SK GAME INIT\n");
 	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
@@ -20108,6 +20108,9 @@ UINT SkWinCore::SK_INIT()
 	X16 iDefaultCreaturesMaxAllocation = (cd.gg.glbCreaturesMaxCount +1) * 3;	// si
 	cd.gg.glbSomeCreatureTable = ALLOC_MEMORY_RAM(iDefaultCreaturesMaxAllocation, afUseUpper, 1024);
 	FILL_STR(cd.gg.glbSomeCreatureTable, iDefaultCreaturesMaxAllocation, 0xFF, 1);
+
+	EXTENDED_LOAD_SPELLS_DEFINITION();	// TODO => put somewhere else ?
+	EXTENDED_LOAD_DM1_ITEM_CONVERSION_LIST();		// TODO => put somewhere else ?
 
 	printf("INIT COMPLETE\n");
 

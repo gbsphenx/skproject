@@ -3,6 +3,8 @@
 //	Low level interface IBMIO / FIRE
 //------------------------------------------------------------------------------
 
+#include <skcnsole.h>
+
 #include <skcore.h>
 #include <stdlib.h>
 #include <skmidi.h>
@@ -117,25 +119,17 @@ i16 SkWinCore::IBMIO_EXEC(const U8 *exe, const U8 *arg)
 //^00EB:0BC4
 void SkWinCore::_00eb_0bc4() //#DS=04BF
 {
-	//^00EB:0BC4
 	ENTER(0);
-	//^00EB:0BC8
 	LOADDS(0x0C48);
 	_04bf_0e34 = reinterpret_cast<U8 *>(__vram);
 	U16 si = 1;
 	do {
-		//^00EB:0BDD
 		if (si < 0xfa00) {
-			//^00EB:0BE3
 			IBMIO_FILL_SCREEN_LINE(si, 0, 1);
 		}
-		//^00EB:0BEF
 		si = ((si & 1) != 0) ? ((si >> 1) ^ 0xb400) : (si >> 1);
-		//^00EB:0C02
 	} while (si != 1);
-	//^00EB:0C09
 	IBMIO_FILL_SCREEN_LINE(0, 0, 1);
-	//^00EB:0C17
 	return;
 }
 
@@ -215,9 +209,7 @@ X16 SkWinCore::IBMIO_INIT_MOUSE()
 #if UseAltic
 	return _04bf_18b2 = 1;
 #else
-	//^01B0:0A6A
 	ENTER(0);
-	//^01B0:0A6D
 
 	// int 33h
 	// http://www2.muroran-it.ac.jp/circle/mpc/old/pc98dos/mouse/mouse.html
@@ -238,7 +230,6 @@ X16 SkWinCore::IBMIO_INIT_MOUSE()
 		__asm mov ax,0x8
 		__asm int 0x33
 	}
-	//^01B0:0AA3
 	return _04bf_18b2;
 #endif
 }
@@ -250,9 +241,7 @@ void SkWinCore::_04bf_0090() { // TODO: Unr
 void SkWinCore::INIT_KBOARD_HOOK() //#DS=04BF
 {
 #if UseAltic
-	//^01B0:0426
 	ENTER(0);
-	//^01B0:042B
 	glbUIKeyReadCount = 0;
 	glbKeyboardReadRRIndex = 0;
 	glbKeyboardWriteRRIndex = 0;
@@ -260,13 +249,9 @@ void SkWinCore::INIT_KBOARD_HOOK() //#DS=04BF
 	_04bf_185c = 0;
 	_04bf_18a8 = 0;
 	_04bf_1862 = 0;
-	//^01B0:0457
 	_01b0_0453 = _sys_getvect(0x09);
 	_sys_setvect(0x09, &SkWinCore::IBMIO_KBOARD_HANDLER);
-	//^01B0:0475
-	//^01B0:04B5
 	_04bf_02bc = 1;
-	//^01B0:04BB
 	return;
 #else
 #error	Unr
@@ -804,44 +789,36 @@ void SkWinCore::_01b0_0fa3()
 }
 
 //^01B0:180C
-void SkWinCore::_01b0_180c() {
-	//^01B0:180C
+// _01b0_180c renamed IBMIO_CALL_TICKSTEP
+void SkWinCore::IBMIO_CALL_TICKSTEP() {
 	LOADDS(0x3083);
 	if (glbDMode == 0 || glbTickStepActive != 0) {
-		//^01B0:1823
 		_01b0_14d8++;
 		if ((_01b0_14d8 & 3) == 0) {
-			//^01B0:1830
-			(this->*glbFncTickStep)(); INDIRECT_CALL
+			printf("CALL glbFncTickStep (%p)\n", glbFncTickStep);
+			(this->*glbFncTickStep)(); INDIRECT_CALL	// TICK_STEP_CHECK
+			printf("AFTER glbFncTickStep\n");
 		}
 	}
-	//^01B0:1834
 	_01b0_20ff();
-	//^01B0:183D
 	bool carry = U16(_01b0_13c6) < U16(_01b0_13ca);
 	_01b0_13c6 -= _01b0_13ca;
-	//^01B0:1846
 	U16 bx = _01b0_13c8;
 	if (bx != _01b0_13ca) {
-		//^01B0:1854
 		// __asm mov al,0x36
 		// __asm out 0x43,al
 		// __asm mov al,bl
 		// __asm out 0x40,al
 		// __asm mov al,bh
 		// __asm out 0x40,al
-		//^01B0:1861
 		_01b0_13ca = bx;
 		glbSoundFreq_13cc = glbSoundFreq_13ce;
 	}
-	//^01B0:186E
 	if (!carry) {
-		//^01B0:1872
 		// __asm mov al,0x20
 		// __asm out 0x20,al
 		return;
 	}
-	//^01B0:1878
 	LOADDS(0x3083);
 	_01b0_0fa3();
 	(this->*_01b0_13be)();
@@ -849,7 +826,7 @@ void SkWinCore::_01b0_180c() {
 
 //^01B0:14EB
 void SkWinCore::_INT08_HANDLER() {
-	_01b0_180c();
+	IBMIO_CALL_TICKSTEP();
 }
 
 //^01B0:1315
@@ -943,77 +920,92 @@ i16 SkWinCore::IBMIO_UNINIT_VID()
 	// DOS => reset video
 }
 
+
+UINT SkWinCore::SK_IBMIO_INIT()
+{
+	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_YELLOW, BLACK);
+	printf("SK IBMIO INIT\n");
+	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
+
+	_04bf_17aa = IBMIO_CHECK_CPU_ERA();
+
+	IBMIO_INIT_VID();
+	_crt88_setvect(0xFE, &SkWinCore::_04bf_0102);
+	i16 di = 0;
+
+	X16 bp08;
+	if (glbPType == 0 || glbPType == 4) {
+		bp08 = IBMIO_INIT_MOUSE();
+		if (bp08 != 0) {
+			glbPType = 4;
+		}
+		else {
+			glbPType = 3;
+		}
+	}
+	INIT_KBOARD_HOOK();
+	_01b0_08d8();
+	if (glbPType == 4 && bp08 != 0)
+		IBMIO_SET_MOUSE_HANDLER();
+	IBMIO_INIT_TIMER();
+	_01b0_18d3_AUDIO(0);
+	_4726_03b2();
+	return 0;
+}
+
 //^01B0:2C48
 // SPX: _01b0_2c48 replaced by IBMIO_MAIN
 i16 SkWinCore::IBMIO_MAIN(i16 argc, const char **argv, char **env) //#DS=04BF
 {
 	// IBMIO_main
 	SkD((DLV_DBG_DOS, "IBMIO_MAIN\n"));
-	//^01B0:2C48
 	ENTER(172);
-	//^01B0:2C4E
 	U8 bp5c[80] = {0};
 	_04bf_17aa = IBMIO_CHECK_CPU_ERA();
 	if (_04bf_17aa < 286) {
-		//^01B0:2C71
 		IBMIO_PRINT_ERROR(strPC286Required);
 		_0088_020b(0);
 	}
-	//^01B0:2C83
 	i16 si;
 	for (si = 1; si < argc; si++) {
-		//^01B0:2C89
 		if (argv[si][0] == '+') {
-			//^01B0:2C9F
 			X16 bp0a;
 			X16 bp06;
 			X16 bp0c;
 			switch (bp0a = SK88_TOUPPER(U8(argv[si][1]))) {
 			case 'S'://^2CD5
-				//^01B0:2CD5
 				switch (SK88_TOUPPER(U8(argv[si][2]))) {
 				case 'I'://^2D03
-					//^01B0:2D03
 					cd.sc.glbSoundCardType = ScardTandy;
 					break;
 				case 'N'://^2D0C
-					//^01B0:2D0C
 					cd.sc.glbSoundCardType = Scard01;
 					break;
 				case 'T'://^2D15
-					//^01B0:2D15
 					cd.sc.glbSoundCardType = Scard04;
 					break;
 				case 'D'://^2D1E
-					//^01B0:2D1E
 					cd.sc.glbSoundCardType = Scard05;
 					bp06 = SK88_TOUPPER(argv[si][3]);
 					if (bp06 >= '1' && bp06 <= '3') {
-						//^01B0:2D4D
 						cd.sc.glbSoundBlasterBasePort = _04bf_05f9[RCJ(18,bp06)];
 					}
-					//^01B0:2D59
 					outportb(cd.sc.glbSoundBlasterBasePort +2, inportb(cd.sc.glbSoundBlasterBasePort +2));
 					break;
 				case 'B'://^2D67
-					//^01B0:2D67
 					cd.sc.glbSoundBlasterBasePort = IBMIO_DETECT_SBLASTER();
 					if (cd.sc.glbSoundBlasterBasePort != 0)
-						//^01B0:2D75
 						cd.sc.glbSoundCardType = ScardSBlaster;
 					break;
 				case 'A'://^2D7E
-					//^01B0:2D7E
 					cd.sc.glbSoundBlasterBasePort = 0x388;
 					_04bf_0e4e = 0x388;
 					cd.sc.glbSoundCardType = Scard07;
 					break;
 				case 'F'://^2D90
-					//^01B0:2D90
 					cd.sc.glbSoundCardType = Scard03;
 					bp06 = SK88_TOUPPER(argv[si][3]);
 					if (bp06 >= '1' && bp06 <= '3')
-						//^01B0:2DC5
 						cd.sc.glbSoundBlasterBasePort = _04bf_05f9[RCJ(18,bp06)];
 					break;
 				case 67://^2EAF
@@ -1033,141 +1025,103 @@ i16 SkWinCore::IBMIO_MAIN(i16 argc, const char **argv, char **env) //#DS=04BF
 				}
 				break;
 			case 'P'://^2DD4
-				//^01B0:2DD4
 				switch (bp0c = SK88_TOUPPER(argv[si][2])) {
 				case 'P'://^2E0A
-					//^01B0:2E0A
 					glbPType = 2;
 					break;
 				case 'A'://^2E12
-					//^01B0:2E12
 					glbPType = 1;
 					if (argv[si][3] != 0) {
-						//^01B0:2E2C
 						_04bf_0296 = argv[si][3] -0x30;
 						if (_04bf_0296 >= 0 && _04bf_0296 <= 7) {
-							//^01B0:2E53
 							_04bf_0298 = _04bf_029c[RCJ(8,_04bf_0296)];
 							_04bf_029a = _04bf_02ac[RCJ(8,_04bf_0296)];
 							break;
 						}
-						//^01B0:2E6F
 						_04bf_0296 = 0;
 						break;
 					}
 					break;
 				case 'K'://^2E77
-					//^01B0:2E77
 					glbPType = 3;
 					break;
 				case 'M'://^2E7F
-					//^01B0:2E7F
 					glbPType = 4;
 					break;
 				}
 				goto _2e85;
 			case 'M'://^2E85
-				//^01B0:2E85
 _2e85:
 				SK88_TOUPPER(argv[si][2]);
 				break;
 			case 'Z'://^2EA1
-				//^01B0:2EA1
 				glbZMode = 0;
 				break;
 			case 'D'://^2EA9
-				//^01B0:2EA9
 				glbDMode = 1;
 				break;
 			}
 		}
-		//^01B0:2EAF
 	}
-	//^01B0:2EB8
 	IBMIO_INIT_VID();
 	_crt88_setvect(0xFE, &SkWinCore::_04bf_0102);
 	si = 2;
 	i16 di = 0;
 	for (; si < argc; bp5c[di] = 0, si++) {
-		//^01B0:2ED3
 		if (di > 1) {
-			//^01B0:2ED8
 			bp5c[di++] = 0x20;
 		}
-		//^01B0:2EDD
 		i16 bp04 = 0;
 		X8 bp01;
 		for (; bp04 < 0x50; bp5c[di] = bp01, di++, bp04++) {
-			//^01B0:2EE4
 			bp01 = argv[si][bp04];
 			if (bp01 == 0)
 				break;
-			//^01B0:2EFE
 		}
-		//^01B0:2F0E
 	}
-	//^01B0:2F18
 	X16 bp08;
 	if (glbPType == 0 || glbPType == 4) {
-		//^01B0:2F26
 		bp08 = IBMIO_INIT_MOUSE();
 		if (bp08 != 0) {
-			//^01B0:2F31
 			glbPType = 4;
 		}
 		else {
-			//^01B0:2F39
 			glbPType = 3;
 		}
 	}
 	do {
-		//^01B0:2F3F
 		INIT_KBOARD_HOOK();
 		_01b0_08d8();
 		if (glbPType == 4 && bp08 != 0)
 			IBMIO_SET_MOUSE_HANDLER();
-		//^01B0:2F58
 		IBMIO_INIT_TIMER();
 		if (glbZMode != 0) {
-			//^01B0:2F66
 			U8 bp00ac[80];
 			SK88_STRCPY(bp00ac, _04bf_01b2[RCJ(4,_04bf_0280)].b14);
 			SK88_STRCAT(bp00ac, _04bf_067a);
 			SK88_STRCAT(bp00ac, bp5c);
 			if (_04bf_01b2[RCJ(4,_04bf_0280)].b0[0] == '@') {
-				//^01B0:2FB7
 				si = IBMIO_EXEC(reinterpret_cast<const U8 *>(argv[_04bf_01b2[RCJ(4,_04bf_0280)].b0[1] -'0']), bp00ac);
 			}
 			else {
-				//^01B0:2FE1
 				si = IBMIO_EXEC(&_04bf_01b2[RCJ(4,_04bf_0280)].b0[0], bp00ac);
 			}
-			//^01B0:2FFD
 			if (_04bf_01b2[RCJ(4,_04bf_0280)].b46 < si)
 				si = 0;
-			//^01B0:3013
 			_04bf_0280 = _04bf_01b2[RCJ(4,_04bf_0280)].b47 -1;
 		}
 		else {
-			//^01B0:3029
 			IBMIO_EXEC(reinterpret_cast<const U8 *>(argv[1]), bp5c);
 		}
-		//^01B0:3040
 		_01b0_18d3_AUDIO(0);
 		if (cd.sc.glbSoundCardType == 5) {
-			//^01B0:304E
 			outportb(glbSoundBlasterBasePort +2, inportb(glbSoundBlasterBasePort +2) | 8);
 		}
-		//^01B0:3059
 		IBMIO_UNINIT_TIMER();
 		if (glbPType == 4 && bp08 != 0)
-			//^01B0:306A
 			IBMIO_UNINIT_MOUSE();
-		//^01B0:306E
 		IBMIO_UNINIT_KBOARD_HOOK();
-		//^01B0:3072
 	} while (_04bf_0280 > 0);
-	//^01B0:307C
 	return IBMIO_UNINIT_VID();
 }
 

@@ -17,13 +17,10 @@
 // SPX: _3df7_075f renamed RETRIEVE_ENVIRONMENT_CMD_CD_FW
 X16 SkWinCore::RETRIEVE_ENVIRONMENT_CMD_CD_FW(DistantEnvironment *ref)
 {
-	//^3DF7:075F
 	ENTER(128);
-	//^3DF7:0763
 	U8 bp80[128];
 	if (QUERY_GDAT_TEXT(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, ref->envImg, bp80)[0] == 0)
 		return 0;
-	//^3DF7:078B
 	ref->cmCD = QUERY_CMDSTR_TEXT(bp80, reinterpret_cast<const Bit8u *>(EnvCM_CD));
 	ref->w6 = ref->w4 = 0;
 	ref->cmFW = U8(QUERY_CMDSTR_TEXT(bp80, reinterpret_cast<const Bit8u *>(EnvCM_FW)));
@@ -37,9 +34,7 @@ X16 SkWinCore::RETRIEVE_ENVIRONMENT_CMD_CD_FW(DistantEnvironment *ref)
 // SPX: _32cb_56bc renamed ENVIRONMENT_DRAW_DISTANT_ELEMENT
 void SkWinCore::ENVIRONMENT_DRAW_DISTANT_ELEMENT(DistantEnvironment *ref, X16 dir, X16 xx, X16 yy)
 {
-	//^32CB:56BC
 	ENTER(6);
-	//^32CB:56C2
 	X16 bp02;	// SPX => bp02 = mirror flip
 	if (ref->cmCD == 0)
 		return;
@@ -58,14 +53,13 @@ void SkWinCore::ENVIRONMENT_DRAW_DISTANT_ELEMENT(DistantEnvironment *ref, X16 di
 	else {
 		bp02 = 0;
 	}
-	//^32CB:5761
+
 	X16 bp04 = ref->b8;
 	X16 bp06 = ref->b9;
 	X16 di = ref->w4;
 	X16 si = ref->w6;
 	if (cd.pi.glbIsPlayerMoving != 0)
 	{
-		//^32CB:5785
 		di = CALC_STRETCHED_SIZE(di, 0x34);
 		si = CALC_STRETCHED_SIZE(si, 0x34);
 		bp04 = CALC_STRETCHED_SIZE(bp04, 0x34);
@@ -73,7 +67,6 @@ void SkWinCore::ENVIRONMENT_DRAW_DISTANT_ELEMENT(DistantEnvironment *ref, X16 di
 		if (ref->b8 == 0x40) {
 			di += _4976_00fe.x;
 			if (ref->cmCD == 0x1771) {	// 0x1771 = 6001
-				//^32CB:57D1
 				si += _4976_4681;
 			}
 			else {
@@ -97,21 +90,17 @@ void SkWinCore::ENVIRONMENT_DRAW_DISTANT_ELEMENT(DistantEnvironment *ref, X16 di
 		, ref->envImg
 		, iElementRecto
 		));
-	//^32CB:57E1
 	QUERY_TEMP_PICST(bp02, bp04, bp06, 0, 0, 0, iElementRecto, -1, glbSceneColorKey, -1, GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, ref->envImg);
 	glbTempPicture.w32 += di;
 	glbTempPicture.w34 += si;
 	DRAW_TEMP_PICST();        
-	//^32CB:5820
 	return;
 }
 
 //^32CB:54CE
 i16 SkWinCore::_32cb_54ce(X16 dir, i16 *xx, i16 *yy, X16 xl, X16 yl)
 {
-	//^32CB:54CE
 	ENTER(4);
-	//^32CB:54D4
 	i16 si;
 	X16 di;
 	switch (dir) {
@@ -136,25 +125,19 @@ i16 SkWinCore::_32cb_54ce(X16 dir, i16 *xx, i16 *yy, X16 xl, X16 yl)
 			di = *yy -yl;
 			break;
 	}
-	//^32CB:5538
 	*xx = di;
 	*yy = si;
 	if (si < 1)
 		return 0;
-	//^32CB:554D
 	U16 bp02 = di * di + si * si;
 	if (bp02 <= 2)
 		return 1;
-	//^32CB:5567
 	U16 cx = bp02 >> 1;
 	U16 bp04;
 	do {
-		//^32CB:556E
 		bp04 = cx;
 		cx = (cx +(bp02 / cx)) >> 1;
-		//^32CB:5582
 	} while (cx < bp04);
-	//^32CB:5589
 	return bp04;
 }
 
@@ -162,37 +145,29 @@ i16 SkWinCore::_32cb_54ce(X16 dir, i16 *xx, i16 *yy, X16 xl, X16 yl)
 // SPX: _32cb_5598 renamed ENVIRONMENT_SET_DISTANT_ELEMENT
 X16 SkWinCore::ENVIRONMENT_SET_DISTANT_ELEMENT(DistantEnvironment *ref, U8 *str, X16 dir, X16 xx, X16 yy)
 {
-	//^32CB:5598
 	ENTER(12);
-	//^32CB:559E
 	ref->w4 = ref->w6 = 0;
 	X16 bp02 = QUERY_CMDSTR_TEXT(str, reinterpret_cast<const Bit8u *>(EnvCM_MV));
 	if (bp02 == 0) {
-		//^32CB:55C4
 		ref->b8 = 0x40;
 		ref->b9 = 0x40;
 		return 1;
 	}
-	//^32CB:55D7
 	if (bp02 == 1) {
-		//^32CB:55E0
 		i16 bp08 = xx + dunMapLocalHeader->MapOffsetX();
 		i16 bp0a = yy + dunMapLocalHeader->MapOffsetY();
 		X16 bp0c = QUERY_CMDSTR_TEXT(str, reinterpret_cast<const Bit8u *>(EnvCM_XLocation));
 		X16 di = QUERY_CMDSTR_TEXT(str, reinterpret_cast<const Bit8u *>(EnvCM_YLocation));
 		i16 si = _32cb_54ce(dir, &bp08, &bp0a, bp0c, di);
 		if (bp0a >= 1) {
-			//^32CB:564B
 			X16 bp04 = QUERY_CMDSTR_TEXT(str, reinterpret_cast<const Bit8u *>(EnvCM_FD));
 			X16 bp06 = max_value(1, 0x40 -(si -bp04));
 			bp06 = (((bp06 << 7) >> 6) +1) >> 1;
-			//^32CB:5683
 			ref->w4 = (i32(bp08) * 210) / si;
 			ref->b8 = ref->b9 = X8(bp06);
 			return 1; // SPX: Element is visible
 		}
 	}
-	//^32CB:56B6
 	return 0; // SPX: Element is not visible (wrong direction)
 }
 
@@ -200,67 +175,46 @@ X16 SkWinCore::ENVIRONMENT_SET_DISTANT_ELEMENT(DistantEnvironment *ref, U8 *str,
 // SPX: _32cb_5824 renamed ENVIRONMENT_DISPLAY_ELEMENTS
 void SkWinCore::ENVIRONMENT_DISPLAY_ELEMENTS(X16 dir, X16 xx, X16 yy)
 {
-	//^32CB:5824
 	ENTER(134);
-	//^32CB:582A
 	X16 di = xx; // xpos
 	X16 si = yy; // ypos
 	DistantEnvironment *bp04;
 	if (glbRainFlagSomething != 0) {
-		//^32CB:5837
 		bp04 = &_4976_5c2a[0];
-		//^32CB:583F
 		while (bp04->envImg != 0xff) {
-			//^32CB:5841
 			ENVIRONMENT_DRAW_DISTANT_ELEMENT(bp04++, dir, di, si);
 		}
 	}
-	//^32CB:5861
 	U8 bp05;
 	U8 bp0086[128];
 	if (_4976_4683 != glbMapGraphicsSet) {
-		//^32CB:586D
 		_4976_4683 = glbMapGraphicsSet;
 		_4976_592a = 1;
 		ZERO_MEMORY(_4976_592b, 13);
-		//^32CB:5888
 		for (bp05 = 0; bp05 <= 0x63; bp05++) {
-			//^32CB:588E
 			if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, dtImage, bp05) == 0)
 				continue;
-			//^32CB:58A6
 			if (QUERY_GDAT_TEXT(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, bp05, bp0086)[0] == 0)
 				continue;
-			//^32CB:58C8
 			_4976_592b[bp05 >> 3] = _4976_592b[bp05 >> 3] | (1 << (bp05 & 7));
 			_4976_592a = 0;
-			//^32CB:58F5
 		}
 	}
-	//^32CB:58FE
 	if (_4976_592a != 0)
 		return;
-	//^32CB:5908
 	bp04 = &_4976_5c2a[0];
-	//^32CB:5910
 	// SPX: Cool! up to 100 distant elements to have in sky/background!
 	// 0x63 contains the horizon graphics ..
 	for (bp05 = 0; bp05 <= 0x63; bp05++) {
-		//^32CB:5917
 		if ((_4976_592b[bp05 >> 3] & (1 << (bp05 & 7))) == 0)
 			continue;
-		//^32CB:5939
 		QUERY_GDAT_TEXT(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, bp05, bp0086);
-		//^32CB:5951
 		if (ENVIRONMENT_SET_DISTANT_ELEMENT(bp04, bp0086, dir, di, si) == 0)
 			continue;
-		//^32CB:596D
 		bp04->envImg = bp05;
 		bp04->cmCD = QUERY_CMDSTR_TEXT(bp0086, reinterpret_cast<const Bit8u *>(EnvCM_CD2));
 		bp04->cmFW = U8(QUERY_CMDSTR_TEXT(bp0086, reinterpret_cast<const Bit8u *>(EnvCM_FW2)));
 		ENVIRONMENT_DRAW_DISTANT_ELEMENT(bp04, dir, di, si);
-		//^32CB:59BA
 	}
-	//^32CB:59C6
 	return;
 }

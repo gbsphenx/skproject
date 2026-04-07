@@ -1067,7 +1067,7 @@ protected:
 	U16 _01b0_0e2c();
 	X16 _01b0_0e27(X16 xx);
 	void _01b0_0fa3();
-	void _01b0_180c();
+	void IBMIO_CALL_TICKSTEP();	// _01b0_180c
 	void _INT08_HANDLER();
 	void IBMIO_INIT_TIMER();
 	void IBMIO_UNINIT_TIMER();
@@ -1080,6 +1080,7 @@ protected:
 	void _sys_intr();
 public:
 	UINT IBMIO_BOOTSTRAP();
+	UINT SK_IBMIO_INIT();
 	UINT SK_INIT();	// New Init (no start game)
 	UINT SK_GAMELOAD();	// Call from lib
 	UINT SK_GAMELOOP(); // Call from lib
