@@ -795,9 +795,7 @@ void SkWinCore::IBMIO_CALL_TICKSTEP() {
 	if (glbDMode == 0 || glbTickStepActive != 0) {
 		_01b0_14d8++;
 		if ((_01b0_14d8 & 3) == 0) {
-			printf("CALL glbFncTickStep (%p)\n", glbFncTickStep);
 			(this->*glbFncTickStep)(); INDIRECT_CALL	// TICK_STEP_CHECK
-			printf("AFTER glbFncTickStep\n");
 		}
 	}
 	_01b0_20ff();

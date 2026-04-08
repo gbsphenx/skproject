@@ -186,7 +186,7 @@ int SKWIN_START_MAIN_HEADLESS(tSKWinContext* xSKWinContext, int iEngine, int arg
 
 	skWinApplication = new SkWinApp();
 
-	SkCodeParam::bRenderingEngineSDL = false;
+	SkCodeParam::bRenderingEngineSDL = true;
 	SkCodeParam::bRenderingEngineDOS = false;
 	SkCodeParam::bRenderingEngineMFC = false;
 
@@ -222,8 +222,6 @@ SK_API int SK_MainFromCommandLine(const char* sCommandLine)
 	//char* argv[] = {"-sdl", "-en", "-data", "DATA-DM2", "-gdat", "DATA-DM2\\DM2V52PC\\G2SKV52C.DAT", "-dungeon", "DATA-DM2\\DM2V52PC\\DNGSK52D.DAT"};
 	char* argv[] = {"-sdl", "-en", "-data", "DATA", "-new"};
 	int argc = 5;
-	printf("SK WIN DLL MAIN\n");
-
 
     return SKWIN_START_MAIN(__SK_ENGINE_V4_, argc, argv);
 //	return iResult;
@@ -254,6 +252,7 @@ SK_API int SK_StartGameLoop(tSKWinContext* xSKWinContext)
 
     return xSKWinContext->xSkCore->SK_GAMELOOP();
 }
+
 
 
 //==============================================================================

@@ -1046,6 +1046,11 @@ _1445:
 	return;
 }
 
+UINT SkWinCore::SK_HANDLE_UI_EVENT(MousePosition *ref)
+{
+	return HANDLE_UI_EVENT(ref);
+}
+
 //^1031:1951
 U16 SkWinCore::HANDLE_UI_EVENT(MousePosition *ref)
 {

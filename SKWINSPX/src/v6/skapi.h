@@ -35,6 +35,8 @@ SK_API int SK_MainFromCommandLine(const char* sCommandLine);
 SK_API int SK_MainStartHeadless(tSKWinContext* xSKWinContext, const char* sCommandLine);
 SK_API int SK_GameLoad(tSKWinContext* xSKWinContext);
 SK_API int SK_StartGameLoop(tSKWinContext* xSKWinContext);
+SK_API int SK_ProceedOneGameStep(tSKWinContext* xSKWinContext);
+SK_API int SK_SendUIEvent(tSKWinContext* xSKWinContext, UINT iUIEventCode);
 //
 
 

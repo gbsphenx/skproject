@@ -8264,9 +8264,9 @@ void SkWinCore::TICK_STEP_CHECK()
 	ENTER(0);
 	//LOADDS(0x0433);
 
-	SkD((DLV_DBG_GAME_LOOP, "TICK_STEP_CHECK: GameTick:%06d, TStep:%02d, TAbsolute:%03d, TCurrent:%03d, TSpeed:%03d, Reached:%d\n"
+	/*SkD((DLV_DBG_GAME_LOOP, "TICK_STEP_CHECK: GameTick:%06d, TStep:%02d, TAbsolute:%03d, TCurrent:%03d, TSpeed:%03d, Reached:%d\n"
 		, glbGameTick, glbTickStepValue, glbAbsoluteTickCounter, glbIntermediateTickCounter, glbTickSpeed, glbTickStepReached
-		));
+		));*/
 
 	glbAbsoluteTickCounter += glbTickStepValue;
 	glbIntermediateTickCounter += glbTickStepValue;
@@ -21556,7 +21556,7 @@ _00a4:
 			break;
 		}
 
-		SkD((DLV_DBG_GAME_LOOP, "GL (%08d) - AFTER TIMERS\n", iLoopCount));
+		//SkD((DLV_DBG_GAME_LOOP, "GL (%08d) - AFTER TIMERS\n", iLoopCount));
 		UPDATE_WEATHER(0);
 		
 		SkD((DLV_DBG_RAIN, "Loop (Rain) >> lvl=%03d / strm=%03d / wet=%03d (r2:%d r3:%d mlt:%d) / tick=%d\n"
@@ -21567,49 +21567,31 @@ _00a4:
 			));
 
 		if (cd.pi.glbIsPlayerSleeping == 0) {
-			//^13AE:00C2
 			if (cd.pi.glbNextChampionNumber == 0)
-				//^13AE:00C9
 				_38c8_0060();
-			//^13AE:00CE
 			if (glbChampionInventory == 0) {
-				//^13AE:00D5
 				if (glbDoLightCheck != 0)
-					//^13AE:00DC
 					CHECK_RECOMPUTE_LIGHT(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
-				//^13AE:00EB
 				
 				if (cd.pi.glbIsPlayerMoving != 0)
-					//^13AE:00F2
 					DISPLAY_VIEWPORT(_4976_4c40, _4976_4c32, _4976_4c34);
 				else
-					//^13AE:0100
 					DISPLAY_VIEWPORT(cd.pi.glbPlayerDir, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
-				//^13AE:0114
 				
 				CHANGE_VIEWPORT_TO_INVENTORY(1);
 				_4976_4bc8 = 0;
 			}
-			//^13AE:0122
 			if (cd.pi.glbIsPlayerMoving != 0) {
-				//^13AE:0129
 				if (cd.pi.glbIsPlayerMoving == 1) {
-					//^13AE:0130
-					//printf("Pending PERFORM MOVE\n");
 					PERFORM_MOVE(cd.pi.glbPlayerLastMove);
 				}
-				//^13AE:013A
 				cd.pi.glbIsPlayerMoving--;
 			}
-			//^13AE:013E
 			_4976_4e64 = 0;
 			if (glbShowMousePointer != 0) {
-				//^13AE:014B
 				glbShowMousePointer = 0;
 				_443c_0434();	// DM2_events_443c_0434
 			}
-			//^13AE:0156
-			//printf("GAME_LOOP: IBMIO_USER_INPUT_CHECK\n"); getch();
 			IBMIO_USER_INPUT_CHECK();
 		}
 		CHOOSE_HIGHLIGHT_ARROW_PANEL();
@@ -21627,7 +21609,7 @@ _00a4:
 		glbGameTick++;
 		//ATLASSERT(ValidateMements());
 		PROCESS_QUEUED_DEALLOC_RECORD();
-		//^13AE:01B3
+
 		SkD((DLV_SYS,"SYS: Tick increased to %u ------------------------------\n", (Bitu)glbGameTick));
 		SkD((DLV_DBG_SEED,"DBG: t %08X Seed %08X \n", (Bitu)glbGameTick, (Bitu)glbRandomSeed));
 		SkD((DLV_DBG_SED3,"DBG: v %02X,%02X,%02X,%02X,%02X,%02X,%02X,%02X \n"
@@ -21641,12 +21623,9 @@ _00a4:
 			, (Bitu)(U8)glbTabCreaturesInfo[1].iSeqControl
 			));
 		if ((X16(glbGameTick) & 0x1ff) == 0)	// every 511 tick, burn lighting items
-			//^13AE:01BB
 			BURN_PLAYER_LIGHTING_ITEMS();
-		//^13AE:01C0
 		// SPX: This is the freeze value
-		if (glbGlobalSpellEffects.FreezeCounter != 0)
-		{
+		if (glbGlobalSpellEffects.FreezeCounter != 0)	{
 			glbGlobalSpellEffects.FreezeCounter = glbGlobalSpellEffects.FreezeCounter -1;
 		}
 		if (_4976_4c00 != 0)
@@ -21661,35 +21640,27 @@ _01f7:
 			_1031_0d36_KEYBOARD(0x20, SPECIAL_UI_KEY_TRANSFORMATION());
 		}
 
-		SkD((DLV_DBG_GAME_LOOP, "GL (%08d) - BEFORE MESSAGE LOOP\n", iLoopCount));
 		MessageLoop(true); // in game
-		SkD((DLV_DBG_GAME_LOOP, "GL (%08d) - AFTER MESSAGE LOOP\n", iLoopCount));
 		do {
 			if (IS_THERE_KEY_INPUT_2() != 0) {
 				goto _01f7;
 			}
-			//^13AE:020F
 			if (_4976_4c3e != 0) {
-				//^13AE:0216
 				X16 di;
 				di = _0cee_04e5(cd.pi.glbPlayerDir, 1, 0, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
 				if ((di >> 5) != 6 || (di & 1) == 0 || (di & 4) != 0) {
-					//^13AE:0247
 					_4976_4c3e = 0;
 					FIRE_MOUSE_RELEASE_CAPTURE();
 					glbMouseVisibility = 1;
 					FIRE_SHOW_MOUSE_CURSOR();
 				}
 			}
-			SkD((DLV_DBG_GAME_LOOP, "GL (%08d) - BEFORE MAIN LOOP\n", iLoopCount));
 			MAIN_LOOP();
-			SkD((DLV_DBG_GAME_LOOP, "GL (%08d) - AFTER MAIN LOOP\n", iLoopCount));
 
 			MessageLoop(false); // in game
-			SkD((DLV_DBG_GAME_LOOP, "GL (%08d) - TICK STEP = %d / _4976_4c02 = %d\n", iLoopCount, glbTickStepReached, _4976_4c02));
+			//SkD((DLV_DBG_GAME_LOOP, "GL (%08d) - TICK STEP = %d / _4976_4c02 = %d\n", iLoopCount, glbTickStepReached, _4976_4c02));
 
 		} while (glbTickStepReached == 0 || _4976_4c02 == 0);
-		SkD((DLV_DBG_GAME_LOOP, "GL (%08d) - AFTER TICK REACHED\n", iLoopCount));
 		iLocalMap = glbMapToLoad;
 		if (iLocalMap != 0xFFFF) {
 			iLocalMap = glbCurrentMapIndex;
@@ -21701,10 +21672,158 @@ _01f7:
 		}
 		//DM2DOS_R_BA7(ddata.v1e0266);
 		REQUEST_PLAY_MUSIC_FROM_MAP(cd.pi.glbPlayerMap);
-		SkD((DLV_DBG_GAME_LOOP, "GL (%08d) - END OF LOOP\n", iLoopCount));
 		continue;
 	}
 	return;
+}
+
+
+
+//^13AE:005C
+UINT SkWinCore::SK_GAME_STEP()
+{
+	int iLoopCount = 0;
+/*
+	{
+		U8 sMessage[128];  memset(sMessage, 0, 128);
+		char sExtraInfo[16]; memset(sExtraInfo, 0, 16);
+		if (SkCodeParam::bDM2V5Mode)
+			strcpy(sExtraInfo, " V5-GFX");
+		sprintf((char*)sMessage, "%s (%s) [%s] <%s>%s\n", __SKWIN_PROGNAME__, strVersionNumber, __SKWIN_RELEASE_DATE__, __SKWIN_SYSTEM__, sExtraInfo);
+		DISPLAY_HINT_TEXT(COLOR_YELLOW, sMessage);
+		CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_YELLOW, BLACK);
+		printf("%s\n", sMessage);
+		CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
+	}*/
+	ENTER(0);
+	glbTickSpeed = stdTickBalance;
+	cd.gg.glbGameHasEnded = 0;
+	FILL_ORPHAN_CAII();
+	U16 iLocalMap = 0; // si
+	
+	// ONE STEP
+	{
+		SkD((DLV_DBG_GAME_LOOP, "-----------------------------------------------------------\n"));
+		iLoopCount++,
+
+#if defined (__DJGPP__)
+		SkCodeParam::iTickSpeedFactor = 0;	// max speed
+#endif
+		stdTickBalance = SkCodeParam::iTickSpeedFactor*4;
+		glbTickSpeed = stdTickBalance;
+
+		glbIntermediateTickCounter = 0;
+		if (glbMapToLoad == 0xFFFF)
+			goto _00a4_proceed_timers;
+		while (true)
+		{
+			LOAD_NEWMAP(U8(glbMapToLoad));
+			MOVE_RECORD_TO(OBJECT_NULL, -1, 0, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
+			glbMapToLoad = 0xFFFF;
+_00a4_proceed_timers:
+			PROCEED_TIMERS();
+			if (glbMapToLoad != 0xFFFF)
+				continue;
+			break;
+		}
+
+		UPDATE_WEATHER(0);
+
+		if (cd.pi.glbIsPlayerSleeping == 0) {
+			if (cd.pi.glbNextChampionNumber == 0)
+				_38c8_0060();
+			if (glbChampionInventory == 0) {
+				if (glbDoLightCheck != 0)
+					CHECK_RECOMPUTE_LIGHT(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
+				
+				if (cd.pi.glbIsPlayerMoving != 0)
+					DISPLAY_VIEWPORT(_4976_4c40, _4976_4c32, _4976_4c34);
+				else
+					DISPLAY_VIEWPORT(cd.pi.glbPlayerDir, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
+				
+				CHANGE_VIEWPORT_TO_INVENTORY(1);
+				_4976_4bc8 = 0;
+			}
+			if (cd.pi.glbIsPlayerMoving != 0) {
+				if (cd.pi.glbIsPlayerMoving == 1) {
+					PERFORM_MOVE(cd.pi.glbPlayerLastMove);
+				}
+				cd.pi.glbIsPlayerMoving--;
+			}
+			_4976_4e64 = 0;
+			if (glbShowMousePointer != 0) {
+				glbShowMousePointer = 0;
+				_443c_0434();	// DM2_events_443c_0434
+			}
+			IBMIO_USER_INPUT_CHECK();
+		}
+		CHOOSE_HIGHLIGHT_ARROW_PANEL();
+		SOUND_482b_05bf(0);
+		PROCESS_PLAYERS_DAMAGE();
+		if (glbGlobalSpellEffects.AuraOfSpeed != 0)
+			glbGlobalSpellEffects.AuraOfSpeed--;
+
+		if ((X16(glbGameTick) & ((cd.pi.glbIsPlayerSleeping != 0) ? 15 : 0x3F)) == 0)
+			UPDATE_CHAMPIONS_STATS();
+		GLOBAL_UPDATE_UNKNOW1();
+		_2e62_0cfa(1);
+		if (cd.pi.glbPlayerDefeated != 0)
+			return -1;
+		glbGameTick++;
+
+		PROCESS_QUEUED_DEALLOC_RECORD();
+
+		if ((X16(glbGameTick) & 0x1ff) == 0)	// every 511 tick, burn lighting items
+			BURN_PLAYER_LIGHTING_ITEMS();
+		// SPX: This is the freeze value
+		if (glbGlobalSpellEffects.FreezeCounter != 0)	{
+			glbGlobalSpellEffects.FreezeCounter = glbGlobalSpellEffects.FreezeCounter -1;
+		}
+		if (_4976_4c00 != 0)
+			_4976_4c00--;
+		if (glbPlayerThrowCounter != 0)
+			glbPlayerThrowCounter--;
+		_3929_086f();
+		glbTickStepReached = 0;
+		CHOOSE_HIGHLIGHT_ARROW_PANEL();
+		if (false) {
+_01f7:
+			_1031_0d36_KEYBOARD(0x20, SPECIAL_UI_KEY_TRANSFORMATION());
+		}
+
+		MessageLoop(true); // in game
+		do {
+			if (IS_THERE_KEY_INPUT_2() != 0) {
+				goto _01f7;
+			}
+			if (_4976_4c3e != 0) {
+				X16 di;
+				di = _0cee_04e5(cd.pi.glbPlayerDir, 1, 0, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
+				if ((di >> 5) != 6 || (di & 1) == 0 || (di & 4) != 0) {
+					_4976_4c3e = 0;
+					FIRE_MOUSE_RELEASE_CAPTURE();
+					glbMouseVisibility = 1;
+					FIRE_SHOW_MOUSE_CURSOR();
+				}
+			}
+			MAIN_LOOP();
+
+			MessageLoop(false); // in game
+
+		} while (glbTickStepReached == 0 || _4976_4c02 == 0);
+		iLocalMap = glbMapToLoad;
+		if (iLocalMap != 0xFFFF) {
+			iLocalMap = glbCurrentMapIndex;
+			CHANGE_CURRENT_MAP_TO(glbMapToLoad);
+		}
+		_2759_12e6();
+		if (iLocalMap != 0xFFFF) {
+			CHANGE_CURRENT_MAP_TO(iLocalMap);
+		}
+		REQUEST_PLAY_MUSIC_FROM_MAP(cd.pi.glbPlayerMap);
+		
+	}
+	return 0;
 }
 
 
@@ -21723,18 +21842,13 @@ UINT SkWinCore::SK_GAMELOOP()
 //^0088:0230
 i16 SkWinCore::SK88_TOUPPER(i16 c)
 {
-	//^0088:0230
 	ENTER(0);
-	//^0088:0233
     i16 dx = c;
 	if (dx == -1)
 		return -1;
-	//^0088:0240
 	U8 dl = U8(dx);
 	if ((_04bf_067f[dl] & 8) != 0)
-		//^0088:024D
-		return dl -0x20;
-	//^0088:0256
+		return dl - 0x20;
 	return dl;
 }
 //^0088:02BB

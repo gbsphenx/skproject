@@ -1084,6 +1084,8 @@ public:
 	UINT SK_INIT();	// New Init (no start game)
 	UINT SK_GAMELOAD();	// Call from lib
 	UINT SK_GAMELOOP(); // Call from lib
+	UINT SK_GAME_STEP(); // Call from lib
+	UINT SK_HANDLE_UI_EVENT(MousePosition *ref); // Call from lib
 protected:
 	//--------------------------------------------------------------------------
 
