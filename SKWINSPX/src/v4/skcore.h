@@ -997,6 +997,8 @@ public:
 
 // SPX: End of new procedures
 
+	int SKExt_ForceMousePointer(U16 iXPos, U16 iYPos);
+
 // SPX: Special procedures
 #if defined (XDMX_BLOODWYCH_ENGINE)
 	int HANDLE_KEY_ON_DOOR_BUTTON(Door* xDoor, ObjectID rlObject, U16 iPosX, U16 iPosY);

@@ -21525,7 +21525,7 @@ void SkWinCore::GAME_LOOP()
 	U16 iLocalMap = 0; // si
 	while (true)
 	{
-		SkD((DLV_DBG_GAME_LOOP, "-----------------------------------------------------------\n"));
+		//SkD((DLV_DBG_GAME_LOOP, "-----------------------------------------------------------\n"));
 		if (iLoopCount%10 == 0 || iLoopCount <= 10)
 			SkD((SkCodeParam::bEngineNoDisplay||DLV_DBG_GAME_LOOP, "GAME_LOOP (%08d)\n", iLoopCount));
 		iLoopCount++,
@@ -21703,7 +21703,7 @@ UINT SkWinCore::SK_GAME_STEP()
 	
 	// ONE STEP
 	{
-		SkD((DLV_DBG_GAME_LOOP, "-----------------------------------------------------------\n"));
+		//SkD((DLV_DBG_GAME_LOOP, "-----------------------------------------------------------\n"));
 		iLoopCount++,
 
 #if defined (__DJGPP__)
@@ -22136,3 +22136,20 @@ SkWinCore::SkWinCore()
 	tickThen = -1;
 }
 
+
+int SkWinCore::SKExt_ForceMousePointer(U16 iXPos, U16 iYPos)
+{
+	printf("SKExt_ForceMousePointer %03d %03d\n", iXPos, iYPos);
+	cd.mk.mice_x = iXPos;
+	cd.mk.mice_y = iYPos;
+	cd.mk.glbMouseXPos = iXPos;
+	cd.mk.glbMouseYPos = iYPos;
+	cd.mk.mice_btn = 0;
+	if (cd.mk.mice_x > 320) cd.mk.mice_x = 319;
+	if (cd.mk.mice_y > 200) cd.mk.mice_y = 199;
+	if (cd.mk.glbMouseXPos > 320) cd.mk.glbMouseXPos = 319;
+	if (cd.mk.glbMouseYPos > 200) cd.mk.glbMouseYPos = 199;
+	//skWinApp->GetMousePosButtons(&cd.mk.mice_x, &cd.mk.mice_y, &cd.mk.mice_btn);
+	//(this->*_int33_mouse_callback)();
+	return 0;
+}
