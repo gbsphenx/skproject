@@ -89,7 +89,7 @@ SkWinApp::SkWinApp()
 
 	xSKCRAM = (X8*) calloc(iSizeCRAM, sizeof(X8));
 	xSKCEMS = (X8*) calloc(iSizeCEMS, sizeof(X8));
-	xSKVRAM = (X8*) calloc(iSizeVRAM, sizeof(X8));
+	//xSKVRAM = (X8*) calloc(iSizeVRAM, sizeof(X8));
 
 	xVRAM = new SkVRAM();
 
@@ -128,7 +128,16 @@ SkWinApp::~SkWinApp()
 
 X8* SkWinApp::getVRAM()
 {
-	return xSKVRAM;
+	if (xVRAM != NULL)
+		return xVRAM->GET_VIDEO_ARRAY();
+	return NULL;
+}
+
+X8* SkWinApp::getVRAMPalette()
+{
+	if (xVRAM != NULL)
+		return xVRAM->GET_PALETTE();
+	return NULL;
 }
 
 
@@ -680,10 +689,8 @@ void SkWinApp::GetMousePosButtons(U16 *x, U16 *y, U16 *buttons)
 	int iDeviceMouseY = 0;
 	U32 iDeviceButtons = 0;
 
-	printf("Get Mouse Buttons\n");
 	//SkD((DLV_MOUSE,"GetMousePosButton\n"));
 	skwin_ML();
-	//SkD((DLV_MOUSE,"after skwin_ML\n"));
 
 	*buttons = 0;
 	if (SkCodeParam::bRenderingEngineSDL) {
@@ -728,7 +735,7 @@ void SkWinApp::GetMousePosButtons(U16 *x, U16 *y, U16 *buttons)
 	//SkD((DLV_MOUSE,"SDL_GetMouseState %d,%d buttons=%d / scale=%d\n", U16(iDeviceMouseX), U16(iDeviceMouseY), U16(*buttons), SkCodeParam::iVideoScale));
 
 	//SkD((DLV_MOUSE,"GetMousePosButtons (%05d): M(%3d,%3d) Btn:(%2d)\n", iCallCount++, iDeviceMouseX, iDeviceMouseY, iDeviceButtons));
-	printf("GetMousePosButtons (%05d): M(%3d,%3d) Btn:(%2d)\n", iCallCount++, iDeviceMouseX, iDeviceMouseY, iDeviceButtons);
+	//printf("GetMousePosButtons (%05d): M(%3d,%3d) Btn:(%2d)\n", iCallCount++, iDeviceMouseX, iDeviceMouseY, iDeviceButtons);
 }
 
 

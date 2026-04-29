@@ -104,6 +104,7 @@ public:
 	UINT setRGB6Palette(X8* xPalette);
 
 	X8* getVRAM();
+	X8* getVRAMPalette();
 
 	void VersionMessage();
 	void StartMessage();
