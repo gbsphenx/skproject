@@ -259,9 +259,9 @@ _1201:
 					}
 					//^1031:134D
 					//else if (glbMousePosition.event >= 0x74 && glbMousePosition.event <= 0x7b) {
-					else if (glbMousePosition.event >= UI_EVENTCODE_CHAMPION1_ACTION_HAND_RIGHT && glbMousePosition.event <= UI_EVENTCODE_CHAMPION4_ACTION_HAND_LEFT) {
+					else if (glbMousePosition.event >= UI_EVENTCODE_x74_CHAMPION1_ACTION_HAND_RIGHT && glbMousePosition.event <= UI_EVENTCODE_x7B_CHAMPION4_ACTION_HAND_LEFT) {
 						//^1031:135B
-						si = (glbMousePosition.event -UI_EVENTCODE_CHAMPION1_ACTION_HAND_RIGHT) >> 1;
+						si = (glbMousePosition.event -UI_EVENTCODE_x74_CHAMPION1_ACTION_HAND_RIGHT) >> 1;
 					}
 					else {
 						//^1031:1365

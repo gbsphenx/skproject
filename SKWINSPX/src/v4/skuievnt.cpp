@@ -28,9 +28,9 @@ void SkWinCore::ADJUST_UI_EVENT(MousePosition *ref)
 	//^1031:157C
 	SkD((DLV_EUI, "Event UI %03d (%02X) %s triggered.\n", si, si, static_cast<LPCSTR>(getUIEventName(si))));
 	//if (si >= 0x74 && si <= 0x7b) { // access to hand item action
-	if (si >= UI_EVENTCODE_CHAMPION1_ACTION_HAND_RIGHT && si <= UI_EVENTCODE_CHAMPION4_ACTION_HAND_LEFT) {
+	if (si >= UI_EVENTCODE_x74_CHAMPION1_ACTION_HAND_RIGHT && si <= UI_EVENTCODE_x7B_CHAMPION4_ACTION_HAND_LEFT) {
 		//^1031:1586
-		si -= UI_EVENTCODE_CHAMPION1_ACTION_HAND_RIGHT;
+		si -= UI_EVENTCODE_x74_CHAMPION1_ACTION_HAND_RIGHT;
 		//^1031:1589
 		Bit16u bp06 = ((si & 1) != 0) ? 1 : 0;
 		//^1031:1599
@@ -46,12 +46,12 @@ void SkWinCore::ADJUST_UI_EVENT(MousePosition *ref)
 		}
 		else {
 			//^1031:15EB
-			si = (di << 1) +bp06 +UI_EVENTCODE_CHAMPION1_ACTION_HAND_RIGHT;
+			si = (di << 1) +bp06 +UI_EVENTCODE_x74_CHAMPION1_ACTION_HAND_RIGHT;
 		}
 	}
 	//^1031:15FA
 	//else if (si >= 0x5f && si <= 0x62) {
-	else if (si >= UI_EVENTCODE_SPELL_OR_LEADER_1 && si <= UI_EVENTCODE_SPELL_OR_LEADER_4) {
+	else if (si >= UI_EVENTCODE_x5F_SPELL_OR_LEADER_1 && si <= UI_EVENTCODE_x62_SPELL_OR_LEADER_4) {
 		//^1031:160A
 		i16 di = GET_PLAYER_AT_POSITION((si -0x5f + cd.pi.glbPlayerDir) & 3);
 		//^1031:161F
@@ -63,7 +63,7 @@ void SkWinCore::ADJUST_UI_EVENT(MousePosition *ref)
 		else {
 			//^1031:1625
 			i16 bp04;
-			if (si <= UI_EVENTCODE_SPELL_OR_LEADER_2) {
+			if (si <= UI_EVENTCODE_x60_SPELL_OR_LEADER_2) {
 				//^1031:162A
 				bp04 = ref->rc6.y + ref->rc6.cy -1 - ref->YPos;
 			}
@@ -74,7 +74,7 @@ void SkWinCore::ADJUST_UI_EVENT(MousePosition *ref)
 			//^1031:164A
 			i16 bp02;
 			//if (si == 0x60 || si == 0x61) {
-			if (si == UI_EVENTCODE_SPELL_OR_LEADER_2 || si == UI_EVENTCODE_SPELL_OR_LEADER_3) {
+			if (si == UI_EVENTCODE_x60_SPELL_OR_LEADER_2 || si == UI_EVENTCODE_x61_SPELL_OR_LEADER_3) {
 				//^1031:1654
 				bp02 = ref->XPos - ref->rc6.x;
 			}
@@ -108,121 +108,116 @@ void SkWinCore::ADJUST_UI_EVENT(MousePosition *ref)
 // SPX: _1031_0d9e renamed TRANSMIT_UI_EVENT
 Bit8u *SkWinCore::TRANSMIT_UI_EVENT(MousePosition *xx)
 {
-	//^1031:0D9E
 	ENTER(0);
-	//^1031:0DA3
 	ADJUST_UI_EVENT(xx);
-	//^1031:0DB0
 	Bit16u si = xx->event;
-	//^1031:0DB7
-	if (si == 0 || si > UI_EVENTCODE_LAST_EVENT) {
-		//^1031:0DC1
+	if (si == 0 || si > UI_EVENTCODE_xEF_LAST_EVENT) {
 		return 0;
 	}
 	Bit16u di;
 	//^1031:0DC8
 	//if ((si >= 0x14 && si < 0x42) || (si >= 0x7d && si <= 0x81) || (si >= 0x10 && si <= 0x13)) {
-	if ((si >= UI_EVENTCODE_ITEM_SLOT_FIRST && si < UI_EVENTCODE_ITEM_SLOT_LAST) 
-		|| (si >= UI_EVENTCODE_TAKE_CHAMPION_TOP_LEFT && si <= UI_EVENTCODE_UPDATE_CHAMPION_POSITION) 
-		|| (si >= UI_EVENTCODE_010 && si <= UI_EVENTCODE_013)) {
+	if ((si >= UI_EVENTCODE_x14_ITEM_SLOT_FIRST && si < UI_EVENTCODE_x42_ITEM_SLOT_LAST) 
+		|| (si >= UI_EVENTCODE_x7D_TAKE_CHAMPION_TOP_LEFT && si <= UI_EVENTCODE_x81_UPDATE_CHAMPION_POSITION) 
+		|| (si >= UI_EVENTCODE_x10 && si <= UI_EVENTCODE_x13)) {
 		//^1031:0DE7
 		di = 1;
 		goto _0f23;
 	}
 	//^1031:0DED
 	//else if (si >= 0x01 && si <= 0x06) {
-	else if (si >= UI_EVENTCODE_ARROW_DIR_FIRST && si <= UI_EVENTCODE_ARROW_DIR_LAST) {
+	else if (si >= UI_EVENTCODE_x01_ARROW_DIR_FIRST && si <= UI_EVENTCODE_x06_ARROW_DIR_LAST) {
 		//^1031:0DF7
-		di = (si - UI_EVENTCODE_ARROW_DIR_FIRST) * 15 +2;
+		di = (si - UI_EVENTCODE_x01_ARROW_DIR_FIRST) * 15 +2;
 		goto _0f23;
 	}
 	//^1031:0E04
 	//else if (si >= 0x74 && si <= 0x7b) {
-	else if (si >= UI_EVENTCODE_CHAMPION1_ACTION_HAND_RIGHT && si <= UI_EVENTCODE_CHAMPION4_ACTION_HAND_LEFT) {
+	else if (si >= UI_EVENTCODE_x74_CHAMPION1_ACTION_HAND_RIGHT && si <= UI_EVENTCODE_x7B_CHAMPION4_ACTION_HAND_LEFT) {
 		//^1031:0E0E
-		di = ((si -UI_EVENTCODE_CHAMPION1_ACTION_HAND_RIGHT) & 1) * 5 + 0x5c;
+		di = ((si -UI_EVENTCODE_x74_CHAMPION1_ACTION_HAND_RIGHT) & 1) * 5 + 0x5c;
 		goto _0f23;
 	}
 	//^1031:0E21
 	//else if (si >= 0x5f && si <= 0x62) {
-	else if (si >= UI_EVENTCODE_SPELL_OR_LEADER_1 && si <= UI_EVENTCODE_SPELL_OR_LEADER_4) {
+	else if (si >= UI_EVENTCODE_x5F_SPELL_OR_LEADER_1 && si <= UI_EVENTCODE_x62_SPELL_OR_LEADER_4) {
 		//^1031:0E2B
-		di = (si -UI_EVENTCODE_SPELL_OR_LEADER_1) * 5 + 0x66;
+		di = (si -UI_EVENTCODE_x5F_SPELL_OR_LEADER_1) * 5 + 0x66;
 		goto _0f23;
 	}
 	//^1031:0E3B
 	//else if (si == 0x70) {
-	else if (si == UI_EVENTCODE_HAND_RUNE_QUIT) {
+	else if (si == UI_EVENTCODE_x70_HAND_RUNE_QUIT) {
 		//^1031:0E40
 		di = 0x7a;
 		goto _0f23;
 	}
 	//^1031:0E46
 	//else if (si == 0x5d || si == 0x5e) {
-	else if (si == UI_EVENTCODE_CHAMPION_TURN_LEFT || si == UI_EVENTCODE_CHAMPION_TURN_RIGHT) {
+	else if (si == UI_EVENTCODE_x01_TURN_LEFT || si == UI_EVENTCODE_x02_TURN_RIGHT) {
 		//^1031:0E50
-		di = ((si - UI_EVENTCODE_CHAMPION_TURN_LEFT) << 3) + 0x82;
+		di = ((si - UI_EVENTCODE_x01_TURN_LEFT) << 3) + 0x82;
 		goto _0f23;
 	}
 	//^1031:0E5D
 	//else if (si >= 0x65 && si <= 0x6a) {
-	else if (si >= UI_EVENTCODE_ADD_RUNE_1 && si <= UI_EVENTCODE_ADD_RUNE_6) {
+	else if (si >= UI_EVENTCODE_x65_ADD_RUNE_1 && si <= UI_EVENTCODE_x6A_ADD_RUNE_6) {
 		//^1031:0E67
 		di = 0x92;
 		goto _0f23;
 	}
 	//^1031:0E6D
 	//else if (si == 0x6b) {
-	else if (si == UI_EVENTCODE_REMOVE_RUNE) {
+	else if (si == UI_EVENTCODE_x6B_REMOVE_RUNE) {
 		//^1031:0E72
 		di = 0x96;
 		goto _0f23;
 	}
 	//^1031:0E78
 	//else if (si == 0x6c) {
-	else if (si == UI_EVENTCODE_VALIDATE_SPELL) {
+	else if (si == UI_EVENTCODE_x6C_VALIDATE_SPELL) {
 		//^1031:0E7D
 		di = 0x9e;
 		goto _0f23;
 	}
 	//^1031:0E83
 	//else if (si >= 0x71 && si <= 0x73) {
-	else if (si >= UI_EVENTCODE_HAND_ACTION_1 && si <= UI_EVENTCODE_HAND_ACTION_3) {
+	else if (si >= UI_EVENTCODE_x71_HAND_ACTION_1 && si <= UI_EVENTCODE_x73_HAND_ACTION_3) {
 		//^1031:0E8D
-		di = (si -UI_EVENTCODE_HAND_ACTION_1) * 5 +0xa2;
+		di = (si - UI_EVENTCODE_x71_HAND_ACTION_1) * 5 +0xa2;
 		goto _0f23;
 	}
 	//^1031:0E9C
 	//else if (si == 0x0b || si == 0xa1) {
-	else if (si == UI_EVENTCODE_RETURN_VIEWPORT || si == UI_EVENTCODE_EXIT_CRYOCELL) {
+	else if (si == UI_EVENTCODE_x0B_RETURN_VIEWPORT || si == UI_EVENTCODE_xA1_EXIT_CRYOCELL) {
 		//^1031:0EA7
 		di = 0xb1;
 		goto _0f23;
 	}
 	//^1031:0EAC
 	//else if (si == 0x91) {
-	else if (si == UI_EVENTCODE_SLEEP) {
+	else if (si == UI_EVENTCODE_x91_SLEEP) {
 		//^1031:
 		di = 0xb6;
 		goto _0f23;
 	}
 	//^1031:0EB7
 	//else if (si == 0x8c) {
-	else if (si == UI_EVENTCODE_DISK_OP) {
+	else if (si == UI_EVENTCODE_x8C_DISK_OP) {
 		//^1031:0EBD
 		di = 0xbb;
 		goto _0f23;
 	}
 	//^1031:0EC2
 	//else if (si >= 0x97 && si <= 0x9a) {
-	else if (si >= UI_EVENTCODE_MAGIC_MAP_RUNE_1 && si <= UI_EVENTCODE_MAGIC_MAP_RUNE_4) {
+	else if (si >= UI_EVENTCODE_x97_MAGIC_MAP_RUNE_1 && si <= UI_EVENTCODE_x9A_MAGIC_MAP_RUNE_4) {
 		//^1031:0ECE
-		di = (si -UI_EVENTCODE_MAGIC_MAP_RUNE_1) * 7 +0xc0;
+		di = (si -UI_EVENTCODE_x97_MAGIC_MAP_RUNE_1) * 7 +0xc0;
 		goto _0f23;
 	}
 	//^1031:0EDF
 	//else if (si >= 0xdb && si <= 0xde) {
-	else if (si >= UI_EVENTCODE_DIALOG_BUTTON_1 && si <= UI_EVENTCODE_DIALOG_BUTTON_4) {
+	else if (si >= UI_EVENTCODE_xDB_DIALOG_BUTTON_1 && si <= UI_EVENTCODE_xDE_DIALOG_BUTTON_4) {
 		//^1031:0EEB
 		switch (_4976_4bd2 -1) {
 			case 0:
@@ -232,7 +227,7 @@ Bit8u *SkWinCore::TRANSMIT_UI_EVENT(MousePosition *xx)
 				break;
 			case 2:
 				//^1031:0F01
-				if (si < UI_EVENTCODE_DIALOG_BUTTON_2) {
+				if (si < UI_EVENTCODE_xDC_DIALOG_BUTTON_2) {
 					//^1031:0F05
 					//^1031:0EFC
 					di = 0xe3;
@@ -249,7 +244,7 @@ Bit8u *SkWinCore::TRANSMIT_UI_EVENT(MousePosition *xx)
 			case 4:
 			case 5:
 				//^1031:0F0C
-				if (si <= UI_EVENTCODE_DIALOG_BUTTON_2) {
+				if (si <= UI_EVENTCODE_xDC_DIALOG_BUTTON_2) {
 					//^1031:0F10
 					//^1031:0F07
 					di = 0xdc;
@@ -267,7 +262,7 @@ Bit8u *SkWinCore::TRANSMIT_UI_EVENT(MousePosition *xx)
 	}
 	//^1031:0F17
 	//else if (si == 0x50) {
-	else if (si == UI_EVENTCODE_CLICK_VIEWPORT) {
+	else if (si == UI_EVENTCODE_x50_CLICK_VIEWPORT) {
 		//^1031:0F1C
 		di = 0xea;
 		goto _0f23;
@@ -928,7 +923,7 @@ void SkWinCore::CLICK_MAGICAL_MAP_AT(Bit16u ww, i16 xx, i16 yy)
 	//^1031:171F
 	Container *bp04 = GET_ADDRESS_OF_RECORD9(bp0c);
 	//^1031:172E
-	if (ww != UI_EVENTCODE_MAGIC_MAP || bp04->b5_5_7() != 1)
+	if (ww != UI_EVENTCODE_x96_MAGIC_MAP || bp04->b5_5_7() != 1)
 		//^1031:1736
 		return;
 	//^1031:174E
@@ -1061,14 +1056,14 @@ U16 SkWinCore::HANDLE_UI_EVENT(MousePosition *ref)
 	U16 si = ref->event;
 	U16 bp04 = ref->XPos;
 	U16 bp06 = ref->YPos;
-	if (si >= UI_EVENTCODE_MOVE_FIRST && si <= UI_EVENTCODE_MOVE_LAST) { // >= 0x03 and <= 0x06
+	if (si >= UI_EVENTCODE_x03_MOVE_FIRST && si <= UI_EVENTCODE_x06_MOVE_LAST) { // >= 0x03 and <= 0x06
 		if (_4976_4c00 != 0)
 			goto _19b1;
 		if (glbPlayerThrowCounter != 0 && ((cd.pi.glbPlayerDir + si -3) & 3) == _4976_4c0c)
 			goto _19b1;
 	}
 	if (cd.pi.glbIsPlayerMoving != 0) {
-		if (si == UI_EVENTCODE_TURN_LEFT || si == UI_EVENTCODE_TURN_RIGHT || si == UI_EVENTCODE_MOVE_FORWARD)	// 0x01 or 0x02 or 0x03
+		if (si == UI_EVENTCODE_x01_TURN_LEFT || si == UI_EVENTCODE_x02_TURN_RIGHT || si == UI_EVENTCODE_x03_MOVE_FORWARD)	// 0x01 or 0x02 or 0x03
 			goto _19b1;
 	}
 	U16 di;
@@ -1081,30 +1076,30 @@ _19b1:
 	di = 1;
 	cd.gg.glbRefreshViewport = 0;
 	i16 bp02;
-	if (si == UI_EVENTCODE_RELEASE_MOUSE_BUTTON) {	// 0xE3
+	if (si == UI_EVENTCODE_xE3_RELEASE_MOUSE_BUTTON) {	// 0xE3
 		_1031_050c();
 	}
-	else if (si == UI_EVENTCODE_MOVE_OBJECT) {	// 0xE1
+	else if (si == UI_EVENTCODE_xE1_MOVE_OBJECT) {	// 0xE1
 		CLEAR_TRY_PUSH_PULL_OBJECT();
 	}
-	else if (si == UI_EVENTCODE_TURN_RIGHT || si == UI_EVENTCODE_TURN_LEFT) { // 0x02 or 0x01
+	else if (si == UI_EVENTCODE_x02_TURN_RIGHT || si == UI_EVENTCODE_x01_TURN_LEFT) { // 0x02 or 0x01
 		PERFORM_TURN_SQUAD(si);  // 1="TURN LEFT", 2="TURN RIGHT" at arrow panel
 	}
-	else if (si >= UI_EVENTCODE_MOVE_FIRST && si <= UI_EVENTCODE_MOVE_LAST) { // >= 0x03 and <= 0x06
+	else if (si >= UI_EVENTCODE_x03_MOVE_FIRST && si <= UI_EVENTCODE_x06_MOVE_LAST) { // >= 0x03 and <= 0x06
 		PERFORM_MOVE(si);  // 3="MOVE FORWARD", 4="MOVE RIGHT", 5="MOVE BACK", 6="MOVE LEFT"
 	}
 	// SPX: Covers all item clickable slots : champions hands, inventory, container. x42-x14 = d46
-	else if (si >= UI_EVENTCODE_ITEM_SLOT_FIRST && si <= UI_EVENTCODE_ITEM_SLOT_LAST) {	// (si >= 0x14 && si <= 0x42)
-		CLICK_ITEM_SLOT(si - UI_EVENTCODE_ITEM_SLOT_FIRST);
+	else if (si >= UI_EVENTCODE_x14_ITEM_SLOT_FIRST && si <= UI_EVENTCODE_x42_ITEM_SLOT_LAST) {	// (si >= 0x14 && si <= 0x42)
+		CLICK_ITEM_SLOT(si - UI_EVENTCODE_x14_ITEM_SLOT_FIRST);
 	}
 	// SPX: When dropping item on stats bar
-	else if (si >= UI_EVENTCODE_CLICK_STATS_BAR_1 && si <= UI_EVENTCODE_CLICK_STATS_BAR_4) { // (si >= 0xEA && si <= 0xED)
-		PUT_ITEM_TO_PLAYER(si - UI_EVENTCODE_CLICK_STATS_BAR_1);
+	else if (si >= UI_EVENTCODE_xEA_CLICK_STATS_BAR_1 && si <= UI_EVENTCODE_xED_CLICK_STATS_BAR_4) { // (si >= 0xEA && si <= 0xED)
+		PUT_ITEM_TO_PLAYER(si - UI_EVENTCODE_xEA_CLICK_STATS_BAR_1);
 		// SPX: extended mode : clicking on stats bar will give player main stats :)
 		if (SkCodeParam::bUseDM2ExtendedMode && cd.pi.glbLeaderHandPossession.object == OBJECT_NULL)
 		{
 			U8 message[64];
-			U8 player = si - UI_EVENTCODE_CLICK_STATS_BAR_1;
+			U8 player = si - UI_EVENTCODE_xEA_CLICK_STATS_BAR_1;
 			sprintf((char*)message, "%s: HP %d / %d |STA %d / %d |MANA %d / %d\n",
 				glbChampionSquad[player].firstName,
 				glbChampionSquad[player].curHP(), glbChampionSquad[player].maxHP(),
@@ -1113,36 +1108,36 @@ _19b1:
 			DISPLAY_HINT_TEXT(glbChampionColor[player], message);
 		}
 	}
-	else if (si >= UI_EVENTCODE_TAKE_CHAMPION_TOP_LEFT && si <= UI_EVENTCODE_UPDATE_CHAMPION_POSITION) { // (si >= 0x7D && si <= 0x81)
-		if (si == UI_EVENTCODE_UPDATE_CHAMPION_POSITION) {
+	else if (si >= UI_EVENTCODE_x7D_TAKE_CHAMPION_TOP_LEFT && si <= UI_EVENTCODE_x81_UPDATE_CHAMPION_POSITION) { // (si >= 0x7D && si <= 0x81)
+		if (si == UI_EVENTCODE_x81_UPDATE_CHAMPION_POSITION) {
 			CHAMPION_SQUAD_RECOMPUTE_POSITION();
 		}
 		else {
-			CHANGE_PLAYER_POS(si - UI_EVENTCODE_TAKE_CHAMPION_TOP_LEFT);
+			CHANGE_PLAYER_POS(si - UI_EVENTCODE_x7D_TAKE_CHAMPION_TOP_LEFT);
 		}
 		_1031_0667();
 		goto _1ab8;
 	}
 	// SPX: One for each moneybox part?
-	else if (si >= UI_EVENTCODE_MONEYBOX_1 && si <= UI_EVENTCODE_MONEYBOX_6) {	// (si >= 0xe4 && si <= 0xe9)
-		CLICK_MONEYBOX(si - UI_EVENTCODE_MONEYBOX_1);	// -0xE4
+	else if (si >= UI_EVENTCODE_xE4_MONEYBOX_1 && si <= UI_EVENTCODE_xE9_MONEYBOX_6) {	// (si >= 0xe4 && si <= 0xe9)
+		CLICK_MONEYBOX(si - UI_EVENTCODE_xE4_MONEYBOX_1);	// -0xE4
 	}
-	else if (si == UI_EVENTCODE_CHAMPION_TURN_LEFT || si == UI_EVENTCODE_CHAMPION_TURN_RIGHT) {	// (si == 0x5d || si == 0x5e)
-		bp02 = (si == UI_EVENTCODE_CHAMPION_TURN_LEFT) ? -1 : 1;
+	else if (si == UI_EVENTCODE_x01_TURN_LEFT || si == UI_EVENTCODE_x02_TURN_RIGHT) {	// (si == 0x5d || si == 0x5e)
+		bp02 = (si == UI_EVENTCODE_x01_TURN_LEFT) ? -1 : 1;
 		glbChampionTable[cd.pi.glbChampionIndex].playerDir((glbChampionTable[cd.pi.glbChampionIndex].playerDir() +bp02) & 3);
 _1ab8:
 		UPDATE_RIGHT_PANEL(0);
 	}
-	else if (si >= UI_EVENTCODE_010 && si <= UI_EVENTCODE_013) {	// (si >= 0x10 && si <= 0x13)
-		SELECT_CHAMPION_LEADER(GET_PLAYER_AT_POSITION((si -UI_EVENTCODE_010 + cd.pi.glbPlayerDir) & 3));
+	else if (si >= UI_EVENTCODE_x10 && si <= UI_EVENTCODE_x13) {	// (si >= 0x10 && si <= 0x13)
+		SELECT_CHAMPION_LEADER(GET_PLAYER_AT_POSITION((si - UI_EVENTCODE_x10 + cd.pi.glbPlayerDir) & 3));
 		_2e62_0cfa(0);
 	}
-	else if (si >= UI_EVENTCODE_VIEW_CHAMPION_1 && si <= UI_EVENTCODE_RETURN_VIEWPORT) { // >= 0x07 and <= 0x0B
-		if (cd.pi.glbNextChampionNumber != 0 && si <= UI_EVENTCODE_RETURN_VIEWPORT) {
+	else if (si >= UI_EVENTCODE_x07_VIEW_CHAMPION_1 && si <= UI_EVENTCODE_x0B_RETURN_VIEWPORT) { // >= 0x07 and <= 0x0B
+		if (cd.pi.glbNextChampionNumber != 0 && si <= UI_EVENTCODE_x0B_RETURN_VIEWPORT) {
 			REVIVE_CHAMPION(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerDir, cd.pi.glbPlayerMap, 0xa1);
 		}
 		else {
-			U16 bp02 = si - UI_EVENTCODE_VIEW_CHAMPION_1;
+			U16 bp02 = si - UI_EVENTCODE_x07_VIEW_CHAMPION_1;
 			if (bp02 == 4 || bp02 < cd.pi.glbChampionsCount) {
 				if (cd.pi.glbNextChampionNumber == 0) {
 					INTERFACE_CHAMPION(bp02);
@@ -1151,54 +1146,54 @@ _1ab8:
 			}
 		}
 	}
-	else if (si == UI_EVENTCODE_VIEW_LEADER) {	// 0x52
+	else if (si == UI_EVENTCODE_x52_VIEW_LEADER) {	// 0x52
 		if (glbChampionLeader != 0xffff) {
 			INTERFACE_CHAMPION(glbChampionLeader);
 		}
 	}
-	else if (si == UI_EVENTCODE_VALIDATE_SPELL) {	// 0x6C
+	else if (si == UI_EVENTCODE_x6C_VALIDATE_SPELL) {	// 0x6C
 		cd.gg.glbRefreshViewport = TRY_CAST_SPELL();
 	}
-	else if (si == UI_EVENTCODE_REMOVE_RUNE) {	// 0x6B
+	else if (si == UI_EVENTCODE_x6B_REMOVE_RUNE) {	// 0x6B
 		REMOVE_RUNE_FROM_TAIL();
 	}
-	else if (si >= UI_EVENTCODE_ADD_RUNE_1 && si <= UI_EVENTCODE_ADD_RUNE_6) { // >= 0x65 and <= 0x6A
-		ADD_RUNE_TO_TAIL(si - UI_EVENTCODE_ADD_RUNE_1);
+	else if (si >= UI_EVENTCODE_x65_ADD_RUNE_1 && si <= UI_EVENTCODE_x6A_ADD_RUNE_6) { // >= 0x65 and <= 0x6A
+		ADD_RUNE_TO_TAIL(si - UI_EVENTCODE_x65_ADD_RUNE_1);
 	}
-	else if (si == UI_EVENTCODE_HAND_RUNE_QUIT) { // 0x70
+	else if (si == UI_EVENTCODE_x70_HAND_RUNE_QUIT) { // 0x70
 		PROCEED_COMMAND_SLOT(-1);
 	}
-	else if (si >= UI_EVENTCODE_HAND_ACTION_1 && si <= UI_EVENTCODE_HAND_ACTION_3) {	// >= 0x71 and <= 0x73
-		cd.gg.glbRefreshViewport = PROCEED_COMMAND_SLOT(si -UI_EVENTCODE_HAND_ACTION_1);
+	else if (si >= UI_EVENTCODE_x71_HAND_ACTION_1 && si <= UI_EVENTCODE_x73_HAND_ACTION_3) {	// >= 0x71 and <= 0x73
+		cd.gg.glbRefreshViewport = PROCEED_COMMAND_SLOT(si -UI_EVENTCODE_x71_HAND_ACTION_1);
 	}
-	else if (si >= UI_EVENTCODE_CHAMPION1_ACTION_HAND_RIGHT && si <= UI_EVENTCODE_CHAMPION4_ACTION_HAND_LEFT) {	// >= 0x74 and <= 0x7B
-		si -= UI_EVENTCODE_CHAMPION1_ACTION_HAND_RIGHT;
+	else if (si >= UI_EVENTCODE_x74_CHAMPION1_ACTION_HAND_RIGHT && si <= UI_EVENTCODE_x7B_CHAMPION4_ACTION_HAND_LEFT) {	// >= 0x74 and <= 0x7B
+		si -= UI_EVENTCODE_x74_CHAMPION1_ACTION_HAND_RIGHT;
 		ACTIVATE_ACTION_HAND(si >> 1, ((si & 1) != 0) ? 1 : 0);
 	}
-	else if (si >= UI_EVENTCODE_SPELL_OR_LEADER_1 && si <= UI_EVENTCODE_SPELL_OR_LEADER_4) {	// >= 0x5F and <= 0x62
-		i16 iChampionIndex = GET_PLAYER_AT_POSITION((si -UI_EVENTCODE_SPELL_OR_LEADER_1 + cd.pi.glbPlayerDir) & 3); // bp02
+	else if (si >= UI_EVENTCODE_x5F_SPELL_OR_LEADER_1 && si <= UI_EVENTCODE_x62_SPELL_OR_LEADER_4) {	// >= 0x5F and <= 0x62
+		i16 iChampionIndex = GET_PLAYER_AT_POSITION((si -UI_EVENTCODE_x5F_SPELL_OR_LEADER_1 + cd.pi.glbPlayerDir) & 3); // bp02
 		if (iChampionIndex >= 0) {
 			SET_SPELLING_CHAMPION(iChampionIndex);
 		}
 	}
-	else if (si == UI_EVENTCODE_MOUTH) {	// 0x46
+	else if (si == UI_EVENTCODE_x46_MOUTH) {	// 0x46
 		PLAYER_CONSUME_OBJECT(0xFFFF, OBJECT_NULL, -1);
 	}
-	else if (si == UI_EVENTCODE_EYE) {	// 0x47
+	else if (si == UI_EVENTCODE_x47_EYE) {	// 0x47
 		CLICK_INVENTORY_EYE();
 	}
-	else if (si == UI_EVENTCODE_CLICK_VIEWPORT) {	// 0x50
+	else if (si == UI_EVENTCODE_x50_CLICK_VIEWPORT) {	// 0x50
 		CLICK_VWPT(bp04, bp06);
 	}
-	else if (si == UI_EVENTCODE_MAGIC_MAP) {	// 0x96
+	else if (si == UI_EVENTCODE_x96_MAGIC_MAP) {	// 0x96
 		CLICK_MAGICAL_MAP_AT(si, bp04, bp06);
 	}
 	// SPX: Clicking runes on magical maps (runes = KU, ROS, DAIN, NETA)
-	else if (si >= UI_EVENTCODE_MAGIC_MAP_RUNE_1 && si <= UI_EVENTCODE_MAGIC_MAP_RUNE_4) {	// >= 0x97 and <= 0x9A
+	else if (si >= UI_EVENTCODE_x97_MAGIC_MAP_RUNE_1 && si <= UI_EVENTCODE_x9A_MAGIC_MAP_RUNE_4) {	// >= 0x97 and <= 0x9A
 		//^1031:1C60
-		CLICK_MAGICAL_MAP_RUNE(si -UI_EVENTCODE_MAGIC_MAP_RUNE_1);
+		CLICK_MAGICAL_MAP_RUNE(si -UI_EVENTCODE_x97_MAGIC_MAP_RUNE_1);
 	}
-	else if (si == UI_EVENTCODE_PAUSE) {	// 0x93
+	else if (si == UI_EVENTCODE_x93_PAUSE) {	// 0x93
 		_4976_4c02 = 0;
 		_38c8_0002();
 		FILL_ENTIRE_PICT(_4976_4c16, glbPaletteT16[COLOR_BLACK]);
@@ -1213,7 +1208,7 @@ _1ab8:
 		_1031_0675(3);
 		_1031_098e();
 	}
-	else if (si == UI_EVENTCODE_END_PAUSE) {	// 0x94
+	else if (si == UI_EVENTCODE_x93_PAUSE) {	// 0x94
 		if (_4976_4c02 == 0) {
 			_4976_4c02 = 1;
 			_38c8_0060();
@@ -1228,7 +1223,7 @@ _1ab8:
 		&& _4976_4c3e == 0
 		&& glbTryPushPullObject == 0
 	) {
-		if (si == UI_EVENTCODE_SLEEP) {	// 0x91
+		if (si == UI_EVENTCODE_x91_SLEEP) {	// 0x91
 			if (cd.pi.glbNextChampionNumber == 0) {
 				_4976_3d59 = 0;
 				if (glbChampionInventory != 0) {
@@ -1249,43 +1244,43 @@ _1ab8:
 				_1031_098e();
 			}
 		}
-		else if (si == UI_EVENTCODE_WAKE) {	// 0x92
+		else if (si == UI_EVENTCODE_x92_WAKE) {	// 0x92
 			RESUME_FROM_WAKE();
 		}
-		else if (si == UI_EVENTCODE_DISK_OP) {	// 0x8C
+		else if (si == UI_EVENTCODE_x8C_DISK_OP) {	// 0x8C
 			if (cd.pi.glbChampionsCount > 0 && cd.pi.glbNextChampionNumber == 0) {
 				_4976_4e62--;
 				GAME_SAVE_MENU();
                 _4976_4e62++;
 			}
 		}
-		else if (si == UI_EVENTCODE_REVIVE_CHAMPION || si == UI_EVENTCODE_EXIT_CRYOCELL) { // 0xA0 or 0xA1
+		else if (si == UI_EVENTCODE_xA0_REVIVE_CHAMPION || si == UI_EVENTCODE_xA1_EXIT_CRYOCELL) { // 0xA0 or 0xA1
             REVIVE_CHAMPION(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerDir, cd.pi.glbPlayerMap, si);
 		}
-		else if (si == UI_EVENTCODE_START_NEW_GAME) {	// 0xD7
+		else if (si == UI_EVENTCODE_xD7_START_NEW_GAME) {	// 0xD7
 			// "NEW" at main menu
 			cd.mo.glbSpecialScreen = _MENU_SCREEN__LOAD_NEW_GAME;
 		}
-		else if (si == UI_EVENTCODE_0D8) {	// 0xD8
+		else if (si == UI_EVENTCODE_xD8_LOAD_GAME) {	// 0xD8
 			cd.mo.glbSpecialScreen = _MENU_SCREEN__LOAD_NEW_GAME;
 			_4976_5bea = 1;
 		}
-		else if (si == UI_EVENTCODE_RESUME_GAME) { // 0xD9
+		else if (si == UI_EVENTCODE_xD9_RESUME_GAME) { // 0xD9
 			// "RESUME" at main menu
 			cd.mo.glbSpecialScreen = _MENU_SCREEN__RESUME_GAME_SELECT;
 		}
-		else if (si == UI_EVENTCODE_SHOW_CREDITS) { // 0xDA
+		else if (si == UI_EVENTCODE_xDA_SHOW_CREDITS) { // 0xDA
 			SHOW_CREDITS();
 		}
-		else if (si == UI_EVENTCODE_0DF) { // 0xDF
+		else if (si == UI_EVENTCODE_xDF) { // 0xDF
 			_4976_5bf2 = 1;
 		}
-		else if (si == UI_EVENTCODE_QUIT_GAME) { // 0xE0
+		else if (si == UI_EVENTCODE_xE0_QUIT_GAME) { // 0xE0
 			SK_PREPARE_EXIT();
 		}
 	}
 
-	if (glbUIEventCode >= UI_EVENTCODE_0A5 && glbUIEventCode <= UI_EVENTCODE_0C6)	// >= 0xa5 and <= 0xc6)
+	if (glbUIEventCode >= UI_EVENTCODE_xA5 && glbUIEventCode <= UI_EVENTCODE_xC6)	// >= 0xa5 and <= 0xc6)
 		cd.gg.glbRefreshViewport = 1;
 	return di;
 }

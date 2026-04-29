@@ -979,7 +979,7 @@ void SkWinCore::REVIVE_CHAMPION(U16 xx, U16 yy, U16 dir, U16 zz, U16 iEventCode)
 	U16 iCurrentMapIndex = glbCurrentMapIndex;	// bp0c
 	CHANGE_CURRENT_MAP_TO(zz);
 	ObjectID tObjectHand = REMOVE_OBJECT_FROM_HAND();	// bp0e
-	if (iEventCode == UI_EVENTCODE_EXIT_CRYOCELL) { // 161
+	if (iEventCode == UI_EVENTCODE_xA1_EXIT_CRYOCELL) { // 161
 		INTERFACE_CHAMPION(4);
 		FIRE_HIDE_MOUSE_CURSOR();
         if (cd.pi.glbChampionsCount == 1)
@@ -1000,7 +1000,7 @@ void SkWinCore::REVIVE_CHAMPION(U16 xx, U16 yy, U16 dir, U16 zz, U16 iEventCode)
 		_38c8_0060();
 		FIRE_SHOW_MOUSE_CURSOR();
 	}
-	else { // iEventCode = UI_EVENTCODE_REVIVE_CHAMPION (160)
+	else { // iEventCode = UI_EVENTCODE_xA0_REVIVE_CHAMPION (160)
 		if (glbChampionShowResurrect == 0)
 			DRAW_CRYOCELL_LEVER(1);
 		if (tObjectHand != OBJECT_NULL)
@@ -2566,7 +2566,7 @@ void SkWinCore::SEARCH_STARTER_CHAMPION() // _2f3f_0789
 				glbChampionShowResurrect = 1;
 				// SPX: Automatic selection of champion (Thoram)
 				SELECT_CHAMPION(0, 1, DIR_NORTH, cd.pi.glbPlayerMap);	// player is imaginarily at 0,1 facing north
-				REVIVE_CHAMPION(0, 1, DIR_NORTH, cd.pi.glbPlayerMap, UI_EVENTCODE_REVIVE_CHAMPION);
+				REVIVE_CHAMPION(0, 1, DIR_NORTH, cd.pi.glbPlayerMap, UI_EVENTCODE_xA0_REVIVE_CHAMPION);
 				glbChampionShowResurrect = 0;
 				glbChampionSquad[0].playerDir(U8(cd.pi.glbPlayerDir));
 				glbChampionSquad[0].playerPos(U8(cd.pi.glbPlayerDir));
@@ -2585,7 +2585,7 @@ void SkWinCore::SEARCH_STARTER_CHAMPION() // _2f3f_0789
 				if (xActuator->ActuatorType() == ACTUATOR_x7F_TYPE_CHAMPION_MIRROR) { // 0x007F
 					glbChampionShowResurrect = 1;
 					SELECT_CHAMPION(0, 0, DIR_EAST, cd.pi.glbPlayerMap);	// player is really at 0,0 facing east
-					REVIVE_CHAMPION(0, 0, DIR_EAST, cd.pi.glbPlayerMap, UI_EVENTCODE_REVIVE_CHAMPION);
+					REVIVE_CHAMPION(0, 0, DIR_EAST, cd.pi.glbPlayerMap, UI_EVENTCODE_xA0_REVIVE_CHAMPION);
 					glbChampionShowResurrect = 0;
 					glbChampionSquad[0].playerDir(U8(cd.pi.glbPlayerDir));
 					glbChampionSquad[0].playerPos(U8(cd.pi.glbPlayerDir));

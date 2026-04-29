@@ -471,40 +471,28 @@ void SkWinCore::_01b0_073d_MOUSE() //#DS=04BF
 //^01B0:0752
 void SkWinCore::IBMIO_MOUSE_EVENT_RECEIVER(Bit16u cursorx, Bit16u cursory, Bit16u buttons) //#DS=04BF
 {
-	//^01B0:0752
 	Bit16u di = cursorx;
 	Bit16u si = cursory;
 	cd.mk.glbMouseXPos = di;
 	cd.mk.glbMouseYPos = si;
 	//printf("IBMIO_MOUSE_EVENT_RECEIVER\n");
-	//^01B0:0765
 	if ((di != cd.mk.glbMousePreviousXPos || si != cd.mk.glbMousePreviousYPos) && _04bf_17a2 <= 0) {
-		//^01B0:0778
 		_01b0_073d_MOUSE();
 		_01b0_05ae_PRECALL_BLIT_MOUSE();
 		cd.mk.glbMousePreviousXPos = di;
 		cd.mk.glbMousePreviousYPos = si;
 	}
-	//^01B0:0788
 	cd.mk.glbMouseButtonState = ((buttons >> 1) & 1) | ((buttons << 1) & 2);
-	//^01B0:079D
 	_04bf_0e7c = buttons ^ _04bf_1934;
-	//^01B0:07A7
 	if (_04bf_0e7c != 0 && _04bf_03c6 != 0) {
-		//^01B0:07B2
 		if ((_04bf_0e7c & 1) != 0) { // left click ?
-			//^01B0:07BA
 			(this->*_04bf_179e)(di, si, ((buttons & 1) != 0) ? 2 : 4) INDIRECT_CALL;
 		}
-		//^01B0:07D0
 		if ((_04bf_0e7c & 2) != 0) { // right click ?
-			//^01B0:07D8
 			(this->*_04bf_179e)(di, si, ((buttons & 2) != 0) ? 1 : 8) INDIRECT_CALL;
 		}
-		//^01B0:07EE
 		_04bf_1934 = buttons;
 	}
-	//^01B0:07F4
 	return;
 }
 
@@ -512,24 +500,15 @@ void SkWinCore::IBMIO_MOUSE_EVENT_RECEIVER(Bit16u cursorx, Bit16u cursory, Bit16
 void SkWinCore::UNLOCK_MOUSE_EVENT() //#DS=04BF
 {
 	//printf("UNLOCK_MOUSE_EVENT\n");
-	//^01B0:080B
 	LOADDS(0x3083)
-	//^01B0:0819
 	while (_04bf_17a4 > 0) {
-		//^01B0:081B
 		_04bf_17a4--;
 		_04bf_179c = (_04bf_179c +1) % 10;
-		//^01B0:082D
 		Bit16u si = _04bf_17ac[_04bf_179c].w0;
-		//^01B0:083B
 		Bit16u bp02 = _04bf_17ac[_04bf_179c].w2;
-		//^01B0:084C
 		Bit16u di = _04bf_17ac[_04bf_179c].w4;
-		//^01B0:085B
 		IBMIO_MOUSE_EVENT_RECEIVER(bp02, di, si);
-		//^01B0:0867
 	}
-	//^01B0:0870
 	_04bf_0e7a--;
 }
 
@@ -538,20 +517,14 @@ void SkWinCore::UNLOCK_MOUSE_EVENT() //#DS=04BF
 void SkWinCore::_01b0_0aa8_MOUSE() //#DS=04BF
 {
 	//printf("_01b0_0aa8_MOUSE\n");
-	//^01B0:0AA8
 	LOADDS(0x3083);
-	//^01B0:0AB3
 	if ((_04bf_17a2--) == 1) {
-		//^01B0:0ABF
 		LOCK_MOUSE_EVENT();
 		_01b0_05ae_PRECALL_BLIT_MOUSE();
-		//^01B0:0AC7
 		cd.mk.glbMousePreviousXPos = cd.mk.glbMouseXPos;
 		cd.mk.glbMousePreviousYPos = cd.mk.glbMouseYPos;
-		//^01B0:0AD3
 		UNLOCK_MOUSE_EVENT();
 	}
-	//^01B0:0AD7
 }
 
 
@@ -559,9 +532,7 @@ void SkWinCore::_01b0_0aa8_MOUSE() //#DS=04BF
 void SkWinCore::FIRE_SHOW_MOUSE_CURSOR()
 {
 	//printf("FIRE_SHOW_MOUSE_CURSOR\n");
-	//^443C:086B
 	glbMouseVisibility--;
-	//^443C:0872
 	_01b0_0aa8_MOUSE() CALL_IBMIO;
 }
 
@@ -569,9 +540,7 @@ void SkWinCore::FIRE_SHOW_MOUSE_CURSOR()
 //^01B0:08D8
 void SkWinCore::_01b0_08d8()
 {
-	//^01B0:08D8
 	ENTER(0);
-	//^01B0:08DB
 	_04bf_17a2 = 1;
 	_04bf_03c6 = 0;
 	cd.mk._04bf_17a8 = 0;
@@ -582,7 +551,6 @@ void SkWinCore::_01b0_08d8()
 	_04bf_17a4 = 0;
 	_04bf_1934 = 0;
 	_04bf_1938 = 0;
-	//^01B0:091C
 	return;
 }
 //^01B0:091E
@@ -590,20 +558,14 @@ void SkWinCore::IBMIO_SET_MOUSE_HANDLER()
 {
 	//printf("IBMIO_SET_MOUSE_HANDLER\n");
 #if UseAltic
-	//^01B0:091E
 	ENTER(0);
-	//^01B0:0923
 	if (_04bf_18b2 == 0)
 		return;
-	//^01B0:0935
 	_01b0_092d_MOUSE_CALLBACK = _int33_mouse_callback;
 	cd.mk.glbMouseXPos = cd.mk.mice_x;
 	cd.mk.glbMouseYPos = cd.mk.mice_y;
 	_int33_mouse_callback = &SkWinCore::IBMIO_MOUSE_HANDLER;
-	//^01B0:0982
-	//^01B0:0A2F
 	_04bf_03d4 = 1;
-	//^01B0:0A35
 	return;
 #else
 #error	Unr
@@ -729,16 +691,12 @@ U8 SkWinCore::SK_UI_IMPORTB(U16 port) {
 //^1031:0781
 void SkWinCore::_1031_0781(Bit16u xx) 
 {
-	//^1031:0781
 	ENTER(12);
-	//^1031:0785
 	sk0d9e *bp04 = _1031_06b3(&_4976_1891[_4976_19ad], xx);
 	SRECT bp0c;
 	if (bp04 != NULL && _1031_01d5(bp04->w2, &bp0c) != 0) {
-		//^1031:07BB
 		FIRE_QUEUE_MOUSE_EVENT(bp0c.x, bp0c.y, 255 & bp04->w4);
 	}
-	//^1031:07D4
 	return;
 }
 
@@ -757,81 +715,50 @@ void SkWinCore::MOUSE_STATE_443c_08ab(i16 *xx, i16 *yy, i16 *zz)
 // SPX _1031_0f3a renamed IBMIO_USER_INPUT_CHECK
 void SkWinCore::IBMIO_USER_INPUT_CHECK() //#DS=4976
 {
-	//^1031:0F3A
 	ENTER(14);
-	//^1031:0F40
 	if (_4976_4e46 == 0) {
-		//^1031:0F4A
 		Bit32u bp04 = glbAbsoluteTickCounter;
-		//^1031:0F57
 		Bit32u bp08 = bp04 - _4976_19a9;
-		//^1031:0F68
 		if (bp08 != 0) {
-			//^1031:0F6F
 			_4976_19a9 = bp04;
-			//^1031:0F7C
 			if (_4976_4e62 == 0 && _4976_4e48 == 0 && _4976_4e64 == 0) {
-				//^1031:0F97
 				while (glbPtrTransmittedUIEvent == 0) {
-					//^1031:0F9D
 					_4976_19a7 = 1;
 					Bit16u di = 1;
-					//^1031:0FA6
 _0fa6:
 					if (_4976_4e00 == 0) {
-						//^1031:0FAD
 						_4976_19a7 = 0;
-						//^1031:0FB3
 						_1031_0b7e_MOUSE();
-						//^1031:0FB7
 						break;
 					}
-					//^1031:0FBA
 					MouseState bp0e = tlbMouseStateRing[_4976_4ea6];
-					//^1031:0FD4
 					_4976_4e00--;
 					_4976_4ea6++;
-					//^1031:0FDC
 					if (_4976_4ea6 > 10)
-						//^1031:0FE4
 						_4976_4ea6 = 0;
-					//^1031:0FEA
 					Bit16u si = 0;
-					//^1031:0FEC
 					if (bp0e.MouseButton() >= 0x20) {
-						//^1031:0FF2
 						if (bp0e.MouseButton() == 0x20) {
-							//^1031:0FF8
 							si = _1031_03f2(&_4976_1891[_4976_19ad], bp0e.MouseX());
 						}
-						//^1031:100F
 						else if (bp0e.MouseButton() == 0x40) {
-							//^1031:1015
-							si = 0x81;
+							si = 0x81;	// 0x81
 						}
-						//^1031:101A
 						else if (bp0e.MouseButton() == 0x60) {
-							//^1031:1020
-							si = 0xe1;
+							si = 0xE1;	// 0xE1
 						}
 					}
-					//^1031:1025
 					else if ((bp0e.MouseButton() & 0x04) != 0) {
-						si = 0xe3;
+						si = 0xE3;	// 0xE3
 					}
-					//^1031:1031
 					else if ((bp0e.MouseButton() & 0x13) != 0) {
 						si = _1031_030a(&_4976_1891[_4976_19ad], bp0e.MouseX(), bp0e.MouseY(), bp0e.MouseButton());
 					}
-					//^1031:1055
 					if (si != 0) {
 						//printf("ZONE %d reached!\n", si);
 						//printf("----------------\n", si);
-						//^1031:1059
 						di = 0;
-						//^1031:105B
 						glbMousePosition.event = si;
-						//^1031:105F
 						glbMousePosition.XPos = _4976_4e66;
 						glbMousePosition.YPos = _4976_4e68;
 						glbMousePosition.rc6.y = _4976_4e9e.y;
@@ -839,26 +766,17 @@ _0fa6:
 						glbMousePosition.rc6.cx = _4976_4e9e.cx;
 						glbMousePosition.rc6.cy = _4976_4e9e.cy;
 					}
-					//^1031:1083
 					if (di != 0)
-						//^1031:1087
 						goto _0fa6;
-					//^1031:108A
 					_4976_19a7 = 0;
-					//^1031:1090
 					_1031_0b7e_MOUSE();
-					//^1031:1094
 					glbPtrTransmittedUIEvent = TRANSMIT_UI_EVENT(&glbMousePosition);
-					//^1031:10A5
 					bp08 = 0;
-					//^1031:10AF
 				}
 			}
-			//^1031:10BB
 			HANDLE_UI_EVENT_1031_111e(Bit16u(bp08));
 		}
 	}
-	//^1031:10C4
 	return;
 }
 

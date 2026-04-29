@@ -4889,7 +4889,7 @@ void SkWinCore::SHOW_CREDITS()
 		MessageLoop(true); // credits
 
 		MAIN_LOOP();
-		if (glbUIEventCode == UI_EVENTCODE_QUIT_CREDITS) // 239
+		if (glbUIEventCode == UI_EVENTCODE_xEF_QUIT_CREDITS) // 239
 			break;
 		SLEEP_SEVERAL_TIME(1);
 	} while (--iScreenTimer != 0);
