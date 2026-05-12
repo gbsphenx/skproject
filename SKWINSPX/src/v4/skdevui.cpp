@@ -169,20 +169,14 @@ U16 SkWinCore::FIRE_MOUSE_EVENT_RECEIVER(Bit16u xx, Bit16u yy, i16 button) //#DS
 void SkWinCore::IBMIO_BLIT_MOUSE_CURSOR(Bit8u *buff, SRECT *rc, Bit16u srcx, Bit16u srcy, Bit16u srcpitch, i16 colorkey) //#DS=04BF
 {
 	//printf("IBMIO_BLIT_MOUSE_CURSOR Visible = %d\n", glbMouseCursorVisible);
-	//^00EB:0777
 	LOADDS(0x0c48)
-	//^00EB:0780
 	if (glbMouseCursorVisible != 0)
 		return;
-	//^00EB:078A
 	_04bf_09e0.x = rc->x;
 	_04bf_09e0.y = rc->y;
 	_04bf_09e8.x = _04bf_09e8.y = 0;
-	//^00EB:07A6
 	_04bf_09e0.cx = _04bf_09e8.cx = rc->cx;
-	//^00EB:07B0
 	_04bf_09e0.cy = _04bf_09e8.cy = rc->cy;
-	//^00EB:07BA
 	ATLASSERT(_04bf_09e8.cx <= 18 && _04bf_09e8.cy <= 18);
 	IBMIO_BLIT_TO_SCREEN_8TO8BPP(
 		__vram,
@@ -194,7 +188,6 @@ void SkWinCore::IBMIO_BLIT_MOUSE_CURSOR(Bit8u *buff, SRECT *rc, Bit16u srcx, Bit
 		24,
 		-1
 		);
-	//^00EB:07DC
 	IBMIO_BLIT_TO_SCREEN_8TO8BPP(
 		buff,
 		__vram,
@@ -205,7 +198,6 @@ void SkWinCore::IBMIO_BLIT_MOUSE_CURSOR(Bit8u *buff, SRECT *rc, Bit16u srcx, Bit
 		320,
 		colorkey
 		);
-	//^00EB:0803
 	_04bf_079c = colorkey;
 	glbMouseCursorVisible = 1;
 }
@@ -353,7 +345,6 @@ X16 SkWinCore::_443c_00f8_MOUSE(X16 xx, X16 yy)
 void SkWinCore::_01b0_05ae_PRECALL_BLIT_MOUSE() //#DS=04BF
 {
 	//printf("_01b0_05ae_PRECALL_BLIT_MOUSE\n");
-	//^01B0:05AE
 	if ((true
 		&& _04bf_1850 != 0
 		&& _04bf_03c6 != 0
@@ -365,81 +356,56 @@ void SkWinCore::_01b0_05ae_PRECALL_BLIT_MOUSE() //#DS=04BF
 		|| _04bf_1852.y + _04bf_1852.cy - 1 < cd.mk.glbMouseYPos
 	)
 	) {
-		//^01B0:05EE
 		_04bf_1850 = 0;
 
-		//^01B0:05F4
 		_04bf_0e7c = FIRE_MOUSE_EVENT_RECEIVER(cd.mk.glbMouseXPos, cd.mk.glbMouseYPos, _04bf_17e8) INDIRECT_CALL;
-		//^01B0:060A
 		if (_04bf_0e7c >= 0) {
-			//^01B0:060E
 			_04bf_1938 = _04bf_0e7c;
 		}
 	}
-	//^01B0:0611
 	sk0e80 *bp04 = &_04bf_0e80[_04bf_1938];
-	//^01B0:0622
 	_04bf_185e = cd.mk.glbMouseXPos - bp04->b0;
-	//^01B0:0634
 	_04bf_1860 = cd.mk.glbMouseYPos - bp04->b1;
-	//^01B0:0644
 	_04bf_0e38 = bp04->b2;
 	_04bf_1936 = bp04->b3;
 	_04bf_18aa = 0;
 	_04bf_18ac = 0;
-	//^01B0:0662
 	if (_04bf_185e < 0) {
-		//^01B0:0669
 		_04bf_18aa = 0 - _04bf_185e;
 		_04bf_185e = 0;
 	}
-	//^01B0:0678
 	if (_04bf_1860 < 0) {
-		//^01B0:067F
 		_04bf_18ac = 0 - _04bf_1860;
 		_04bf_1860 = 0;
 	}
-	//^01B0:068E
 	if (_04bf_185e >= 320)
 		return;
-	//^01B0:069B
 	if (_04bf_1860 >= 200)
 		return;
-	//^01B0:06A8
 	if (cd.mk._04bf_17a8 != 0)
 		return;
 	cd.mk._04bf_17a8++;
-	//^01B0:06BB
 	SRECT bp0c;
 	bp0c.x = _04bf_185e;
 	bp0c.cx = _04bf_0e38 - _04bf_18aa;
-	//^01B0:06CB
 	if (bp0c.x + bp0c.cx - 1 > 319) {
-		//^01B0:06D7
 		bp0c.cx -= bp0c.x + bp0c.cx - 320;
 	}
-	//^01B0:06E3
 	bp0c.y = _04bf_1860;
 	bp0c.cy = _04bf_1936 - _04bf_18ac;
-	//^01B0:06F3
 	if (bp0c.y + bp0c.cy - 1 > 199) {
-		//^01B0:06FF
 		bp0c.cy -= bp0c.y + bp0c.cy - 200;
 	}
-	//^01B0:070B
+	//void SkWinCore::IBMIO_BLIT_MOUSE_CURSOR(Bit8u *buff, SRECT *rc, Bit16u srcx, Bit16u srcy, Bit16u srcpitch, i16 colorkey)
 	IBMIO_BLIT_MOUSE_CURSOR(bp04->b6, &bp0c, _04bf_18aa, _04bf_18ac, _04bf_0e38, bp04->b4);
-	//^01B0:0738
 	return;
 }
 
 //^00EB:073F
 void SkWinCore::IBMIO_HIDE_MOUSE_CURSOR() //#DS=04BF
 {
-	//^00EB:073F
 	LOADDS(0x0c48);
-	//^00EB:0748
 	if (glbMouseCursorVisible != 0) {
-		//^00EB:074F
 		IBMIO_BLIT_TO_SCREEN_8TO8BPP(
 			_04bf_079e,
 			__vram,
@@ -450,10 +416,8 @@ void SkWinCore::IBMIO_HIDE_MOUSE_CURSOR() //#DS=04BF
 			320,
 			-1
 			);
-		//^00EB:076E
 		glbMouseCursorVisible = 0;
 	}
-	//^00EB:0774
 	return;
 }
 

@@ -53,6 +53,9 @@ SkRendererSDL::~SkRendererSDL()
 UINT SkRendererSDL::InitAudio()
 {
 #if !defined (__NO_SDL__)
+
+	printf("Starting SDL audio init...\n");
+
     SDL_AudioSpec want = {0};
 
     //want.freq = 11025;
@@ -186,15 +189,17 @@ UINT SkRendererSDL::ConvertVRAMToRGB()
 UINT SkRendererSDL::Render()
 {
 #if !defined (__NO_SDL__)
-	ConvertVRAMToRGB();
-	//SDL_Rect src = { 0, 0, 160, 100 };   // from texture
-	SDL_Rect dst = { 0, 0, (int)iScreenWidth, (int)iScreenHeight }; // to screen
-	SDL_SetRenderDrawColor(sdlRenderer, 0, 128, 0, 255);
-    SDL_RenderClear(sdlRenderer);
-	SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
-	//printf("Render = %08X, Texture = %08X\n", sdlRenderer, sdlTexture);
-	//SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, &dst);
-    SDL_RenderPresent(sdlRenderer);
+	if (SkCodeParam::bRenderingEngineSDL == true) {
+		ConvertVRAMToRGB();
+		//SDL_Rect src = { 0, 0, 160, 100 };   // from texture
+		SDL_Rect dst = { 0, 0, (int)iScreenWidth, (int)iScreenHeight }; // to screen
+		SDL_SetRenderDrawColor(sdlRenderer, 0, 128, 0, 255);
+		SDL_RenderClear(sdlRenderer);
+		SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
+		//printf("Render = %08X, Texture = %08X\n", sdlRenderer, sdlTexture);
+		//SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, &dst);
+		SDL_RenderPresent(sdlRenderer);
+	}
 #endif // not __NO_SDL__
 	return 0;
 }

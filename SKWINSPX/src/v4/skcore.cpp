@@ -22140,8 +22140,7 @@ SkWinCore::SkWinCore()
 
 int SkWinCore::SKExt_ForceMousePointer(U16 iXPos, U16 iYPos)
 {
-	printf("SKExt_ForceMousePointer %03d %03d\n", iXPos, iYPos);
-	cd.mk.mice_x = iXPos;
+/*	cd.mk.mice_x = iXPos;
 	cd.mk.mice_y = iYPos;
 	cd.mk.glbMouseXPos = iXPos;
 	cd.mk.glbMouseYPos = iYPos;
@@ -22152,5 +22151,10 @@ int SkWinCore::SKExt_ForceMousePointer(U16 iXPos, U16 iYPos)
 	if (cd.mk.glbMouseYPos > 200) cd.mk.glbMouseYPos = 199;
 	//skWinApp->GetMousePosButtons(&cd.mk.mice_x, &cd.mk.mice_y, &cd.mk.mice_btn);
 	//(this->*_int33_mouse_callback)();
+	//_01b0_05ae_PRECALL_BLIT_MOUSE();
+*/
+	cd.mk.glbExternalMouse = true;
+	cd.mk.glbExternalMouseX = iXPos;
+	cd.mk.glbExternalMouseY = iYPos;
 	return 0;
 }

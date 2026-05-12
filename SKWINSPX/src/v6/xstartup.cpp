@@ -60,7 +60,9 @@ int SKWIN_START_MAIN(int iEngine, int argc, char **argv);
 int SKWIN_V5BIT_MAIN(SkWinApp* skWinApplication);
 
 //==============================================================================
-#ifndef _SKPROBE_
+//#ifndef _SKPROBE_
+//#if !defined (_SKPROBE_) || !defined (_SK_NOMAIN_)
+#ifndef _SK_NOMAIN_
 int main(int argc, char* argv[])
 {
 	char sBuildInfo[100];
@@ -186,7 +188,7 @@ int SKWIN_START_MAIN_HEADLESS(tSKWinContext* xSKWinContext, int iEngine, int arg
 
 	skWinApplication = new SkWinApp();
 
-	SkCodeParam::bRenderingEngineSDL = true;
+	SkCodeParam::bRenderingEngineSDL = false;
 	SkCodeParam::bRenderingEngineDOS = false;
 	SkCodeParam::bRenderingEngineMFC = false;
 
@@ -230,9 +232,15 @@ SK_API int SK_MainFromCommandLine(const char* sCommandLine)
 SK_API int SK_MainStartHeadless(tSKWinContext* xSKWinContext, const char* sCommandLine)
 {
 	int iResult = 0;
-	//char* argv[] = {"-sdl", "-en", "-data", "DATA-DM2", "-gdat", "DATA-DM2\\DM2V52PC\\G2SKV52C.DAT", "-dungeon", "DATA-DM2\\DM2V52PC\\DNGSK52D.DAT"};
-	char* argv[] = {"-sdl", "-en", "-data", "DATA", "-new"};
 	int argc = 6;
+//	char* argv[] = {"-sdl", "-en", "-data", "DATA", "-new"};
+	argc = 5;
+	//char* argv[] = {"-en", "-data", "DATA", "-new"}; argc = 4;
+	//char* argv[] = {"-sdl", "-en", "-data", "DATA-DM2", "-new", "-gdat", "DATA-DM2\\DM2V52PC\\G2SKV52C.DAT", "-dungeon", "DATA-DM2\\DM2V52PC\\DNGSK52D.DAT"};
+	//char* argv[] = {"-sdl", "-en", "-data", "DATA-DM2", "-new", "-gdat", "DATA-DM2\\COMMON\\G2SKV42X.DAT", "-dungeon", "DATA-DM2\\DM2V52PC\\DNGSK52D.DAT"}; argc = 9;
+	char* argv[] = {"-audio", "-en", "-data", "DATA-DM2", "-new", "-gdat", "DATA-DM2\\COMMON\\G2SKV42X.DAT", "-dungeon", "DATA-DM2\\DM2V52PC\\DNGSK52D.DAT"}; argc = 9;
+	//char* argv[] = {"-en", "-data", "DATA-DM2", "-new", "-gdat", "DATA-DM2\\COMMON\\G2SKV42X.DAT", "-dungeon", "DATA-DM2\\DM2V52PC\\DNGSK52D.DAT"}; argc = 8;
+	//argc = 9;
     return SKWIN_START_MAIN_HEADLESS(xSKWinContext, __SK_ENGINE_V4_, argc, argv);
 //	return iResult;
 }
@@ -253,6 +261,16 @@ SK_API int SK_StartGameLoop(tSKWinContext* xSKWinContext)
     return xSKWinContext->xSkCore->SK_GAMELOOP();
 }
 
+SK_API int SK_StartGameLoop(tSKWinContext* xSKWinContext, MouseProviderFunc fMP)
+{
+	int iResult = 0;
 
+    return xSKWinContext->xSkCore->SK_GAMELOOP();
+}
+
+SK_API void SK_RegisterMouseProvider(tSKWinContext* xSKWinContext, MouseProviderFunc func)
+{
+    xSKWinContext->xSkCore->skWinApp->RegisterMouseProvider(xSKWinContext->xController, func);
+}
 
 //==============================================================================

@@ -23,6 +23,7 @@ public:
 	static bool bRenderingEngineDOS;				// DOS renderer - DOS only
 	static bool bRenderingEngineMFC;				// MFC renderer - Windows only
 	static bool bEngineNoDisplay;
+	static bool bAudioEngineSDL;						// SDL audio
 
 	static UINT bOptionNewGame;
 	static int bOptionResumeSaveGame;	// not UINT else there is trouble to get the resume game screen

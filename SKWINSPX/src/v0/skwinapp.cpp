@@ -110,6 +110,7 @@ SkWinApp::SkWinApp()
 	cntKeybIn = 0;
 	curKeybIn = 0;
 
+	fMouseProvider = NULL;
 	iCallbackMouseX = 0;
 	iCallbackMouseY = 0;
 	iCallbackMouseButton = 0;
@@ -209,7 +210,10 @@ void SkWinApp::ProcessArgs(int argc, char** argv)
 			SkCodeParam::bRenderingEngineSDL = false;
 			SkCodeParam::bEngineNoDisplay = true;
 		}
-
+		else if (!strcmp(argv[iArgIndex], "-audio")) {
+			printf("Option: audio (SDL)\n");
+			SkCodeParam::bAudioEngineSDL = true;
+		}
 		// Options: language
 		else if (!strcmp(argv[iArgIndex], "-en")) {
 			printf("Option: language = english\n");
@@ -362,6 +366,13 @@ UINT SkWinApp::setVideoMode()
 		xSkWinRenderer = (SkRendererGeneric*) new SkRendererMFC();
 	}
 
+	//--- If no GFX mode is selected but audio is requested
+	if (xSkWinRenderer == NULL && SkCodeParam::bAudioEngineSDL == true) {
+		xSkWinRenderer = (SkRendererGeneric*) new SkRendererSDL();
+		((SkRendererSDL*)xSkWinRenderer)->InitAudio();
+		return 0;
+	}
+
 	if (xSkWinRenderer != NULL) {
 		xSkWinRenderer->Init(xVRAM);
 		xSkWinRenderer->InitWinApp(this);
@@ -512,8 +523,11 @@ const X8* SkWinApp::GET_DATA_FOLDER_NAME()
 
 void SkWinApp::AudioPlayDirect(const char* sAudioFilename, i8 vol)
 {
-	xSkWinRenderer->AudioStop();
-	xSkWinRenderer->AudioPlayFile(sAudioFilename, vol);
+	if (xSkWinRenderer != NULL)
+	{
+		xSkWinRenderer->AudioStop();
+		xSkWinRenderer->AudioPlayFile(sAudioFilename, vol);
+	}
 }
 
 // Old compatibility with CSkWin -----------------------------------------------
@@ -533,7 +547,8 @@ void SkWinApp::skwin_SndPlayHi(const U8 *buff, U32 buffSize, i8 vol)
 	}
 	// SPX
 */
-	xSkWinRenderer->AudioPlaySound(buff, buffSize, vol, iPlaybackFrequency);
+	if (xSkWinRenderer != NULL)
+		xSkWinRenderer->AudioPlaySound(buff, buffSize, vol, iPlaybackFrequency);
 }
 
 void SkWinApp::skwin_SndPlayLo(const U8 *buff, U32 buffSize, i8 dX, i8 dY)
@@ -682,6 +697,13 @@ CSkKinput* SkWinApp::DequeueKinput()
 	return pKInput;
 }
 
+
+void SkWinApp::RegisterMouseProvider(void* xGameController, MouseProviderFunc func)
+{
+	xExternalController = xGameController;
+    fMouseProvider = func;
+}
+
 void SkWinApp::GetMousePosButtons(U16 *x, U16 *y, U16 *buttons) 
 {
 	static UINT iCallCount = 0;
@@ -730,7 +752,14 @@ void SkWinApp::GetMousePosButtons(U16 *x, U16 *y, U16 *buttons)
 		*buttons = U16(iDeviceButtons);
 	}
 
-		//SkD((DLV_MOUSE,"SDL_GetMouseState\n"));
+	if (fMouseProvider != NULL)
+	{
+		fMouseProvider(xExternalController, x, y, buttons);
+		//printf("GetMousePosButtons (%05d): M(%3d,%3d) Btn:(%2d)\n", iCallCount++, *x, *y, *buttons);
+	}
+	
+
+	//SkD((DLV_MOUSE,"SDL_GetMouseState\n"));
 
 	//SkD((DLV_MOUSE,"SDL_GetMouseState %d,%d buttons=%d / scale=%d\n", U16(iDeviceMouseX), U16(iDeviceMouseY), U16(*buttons), SkCodeParam::iVideoScale));
 

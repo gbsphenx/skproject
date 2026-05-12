@@ -16,8 +16,9 @@ bool SkCodeParam::bRenderingEngineSDL = false;
 #endif // __DJGPP__
 
 bool SkCodeParam::bRenderingEngineMFC = false;
-
+bool SkCodeParam::bAudioEngineSDL = false;
 bool SkCodeParam::bEngineNoDisplay = false;
+
 
 UINT SkCodeParam::bOptionNewGame = 0;
 int SkCodeParam::bOptionResumeSaveGame = -1;

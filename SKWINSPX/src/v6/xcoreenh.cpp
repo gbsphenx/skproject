@@ -635,7 +635,7 @@ U16 SkWinCore::FORCE_PLAYER_PARTY_TO(i16 xposTo, i16 yposTo, i16 mapTo)
 void SkWinCore::ADD_PARTY_CHAMPION(int iChampionID)
 {
 	SELECT_CHAMPION_FROM_GDAT(iChampionID);
-	REVIVE_CHAMPION(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerDir, cd.pi.glbPlayerMap, UI_EVENTCODE_REVIVE_CHAMPION);
+	REVIVE_CHAMPION(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerDir, cd.pi.glbPlayerMap, UI_EVENTCODE_xA0_REVIVE_CHAMPION);
 	glbChampionShowResurrect = 0;
 	glbChampionSquad[0].playerDir(U8(cd.pi.glbPlayerDir));
 	glbChampionSquad[0].playerPos(U8(cd.pi.glbPlayerDir));
@@ -666,7 +666,7 @@ void SkWinCore::INIT_CHAMPIONS_CUSTOM_MODES()
 
 			printf("INIT_CHAMPIONS_CUSTOM_MODES FOR BW/EOB\n");
 			SELECT_CHAMPION_FROM_GDAT(iChampionID);
-			REVIVE_CHAMPION(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerDir, cd.pi.glbPlayerMap, UI_EVENTCODE_REVIVE_CHAMPION);
+			REVIVE_CHAMPION(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerDir, cd.pi.glbPlayerMap, UI_EVENTCODE_xA0_REVIVE_CHAMPION);
 			glbChampionShowResurrect = 0;
 			glbChampionSquad[0].playerDir(U8(cd.pi.glbPlayerDir));
 			glbChampionSquad[0].playerPos(U8(cd.pi.glbPlayerDir));
@@ -1185,15 +1185,7 @@ U16 SkWinCore::EXT_PROCEED_DCS_GENERIC_COMMAND(const char* sCommandName, const c
 
 void SkWinCore::PLAY_DIRECT_SOUND(const char* sAudioFilename, int volume)
 {
-	if (SkCodeParam::bUseAudioSDL == true)
-		XAUDIO_SDL_PLAY_SOUND_FILE(sAudioFilename, volume);
-	else {
-//#if defined(_USE_MFC80) || defined(_USE_MFC60)
 	skWinApp->skwin_SndPlayFile(sAudioFilename, volume);
-//#endif
-	;
-	}
-	;
 }
 
 // static table of musics mapped to maps -- poor implementation and not dynamic yet

@@ -32,6 +32,11 @@ cd.mk.glbMouseXPos = 0x0;
 cd.mk.glbMouseYPos = 0x0;
 cd.mk.glbMousePreviousXPos = 0x0;
 cd.mk.glbMousePreviousYPos = 0x0;
+// SPX special
+cd.mk.glbExternalMouse = 0;
+cd.mk.glbExternalMouseX = 0;
+cd.mk.glbExternalMouseY = 0;
+// SPX special
 _04bf_03c6 = 0x0;
 _04bf_03c8 = 0;
 _04bf_03ca = 0;

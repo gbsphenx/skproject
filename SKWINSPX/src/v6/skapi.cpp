@@ -29,4 +29,11 @@ SK_API int SK_SendUIEvent(tSKWinContext* xSKWinContext, UINT iUIEventCode)
 	return xSKWinContext->xSkCore->SK_HANDLE_UI_EVENT(&xUIHandleData);
 }
 
+SK_API int SK_SetMousePointer(tSKWinContext* xSKWinContext, UINT iXPos, UINT iYPos)
+{
+	xSKWinContext->xSkCore->SKExt_ForceMousePointer(iXPos, iYPos);
+	return 0;
+}
+
+
 //------------------------------------------------------------------------------

@@ -53,6 +53,7 @@ public:
 	virtual ~SkRendererSDL();
 
 	UINT Init(SkVRAM* xVRAM);
+	UINT InitAudio();
 	UINT ResizeWindow();
 	UINT SetVGAPaletteRGB(X8 *xVGAPalette);
 	UINT Render();
@@ -67,7 +68,6 @@ public:
 
 private:
 	UINT ConvertVRAMToRGB();
-	UINT InitAudio();
 };
 
 

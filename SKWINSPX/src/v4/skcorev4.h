@@ -82,6 +82,11 @@ typedef struct {
 	U16	glbMousePreviousXPos;		// (_04bf_03c2) prev xpos
 	U16	glbMousePreviousYPos;		// (_04bf_03c4) prev ypos
 
+//--- These are special from external control outside SKWin
+	U16 glbExternalMouse;
+	U16	glbExternalMouseX;
+	U16	glbExternalMouseY;
+
 } SKCoreMouseKeyboard;
 
 // cd.sc.
