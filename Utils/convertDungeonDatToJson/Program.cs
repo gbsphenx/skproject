@@ -421,7 +421,7 @@ namespace convertDungeonDatToJson {
                         d.objs.Add(newObj = new ClothDef {
                             itemType = (attr >> 0) & 127,
                             important = 0 != ((attr >> 7) & 1),
-                            charges = (attr >> 10) & 15,
+                            charges = (attr >> 9) & 15,
                         });
                         break;
                     }
