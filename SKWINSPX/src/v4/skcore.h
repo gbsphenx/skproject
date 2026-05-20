@@ -2142,7 +2142,7 @@ protected:
 	U16 PLAY_SOUND(U16 xx, SoundStructure *ref);
 	U16 QUERY_SND_ENTRY_INDEX(Bit8u cls1, Bit8u cls2, Bit8u cls4);
 	void QUEUE_NOISE_GEN1(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u xx, Bit8u yy, i16 xpos, i16 ypos, i16 tickDelta);
-	void QUEUE_NOISE_GEN2(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u cls2alt, i16 xpos, i16 ypos, U16 tickDelta, Bit8u ss, Bit8u tt);
+	void QUEUE_NOISE_GEN2(Bit8u iGDatCategory, Bit8u iGDatItemId, Bit8u iSoundID, Bit8u iGDatItemIdAlt, i16 xpos, i16 ypos, U16 tickDelta, Bit8u ss, Bit8u tt);
 	void DELETE_TIMER(U16 iTimerIndex);
 	void INVOKE_MESSAGE(i16 xpos, i16 ypos, U16 dir, U16 actionType, Bit32u tick);
 	void SET_ITEMTYPE(ObjectID recordLink, Bit8u itemType);

@@ -8,11 +8,16 @@
 class SkVRAM
 {
 private:
-	X8* VRAM;
+	X8* VRAM;		// Internal SKWin VRAM
 	X8* xVGAPalette;
+
+	X8* VRAMRGB;	// Special 24-bits VRAM from external renderer
 
 	UINT VRAM_SCREEN_WIDTH;
 	UINT VRAM_SCREEN_HEIGHT;
+
+public:
+	bool bUseVRAMRGB;
 
 public:
 	SkVRAM();
@@ -20,10 +25,12 @@ public:
 
 	X8* GET_VIDEO_ARRAY();
 	X8* GET_PALETTE();
+	X8* GET_VIDEO_ARRAY_RGB();
 	UINT GET_VRAM_WIDTH() { return VRAM_SCREEN_WIDTH ; };
 	UINT GET_VRAM_HEIGHT() { return VRAM_SCREEN_HEIGHT ; };
 
 	UINT COPY_VRAM_DATA(X8* xSourceVRAMData);
+	UINT COPY_VRAM_RGB_DATA(X8* xSourceVRAMData);
 
 	UINT INIT_GREYSCALE_PALETTE();
 	UINT INIT_VGA_PALETTE();

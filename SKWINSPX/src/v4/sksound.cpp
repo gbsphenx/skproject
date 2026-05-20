@@ -474,14 +474,12 @@ void SkWinCore::QUEUE_NOISE_GEN1(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u xx, B
 
 //^482B:00BF
 //void SkWinCore::QUEUE_NOISE_GEN2(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u cls2alt, i16 xpos, i16 ypos, U16 tickDelta, Bit8u ss, Bit8u tt)
-void SkWinCore::QUEUE_NOISE_GEN2(Bit8u cls1, Bit8u cls2, Bit8u iSoundID, Bit8u cls2alt, i16 xpos, i16 ypos, U16 tickDelta, Bit8u ss, Bit8u tt)
+void SkWinCore::QUEUE_NOISE_GEN2(Bit8u iGDatCategory, Bit8u iGDatItemId, Bit8u iSoundID, Bit8u iGDatItemIdAlt, i16 xpos, i16 ypos, U16 tickDelta, Bit8u ss, Bit8u tt)
 {
-	//^482B:00BF
-	//^482B:00C2
 	// SPX: In the case of sound at cls2 is not found, use the default with cls2alt
 	QUEUE_NOISE_GEN1(
-		cls1,
-		(QUERY_SND_ENTRY_INDEX(cls1, cls2, iSoundID) != 0) ? cls2 : cls2alt,
+		iGDatCategory,
+		(QUERY_SND_ENTRY_INDEX(iGDatCategory, iGDatItemId, iSoundID) != 0) ? iGDatItemId : iGDatItemIdAlt,
 		iSoundID,
 		ss,
 		tt,
@@ -489,10 +487,8 @@ void SkWinCore::QUEUE_NOISE_GEN2(Bit8u cls1, Bit8u cls2, Bit8u iSoundID, Bit8u c
 		ypos,
 		tickDelta
 		);
-	//^482B:00FF
 	//SkD((DLV_BUGHERE,"Player sound (%02X,%02X,%02X) alt (%02X) to (%02d,%02d) / Delta = %02d / ss/tt = %02X,%02X\n"
-	//	, (Bitu)cls1, (Bitu)cls2, (Bitu)cls4, (Bitu)cls2alt, xpos, ypos, tickDelta, ss, tt) );
-
+	//	, (Bitu)iGDatCategory, (Bitu)iGDatItemId, (Bitu)cls4, (Bitu)iGDatItemIdAlt, xpos, ypos, tickDelta, ss, tt) );
 	return;		
 }
 

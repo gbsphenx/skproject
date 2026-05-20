@@ -214,6 +214,8 @@ int SKWIN_START_MAIN_HEADLESS(tSKWinContext* xSKWinContext, int iEngine, int arg
 
 		iGameRC = xSKWinContext->xSkCore->SK_INIT();
 	}
+
+	SkCodeParam::bDisplayNoMouse = false;
 	
 	return iGameRC;
 }
@@ -233,12 +235,13 @@ SK_API int SK_MainStartHeadless(tSKWinContext* xSKWinContext, const char* sComma
 {
 	int iResult = 0;
 	int argc = 6;
-//	char* argv[] = {"-sdl", "-en", "-data", "DATA", "-new"};
+	char* argv[] = {"-sdl", "-en", "-data", "DATA", "-new"}; argc = 5;
 	argc = 5;
 	//char* argv[] = {"-en", "-data", "DATA", "-new"}; argc = 4;
+	//char* argv[] = {"-audio", "-en", "-data", "DATA", "-new"}; argc = 5;
 	//char* argv[] = {"-sdl", "-en", "-data", "DATA-DM2", "-new", "-gdat", "DATA-DM2\\DM2V52PC\\G2SKV52C.DAT", "-dungeon", "DATA-DM2\\DM2V52PC\\DNGSK52D.DAT"};
 	//char* argv[] = {"-sdl", "-en", "-data", "DATA-DM2", "-new", "-gdat", "DATA-DM2\\COMMON\\G2SKV42X.DAT", "-dungeon", "DATA-DM2\\DM2V52PC\\DNGSK52D.DAT"}; argc = 9;
-	char* argv[] = {"-audio", "-en", "-data", "DATA-DM2", "-new", "-gdat", "DATA-DM2\\COMMON\\G2SKV42X.DAT", "-dungeon", "DATA-DM2\\DM2V52PC\\DNGSK52D.DAT"}; argc = 9;
+	//char* argv[] = {"-audio", "-en", "-data", "DATA-DM2", "-new", "-gdat", "DATA-DM2\\COMMON\\G2SKV42X.DAT", "-dungeon", "DATA-DM2\\DM2V52PC\\DNGSK52D.DAT"}; argc = 9;
 	//char* argv[] = {"-en", "-data", "DATA-DM2", "-new", "-gdat", "DATA-DM2\\COMMON\\G2SKV42X.DAT", "-dungeon", "DATA-DM2\\DM2V52PC\\DNGSK52D.DAT"}; argc = 8;
 	//argc = 9;
     return SKWIN_START_MAIN_HEADLESS(xSKWinContext, __SK_ENGINE_V4_, argc, argv);
@@ -271,6 +274,11 @@ SK_API int SK_StartGameLoop(tSKWinContext* xSKWinContext, MouseProviderFunc fMP)
 SK_API void SK_RegisterMouseProvider(tSKWinContext* xSKWinContext, MouseProviderFunc func)
 {
     xSKWinContext->xSkCore->skWinApp->RegisterMouseProvider(xSKWinContext->xController, func);
+}
+
+SK_API void SK_RegisterVRAMProvider(tSKWinContext* xSKWinContext, RGBVRAMProviderFunc func)
+{
+    xSKWinContext->xSkCore->skWinApp->RegisterRGBVRAMProvider(xSKWinContext->xController, func);
 }
 
 //==============================================================================

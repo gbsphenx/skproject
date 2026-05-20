@@ -110,7 +110,8 @@ SkWinApp::SkWinApp()
 	cntKeybIn = 0;
 	curKeybIn = 0;
 
-	fMouseProvider = NULL;
+	fVRAMProvider = NULL;		// external provider
+	fMouseProvider = NULL;		// external provider
 	iCallbackMouseX = 0;
 	iCallbackMouseY = 0;
 	iCallbackMouseButton = 0;
@@ -454,6 +455,9 @@ UINT SkWinApp::resetVideoMode()
 
 UINT SkWinApp::renderScreen(i16 x, i16 y, i16 cx, i16 cy)
 {
+	// Actually ignore the screen pos and render the full screen
+	if (fVRAMProvider != NULL && xVRAM != NULL)
+		fVRAMProvider(xExternalController, xVRAM->GET_VIDEO_ARRAY_RGB());
 
 	if (xSkWinRenderer != NULL)
 		xSkWinRenderer->Render();
@@ -693,6 +697,7 @@ CSkKinput* SkWinApp::DequeueKinput()
 		pKInput = &xKeybInput[curKeybIn];
 		curKeybIn = (curKeybIn +1) % MAXKEYBIN;
 		cntKeybIn--;
+		printf("Dequeue: %04X\n", *pKInput);
 	}
 	return pKInput;
 }
@@ -703,6 +708,15 @@ void SkWinApp::RegisterMouseProvider(void* xGameController, MouseProviderFunc fu
 	xExternalController = xGameController;
     fMouseProvider = func;
 }
+
+void SkWinApp::RegisterRGBVRAMProvider(void* xGameController, RGBVRAMProviderFunc func)
+{
+	xExternalController = xGameController;
+    fVRAMProvider = func;
+	if (xVRAM != NULL)
+		xVRAM->bUseVRAMRGB = true;
+}
+
 
 void SkWinApp::GetMousePosButtons(U16 *x, U16 *y, U16 *buttons) 
 {
@@ -951,6 +965,12 @@ void SkWinApp::processKinput(U32 nChar, bool press)
 		}
 		p->raw = (press) ? (v) : (v | 0x80);
 	}
+
+#else	// NO_DSL
+	U8 v = 0x002D; // 'x'
+	CSkKinput *p = allocKinput();
+	if (p != NULL)
+		p->raw = (press) ? (v) : (v | 0x80);
 
 #endif
 }

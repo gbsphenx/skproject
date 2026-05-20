@@ -172,13 +172,24 @@ UINT SkRendererSDL::ConvertVRAMToRGB()
 	if (xVRAM != NULL) {
 		xVRAMData = xVRAM->GET_VIDEO_ARRAY();
 		SetVGAPaletteRGB(xVRAM->GET_PALETTE());
+
+		for (UINT i = 0; i < iScreenWidth * iScreenHeight; i++) {
+			SDL_Color c = sdlPalette[xVRAMData[i]];
+
+			xRGBBuffer[i] = (c.r << 24) | (c.g << 16) | (c.b << 8) | c.a;
+		}
 	}
-
-    for (UINT i = 0; i < iScreenWidth * iScreenHeight; i++) {
-        SDL_Color c = sdlPalette[xVRAMData[i]];
-
-		xRGBBuffer[i] = (c.r << 24) | (c.g << 16) | (c.b << 8) | c.a;
-    }
+	if (xVRAM != NULL && xVRAM->bUseVRAMRGB) {
+		UINT z = 0;
+		xVRAMData = xVRAM->GET_VIDEO_ARRAY_RGB();
+		//xVRAMData = xVRAM->GET_VIDEO_ARRAY();
+		///printf("Uses RGB-VRAM! read from %08X\n", xVRAMData);
+		for (UINT i = 0; i < iScreenWidth * iScreenHeight; i++)
+		{
+			xRGBBuffer[i] = (xVRAMData[z] << 24) | (xVRAMData[z+1] << 16) | (xVRAMData[z+2] << 8) | 0x00;
+			z += 3;
+		}
+	}
 	SDL_UpdateTexture(sdlTexture, NULL, xRGBBuffer, iScreenWidth * sizeof(uint32_t));
 
 #endif // not __NO_SDL__

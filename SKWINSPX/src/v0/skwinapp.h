@@ -32,6 +32,7 @@ typedef enum {
 class SkVRAM;
 
 typedef void (*MouseProviderFunc)(void* xContext, U16* x, U16* y, U16* buttons);
+typedef void (*RGBVRAMProviderFunc)(void* xContext, X8* xBuffer);
 
 //------------------------------------------------------------------------------
 
@@ -47,7 +48,8 @@ private:
 	SkVRAM*	xVRAM;
 
 	void*				xExternalController;
-	MouseProviderFunc fMouseProvider;
+	MouseProviderFunc	fMouseProvider;
+	RGBVRAMProviderFunc	fVRAMProvider;
 
 public:
 
@@ -132,6 +134,7 @@ public:
 	bool skwin_ML();
 //--- special external mouse provider
 	void RegisterMouseProvider(void* xGameController, MouseProviderFunc func);
+	void RegisterRGBVRAMProvider(void* xGameController, RGBVRAMProviderFunc func);
 
 //------------------------------------------------------------------------------
 // CSkWin part for Minput / Kinput

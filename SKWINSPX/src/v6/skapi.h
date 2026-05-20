@@ -27,7 +27,7 @@ extern "C" {
 
 typedef struct
 {
-	SkWinCore* xSkCore;
+	SkWinCore*	xSkCore;
 	void*		xController;	// external game controller
 } tSKWinContext;
 
@@ -41,6 +41,7 @@ SK_API int SK_SendUIEvent(tSKWinContext* xSKWinContext, UINT iUIEventCode);
 SK_API int SK_SetMousePointer(tSKWinContext* xSKWinContext, UINT iXPos, UINT iYPos);
 
 SK_API void SK_RegisterMouseProvider(tSKWinContext* xSKWinContext, MouseProviderFunc func);
+SK_API void SK_RegisterVRAMProvider(tSKWinContext* xSKWinContext, RGBVRAMProviderFunc func);
 //
 
 

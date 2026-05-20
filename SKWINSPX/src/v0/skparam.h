@@ -65,6 +65,8 @@ public:
 	static bool bUseSuperInfoEye;
 	static bool bShowLuck;
 
+	static bool bDisplayNoMouse;
+
 	static bool bMIDIMusicEnabled;
 	static bool bWAVMusicEnabled;
 	static bool bUseExtendedSound;

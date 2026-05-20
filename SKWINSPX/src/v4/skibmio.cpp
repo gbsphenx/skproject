@@ -556,8 +556,8 @@ U16 SkWinCore::_01b0_0e2c()
 	ENTER(0);
 	//^01B0:0E2C
 	outportb(0x43,0x80);
-	U8 al = SK_UI_IMPORTB(0x42);
-	U8 ah = SK_UI_IMPORTB(0x42);
+	U8 al = SK_UI_IMPORTB(0x42);	// always return 0 ?
+	U8 ah = SK_UI_IMPORTB(0x42);	// always return 0 ?
 	return (ah<<8)|al;
 	//^01B0:0E43
 }

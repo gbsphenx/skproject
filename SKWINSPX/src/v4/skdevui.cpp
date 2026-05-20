@@ -11,7 +11,7 @@
 
 #include <skcore.h>
 #include <skdebug.h>
-
+#include <skparam.h>
 
 //^1031:0B7E
 // _1031_0b7e renamed _1031_0b7e_MOUSE
@@ -172,6 +172,9 @@ void SkWinCore::IBMIO_BLIT_MOUSE_CURSOR(Bit8u *buff, SRECT *rc, Bit16u srcx, Bit
 	LOADDS(0x0c48)
 	if (glbMouseCursorVisible != 0)
 		return;
+	if (SkCodeParam::bDisplayNoMouse == true)
+		return;
+
 	_04bf_09e0.x = rc->x;
 	_04bf_09e0.y = rc->y;
 	_04bf_09e8.x = _04bf_09e8.y = 0;
