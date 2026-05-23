@@ -137,6 +137,11 @@ int SKWIN_START_MAIN(int iEngine, int argc, char **argv)
 #if defined(SK9821V4) || defined (SKWINSPX)
 		SkWinCore skApp;
 		skApp.skWinApp = skWinApplication;
+		/*skApp.skWinApp->pMouseButtons = &(skApp.cd.mk.mice_btn);
+		skApp.skWinApp->pMouseX = &(skApp.cd.mk.mice_x);
+		skApp.skWinApp->pMouseY = &(skApp.cd.mk.mice_y);
+		skApp.skWinApp->fCoreMouseCallback = &SkWinCore::IBMIO_MOUSE_HANDLER;
+		skApp.skWinApp->xCore = &skApp;*/
 #endif // SK9821V4
 		skWinApplication->setVideoMode();
 		skWinApplication->StartMessage();
@@ -206,6 +211,11 @@ int SKWIN_START_MAIN_HEADLESS(tSKWinContext* xSKWinContext, int iEngine, int arg
 //		SkWinCore skApp;
 //		skApp.skWinApp = skWinApplication;
 		xSKWinContext->xSkCore->skWinApp = skWinApplication;
+		skWinApplication->pMouseButtons = &(xSKWinContext->xSkCore->cd.mk.mice_btn);
+		skWinApplication->pMouseX = &(xSKWinContext->xSkCore->cd.mk.mice_x);
+		skWinApplication->pMouseY = &(xSKWinContext->xSkCore->cd.mk.mice_y);
+		skWinApplication->fCoreMouseCallback = &SkWinCore::IBMIO_MOUSE_HANDLER;
+		skWinApplication->xCore = xSKWinContext->xSkCore;
 
 		skWinApplication->setVideoMode();
 		skWinApplication->StartMessage();
@@ -223,29 +233,41 @@ int SKWIN_START_MAIN_HEADLESS(tSKWinContext* xSKWinContext, int iEngine, int arg
 SK_API int SK_MainFromCommandLine(const char* sCommandLine)
 {
 	int iResult = 0;
-	//char* argv[] = {"-sdl", "-en", "-data", "DATA-DM2", "-gdat", "DATA-DM2\\DM2V52PC\\G2SKV52C.DAT", "-dungeon", "DATA-DM2\\DM2V52PC\\DNGSK52D.DAT"};
-	char* argv[] = {"-sdl", "-en", "-data", "DATA", "-new"};
-	int argc = 5;
+	static char sCommandBuffer[1024];
+	static char* argv[64];
+	int argc = 0;
+	
+	memset(sCommandBuffer, 0, 1024);
+	strncpy(sCommandBuffer, sCommandLine, 1024);
+
+    char* sToken = strtok(sCommandBuffer, " ");
+    while (sToken != NULL && argc < 64)
+    {
+        argv[argc++] = sToken;
+        sToken = strtok(NULL, " ");
+    }
 
     return SKWIN_START_MAIN(__SK_ENGINE_V4_, argc, argv);
-//	return iResult;
 }
 
 SK_API int SK_MainStartHeadless(tSKWinContext* xSKWinContext, const char* sCommandLine)
 {
 	int iResult = 0;
-	int argc = 6;
-	char* argv[] = {"-sdl", "-en", "-data", "DATA", "-new"}; argc = 5;
-	argc = 5;
-	//char* argv[] = {"-en", "-data", "DATA", "-new"}; argc = 4;
-	//char* argv[] = {"-audio", "-en", "-data", "DATA", "-new"}; argc = 5;
-	//char* argv[] = {"-sdl", "-en", "-data", "DATA-DM2", "-new", "-gdat", "DATA-DM2\\DM2V52PC\\G2SKV52C.DAT", "-dungeon", "DATA-DM2\\DM2V52PC\\DNGSK52D.DAT"};
-	//char* argv[] = {"-sdl", "-en", "-data", "DATA-DM2", "-new", "-gdat", "DATA-DM2\\COMMON\\G2SKV42X.DAT", "-dungeon", "DATA-DM2\\DM2V52PC\\DNGSK52D.DAT"}; argc = 9;
-	//char* argv[] = {"-audio", "-en", "-data", "DATA-DM2", "-new", "-gdat", "DATA-DM2\\COMMON\\G2SKV42X.DAT", "-dungeon", "DATA-DM2\\DM2V52PC\\DNGSK52D.DAT"}; argc = 9;
-	//char* argv[] = {"-en", "-data", "DATA-DM2", "-new", "-gdat", "DATA-DM2\\COMMON\\G2SKV42X.DAT", "-dungeon", "DATA-DM2\\DM2V52PC\\DNGSK52D.DAT"}; argc = 8;
-	//argc = 9;
+	static char sCommandBuffer[1024];
+	static char* argv[64];
+	int argc = 0;
+	
+	memset(sCommandBuffer, 0, 1024);
+	strncpy(sCommandBuffer, sCommandLine, 1024);
+
+    char* sToken = strtok(sCommandBuffer, " ");
+    while (sToken != NULL && argc < 64)
+    {
+        argv[argc++] = sToken;
+        sToken = strtok(NULL, " ");
+    }
+
     return SKWIN_START_MAIN_HEADLESS(xSKWinContext, __SK_ENGINE_V4_, argc, argv);
-//	return iResult;
 }
 
 
@@ -279,6 +301,11 @@ SK_API void SK_RegisterMouseProvider(tSKWinContext* xSKWinContext, MouseProvider
 SK_API void SK_RegisterVRAMProvider(tSKWinContext* xSKWinContext, RGBVRAMProviderFunc func)
 {
     xSKWinContext->xSkCore->skWinApp->RegisterRGBVRAMProvider(xSKWinContext->xController, func);
+}
+
+SK_API void SK_ForceRenderScreen(tSKWinContext* xSKWinContext)
+{
+	xSKWinContext->xSkCore->SKExt_FORCE_RENDER_SCREEN();
 }
 
 //==============================================================================
