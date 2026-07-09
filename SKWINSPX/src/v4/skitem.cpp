@@ -32,7 +32,7 @@ U16 SkWinCore::IS_ITEM_FIT_FOR_EQUIP(ObjectID recordLink, i16 inventorySlot, U16
 		return 0;
 	}
 	if (iInvSlot < INVENTORY_BACKPACK_1) {	// 0x000D
-		if (iInvSlot > INVENTORY_HAND_LAST) {	// 0x0001
+		if (iInvSlot > C01_INVENTORY_HAND_LAST) {	// 0x0001
 			return iFlagsValue & _4976_49e8_ItemHoldMask[RCJ(INVENTORY_BACKPACK_1,iInvSlot)];	// _4976_49e8[RCJ(13,si)]
 		}
 	}

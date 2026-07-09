@@ -4786,107 +4786,80 @@ void SkWinCore::CREATURE_CCM06()
 //^075F:1C74
 i16 SkWinCore::CREATURE_ATTACKS_PLAYER(Creature *ref, U16 player)
 {
-	//^075F:1C74
 	ENTER(16);
-	//^075F:1C7A
 	Champion *champion;	//*bp04
     if (player >= cd.pi.glbChampionsCount || (champion = &glbChampionSquad[player])->curHP() == 0)
 		return 0;
-	//^075F:1CA3
-	i16 si = 0;
-	X16 bp0e = dunMapLocalHeader->Difficulty() << 1;
+	i16 si = 0;	// si
+	X16 iLocalDifficultyModifier = dunMapLocalHeader->Difficulty() << 1;			// bp0e
 	AIDefinition *AIdef = QUERY_CREATURE_AI_SPEC_FROM_TYPE(ref->CreatureType());	//*bp08
-	X16 bp10 = AIdef->b28;
+	X16 iAIb28 = AIdef->b28;	// bp10
 	ADJUST_SKILLS(player, SKILL_FIGHTER_PARRY, AIdef->w22_8_b());	// 7
 	X16 di;
 	if (glbGlobalSpellEffects.Invisibility != 0 && AIdef->w0_a_a() == 0) {
-		//^075F:1D01
 		di = 0x10;
 	}
 	else if (AIdef->w0_b_b() != 0) {
-		//^075F:1D10
 		di = 0;
 	}
 	else {
-		//^075F:1D14
 		di = glbLightLevel << 1;
 	}
-	//^075F:1D1B
 	X16 bp0c = AIdef->Defense;
-	if (bp10 == 9) {
-		//^075F:1D2D
+	if (iAIb28 == 9) {
 		bp0c = min_value(255, bp0c << 1);
 	}
-	else if (bp10 == 8) {
-		//^075F:1D45
+	else if (iAIb28 == 8) {
 		bp0c = 255;
 	}
-	//^075F:1D4A
 	if (false
 		|| cd.pi.glbIsPlayerSleeping != 0
 		|| bp0c == 255
-		|| ((USE_DEXTERITY_ATTRIBUTE(player) < U16((RAND()&0x1f) +bp0c +bp0e +di -0x10) || RAND02() == 0) && USE_LUCK_ATTRIBUTE(champion, 0x3c) == 0)
+		|| ((USE_DEXTERITY_ATTRIBUTE(player) < U16((RAND()&0x1f) +bp0c + iLocalDifficultyModifier +di -0x10) || RAND02() == 0) && USE_LUCK_ATTRIBUTE(champion, 0x3c) == 0)
 	) {
-		//^075F:1D9D
 		di = RAND();
 		U16 bp0a;
 		if ((di & 0x70) != 0 && (bp0c = AIdef->w26) != 0) {
-			//^075F:1DB7
 			di &= 15;
 			if (di == 0)
 				di = 1;
-			//^075F:1DC4
 			for (bp0a = 0; bp0a < 3 && (bp0c&15) < di; ) {
-				//^075F:1DCB
 				bp0a++;
 				bp0c >>= 4;
-				//^075F:1DD2
 			}
-			//^075F:1DE2
 			bp0a = _4976_00e3[RCJ(5, 1 +bp0a)];
 		}
 		else {
-			//^075F:1DED
 			bp0a = (di&1) +1;
 		}
-		//^075F:1DF6
-		si = AIdef->AttackStrength +min_value(AIdef->AttackStrength, (RAND()&15) +bp0e);
-		if (bp10 != 8) {
-			//^075F:1E26
+		si = AIdef->AttackStrength + min_value(AIdef->AttackStrength, (RAND()&15) + iLocalDifficultyModifier);
+		if (iAIb28 != 8) {
 			si = si -(QUERY_PLAYER_SKILL_LV(player, SKILL_FIGHTER_PARRY, 1) << 1);
 			if (si <= 1) {
-				//^075F:1E44
 				if (RAND01() != 0) {
-					//^075F:1E4D
 					si = 0;
 					goto _1f21;
 				}
 				else {
-					//^075F:1E52
 					si = RAND02() +2;
 				}
 			}
 		}
-		//^075F:1E5B
 		si >>= 1;
 		si = RAND16(si) +RAND02() +si;
 		si = si +RAND16(si);
 		si >>= 2;
 		si = RAND02() +si +1;
 		if (RAND01() != 0) {
-			//^075F:1E94
 			si = si -(RAND16((si >> 1) +1) -1);
 		}
-		//^075F:1EA7
-		si = WOUND_PLAYER(player, si, bp0a, bp10);
+		si = WOUND_PLAYER(player, si, bp0a, iAIb28);
 		if (si != 0) {
-			//^075F:1EBF
 			// SPX: Champion "oof" sound when hit
 			// => it would be possible to have several oof sounds using a random
 			QUEUE_NOISE_GEN2(GDAT_CATEGORY_x16_CHAMPIONS, champion->HeroType(), SOUND_CHAMPION_GETHIT, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 2, 0x69, 0xc8);
 			di = AIdef->PoisonDamage;
 			if (di != 0 && RAND01() != 0 && (di = USE_ABILITY_ATTRIBUTE(champion, abVit, di)) > 0) {
-				//^075F:1F16
 				PROCESS_POISON(player, di);
 			}
 
@@ -4894,7 +4867,6 @@ i16 SkWinCore::CREATURE_ATTACKS_PLAYER(Creature *ref, U16 player)
 			{
 				U16 iPlagueDamage = 0;
 				// Get plague damage from creature if any
-				//iPlagueDamage = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0F_CREATURES, ref->CreatureType(), dtWordValueExt, GDAT_AI_PLAGUE_DAMAGE);
 				iPlagueDamage = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0F_CREATURES, ref->CreatureType(), dtWordValue, GDAT_AI_PLAGUE_DAMAGE);
 				if (iPlagueDamage > 0 && iPlagueDamage < 255)
 					PROCESS_PLAGUE(player, iPlagueDamage);
@@ -4903,12 +4875,10 @@ i16 SkWinCore::CREATURE_ATTACKS_PLAYER(Creature *ref, U16 player)
 #endif
 		}
 	}
-	//^075F:1F21
 _1f21:
 	// SPX: damage(?) is done to champions so that they are forced to wake
 	if (cd.pi.glbIsPlayerSleeping != 0)
 		RESUME_FROM_WAKE();
-	//^075F:1F2D
 	return si;
 }
 //^1C9A:166F

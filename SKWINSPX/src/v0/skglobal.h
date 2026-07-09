@@ -292,7 +292,7 @@ extern const U16 _4976_46f4_tblGfxSet[6];	// _4976_46f4
 extern const U16 _4976_4700_tblGfxSet[6]; // _4976_4700
 extern const U16 _4976_470c_tblGfxSet[6]; // _4976_470c
 extern const U16 _4976_4718_tblGfxSet[6]; // _4976_4718
-extern const X8 * const _4976_4760;
+extern const X8 * const glbConstStringTxtSpace;	// _4976_4760
 extern const U8 _4976_4a04[4];
 extern const U16 tblAIStats01[42];			// _4976_3752 renamed tblAIStats01
 extern const i8 glbTabYAxisDistance[23];	// (_4976_412d) y-axis distance (viewport)
@@ -376,8 +376,8 @@ extern X16 _4976_4282[16]; //Rr
 extern U8 tlbGraphicsFlip[16]; //Rr
 extern X8 tlbGraphicsPitHidden[16]; //Rr
 extern X8 tlbGraphicsPitNormal[16]; //Rr
-extern X16 _4976_42d2[16]; //Rr
-extern X8 _4976_42f2[23][4]; //Rr
+extern X16 tblGraphicsTeleporterWords[16]; //Rr
+extern X8 tblGraphicsTeleporterBytes4[23][4]; //Rr
 extern i8 _4976_436c[4][5]; //Rr
 extern U8 _4976_4380[4][2]; //Rr
 extern i8 _4976_4388[4][4]; //Rr
@@ -467,12 +467,12 @@ extern U8	_4976_3df9[7]; //Rr
 extern U8	_4976_4980[4]; //Rp
 extern U8	_4976_4984[4]; //Rp
 extern sk38f4	_4976_38f4[12]; //Rr
-extern U8	_089c_00e3[256]; //Rp
+extern U8	tblASCIIFlags[256]; //Rp
 //}}SKVAL1
 
-extern const X8 * const _4976_498e;
-extern const X8 * const _4976_4992;
-extern const X8 * const _4976_4756;
+extern const X8 * const _4976_498e;	// _4976_498e
+extern const X8 * const _4976_4992;	// _4976_4992
+extern const X8 * const glbConstCharTxtSpace;	// _4976_4756
 
 
 

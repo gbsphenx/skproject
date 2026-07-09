@@ -118,9 +118,8 @@ void SkWinCore::PROCEED_GLOBAL_EFFECT_TIMERS()
 					}
 					break;
 				}
-			case ttyPoison:	// x4B
+			case C75_tty_PoisonChampion:	// x4B
 				{
-					//^2066:2BC1
 					glbChampionSquad[si].PoisonValue++;
 					break;
 				}
@@ -3033,7 +3032,7 @@ void SkWinCore::PROCEED_TIMERS()
 				PROCESS_CLOUD(xCurrentTimer);
 				break;
 
-			case ttyDoorDestroy://^3B32
+			case C02_tty_DoorDestroy://^3B32
 				PROCESS_TIMER_DESTROY_DOOR(xCurrentTimer);
 				break;
 
@@ -3097,7 +3096,7 @@ void SkWinCore::PROCEED_TIMERS()
 				glbGlobalSpellEffects.SeeThruWalls = glbGlobalSpellEffects.SeeThruWalls -1;
 				break;
 #endif
-			case ttyPoison://^3CA1	(0x4B / 75)
+			case C75_tty_PoisonChampion://^3CA1	(0x4B / 75)
 				glbChampionSquad[iEventActor = timer.actor].PoisonValue--;
 				PROCESS_POISON(iEventActor, timer.value);
 				break;

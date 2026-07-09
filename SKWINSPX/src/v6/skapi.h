@@ -3,7 +3,8 @@
 
 //------------------------------------------------------------------------------
 
-#include <skcore.h>
+//#include <skcore.h>
+class SkWinCore;
 
 #ifdef __cplusplus
 extern "C" {

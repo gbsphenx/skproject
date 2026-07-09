@@ -45,6 +45,9 @@ SkVRAM::SkVRAM()
 	VRAMRGB = (X8*) calloc (VRAM_SCREEN_WIDTH * VRAM_SCREEN_HEIGHT * 4, sizeof(X8));
 	bUseVRAMRGB = false;
 
+	VRAM_SVGA = (X8*) calloc (640 * 480 * 4, sizeof(X8));
+	bUseVRAMSVGA = false;
+
 	INIT_VGA_PALETTE();
 }
 
@@ -53,6 +56,7 @@ SkVRAM::~SkVRAM()
 	free(VRAM);
 	free(xVGAPalette);
 	free(VRAMRGB);
+	free(VRAM_SVGA);
 }
 
 X8* SkVRAM::GET_VIDEO_ARRAY()
@@ -67,7 +71,25 @@ X8* SkVRAM::GET_PALETTE()
 
 X8* SkVRAM::GET_VIDEO_ARRAY_RGB()
 {
+	if (bUseVRAMSVGA)
+		return VRAM_SVGA;
 	return VRAMRGB;
+}
+
+//------------------------------------------------------------------------------
+
+UINT SkVRAM::GET_VRAM_WIDTH()
+{
+	if (bUseVRAMSVGA)
+		return 640;
+	return VRAM_SCREEN_WIDTH; 
+}
+
+UINT SkVRAM::GET_VRAM_HEIGHT()
+{ 
+	if (bUseVRAMSVGA)
+		return 480;
+	return VRAM_SCREEN_HEIGHT; 
 }
 
 //------------------------------------------------------------------------------

@@ -23,6 +23,49 @@ using namespace kkBitBlt;
     #define strncasecmp _strnicmp
 #endif // _WIN32
 
+#ifdef __DJGPP__
+#include <strings.h>
+#include <time.h>
+#include <stdlib.h>
+
+#undef inportb
+#undef outportb
+#include <dos.h>
+
+#ifndef _stricmp
+#define _stricmp strcasecmp
+#endif // _stricmp
+
+#ifndef _exit
+#define _exit exit
+#endif // _exit
+
+#define min(A,B) ((A < B) ? A : B)
+#define max(A,B) ((A < B) ? B : A)
+
+#endif // __DJGPP__
+
+
+#if defined(__MINGW__) || defined(__LINUX__)
+#include <strings.h>
+#include <time.h>
+#include <stdlib.h>
+#undef inportb
+#undef outportb
+#define outportb(PORT,VAL)
+#define inportb(PORT,VAL)
+#ifndef _stricmp
+#define _stricmp strcasecmp
+#endif // _stricmp
+
+#ifndef _exit
+#define _exit exit
+#endif // _exit
+
+#define min(A,B) ((A < B) ? A : B)
+#define max(A,B) ((A < B) ? B : A)
+
+#endif // __MINGW__ / __LINUX__
 
 //------------------------------------------------------------------------------
 // FIRE - LEVEL
@@ -41,6 +84,18 @@ int SkWinCore::FIRE_BOOTSTRAP() //#DS=089C
 	return (FIRE_MAIN(3, argv, NULL));
 }
 
+//^069A:035B
+X16 SkWinCore::_069a_035b(X16 xx)
+{
+	ENTER(0);
+	if (xx == 0xffff)
+		return 0xffff;
+	if ((_4976_00e3[RCJ(5, U8(xx))] & 8) != 0)
+		return U8(xx) - 32;
+	return U8(xx);
+}
+
+
 //^13AE:02A3
 // SPX: _13ae_02a3 renamed FIRE_MAIN
 i16 SkWinCore::FIRE_MAIN(i16 argc, const char **argv, char **env) //#DS=4976
@@ -58,10 +113,10 @@ i16 SkWinCore::FIRE_MAIN(i16 argc, const char **argv, char **env) //#DS=4976
 				if (_069a_035b(argv[si][2]) == 'L') {
 					switch (_069a_035b(argv[si][3])) {
 						case 'C': //^_0323
-							_4976_4806 = 0x60;
+							glbFireUnknownGLCK = 0x60;
 							break;
 						case 'K': //^_032a
-							_4976_4806 = 0x50;
+							glbFireUnknownGLCK = 0x50;
 							break;
 					}
 				}
@@ -69,23 +124,23 @@ i16 SkWinCore::FIRE_MAIN(i16 argc, const char **argv, char **env) //#DS=4976
 		}
 	}
 	if (_sk_setjmp(_4976_4de0) == 0) {
-	    _4726_03b2();
-		_38c8_04aa();
+	    FIRE_INIT();
+		INIT();	// _38c8_04aa
 		while (true) {
 			GAME_LOOP();
-			END_GAME(glbPlayerDefeated);
+			END_GAME(cd.pi.glbPlayerDefeated);
 		}
 	}
 #endif
-    _4726_03b2();	// _4726_03b2
+    FIRE_INIT();	// _4726_03b2
 	rc = INIT();	// _38c8_04aa
 	if (rc != 0)
 		return -1;
 
-	// SPX: Add some more init here, just before starting the GAME_LOOP
-
-	EXTENDED_LOAD_SPELLS_DEFINITION();	// TODO => put somewhere else ?
-	EXTENDED_LOAD_DM1_ITEM_CONVERSION_LIST();		// TODO => put somewhere else ?
+	if (SkCodeParam::bSpecialModeInspect) {
+		INSPECT();
+		return 0;
+	}
 
 	while (true) {
 		GAME_LOOP();
@@ -93,6 +148,131 @@ i16 SkWinCore::FIRE_MAIN(i16 argc, const char **argv, char **env) //#DS=4976
 	}
 	return 0;
 }
+
+//------------------------------------------------------------------------------
+
+//^069A:0406
+/*
+X16 SkWinCore::_sk_setjmp(jmp_buf xx)
+{
+	return setjmp(xx);
+}
+*/
+
+//^01B0:20EF
+// TODO: random seed ?
+i16 SkWinCore::_01b0_20ef()
+{
+	// Query random seed?
+	// AH=sec.
+	// AL=milli sec.
+
+	time_t t;
+	t = time(&t);
+	return U8(localtime(&t)->tm_sec) << 8;
+}
+
+//^069A:038D
+void (SkWinCore::*SkWinCore::_crt_getvect(U16 interruptno))() {
+#if UseAltic
+	return _sys_getvect(interruptno);
+#else
+#error	Unc
+#endif
+}
+
+
+
+//^01B0:2B1B
+// TODO : that one does nothing ?!
+// SPX: _01b0_2b1b renamed _01b0_2b1b
+int SkWinCore::IBMIO_AUDIO_ZERO()
+{
+	ENTER(0);
+	return 0;
+}
+
+//^01B0:0E80
+// SPX: _01b0_0e80 replaced by SET_FUNC_TICK_STEP
+X16 SkWinCore::SET_FUNC_TICK_STEP(void (SkWinCore::*pfn)()) //#DS=04BF
+{
+	ENTER(0);
+	LOADDS(0x3083);
+	glbFncTickStep = pfn;
+	glbTickStepActive = 1;
+
+	printf("SET_FUNC_TICK_STEP\n");
+	SkD((DLV_DBG_TICK, "Tick step value = %03d\n", 1));
+	return 1;
+}
+
+//^4726:03B2
+// TODO: related to some init ?
+// SPX: _4726_03b2 renamed FIRE_INIT
+void SkWinCore::FIRE_INIT()	// _4726_03b2
+{
+	printf("FIRE_INIT\n");
+	ENTER(0);
+#if UseAltic
+	_4976_5e90 = _4976_5e98 = _4976_5e88 = _4976_5e8c = 0;
+#else
+	_4976_5e90 = _crt_getvect(0xFE);
+	_4976_5e98 = _4976_5e90;
+	_4976_5e88 = _crt_getvect(0xFF);
+	_4976_5e8c = _4976_5e88;
+#endif
+	glbRandomSeed = _01b0_20ef() CALL_IBMIO * 0x7AE3;
+#if UseAltic
+	glbRandomSeed = 12345;
+#endif
+	_00eb_0bc4();
+	IBMIO_SELECT_PALETTE_SET(0);
+	IBMIO_AUDIO_ZERO();
+	glbTickStepValue = SET_FUNC_TICK_STEP(&SkWinCore::TICK_STEP_CHECK);
+	return;
+}
+
+//^069A:0309
+U32 SkWinCore::_crt_farcoreleft() { // TODO: Unr
+	Unr(); return 0;
+}
+
+//^069A:0387
+U32 SkWinCore::_crt_coreleft() { // TODO: Unr
+	Unr(); return 0;
+}
+
+//^069A:0470
+i16 SkWinCore::_crt_setblock(U16 segx, U16 newsize) { // TODO: Unr
+	Unr(); return 0;
+}
+
+//^069A:01DD
+U16 SkWinCore::_crt_normalize(U8 *cp) { // TODO: Unr
+	Unr(); return 0;
+}
+
+//^069A:029C
+U8 *SkWinCore::_crt_brk(U32 addr) { // TODO: Unr
+	Unr(); return NULL;
+}
+
+//^069A:0607
+U8 *SkWinCore::_crt_CreateHeap(U16 ax) { // TODO: Unr
+	Unr(); return NULL;
+}
+
+//^069A:06CE
+U8 *SkWinCore::_crt_farmalloc(U32 size) { // TODO: Unr
+	Unr(); return NULL;
+}
+
+
+
+
+
+
+
 
 //------------------------------------------------------------------------------
 // IBMIO - LEVEL
@@ -168,7 +348,9 @@ void SkWinCore::IBMIO_PRINT_ERROR(const U8 *str) //#DS=04BF
 	return;
 #endif
 }
-void SkWinCore::_0088_020b(X16 xx) { // TODO: Unr
+
+// SPX: _0088_020b renamed IBMIO_EXIT_BAD_CPU
+void SkWinCore::IBMIO_EXIT_BAD_CPU(X16 xx) { // TODO: Unr
 	Unr();
 }
 
@@ -251,7 +433,7 @@ void SkWinCore::INIT_KBOARD_HOOK() //#DS=04BF
 	_04bf_1862 = 0;
 	_01b0_0453 = _sys_getvect(0x09);
 	_sys_setvect(0x09, &SkWinCore::IBMIO_KBOARD_HANDLER);
-	_04bf_02bc = 1;
+	cd.dos.glbKeyboardHook = 1;
 	return;
 #else
 #error	Unr
@@ -893,10 +1075,9 @@ void SkWinCore::IBMIO_UNINIT_TIMER()
 void SkWinCore::IBMIO_UNINIT_MOUSE()
 {
 	ENTER(0);
-	if (_04bf_03d4 != 0) {
-		//^01B0:0A45
-		_04bf_03d4 = 0;
-		_04bf_03c6 = 0;
+	if (cd.dos.glbMouseHandlerSet != 0) {
+		cd.dos.glbMouseHandlerSet = 0;
+		cd.dos.glbMouseEventReceiverSet = 0;
 		_int33_mouse_callback = _01b0_092d_MOUSE_CALLBACK;
 	}
 	return;
@@ -905,8 +1086,8 @@ void SkWinCore::IBMIO_UNINIT_MOUSE()
 void SkWinCore::IBMIO_UNINIT_KBOARD_HOOK()
 {
 	ENTER(0);
-	if (_04bf_02bc != 0) {
-		_04bf_02bc = 0;
+	if (cd.dos.glbKeyboardHook != 0) {
+		cd.dos.glbKeyboardHook = 0;
 		_sys_setvect(0x09, _01b0_0453);
 	}
 	return;
@@ -919,13 +1100,13 @@ i16 SkWinCore::IBMIO_UNINIT_VID()
 }
 
 
-UINT SkWinCore::SK_IBMIO_INIT()
+UINT SkWinCore::SKLIB_IBMIO_INIT()
 {
 	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_YELLOW, BLACK);
 	printf("SK IBMIO INIT\n");
 	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
 
-	_04bf_17aa = IBMIO_CHECK_CPU_ERA();
+	cd.dos.glbCPUClass = IBMIO_CHECK_CPU_ERA();
 
 	IBMIO_INIT_VID();
 	_crt88_setvect(0xFE, &SkWinCore::_04bf_0102);
@@ -942,12 +1123,12 @@ UINT SkWinCore::SK_IBMIO_INIT()
 		}
 	}
 	INIT_KBOARD_HOOK();
-	_01b0_08d8();
+	IBMIO_01b0_08d8();
 	if (glbPType == 4 && bp08 != 0)
 		IBMIO_SET_MOUSE_HANDLER();
 	IBMIO_INIT_TIMER();
 	_01b0_18d3_AUDIO(0);
-	_4726_03b2();
+	FIRE_INIT();
 	return 0;
 }
 
@@ -959,10 +1140,10 @@ i16 SkWinCore::IBMIO_MAIN(i16 argc, const char **argv, char **env) //#DS=04BF
 	SkD((DLV_DBG_DOS, "IBMIO_MAIN\n"));
 	ENTER(172);
 	U8 bp5c[80] = {0};
-	_04bf_17aa = IBMIO_CHECK_CPU_ERA();
-	if (_04bf_17aa < 286) {
+	cd.dos.glbCPUClass = IBMIO_CHECK_CPU_ERA();
+	if (cd.dos.glbCPUClass < 286) {
 		IBMIO_PRINT_ERROR(strPC286Required);
-		_0088_020b(0);
+		IBMIO_EXIT_BAD_CPU(0);
 	}
 	i16 si;
 	for (si = 1; si < argc; si++) {
@@ -1089,7 +1270,7 @@ _2e85:
 	}
 	do {
 		INIT_KBOARD_HOOK();
-		_01b0_08d8();
+		IBMIO_01b0_08d8();
 		if (glbPType == 4 && bp08 != 0)
 			IBMIO_SET_MOUSE_HANDLER();
 		IBMIO_INIT_TIMER();
@@ -1113,7 +1294,7 @@ _2e85:
 		}
 		_01b0_18d3_AUDIO(0);
 		if (cd.sc.glbSoundCardType == 5) {
-			outportb(glbSoundBlasterBasePort +2, inportb(glbSoundBlasterBasePort +2) | 8);
+			outportb(cd.sc.glbSoundBlasterBasePort +2, inportb(cd.sc.glbSoundBlasterBasePort +2) | 8);
 		}
 		IBMIO_UNINIT_TIMER();
 		if (glbPType == 4 && bp08 != 0)
@@ -1166,7 +1347,7 @@ void SkWinCore::IBMIO_BLIT_TO_SCREEN_8TO8BPP(
 	//^00EB:0254
 	ENTER(6);
 	//^00EB:025A
-	_04bf_0cf0 = reinterpret_cast<U8 *>(src);
+	glbBlitBufferSource = reinterpret_cast<U8 *>(src);
 	_04bf_0e34 = reinterpret_cast<U8 *>(dst);
 	X16 bp04 = prc->cx;
 	X16 bp02 = prc->cy;
@@ -1230,9 +1411,9 @@ void SkWinCore::FIRE_BLIT_PICTURE(
 		, (Bitu)rc->x, (Bitu)rc->y, (Bitu)rc->cx, (Bitu)rc->cy, (Bitu)srcx, (Bitu)srcy
 		, (Bitu)srcPitch, (Bitu)dstPitch, (Bitu)colorkey, (Bitu)mirrorFlip, (Bitu)srcBpp, (Bitu)dstBpp, localPal));
 #if UseAltic
-	ATLASSERT((srcBpp == 4 || srcBpp == 8) && (dstBpp == 4 || dstBpp == 8));
+	ATLASSERT((srcBpp == IMG_4_BPP || srcBpp == IMG_8_BPP) && (dstBpp == IMG_4_BPP || dstBpp == IMG_8_BPP));
 	ATLASSERT(colorkey == -1 || (0 <= colorkey && colorkey <= 255));
-	U16 dstibpp = 8, dsticx = 320, dsticy = 200;
+	U16 dstibpp = IMG_8_BPP, dsticx = 320, dsticy = 200;
 	if (dst != NULL) {
 		dstibpp = READ_I16(dst,-6);
 		dsticx = READ_I16(dst,-4);
@@ -1460,17 +1641,12 @@ void SkWinCore::IBMIO_UPDATE_PALETTE_SET()
 }
 
 //^00EB:0654
-void SkWinCore::IBMIO_SELECT_PALETTE_SET(Bit8u number) //#DS=04BF
+void SkWinCore::IBMIO_SELECT_PALETTE_SET(U8 iPaletteSet) //#DS=04BF
 {
-	//^00EB:0654
-	//^00EB:0659
 	LOADDS(0x0c48);
-	number=1;
-	//^00EB:065E
-	if (number == 0) {
-		//^00EB:0664
+	iPaletteSet=1;
+	if (iPaletteSet == 0) {
 		IBMIO_WAIT_VSYNC();
-		//^00EB:0668
 		//outportb(0x03c8, 0);
 		U16 si = 0;
 		/*
@@ -1481,24 +1657,18 @@ void SkWinCore::IBMIO_SELECT_PALETTE_SET(Bit8u number) //#DS=04BF
 			outportb(0x03c9, (si%16)>>3);
 			//^00EB:067C
 		}*/
-		//^00EB:0683
 	}
-	//^00EB:0686
-	else if (number == 1) {
-		//^00EB:068C
+	else if (iPaletteSet == 1) {
 		IBMIO_UPDATE_PALETTE_SET();
 	}
-	//^00EB:0690
-	glbUpdatePalette = number;
-	//^00EB:0696
+	glbUpdatePalette = iPaletteSet;
 	return;
 }
 
 //^44C8:1BD4
-void SkWinCore::FIRE_SELECT_PALETTE_SET(Bit8u number)
+void SkWinCore::FIRE_SELECT_PALETTE_SET(U8 iPaletteSet)
 {
-	//^44C8:1BD4
-	IBMIO_SELECT_PALETTE_SET(number) CALL_IBMIO;
+	IBMIO_SELECT_PALETTE_SET(iPaletteSet) CALL_IBMIO;
 }
 
 //^00EB:0353
@@ -1684,7 +1854,7 @@ void SkWinCore::FIRE_FILL_RECT_ANY(Bit8u *buff, SRECT* rc, U16 fill, U16 width, 
 	if (buff == NULL) {
 		IBMIO_FILL_RECT_SCREEN(rc, si) CALL_IBMIO;
 	}
-	else if (bpp == 4) {
+	else if (bpp == IMG_4_BPP) {
 		FIRE_FILL_RECT_4BPP_PICT(buff, rc, si, width);
 	}
 	else {
@@ -1696,9 +1866,9 @@ void SkWinCore::FIRE_FILL_RECT_ANY(Bit8u *buff, SRECT* rc, U16 fill, U16 width, 
 //^44C8:1DAF
 void SkWinCore::FIRE_FILL_SCREEN_RECT(U16 iRectNo, U8 fill)
 {
-	SRECT bp08; // bp08
-	SRECT *prc = QUERY_EXPANDED_RECT(iRectNo, &bp08);
-	FIRE_FILL_RECT_ANY(NULL, prc, fill, bp08.cx, 8);
+	SRECT xRect; // bp08
+	SRECT* xExpRect = QUERY_EXPANDED_RECT(iRectNo, &xRect);
+	FIRE_FILL_RECT_ANY(NULL, xExpRect, fill, xRect.cx, IMG_8_BPP);
 }
 
 //^0AAF:0000
@@ -1717,18 +1887,15 @@ void SkWinCore::FIRE_FADE_SCREEN(U16 fadeOutIfTrue) //#DS=4976
 }
 
 //^44C8:1D8C
-void SkWinCore::FIRE_FILL_BACKBUFF_RECT(SRECT *rc, Bit8u fill)
+void SkWinCore::FIRE_FILL_BACKBUFF_RECT(SRECT* xRect, Bit8u fill)
 {
-	//^44C8:1D8C
-	//^44C8:1D8F
     FIRE_FILL_RECT_ANY(
 		_4976_4c16,
-		rc,
+		xRect,
 		fill,
 		_4976_00f6,
-		8
+		IMG_8_BPP
 		);
-	//^44C8:1DAD
 	return;
 }
 
@@ -1766,12 +1933,12 @@ void SkWinCore::IBMIO_BLIT_TO_SCREEN_xTO8BPP(
 	Pic8 dp;
 	dp.buff = (U8 *)vram; dp.ox = rc->x; dp.oy = rc->y; dp.pitch = 320; dp.cy = 200; dp.dx = 1; dp.dy = 1;
 
-	if (srcBpp == 8) {
+	if (srcBpp == IMG_8_BPP) {
 		Pic8 sp;
 		sp.buff = (U8 *)src; sp.ox = srcx; sp.oy = srcy; sp.pitch = srcPitch; sp.cy = 0; sp.dx = 1; sp.dy = 1;
 		BlitSvc(sp, dp, rc->cx, rc->cy, colorkey);
 	}
-	else {
+	else {	// IMG_4_BPP
 		Pic4 sp;
 		sp.buff = (U8 *)src; sp.ox = srcx; sp.oy = srcy; sp.cx = srcPitch; sp.pitch = (srcPitch +1) / 2; sp.cy = 0; sp.dx = 1; sp.dy = 1; sp.pal = (U8 *)localPal;
 		BlitSvc(sp, dp, rc->cx, rc->cy, colorkey);
@@ -1882,7 +2049,8 @@ void SkWinCore::VIDEO_MEM_MOVE(SRECT *prc, i16 yy)
 // ANIM - LEVEL
 
 //^0759:08E7
-int SkWinCore::_0759_08e7(i16 argc, const char **argv, char **env) // #DS=089C
+// SPX: _0759_08e7 renamed ANIM_MAIN
+int SkWinCore::ANIM_MAIN(i16 argc, const char **argv, char **env) // #DS=089C
 {
 	//^0759:08E7
 	ENTER(214);
@@ -2098,8 +2266,8 @@ int SkWinCore::_0759_08e7(i16 argc, const char **argv, char **env) // #DS=089C
 		//^0759:0CDB
 		_0759_06b5();
 	//^0759:0CDF
-	_0759_06a1(0);
-	_0759_065f();
+	ANIM_SELECT_PALETTE_SET(0);
+	ANIM_SET_BLACK_SCREEN();
 	X32 bp18 = 0; // anim read offset?
 	X32 bp24 = 0;
 	//^0759:0CFA
@@ -2139,7 +2307,7 @@ int SkWinCore::_0759_08e7(i16 argc, const char **argv, char **env) // #DS=089C
 			//^0759:0E21
 			if (bp28 == 1) {
 				//^0759:0E2C
-				_0759_0792();
+				ANIM_WA_0759_0792();
 			}
 			break;
 		case 0x4453://^0E33 // "SD"
@@ -2181,7 +2349,7 @@ int SkWinCore::_0759_08e7(i16 argc, const char **argv, char **env) // #DS=089C
 				? _0759_0869(_089c_02c0[bp28])
 				: &bp04[_089c_02c0[bp28 -1]];
 			//^0759:0F35
-			_0759_0739(bp3a, bp3e, bp3c);
+			ANIM_SO_0759_0739(bp3a, bp3e, bp3c);
 			if (di != 0) {
 				//^0759:0F4F
 				bp0c = _0759_0869(bp18);
@@ -2200,7 +2368,7 @@ int SkWinCore::_0759_08e7(i16 argc, const char **argv, char **env) // #DS=089C
 				ANIM_DECODE_IMG1(&bp0c[6], bp08);
 			}
 			//^0759:0FD6
-			_0759_06a1(1);
+			ANIM_SELECT_PALETTE_SET(1);
 			bp2a++;
 			while (_089c_0344 > 0 && bp34 == 0) {
 #if UseAltic
@@ -2248,7 +2416,7 @@ int SkWinCore::_0759_08e7(i16 argc, const char **argv, char **env) // #DS=089C
 					//^0759:113C
 				}
 				//^0759:1147
-				_0759_06a1(0);
+				ANIM_SELECT_PALETTE_SET(0);
 				_0759_0688(bp00d6, 0);
 			}
 			break;
@@ -2319,7 +2487,7 @@ _12ce:
 	}
 	if (bp46 == 0) {
 		//^0759:1366
-		_0759_06a1(0);
+		ANIM_SELECT_PALETTE_SET(0);
 	}
 	if (di != 0) {
 		//^0759:1371
@@ -2354,7 +2522,7 @@ int SkWinCore::ANIM_BOOTSTRAP_SWOOSH() // #DS=089C
 	// 08D2:1002  73 68 00 2B 70 6D 00 2B 73 62 00 08 00 00 5A 00  sh.+pm.+sb....Z.
 	// 08D2:1012  00 2B 96 00 00 00 00 00 00 00 00 00 00 00 00 00  .+ÅE............
 	const char *argv[] = {"ANIM", "swoosh", "+pm", "+sb"};
-	return (_0759_08e7(4, argv, NULL));
+	return (ANIM_MAIN(4, argv, NULL));
 }
 
 //^069A:0000
@@ -2366,24 +2534,22 @@ int SkWinCore::ANIM_BOOTSTRAP_TITLE() // #DS=089C
 	// 08D2:0FFC  68 00 2B 61 73 00 2B 61 62 00 2B 70 6D 00 2B 73  h.+as.+ab.+pm.+s
 	// 08D2:100C  62 00 00 00 5A 00 00 2B 96 00 00 00 00 00 00 00  b...Z..+ÅE......
 	const char *argv[] = {"ANIM", "title", "+ah", "+as", "+ab", "+pm", "+sb"};
-	return (_0759_08e7(7, argv, NULL));
+	return (ANIM_MAIN(7, argv, NULL));
 }
 
 
 
 //^069A:035B
-X16 SkWinCore::ANIM_TOUPPER(X16 xx)
+X16 SkWinCore::ANIM_TOUPPER(X16 iChar)
 {
-	//^069A:035B
 	ENTER(0);
-	//^069A:035E
-	i16 dx = xx;
-	if (dx == -1)
+	i16 iLocalChar = iChar;
+	if (iLocalChar == -1)
 		return -1;
-	if ((_089c_00e3[U8(dx)] & 8) != 0)
-		return U8(dx) -32;
-	//^069A:0381
-	return U8(dx);
+	// Note: in tblASCIIFlags, flag 8 = lowercase, flag 4 = uppercase
+	if ((tblASCIIFlags[U8(iLocalChar)] & 8) != 0)	// if it's lowercase
+		return U8(iLocalChar) - 32;		// 'a' - 32 = 'A'
+	return U8(iLocalChar);
 }
 
 
@@ -2395,13 +2561,11 @@ X16 SkWinCore::ANIM_TOUPPER(X16 xx)
 
 
 //^0759:06A1
-void SkWinCore::_0759_06a1(U8 ps)
+// _0759_06a1 renamed ANIM_SELECT_PALETTE_SET
+void SkWinCore::ANIM_SELECT_PALETTE_SET(U8 iPaletteSet)
 {
-	//^0759:06A1
 	ENTER(0);
-	//^0759:06A4
-	IBMIO_SELECT_PALETTE_SET(ps) CALL_IBMIO;
-	//^0759:06B3
+	IBMIO_SELECT_PALETTE_SET(iPaletteSet) CALL_IBMIO;
 	return;
 }
 
@@ -2450,21 +2614,17 @@ void SkWinCore::_0759_0688(skxxxj *xx, U16 yy)
 
 
 //^0759:065F
-void SkWinCore::_0759_065f()
+void SkWinCore::ANIM_SET_BLACK_SCREEN()
 {
-	//^0759:065F
 	ENTER(8);
-	//^0759:0663
-	SRECT bp08 = _089c_00d0;
-	//^0759:0674
-	IBMIO_FILL_RECT_SCREEN(&bp08, 0);
-	//^0759:0686
+	SRECT xScreenRect = glbRectFullScreen;	// rect 0,0,320,200
+	IBMIO_FILL_RECT_SCREEN(&xScreenRect, 0);
 	return;
 }
-void SkWinCore::_0759_0792() {
+void SkWinCore::ANIM_WA_0759_0792() {
 	Unr(); // anim
 }
-void SkWinCore::_0759_0739(U8 *xx, U16 yy, U16 zz) {
+void SkWinCore::ANIM_SO_0759_0739(U8 *xx, U16 yy, U16 zz) {
 	Unr(); // anim
 }
 //^0759:0330
@@ -2550,7 +2710,7 @@ void SkWinCore::ANIM_DECODE_IMG1(U8 *xx, U8 *yy)
 			//^0759:051B
 			if (bp0c < di) {
 				//^0759:0520
-				_0759_0310(bp0c, di -bp0c);
+				IBMIO_BLIT_0759_0310(bp0c, di -bp0c);
 			}
 			//^0759:052F
 			si = ((bp09 >> 2)&16)|(bp09&15);
@@ -2606,7 +2766,7 @@ void SkWinCore::ANIM_DECODE_IMG1(U8 *xx, U8 *yy)
 	//^0759:0637
 	if (bp0c < di) {
 		//^0759:063C
-		_0759_0310(bp0c, di -bp0c);
+		IBMIO_BLIT_0759_0310(bp0c, di -bp0c);
 	}
 	//^0759:064B
 	return;

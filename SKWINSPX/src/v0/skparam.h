@@ -24,6 +24,9 @@ public:
 	static bool bRenderingEngineMFC;				// MFC renderer - Windows only
 	static bool bEngineNoDisplay;
 	static bool bAudioEngineSDL;						// SDL audio
+	static bool bVideoSVGADisplay;
+
+	static bool bSpecialModeInspect;				// Mode: not game, but GDAT inspect
 
 	static UINT bOptionNewGame;
 	static int bOptionResumeSaveGame;	// not UINT else there is trouble to get the resume game screen

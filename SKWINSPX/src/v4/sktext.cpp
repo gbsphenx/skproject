@@ -585,7 +585,7 @@ const Bit8u *SkWinCore::DRAW_MBCS_STR(
 	//^3929:018B
 	Bit8u bp2a[16]; // 2a-1b
 	Bit16u bp0a;
-	if (dstbpp != 4) {
+	if (dstbpp != IMG_4_BPP) {	// IMG_8_BPP
 		//^3929:0191
 		bp2a[ 0] = (Bit8u)clr2;
 		bp2a[15] = (Bit8u)clr1;
@@ -593,7 +593,7 @@ const Bit8u *SkWinCore::DRAW_MBCS_STR(
 		bp0a = ((clr2 & 0x4000) != 0) ? 0 : -1;
 		//^3929:01A6
 	}
-	else {
+	else {	// IMG_4_BPP
 		//^3929:01B1
 		if ((clr2 & 0x4000) != 0) {
 			//^3929:01B8
@@ -639,7 +639,7 @@ const Bit8u *SkWinCore::DRAW_MBCS_STR(
 				//^3929:0295
 				di = (bp04->w2 * bp04->w6);
 				si = (bp04->w4 * bp04->w8);
-				ALLOC_NEW_PICT(bp1a, di, si, 4);
+				ALLOC_NEW_PICT(bp1a, di, si, IMG_4_BPP);
 				//^3929:02BB
 				bp12 = QUERY_GDAT_IMAGE_ENTRY_BUFF(0x1c, *ww, bp0d);
 				//^3929:02D6

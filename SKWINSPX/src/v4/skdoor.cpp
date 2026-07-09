@@ -51,34 +51,34 @@ i16 SkWinCore::QUERY_DOOR_DAMAGE_RESIST(U8 iDoorType)	// cls2
 
 
 //^075F:2205
-U16 SkWinCore::ATTACK_DOOR(i16 x, i16 y, U16 damage, U16 isSpellAttack, U16 delay)
+U16 SkWinCore::ATTACK_DOOR(i16 x, i16 y, U16 iDamage, U16 isSpellAttack, U16 iDestroyDelay)
 {
 	ENTER(18);
-	Door *door = GET_ADDRESS_OF_TILE_RECORD(U8(x), U8(y))->castToDoor();	//*bp04
+	Door* xDoor = GET_ADDRESS_OF_TILE_RECORD(U8(x), U8(y))->castToDoor();	//*bp04
 	// SPX: Disable door controls if "weak door" mode is activated. Controls within are original code
 	if (!SkCodeParam::bWeakDoors) {
-		if (isSpellAttack != 0 && door->DestroyablebyFireball() == 0)
+		if (isSpellAttack != 0 && xDoor->DestroyablebyFireball() == 0)
 			return 0;
-		if (isSpellAttack == 0 && door->BashablebyChopping() == 0)
+		if (isSpellAttack == 0 && xDoor->BashablebyChopping() == 0)
 			return 0;
-		if (QUERY_DOOR_DAMAGE_RESIST(GET_GRAPHICS_FOR_DOOR(door)) <= damage)
+		if (QUERY_DOOR_DAMAGE_RESIST(GET_GRAPHICS_FOR_DOOR(xDoor)) <= iDamage)
 			return 0;
 	} // End of "weak door"	
-	U8 *bp08 = &glbCurrentTileMap[x][y];
-	if ((*bp08 & 7) != _DOOR_STATE_C04_CLOSED)	// ((*bp08 & 7) != 4) not closed
-		return 0;
-	if (delay != 0) {
-		Timer bp12;
-		bp12.SetMap(glbCurrentMapIndex);
-		bp12.SetTick(glbGameTick +delay);
-		bp12.TimerType(ttyDoorDestroy);
-		bp12.actor = TIMER_ACTOR__00;
-		bp12.XcoordB(U8(x));
-		bp12.YcoordB(U8(y));
-		QUEUE_TIMER(&bp12);
+	U8* iTile = &glbCurrentTileMap[x][y];	// bp08
+	if ((*iTile & 7) != _DOOR_STATE_C04_CLOSED)	// ((*bp08 & 7) != 4) not closed
+		return 0;	// won't destroy a door that is open
+	if (iDestroyDelay != 0) {
+		Timer xTimer;	// bp12
+		xTimer.SetMap(glbCurrentMapIndex);
+		xTimer.SetTick(glbGameTick + iDestroyDelay);
+		xTimer.TimerType(C02_tty_DoorDestroy);
+		xTimer.actor = TIMER_ACTOR__00;
+		xTimer.XcoordB(U8(x));
+		xTimer.YcoordB(U8(y));
+		QUEUE_TIMER(&xTimer);
 	}
-	else {
-		*bp08 = (*bp08 & 0xf8) | _DOOR_STATE_C05_DESTROYED; // (*bp08 = (*bp08 & 0xf8) | 5;) Destroyed or bashed
+	else {	// adjust tile with DESTROYED flag
+		*iTile = (*iTile & 0xF8) | _DOOR_STATE_C05_DESTROYED; // (*bp08 = (*bp08 & 0xf8) | 5;) Destroyed or bashed
 	}
 	return 1;
 }

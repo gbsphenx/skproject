@@ -19,6 +19,7 @@ bool SkCodeParam::bRenderingEngineMFC = false;
 bool SkCodeParam::bAudioEngineSDL = false;
 bool SkCodeParam::bEngineNoDisplay = false;
 
+bool SkCodeParam::bSpecialModeInspect = false;
 
 UINT SkCodeParam::bOptionNewGame = 0;
 int SkCodeParam::bOptionResumeSaveGame = -1;
@@ -30,6 +31,7 @@ bool SkCodeParam::bNoMusic = false;
 bool SkCodeParam::bChampionImmune = false;
 
 bool SkCodeParam::bUseAudioSDL = false;
+bool SkCodeParam::bVideoSVGADisplay = false;
 
 bool SkCodeParam::bDM1Mode = false;
 bool SkCodeParam::bGFXFixModeDM1 = false;	// adjust gfx positions for DM1 mode

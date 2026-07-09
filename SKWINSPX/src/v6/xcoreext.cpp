@@ -429,14 +429,14 @@ i16 SkWinCore::CONSUME_ANY_FROM_HAND(i16 iDBItem, i16 iItemID)
 
 	for (iPlayer = 0; iPlayer < 4; iPlayer++) {
 		for (iHand = 0; iHand < 2; iHand++) {
-			rlItem = glbChampionSquad[iPlayer].Possess(INVENTORY_HAND_RIGHT + iHand);
+			rlItem = glbChampionSquad[iPlayer].Possess(C00_INVENTORY_HAND_RIGHT + iHand);
 			if (rlItem != OBJECT_NULL) {
 				if (rlItem.orif.db == iDBItem) {
 					if (iDBItem == DB_CATEGORY_MISC_ITEM) {
 						xMisc = GET_ADDRESS_OF_RECORDA(rlItem);
 						if (xMisc->ItemType() == iItemID) {
 							iFoundAndConsumed = 1;
-							glbChampionSquad[iPlayer].Possess(INVENTORY_HAND_RIGHT + iHand, OBJECT_NULL);
+							glbChampionSquad[iPlayer].Possess(C00_INVENTORY_HAND_RIGHT + iHand, OBJECT_NULL);
 							DEALLOC_RECORD(rlItem);
 							return iFoundAndConsumed;
 						}

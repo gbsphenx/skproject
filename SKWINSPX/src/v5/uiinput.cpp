@@ -957,7 +957,7 @@ static i16 oldmb = -1, oldmx = -1, oldmy = -1;
 			U16 iOldButtonState = 0;
 			glbMouseButtonState = ((mice_btn >> 1) & 1) | ((mice_btn << 1) & 2);
 			iCheckButton = mice_btn ^ iOldButtonState;
-			//if (iCheckButton != 0 /*&& _04bf_03c6 != 0*/) {
+			//if (iCheckButton != 0 /*&& cd.dos.glbMouseEventReceiverSet != 0*/) {
 			if (iCheckButton != 0) {
 				if ((iCheckButton & 1) != 0) { // left click ?
 					iNewEventButtonValue = ((mice_btn & 1) != 0) ? 2 : 4;

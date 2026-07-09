@@ -359,14 +359,11 @@ _148a:
 			case 16:
 				{
 					//^1031:14D6
-					_4976_4bd5 = *glbPtrTransmittedUIEvent; glbPtrTransmittedUIEvent++;
-					_4976_4bd6 = *glbPtrTransmittedUIEvent; glbPtrTransmittedUIEvent++;
-					_4976_4bd4 = *glbPtrTransmittedUIEvent; glbPtrTransmittedUIEvent++;
-					//^1031:1500
-					_0aaf_01db(_4976_4df8, 1);
-					//^1031:150D
+					glbGDATItemCls1Category = *glbPtrTransmittedUIEvent; glbPtrTransmittedUIEvent++;
+					glbGDATItemCls2MainItemId = *glbPtrTransmittedUIEvent; glbPtrTransmittedUIEvent++;
+					glbGDATItemCls4EntryId = *glbPtrTransmittedUIEvent; glbPtrTransmittedUIEvent++;
+					RECT_0aaf_01db(_4976_4df8, 1);
 					bp48.w0 = 0xffff;
-					//^1031:1512
 					_0aaf_002f();
 
 					break;

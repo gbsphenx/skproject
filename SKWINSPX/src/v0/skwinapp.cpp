@@ -116,6 +116,11 @@ SkWinApp::SkWinApp()
 	iCallbackMouseY = 0;
 	iCallbackMouseButton = 0;
 
+	pMouseButtons = NULL;
+	pMouseX = NULL;
+	pMouseY = NULL;
+	fCoreMouseCallback = NULL;
+
 }
 
 SkWinApp::~SkWinApp()
@@ -204,6 +209,10 @@ void SkWinApp::ProcessArgs(int argc, char** argv)
 #endif
 			//SkCodeParam::bEngineNoDisplay = false;
 		}
+		else if (!strcmp(argv[iArgIndex], "-svga")) {	// switch to 640x480
+			printf("Option: video size = SVGA\n");
+			SkCodeParam::bVideoSVGADisplay = true;
+		}
 		else if (!strcmp(argv[iArgIndex], "-headless")) {
 			printf("Option: renderer = none\n");
 			SkCodeParam::bRenderingEngineDOS = false;
@@ -241,6 +250,12 @@ void SkWinApp::ProcessArgs(int argc, char** argv)
 			lang = _GDAT_LANG_ITALIAN_;	// italian
 		}
 
+
+		// Special mode: inspect (debug)
+		else if (!strcmp(argv[iArgIndex], "-inspect")) {
+			printf("Option: special mode INSPECT\n");
+			SkCodeParam::bSpecialModeInspect = true;
+		}
 
 		// specify any graphics.dat filename
 		else if (!strcmp(argv[iArgIndex], "-gdat"))
@@ -296,6 +311,10 @@ void SkWinApp::ProcessArgs(int argc, char** argv)
 		}
 
 		/// Options: specific game modes
+		else if (!strcmp(argv[iArgIndex], "-dm1")) {	// DM1 Rules, to be played with original DM1 dungeons
+			printf("Option: game mode = Dungeon Master 1\n");
+			SkCodeParam::bDM1Mode = true;
+		}
 		else if (!strcmp(argv[iArgIndex], "-tq")) {	// Theron's Quest
 			printf("Option: game mode = Theron's Quest\n");
 			SkCodeParam::bTQMode = true;
@@ -375,6 +394,11 @@ UINT SkWinApp::setVideoMode()
 	}
 
 	if (xSkWinRenderer != NULL) {
+		if (SkCodeParam::bVideoSVGADisplay) {
+			xVRAM->bUseVRAMSVGA = true;
+			SkCodeParam::iVideoScale = 1;
+			SkCodeParam::fVideoYScale = 1;
+		}
 		xSkWinRenderer->Init(xVRAM);
 		xSkWinRenderer->InitWinApp(this);
 	}
@@ -726,6 +750,7 @@ void SkWinApp::GetMousePosButtons(U16 *x, U16 *y, U16 *buttons)
 	U32 iDeviceButtons = 0;
 
 	//SkD((DLV_MOUSE,"GetMousePosButton\n"));
+	
 	skwin_ML();
 
 	*buttons = 0;
@@ -739,8 +764,11 @@ void SkWinApp::GetMousePosButtons(U16 *x, U16 *y, U16 *buttons)
 		if (iDeviceButtons & SDL_BUTTON(SDL_BUTTON_MIDDLE))
 			*buttons += 4; // middle
 #endif // __NO_SDL__
-		*x = U16(iDeviceMouseX)/SkCodeParam::iVideoScale;
-		*y = U16(iDeviceMouseY)/(SkCodeParam::iVideoScale*SkCodeParam::fVideoYScale);
+		if (iDeviceMouseX != 0 && iDeviceMouseY != 0) {	// little trick to let processMinput change mouse coords, else in external mode, GetMouseState keeps 0,0 that resets mouse coords.
+			*x = U16(iDeviceMouseX)/SkCodeParam::iVideoScale;
+			*y = U16(iDeviceMouseY)/(SkCodeParam::iVideoScale*SkCodeParam::fVideoYScale);
+		}
+		//printf("GetMousePosButton x,y = %d %d\n", *x, *y);
 	}
 	else if (SkCodeParam::bRenderingEngineDOS) {
 #if defined (__DJGPP__)
@@ -765,12 +793,12 @@ void SkWinApp::GetMousePosButtons(U16 *x, U16 *y, U16 *buttons)
 		*y = U16(iDeviceMouseY);																
 		*buttons = U16(iDeviceButtons);
 	}
-
+/*
 	if (fMouseProvider != NULL)
 	{
 		fMouseProvider(xExternalController, x, y, buttons);
 		//printf("GetMousePosButtons (%05d): M(%3d,%3d) Btn:(%2d)\n", iCallCount++, *x, *y, *buttons);
-	}
+	}*/
 	
 
 	//SkD((DLV_MOUSE,"SDL_GetMouseState\n"));
@@ -791,6 +819,22 @@ void SkWinApp::skwin_SndPlayFile(const char* sFilename, i8 vol)
 
 void SkWinApp::processMinput(U8 button, bool pressed, int x, int y)
 {
+	int iDeviceMouseX = x;
+	int iDeviceMouseY = y;
+	U32 iDeviceButtons = button;
+
+	//printf("processMinput %d %d --- callback %p\n", x, y, fCoreMouseCallback);
+
+	if (pMouseX != NULL && pMouseY != NULL) {
+		*pMouseX = U16(iDeviceMouseX)/SkCodeParam::iVideoScale;
+		*pMouseY = U16(iDeviceMouseY)/(SkCodeParam::iVideoScale*SkCodeParam::fVideoYScale);
+	/// needs to call the SkWinCore mouse callback
+		if (fCoreMouseCallback != NULL) {
+			//printf("call Callback!\n");
+			 (xCore->*fCoreMouseCallback)();
+		}
+	}
+
 //#if defined(__LINUX__) && defined(__SDL__)
 	/*
 	x /= sxfact;
@@ -888,6 +932,11 @@ void SkWinApp::processKinput(U32 nChar, bool press)
 				printf("Speed Factor: %d\n", SkCodeParam::iTickSpeedFactor);
 				break;
 		}
+		return;
+	}
+	else if (press && nChar == SDLK_F8) {	// switch VRAM/RGB-VRAM
+		if (xVRAM != NULL)
+			xVRAM->bUseVRAMRGB = !xVRAM->bUseVRAMRGB;
 		return;
 	}
 

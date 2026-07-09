@@ -787,7 +787,7 @@ const U16 _4976_4700_tblGfxSet[6] = {  0,110,118,118, 38,110};
 const U16 _4976_470c_tblGfxSet[6] = {  0,104,116,116,  0,104};
 const U16 _4976_4718_tblGfxSet[6] = {  0, 82, 90, 90, 37, 82};
 
-const X8* const _4976_4760 = (const X8*)" ";
+const X8* const glbConstStringTxtSpace = (const X8*)" ";	// _4976_4760
 
 const U8 _4976_4a04[4] = { 6, 8,18,16}; // n,e,s,w	0.0110/0.1000//1.1000/1.0110
 
@@ -1105,8 +1105,8 @@ X16 _4976_4282[16]; //Rr
 U8 tlbGraphicsFlip[16]; //Rr
 X8 tlbGraphicsPitHidden[16]; //Rr
 X8 tlbGraphicsPitNormal[16]; //Rr
-X16 _4976_42d2[16]; //Rr
-X8 _4976_42f2[23][4]; //Rr
+X16 tblGraphicsTeleporterWords[16]; //Rr
+X8 tblGraphicsTeleporterBytes4[23][4]; //Rr
 i8 _4976_436c[4][5]; //Rr
 U8 _4976_4380[4][2]; //Rr
 i8 _4976_4388[4][4]; //Rr
@@ -1196,12 +1196,12 @@ U8	_4976_3df9[7]; //Rr
 U8	_4976_4980[4]; //Rp
 U8	_4976_4984[4]; //Rp
 sk38f4	_4976_38f4[12]; //Rr
-U8	_089c_00e3[256]; //Rp
+U8	tblASCIIFlags[256]; //Rp	(_089c_00e3)
 //}}SKVAL1
 
-const X8* const _4976_498e = _4976_4980;
-const X8* const _4976_4992 = _4976_4984;
-const X8* const _4976_4756 = _4976_4760;
+const X8* const _4976_498e = _4976_4980;	// _4976_498e = _4976_4980
+const X8* const _4976_4992 = _4976_4984;	// _4976_4992 = _4976_4984
+const X8* const glbConstCharTxtSpace = glbConstStringTxtSpace;	// _4976_4756 = _4976_4760
 
 
 

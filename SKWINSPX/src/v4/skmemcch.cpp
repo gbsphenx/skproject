@@ -33,7 +33,7 @@ mement* SkWinCore::_3e74_48c9_MEMENT(U16 mementi)
 	if (si == 0) {
 		U16 di = xMement->w8();
 		if (di == 0xFFFF) {
-			glbMement2 = (xMement != _4976_5c8c) ? xMement : NULL;
+			glbMement2 = (xMement != glbMement3) ? xMement : NULL;
 			xMement->w4(1);
 			return xMement;
 		}
@@ -41,7 +41,7 @@ mement* SkWinCore::_3e74_48c9_MEMENT(U16 mementi)
 		TEST_MEMENT(xMement3);
 		U16 bp0e = xMement->w6();
 		if (bp0e == 0xffff) {
-			_4976_5d5e = xMement3;
+			glbMement5 = xMement3;
 		}
 		else {
 			xMement = tblMementsPointers[bp0e];
@@ -57,7 +57,7 @@ mement* SkWinCore::_3e74_48c9_MEMENT(U16 mementi)
 			si++;
 		}
 		xMement->w4(si);
-		if (xMement == _4976_5d70) {
+		if (xMement == glbMement4) {
 			return xMement;
 		}
 		U16 di = xMement->w8();
@@ -69,7 +69,7 @@ mement* SkWinCore::_3e74_48c9_MEMENT(U16 mementi)
 		U16 bp0e = xMement->w6();
 		if (bp0e == 0xFFFF) {
 			glbMement2 = xMement3;
-			_4976_5d5e = xMement3;
+			glbMement5 = xMement3;
 			xMement3->w6(0xFFFF);
 		}
 		else {
@@ -81,7 +81,7 @@ mement* SkWinCore::_3e74_48c9_MEMENT(U16 mementi)
 			xMement->w8(di);
 			xMement3->w6(bp0e);
 		}
-		if (glbMement2 == _4976_5c8c) {
+		if (glbMement2 == glbMement3) {
 			glbMement2 = NULL;
 		}
 
@@ -93,7 +93,7 @@ mement* SkWinCore::_3e74_48c9_MEMENT(U16 mementi)
 				xMement->w8(mementi);
 				xMement2->w6(bp0e);
 				xMement2->w8(0xffff);
-				_4976_5d70 = xMement2;
+				glbMement4 = xMement2;
 			}
 			else {
 				xMement3 = tblMementsPointers[di];
@@ -148,7 +148,8 @@ void SkWinCore::FREE_CACHE_INDEX(U16 cacheIndex)
 
 
 //^3E74:4549
-void SkWinCore::_3e74_4549(U16 xx)
+// SPX: 3e74_4549 renamed MEMENT_3e74_4549
+void SkWinCore::MEMENT_3e74_4549(U16 xx)
 {
 	// cqOk @ 21:03 2007/02/21
 
@@ -172,16 +173,16 @@ void SkWinCore::_3e74_4549(U16 xx)
 				if (si == 0xffff) {
 					//^3E74:459E
 					glbMement2 = NULL;
-					_4976_5c8c = NULL;
-					_4976_5d70 = NULL;
-					_4976_5d5e = NULL;
+					glbMement3 = NULL;
+					glbMement4 = NULL;
+					glbMement5 = NULL;
 				}
 				else {
 					//^3E74:45C1
 					bp08 = tblMementsPointers[si];
 					TEST_MEMENT(bp08);
 					//^3E74:45D9
-					_4976_5d5e = bp08;
+					glbMement5 = bp08;
 					//^3E74:45E0
 					bp08->w6(0xffff);
 					//^3E74:45E9
@@ -197,9 +198,9 @@ void SkWinCore::_3e74_4549(U16 xx)
 				//^3E74:460B
 				if (si == 0xffff) {
 					//^3E74:4610
-					if (bp04 == _4976_5c8c) {
+					if (bp04 == glbMement3) {
 						//^3E74:4625
-						_4976_5c8c = NULL;
+						glbMement3 = NULL;
 					}
 					else {
 						//^3E74:4633
@@ -209,7 +210,7 @@ void SkWinCore::_3e74_4549(U16 xx)
 						}
 					}
 					//^3E74:4654
-					_4976_5d70 = bp08;
+					glbMement4 = bp08;
 				}
 				else {
 					//^3E74:4663
@@ -222,7 +223,7 @@ void SkWinCore::_3e74_4549(U16 xx)
 _4682:
 				if (bp04 == glbMement2) {
 					//^3E74:4696
-					if (bp08 == _4976_5c8c) {
+					if (bp08 == glbMement3) {
 						//^3E74:46AB
 						glbMement2 = NULL;
 					}
@@ -233,9 +234,9 @@ _4682:
 				}
 				else {
 					//^3E74:46C8
-					if (_4976_5c8c == bp04) {
+					if (glbMement3 == bp04) {
 						//^3E74:46DC
-						_4976_5c8c = bp08;
+						glbMement3 = bp08;
 					}
 				}
 			}
@@ -381,7 +382,7 @@ void SkWinCore::FREE_INDEXED_MEMENT(U16 index)
 			FREE_CACHE_INDEX(iLocalCacheIndex);
 		}
 	}
-	_3e74_4549(iMemEntryIndex);
+	MEMENT_3e74_4549(iMemEntryIndex);
 	mement* xMemEntry = tblMementsPointers[iMemEntryIndex];	// bp04
 	if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(xMemEntry))
 		return;
@@ -463,19 +464,14 @@ U16 SkWinCore::INSERT_CACHE_HASH_AT(Bit32u cacheHash, U16 ici)
 {
 	// cqOk @ 21:03 2007/02/21
 
-	//^3E74:54A1
-	//^3E74:54A6
 	if (cd.mc._4976_5c92_cache == glbCacheRecyclerMax) {
-		//^3E74:54AF
-		mement *bp04 = _4976_5d5e;
-		//^3E74:54B6
-		for (; (bp04->w10() & 0x8000) == 0; ) {
-			//^3E74:54B8
-			bp04 = tblMementsPointers[bp04->w8()];
-			TEST_MEMENT(bp04);
+		mement* xMemEnt = glbMement5;	// bp04
+		for (; (xMemEnt->getRawDataIndex() & 0x8000) == 0; ) {
+			xMemEnt = tblMementsPointers[xMemEnt->w8()];
+			TEST_MEMENT(xMemEnt);
 		}
 		//{
-		//	mement *p = _4976_5d5e;
+		//	mement *p = _4976_5d5e; (glbMement5)
 		//	while (p != NULL) {
 		//		SkD((DLV_CPX, "ME: %p I %04X  Mi %04X \n", p, p->w10(), p->w8()));
 		//		p = tblMementsPointers[p->w8()];
@@ -487,26 +483,19 @@ U16 SkWinCore::INSERT_CACHE_HASH_AT(Bit32u cacheHash, U16 ici)
 		//	}
 		//}
 
-		//^3E74:54E0
-		FREE_INDEXED_MEMENT(bp04->w10());
-		//^3E74:54E9
+		FREE_INDEXED_MEMENT(xMemEnt->getRawDataIndex());
 		FIND_ICI_FROM_CACHE_HASH(cacheHash, &ici);
 	}
-	//^3E74:54FB
 	U16 si = _3e74_4471_CACHE();
 	if (SkCodeParam::bUsePowerDebug && si == 0xFFFF) // 0xFFFF
 		return 0xFFFF;
-	//^3E74:5501
 	MOVE_MEMORY(
 		&_4976_5c7e_cache_ici[ici],
 		&_4976_5c7e_cache_ici[ici +1],
 		(cd.mc._4976_5c92_cache - ici -1) << 1
 		);
-	//^3E74:5536
 	_4976_5c7e_cache_ici[ici] = si;
-	//^3E74:5544
 	_4976_5c86_cache_hash[si] = cacheHash;
-	//^3E74:555C
 	return si;
 }
 
@@ -518,35 +507,35 @@ void SkWinCore::MEMENT_3e74_44ad()
 {
 	// cqOk @ 21:03 2007/02/21
 
-	_4976_5d2a = glbGameTick;
+	glbGameTickHoldFromMement = glbGameTick;
 	glbMement2 = NULL;
-	mement *bp04 = _4976_5c8c;
-	if (bp04 == NULL) {
-		bp04 = _4976_5d70;
-		if (bp04 == NULL)
+	mement* xMemEnt = glbMement3;	// bp04
+	if (xMemEnt == NULL) {
+		xMemEnt = glbMement4;
+		if (xMemEnt == NULL)
 			return;
 	}
-	while (bp04->w4() != 0) {
-		if (bp04->w4() <= 0xfffd) {
-			bp04->w4(0);
+	while (xMemEnt->w4() != 0) {
+		if (xMemEnt->w4() <= 0xFFFD) {
+			xMemEnt->w4(0);
 		}
-		U16 si = bp04->w6();
-		if (si == 0xffff)
+		U16 si = xMemEnt->w6();
+		if (si == 0xFFFF)
 			return;
-		bp04 = tblMementsPointers[si];
-		TEST_MEMENT(bp04);
+		xMemEnt = tblMementsPointers[si];
+		TEST_MEMENT(xMemEnt);
 	}
 }
 
 //^3E74:0C62
-U16 SkWinCore::QUERY_MEMENTI_FROM(U16 iEntryIndex)
+U16 SkWinCore::QUERY_MEMENTI_FROM(U16 iRawDataIdx)
 {
 	// xx&0x8000==0x8000: cacheindex-to-mementi
 	// xx&0x8000==0x0000: raw data index to mementi
 
 	// returns 0xffff if no match found.
 
-	U16 iLocalEntryIndex = iEntryIndex;	// si
+	U16 iLocalEntryIndex = iRawDataIdx;	// si
 	if ((iLocalEntryIndex & 0x8000) != 0) {
 		if (SkCodeParam::bUseFixedMode && (iLocalEntryIndex & 0x7FFF) >= MEM_CACHE_TABLE_MAX)	// SPX: protection to avoid further invalid pointer
 			return 0xFFFF;
@@ -563,7 +552,7 @@ U16 SkWinCore::QUERY_MEMENTI_FROM(U16 iEntryIndex)
 U16 SkWinCore::ADD_CACHE_HASH(Bit32u cacheHash, U16 *piYaCacheIndex)
 {
 	// returns 0 if inserted new one, 1 if already exists.
-	if (glbGameTick != _4976_5d2a) {
+	if (glbGameTick != glbGameTickHoldFromMement) {
 		MEMENT_3e74_44ad();
 	}
 	U16 bp02 = 0;
@@ -593,11 +582,11 @@ U8* SkWinCore::QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(U16 cacheIndex)
 }
 
 //^3E74:583A
-void SkWinCore::_3e74_583a_MEMENTI(U16 xx)
+void SkWinCore::_3e74_583a_MEMENTI(U16 iMemEntryIndex)
 {
-	U16 si = QUERY_MEMENTI_FROM(xx | 0x8000);
-	if (si != 0xFFFF) {
-		_3e74_4549(si);
+	U16 iMemEntryCacheIndex = QUERY_MEMENTI_FROM(iMemEntryIndex | 0x8000);	// si
+	if (iMemEntryCacheIndex != 0xFFFF) {
+		MEMENT_3e74_4549(iMemEntryCacheIndex);
 	}
 	return;
 }
@@ -605,11 +594,11 @@ void SkWinCore::_3e74_583a_MEMENTI(U16 xx)
 //^3E74:4416
 U16 SkWinCore::FIND_FREE_MEMENTI()
 {
-//	if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(_4976_5d5e))
+//	if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(glbMement5))
 //		return -1;
 	U16 iNextFreeMementi = glbNextFreeMementIndex;	// si
 	if (iNextFreeMementi == 0xFFFF) {
-		FREE_INDEXED_MEMENT(_4976_5d5e->w10());
+		FREE_INDEXED_MEMENT(glbMement5->getRawDataIndex());
 		iNextFreeMementi = glbNextFreeMementIndex;
 	}
 	glbMementIndex_4976_5c9e++;
@@ -626,110 +615,76 @@ U16 SkWinCore::FIND_FREE_MEMENTI()
 }
 
 //^3E74:2AD9
-void SkWinCore::GUARANTEE_FREE_CPXHEAP_SIZE(i32 buffSize)
+void SkWinCore::GUARANTEE_FREE_CPXHEAP_SIZE(i32 iBufferSize)
 {
-	ATLASSERT(buffSize > 0 && buffSize < BUFF_SIZE_MAX);
+	ATLASSERT(iBufferSize > 0 && iBufferSize < BUFF_SIZE_MAX);
 
-	//^3E74:2AD9
-	//^3E74:2ADC
-	for (; _4976_5cf8 < buffSize; ) {
-		//^3E74:2ADE
-		if (_4976_5d5e == NULL) {
-			//^3E74:2AF0
+	for (; _4976_5cf8 < iBufferSize; ) {
+		if (glbMement5 == NULL) {
 			RAISE_SYSERR(SYSTEM_ERROR__FREE_CPXHEAP_SIZE);
 		}
-		//^3E74:2AF8
-		if (_4976_4809 != 0xffff && _4976_4809 != _4976_4807) {
-			//^3E74:2B08
+		if (_4976_4809 != 0xFFFF && _4976_4809 != glbRawDataNoAllocated) {
 			FREE_INDEXED_MEMENT(_4976_4809);
 		}
 		else {
-			//^3E74:2B0E
-			FREE_INDEXED_MEMENT(_4976_5d5e->w10());
+			FREE_INDEXED_MEMENT(glbMement5->getRawDataIndex());
 		}
-		//^3E74:2B1B
 	}
-	//^3E74:2B2E
 	return;
 }
 
 
 
 //^3E74:2B30
-void SkWinCore::_3e74_2b30()
+// SPX: 3e74_2b30 renamed MEMENT_3e74_2b30 // MEMENT_INIT_GFX_TABLE
+void SkWinCore::MEMENT_INIT_GFX_TABLE()
 {
 	int iDebugLoopCount = 0;
 	// cqOk @ 21:03 2007/02/21
 
-	//^3E74:2B30
-	//^3E74:2B36
 	if (glbMement1 != NULL) {	// mement
-		//^3E74:2B4B
-		mement *bp04 = _4976_5ce6;
-		mement *bp08 = _4976_5ce6;
+		mement* xMemEnt01 = _4976_5ce6;	// bp04
+		mement* xMemEnt02 = _4976_5ce6;	// bp08
 
 		do {
-			//^3E74:2B5E
-			i32 bp0c = bp04->dw0();
+			i32 iLength01 = xMemEnt01->dw0();	// (bp0c) length
 			//printf("LOAD_DYN4>_3e74_2b30[MEMENT] (#%05d) bp0c (length) = %d\n", iDebugLoopCount, bp0c);
 			// SPX: we can get stuck in the loop, let's assume that after 1000 loop we try to get out, or if the length is ridiculously too much
-			if (SkCodeParam::bUseFixedMode && (iDebugLoopCount > 1000 || bp0c > 1024000))
+			if (SkCodeParam::bUseFixedMode && (iDebugLoopCount > 1000 || iLength01 > 1024000))
 				break;
-			//^3E74:2B6E
-			if (bp0c > 0) {
-				//^3E74:2B78
-				PTR_PADA(bp04, bp0c);
+			if (iLength01 > 0) {
+				PTR_PADA(xMemEnt01, iLength01);	// move +iLength01
 			}
 			else {
-				//^3E74:2B86
-				bp0c = -bp0c;
-				//^3E74:2B99
-				if (bp08 != bp04) {
-					//^3E74:2BAF
-					U16 di = bp04->w10();
-					//^3E74:2BB6
-					U16 si = QUERY_MEMENTI_FROM(di);
-					//^3E74:2BBE
-					tblMementsPointers[si] = bp08;
-					//^3E74:2BD4
-					COPY_MEMORY(bp04, bp08, bp0c);
-					TEST_MEMENT(bp08);	// SPX TODO this part is prone to fail while changing level
-					//^3E74:2BEE
-					if (_4976_5d5e == bp04) {
-						//^3E74:2C02
-						_4976_5d5e = bp08;
+				iLength01 = -iLength01;
+				if (xMemEnt02 != xMemEnt01) {
+					U16 iRawDataIdx = xMemEnt01->getRawDataIndex();	// di
+					U16 si = QUERY_MEMENTI_FROM(iRawDataIdx);
+					tblMementsPointers[si] = xMemEnt02;
+					COPY_MEMORY(xMemEnt01, xMemEnt02, iLength01);
+					TEST_MEMENT(xMemEnt02);	// SPX TODO this part is prone to fail while changing level
+					if (glbMement5 == xMemEnt01) {
+						glbMement5 = xMemEnt02;
 					}
-					//^3E74:2C0F
-					if (_4976_5d70 == bp04) {
-						//^3E74:2C23
-						_4976_5d70 = bp08;
+					if (glbMement4 == xMemEnt01) {
+						glbMement4 = xMemEnt02;
 					}
-					//^3E74:2C30
-					if (glbMement2 == bp04) {
-						//^3E74:2C44
-						glbMement2 = bp08;
+					if (glbMement2 == xMemEnt01) {
+						glbMement2 = xMemEnt02;
 					}
-					//^3E74:2C53
-					else if (_4976_5c8c == bp04) {
-						//^3E74:2C67
-						_4976_5c8c = bp08;
+					else if (glbMement3 == xMemEnt01) {
+						glbMement3 = xMemEnt02;
 					}
 				}
-				//^3E74:2C74
-				PTR_PADA(bp04, bp0c);
-				//^3E74:2C84
-				PTR_PADA(bp08, bp0c);
+				PTR_PADA(xMemEnt01, iLength01);	// move +iLength01
+				PTR_PADA(xMemEnt02, iLength01);	// move +iLength01
 			}
 			iDebugLoopCount++; // debug
-			//^3E74:2C94
-		} while (bp04 != _4976_5cb2);	// at some point, this becomes impossible when bp04 never changes and we get stuck in the loop
+		} while (xMemEnt01 != _4976_5cb2);	// at some point, this becomes impossible when bp04 never changes and we get stuck in the loop
 
-		//^3E74:2CAC
-		_4976_5cb2 = bp08;
-		//^3E74:2CB9
+		_4976_5cb2 = xMemEnt02;
 		glbMement1 = NULL;
 	}
-	//^3E74:2CC5
 	return;
 }
 
@@ -752,11 +707,8 @@ _2cfb:
 		//^3E74:2D08
 		PTR_PADA(_4976_5cb2,buffSize);
 	}
-	//^3E74:2D1B
 	else if (glbMement1->dw0() < buffSize) {
-		//^3E74:2D32
-		_3e74_2b30();
-		//^3E74:2D36
+		MEMENT_INIT_GFX_TABLE();
 		goto _2cfb;
 	}
 	else {
@@ -959,125 +911,83 @@ U16 SkWinCore::FIND_ICI_FROM_CACHE_HASH(Bit32u cacheHash, U16 *ici)
 }
 
 //^3E74:4701
-void SkWinCore::RECYCLE_MEMENTI(U16 mementi, U16 yy)
+void SkWinCore::RECYCLE_MEMENTI(U16 iMemEntIdx, U16 yy)
 {
 	// cqOk @ 21:03 2007/02/21
 
-	//^3E74:4701
-	//^3E74:4707
-	U16 di = mementi;
-	//^3E74:470C
-	mement *bp04 = tblMementsPointers[di];
-	if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(bp04))
+	U16 iLocalMemEntIdx = iMemEntIdx;	// di
+	mement* xMemEntry = tblMementsPointers[iLocalMemEntIdx];	// bp04
+	if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(xMemEntry))
 		return;
-	TEST_MEMENT(bp04);
-	//^3E74:4722
-	if (bp04->w4() != 0xffff) {
-		//^3E74:472C
-		_3e74_48c9_MEMENT(di);
-		//^3E74:4733
+	TEST_MEMENT(xMemEntry);
+	if (xMemEntry->w4() != 0xffff) {
+		_3e74_48c9_MEMENT(iLocalMemEntIdx);
 		return;
 	}
-	//^3E74:4736
-	mement *bp0c;
-	mement *bp10;
+	mement* xMemEntry02;	// bp0c
+	mement* xMemEntry03;	// bp10
 	if (yy != 0) {
-		//^3E74:473C
-		bp04->w4(0xfffe);
-		bp0c = _4976_5c8c;
-
-		//^3E74:4752
-		//^3E74:4786
-		bp10 = _4976_5d70;
+		xMemEntry->w4(0xFFFE);
+		xMemEntry02 = glbMement3;
+		xMemEntry03 = glbMement4;
 	}
 	else {
-		//^3E74:4754
-		bp04->w4(1);
-		//^3E74:475D
-		bp0c = glbMement2;
-		//^3E74:476A
-		bp10 = _4976_5c8c;
-		if (bp10 == NULL) {
-			//^3E74:4786
-			bp10 = _4976_5d70;
+		xMemEntry->w4(1);
+		xMemEntry02 = glbMement2;
+		xMemEntry03 = glbMement3;
+		if (xMemEntry03 == NULL) {
+			xMemEntry03 = glbMement4;
 		}
 	}
 
-	//^3E74:4793
-	if (bp0c != NULL) {
-		//^3E74:47A4
+	if (xMemEntry02 != NULL) {
 		goto _483a;
 	}
-	//^3E74:47A7
-	U16 bp12;
-	U16 si;
-	if (_4976_5d70 == NULL) {
-		//^3E74:47B9
-		bp04->w6(0xffff);
-		_4976_5d5e = bp04;
-		//^3E74:47CF
+	U16 bp12;	// bp12
+	U16 si;		// si
+	if (glbMement4 == NULL) {
+		xMemEntry->w6(0xffff);
+		glbMement5 = xMemEntry;
 		goto _4822;
 	}
-	//^3E74:47D1
 	if (glbMement2 == NULL) {
-		//^3E74:47E3
-		if (_4976_5c8c != NULL) {
-			//^3E74:47F5
-			bp0c = bp10;
-			//^3E74:4801
+		if (glbMement3 != NULL) {
+			xMemEntry02 = xMemEntry03;
 			goto _483a;
 		}
 	}
-	//^3E74:4803
-	bp10->w8(di);
-	bp12 = bp10->w10();
-	//^3E74:4811
+	xMemEntry03->w8(iLocalMemEntIdx);
+	bp12 = xMemEntry03->getRawDataIndex();
 	si = QUERY_MEMENTI_FROM(bp12);
-	//^3E74:481B
-	bp04->w6(si);
-	//^3E74:4822
+	xMemEntry->w6(si);
 _4822:
-	bp04->w8(0xffff);
-	_4976_5d70 = bp04;
-	//^3E74:4838
+	xMemEntry->w8(0xffff);
+	glbMement4 = xMemEntry;
 	goto _48a3;
 
-	//^3E74:483A
 _483a:
-	si = bp0c->w6();
-	bp0c->w6(di);
-	bp04->w6(si);
-	//^3E74:484C
+	si = xMemEntry02->w6();
+	xMemEntry02->w6(iLocalMemEntIdx);
+	xMemEntry->w6(si);
 	U16 bp14;
 	if (si != 0xffff) {
-		//^3E74:4851
 		mement *bp08 = tblMementsPointers[si];
 		TEST_MEMENT(bp08);
-		//^3E74:4869
-		bp04->w8(bp08->w8());
-		//^3E74:4877
-		bp08->w8(di);
-		//^3E74:487E
+		xMemEntry->w8(bp08->w8());
+		bp08->w8(iLocalMemEntIdx);
 		goto _48a3;
 	}
-	//^3E74:4880
-	bp14 = QUERY_MEMENTI_FROM(bp0c->w10());
-	//^3E74:488F
-	bp04->w8(bp14);
-	//^3E74:4896
-	_4976_5d5e = bp04;
+	bp14 = QUERY_MEMENTI_FROM(xMemEntry02->getRawDataIndex());
+	xMemEntry->w8(bp14);
+	glbMement5 = xMemEntry;
 
-	//^3E74:48A3
 _48a3:
 	if (yy != 0) {
-		//^3E74:48A9
-		_4976_5c8c = bp04;
+		glbMement3 = xMemEntry;
 	}
 	else {
-		//^3E74:48B8
-		glbMement2 = bp04;
+		glbMement2 = xMemEntry;
 	}
-	//^3E74:48C5
 	return;
 }
 
@@ -1113,19 +1023,20 @@ int SkWinCore::TEST_MEMENT(mement* xMemEntry)
 X32 SkWinCore::_3e74_5673_CACHE(X32 cacheHash, U16 *piYaCacheIndex, X16 ifTryInsert)
 {
 	ENTER(2);
-	if (glbGameTick != _4976_5d2a) {
+	if (glbGameTick != glbGameTickHoldFromMement) {
 		MEMENT_3e74_44ad();
 	}
-	U16 bp02;
-	if (FIND_ICI_FROM_CACHE_HASH(cacheHash, &bp02) == 0) {
-		*piYaCacheIndex = (ifTryInsert != 0) ? INSERT_CACHE_HASH_AT(cacheHash, bp02) : 0xFFFF;
+	U16 ici;	// bp02
+	if (FIND_ICI_FROM_CACHE_HASH(cacheHash, &ici) == 0) {
+		*piYaCacheIndex = (ifTryInsert != 0) ? INSERT_CACHE_HASH_AT(cacheHash, ici) : 0xFFFF;
 		return 0;
 	}
-	*piYaCacheIndex = _4976_5c7e_cache_ici[bp02];
+	*piYaCacheIndex = _4976_5c7e_cache_ici[ici];
 // SPX: Break down to catch and prevent NULL / crash
-	mement* xm = _3e74_48c9_MEMENT(QUERY_MEMENTI_FROM(*piYaCacheIndex | 0x8000));
-	if (CheckSafePointer(xm))
-		return *reinterpret_cast<i32 *>(xm) - (sizeof(mement)) - 4;	// -22 = -sizeof(mement) - 4
+	mement* xMemEnt = _3e74_48c9_MEMENT(QUERY_MEMENTI_FROM(*piYaCacheIndex | 0x8000));	// xm
+	if (CheckSafePointer(xMemEnt))
+		return *reinterpret_cast<i32 *>(xMemEnt) - (sizeof(mement)) - 4;	// -22 = -sizeof(mement) - 4
+		// SPX: what is this -4 ?
 //	return *reinterpret_cast<i32 *>(_3e74_48c9_MEMENT(QUERY_MEMENTI_FROM(*piYaCacheIndex | 0x8000))) -22;	// SPX: -22 ?? -sizeof(mement) - 4 ?
 	return 0;
 }
@@ -1159,3 +1070,317 @@ void SkWinCore::_1c9a_0247_FREE_CACHE_FROM_CREATURE(ObjectID rl)
 	return;
 }
 
+
+
+//^4726:0162
+void SkWinCore::MAP_EMS_TO_PTR(U32 xx, U32 yy, U8 **ss, U8 **tt)
+{
+//!	//^4726:0162
+//!	ENTER(14);
+//!	//^4726:0168
+//!	if (xx > yy) {
+//!		//^4726:017A
+//!		X32 bp0e = xx;
+//!		xx = yy;
+//!		yy = bp0e;
+//!		U8 **bp08 = ss;
+//!		ss = tt;
+//!		tt = bp08;
+//!	}
+//!	//^4726:01C2
+//!	U16 bp04 = U16(xx >> 14);
+//!	U16 di = U16(xx) & 0x3fff;
+//!	U16 bp06 = U16(yy >> 14);
+//!	U16 si = U16(yy) & 0x3fff;
+//!	U8 bp01 = 0;
+//!	U8 bp02 = U8(bp06 -bp04);
+//!	__asm mov  ah,0x44
+//!	__asm mov  al,[bp01]
+//!	__asm mov  bx,[bp04]
+//!	__asm mov  dx,[_4976_5ea4]
+//!	__asm int  0x67
+//!	bp01++;
+//!	bp04++;
+//!	__asm mov  ah,0x44
+//!	__asm mov  al,[bp01]
+//!	__asm mov  bx,[bp04]
+//!	__asm mov  dx,[_4976_5ea4]
+//!	__asm int  0x67
+//!	*ss = &_4976_5ea0[di];
+//!	if (bp02 >= 2) {
+//!		//^4726:023A
+//!		bp02 = 2;
+//!		__asm mov  ah,0x44
+//!		__asm mov  al,[bp02]
+//!		__asm mov  bx,[bp06]
+//!		__asm mov  dx,[_4976_5ea4]
+//!		__asm int  0x67
+//!		bp02++;
+//!		bp06++;
+//!		__asm mov  ah,0x44
+//!		__asm mov  al,[bp02]
+//!		__asm mov  bx,[bp06]
+//!		__asm mov  dx,[_4976_5ea4]
+//!		__asm int  0x67
+//!		bp02 = 2;
+//!	}
+//!	//^4726:0266
+//!	else if (bp02 == 1) {
+//!		//^4726:026C
+//!		bp02 = 2;
+//!		bp06++;
+//!		__asm mov  ah,0x44
+//!		__asm mov  al,[bp02]
+//!		__asm mov  bx,[bp06]
+//!		__asm mov  dx,[_4976_5ea4]
+//!		__asm int  0x67
+//!		bp02 = 1;
+//!	}
+//!	else {
+//!		//^4726:0287
+//!		bp02 = 0;
+//!	}
+//!	//^4726:028B
+//!	*tt = &_4976_5ea0[si + (bp02 << 14)];
+}
+
+
+
+//^4726:02AC
+U8 *SkWinCore::_4726_02ac()
+{
+	//^4726:02AC
+	ENTER(4);
+	//^4726:02B0
+	if (_4976_4968 != 0) {
+		//^4726:02B7
+		U8 *bp04 = EMS_MAP_BANK_TO_MEMORY(_4976_5eac + (+6), 1);
+		WRITE_UI16(bp04,-6,8);
+		WRITE_UI16(bp04,-4,_4976_00f6);
+		WRITE_UI16(bp04,-2,_4976_00f8);
+		return bp04;
+	}
+	return NULL;
+}
+
+//^3E74:2F41
+void SkWinCore::_3e74_2f41(sk5d12 *ref)
+{
+	//^3E74:2F41
+	ENTER(28);
+	//^3E74:2F47
+	shelf_memory bp08 = t2s(ref->t0);
+	shelf_memory bp04 = bp08 -2;
+	//^3E74:2F63
+	while (ref->t8 < tiamat(bp04)) {
+		//^3E74:2F66
+		X16 si = READ_UI16(REALIZE_GRAPHICS_DATA_MEMORY(bp04),+0);
+		i32 bp0c = ((QUERY_GDAT_RAW_DATA_LENGTH(si & 0x7fff) +1) & 0xfffe) +4;
+		bp04 -= (bp0c);
+		if ((si & 0x8000) == 0) {
+			//^3E74:2FA8
+			bp08 -= (bp0c);
+			if (bp04 + (+2) != bp08) {
+				//^3E74:2FC7
+				// SPX: I crashed here with custom dungeon/gdat, at that point, map_ems_to_ptr has no effective code.
+				if (!SkCodeParam::bUsePowerDebug)
+					ATLASSERT(false);
+				U32 bp10 = bp04.val -0x001FFFFE;
+				U32 bp14 = bp08.val -0x00200000;
+				do {
+					//^3E74:2FEB
+					// SPX: problem here with unitialized bp18 & bp1c and no written code to map_ems_to_ptr
+					U8 *bp18 = 0;	// U8 *bp18;
+					U8 *bp1c = 0;	// U8 *bp1c;
+					MAP_EMS_TO_PTR(bp10, bp14, &bp18, &bp1c);
+					if (!SkCodeParam::bUsePowerDebug || (bp18 != 0 && bp1c != 0) )
+						COPY_MEMORY(bp18, bp1c, (bp0c > 0x4000) ? 0x4000 : bp0c);
+					bp0c -= 0x4000;
+					if (bp0c <= 0)
+						break;
+					bp10 += 0x4000;
+					bp14 += 0x4000;
+				} while (true);
+				//^3E74:3068
+				glbShelfMemoryTable[si] = bp08 + (+2);
+			}
+		}
+		//^3E74:3086
+	}
+	//^3E74:30A3
+	ref->t8 = s2t(bp08);
+	_4726_02ac();
+	//^3E74:30B9
+	return;
+}
+
+//^3E74:30BD
+void SkWinCore::_3e74_30bd(sk5d12 *ref)
+{
+	//^3E74:30BD
+	ENTER(12);
+	//^3E74:30C3
+	if (ref->t0.IsZero())
+		return;
+	//^3E74:30DB
+	if (ref->Is4EMS() != 0) {
+		_3e74_2f41(ref);
+		return;
+	}
+	//^3E74:30F5
+	U8 *bp08 = t2ptr(ref->t0);
+	U8 *bp04 = PTR_PADD(bp08,-2);
+	for (; t2ptr(ref->t8) < bp04; ) {
+		//^3E74:311D
+		X16 si = READ_UI16(bp04,+0);
+		X32 bp0c = ((QUERY_GDAT_RAW_DATA_LENGTH(si & 0x7fff) +1) & 0xfffe) +4;
+		bp04 -= bp0c;
+		if ((si & 0x8000) == 0) {
+			//^3E74:3153
+			bp08 -= bp0c;
+			if (bp04 +2 != bp08) {
+				//^3E74:3180
+				COPY_MEMORY(bp04 +2, bp08, bp0c);
+				glbShelfMemoryTable[si] = CONVERT_PHYS_TO_SHELF_FORM(bp08 +2);
+			}
+		}
+		//^3E74:31D0
+	}
+	//^3E74:31EB
+	ref->t8 = ptr2t(bp08);
+	//^3E74:31FC
+	return;
+}
+//^3E74:0017
+X32 SkWinCore::_3e74_0017(sk5d12 *ref)
+{
+	//^3E74:0017
+	ENTER(4);
+	//^3E74:001B
+	X32 bp04 = 0;
+	if (ref->t0.IsntZero()) {
+		if (ref->Is4EMS()) {
+			bp04 = tiamat::Size(ref->t0, ref->t4);
+		}
+		else {
+			bp04 = tiamat::Size(ref->t0, ref->t4);
+		}
+	}
+	//^3E74:0079
+	return bp04;
+}
+
+//^3E74:0081
+i32 SkWinCore::_3e74_0081(sk5d12 *ref) { // TODO: Unr
+	Unr(); 
+	return 0;
+}
+
+//^3E74:32FB
+tiamat SkWinCore::_3e74_32fb(sk5d12 *ss, U8 *tt, i32 ww) { // TODO: Unr
+	Unr(); 
+	return tiamat();
+}
+
+//^3E74:5133
+// SPX: _3e74_5133 renamed GET_SHELFMEM_FROM_GDAT_INDEX
+shelf_memory SkWinCore::GET_SHELFMEM_FROM_GDAT_INDEX(U8 iGDatCls1Category, U8 iGDatCls2MainItemId, U8 iGDatCls3DataType, U8 iGDatCls4EntryId)
+{
+	ENTER(0);
+	U16 iDataIdx = QUERY_GDAT_ENTRY_DATA_INDEX(iGDatCls1Category, iGDatCls2MainItemId, iGDatCls3DataType, iGDatCls4EntryId);	// si
+	return glbShelfMemoryTable[iDataIdx];
+}
+//^47EB:00A4
+void SkWinCore::_47eb_00a4(sk5f0a *ref)
+{
+	ENTER(4);
+	sk5f0a **bp04 = &ref->pv8;
+	*bp04 = _4976_5efa;
+	_4976_5efa = ref;
+	return;
+}
+
+
+
+//^3E74:32A2
+tiamat SkWinCore::_3e74_32a2(sk5d12 *ref, i32 xx)
+{
+	ENTER(0);
+	X16 si = (ref->Is4EMS() != 0) ? 1 : 0;
+	if (si != 0) {
+		ref->t8 -= xx;
+	}
+	else {
+		ref->t8 -= xx;
+	}
+	return ref->t8;
+}
+
+
+
+//^3E74:00ED
+X16 SkWinCore::_3e74_00ed(sk5d12 *ref, shelf_memory ps)
+{
+	//^3E74:00ED
+	ENTER(4);
+	//^3E74:00F2
+	X16 si = 0;
+	if (ref == NULL)
+		return si;
+	//^3E74:010C
+	if (ps.AtEMS()) {
+		//^3E74:011A
+		if (ref->Is4EMS() && ref->t4 <= tiamat(ps) && ref->t0 >= tiamat(ps)) {
+			//^3E74:014F
+			return 1;
+		}
+		//^3E74:0154
+		return 0;
+	}
+	//^3E74:0158
+	U8 *bp04 = REALIZE_GRAPHICS_DATA_MEMORY(ps);
+	if (t2ptr(ref->t4) <= bp04 && t2ptr(ref->t0) >= bp04)
+		return 1;
+	return 0;
+}
+
+tiamat SkWinCore::s2t(shelf_memory s) {
+	return tiamat(s);
+}
+shelf_memory SkWinCore::t2s(tiamat t) {
+	switch (t.Area()) {
+		case 0:
+			return shelf_memory::From_cram(t.val);
+		case 1:
+			return shelf_memory::From_cems(t.val -0x200000);
+	}
+	ATLASSERT(false);
+	return shelf_memory();
+}
+U8 *SkWinCore::t2ptr(tiamat t) {
+	switch (t.Area()) {
+		case 0: return &xCRAM[t.val];
+		case 1: return &xCEMS[t.val -0x200000];
+	}
+	ATLASSERT(false);
+	return NULL;
+}
+tiamat SkWinCore::ptr2t(U8 *pb) {
+	U32ptr val;
+	val = pb - xCRAM;
+	//if (val < sizeof(cram)) {
+	if (val < skWinApp->iSizeCRAM) {
+		tiamat v; v.val = (U32)val; return v;
+	}
+	val = pb - xCEMS;
+	if (val < shelf_memory::SizeOf_cems()) {	// replaced sizeof(cems)
+		tiamat v; v.val = (U32)val +0x200000; return v;
+	}
+	ATLASSERT(false);
+	return tiamat::zero();
+}
+
+//^3E74:3200
+void SkWinCore::_3e74_3200(X16 ww) { // TODO: Unr
+	Unr();
+}

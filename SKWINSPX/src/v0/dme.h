@@ -1269,7 +1269,7 @@ namespace DM2Internal {
 		mement* xMementRef1;
 		mement* xMementRef2;
 		U8 pDummyPad1;	// just here to test non 18-bytes mement struct.
-// SPX: !!! these 6 bytes must remain at the end of structure !!! because these are the 6 bytes checked from an image buffer -6 !
+// SPX: !!! these 6 bytes must remain at the end of structure !!! because these are the 6 bytes checked from an image buffer pointer -6 !
 		X16 _w12;		// @12 // bpp
 		X16 _w14;		// @14 // width
 		X16 _w16;		// @16 // height
@@ -1280,7 +1280,7 @@ namespace DM2Internal {
 		X16 w4() const { return _w4; }
 		X16 w6() const { return _w6; }
 		X16 w8() const { return _w8; }
-		X16 w10() const { return _w10; }
+		X16 getRawDataIndex() const { return _w10; }	// w10
 		void w4(X16 val) { _w4 = val; }
 		void w6(X16 val) { _w6 = val; }
 		void w8(X16 val) { _w8 = val; }
@@ -1942,13 +1942,13 @@ namespace DM2Internal {
 		U8 bp02;		// @8 // dir
 		U8 bp01;		// @9 // actionType
 	};
-	// 
-	struct sk5f06 { // 7 bytes
+	// SPX: sk5f06
+	struct SoundShortInfo { // 7 bytes
 		U16 w0;		// @0
 		U8 category;		// @2 // b2 cls1
 		U8 index;		// @3 // b3 cls2
 		U8 entry;		// @4 // b4 cls4
-		U16 w5;		// @5
+		U16 iGDatRawIndex;		// @5	// w5
 	};
 	// SPX: sk5f0e
 	struct SoundEntryInfo { // 12 bytes
@@ -2006,7 +2006,7 @@ namespace DM2Internal {
 	// 
 	struct sk5cfc_image { // 14 bytes / 18 bytes 64-bits
 		sk5cfc_image *pv0;	// @0
-		X16 w4;			// @4
+		X16 iGDatRawDataIdx;			// @4		// iGDAT Raw Data Index
 		X16 w6;			// @6
 		X16 w8;			// @8		// bmp structure : resolution + bits
 		X16 width;		// @10		// w10 width
@@ -2056,20 +2056,20 @@ namespace DM2Internal {
 		U8 *pb0;		// @0 // pic bits
 		U16 w4;		// @4 // 4=Use (b8,b9,b11), 8=Use w12 for cacheIndex
 		U16 w6;		// @6 // raw data index
-		U8 iGDatCategory;		// @8 // cls1
-		U8 iGDatItemId;		// @9 // cls2
-		U8 iGDatEntryType;		// @10 // cls3
-		U8 iGDatEntryId;		// @11 // cls4
+		U8 iGDatCls1Category;		// @8 // cls1
+		U8 iGDatCls2MainItemId;		// @9 // cls2
+		U8 iGDatCls3DataType;		// @10 // cls3
+		U8 iGDatCls4EntryId;		// @11 // cls4
 		i16 w12;	// @12
 		U16 w14;		// @14
 		U16 w16;		// @16
 		i16 width;	// @18 // (i16 w18) width
 		i16 height;	// @20 // (i16 w20) height
-		i16 w22;	// @20 // bpp
+		i16 w22;	// @22 // bpp
 	};
 	// 
 	// SPX: skxxx4 renamed ExtendedPicture
-	struct ExtendedPicture : Picture { // 314 bytes
+	struct ExtendedPicture : Picture { // 314 bytes (58 pic data + 256 colors)
 	//	U8 *pb0;		// @0
 	//	U16 w4;		// @4
 	//	U16 w6;		// @6
@@ -2082,6 +2082,7 @@ namespace DM2Internal {
 	//	U16 w16;		// @16
 	//	i16 w18;	// @18
 	//	i16 w20;	// @20
+	//	i16 w22;	// @22
 		U16 rectNo;		// @24 // (U16 w24) rectno
 		U16 w26;		// @26
 		i16 iXOffset;	// @28 // x-offset
@@ -2095,7 +2096,7 @@ namespace DM2Internal {
 		U16 iXStretch;		// @52 // horz stretch factor? (unstretch is 64)
 		U16 iYStretch;		// @54 // vert stretch factor? (unstretch is 64)
 		U16 w56;		// @56 // palentcnt
-		U8 b58[256];	// @58 // local palette 16 colors
+		U8 b58[256];	// @58 // local palette 256 colors
 	};
 	// SPX: about colorkey2 (w48), there can be these values : -1, -2, -3! what meaning?
 
@@ -2576,20 +2577,20 @@ namespace DM2Internal {
 //	};
 	//
 	struct SkEnt4 { // 4 bytes
-		U8 b0;
-		U8 b1;
-		U8 b2;
-		U8 b3;
+		U8 iCls1Category;
+		U8 iCls2MainItemId;
+		U8 iCls3DataType;
+		U8 iCls4EntryId;
 
-		U8 cls1() const { return b0; } // main cls
-		U8 cls2() const { return b1; } // sub cls
-		U8 cls3() const { return b2; } // type
-		U8 cls4() const { return b3; } // item
+		U8 cls1() const { return iCls1Category; } // main cls
+		U8 cls2() const { return iCls2MainItemId; } // sub cls
+		U8 cls3() const { return iCls3DataType; } // type
+		U8 cls4() const { return iCls4EntryId; } // item
 
-		void cls1(U8 val) { b0 = val; }
-		void cls2(U8 val) { b1 = val; }
-		void cls3(U8 val) { b2 = val; }
-		void cls4(U8 val) { b3 = val; }
+		void cls1(U8 iClsValue) { iCls1Category = iClsValue; }
+		void cls2(U8 iClsValue) { iCls2MainItemId = iClsValue; }
+		void cls3(U8 iClsValue) { iCls3DataType = iClsValue; }
+		void cls4(U8 iClsValue) { iCls4EntryId = iClsValue; }
 	};
 	// 
 	struct SkLoadEnt { // 6 bytes
@@ -2997,7 +2998,7 @@ namespace DM2Internal {
 		//					-1 : When a monster is attacked. When we bump into a monster
 		tty00 = 0,			// csbwin: empty
 		tty01DoorStep		= 0x01, // tty01 step door
-		ttyDoorDestroy		= 0x02,		// tty02 CSBWin => Bash door
+		C02_tty_DoorDestroy		= 0x02,		// tty02 CSBWin => Bash door
 		tty04 = 0x04, // activation for tile record (such as floor/wall/pitfall/door/trickwall/teleporter)
 		// csbwin: 0x0B (11) reenable character attack
 		tty0C = 0x0C,		// csbwin 12 ? highlight for champion damaged ?
@@ -3022,10 +3023,19 @@ namespace DM2Internal {
 		ttySeeThruWalls		= 0x49, // tty49 (73) csbwin : OH EW RA See thru walls
 #endif
 		//ttyPartyShield		= 0x4A, // tty4A (74) csbwin : YA IR
-		ttyPoison			= 0x4B, // tty4B (75) poison timer
-		// csbwin 77 Spell shield
-		// csbwin 78 Fire shield
-		// csbwin 79 YA BRO ROS : Magic Footprints
+		C75_tty_PoisonChampion		= 0x4B, // tty4B (75) poison timer
+//...........................
+// SPX: not originally in DM2		
+		C77_tty_SpellShield		= 0x4D,	// DM1/CSBWin 77 Spell shield
+		C78_tty_FireShield		= 0x4E,	// DM1/CSBWin 78 Fire shield
+		C79_tty_MagicFootPrints	= 0x4F,	// DM1/CSBWin 79 YA BRO ROS : Magic Footprints
+
+		C80_tty_MagicMap		= 0x50,	// DM1/CSBWin 80 Magic Map
+		C81_tty_MagicMap		= 0x51, // DM1/CSBWin 81 Magic Map
+		C82_tty_MagicMap		= 0x52, // DM1/CSBWin 82 Magic Map
+		C83_tty_MagicMap		= 0x53, // DM1/CSBWin 83 Magic Map
+// SPX: not originally in DM2
+//...........................
 		ttyWeather			= 0x54,	// tty54 (84)
 		ttyOrnateAnimator	= 0x55,	// tty55 (85)
 		ttyTickGenerator	= 0x56,	// tty56 (86)

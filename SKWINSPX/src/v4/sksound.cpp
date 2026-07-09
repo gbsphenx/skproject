@@ -1,8 +1,8 @@
 //#include <StdAfx.h>	// Required for MVC6 compilation
-#include <skcore.h>
+#include <skglobal.h>
 #include <skdebug.h>
 #include <skver.h>
-#include <skglobal.h>
+#include <skcore.h>
 
 //#if defined(_USE_MFC80) || defined(_USE_MFC60)
 //#include <SKMFC.h>
@@ -291,9 +291,9 @@ U16 SkWinCore::QUERY_SND_ENTRY_INDEX(Bit8u cls1, Bit8u cls2, Bit8u cls4)
 {
 	U16 iSoundEntry = 0;
 	for (iSoundEntry = 0; iSoundEntry < _4976_49d4[0][0]; iSoundEntry++) {
-		if (_4976_5f06[iSoundEntry].category == cls1) {
-			if (_4976_5f06[iSoundEntry].index == cls2) {
-				if (_4976_5f06[iSoundEntry].entry == cls4) {
+		if (tblSoundShortInfo[iSoundEntry].category == cls1) {
+			if (tblSoundShortInfo[iSoundEntry].index == cls2) {
+				if (tblSoundShortInfo[iSoundEntry].entry == cls4) {
 					return iSoundEntry + 1;
 				}
 			}
@@ -374,7 +374,7 @@ void SkWinCore::QUEUE_NOISE_GEN1(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u xx, B
 		return;
 	}
 	//^482B:02B7
-	sk5f0a *bp08 = &_4976_5f0a[_4976_5f06[bp0e -1].w0];
+	sk5f0a *bp08 = &_4976_5f0a[tblSoundShortInfo[bp0e -1].w0];
 	//^482B:02DC
 	if (tickDelta > 0) {
 		//^482B:02E2
@@ -448,7 +448,7 @@ void SkWinCore::QUEUE_NOISE_GEN1(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u xx, B
 		//^482B:0429
 	}
 	//^482B:042E
-	bp0c[di].pv0 = &_4976_5f0a[_4976_5f06[bp0e -1].w0];
+	bp0c[di].pv0 = &_4976_5f0a[tblSoundShortInfo[bp0e -1].w0];
 	//^482B:0467
     bp0c[di].b4 = xx;
 	bp0c[di].b5 = yy;
@@ -629,4 +629,71 @@ U16 SkWinCore::_47eb_02e0(SoundStructure *xx, SoundStructure *yy)
 	}
 	//^47EB:032C
 	return si = 0;
+}
+
+
+//^482B:015C
+// SPX: looks like searching next available index in the _4976_49d4 table ?
+// SPX: _482b_015c renamed AUDIO_482b_015c
+U16 SkWinCore::AUDIO_482b_015c(U16 iGDatRawIndex)
+{
+	ENTER(0);
+	for (U16 iSndIdx = 0; iSndIdx < _4976_49d4[0][0]; iSndIdx++) {	// si
+		if (tblSoundShortInfo[iSndIdx].iGDatRawIndex == iGDatRawIndex) {
+			return iSndIdx + 1;
+		}
+	}
+	return 0;
+}
+
+
+
+//^482B:07C2
+// SPX: _482b_07c2 renamed AUDIO_482b_07c2
+void SkWinCore::AUDIO_482b_07c2(U16 xx)
+{
+	ENTER(0);
+	U16 iSndIdx;	// si
+	for (iSndIdx = 0; _4976_49d4[0][0]-- > iSndIdx; ) {
+		U16 iDatRawIdx = tblSoundShortInfo[_4976_49d4[0][0]].iGDatRawIndex;	// di
+		if (iDatRawIdx != 0xFFFF) {
+			if (AUDIO_482b_015c(iDatRawIdx) == 0) {
+				_47eb_00d9_AUDIO(&_4976_5f0a[tblSoundShortInfo[_4976_49d4[0][0]].w0]);
+				_4976_49d4[0][1]--;
+			}
+		}
+	}
+	_4976_49d4[0][0] = iSndIdx;
+	_4976_49d0 = 0;
+	return;
+}
+
+
+//^482B:0684
+// SPX: _482b_0684 renamed AUDIO_482b_0684
+void  SkWinCore::AUDIO_482b_0684()
+{
+	ENTER(6);
+	for (U16 iSndIdx = 0; iSndIdx < _4976_49d4[0][0]; iSndIdx++) {	// si
+		SoundShortInfo* xSoundInfo = &tblSoundShortInfo[iSndIdx];	// bp04
+		if (xSoundInfo->iGDatRawIndex != 0xFFFF)
+			continue;
+		X16 iRawDatIdx =  QUERY_GDAT_ENTRY_DATA_INDEX(xSoundInfo->category, xSoundInfo->index, dtSnd, xSoundInfo->entry);	// di
+		X16 bp06 = AUDIO_482b_015c(iRawDatIdx);
+		if (bp06 != 0) {
+			xSoundInfo->w0 = tblSoundShortInfo[bp06 -1].w0;
+			xSoundInfo->iGDatRawIndex = iRawDatIdx;
+			continue;
+		}
+		if (_4976_49d4[0][1] >= _4976_5cae)
+			break;
+		xSoundInfo->iGDatRawIndex = iRawDatIdx;
+		xSoundInfo->w0 = _4976_49d4[0][1];
+		_4976_5f0a[xSoundInfo->w0].ps0 = GET_SHELFMEM_FROM_GDAT_INDEX(xSoundInfo->category, xSoundInfo->index, dtSnd, xSoundInfo->entry) + (2);
+		_4976_5f0a[xSoundInfo->w0].w4 = QUERY_GDAT_ENTRY_DATA_LENGTH(xSoundInfo->category, xSoundInfo->index, dtSnd, xSoundInfo->entry) -2;
+		_4976_5f0a[xSoundInfo->w0].w6 = SOUND_FREQUENCY_5500;	// 5500
+		_47eb_00a4(&_4976_5f0a[xSoundInfo->w0]);
+		_4976_49d4[0][1]++;
+	}
+	return;
 }

@@ -100,8 +100,9 @@ UINT SkRendererSDL::Init(SkVRAM* xVRAM)
 	this->xVRAM = xVRAM;
 	//iScreenWidth = iScreenWidth;
 	//iScreenHeight = iScreenHeight;
+	printf("Screen size = %d * %d\n", iScreenWidth, iScreenHeight);
 	xRGBBuffer = (uint32_t*) calloc (iScreenWidth * iScreenHeight, sizeof (uint32_t));
-
+	SkCodeParam::iVideoScale = 2;
     sdlWindow = SDL_CreateWindow(sSDLWindowName,
                                   SDL_WINDOWPOS_CENTERED,
                                   SDL_WINDOWPOS_CENTERED,
@@ -169,17 +170,7 @@ UINT SkRendererSDL::ConvertVRAMToRGB()
 {
 #if !defined (__NO_SDL__)
 	X8* xVRAMData = NULL;
-	if (xVRAM != NULL) {
-		xVRAMData = xVRAM->GET_VIDEO_ARRAY();
-		SetVGAPaletteRGB(xVRAM->GET_PALETTE());
-
-		for (UINT i = 0; i < iScreenWidth * iScreenHeight; i++) {
-			SDL_Color c = sdlPalette[xVRAMData[i]];
-
-			xRGBBuffer[i] = (c.r << 24) | (c.g << 16) | (c.b << 8) | c.a;
-		}
-	}
-	if (xVRAM != NULL && xVRAM->bUseVRAMRGB) {
+	if (xVRAM != NULL && (xVRAM->bUseVRAMRGB || xVRAM->bUseVRAMSVGA)) {
 		UINT z = 0;
 		xVRAMData = xVRAM->GET_VIDEO_ARRAY_RGB();
 		//xVRAMData = xVRAM->GET_VIDEO_ARRAY();
@@ -188,6 +179,16 @@ UINT SkRendererSDL::ConvertVRAMToRGB()
 		{
 			xRGBBuffer[i] = (xVRAMData[z] << 24) | (xVRAMData[z+1] << 16) | (xVRAMData[z+2] << 8) | 0x00;
 			z += 3;
+		}
+	}
+	else if (xVRAM != NULL) {
+		xVRAMData = xVRAM->GET_VIDEO_ARRAY();
+		SetVGAPaletteRGB(xVRAM->GET_PALETTE());
+
+		for (UINT i = 0; i < iScreenWidth * iScreenHeight; i++) {
+			SDL_Color c = sdlPalette[xVRAMData[i]];
+
+			xRGBBuffer[i] = (c.r << 24) | (c.g << 16) | (c.b << 8) | c.a;
 		}
 	}
 	SDL_UpdateTexture(sdlTexture, NULL, xRGBBuffer, iScreenWidth * sizeof(uint32_t));
@@ -207,7 +208,6 @@ UINT SkRendererSDL::Render()
 		SDL_SetRenderDrawColor(sdlRenderer, 0, 128, 0, 255);
 		SDL_RenderClear(sdlRenderer);
 		SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
-		//printf("Render = %08X, Texture = %08X\n", sdlRenderer, sdlTexture);
 		//SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, &dst);
 		SDL_RenderPresent(sdlRenderer);
 	}
@@ -274,6 +274,7 @@ bool SkRendererSDL::ML()
 #if !defined (__NO_SDL__)
 	while (true) {
 		//SkD((DLV_MOUSE,"before SDL_PumpEvents\n"));
+		//printf("SDL2 SkRendererSDL::ML\n");
 		SDL_Event event;
 		SDL_PumpEvents();
 		if (SDL_PollEvent(&event)) {
@@ -285,6 +286,7 @@ bool SkRendererSDL::ML()
 				case SDL_KEYUP:
 					xMasterWinApp->processKinput(event.key.keysym.sym, false);
 					break;
+				// the mouse events below are actually not used for mouse
 				case SDL_MOUSEMOTION:
 					xMasterWinApp->processMinput(-1, false, event.motion.x, event.motion.y);
 					break;

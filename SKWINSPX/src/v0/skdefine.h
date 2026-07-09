@@ -5,24 +5,6 @@
 // These could also be declared as enums or constants
 // This DEFINES.H is to be used with both V4 and V5 codes.
 
-/*
-#define _OPTION_DUNGEON_NO_SPECIFIC_		0	// to be used with original DATA folder
-#define _OPTION_DUNGEON_DM1_KID_			1	// DM1 engine
-#define _OPTION_DUNGEON_DM1_DM_				2
-#define _OPTION_DUNGEON_DM1_CSB_			3
-#define _OPTION_DUNGEON_DM1_TQ_				4
-#define _OPTION_DUNGEON_DM2_DM_				5	// DM2 engine
-#define _OPTION_DUNGEON_DM2_CSB_			6
-#define _OPTION_DUNGEON_DM2_TQ_				7
-#define _OPTION_DUNGEON_DM2_SK_BETA_		8
-#define _OPTION_DUNGEON_DM2_SK_DEMO_		9
-#define _OPTION_DUNGEON_DM2_SK_				10
-#define _OPTION_DUNGEON_DM2_SK_EXT_			11
-// Experimental
-#define _OPTION_DUNGEON_BWY_BW_				12	// Bloodwych Engine
-#define _OPTION_DUNGEON_EOB_EOB1_			13	// Eye of the Beholder Engine
-#define _OPTION_DUNGEON_DMX_				14	// DM Xtended
-*/
 
 #define _OPTION_CLI_TITLE_NEW_GAME				1
 #define _OPTION_CLI_TITLE_RESUME_SCREEN			2
@@ -35,6 +17,10 @@
 #define _GDAT_LANG_FRENCH_					0x40
 #define _GDAT_LANG_SPANISH_					0x50	// SPX: Additional value
 #define _GDAT_LANG_ITALIAN_					0x60	// SPX: Additional value
+
+
+#define IMG_4_BPP					4			// 4 bits per pixel => 16 colors
+#define IMG_8_BPP					8			// 8 bits per pixel => 256 colors
 
 
 //------------------------------------------------------------------------------
@@ -199,6 +185,7 @@ enum dtIndex
 
 // Playback 0x157C = 5500 Hz
 #define PLAYBACK_FREQUENCY			5500
+#define SOUND_FREQUENCY_5500		5500
 #define SKWIN_PLAYBACK_FREQUENCY	6000
 #define SKWIN_PLAYBACK_FREQUENCY_V5	11025
 
@@ -354,15 +341,16 @@ enum SkillLevel {
 		//  +--+ | 5| +--+--+
 		//       +--+
 
-#define INVENTORY_HAND_RIGHT			0
-#define INVENTORY_HAND_LEFT				1
-	#define INVENTORY_HAND_LAST				1
+#define C00_INVENTORY_HAND_RIGHT			0
+	#define C00_INVENTORY_BODYPART_FIRST		0
+#define C01_INVENTORY_HAND_LEFT				1
+	#define C01_INVENTORY_HAND_LAST				1
 
 #define INVENTORY_HEAD					2
 #define INVENTORY_BODY					3	
 #define INVENTORY_LEGS					4	
 #define INVENTORY_FOOT					5
-	#define INVENTORY_BODYPART_LAST			5	
+	#define C05_INVENTORY_BODYPART_LAST			5	
 
 #define INVENTORY_POUCH_2				6
 #define INVENTORY_SCABBARD_2			7		
@@ -552,6 +540,8 @@ enum SkillLevel {
 #define GDAT_INTERFACE_BODY_HAND_LEFT				0x34
 #define GDAT_INTERFACE_BODY_HAND_RIGHT				0x38
 
+#define GDAT_x04_CHAR_ICON_SLAB_GREY			0x04
+#define GDAT_x05_CHAR_ICON_SLAB_RED_FRAME		0x05
 
 //------------------------------------------------------------------------------
 //	GLOBAL IMAGE ATTRIBUTES
@@ -1295,7 +1285,7 @@ enum SkillLevel {
 // weapon attack
 // portrait changed
 
-#define	CHAMPION_FLAG_0010			0x0010	// 0x0010
+#define	CHAMPION_FLAG_0010_MALE		0x0010	// 0x0010
 #define	CHAMPION_FLAG_0400			0x0400	// 0x0400
 #define	CHAMPION_FLAG_0800			0x0800	// 0x0800
 #define	CHAMPION_FLAG_1000			0x1000	// 0x1000
@@ -1306,6 +1296,21 @@ enum SkillLevel {
 #define	CHAMPION_FLAG_4000			0x4000	// 0x4000
 #define	CHAMPION_FLAG_8000			0x8000	// 0x8000
 #define CHAMPION_FLAG_FC00			0xfc00	// 0xfc00
+
+/* DM1/ReDMCSB: Champion attributes
+#define MASK0x0000_NONE           0x0000
+#define MASK0x0008_DISABLE_ACTION 0x0008
+#define MASK0x0010_MALE           0x0010
+#define MASK0x0080_NAME_TITLE     0x0080
+#define MASK0x0100_STATISTICS     0x0100
+#define MASK0x0200_LOAD           0x0200
+#define MASK0x0400_ICON           0x0400
+#define MASK0x0800_PANEL          0x0800
+#define MASK0x1000_STATUS_BOX     0x1000
+#define MASK0x2000_WOUNDS         0x2000
+#define MASK0x4000_VIEWPORT       0x4000
+#define MASK0x8000_ACTION_HAND    0x8000
+*/
 
 //------------------------------------------------------------------------------
 //	CONSTANT VALUE OR TYPES FOR FUNCTIONS
@@ -1557,10 +1562,23 @@ typedef enum
 
 #define RECT_015_BOTTOM_MESSAGE_3_LINES				15
 
+#define RECT_165_CHAMPION_FIRSTNAME_1				165
+#define RECT_166_CHAMPION_FIRSTNAME_2				166
+#define RECT_167_CHAMPION_FIRSTNAME_3				167
+#define RECT_168_CHAMPION_FIRSTNAME_4				168
+
+
 #define RECT_173_CHAMPION_PORTRAIT_1				173
 #define RECT_174_CHAMPION_PORTRAIT_2				174
 #define RECT_175_CHAMPION_PORTRAIT_3				175
 #define RECT_176_CHAMPION_PORTRAIT_4				176
+
+#define RECT_545_INVENTORY_MOUTH_COLOR_FRAME		545
+#define RECT_546_INVENTORY_EYE_COLOR_FRAME			546
+
+#define RECT_553_CHAMPION_TITLE_NAMES				553
+#define RECT_554_CHAMPION_SHEET_IMAGE				554
+#define RECT_555_CHAMPION_SHEET_LOAD_STRING			555
 
 
 //------------------------------------------------------------------------------
@@ -1646,6 +1664,7 @@ typedef enum
 #define C5_ATTACK_MAGIC     5 /* Caused by Poison Bolt explosions and creatures (Grey Lord, Lord Chaos, Lord Order, Materializer / Zytaz, Vexirk, Wizard Eye / Flying Eye) */
 #define C6_ATTACK_PSYCHIC   6 /* Caused by creatures (Ghost / Rive, Screamer) */
 #define C7_ATTACK_LIGHTNING 7 /* Caused by Lightning Bolt explosions */
+#define C8_ATTACK_UNKNOWN	8 /* Only DM2 */
 
 /* Explosion types */
 #define C000_EXPLOSION_FIREBALL             0
@@ -1659,6 +1678,10 @@ typedef enum
 #define C050_EXPLOSION_FLUXCAGE            50
 #define C100_EXPLOSION_REBIRTH_STEP1      100
 #define C101_EXPLOSION_REBIRTH_STEP2      101
+
+/* For F0313_CHAMPION_GetWoundDefense */
+#define MASK0x0000_DO_NOT_USE_SHARP_DEFENSE 0x0000
+#define MASK0x8000_USE_SHARP_DEFENSE        0x8000
 
 //------------------------------------------------------------------------------
 

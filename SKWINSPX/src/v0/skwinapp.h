@@ -36,9 +36,13 @@ typedef void (*RGBVRAMProviderFunc)(void* xContext, X8* xBuffer);
 
 //------------------------------------------------------------------------------
 
+class SkWinCore;	// !!!! done for testing fCoreMouseCallback
 
 class SkWinApp
 {
+public:
+	SkWinCore* xCore;	// reference to game
+
 private:
 	UINT	iVideoRenderer;
 //	SkRendererSDL* xRendererSDL;
@@ -47,15 +51,25 @@ private:
 	SkRendererGeneric* xSkWinRenderer;
 	SkVRAM*	xVRAM;
 
+
+
 	void*				xExternalController;
 	MouseProviderFunc	fMouseProvider;
 	RGBVRAMProviderFunc	fVRAMProvider;
 
 public:
 
+	//// Check if I need both ?
 	U16 iCallbackMouseX;
 	U16 iCallbackMouseY;
 	U32 iCallbackMouseButton;
+
+	/// mice_x mice_y from SkWinCore, as I can't have SkWinApp know about SkWinCore class
+	U16* pMouseButtons;
+	U16* pMouseX;
+	U16* pMouseY;
+	//void (SkWinApp::*fCoreMouseCallback)();
+	void (SkWinCore::*fCoreMouseCallback)();
 
 //	SkWinCore* skw;
 	int sxfact;

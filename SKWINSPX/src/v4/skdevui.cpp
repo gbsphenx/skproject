@@ -201,7 +201,7 @@ void SkWinCore::IBMIO_BLIT_MOUSE_CURSOR(Bit8u *buff, SRECT *rc, Bit16u srcx, Bit
 		320,
 		colorkey
 		);
-	_04bf_079c = colorkey;
+	glbBlitMouseColorkey = colorkey;
 	glbMouseCursorVisible = 1;
 }
 
@@ -350,7 +350,7 @@ void SkWinCore::_01b0_05ae_PRECALL_BLIT_MOUSE() //#DS=04BF
 	//printf("_01b0_05ae_PRECALL_BLIT_MOUSE\n");
 	if ((true
 		&& _04bf_1850 != 0
-		&& _04bf_03c6 != 0
+		&& cd.dos.glbMouseEventReceiverSet != 0
 	) && (
 		false
 		|| cd.mk.glbMouseXPos < _04bf_1852.x 
@@ -367,35 +367,35 @@ void SkWinCore::_01b0_05ae_PRECALL_BLIT_MOUSE() //#DS=04BF
 		}
 	}
 	sk0e80 *bp04 = &_04bf_0e80[_04bf_1938];
-	_04bf_185e = cd.mk.glbMouseXPos - bp04->b0;
-	_04bf_1860 = cd.mk.glbMouseYPos - bp04->b1;
+	cd.mk.glbSomeMouseX = cd.mk.glbMouseXPos - bp04->b0;
+	cd.mk.glbSomeMouseY = cd.mk.glbMouseYPos - bp04->b1;
 	_04bf_0e38 = bp04->b2;
-	_04bf_1936 = bp04->b3;
+	cd.mk.glbSomeMouseButton = bp04->b3;
 	_04bf_18aa = 0;
 	_04bf_18ac = 0;
-	if (_04bf_185e < 0) {
-		_04bf_18aa = 0 - _04bf_185e;
-		_04bf_185e = 0;
+	if (cd.mk.glbSomeMouseX < 0) {
+		_04bf_18aa = 0 - cd.mk.glbSomeMouseX;
+		cd.mk.glbSomeMouseX = 0;
 	}
-	if (_04bf_1860 < 0) {
-		_04bf_18ac = 0 - _04bf_1860;
-		_04bf_1860 = 0;
+	if (cd.mk.glbSomeMouseY < 0) {
+		_04bf_18ac = 0 - cd.mk.glbSomeMouseY;
+		cd.mk.glbSomeMouseY = 0;
 	}
-	if (_04bf_185e >= 320)
+	if (cd.mk.glbSomeMouseX >= 320)
 		return;
-	if (_04bf_1860 >= 200)
+	if (cd.mk.glbSomeMouseY >= 200)
 		return;
-	if (cd.mk._04bf_17a8 != 0)
+	if (cd.mk.glbMouseCurVis2 != 0)
 		return;
-	cd.mk._04bf_17a8++;
+	cd.mk.glbMouseCurVis2++;
 	SRECT bp0c;
-	bp0c.x = _04bf_185e;
+	bp0c.x = cd.mk.glbSomeMouseX;
 	bp0c.cx = _04bf_0e38 - _04bf_18aa;
 	if (bp0c.x + bp0c.cx - 1 > 319) {
 		bp0c.cx -= bp0c.x + bp0c.cx - 320;
 	}
-	bp0c.y = _04bf_1860;
-	bp0c.cy = _04bf_1936 - _04bf_18ac;
+	bp0c.y = cd.mk.glbSomeMouseY;
+	bp0c.cy = cd.mk.glbSomeMouseButton - _04bf_18ac;
 	if (bp0c.y + bp0c.cy - 1 > 199) {
 		bp0c.cy -= bp0c.y + bp0c.cy - 200;
 	}
@@ -428,9 +428,9 @@ void SkWinCore::IBMIO_HIDE_MOUSE_CURSOR() //#DS=04BF
 // _01b0_073d renamed _01b0_073d_MOUSE
 void SkWinCore::_01b0_073d_MOUSE() //#DS=04BF
 {
-	if (cd.mk._04bf_17a8 != 0) {
+	if (cd.mk.glbMouseCurVis2 != 0) {
 		IBMIO_HIDE_MOUSE_CURSOR();
-		cd.mk._04bf_17a8--;
+		cd.mk.glbMouseCurVis2--;
 	}
 	return;
 }
@@ -451,12 +451,12 @@ void SkWinCore::IBMIO_MOUSE_EVENT_RECEIVER(Bit16u cursorx, Bit16u cursory, Bit16
 	}
 	cd.mk.glbMouseButtonState = ((buttons >> 1) & 1) | ((buttons << 1) & 2);
 	_04bf_0e7c = buttons ^ _04bf_1934;
-	if (_04bf_0e7c != 0 && _04bf_03c6 != 0) {
+	if (_04bf_0e7c != 0 && cd.dos.glbMouseEventReceiverSet != 0) {
 		if ((_04bf_0e7c & 1) != 0) { // left click ?
-			(this->*_04bf_179e)(di, si, ((buttons & 1) != 0) ? 2 : 4) INDIRECT_CALL;
+			(this->*pfnMouseEventReceiver)(di, si, ((buttons & 1) != 0) ? 2 : 4) INDIRECT_CALL;
 		}
 		if ((_04bf_0e7c & 2) != 0) { // right click ?
-			(this->*_04bf_179e)(di, si, ((buttons & 2) != 0) ? 1 : 8) INDIRECT_CALL;
+			(this->*pfnMouseEventReceiver)(di, si, ((buttons & 2) != 0) ? 1 : 8) INDIRECT_CALL;
 		}
 		_04bf_1934 = buttons;
 	}
@@ -505,12 +505,13 @@ void SkWinCore::FIRE_SHOW_MOUSE_CURSOR()
 
 
 //^01B0:08D8
-void SkWinCore::_01b0_08d8()
+// SPX: _01b0_08d8 renamed IBMIO_01b0_08d8
+void SkWinCore::IBMIO_01b0_08d8()
 {
 	ENTER(0);
 	_04bf_17a2 = 1;
-	_04bf_03c6 = 0;
-	cd.mk._04bf_17a8 = 0;
+	cd.dos.glbMouseEventReceiverSet = 0;
+	cd.mk.glbMouseCurVis2 = 0;
 	_04bf_1850 = 0;
 	sysMousePositionCaptured = 0;
 	_04bf_0e7a = 0;
@@ -532,7 +533,7 @@ void SkWinCore::IBMIO_SET_MOUSE_HANDLER()
 	cd.mk.glbMouseXPos = cd.mk.mice_x;
 	cd.mk.glbMouseYPos = cd.mk.mice_y;
 	_int33_mouse_callback = &SkWinCore::IBMIO_MOUSE_HANDLER;
-	_04bf_03d4 = 1;
+	cd.dos.glbMouseHandlerSet = 1;
 	return;
 #else
 #error	Unr
@@ -610,8 +611,8 @@ void SkWinCore::_01b0_08b6_SET_RECEIVER(U16 (SkWinCore::*pfn)(U16 xx, U16 yy, i1
 {
 	ENTER(0);
 	LOADDS(0x3083);
-	_04bf_179e = pfn;
-	_04bf_03c6 = 1;
+	pfnMouseEventReceiver = pfn;
+	cd.dos.glbMouseEventReceiverSet = 1;
 	return;
 }
 
@@ -624,9 +625,9 @@ void SkWinCore::MOUSE_STATE_01b0_0d39(i16 *xx, i16 *yy, i16 *zz, Bit16u ww) //#D
 	ENTER(0);
 	LOADDS(0x3083);
 	if (ww != 0) {
-		*xx = _04bf_185e;
-		*yy = _04bf_1860;
-		*zz = _04bf_1936;
+		*xx = cd.mk.glbSomeMouseX;
+		*yy = cd.mk.glbSomeMouseY;
+		*zz = cd.mk.glbSomeMouseButton;
 	}
 	else {
 		*xx = cd.mk.glbMouseXPos;
@@ -806,7 +807,7 @@ void SkWinCore::_01b0_0c70_MOUSE(Bit16u xx) //#DS=04BF
 {
 	LOADDS(0x3083);
 	LOCK_MOUSE_EVENT();
-	if (cd.mk._04bf_17a8 != 0) {
+	if (cd.mk.glbMouseCurVis2 != 0) {
 		_01b0_073d_MOUSE();
 		_04bf_1938 = xx;
 		_01b0_05ae_PRECALL_BLIT_MOUSE();

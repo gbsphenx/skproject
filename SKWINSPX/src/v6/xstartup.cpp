@@ -9,15 +9,15 @@
 //		SDL : window-box without menus
 
 // MSVC6 note: uncheck "use precompiled header file .pch" else expect "unexpected #endif" there.
+
 #if defined (SKWINSPX) || defined (SK9821V4)
 	#if defined (SKDLL_EXPORTS) || defined (LIBSKWINDLL_EXPORTS)
 	#include <StdAfx.h>
 	#endif // LIBSKWINDLL_EXPORTS
 #endif
 
-#include <skapi.h>
-
 #include <skver.h>
+
 #include <skparam.h>
 #include <skdebug.h>
 
@@ -27,6 +27,8 @@
 #endif // SK9821V4
 
 #include <stdio.h>
+#include <string.h>
+
 #include <xcorelog.h>
 #include <xsfxsdl.h>
 #include <skcnsole.h>
@@ -36,6 +38,8 @@
 #include <vector>
 #include <string>
 #include <sstream>
+
+#include <skapi.h>
 
 //==============================================================================
 
@@ -222,7 +226,7 @@ int SKWIN_START_MAIN_HEADLESS(tSKWinContext* xSKWinContext, int iEngine, int arg
 		skWinApplication->ProcessArgs(argc, argv); // just to display again
 		skWinApplication->MemInfo();
 
-		iGameRC = xSKWinContext->xSkCore->SK_INIT();
+		iGameRC = xSKWinContext->xSkCore->SKLIB_INIT();
 	}
 
 	SkCodeParam::bDisplayNoMouse = false;
@@ -275,7 +279,7 @@ SK_API int SK_GameLoad(tSKWinContext* xSKWinContext)
 {
 	int iResult = 0;
 
-    return xSKWinContext->xSkCore->SK_GAMELOAD();
+    return xSKWinContext->xSkCore->SKLIB_GAMELOAD();
 }
 
 
@@ -283,14 +287,14 @@ SK_API int SK_StartGameLoop(tSKWinContext* xSKWinContext)
 {
 	int iResult = 0;
 
-    return xSKWinContext->xSkCore->SK_GAMELOOP();
+    return xSKWinContext->xSkCore->SKLIB_GAMELOOP();
 }
 
 SK_API int SK_StartGameLoop(tSKWinContext* xSKWinContext, MouseProviderFunc fMP)
 {
 	int iResult = 0;
 
-    return xSKWinContext->xSkCore->SK_GAMELOOP();
+    return xSKWinContext->xSkCore->SKLIB_GAMELOOP();
 }
 
 SK_API void SK_RegisterMouseProvider(tSKWinContext* xSKWinContext, MouseProviderFunc func)

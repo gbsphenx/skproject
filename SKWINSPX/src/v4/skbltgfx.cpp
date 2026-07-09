@@ -120,17 +120,14 @@ void SkWinCore::IBMIO_LOAD_4TO8BPP_PAL(const U8 *pal)
 
 
 //^00EB:070C
-void SkWinCore::_00eb_070c(U8 *buffSrc, U16 yy, U16 zz, U16 ww) //#DS=04BF
+// SPX: _00eb_070c renamed IBMIO_BLIT_SOURCE_4TO8BPP
+void SkWinCore::IBMIO_BLIT_SOURCE_4TO8BPP(U8 *buffSrc, U16 offSrc, U16 offDst, U16 size) //#DS=04BF
 {
-	//^00EB:070C
 	ENTER(0);
-	//^00EB:070F
 	LOADDS(0x0c48);
-	//^00EB:0715
-	_04bf_0cf0 = buffSrc;
+	glbBlitBufferSource = buffSrc;
 	IBMIO_LOAD_4TO8BPP_PAL(_04bf_00dc);
-	IBMIO_BLIT_ROW_4TO8BPP(yy, zz, ww);
-	//^00EB:073D
+	IBMIO_BLIT_ROW_4TO8BPP(offSrc, offDst, size);
 	return;
 }
 
@@ -145,7 +142,7 @@ void SkWinCore::IBMIO_BLIT_ROW_4TO8BPP(U16 offSrc, U16 offDst, U16 size)
 	U8 *dsbx = _00eb_0023;
 	U8 *esdi = _04bf_0e34 + offDst;
 	U16 cx = size;
-	const U8 *dssi = _04bf_0cf0;
+	const U8 *dssi = glbBlitBufferSource;
 	bool carry1 = (offSrc & 1) != 0;
 	offSrc >>= 1;
 	dssi += offSrc;
@@ -1506,9 +1503,9 @@ SRECT *SkWinCore::QUERY_BLIT_RECT(Bit8u *buff, SRECT *rect, U16 rectno, i16 *you
 			break;
 	}
 	//^098D:0AC2
-	if (_4976_4bca.cx != 0) {
+	if (glb_4976_4bca_Rect.cx != 0) {
 		//^098D:0AC9
-		COPY_MEMORY(&_4976_4bca, &spRect1, sizeof(SRECT));
+		COPY_MEMORY(&glb_4976_4bca_Rect, &spRect1, sizeof(SRECT));
 	}
 	//^098D:0ADE
 	if (_4976_4bc8 != 0 && cd.pi.glbIsPlayerMoving != 0 && bp24 == 3) {
@@ -1577,8 +1574,8 @@ void SkWinCore::MOVE_MEMORY_WITH_DELTA(U16 offSrc, U16 offDst, U16 size) //#DS=0
 	//^00EB:01EB
 	//^00EB:01EE
 	MOVE_MEMORY(
-		_04bf_0cf0 +offSrc,
-		_04bf_0e34 +offDst,
+		glbBlitBufferSource + offSrc,
+		_04bf_0e34 + offDst,
 		size
 		);
 	//^00EB:021F
@@ -1593,7 +1590,7 @@ void SkWinCore::COPY_MEMORY_WITH_DELTA_AND_TRANSPARENT(U16 offSrc, U16 offDst, U
 	Bit8u dh = colorkey;
 	Bit8u *di = _04bf_0e34 + offDst;
 	U16 cx = size;
-	Bit8u *si = _04bf_0cf0 + offSrc;
+	Bit8u *si = glbBlitBufferSource + offSrc;
 
 	do {
 		//^00EB:0242
@@ -1620,8 +1617,8 @@ void SkWinCore::MOVE_MEMORY_STRETCH_13TO16(U16 offSrc, U16 offDst)
 
 	//^00EB:0812
 	//^00EB:0817
-	Bit8u *di = _04bf_0e34 +offDst;
-	Bit8u *si = _04bf_0cf0 +offSrc;
+	Bit8u *di = _04bf_0e34 + offDst;
+	Bit8u *si = glbBlitBufferSource + offSrc;
 	U16 cx = 14;
 
 	// DS:SI	E000:871B -> E000:8728 (+13)
@@ -1719,7 +1716,12 @@ SRECT *SkWinCore::QUERY_EXPANDED_RECT(U16 rectno, SRECT *rc)
 void SkWinCore::DRAW_DIALOGUE_PICT(Bit8u *srcImage, Bit8u *dstImage, SRECT *rect, U16 srcx, U16 srcy, U16 colorkey, Bit8u localpal[16])
 {
 	if (SkCodeParam::bUsePowerDebug) {
+		// 1st pass, check for valid image pointer
 		if (!CheckSafePointer(srcImage) || !CheckSafePointer(dstImage))
+			return;
+		// 2nd pass, check for valid bpp for each image pointer (if not, the pointer may be messed, then it will crash)
+		if ( ( ((U16 *)srcImage)[-3] != 4 && ((U16 *)srcImage)[-3] != 8) ||
+			( ((U16 *)dstImage)[-3] != 4 && ((U16 *)dstImage)[-3] != 8) )
 			return;
 	}
 	// draw the:
@@ -1744,18 +1746,17 @@ void SkWinCore::DRAW_DIALOGUE_PICT(Bit8u *srcImage, Bit8u *dstImage, SRECT *rect
 
 
 //^3E74:0C16
-void SkWinCore::FREE_PICT_BUFF(Bit8u *buff)
+void SkWinCore::FREE_PICT_BUFF(U8* xImageBuffer)
 {
 	// READ_UI16(buff,-6) -> bpp(4 or 8)
 	// READ_UI16(buff,-4) -> width
 	// READ_UI16(buff,-2) -> height
 
-	//^3E74:0C16
 	DEALLOC_UPPER_MEMORY(
-		(	(READ_UI16(buff,-6) == 4) 
-			? (((READ_UI16(buff,-4) +1) & 0xfffe) >> 1)	// if 4 bpp, round up width to byte align.
-			:   (READ_UI16(buff,-4)     & 0xffff)		// if 8 bpp, already byte aligned.
-		) * READ_UI16(buff,-2) +6
+		(	(READ_UI16(xImageBuffer,-6) == 4)	// bpp
+			? (((READ_UI16(xImageBuffer,-4) +1) & 0xFFFE) >> 1)	// if 4 bpp, round up width to byte align.
+			:   (READ_UI16(xImageBuffer,-4)     & 0xFFFF)		// if 8 bpp, already byte aligned.
+		) * READ_UI16(xImageBuffer,-2) +6
 	);
 }
 
@@ -1764,7 +1765,7 @@ void SkWinCore::FREE_PICT_BUFF(Bit8u *buff)
 void SkWinCore::TRIM_BLIT_RECT(i16 xx, i16 yy, i16 ss, i16 tt)
 {
 	ENTER(0);
-	SET_SRECT(&_4976_4bca, xx, yy, _4976_00f6 -ss -xx, _4976_00f8 -tt -yy);
+	SET_SRECT(&glb_4976_4bca_Rect, xx, yy, _4976_00f6 -ss -xx, _4976_00f8 -tt -yy);
 	return;
 }
 
@@ -1818,21 +1819,21 @@ X8* SkWinCore::QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(i16 iCacheIndex, Picture *ref
 }
 
 //^0B36:004B
-X8* SkWinCore::QUERY_PICST_IMAGE(Picture *ref)
+X8* SkWinCore::QUERY_PICST_IMAGE(Picture* xPicture)
 {
 	ENTER(4);
-	X8* xImageDataBuff = QUERY_GDAT_IMAGE_ENTRY_BUFF(ref->iGDatCategory, ref->iGDatItemId, ref->iGDatEntryId);	// bp04
+	X8* xImageDataBuff = QUERY_GDAT_IMAGE_ENTRY_BUFF(xPicture->iGDatCls1Category, xPicture->iGDatCls2MainItemId, xPicture->iGDatCls4EntryId);	// bp04
 	if (SkCodeParam::bUseFixedMode && xImageDataBuff == NULL)
 		xImageDataBuff = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x15_MISCELLANEOUS, GDAT_ITEM_DEFAULT_INDEX, GDAT_ITEM_DEFAULT_INDEX); // Get Yukman!
 	if (SkCodeParam::bUseFixedMode && xImageDataBuff == NULL)
 		return NULL;
-	ref->pb0 = xImageDataBuff;
-	ref->w14 = 0;
-	ref->w16 = 0;
-	ref->width = READ_UI16(xImageDataBuff,-4);
-	ref->height = READ_UI16(xImageDataBuff,-2);
-	ref->w22 = READ_UI16(xImageDataBuff,-6);
-	ref->w4 = 4;
+	xPicture->pb0 = xImageDataBuff;
+	xPicture->w14 = 0;
+	xPicture->w16 = 0;
+	xPicture->width = READ_UI16(xImageDataBuff,-4);
+	xPicture->height = READ_UI16(xImageDataBuff,-2);
+	xPicture->w22 = READ_UI16(xImageDataBuff,-6);	// bpp
+	xPicture->w4 = 4;
 	return xImageDataBuff;
 }
 
@@ -1898,51 +1899,51 @@ i16 SkWinCore::QUERY_GDAT_PICT_OFFSET(Bit8u cls1, Bit8u cls2, Bit8u cls4)
 
 //^0B36:0520
 //ExtendedPicture *SkWinCore::QUERY_GDAT_SUMMARY_IMAGE(ExtendedPicture *ref, Bit8u cls1, Bit8u cls2, Bit8u cls4)
-ExtendedPicture *SkWinCore::QUERY_GDAT_SUMMARY_IMAGE(ExtendedPicture *ref, Bit8u iCategory, Bit8u iItemNo, Bit8u iEntry)
+ExtendedPicture *SkWinCore::QUERY_GDAT_SUMMARY_IMAGE(ExtendedPicture* xExtPicture, U8 iGDatCls1Category, U8 iGDatCls2MainItemId, U8 iGDatCls4EntryId)
 {
 	SkD((DLV_DBG_GETPIC, "DBG: QUERY_GDAT_SUMMARY_IMAGE(%p,%02X,%02X,%02X)\n"
-		, ref, (Bitu)iCategory, (Bitu)iItemNo, (Bitu)iEntry));
+		, xExtPicture, (Bitu)iGDatCls1Category, (Bitu)iGDatCls2MainItemId, (Bitu)iGDatCls4EntryId));
 
 	ENTER(8);
-	ZERO_MEMORY(ref, 314);
-	ref->w12 = -1;
-	ref->iGDatCategory = iCategory;
-	ref->iGDatItemId = iItemNo;
-	ref->iGDatEntryType = dtImage;
-	ref->iGDatEntryId = iEntry;
-	ref->iYStretch = 64;
-	ref->iXStretch = 64;
-	ref->rectNo = 0xffff;
-	ref->w26 = 0xffff;
-	ref->pb44 = _4976_4964;
-	ref->colorKeyPassThrough = -1;
-	if (iCategory != 0xff) {
-		ref->w6 = QUERY_GDAT_ENTRY_DATA_INDEX(iCategory, iItemNo, dtImage, iEntry);
-		i16 bp02 = QUERY_GDAT_ENTRY_DATA_INDEX(iCategory, iItemNo, dtImageOffset, 0xFE);
+	ZERO_MEMORY(xExtPicture, sizeof(ExtendedPicture));	// 314
+	xExtPicture->w12 = -1;
+	xExtPicture->iGDatCls1Category = iGDatCls1Category;
+	xExtPicture->iGDatCls2MainItemId = iGDatCls2MainItemId;
+	xExtPicture->iGDatCls3DataType = dtImage;
+	xExtPicture->iGDatCls4EntryId = iGDatCls4EntryId;
+	xExtPicture->iYStretch = 64;
+	xExtPicture->iXStretch = 64;
+	xExtPicture->rectNo = 0xffff;
+	xExtPicture->w26 = 0xffff;
+	xExtPicture->pb44 = _4976_4964;
+	xExtPicture->colorKeyPassThrough = -1;
+	if (iGDatCls1Category != 0xFF) {
+		xExtPicture->w6 = QUERY_GDAT_ENTRY_DATA_INDEX(iGDatCls1Category, iGDatCls2MainItemId, dtImage, iGDatCls4EntryId);
+		i16 bp02 = QUERY_GDAT_ENTRY_DATA_INDEX(iGDatCls1Category, iGDatCls2MainItemId, dtImageOffset, 0xFE);
 		if (bp02 != 0) {
-			ref->iXOffset += i8(bp02 >> 8);
-			ref->iYOffset += i8(bp02);
+			xExtPicture->iXOffset += i8(bp02 >> 8);
+			xExtPicture->iYOffset += i8(bp02);
 		}
-		bp02 = QUERY_GDAT_PICT_OFFSET(iCategory, iItemNo, iEntry);
+		bp02 = QUERY_GDAT_PICT_OFFSET(iGDatCls1Category, iGDatCls2MainItemId, iGDatCls4EntryId);
 		if (bp02 != 0) {
-			ref->iXOffset += i8(bp02 >> 8);
-			ref->iYOffset += i8(bp02);
+			xExtPicture->iXOffset += i8(bp02 >> 8);
+			xExtPicture->iYOffset += i8(bp02);
 		}
-		Bit8u *bp06 = QUERY_GDAT_IMAGE_LOCALPAL(iCategory, iItemNo, iEntry);
+		Bit8u *bp06 = QUERY_GDAT_IMAGE_LOCALPAL(iGDatCls1Category, iGDatCls2MainItemId, iGDatCls4EntryId);
 		if (bp06 == NULL) {
-			ref->w56 = 256;
-			bp06 = ref->b58;
+			xExtPicture->w56 = 256;
+			bp06 = xExtPicture->b58;
 			i16 bp08 = 0;
 			for (; bp08 < 256; bp08++) {
 				bp06[bp08] = (Bit8u)bp08;
 			}
 		}
 		else {
-			ref->w56 = 16;
-			COPY_MEMORY(bp06, ref->b58, 16);
+			xExtPicture->w56 = 16;
+			COPY_MEMORY(bp06, xExtPicture->b58, 16);
 		}
 	}
-	return ref;
+	return xExtPicture;
 }
 
 
@@ -1967,68 +1968,70 @@ void SkWinCore::ALLOC_IMAGE_MEMENT(Bit8u cls1, Bit8u cls2, Bit8u cls4)
 			if (bp04->BitsPixel() != 8) {
 				return;
 			}
-			_4976_4807 = si;
+			glbRawDataNoAllocated = si;
 			return;
 		}
 		else {
-			_3e74_4549(di);
+			MEMENT_3e74_4549(di);
 		}
 	}
 	return;
 }
 
 //^0B36:018F
-void SkWinCore::ALLOC_PICT_MEMENT(Picture *ref)
+void SkWinCore::ALLOC_PICT_MEMENT(Picture* xPicture)
 {
 	ENTER(0);
-	if ((ref->w4 & 0x0004) != 0) {
-		ALLOC_IMAGE_MEMENT(ref->iGDatCategory, ref->iGDatItemId, ref->iGDatEntryId);
+	if ((xPicture->w4 & 0x0004) != 0) {
+		ALLOC_IMAGE_MEMENT(xPicture->iGDatCls1Category, xPicture->iGDatCls2MainItemId, xPicture->iGDatCls4EntryId);
 	}
-	else if ((ref->w4 & 0x0008) != 0) {
-		_3e74_583a_MEMENTI(ref->w12);
+	else if ((xPicture->w4 & 0x0008) != 0) {
+		_3e74_583a_MEMENTI(xPicture->w12);
+	}
+
+}
+
+//^0B36:01CD
+void SkWinCore::FREE_PICT_MEMENT(Picture* xPicture)
+{
+	ENTER(0);
+	if ((xPicture->w4 & 0x0004) != 0) {
+		FREE_IMAGE_MEMENT(xPicture->iGDatCls1Category, xPicture->iGDatCls2MainItemId, xPicture->iGDatCls4EntryId);
+	}
+	else if ((xPicture->w4 & 0x0008) != 0) {
+		_3e74_585a_CACHE(xPicture->w12, 0);
 	}
 
 }
 
 //^0B36:068F
-Bit32u SkWinCore::CALC_PICT_ENT_HASH(ExtendedPicture *ref)
+Bit32u SkWinCore::CALC_PICT_ENT_HASH(ExtendedPicture *xExtPicture)
 {
 	ENTER(0);
-	return (Bit32u(ref->w6 & 0x1fff) << 12) | ((ref->iXStretch & 0x007f) << 5) | (ref->iYStretch & 0x001f);
+	return (Bit32u(xExtPicture->w6 & 0x1fff) << 12) | ((xExtPicture->iXStretch & 0x007f) << 5) | (xExtPicture->iYStretch & 0x001f);
 }
 
 //^3E74:5992
-void SkWinCore::FREE_IMAGE_MEMENT(Bit8u cls1, Bit8u cls2, Bit8u cls4)
+void SkWinCore::FREE_IMAGE_MEMENT(U8 iGDatCls1Category, U8 iGDatCls2MainItemId, U8 iGDatCls4EntryId)
 {
 	ENTER(0);
-	U16 si = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, dtImage, cls4);
-	if (si == 0xffff || glbShelfMemoryTable[si].Absent()) {
-		si = QUERY_GDAT_ENTRY_DATA_INDEX(0x15,0xfe,dtImage,0xfe);
+	U16 iRawDataNo = QUERY_GDAT_ENTRY_DATA_INDEX(iGDatCls1Category, iGDatCls2MainItemId, dtImage, iGDatCls4EntryId);	// si
+	if (iRawDataNo == 0xFFFF || glbShelfMemoryTable[iRawDataNo].Absent()) {
+		iRawDataNo = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x15_MISCELLANEOUS, 0xFE, dtImage, 0xFE);	// default yukman
 	}
-	if (si == 0xffff)
+	if (iRawDataNo == 0xFFFF)
 		return;
-	if (_4976_4807 == si) {
-		_4976_4807 = 0xffff;
+	if (glbRawDataNoAllocated == iRawDataNo) {
+		glbRawDataNoAllocated = 0xFFFF;
 	}
-	U16 di = QUERY_MEMENTI_FROM(si);
-	if (di != 0xffff) {
-		RECYCLE_MEMENTI(di, 0);
+	U16 iMemEntIdx = QUERY_MEMENTI_FROM(iRawDataNo);	// di
+	if (iMemEntIdx != 0xFFFF) {
+		RECYCLE_MEMENTI(iMemEntIdx, 0);
 	}
 	return;
 }
 
-//^0B36:01CD
-void SkWinCore::FREE_PICT_MEMENT(Picture *ref)
-{
-	ENTER(0);
-	if ((ref->w4 & 0x0004) != 0) {
-		FREE_IMAGE_MEMENT(ref->iGDatCategory, ref->iGDatItemId, ref->iGDatEntryId);
-	}
-	else if ((ref->w4 & 0x0008) != 0) {
-		_3e74_585a_CACHE(ref->w12, 0);
-	}
 
-}
 
 //^44C8:2307
 // TODO: related gfx ?
@@ -2320,32 +2323,32 @@ void SkWinCore::FIRE_STRETCH_BLIT_TO_MEMORY_4TO4BPP(Bit8u *src, Bit8u *dst, U16 
 #pragma warning(pop)
 
 //^0B36:06D3
-ExtendedPicture *SkWinCore::QUERY_PICST_IT(ExtendedPicture *ref)
+ExtendedPicture *SkWinCore::QUERY_PICST_IT(ExtendedPicture* xExtPicture)
 {
 	// query image with some capacity
 	// - stretch
 
 	ENTER(364);
-	U16 iIsStretched = (ref->iXStretch != 64 || ref->iYStretch != 64) ? 1 : 0;	// bp12
+	U16 iIsStretched = (xExtPicture->iXStretch != 64 || xExtPicture->iYStretch != 64) ? 1 : 0;	// bp12
 	U16 bp14 = 0;
-	U16 bp16 = (ref->w6 == 0xFFFF && ref->w12 >= 0) ? 1 : 0;
+	U16 bp16 = (xExtPicture->w6 == 0xFFFF && xExtPicture->w12 >= 0) ? 1 : 0;
 	if (iIsStretched != 0) {
-		ref->iXOffset = CALC_STRETCHED_SIZE(ref->iXOffset, ref->iXStretch);
-		ref->iYOffset = CALC_STRETCHED_SIZE(ref->iYOffset, ref->iYStretch);
+		xExtPicture->iXOffset = CALC_STRETCHED_SIZE(xExtPicture->iXOffset, xExtPicture->iXStretch);
+		xExtPicture->iYOffset = CALC_STRETCHED_SIZE(xExtPicture->iYOffset, xExtPicture->iYStretch);
 	}
-	if ((ref->mirrorFlip & 0x0001) != 0) {
-		ref->iXOffset = - ref->iXOffset;
+	if ((xExtPicture->mirrorFlip & 0x0001) != 0) {
+		xExtPicture->iXOffset = - xExtPicture->iXOffset;
 	}
-	if (ref->colorKeyPassThrough == -3)
-		return ref;
+	if (xExtPicture->colorKeyPassThrough == -3)
+		return xExtPicture;
 	if (iIsStretched == 0 && bp14 == 0) {
 		if (bp16 != 0) {
-			QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(ref->w12, ref);
-			return ref;
+			QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(xExtPicture->w12, xExtPicture);
+			return xExtPicture;
 		}
 		else {
-			QUERY_PICST_IMAGE(ref);
-			return ref;
+			QUERY_PICST_IMAGE(xExtPicture);
+			return xExtPicture;
 		}
 	}
 	U16 bp18;
@@ -2354,22 +2357,22 @@ ExtendedPicture *SkWinCore::QUERY_PICST_IT(ExtendedPicture *ref)
 	Picture bp32;
 	if (bp16 != 0) {
 		bp18 = ALLOC_TEMP_CACHE_INDEX();
-		COPY_MEMORY(ref, &bp32, 24);
+		COPY_MEMORY(xExtPicture, &bp32, sizeof(Picture));	// 24 is size of Picture
 		Bit8u *bp08 = QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(bp32.w12, &bp32);
 		ALLOC_PICT_MEMENT(&bp32);
 		bp04 = NULL;
 	}
 	else {
-		Bit32u bp10 = CALC_PICT_ENT_HASH(ref);
+		Bit32u bp10 = CALC_PICT_ENT_HASH(xExtPicture);
 		if (ADD_CACHE_HASH(bp10, &bp18) != 0) {
-			QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(bp18, ref);
-			return ref;
+			QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(bp18, xExtPicture);
+			return xExtPicture;
 		}
 		else {
 			bp04 = NULL;
 			bp08 = NULL;
 			if (bp08 == NULL) {
-				COPY_MEMORY(ref, &bp32, 24);
+				COPY_MEMORY(xExtPicture, &bp32, sizeof(Picture));	// 24 is size of Picture
 				bp08 = QUERY_PICST_IMAGE(&bp32);
 				ALLOC_PICT_MEMENT(&bp32);
 			}
@@ -2377,7 +2380,7 @@ ExtendedPicture *SkWinCore::QUERY_PICST_IT(ExtendedPicture *ref)
 	}
 	if ((bp32.w4 & 0x0010) != 0) {
 		ExtendedPicture bp016c;
-		COPY_MEMORY(ref, &bp016c, 314);
+		COPY_MEMORY(xExtPicture, &bp016c, sizeof(ExtendedPicture));	// 314 is ExtendedPicture size
 		bp016c.mirrorFlip = 0;
 		bp016c.iYStretch = 64;
 		bp016c.iXStretch = 64;
@@ -2405,27 +2408,27 @@ ExtendedPicture *SkWinCore::QUERY_PICST_IT(ExtendedPicture *ref)
 		ALLOC_PICT_MEMENT(&bp32);
 	}
 	if (iIsStretched != 0) {
-		i16 di = CALC_STRETCHED_SIZE(bp32.width, ref->iXStretch);
-		i16 si = CALC_STRETCHED_SIZE(bp32.height, ref->iYStretch);
-		if (di <= 0 || si <= 0) {
-			ref->width = di;
-			ref->height = si;
+		i16 iWidthStretched = CALC_STRETCHED_SIZE(bp32.width, xExtPicture->iXStretch);	// di
+		i16 iHeightStretched = CALC_STRETCHED_SIZE(bp32.height, xExtPicture->iYStretch);	// si
+		if (iWidthStretched <= 0 || iHeightStretched <= 0) {
+			xExtPicture->width = iWidthStretched;
+			xExtPicture->height = iHeightStretched;
 		}
 		else {
-			ALLOC_NEW_PICT(bp18, di, si, bp32.w22);
+			ALLOC_NEW_PICT(bp18, iWidthStretched, iHeightStretched, bp32.w22);
 			bp08 = QUERY_PICT_BITS(&bp32);
-			bp04 = QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(bp18, ref);
+			bp04 = QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(bp18, xExtPicture);
 			if (bp32.w22 == 8) {
-				_44c8_2351(bp08, bp04, bp32.width, bp32.height, di, si);
+				_44c8_2351(bp08, bp04, bp32.width, bp32.height, iWidthStretched, iHeightStretched);
 			}
 			else {
-				FIRE_STRETCH_BLIT_TO_MEMORY_4TO4BPP(bp08, bp04, bp32.width, bp32.height, di, si, NULL);
+				FIRE_STRETCH_BLIT_TO_MEMORY_4TO4BPP(bp08, bp04, bp32.width, bp32.height, iWidthStretched, iHeightStretched, NULL);
 			}
 		}
 	}
 	FREE_PICT_MEMENT(&bp32);
 	_3e74_585a_CACHE(bp18, 0);
-	return ref;
+	return xExtPicture;
 }
 
 

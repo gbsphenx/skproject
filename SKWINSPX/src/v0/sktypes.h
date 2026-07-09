@@ -52,7 +52,19 @@ typedef unsigned int	uint_t;
 //..............................................................................
 // MINGW / DOS (DJGPP)
 
-#if defined(__DJGPP__) || defined(__MINGW__)
+#if defined(__DJGPP__)
+#include <assert.h>
+#include <stdint.h>
+typedef signed char		int8_t;
+typedef signed short	int16_t;
+//typedef signed int		int32_t;
+typedef unsigned char	uint8_t;
+typedef unsigned short	uint16_t;
+//typedef unsigned int	uint32_t;
+typedef unsigned int	uint_t;
+#endif // __DJGPP__
+
+#if defined(__MINGW__)
 #include <assert.h>
 typedef signed char		int8_t;
 typedef signed short	int16_t;
@@ -61,8 +73,7 @@ typedef unsigned char	uint8_t;
 typedef unsigned short	uint16_t;
 typedef unsigned int	uint32_t;
 typedef unsigned int	uint_t;
-#endif // __DJGPP__
-
+#endif // __MINGW__
 
 
 //------------------------------------------------------------------------------

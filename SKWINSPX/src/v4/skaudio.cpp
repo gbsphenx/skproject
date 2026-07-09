@@ -51,36 +51,30 @@ X16 SkWinCore::_RELOAD_SOUND_BUFFER(U8 *buff, X16 buffSize, X16 playbackRate) //
 //^47EB:0003
 void SkWinCore::_47eb_0003()
 {
-	//^47EB:0003
 	ENTER(0);
-	//^47EB:0006
-	_4976_4838 = X8(_01b0_2b1b() CALL_IBMIO);
+	glbAudioUnknown = X8(IBMIO_AUDIO_ZERO() CALL_IBMIO);
 	if (IS_SCARD_PRESENT() CALL_IBMIO != 0) {
-		//^47EB:001F
 		_RELOAD_SOUND_BUFFER(
-			ALLOC_MEMORY_RAM(_4976_5c7c, afUseUpper, 0x400),
-			_4976_5c7c, PLAYBACK_FREQUENCY
+			ALLOC_MEMORY_RAM(glbMemRAMAudioStuff, afUseUpper, 0x400),
+			glbMemRAMAudioStuff, PLAYBACK_FREQUENCY
 			) CALL_IBMIO;
 	}
-	//^47EB:0046
 	return;
 }
 
 //^482B:0004
-void SkWinCore::_482b_0004()
+// SPX: _482b_0004 renamed ALLOC_AUDIO_TABLES
+void SkWinCore::ALLOC_AUDIO_TABLES()
 {
-	//^482B:0004
 	ENTER(4);
-	//^482B:0008
 	_4976_5f0a = reinterpret_cast<sk5f0a *>(ALLOC_MEMORY_RAM(_4976_5cae << 4, afUseUpper, 0x400));
-	_4976_5f06 = reinterpret_cast<sk5f06 *>(ALLOC_MEMORY_RAM(_4976_5d58 * 7, afUseUpper, 0x400));
-	_4976_5f02 = reinterpret_cast<SoundStructure *>(ALLOC_MEMORY_RAM(0xf0, afUseUpper, 0x400));
-	U32 bp04;
-	glbSoundList = reinterpret_cast<SoundEntryInfo *>(ALLOC_MEMORY_RAM(bp04 = 0x60, afUseUpper, 0x400));
-	ZERO_MEMORY(glbSoundList, bp04);
+	tblSoundShortInfo = reinterpret_cast<SoundShortInfo *>(ALLOC_MEMORY_RAM(_4976_5d58 * (sizeof(SoundShortInfo)), afUseUpper, 0x400));	// *7 = size of SoundShortInfo
+	_4976_5f02 = reinterpret_cast<SoundStructure *>(ALLOC_MEMORY_RAM(0xF0, afUseUpper, 0x400));
+	U32 iMemInitVal = 0; // bp04
+	glbSoundList = reinterpret_cast<SoundEntryInfo *>(ALLOC_MEMORY_RAM(iMemInitVal = 0x60, afUseUpper, 0x400));
+	ZERO_MEMORY(glbSoundList, iMemInitVal);
 	_4976_5efe = reinterpret_cast<SoundStructure *>(ALLOC_MEMORY_RAM(0x48, afUseUpper, 0x400));
 	_47eb_0003();
-	//^482B:00BD
 	return;
 }
 

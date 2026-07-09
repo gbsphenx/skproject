@@ -21,6 +21,23 @@
 //..............................................................................
 //------------------------------------------------------------------------------
 
+typedef U16 (*pfnOversee_t)(ObjectID *ref, void *pv);
+
+// old legacy system variables
+// cd.dos.
+typedef struct {
+
+	//U16	(SkWinCore::*pfnMouseEventReceiver)(U16 xx, U16 yy, i16 zz);	// (::*_04bf_179e)
+	X16		glbMouseEventReceiverSet;	// (_04bf_03c6)
+	X16		glbMouseHandlerSet;			// (_04bf_03d4)
+	X16		glbKeyboardHook;			// (_04bf_02bc)
+
+	U16		glbCPUClass;			// (_04bf_17aa)	CPU class
+
+} SKCoreLegacySystem;
+
+
+
 
 // cd.mc.
 typedef struct {
@@ -70,7 +87,7 @@ typedef struct {
 // cd.mk.
 typedef struct {
 
-	U16	_04bf_17a8;	// _04bf_17a8
+	U16	glbMouseCurVis2;	// (_04bf_17a8) mouse cursor vis2?
 
 	U16 mice_btn;
 	U16 mice_x;
@@ -82,7 +99,12 @@ typedef struct {
 	U16	glbMousePreviousXPos;		// (_04bf_03c2) prev xpos
 	U16	glbMousePreviousYPos;		// (_04bf_03c4) prev ypos
 
-//--- These are special from external control outside SKWin
+	i16	glbSomeMouseX;	// (_04bf_185e)
+	i16 glbSomeMouseY;	// (_04bf_1860)
+	U16	glbSomeMouseButton;		// (_04bf_1936)
+
+
+//--- These are special from external control outside SKWin (not original code)
 	U16 glbExternalMouse;
 	U16	glbExternalMouseX;
 	U16	glbExternalMouseY;
@@ -144,6 +166,8 @@ typedef struct {
 //------------------------------------------------------------------------------
 
 typedef struct {
+
+	SKCoreLegacySystem		dos;
 
 	SKCodeMemCache			mc;
 
