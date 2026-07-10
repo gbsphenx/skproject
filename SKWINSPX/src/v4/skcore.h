@@ -346,8 +346,8 @@ protected:
 	U16	_4976_480d;		// position at buffer unit
 	X32		_4976_480f; // 90 D0 03 00 -> 00030D90
 	X8		glbAudioUnknown;	// _4976_4838
-	U16	_4976_4839;		// previously loaded raw data index
-	Bit32u	_4976_483b;		// previously loaded raw data file pos
+	U16		glbGDatCursorDataIdx;		// (_4976_4839) previously loaded raw data index
+	U32		glbGDatLastDataCumulatedLength;		// (_4976_483b) previously loaded raw data file pos 
 	U16	_4976_484b_cache;		// incremental serial for use with memory alloc counter?
 	U16		_4976_484d;
 	i16	glbMouseVisibility;		// (_4976_4860)
@@ -572,7 +572,7 @@ protected:
 	U16		_4976_523a;
 	U32		_4976_523c;
 	U16		*_4976_5240;	// certain table for containers
-	U16	_4976_5244;
+	U16		glbTimerFlag;		//_4976_5244
 	U16		*_4976_5246;	// certain table for creatures
 	Bit32u	_4976_524a;				// DUNGEON.dat file position while gameload
 	Bit8u	_4976_524e;				// by suppress writer (current bit position)
@@ -602,10 +602,10 @@ protected:
 	U16	_4976_52e4;		// 0=fighter, 1=ninja, 2=priest, 3=wizard
 	U16	glbChampionBonesIndex;		// (_4976_52e6) who's bone? (0 to 3)
 	U16	glbItemWeightKg;		// (_4976_52e8) weight xxx part of xxx.?
-	Bit8u	*_4976_52ea[2];
+	U8*	tblZStr_4976_52ea[2];	// (_4976_52ea)
 	U16	_4976_52f4;
 	U16	glbChampMaxLoadDisplay;	// _4976_52f6
-	U16	_4976_52f8;
+	U16	glbZStringIdx_4976_52f8;	// _4976_52f8
 	U16	glbChampWeightLoadTenthDisplay;	// _4976_52fa
 	SkLoadEnt*	tblSkEntries;	// _4976_52fc
 	X16		glbSkEntriesCount;		// (_4976_5300) count of used _4976_52fc entries
@@ -811,7 +811,7 @@ protected:
 	mement*	glbMement5;	// (_4976_5d5e) mement#5
 	i32		_4976_5d62; // C6 6C D0 00 -> 00D06CC6
 	U32		_4976_5d66;
-	Bit32u	_4976_5d6a;		// GRAPHICS.DAT absolute file position of 2nd raw data
+	U32		glbGDatCursorDataCumulatedLength;		// (_4976_5d6a) GRAPHICS.DAT absolute file position of 2nd raw data
 	U16	_4976_5d6e;		// poolflag of EMS memory pool
 	mement*	glbMement4;	// (_4976_5d70) mement#4
 	U16	glbNumberOfMements;		// (_4976_5d74) cnt tblMementsPointers
@@ -850,7 +850,7 @@ protected:
 	U32		glbCRAMSize;		// (_4976_5e9c) size of CRAM
 	Bit8u	*_4976_5ea0;	// EMS mapped memory location (E000:0000)
 	U16	_4976_5ea4;		// EMS handle
-	U32		_4976_5ea6;		// EMS allocated size
+	U32		glbEMSMemPool;		// (_4976_5ea6) EMS allocated size
 	i16		glbTickStepValue;	// (_4976_5eaa)
 	shelf_memory _4976_5eac;		// ems last page? for back VRAM?
 	U16	_4976_5eb0;
@@ -859,15 +859,15 @@ protected:
 	X16		_4976_5eb6;
 	U16	_4976_5eb8;
 	X16		glbDriveNumber;		// drive number
-	X16		_4976_5ebc;
+	X16		glbDriveNumber2;			// (_4976_5ebc) drive number 2
 	sk5f0a	*_4976_5efa;
 	SoundStructure*	_4976_5efe;
 	SoundStructure*	_4976_5f02;
 	SoundShortInfo*	tblSoundShortInfo;	// (_4976_5f06) size=?
 	sk5f0a	*_4976_5f0a;	// (_4976_5f0a) size=?
 	SoundEntryInfo	*glbSoundList;	// size=8 (_4976_5f0e)
-	Bit8u	glbIngameGlobVarBytes[64];	// game byte val	// (_4976_5f12)
-	Bit8u	glbIngameGlobVarFlags[8];	// game flags		// (_4976_5f52)
+	U8	glbIngameGlobVarFlags[8];	// 64 game flags		// (_4976_5f52)
+	U8	glbIngameGlobVarBytes[64];	// game byte val	// (_4976_5f12)
 	U16	glbIngameGlobVarWords[64];	// game word val	// (_4976_5f5a)
 	CreatureCommandAnimation	*tlbCreaturesActionsGroupSets; // [0..471] // (_4976_5fda) Item 01-00-00 part 2 actions group sets
 	CreatureAnimationFrame	*tlbCreaturesAnimationSequences; // [0..517] // (_4976_5fde)	Item 01-00-00 part 1 animations sequences
@@ -1620,8 +1620,10 @@ protected:
 	void ADJUST_HAND_COOLDOWN(U16 player, U16 yy, U16 zz);
 	U16 CAST_SPELL_PLAYER(U16 player, SpellDefinition *ref, U16 power);
 	void DRAW_TRANSPARENT_STATIC_PIC(U8 cls1, U8 cls2, U8 cls4, U16 rectno, U16 colorkey);
-	U16 GET_GLOB_VAR(U16 var);
-	U16 UPDATE_GLOB_VAR(U16 var, U16 newval, U16 op);	// GLOBAL VAR
+	
+	U16 GET_GLOB_VAR(U16 iGlobalVar);
+	U16 UPDATE_GLOB_VAR(U16 iGlobalVar, U16 iOpValue, U16 iOperator);	// GLOBAL VAR
+
 	void PROCEED_SPELL_FAILURE(U16 xx);
 	U16 TRY_CAST_SPELL();
 	void REMOVE_RUNE_FROM_TAIL();
@@ -1630,7 +1632,7 @@ protected:
 	U16 USE_DEXTERITY_ATTRIBUTE(U16 player);
 	U16 USE_LUCK_ATTRIBUTE(Champion *ref, U16 xx);
 	U16 CALC_PLAYER_ATTACK_DAMAGE(Champion *ref, U16 player, ObjectID rlEnemy, U16 xx, U16 yy, U16 valPb, U16 valDM, U16 valSk, U16 valAt);
-	U16 WIELD_WEAPON(U16 player, U16 valPa, U16 xx, U16 yy, U16 valSk, U16 valAt);
+	U16 WIELD_WEAPON(U16 iChampionIdx, U16 valPa, U16 xx, U16 yy, U16 valSk, U16 valAt);
 	i16 STAMINA_ADJUSTED_ATTR(Champion *ref, i16 quantity);
 	U16 COMPUTE_PLAYER_ATTACK_OR_THROW_STRENGTH(U16 xx, U16 yy, i16 zz);
 	U16 _2c1d_0e23(U16 xx);
@@ -1729,7 +1731,7 @@ protected:
 	void CLICK_VWPT(i16 xx, i16 yy);
 	void CLICK_MAGICAL_MAP_AT(U16 ww, i16 xx, i16 yy);
 	void CLICK_MAGICAL_MAP_RUNE(U16 rune);
-	void _38c8_0060();
+	void SLEEP_SCREEN_38c8_0060();	// _38c8_0060
 	void DRAW_WAKE_UP_TEXT();
 	void RESUME_FROM_WAKE();
 	void FILE_DELETE(const U8 *curf);
@@ -1750,7 +1752,7 @@ protected:
 	void __OPEN_DIALOG_PANEL(U8 cls2, U16 yy);
 	void _2066_33c4(U8 *str, U16 yy);
 	void _2066_398a(i16 xx);
-	void _2066_3820(U8 *xx, U16 yy);
+	void DIALOG_2066_3820(U8 *xx, U16 yy);	// _2066_3820
 
 	void _3929_0b01(U16 xx, U16 yy); // TODO: Unr
 	void _3929_0b20(U16 xx, U32 yy); // TODO: Unr
@@ -1759,8 +1761,8 @@ protected:
 	void _1031_0d36_KEYBOARD(U16 xx, U16 yy);
 	U8 _01b0_054a_KEYBOARD(U16 xx);
 	U8 _476d_05b6_KEYBOARD(U16 xx);
-	void _2066_37f2();
-	i16 _2066_33e7();
+	void DIALOG_2066_37f2();	// _2066_37f2
+	i16 DIALOG_2066_33e7();	// _2066_33e7
 	void SET_PARTY_HERO_FLAG(U16 flagvalue);
 	void SEARCH_STARTER_CHAMPION(); // _2f3f_0789
 	void FILL_U16(i16 *buff, X16 cnt, i16 val, i16 delta);
@@ -1956,7 +1958,7 @@ protected:
 
 	U16 FILE_SEEK(U16 handle, Bit32u pos);
 	U32 FILE_TELL(U16 handle);
-	void _476d_05e3(U8 *str); // TODO: Unr
+	void RAISE_SYSERR_UNIMPLEMENTED(U8 *str); // (_476d_05e3) TODO: Unr
 	void __DECLSPEC_NORETURN_ RAISE_SYSERR(U16 syserr);
 	void GRAPHICS_DATA_READ(U32 location, U32 size, X8 *buff);
 	void LOAD_GDAT_RAW_DATA(U16 index, shelf_memory ps);
@@ -2025,7 +2027,7 @@ protected:
 	U16 GET_ITEMDB_OF_ITEMSPEC_ACTUATOR(U16 actuatorData);
 	Bit8u GET_ITEMTYPE_OF_ITEMSPEC_ACTUATOR(U16 actuatorData);
 	Bit8u QUERY_CLS1_FROM_RECORD(ObjectID recordLink);
-	tiamat _3e74_0756(Bit8u *xx, i32 size); // TODO: Unr
+	tiamat TIAMAT_ZERO(Bit8u *xx, i32 size); // (_3e74_0756) TODO: Unr
 	U16 TRY_PUSH_OBJECT_TO(ObjectID rl, i16 xpos, i16 ypos, i16 *xx, i16 *yy);
 	X16 GET_CHAMPION_SPECIAL_FORCE(U16 iChampionIdx);
 	U16 GET_PARTY_SPECIAL_FORCE();
@@ -2219,10 +2221,10 @@ protected:
 	void INIT_CRAM_EMS_MEM(); // _4726_02f7
 	X16 _01b0_1ffc(X16 xx);	// Returns 1 and assert false ...
 	X16 _476d_02e0(X16 xx);
-	void _01b0_20ca(i16 drvno, U8 *str);
-	void _476d_04f4(i16 drvno, U8 *str);
-	void _476d_018a();
-	void _2636_03d4();
+	void IBMIO_GET_DRIVE_NAME(i16 iDriveNo, U8* sDriveString);	// _01b0_20ca
+	void IBMIO_GET_DRIVE_NAME_2(i16 iDriveNo, U8* sDriveString);	// _476d_04f4
+	void IBMIO_GET_ALL_DRIVE_NAMES();	// _476d_018a
+	void SOME_ALLOC_TABLE_2636_03d4();	// _2636_03d4
 	U32 GET_FILE_POS_6(i16 handle);
 	U32 GET_FILE_SIZE(i16 handle);
 	U16 SWAPW(U16 xx);
@@ -2394,7 +2396,7 @@ protected:
 	void GLOBAL_UPDATE_UNKNOW1();
 	void BURN_PLAYER_LIGHTING_ITEMS();
 	void _44c8_1dfc(SRECT *prc, U8 colorkey);
-	void _3929_086f();
+	void DRAW_MESSAGE_HINT_TEXTS();	// _3929_086f
 	X16 _0cee_04e5(X16 xx, X16 yy, X16 zz, i16 ss, i16 tt);
 	void _2759_12e6();
 	void GAME_LOOP();

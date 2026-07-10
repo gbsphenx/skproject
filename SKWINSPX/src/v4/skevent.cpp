@@ -622,9 +622,9 @@ void SkWinCore::SET_TIMER_3C_OR_3D(ObjectID recordLink, i16 xx, i16 yy, Bit16u c
 	ENTER(10);
 	Timer tTimer; // bp0a
 	tTimer.SetMap(curmap);
-	tTimer.SetTick(glbGameTick +5);
+	tTimer.SetTick(glbGameTick + 5);
 	// SPX: though .. tty3D and tty3C seems to be handled exactly the same way!
-	tTimer.TimerType((ss != 0) ? tty3D : tty3C);
+	tTimer.TimerType((ss != 0) ? tty3D : C60_tty);
 	tTimer.actor = TIMER_ACTOR__00;
 	tTimer.Xcoord(xx);
 	tTimer.Ycoord(yy);
@@ -1503,12 +1503,11 @@ void SkWinCore::ACTIVATE_ITEM_TELEPORT(Timer *ref, Actuator *pr4, ObjectID rl, X
 // SPX: _3a15_15d8 renamed ACTIVATE_INVERSE_FLAG
 void SkWinCore::ACTIVATE_INVERSE_FLAG(Timer *ref, Actuator *pr4) 
 {
-	//^3A15:15D8
 	ENTER(0);
-	//^3A15:15DB
-	UPDATE_GLOB_VAR(pr4->ActuatorData(), 1, ((pr4->RevertEffect() != 0) ? 3 : 0) +ref->ActionType());
+	// SPX: supposedly, ActionType would be between 0 to 2 giving either "bit flag operation" (0 (set), 1 (clear), 2 (invert)) or "value set" (3 (add), 4 (minus), 5 (none))
+	UPDATE_GLOB_VAR(pr4->ActuatorData(), 1, ((pr4->RevertEffect() != 0) ? C03_GLOBAL_VAR_OP_ADD : C00_GLOBAL_VAR_OP_FLAG_SET) + ref->ActionType());
+	//UPDATE_GLOB_VAR(pr4->ActuatorData(), 1, ((pr4->RevertEffect() != 0) ? 3 : 0) + ref->ActionType());
 	INVOKE_ACTUATOR(pr4, (pr4->OnceOnlyActuator() != 0) ? pr4->ActionType() : ref->ActionType(), 0);
-	//^3A15:164E
 	return;
 }
 //^3A15:1650
@@ -3060,7 +3059,7 @@ void SkWinCore::PROCEED_TIMERS()
 						goto _3d93;
 				}
 				break;
-			case tty3C://^3BC0
+			case C60_tty://^3BC0
 			case tty3D://^3BC0
 				PROCESS_TIMER_3D(xCurrentTimer);
 				break;

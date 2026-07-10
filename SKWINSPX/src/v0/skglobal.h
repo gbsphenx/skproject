@@ -464,8 +464,8 @@ extern U8	_4976_3dde[4]; //Rr // each player dir?
 extern U16	_4976_3de2[6]; //Rp // players in squad position list?
 extern U16	_4976_3de6[4][2]; //Rr
 extern U8	_4976_3df9[7]; //Rr
-extern U8	_4976_4980[4]; //Rp
-extern U8	_4976_4984[4]; //Rp
+extern U8	glbDriveNameStr[4]; //Rp	(_4976_4980)
+extern U8	glbDriveNameStr2[4]; //Rp			(_4976_4984)
 extern sk38f4	_4976_38f4[12]; //Rr
 extern U8	tblASCIIFlags[256]; //Rp
 //}}SKVAL1
@@ -577,8 +577,15 @@ bool	CheckSafePointer(void* p);
 
 #define outportb(PORT,VAL)
 
+//--- Special READ / WRITE for the Image Buffer header at pos -2, -4, -6 for height, width and bpp
 
-//--- Some Debug/Test flags
+#define WRITE_IMGBUFF_HEIGHT(PTR,VAL)	WRITE_UI16(PTR,-2,VAL)
+#define WRITE_IMGBUFF_WIDTH(PTR,VAL)	WRITE_UI16(PTR,-4,VAL)
+#define WRITE_IMGBUFF_BPP(PTR,VAL)		WRITE_UI16(PTR,-6,VAL)
+
+
+
+//--- Some Debug/Test flags => SPX: to be removed !! use SkCodeParam instead
 extern bool	bUseDM2ExtendedMode;
 //extern float	fDebugRainSpeed;
 extern bool	bUseSuperMode;

@@ -1193,14 +1193,14 @@ U8	_4976_3dde[4]; //Rr // each player dir?
 U16	_4976_3de2[6]; //Rp // players in squad position list?
 U16	_4976_3de6[4][2]; //Rr
 U8	_4976_3df9[7]; //Rr
-U8	_4976_4980[4]; //Rp
-U8	_4976_4984[4]; //Rp
+U8	glbDriveNameStr[4]; //Rp	(_4976_4980)
+U8	glbDriveNameStr2[4]; //Rp	(_4976_4984)
 sk38f4	_4976_38f4[12]; //Rr
 U8	tblASCIIFlags[256]; //Rp	(_089c_00e3)
 //}}SKVAL1
 
-const X8* const _4976_498e = _4976_4980;	// _4976_498e = _4976_4980
-const X8* const _4976_4992 = _4976_4984;	// _4976_4992 = _4976_4984
+const X8* const _4976_498e = glbDriveNameStr;	// _4976_498e = _4976_4980
+const X8* const _4976_4992 = glbDriveNameStr2;	// _4976_4992 = _4976_4984
 const X8* const glbConstCharTxtSpace = glbConstStringTxtSpace;	// _4976_4756 = _4976_4760
 
 

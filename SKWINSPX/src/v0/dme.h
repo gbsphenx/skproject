@@ -3014,8 +3014,8 @@ namespace DM2Internal {
 		tty1E = 0x1E, // (30) step missile 1
 		tty21 = 0x21, // (33) think creature 0
 		tty22 = 0x22, // (34) think creature 1
-		tty3C = 0x3C,
-		tty3D = 0x3D,		// about minion and teleport / opening something ?
+		C60_tty = 0x3C,	// (3C=60)
+		tty3D = 0x3D,		// (3D=61) about minion and teleport / opening something ?
 		ttyLight			= 0x46,	// tty46 (70) light
 		ttyInvisibility		= 0x47,	// tty47 (71) csbwin OH EW SAR
 		ttyEnchantment		= 0x48, // tty48 (72) enchantment/aura timer?

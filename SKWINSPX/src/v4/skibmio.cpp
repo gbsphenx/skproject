@@ -23,6 +23,8 @@ using namespace kkBitBlt;
     #define strncasecmp _strnicmp
 #endif // _WIN32
 
+//..............................................................................
+
 #ifdef __DJGPP__
 #include <strings.h>
 #include <time.h>
@@ -40,11 +42,22 @@ using namespace kkBitBlt;
 #define _exit exit
 #endif // _exit
 
+
+int getdrive()
+{
+	return 3; // C
+}
+
+#ifndef _getdrive
+#define _getdrive getdrive
+#endif // _getdrive
+
 #define min(A,B) ((A < B) ? A : B)
 #define max(A,B) ((A < B) ? B : A)
 
 #endif // __DJGPP__
 
+//..............................................................................
 
 #if defined(__MINGW__) || defined(__LINUX__)
 #include <strings.h>
@@ -61,6 +74,12 @@ using namespace kkBitBlt;
 #ifndef _exit
 #define _exit exit
 #endif // _exit
+
+int getdrive() { return 3; }
+
+#ifndef _getdrive
+#define _getdrive getdrive
+#endif // _getdrive
 
 #define min(A,B) ((A < B) ? A : B)
 #define max(A,B) ((A < B) ? B : A)
@@ -2896,4 +2915,105 @@ U32 SkWinCore::ANIM_GET_FILE_SIZE(X16 fh)
 #else
 	return Unr(),0;
 #endif
+}
+
+
+
+
+
+//^01B0:1FFC
+X16 SkWinCore::_01b0_1ffc(X16 xx)
+{
+#if UseAltic
+	return 1;
+#else
+	// TODO: ioctl
+	ATLASSERT(false);
+	return 1;
+#endif
+}
+
+//^476D:02E0
+X16 SkWinCore::_476d_02e0(X16 xx)
+{
+	ENTER(0);
+	return _01b0_1ffc(xx) CALL_IBMIO;
+}
+
+//^01B0:20CA
+// SPX: _01b0_20ca renamed IBMIO_GET_DRIVE_NAME
+void SkWinCore::IBMIO_GET_DRIVE_NAME(i16 iDriveNo, U8* sDriveString)
+{
+	// This writes "A:", "C:" etc ...
+	ENTER(0);
+	if (iDriveNo >= 0 && iDriveNo < 0x19) {
+		sDriveString[0] = U8(iDriveNo) + 0x40;	// to get uppercase letter
+		sDriveString[1] = ':';
+		sDriveString[2] = 0;
+	}
+	return;
+}
+
+//^476D:04F4
+// SPX: _476d_04f4 renamed IBMIO_GET_DRIVE_NAME_2
+void SkWinCore::IBMIO_GET_DRIVE_NAME_2(i16 iDriveNo, U8* sDriveString)
+{
+	ENTER(0);
+	IBMIO_GET_DRIVE_NAME(iDriveNo, sDriveString);
+	return;
+}
+
+//^476D:018A
+// SPX: _476d_018a renamed IBMIO_GET_ALL_DRIVE_NAMES
+void SkWinCore::IBMIO_GET_ALL_DRIVE_NAMES()
+{
+	ENTER(0);
+	_4976_5eb2 = _getdrive();
+	if (_476d_02e0(_4976_5eb2) == 1) {
+		glbDriveNumber = _4976_5eb2;
+		_4976_499e = 1;
+		glbDriveNumber2 = _4976_5eb2;
+		_4976_49a0 = 1;
+		_4976_5eb4 = 1;
+		_4976_5eb0 = 1;
+	}
+	else {
+		_4976_5eb6 = _4976_5eb2;
+		glbDriveNumber = _4976_5eb4 = _4976_5eb2 ^ 3;
+		if (glbDriveNumber == 1) {
+			if (_476d_02e0(2) != 0 && _476d_02e0(1) == _476d_02e0(2)) {
+				glbDriveNumber2 = 2;
+				_4976_5eb0 = 0;
+			}
+			else {
+				glbDriveNumber2 = _4976_5eb2;
+				_4976_5eb0 = 1;
+			}
+		}
+		else if (glbDriveNumber == 2) {
+			if (_476d_02e0(1) != 0 && _476d_02e0(1) == _476d_02e0(2)) {
+				glbDriveNumber2 = 1;
+				_4976_5eb0 = 0;
+			}
+			else {
+				glbDriveNumber2 = _4976_5eb2;
+				_4976_5eb0 = 1;
+			}
+		}
+		else {
+			glbDriveNumber2 = _4976_5eb2;
+			_4976_5eb0 = 1;
+		}
+	}
+	if (_4976_499e != 0) {
+		IBMIO_GET_DRIVE_NAME_2(1, glbDriveNameStr);	// A: ?
+	}
+	else {
+		IBMIO_GET_DRIVE_NAME_2(glbDriveNumber, glbDriveNameStr);
+	}
+	IBMIO_GET_DRIVE_NAME_2(glbDriveNumber2, glbDriveNameStr2);
+	//SPX: 0x40 = 'A'-1
+	strDirLetter[0] = glbDriveNumber + 0x40;
+	strDirLetter2[0] = glbDriveNumber2 +0x40;
+	return;
 }

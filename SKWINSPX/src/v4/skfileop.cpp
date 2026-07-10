@@ -435,7 +435,7 @@ i16 SkWinCore::_2066_0b44_WRITE_TIMERS()
 	//^2066:0B58
 	while (i < glbTimersCount) {
 		switch (bp04->TimerType()) {
-			case tty3C:
+			case C60_tty:
 			case tty3D:
 				//^2066:0B6B
 				if (WRITE_RECORD_CHECKCODE(bp04->id8(), 0, 0) != 0) {

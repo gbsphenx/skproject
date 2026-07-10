@@ -996,8 +996,8 @@ void SkWinCore::REVIVE_CHAMPION(U16 xx, U16 yy, U16 dir, U16 zz, U16 iEventCode)
 		glbChampionHandCoolingDown[iChampionNumber][0] = 0;
 		_4976_3de6[RCJ(4,iChampionNumber)][0] = 0xFFFF;
 		glbChampionHandCoolingDown[iChampionNumber][2] = 0;
-		FIRE_FILL_SCREEN_RECT(iChampionNumber + 161, glbPaletteT16[COLOR_BLACK]);
-		_38c8_0060();
+		FIRE_FILL_SCREEN_RECT(iChampionNumber + RECT_161_CHAMPION_SLAB_AREA, glbPaletteT16[COLOR_BLACK]);
+		SLEEP_SCREEN_38c8_0060();
 		FIRE_SHOW_MOUSE_CURSOR();
 	}
 	else { // iEventCode = UI_EVENTCODE_xA0_REVIVE_CHAMPION (160)
@@ -1048,7 +1048,7 @@ void SkWinCore::REVIVE_CHAMPION(U16 xx, U16 yy, U16 dir, U16 zz, U16 iEventCode)
 			DISPLAY_HINT_TEXT(glbChampionColor[iChampionNumber], QUERY_GDAT_TEXT(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 0x00, 0x0E, sTxtChampionAwakened));
 			if (glbChampionInventory != 0) {
 				INTERFACE_CHAMPION(4);
-				_38c8_0060();
+				SLEEP_SCREEN_38c8_0060();
 			}
 		}
 	}
@@ -1693,97 +1693,62 @@ _21dd:
 }
 
 //^2759:14C8
-U16 SkWinCore::WIELD_WEAPON(U16 player, U16 valPa, U16 xx, U16 yy, U16 valSk, U16 valAt)
+U16 SkWinCore::WIELD_WEAPON(U16 iChampionIdx, U16 valPa, U16 xx, U16 yy, U16 valSk, U16 valAt)
 {
 	// returns 0 if no target, 1 if hits a creature.
 
-	//^2759:14C8
 	ENTER(4);
-	//^2759:14CE
-	Champion *champion = &glbChampionSquad[player];	//*bp04
-	//^2759:14DF
+	Champion* xChampion = &glbChampionSquad[iChampionIdx];	//*bp04
 	if (glbObjectID_4976_534c == OBJECT_NULL)
-		//^2759:14E6
-		//^2759:15CA
 		return 0;
-	//^2759:14E9
 	if (GET_CREATURE_AT(xx, yy) == OBJECT_NULL)
-		//^2759:14FB
-		//^2759:15CA
 		return 0;
-	//^2759:14FE
-	U16 di = champion->playerPos();
-	//^2759:1509
+	U16 iChampionPos = xChampion->playerPos();	// di
 	U16 si;
-	switch ((di +4 -champion->playerDir()) & 3) {
+	switch ((iChampionPos + 4 - xChampion->playerDir()) & 3) {
 		case 2:
-			//^2759:1526
 			si = 3;
-			//^2759:1529
 			goto _152e;
 
 		case 3:
-			//^2759:152B
 			si = 1;
-			//^2759:152E
 _152e:
-			if (GET_PLAYER_AT_POSITION((di + si) & 3) != -1) {
-				//^2759:1541
+			if (GET_PLAYER_AT_POSITION((iChampionPos + si) & 3) != -1) {
 				glbChampionAttackDamage = ATTACK_FAILURE_NOT_FRONT; // -1
-				//^2759:1547
-				glbSomeChampionPanelFlag = max_value(1, 8 - UPDATE_GLOB_VAR(66, 1, 3));
-				//^2759:1567
-				//^2759:15CA
+				glbSomeChampionPanelFlag = max_value(1, 8 - UPDATE_GLOB_VAR(C066_GLOB_BYTE_02_CHAMPION, 1, C03_GLOBAL_VAR_OP_ADD));
 				return 0;
 			}
 
 			break;
 	}
-	//^2759:1569
 	if (valPa == 1) {
-		//^2759:156F
 		if ((QUERY_CREATURE_AI_SPEC_FLAGS(glbObjectID_4976_534c) & 0x0020) == 0)
-			//^2759:157C
-			//^2759:15CA
 			return 0;
 	}
-	//^2759:157E
 	si = QUERY_CUR_CMDSTR_ENTRY(CnPB_Probability);
-	//^2759:1587
-	di = QUERY_CUR_CMDSTR_ENTRY(CnDM_Damage);
-	//^2759:1590
+	U16	iWeaponDamage; // reused di
+	iWeaponDamage = QUERY_CUR_CMDSTR_ENTRY(CnDM_Damage);
 	if (QUERY_CUR_CMDSTR_ENTRY(CnHN_HarmNonMaterial) != 0)
-		//^2759:159B
 		si |= 0x8000;	// Hurt non material
-	//^2759:159F
-	glbChampionAttackDamage = CALC_PLAYER_ATTACK_DAMAGE(champion, player, glbObjectID_4976_534c, xx, yy, si, di, valSk, valAt);
-	//^2759:15C5
+	glbChampionAttackDamage = CALC_PLAYER_ATTACK_DAMAGE(xChampion, iChampionIdx, glbObjectID_4976_534c, xx, yy, si, iWeaponDamage, valSk, valAt);
 	return 1;
 }
 
 
 //^2C1D:0E57
-i16 SkWinCore::STAMINA_ADJUSTED_ATTR(Champion *ref, i16 quantity)
+i16 SkWinCore::STAMINA_ADJUSTED_ATTR(Champion* xChampion, i16 iValue)
 {
 	// CSBwinSimilarity: TAG0163c8,StaminaAdjustedAttribute
 
-	//^2C1D:0E57
 	ENTER(2);
-	//^2C1D:0E5D
-	i16 si = quantity;
-	//^2C1D:0E60
-	i16 bp02 = ref->curStamina();
-	//^2C1D:0E6A
-	U16 di = ref->maxStamina() >> 1;
-	//^2C1D:0E72
-	if (bp02 < di) {
-		//^2C1D:0E76
-		si >>= 1;
-		//^2C1D:0E78
-		return (i32(si) * i32(bp02)) / i32(di) +si;
+	i16 iStaminaValue = iValue;	// si
+	i16 iStamina = xChampion->curStamina();	// bp02
+	U16 iMaxStaminaHalf = xChampion->maxStamina() >> 1;	// di
+	if (iStamina < iMaxStaminaHalf) {
+		iStaminaValue >>= 1;
+		return (i32(iStaminaValue) * i32(iStamina)) / i32(iMaxStaminaHalf) + iStaminaValue;
 	}
-	//^2C1D:0E9C
-	return si;
+	return iStaminaValue;
 }
 
 //^2C1D:1DE2

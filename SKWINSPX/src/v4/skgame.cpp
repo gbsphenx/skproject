@@ -662,40 +662,29 @@ void SkWinCore::SHOOT_ITEM(ObjectID rlItemThrown, U16 xx, U16 yy, U16 dir, U16 a
 
 
 //^48AE:0001
-U16 SkWinCore::GET_GLOB_VAR(U16 var)
+U16 SkWinCore::GET_GLOB_VAR(U16 iGlobalVar)
 {
 	// 0x00-0x3f: 1bit value
 	// 0x40-0x7f: byte value
 	// 0x80-0xbf: word value
 
-	//^48AE:0001
 	ENTER(0);
-	//^48AE:0004
-	if (var <= 0x3f) {
-		//^48AE:000A
-		if ((glbIngameGlobVarFlags[var >> 3] & (1 << (var & 7))) == 0)
-			//^48AE:0023
-			//^48AE:0054
+	if (iGlobalVar <= 0x3F) {
+		if ((glbIngameGlobVarFlags[iGlobalVar >> 3] & (1 << (iGlobalVar & 7))) == 0)
 			return 0;
-		//^48AE:0025
 		return 1;
 	}
-	//^48AE:002A
-	if (var <= 0x7f) {
-		//^48AE:0030
-		return glbIngameGlobVarBytes[var -0x40];
+	if (iGlobalVar <= 0x7F) {
+		return glbIngameGlobVarBytes[iGlobalVar - 0x40];
 	}
-	//^48AE:003E
-	if (var <= 0xbf) {
-		//^48AE:0045
-		return glbIngameGlobVarWords[var -0x80];
+	if (iGlobalVar <= 0xBF) {
+		return glbIngameGlobVarWords[iGlobalVar - 0x80];
 	}
-	//^48AE:0054
 	return 0;
 }
 
 //^48AE:0058
-U16 SkWinCore::UPDATE_GLOB_VAR(U16 var, U16 newval, U16 op)
+U16 SkWinCore::UPDATE_GLOB_VAR(U16 iGlobalVar, U16 iOpValue, U16 iOperator)
 {
 	// op == 0: var = 1
 	// op == 1: var = 0
@@ -704,97 +693,62 @@ U16 SkWinCore::UPDATE_GLOB_VAR(U16 var, U16 newval, U16 op)
 	// op == 4: var -= newval
 	// op == 6: var = newval
 
-	//^48AE:0058
 	ENTER(0);
-	//^48AE:005D
-	U16 di = newval;
-	//^48AE:0060
-	U16 si = GET_GLOB_VAR(var);
-	//^48AE:006A
-	switch (op) {
-		case 0:
-			//^48AE:0079
-			si = 1;
-			//^48AE:007C
+	U16 iSetValue = iOpValue;	// di
+	U16 iCurrentValue = GET_GLOB_VAR(iGlobalVar);	// si
+	switch (iOperator) {
+		case C00_GLOBAL_VAR_OP_FLAG_SET:
+			iCurrentValue = 1;
 			break;
 
-		case 1:
-			//^48AE:007E
-			//^48AE:0084
-			si = 0;
-			//^48AE:0086
+		case C01_GLOBAL_VAR_OP_FLAG_CLEAR:
+			iCurrentValue = 0;
 			break;
 
-		case 2:
-			//^48AE:0080
-			si = (si != 0) ? 0 : 1;
-			//^48AE:008B
+		case C02_GLOBAL_VAR_OP_FLAG_TOGGLE:
+			iCurrentValue = (iCurrentValue != 0) ? 0 : 1;
 			break;
 
-		case 3:
-			//^48AE:008D
-			si += di;
-			//^48AE:008F
+		case C03_GLOBAL_VAR_OP_ADD:
+			iCurrentValue += iSetValue;
 			break;
 
-		case 4:
-			//^48AE:0091
-			si -= di;
-			//^48AE:0093
+		case C04_GLOBAL_VAR_OP_SUBTRACT:
+			iCurrentValue -= iSetValue;
 			break;
 
-		case 5:
+		case C05_GLOBAL_VAR_OP_NONE:
 			break;
 
-		case 6:
-			//^48AE:0095
-			si = di;
+		case C06_GLOBAL_VAR_OP_NEW_VALUE:
+			iCurrentValue = iSetValue;
 			break;
 	}
-	//^48AE:0097
 	// var x00 - x3F => FLAGS 0 to 8 (in fact var = #FLAG*8 ...)
-	if (var <= 0x3f) {
-		//^48AE:009D
-		op = 1 << (var & 7);
-		//^48AE:00AB
-		var >>= 3;
-		//^48AE:00AF
-		if (si != 0) {
-			//^48AE:00B3
-			si = 1;
-			//^48AE:00B6
-			glbIngameGlobVarFlags[var] |= U8(op);
-			//^48AE:00C0
-			//^48AE:0106
-			return si;
+	if (iGlobalVar <= 0x3f) {
+		iOperator = 1 << (iGlobalVar & 7);	// bit flag
+		iGlobalVar >>= 3;
+		if (iCurrentValue != 0) {
+			iCurrentValue = 1;
+			glbIngameGlobVarFlags[iGlobalVar] |= U8(iOperator);
+			return iCurrentValue;
 		}
 		else {
-			//^48AE:00C2
-			glbIngameGlobVarFlags[var] &= ~U8(op);
-			//^48AE:00CE
-			//^48AE:0106
-			return si;
+			glbIngameGlobVarFlags[iGlobalVar] &= ~U8(iOperator);
+			return iCurrentValue;
 		}
 	}
-	//^48AE:00D0
 	// var x40 - x7F => BYTE 00 to 64
-	if (var <= 0x7f) {
-		//^48AE:00D6
-		si = BETWEEN_VALUE(0, si, 255);
-		//^48AE:00E6
-		glbIngameGlobVarBytes[var -0x40] = U8(si);
-		//^48AE:00F0
-		//^48AE:0106
-		return si;
+	if (iGlobalVar <= 0x7F) {
+		iCurrentValue = BETWEEN_VALUE(0, iCurrentValue, 255);
+		glbIngameGlobVarBytes[iGlobalVar - 0x40] = U8(iCurrentValue);
+		return iCurrentValue;
 	}
-	//^48AE:00F2
 	// var x80 - xbf => WORD 00 to 64
-	if (var <= 0xbf) {
-		//^48AE:00F9
-		glbIngameGlobVarWords[var -0x80] = si;
+	if (iGlobalVar <= 0xBF) {
+		glbIngameGlobVarWords[iGlobalVar - 0x80] = iCurrentValue;
 	}
-	//^48AE:0106
-	return si;
+	return iCurrentValue;
 }
 
 
@@ -802,51 +756,36 @@ U16 SkWinCore::UPDATE_GLOB_VAR(U16 var, U16 newval, U16 op)
 // SPX: _29ee_0b4a renamed PROCEED_SPELL_FAILURE
 void SkWinCore::PROCEED_SPELL_FAILURE(U16 xx)
 {
-	//^29EE:0B4A
 	ENTER(0);
 
-	//^29EE:0B4F
 	U16 di = 1;
-	//^29EE:0B52
-	U16 si;
+	U16 iGlobalVariable;	// si
 	switch (xx & 0xfff0) {
 		case 0x0010:
-			//^29EE:0B69
 			if ((xx & 15) == 3) {
-				//^29EE:0B74
 				glbChampionAttackDamage = ATTACK_FAILURE_WIZARD;	// -4
 			}
 			else {
-				//^29EE:0B7C
 				glbChampionAttackDamage = ATTACK_FAILURE_PRIEST;	// -5
 			}
-			//^29EE:0B82
-			si = 0x45;
-			//^29EE:0B85
+			iGlobalVariable = C069_GLOB_BYTE_05_CHAMPION_FAIL_SPELL;
 			goto _0baa;
 
 		case 0x0020:
-			//^29EE:0B87
 			glbChampionAttackDamage = ATTACK_MEANINGLESS_SPELL;	// -3
-			//^29EE:0B8D
-			si = 0x46;
-			//^29EE:0B90
+			iGlobalVariable = C070_GLOB_BYTE_06_CHAMPION_UNKNOWN_SPELL;
 			goto _0baa;
 
 		case 0x0030:	// need flask in hand 
-			//^29EE:0B92
 			//DRAW_TRANSPARENT_STATIC_PIC(0x01, 0x05, 0x0B, 0x5c, -1);
-			DRAW_TRANSPARENT_STATIC_PIC(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_CLASS_SPELLING, GDAT_IMG_NEED_FLASK, 0x5c, -1);
-			//^29EE:0BA4
-			si = 0x44;
+			DRAW_TRANSPARENT_STATIC_PIC(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_CLASS_SPELLING, GDAT_IMG_NEED_FLASK, 0x5C, -1);
+			iGlobalVariable = C068_GLOB_BYTE_04_CHAMPION_NEED_FLASK;
 			di = 0x03;
-			//^29EE:0BAA
 _0baa:
-			glbSomeChampionPanelFlag = max_value(di, 8 - UPDATE_GLOB_VAR(si, 1, 3));
+			glbSomeChampionPanelFlag = max_value(di, 8 - UPDATE_GLOB_VAR(iGlobalVariable, 1, C03_GLOBAL_VAR_OP_ADD));
 
 			break;
 	}
-	//^29EE:0BC8
 	return;
 }
 
@@ -1390,7 +1329,7 @@ U16 SkWinCore::ENGAGE_COMMAND(U16 player, i16 cmdSlot)
 				//^2759:1AC6
 				if (bp48 == 0) {
 					//^2759:1ACC
-					glbSomeChampionPanelFlag = max_value(1, 8 - UPDATE_GLOB_VAR(67, 1, 3));
+					glbSomeChampionPanelFlag = max_value(1, 8 - UPDATE_GLOB_VAR(C067_GLOB_BYTE_03_CHAMPION_NEED_AMMO, 1, C03_GLOBAL_VAR_OP_ADD));
 					//^2759:1AEC
 					glbChampionAttackDamage = ATTACK_REQUIRES_HAND_ITEM;	// -2
 					//^2759:1AF2
@@ -1727,7 +1666,7 @@ _CreateMinion:
 				//^2759:1FE0
 				break;
 			//^2759:1FE2
-			glbSomeChampionPanelFlag = max_value(1, 8 - UPDATE_GLOB_VAR(0x47, 1, 3));
+			glbSomeChampionPanelFlag = max_value(1, 8 - UPDATE_GLOB_VAR(C071_GLOB_BYTE_07_CHAMPION_NEED_TELEPORT_MARK, 1, C03_GLOBAL_VAR_OP_ADD));
 			glbChampionAttackDamage = ATTACK_FAILURE_X_TELEPORT;
 
 			break;
@@ -3509,7 +3448,7 @@ _3333:
 		//^2066:33B0
 	} while (bp06 == 0);
 	//^2066:33B9
-	_2066_37f2();
+	DIALOG_2066_37f2();
 	return si;
 }
 

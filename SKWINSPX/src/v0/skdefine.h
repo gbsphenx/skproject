@@ -707,6 +707,8 @@ enum SkillLevel {
 // |21|22|23|24|25|
 // +--+--+--+--+--+
 
+
+
 // THEN internally, values are shifted -1 so that they range from 0 to 24 instead.
 #define ORNATE_POS__VFARLEFT_HFARTOP		0
 #define ORNATE_POS__VLEFT_HFARTOP			1
@@ -737,6 +739,15 @@ enum SkillLevel {
 #define ORNATE_POS__VCENTERED_HFARBOTTOM	22
 #define ORNATE_POS__VRIGHT_HFARBOTTOM		23
 #define ORNATE_POS__VFARRIGHT_HFARBOTTOM	24
+
+// It looks like there is also a 5x5 grid used as this (check DIR_FROM_5x5_POS)
+// +--+--+--+
+// |06|07|08|
+// +--+--+--+
+// |11|12|13|
+// +--+--+--+
+// |16|17|18|
+// +--+--+--+
 
 #define GDAT_WALL_ORNATE__DO_NOT_FLIP		0x07	// 1 = do not flip that graphics
 #define GDAT_WALL_ORNATE__0A				0x0A	// 0 (default) = non alcove / 1 = Alcove / 2 = shop glass / 3 = Passive device (cryocell : show champion portrait)
@@ -1250,13 +1261,39 @@ enum SkillLevel {
 //	ENGINE GLOBAL VARIABLES
 //------------------------------------------------------------------------------
 
-// Global Variables
-#define GLOB_BYTE_00				0x40
-#define GLOB_BYTE_02				0x42	// Used in attack failure ..
-#define GLOB_BYTE_07				0x47	// Used for X teleporter (mark last teleporter source?)
+// Ingame World Global Variables
+// Global variables range from x00 to xBF as follow (range xC0 to xFF is unused)
+// - 0x00 to 0x3F	64 bit flags values (stored in glbIngameGlobVarFlags)
+// - 0x40 to 0x7F	64 bytes values (stored in glbIngameGlobVarBytes)
+// - 0x80 to 0xBF	64 2-bytes word values (stored in glbIngameGlobVarWords)
+//#define GLOB_BYTE_00									0x40
+#define C064_GLOB_BYTE_00_RAIN							0x40
+#define C065_GLOB_BYTE_01_CLOUD							0x41
+//#define GLOB_BYTE_02									0x42	// Used in attack failure ..
+#define C066_GLOB_BYTE_02_CHAMPION						0x42
+#define C067_GLOB_BYTE_03_CHAMPION_NEED_AMMO			0x43
+#define C068_GLOB_BYTE_04_CHAMPION_NEED_FLASK			0x44
+#define C069_GLOB_BYTE_05_CHAMPION_FAIL_SPELL			0x45
+#define C070_GLOB_BYTE_06_CHAMPION_UNKNOWN_SPELL		0x46
+#define C071_GLOB_BYTE_07_CHAMPION_NEED_TELEPORT_MARK	0x47	// // Used for X teleporter (mark last teleporter source?)
+
+// That means some of these variables should not be used in dungeon data to prevent some weird/broken behaviour
+
+//#define GLOB_BYTE_07				0x47	// Used for X teleporter (mark last teleporter source?)
 #define GLOB_BYTE_3F				0x7F
 #define GLOB_WORD_00				0x80
 #define GLOB_WORD_3F				0xBF
+
+
+
+#define C00_GLOBAL_VAR_OP_FLAG_SET		0
+#define C01_GLOBAL_VAR_OP_FLAG_CLEAR	1
+#define C02_GLOBAL_VAR_OP_FLAG_TOGGLE	2
+#define C03_GLOBAL_VAR_OP_ADD			3
+#define C04_GLOBAL_VAR_OP_SUBTRACT		4
+#define C05_GLOBAL_VAR_OP_NONE			5
+#define C06_GLOBAL_VAR_OP_NEW_VALUE		6
+
 
 
 //------------------------------------------------------------------------------
@@ -1484,6 +1521,11 @@ enum SkillLevel {
 #define ACTUATOR_SIMPLE_USAGE__RECHARGER				0x08	// Like gem vein
 #define ACTUATOR_SIMPLE_USAGE__TELEPORTER_WITH_FLAG		0x10	// 
 
+
+#define C00_ACT_SIMPLE__MODE_TEXT					0x00
+#define C01_ACT_SIMPLE__MODE_ACTIVE_DECORATION		0x01
+#define C02_ACT_SIMPLE__MODE_COMPLEX				0x02
+
 //------------------------------------------------------------------------------
 //	SPELLS
 //------------------------------------------------------------------------------
@@ -1562,6 +1604,11 @@ typedef enum
 
 #define RECT_015_BOTTOM_MESSAGE_3_LINES				15
 
+#define RECT_161_CHAMPION_SLAB_AREA					161
+#define RECT_162_CHAMPION_SLAB_AREA					162
+#define RECT_163_CHAMPION_SLAB_AREA					163
+#define RECT_164_CHAMPION_SLAB_AREA					164
+
 #define RECT_165_CHAMPION_FIRSTNAME_1				165
 #define RECT_166_CHAMPION_FIRSTNAME_2				166
 #define RECT_167_CHAMPION_FIRSTNAME_3				167
@@ -1572,6 +1619,8 @@ typedef enum
 #define RECT_174_CHAMPION_PORTRAIT_2				174
 #define RECT_175_CHAMPION_PORTRAIT_3				175
 #define RECT_176_CHAMPION_PORTRAIT_4				176
+
+#define RECT_453									0x01C5
 
 #define RECT_545_INVENTORY_MOUTH_COLOR_FRAME		545
 #define RECT_546_INVENTORY_EYE_COLOR_FRAME			546

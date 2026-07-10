@@ -280,30 +280,22 @@ void SkWinCore::_2066_398a(i16 xx)
 	return;
 }
 //^2066:3820
-void SkWinCore::_2066_3820(U8 *xx, U16 yy)
+// _2066_3820 renamed DIALOG_2066_3820
+void SkWinCore::DIALOG_2066_3820(U8 *xx, U16 yy)
 {
-	//^2066:3820
 	ENTER(8);
-	//^2066:3824
 	SRECT bp08;
-	QUERY_EXPANDED_RECT(0x1c5, &bp08);
-	//^2066:3834
-	DRAW_DIALOGUE_PICT(QUERY_GDAT_IMAGE_ENTRY_BUFF(0x1a, 0x81, 0x00), _4976_4c16, &bp08, 
-		bp08.x, bp08.y, -1, QUERY_GDAT_IMAGE_LOCALPAL(0x1a, 0x81, 0x00));
-	//^2066:3873
+	QUERY_EXPANDED_RECT(RECT_453, &bp08);
+	DRAW_DIALOGUE_PICT(QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x1A_DIALOG_BOXES, 0x81, 0x00), _4976_4c16, &bp08, 
+		bp08.x, bp08.y, -1, QUERY_GDAT_IMAGE_LOCALPAL(GDAT_CATEGORY_x1A_DIALOG_BOXES, 0x81, 0x00));
 	DRAW_VP_STR(bp08.x, bp08.y +4, glbPaletteT16[COLOR_YELLOW], xx);
-	//^2066:3896
 	if (yy != 0) {
-		//^2066:389C
 		bp08.x += SK_STRLEN(xx) * _4976_0126;
 		bp08.cx = _4976_0126;
 		bp08.cy -= 4;
-		//^2066:38BA
 		FIRE_FILL_BACKBUFF_RECT(&bp08, glbPaletteT16[COLOR_ORANGE]);
 	}
-	//^2066:38D2
 	_0aaf_002f();
-	//^2066:38D7
 	return;
 }
 
@@ -311,55 +303,31 @@ void SkWinCore::_2066_3820(U8 *xx, U16 yy)
 //^3E74:5B7C
 void SkWinCore::_3e74_5b7c_KEYBOARD(U16 xx)
 {
-	//^3E74:5B7C
 	ENTER(20);
-	//^3E74:5B80
 	_476d_05b6_KEYBOARD(xx);
-	//^3E74:5B89
 	if (_4976_484d++ == _4976_484f[RCJ(4,_4976_484d)]) {
-		//^3E74:5B9F
 		if (_4976_484f[RCJ(4,_4976_484d)] != 0)
-			//^3E74:5BAA
 			return;
-		//^3E74:5BAD
 		const U8 *bp04 = _4976_4853;
-		//^3E74:5BB5
 		DISPLAY_HINT_TEXT(COLOR_WHITE, bp04);
-		//^3E74:5BC5
 		U8 bp14[16];
 		DISPLAY_HINT_TEXT(COLOR_WHITE, SK_LTOA10(2, bp14));
-		//^3E74:5BE2
 		_3929_0b01(15, 46);
-		//^3E74:5BED
 		_3929_0b20(15, 8);
-		//^3E74:5BFB
 		_3929_0b20(15, glbCRAMSize);
-		//^3E74:5C0D
-		_3929_0b20(15, _4976_5ea6);
-		//^3E74:5C1F
+		_3929_0b20(15, glbEMSMemPool);
 		_3929_0b20(15, _4976_5d66);
-		//^3E74:5C31
 		bp04 = _4976_485a;
-		//^3E74:5C39
 		SK_STRCPY(bp14, bp04);
-		//^3E74:5C4C
 		if (_4976_5bee[0] != 0)
-			//^3E74:5C53
 			bp14[0] = 0x47;
-		//^3E74:5C57
 		if (_4976_5bee[1] != 0)
-			//^3E74:5C5E
 			bp14[1] = 0x53;
-		//^3E74:5C62
 		if (_4976_5bee[2] != 0)
-			//^3E74:5C69
 			bp14[2] = 0x45;
-		//^3E74:5C6D
 		DISPLAY_HINT_TEXT(COLOR_WHITE, bp14);
 	}
-	//^3E74:5C7C
 	_4976_484d = 0;
-	//^3E74:5C82
 	return;
 }
 

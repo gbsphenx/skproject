@@ -189,9 +189,9 @@ void SkWinCore::UPDATE_WEATHER(U16 aa)	// aa = 1 when called from timer, aa = 0 
 	if (bp0a != 0) {
 		//^3DF7:041C
 		bp0a = 0;
-		X16 bp18 = (glbRainStormController < 0xb6) ? 1 : 0;
+		X16 bp18 = (glbRainStormController < 0xB6) ? 1 : 0;
 		if (bp18 != 0) {
-			UPDATE_GLOB_VAR(0x40, 0x0, 0x6);
+			UPDATE_GLOB_VAR(C064_GLOB_BYTE_00_RAIN, 0x0, C06_GLOBAL_VAR_OP_NEW_VALUE);
 		}
 		//^3DF7:0447
 		X16 bp0e = 0;
@@ -252,31 +252,23 @@ void SkWinCore::UPDATE_WEATHER(U16 aa)	// aa = 1 when called from timer, aa = 0 
 								continue;
 						}
 					}
-					//^3DF7:05E8
 					CREATE_CLOUD(OBJECT_EFFECT_THUNDER, glbRainStormController, di, si, 255);
 					if (glbChampionInventory == 0 && cd.pi.glbIsPlayerSleeping == 0)
 						break;
-					//^3DF7:0609
 					if (bp18 != 0)
 						break;
-					//^3DF7:060F
 					// SPX: glbPlayerPosX = x1, glbPlayerPosY = y1, di = x2, si = y2
 					bp0c = CALC_SQUARE_DISTANCE(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, di, si);
 					if (bp0c > 3)
 						break;
-					//^3DF7:062A
 					if (CALC_VECTOR_DIR(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, di, si) != cd.pi.glbPlayerDir)
 						break;
-					//^3DF7:0642
-					UPDATE_GLOB_VAR(0x41, 1, 3);
+					UPDATE_GLOB_VAR(C065_GLOB_BYTE_01_CLOUD, 1, C03_GLOBAL_VAR_OP_ADD);
 					break;
-					//^3DF7:0652
 				} while (--bp0e != 0);
 			}
 		}
-		//^3DF7:065A
 		if (bp0e == 0 && RAND01() != 0) {
-			//^3DF7:0669
 			bp04->envImg = U8(RAND16(3)) + GFX_ENVIRONMENT_IMG_THUNDER;	// 0x64 = thunder 1 => 0x66 = thunder 3
 			if (RETRIEVE_ENVIRONMENT_CMD_CD_FW(bp04) != 0) {
 				bp0a = 1;
