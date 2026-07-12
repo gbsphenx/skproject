@@ -1612,49 +1612,34 @@ void SkWinCore::FIRE_BLIT_TO_MEMORY_8TO8BPP(
 //^00EB:03D5
 void SkWinCore::IBMIO_WAIT_VSYNC()
 {
-	//printf("WAIT ON ...");
 #ifndef __DJGPP__
 
 #if UseAltic
 	skWinApp->skwin_Sleep(1000 / 50);
 #else
-	//^00EB:03D5
-	//^00EB:03D8
-	while ((inportb(0x03da) & 0x08) != 0);
-	//^00EB:03E0
-	while ((inportb(0x03da) & 0x08) == 0);
+	while ((inportb(0x03DA) & 0x08) != 0);
+	while ((inportb(0x03DA) & 0x08) == 0);
 #endif
 
 #endif // __DJGPP__
-	//printf(" WAIT OFF.\n");
 }
 
 //^00EB:045D
 void SkWinCore::IBMIO_UPDATE_PALETTE_SET()
 {
-	//^00EB:045D
-	//^00EB:0463
 	IBMIO_WAIT_VSYNC();
-	//^00EB:0466
-	outportb(0x03c8, 0);
-	U16 si = 0;
-	//^00EB:0470
-	for (; si < 256; si++) {
-		//^00EB:0472
-		Bit8u bp01 = glbPaletteRGB[si][0];
-		Bit8u bp02 = glbPaletteRGB[si][1];
-		Bit8u bp03 = glbPaletteRGB[si][2];
-		//^00EB:04A2
+	outportb(0x03C8, 0);
+	U16 iColIdx = 0;	// si
+	for (iColIdx = 0; iColIdx < 256; iColIdx++) {
+		U8 iCol1R = glbPaletteRGB[iColIdx][0];	// bp01
+		U8 iCol2G = glbPaletteRGB[iColIdx][1];	// bp02
+		U8 iCol3B = glbPaletteRGB[iColIdx][2];	// bp03
 		//bp01 = bp02 = bp03 = ((si%16)+1) << 4;
 		//outportb(0x03c8, si);
-		outportb(0x03C9, bp01);
-		outportb(0x03C9, bp02);
-		outportb(0x03C9, bp03);
-		//printf("%2X%2X%2X ", bp01, bp02, bp03);
-		//^00EB:04B1
+		outportb(0x03C9, iCol1R);
+		outportb(0x03C9, iCol2G);
+		outportb(0x03C9, iCol3B);
 	}
-	//^00EB:04B8
-	//^00EB:04B9
 	skWinApp->setRGB6Palette((X8*) glbPaletteRGB);
 	return;
 }
@@ -1906,10 +1891,10 @@ void SkWinCore::FIRE_FADE_SCREEN(U16 fadeOutIfTrue) //#DS=4976
 }
 
 //^44C8:1D8C
-void SkWinCore::FIRE_FILL_BACKBUFF_RECT(SRECT* xRect, Bit8u fill)
+void SkWinCore::FIRE_FILL_BACKBUFF_RECT(SRECT* xRect, U8 fill)
 {
     FIRE_FILL_RECT_ANY(
-		_4976_4c16,
+		glbBackBuffViewport,
 		xRect,
 		fill,
 		_4976_00f6,

@@ -1147,18 +1147,19 @@ void SkWinCore::MAP_EMS_TO_PTR(U32 xx, U32 yy, U8 **ss, U8 **tt)
 
 
 //^4726:02AC
-U8 *SkWinCore::_4726_02ac()
+// SPX: _4726_02ac renamed MEM_PREPARE_VIEWPORT ??
+U8 *SkWinCore::MEM_PREPARE_VIEWPORT()
 {
-	//^4726:02AC
 	ENTER(4);
-	//^4726:02B0
 	if (_4976_4968 != 0) {
-		//^4726:02B7
-		U8 *bp04 = EMS_MAP_BANK_TO_MEMORY(_4976_5eac + (+6), 1);
-		WRITE_UI16(bp04,-6,8);
-		WRITE_UI16(bp04,-4,_4976_00f6);
-		WRITE_UI16(bp04,-2,_4976_00f8);
-		return bp04;
+		U8* xImageBuffer = EMS_MAP_BANK_TO_MEMORY(_4976_5eac + (+6), 1);	// bp04
+		//WRITE_UI16(xImageBuffer,-6,8);
+		//WRITE_UI16(xImageBuffer,-4,_4976_00f6);
+		//WRITE_UI16(xImageBuffer,-2,_4976_00f8);
+		WRITE_IMGBUFF_BPP(xImageBuffer,IMG_8_BPP);
+		WRITE_IMGBUFF_WIDTH(xImageBuffer,_4976_00f6);
+		WRITE_IMGBUFF_HEIGHT(xImageBuffer,_4976_00f8);
+		return xImageBuffer;
 	}
 	return NULL;
 }
@@ -1207,10 +1208,8 @@ void SkWinCore::_3e74_2f41(sk5d12 *ref)
 		}
 		//^3E74:3086
 	}
-	//^3E74:30A3
 	ref->t8 = s2t(bp08);
-	_4726_02ac();
-	//^3E74:30B9
+	MEM_PREPARE_VIEWPORT();
 	return;
 }
 

@@ -253,7 +253,7 @@ _08fe:
 	glbTempPicture.iYOffset += offy;
 	glbTempPicture.rectNo = rectno;
 	glbTempPicture.w26 = pp;
-	glbTempPicture.pb44 = _4976_4c16;
+	glbTempPicture.pb44 = glbBackBuffViewport;
 	glbTempPicture.colorKeyPassThrough = colorkey1;
 	//^32CB:0972
 	_32cb_0804(glbTempPicture.b58, di, colorkey1, colorkey2, glbTempPicture.w56);
@@ -2445,7 +2445,7 @@ void SkWinCore::_32cb_2cf3(U8 cls2, U16 scale64, U16 mirrorFlip, U16 rectno)
 	glbTempPicture.w26 = 0;
 	glbTempPicture.rectNo = rectno;
 	glbTempPicture.colorKeyPassThrough = 10;	// hard set color key!
-	glbTempPicture.pb44 = _4976_4c16;
+	glbTempPicture.pb44 = glbBackBuffViewport;
 	glbTempPicture.mirrorFlip = mirrorFlip;
 	glbTempPicture.iYStretch = glbTempPicture.iXStretch = si;
 

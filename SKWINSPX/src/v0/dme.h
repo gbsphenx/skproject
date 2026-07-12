@@ -1646,7 +1646,7 @@ namespace DM2Internal {
 		//  +--+ | 5| +--+--+
 		//       +--+
 
-		ObjectID inventory[INVENTORY_MAX_SLOT];	// @193 // w193[30] player posessions
+		ObjectID inventory[C30_INVENTORY_MAX_SLOT];	// @193 // w193[30] player posessions
 
 		ObjectID Possess(U16 no) const { return ObjectID(inventory[no]); }
 		void Possess(U16 no, ObjectID recordLink) { inventory[no] = recordLink; }

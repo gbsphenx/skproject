@@ -8,6 +8,8 @@
 #include <skver.h>
 #include <sktypes.h>
 
+#include <skwinapp.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -231,9 +233,26 @@ UINT SkRendererDOS::Close()
 }
 
 
+bool SkRendererDOS::ML()
+{
+#ifdef __DJGPP__
+    while (kbhit())
+    {
+        int key = getkey();
+		printf("DOS key = %d\n", key);
+        xMasterWinApp->processKinput(key, true);	// key pressed
+		xMasterWinApp->processKinput(key, false);	// key released
+    }
+#endif // __DJGPP__
+	return true;
+}
+
+
 UINT SkRendererDOS::AudioPlaySound(const U8 *xSoundBuffer, U32 iBufferSize, i8 iSoundVolume, U16 iPlaybackFrequency)
 {
 	return 0;
 }
+
+
 
 //------------------------------------------------------------------------------

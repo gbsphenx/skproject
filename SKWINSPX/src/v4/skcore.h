@@ -377,55 +377,55 @@ protected:
 	SRECT	glb_4976_4bca_Rect;		// _4976_4bca
 	U16	_4976_4bd2;
 	// these 3 from TransmittedUIEvent (HANDLE_UI_EVENT_1031_111e)
-	U8	glbGDATItemCls1Category;		// (_4976_4bd5) =0x1a
-	U8	glbGDATItemCls2MainItemId;		// (_4976_4bd6) =0xfe
-	U8	glbGDATItemCls4EntryId;		// (_4976_4bd4) =0x01
-	U16	_4976_4bd8;		// dialogue visibility: 1=dialog mode
+	U8		glbGDATItemCls1Category;		// (_4976_4bd5) =0x1a
+	U8		glbGDATItemCls2MainItemId;		// (_4976_4bd6) =0xfe
+	U8		glbGDATItemCls4EntryId;		// (_4976_4bd4) =0x01
+	U16		_4976_4bd8;		// dialogue visibility: 1=dialog mode
 	U8		*glbPaletteT16;	// (_4976_4a02) probably, a palette set (16 bytes).
 	sk4bde	*_4976_4bde;
 	sk4be2	*_4976_4be2;
-	U16	_4976_4be6;
+	U16		_4976_4be6;
 	//U16	glbIsPlayerSleeping; // (_4976_4be8) 1 if sleep?
 	//U16	glbIsPlayerMoving; // (_4976_4bea) 0 if you stay, not 0 if stepping forward/backward
 	Bit32u	glbGameTick;	// (_4976_4bec) current game tick
-	U16	glbTickSpeed;	// (_4976_4bf0) 0 is the fastest (no wait between game tick), 15 is slow
+	U16		glbTickSpeed;	// (_4976_4bf0) 0 is the fastest (no wait between game tick), 15 is slow
 	//U16	glbPlayerLastMove;		// (_4976_4bf2) Last effective move (see PERFORM_MOVE)
 	//U16	glbPlayerMap;	// (_4976_4bf4) current player map #
 	//U16	glbPlayerDir;	// (_4976_4bf6) current player dir (0,1,2,3=N,E,S,W)
-	U16	glbPlayerSpecialStairsDir;	// SPX: added this for special behaviour going stairs for BW
-	U16	glbRecalcLightIndicator;	// (_4976_4bf8)
+	U16		glbPlayerSpecialStairsDir;	// SPX: added this for special behaviour going stairs for BW
+	U16		glbRecalcLightIndicator;	// (_4976_4bf8)
 	//i16		glbPlayerPosX;	// (_4976_4bfa) current player x-axis (column)
-//	U16	glbNextChampionNumber;		// (_4976_4bfc) Related to champions count ?
-	U16	_4976_4bfe;
-	U16	_4976_4c00;
-	U16	_4976_4c02;
-	U16	glbSomePosX_4976_4c04;	// (4976_4c04)
+//	U16		glbNextChampionNumber;		// (_4976_4bfc) Related to champions count ?
+	U16		_4976_4bfe;
+	U16		_4976_4c00;
+	U16		_4976_4c02;
+	U16		glbSomePosX_4976_4c04;	// (4976_4c04)
 	//i16		glbPlayerPosY;	// (_4976_4c06) current player y-axis (row)
-	U16	_4976_4c08;
+	U16		_4976_4c08;
 	U16		_4976_4c0a;
-	U16	_4976_4c0c;
+	U16		_4976_4c0c;
 	X16		glbIntermediateTickCounter;	// (_4976_4c0e)
-	U16	glbDir_4976_4c10;				// (_4976_4c10) some dir
-	U16	glbMap_4976_4c12;				// (_4976_4c12) map for someone
-	U16	glbPlayerThrowCounter;	// (_4976_4c14) Spx: I don't get the real usage of this .. seems quite useless ...
-	Bit8u	*_4976_4c16;	// off-screen viewport? (224x136) =0xE0008006
+	U16		glbDir_4976_4c10;				// (_4976_4c10) some dir
+	U16		glbMap_4976_4c12;				// (_4976_4c12) map for someone
+	U16		glbPlayerThrowCounter;	// (_4976_4c14) Spx: I don't get the real usage of this .. seems quite useless ...
+	U8*		glbBackBuffViewport;	// (_4976_4c16) off-screen viewport? (224x136) =0xE0008006
 	Bit32u	_4976_4c1a;		// game tick?
-	U16	glbSomePosY_4976_4c1e;		// (_4976_4c1e)
+	U16		glbSomePosY_4976_4c1e;		// (_4976_4c1e)
 	Bit32u	glbAbsoluteTickCounter;			// (_4976_4c20)
 	//i16	glbSpecialScreen;		// (_4976_4c24) Spx: some sort of flag telling if we are in MAIN screen, CREDITS or INGAME ?
-	U16	_4976_4c26;
-	U16	glbMap_4c28;	// (_4976_4c28) a map?
+	U16		_4976_4c26;
+	U16		glbMap_4c28;	// (_4976_4c28) a map?
 	//U16	glbPlayerDefeated;	// (_4976_4c2a) all player are defeated
-	U16	_4976_4c2c;
-	U16	glbSomePosX_4c2e;	// (_4976_4c2e) a x?
-	U16	glbSomePosY_4c30;	// (_4976_4c30) a y?
+	U16		_4976_4c2c;
+	U16		glbSomePosX_4c2e;	// (_4976_4c2e) a x?
+	U16		glbSomePosY_4c30;	// (_4976_4c30) a y?
 	i16		_4976_4c32;
 	i16		_4976_4c34;
-	U16	glbLightLevel; // light level2? // SPX: _4976_4c36 renamed glbLightLevel
-	U16	glbShowItemStats;		// (_4976_4c38)
+	U16		glbLightLevel; // light level2? // SPX: _4976_4c36 renamed glbLightLevel
+	U16		glbShowItemStats;		// (_4976_4c38)
 	U16		glbShowMousePointer;	// (_4976_4c3a) ShowCursor16572
 	//U16	glbChampionsCount;				// (_4976_4c3c) player count
-	U16	_4976_4c3e;
+	U16		_4976_4c3e;
 	U16		_4976_4c40;	// dir?
 	U8		_4976_4c42[16];
 	OID_T	*glbIndexOfTilesWithObjects;			// (_4976_4c52) U16* [LOCAL] Index of tiles with objects on them (per column)
@@ -648,7 +648,7 @@ protected:
 	i8	_4976_539f;
 	U16	_4976_53a0;
 	U16	_4976_53a2;
-	U16	_4976_53a4;
+	U16		glbCommandSlotsNum;	// _4976_53a4
 	SRECT	_4976_53a6;
 	Bit8u	glbHoldedContainerType;	// (_4976_53ae) type of showing chest
 	//LeaderPossession	glbLeaderHandPossession;	// (_4976_57c8) player handy posession
@@ -1403,7 +1403,7 @@ protected:
 	void PROCESS_ITEM_BONUS(i16 player, ObjectID recordLink, i16 inventorySlot, i16 x4);	// Is that working?
 	ObjectID REMOVE_POSSESSION(U16 player, U16 possess);
 	void EQUIP_ITEM_TO_INVENTORY(U16 player, ObjectID rl, U16 inventorySlot);
-	U16 _2759_0e93(U16 player, ObjectID rl, i16 hand);
+	U16 CHECK_SOME_HAND_READY(U16 player, ObjectID rl, i16 hand);	// _2759_0e93
 	void LOAD_PROJECTILE_TO_HAND(U16 player, i16 hand);
 	Bit8u *QUERY_GDAT_ENTRY_DATA_PTR(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4);
 	void FREE_PICT6(SkImage *ref);
@@ -1473,7 +1473,7 @@ protected:
 	void _1031_0667();
 	Bit8u *QUERY_CMDSTR_NAME(Bit8u cls1, Bit8u cls2, Bit8u cls4);
 	void DRAW_CMD_SLOT(U16 cmdSlot, Bit8u ww);
-	void _29ee_0b2b();
+	void DRAW_SEVERAL_CMD_SLOTS();	// _29ee_0b2b
 	void _29ee_1d03(U16 xx);
 	i16 FIND_LADDER_AROUND(i16 xx, i16 yy, i16 isupper, Actuator **ref);
 	U16 _19f0_124b(i16 *xx, i16 *yy, U16 ww, i16 ss, U16 tt);
@@ -1500,8 +1500,8 @@ protected:
 	void CLEAR_TRY_PUSH_PULL_OBJECT();	// _1031_04f5 renamed CLEAR_TRY_PUSH_PULL_OBJECT
 	void HIGHLIGHT_ARROW_PANEL(U16 cls4, U16 rectno, U16 bright);
 	void CHOOSE_HIGHLIGHT_ARROW_PANEL(); // 12b4_0092
-	void IBMIO_FILL_HALFTONE_RECT(SRECT *rc);
-	void FIRE_FILL_HALFTONE_RECTV(SRECT *rc, U16 aa);
+	void IBMIO_FILL_HALFTONE_RECT(SRECT* xRect);
+	void FIRE_FILL_HALFTONE_RECTV(SRECT* xRect, U16 aa);
 	void FIRE_FILL_HALFTONE_RECTI(U16 rectno, U16 aa);
 	void IBMIO_MOUSE_RELEASE_CAPTURE();
 	void FIRE_MOUSE_RELEASE_CAPTURE();
@@ -1529,7 +1529,7 @@ protected:
 	U16 _1031_03f2(sk1891 *ref, U16 xx);
 	void ADJUST_UI_EVENT(MousePosition *ref);
 	Bit8u *TRANSMIT_UI_EVENT(MousePosition *xx);
-	void _0b36_129a(sk3f6c *ref, i16 xx, i16 yy, Bit8u clr1, Bit8u clr2, Bit8u *str);
+	void DRAW_STUFF_0b36_129a(sk3f6c *ref, i16 xx, i16 yy, Bit8u clr1, Bit8u clr2, Bit8u *str);	// _0b36_129a
 	void DRAW_PICST(ExtendedPicture *ref);
 	void DRAW_STATIC_PIC(Bit8u cls1, Bit8u cls2, Bit8u cls4, U16 rectno, i16 colorkey);
 	void DRAW_CHARSHEET_OPTION_ICON(Bit8u cls4, U16 rectno, U16 zz);
@@ -1537,7 +1537,7 @@ protected:
 	void DRAW_CHAMPION_PICTURE(U16 player); // _2e62_061d
 	void DRAW_PLAYER_3STAT_HEALTH_BAR(U16 player);
 	void DRAW_PLAYER_DAMAGE(U16 player);
-	void DRAW_CUR_MAX_HMS(U16 rectno, i16 curVal, i16 maxVal);
+	void DRAW_CUR_MAX_HMS(U16 iRectNo, i16 curVal, i16 maxVal);
 	void DRAW_PLAYER_3STAT_TEXT(Champion *ref);
 	void DRAW_EYE_MOUTH_COLORED_RECTANGLE(U8 iGDatEntryId, U16 iRectNo);
 	void DRAW_CRYOCELL_LEVER(U16 leverIsOn);
@@ -1546,7 +1546,7 @@ protected:
 	i16 QUERY_3STAT_BAR_COLOR(U8 cls4, i16 def_color);
 	void DRAW_FOOD_WATER_POISON_PANEL();
 	void DRAW_GUIDED_STR(const U8 *ref);
-	void _24a5_0732(i16 xx, i16 yy, U8 *str);
+	void DRAW_STUFF_STRINGS(i16 xx, i16 yy, U8 *str);	// _24a5_0732
 	void DRAW_SCROLL_TEXT(ObjectID rl);
 	U8 *QUERY_GDAT_ITEM_NAME(U8 cls1, U8 cls2);
 	U8 *GET_ITEM_NAME(ObjectID recordLink);
@@ -1597,9 +1597,9 @@ protected:
 	void DISPLAY_HINT_NEW_LINE();
 	void DISPLAY_TAKEN_ITEM_NAME(ObjectID rl);
 	void TAKE_OBJECT(ObjectID rl, U16 xx);
-	void _2e62_0cfa(U16 xx);
-	void _443c_0004(U8 *buffSrc, U8 *buffDst, U8 *localpal);
-	void _443c_0434();
+	void UPDATE_GENERAL_CHAMPIONS_STAT_DISP(U16 xx);	// _2e62_0cfa
+	void DRAW_SHADOWED_HAND_CURSOR(U8 *buffSrc, U8 *buffDst, U8 *localpal);	// _443c_0004
+	void CHANGE_CURSOR_HAND_ITEM();	// _443c_0434
 	void CLICK_ITEM_SLOT(U16 xx);
 	void PUT_ITEM_TO_PLAYER(U16 championIndex);
 	ObjectID TAKE_COIN_FROM_WALLET(ObjectID rl, i16 xx);
@@ -1750,7 +1750,7 @@ protected:
 
 	void READ_SAVEGAMES_FILENAMES(); // _2066_38d9
 	void __OPEN_DIALOG_PANEL(U8 cls2, U16 yy);
-	void _2066_33c4(U8 *str, U16 yy);
+	void COPY_STRING_2066_33c4(U8 *str, U16 yy);	// _2066_33c4
 	void _2066_398a(i16 xx);
 	void DIALOG_2066_3820(U8 *xx, U16 yy);	// _2066_3820
 
@@ -2038,7 +2038,7 @@ protected:
 	X16 _0cee_319e_ALCOVE_GET_GDAT_X13(ObjectID rl); // _0cee_319e
 	U16 ATTACK_WALL(i16 xTo, i16 yTo, i16 xFrm, i16 yFrm, U16 dirTo, ObjectID rlThrown);
 	X16 _2c1d_132c(i16 ss, U16 tt);
-	X16 _2c1d_135d(i16 play, U16 ww);
+	X16 CHAMPION_COMPUTE_SOME_SHIELD(i16 play, U16 ww);	// _2c1d_135d
 	i16 GET_SCALED_PRODUCT(U16 iValue, U16 iDivideScale, U16 iMultiplier);	// _0cd5_0176
 	i16 USE_ABILITY_ATTRIBUTE(Champion *ref, X16 ability, i16 tt); // _2c1d_0f2a renamed USE_ABILITY_ATTRIBUTE
 
@@ -2067,7 +2067,7 @@ protected:
 	tiamat ptr2t(U8 *pb);
 	void _3e74_3200(X16 ww); // TODO: Unr
 	void MAP_EMS_TO_PTR(U32 xx, U32 yy, U8 **ss, U8 **tt);
-	U8 *_4726_02ac();
+	U8* MEM_PREPARE_VIEWPORT();	// _4726_02ac
 	void _3e74_2f41(sk5d12 *ref);
 	void _3e74_30bd(sk5d12 *ref);
 	X32 _3e74_0017(sk5d12 *ref);

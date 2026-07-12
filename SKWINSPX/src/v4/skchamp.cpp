@@ -29,7 +29,7 @@ void SkWinCore::CALC_PLAYER_WEIGHT(U16 player)
 	i16 iInvSlot = 0;	// si
 
 	//for (; si < 30; si++) {
-	for (iInvSlot = 0; iInvSlot < INVENTORY_MAX_SLOT; iInvSlot++) {
+	for (iInvSlot = 0; iInvSlot < C30_INVENTORY_MAX_SLOT; iInvSlot++) {
 		iTotalWeight += QUERY_ITEM_WEIGHT(glbChampionSquad[player].inventory[iInvSlot]);
 	}
 	if (_4976_5336 - 1 == player && glbSelectedHandAction < 2) {
@@ -88,7 +88,7 @@ void SkWinCore::PROCESS_ITEM_BONUS(i16 player, ObjectID recordLink, i16 inventor
 	if (di == OBJECT_NULL)
 		return;
 	//^2C1D:0404
-	if (inventorySlot < INVENTORY_MAX_SLOT) {	// (possess < 30)
+	if (inventorySlot < C30_INVENTORY_MAX_SLOT) {	// (possess < 30)
 		//^2C1D:040D
 		U16 bp06 = QUERY_GDAT_DBSPEC_WORD_VALUE(di, GDAT_ITEM_STATS_GEN_FLAGS);
 		//^2C1D:041A
@@ -228,47 +228,33 @@ void SkWinCore::PROCESS_ITEM_BONUS(i16 player, ObjectID recordLink, i16 inventor
 }
 
 //^2C1D:07A3
-ObjectID SkWinCore::REMOVE_POSSESSION(U16 player, U16 possess)
+ObjectID SkWinCore::REMOVE_POSSESSION(U16 iChampionIdx, U16 possess)
 {
 	// CSBwinSimilarity: TAG015a66,RemovePossession
 
-	//^2C1D:07A3
 	ENTER(4);
-	//^2C1D:07A9
-	U16 si = possess;
-	//^2C1D:07AC
-	Champion *bp04 = &glbChampionSquad[player];
-	//^2C1D:07BD
-	ObjectID di;
-	if (si >= INVENTORY_MAX_SLOT) {	// (si >= 30)
-		//^2C1D:07C2
-		di = glbCurrentContainerItems[si -INVENTORY_MAX_SLOT];
-		//^2C1D:07CD
-		glbCurrentContainerItems[si -INVENTORY_MAX_SLOT] = OBJECT_NULL;
+	U16 iInvSlot = possess;	// si
+	Champion* xChampion = &glbChampionSquad[iChampionIdx];	// bp04
+	ObjectID di;	// di
+	if (iInvSlot >= C30_INVENTORY_MAX_SLOT) {	// (si >= 30)
+		di = glbCurrentContainerItems[iInvSlot - C30_INVENTORY_MAX_SLOT];
+		glbCurrentContainerItems[iInvSlot - C30_INVENTORY_MAX_SLOT] = OBJECT_NULL;
 	}
 	else {
-		//^2C1D:07DC
-		di = bp04->Possess(si);
-		//^2C1D:07EA
-		bp04->Possess(si, OBJECT_NULL);
+		di = xChampion->Possess(iInvSlot);
+		xChampion->Possess(iInvSlot, OBJECT_NULL);
 	}
-	//^2C1D:07FA
 	if (di == OBJECT_NULL) {
-		//^2C1D:07FF
 		return OBJECT_NULL;
 	}
-	//^2C1D:0804
 	if (true
-		&& cd.pi.glbChampionIndex -1 == player
-		&& si <= 1
-		&& si == glbSelectedHandAction
+		&& cd.pi.glbChampionIndex -1 == iChampionIdx
+		&& iInvSlot <= 1
+		&& iInvSlot == glbSelectedHandAction
 	) {
-		//^2C1D:0818
 		DISPLAY_RIGHT_PANEL_SQUAD_HANDS();
 	}
-	//^2C1D:081D
-	PROCESS_ITEM_BONUS(player, di, si, -1);
-	//^2C1D:082B
+	PROCESS_ITEM_BONUS(iChampionIdx, di, iInvSlot, -1);
 	return di;
 }
 
@@ -281,8 +267,8 @@ void SkWinCore::EQUIP_ITEM_TO_INVENTORY(U16 iChampionID, ObjectID rl, U16 invent
 	if (oObject != OBJECT_NULL) {
 		Champion* xChampion = &glbChampionSquad[iChampionID];
 		oObject.ClearDir();
-		if (iInvSlot >= INVENTORY_MAX_SLOT) {	// (di >= 30)
-			glbCurrentContainerItems[iInvSlot - INVENTORY_MAX_SLOT] = oObject;
+		if (iInvSlot >= C30_INVENTORY_MAX_SLOT) {	// (di >= 30)
+			glbCurrentContainerItems[iInvSlot - C30_INVENTORY_MAX_SLOT] = oObject;
 		}
 		else {
 			xChampion->Possess(iInvSlot, oObject);
@@ -294,179 +280,112 @@ void SkWinCore::EQUIP_ITEM_TO_INVENTORY(U16 iChampionID, ObjectID rl, U16 invent
 
 //^2759:0E93
 // TODO: related hand activation ?
-U16 SkWinCore::_2759_0e93(U16 player, ObjectID rl, i16 hand)
+// SPX: _2759_0e93 renamed CHECK_SOME_HAND_READY
+U16 SkWinCore::CHECK_SOME_HAND_READY(U16 iChampIdx, ObjectID rl, i16 hand)
 {
-	//^2759:0E93
 	ENTER(2);
-	//^2759:0E99
-	X16 di = player;
+	X16 iLocalChampIdx = iChampIdx;	// di
 	X16 bp02 = 0;
 	if (rl != OBJECT_NULL) {
-		//^2759:0EAA
-		if (IS_ITEM_HAND_ACTIVABLE(di, rl, -1) != 0) {
-			//^2759:0EBB
-			U16 si;
-			for (si = 0; si < _4976_53a4; si++) {
-				//^2759:0EBF
-				if (QUERY_CMDSTR_ENTRY(glbItemSelected[si].category, glbItemSelected[si].index, glbItemSelected[si].entry, 2) == hand) {
-					//^2759:0EEB
+		if (IS_ITEM_HAND_ACTIVABLE(iLocalChampIdx, rl, -1) != 0) {
+			U16 iCmdSlotIdx;	// si
+			for (iCmdSlotIdx = 0; iCmdSlotIdx < glbCommandSlotsNum; iCmdSlotIdx++) {
+				if (QUERY_CMDSTR_ENTRY(glbItemSelected[iCmdSlotIdx].category, glbItemSelected[iCmdSlotIdx].index, glbItemSelected[iCmdSlotIdx].entry, 2) == hand) {
 					bp02 = 1;
 					break;
 				}
-				//^2759:0EF2
 			}
 		}
-		//^2759:0EF9
-		di = cd.pi.glbChampionIndex;
-		if (di != 0) {
+		iLocalChampIdx = cd.pi.glbChampionIndex;
+		if (iLocalChampIdx != 0) {
 			if (glbSelectedHandAction == 0 || glbSelectedHandAction == 1) {
-				//^2759:0F10
-				di--;
-				IS_ITEM_HAND_ACTIVABLE(di, glbChampionSquad[di].Possess(glbSelectedHandAction), glbSelectedHandAction);
+				iLocalChampIdx--;
+				IS_ITEM_HAND_ACTIVABLE(iLocalChampIdx, glbChampionSquad[iLocalChampIdx].Possess(glbSelectedHandAction), glbSelectedHandAction);
 			}
 		}
 	}
-	//^2759:0F32
 	return bp02;
 }
 
 //^2759:0FB0
-void SkWinCore::LOAD_PROJECTILE_TO_HAND(U16 player, i16 hand)
+void SkWinCore::LOAD_PROJECTILE_TO_HAND(U16 iChampionIdx, i16 hand)
 {
-	//^2759:0FB0
 	ENTER(14);
-	//^2759:0FB6
-	Champion *champion = &glbChampionSquad[player];	//*bp04
-	//^2759:0FC7
-    champion->handCooldown[hand] = 0;
-	//^2759:0FD2
-	if (champion->curHP() == 0 || hand >= 2)
-		//^2759:0FE5
+	Champion* xChampion = &glbChampionSquad[iChampionIdx];	//*bp04
+    xChampion->handCooldown[hand] = 0;
+	if (xChampion->curHP() == 0 || hand >= 2)
 		return;
-	//^2759:0FE8
-	i16 bp0e = hand ^ 1;
-	//^2759:0FF1
-	i16 bp0a = hand;
-	//^2759:0FF7
-	U16 bp0c = champion->handCommand[hand];
-	//^2759:1003
-	champion->handCommand[hand] = 0xff;
-	//^2759:100E
-	champion->handDefenseClass[hand] = 0;
-	//^2759:1019
+	i16 iOtherHand = hand ^ 1;	// bp0e
+	i16 bp0a = hand;	// bp0a
+	U16 bp0c = xChampion->handCommand[hand];
+	xChampion->handCommand[hand] = 0xFF;
+	xChampion->handDefenseClass[hand] = 0;
 	//if (bp0c == 32) {
 	if (bp0c == CmLaunchProjectile) {
-		//^2759:1022
-		if (champion->Possess(bp0e) != OBJECT_NULL)
-			//^2759:1034
+		if (xChampion->Possess(iOtherHand) != OBJECT_NULL)
 			return;
-		//^2759:1037
-		U16 di = INVENTORY_SCABBARD_1;	// 12
-		//^2759:103C
-		if (IS_MISSILE_VALID_TO_LAUNCHER(player, bp0a, champion->Possess(di)) != 0) {
-			//^2759:1059
+		U16 di = C12_INVENTORY_SCABBARD_1;	// 12
+		if (IS_MISSILE_VALID_TO_LAUNCHER(iChampionIdx, bp0a, xChampion->Possess(di)) != 0) {
 _1059:
-			ObjectID si = REMOVE_POSSESSION(player, di);
+			ObjectID si = REMOVE_POSSESSION(iChampionIdx, di);
 
-			//^2759:1066
-			EQUIP_ITEM_TO_INVENTORY(player, si, bp0e);
-			//^2759:1075
+			EQUIP_ITEM_TO_INVENTORY(iChampionIdx, si, iOtherHand);
 			return;
 		}
 		else {
-			//^2759:1078
-			ObjectID si = champion->Possess(INVENTORY_SCABBARD_1);	// 12
-			//^2759:1082
+			ObjectID si = xChampion->Possess(C12_INVENTORY_SCABBARD_1);	// 12
 			if (IS_CONTAINER_CHEST(si) != 0) {
-				//^2759:108D
-				ObjectID *bp08 = &GET_ADDRESS_OF_RECORD9(si)->w2;
-				//^2759:109C
+				ObjectID* bp08 = &GET_ADDRESS_OF_RECORD9(si)->w2;
 				si = *bp08;
-				//^2759:10A2
 				for (; si != OBJECT_END_MARKER; si = GET_NEXT_RECORD_LINK(si)) {
-					//^2759:10A4
-					if (IS_MISSILE_VALID_TO_LAUNCHER(player, bp0a, si) != 0) {
-						//^2759:10B6
+					if (IS_MISSILE_VALID_TO_LAUNCHER(iChampionIdx, bp0a, si) != 0) {
 						CUT_RECORD_FROM(si, bp08, -1, 0);
-						//^2759:10C9
-						//^2759:1066
-						EQUIP_ITEM_TO_INVENTORY(player, si, bp0e);
-						//^2759:1075
+						EQUIP_ITEM_TO_INVENTORY(iChampionIdx, si, iOtherHand);
 						return;
 					}
-					//^2759:10CB
 				}
 			}
-			//^2759:10D9
 			//for (i16 di = 7; di <= 9; di++) {
-			for (i16 di = INVENTORY_SCABBARD_2; di <= INVENTORY_SCABBARD_4; di++) {
-				//^2759:10DE
-				if (IS_MISSILE_VALID_TO_LAUNCHER(player, bp0a, champion->Possess(di)) != 0)
-					//^2759:10FD
+			for (i16 di = C07_INVENTORY_SCABBARD_2; di <= C09_INVENTORY_SCABBARD_4; di++) {
+				if (IS_MISSILE_VALID_TO_LAUNCHER(iChampionIdx, bp0a, xChampion->Possess(di)) != 0)
 					goto _1059;
-				//^2759:1100
 			}
-			//^2759:1106
 			return;
 		}
 	}
-	//^2759:1109
 	if (bp0c != 42)
-		//^2759:110F
 		return;
-	//^2759:1112
-	if (champion->Possess(bp0a) != OBJECT_NULL)
-		//^2759:1124
+	if (xChampion->Possess(bp0a) != OBJECT_NULL)
 		return;
-	//^2759:1127
-	U16 di = INVENTORY_SCABBARD_1;
+	U16 di = C12_INVENTORY_SCABBARD_1;
 	ObjectID si;
-	if (_2759_0e93(player, champion->Possess(di), bp0c) != 0) {
-		//^2759:1149
+	if (CHECK_SOME_HAND_READY(iChampionIdx, xChampion->Possess(di), bp0c) != 0) {
 _1149:
-		si = REMOVE_POSSESSION(player, di);
-		//^2759:1156
+		si = REMOVE_POSSESSION(iChampionIdx, di);
 _1156:
-		EQUIP_ITEM_TO_INVENTORY(player, si, bp0a);
-		//^2759:1075
+		EQUIP_ITEM_TO_INVENTORY(iChampionIdx, si, bp0a);
 		return;
 	}
-	//^2759:115C
-	if (IS_CONTAINER_CHEST(si = champion->Possess(INVENTORY_SCABBARD_1)) != 0) {
-		//^2759:1171
+	if (IS_CONTAINER_CHEST(si = xChampion->Possess(C12_INVENTORY_SCABBARD_1)) != 0) {
 		ObjectID *bp08 = &GET_ADDRESS_OF_RECORD(si)->w0;
-		//^2759:1180
 		si = *bp08;
 
-		//^2759:1186
 		for (; si != OBJECT_END_MARKER; si = GET_NEXT_RECORD_LINK(si)) {
-			//^2759:1188
-			if (_2759_0e93(player, si, bp0c) != 0) {
-				//^2759:119A
+			if (CHECK_SOME_HAND_READY(iChampionIdx, si, bp0c) != 0) {
 				CUT_RECORD_FROM(si, bp08, -1, 0);
-				//^2759:11AD
 				goto _1156;
 			}
-			//^2759:11AF
 		}
 	}
-	//^2759:11BD
 //		for (di = 7; di <= 9; di++) {
-	for (di = INVENTORY_SCABBARD_2; di <= INVENTORY_SCABBARD_4; di++) {
-		//^2759:11C2
-		if (_2759_0e93(player, champion->Possess(di), bp0c) != 0) {
-			//^2759:11E1
+	for (di = C07_INVENTORY_SCABBARD_2; di <= C09_INVENTORY_SCABBARD_4; di++) {
+		if (CHECK_SOME_HAND_READY(iChampionIdx, xChampion->Possess(di), bp0c) != 0) {
 			goto _1149;
 		}
-		//^2759:11E4
 	}
-	//^2759:11EA
-	si = REMOVE_POSSESSION(player, 12);
-	//^2759:11F8
+	si = REMOVE_POSSESSION(iChampionIdx, 12);
 	if (si != OBJECT_NULL)
-		//^2759:11FD
 		goto _1156;
-	//^2759:1200
 	return;
 }
 
@@ -562,44 +481,29 @@ U16 SkWinCore::_2759_01fe(U16 player, ObjectID recordLink, U16 cmdNum)
 
 //^2759:04C0
 // SPX: _2759_04c0 renamed FIND_POUCH_OR_SCABBARD_POSSESSION_POS
-i16 SkWinCore::FIND_POUCH_OR_SCABBARD_POSSESSION_POS(i16 player, i16 yy)	// yy = pouch or scabbard
+i16 SkWinCore::FIND_POUCH_OR_SCABBARD_POSSESSION_POS(i16 iChampionIdx, i16 iIsScabbardOrPouch)	// yy = pouch or scabbard
 {
-	//^2759:04C0
 	ENTER(0);
-	//^2759:04C5
-	i16 di = player;
-	//^2759:04C8
-	if (yy == 1) {	// SCABBARD
-		//^2759:04CE
-		if (glbChampionSquad[di].Possess(INVENTORY_SCABBARD_1) != OBJECT_NULL) {	// Possess(12)
-			//^2759:04DE
-			return INVENTORY_SCABBARD_1;	// 12
+	i16 iLChampIdx = iChampionIdx;	// di
+	if (iIsScabbardOrPouch == 1) {	// SCABBARD
+		if (glbChampionSquad[iLChampIdx].Possess(C12_INVENTORY_SCABBARD_1) != OBJECT_NULL) {	// Possess(12)
+			return C12_INVENTORY_SCABBARD_1;	// 12
 		}
-		//^2759:04E3
 		//for (i16 si = 7; si <= 9; si++) {
-		for (i16 si = INVENTORY_SCABBARD_2; si <= INVENTORY_SCABBARD_4; si++) {
-			//^2759:04E8
-			if (glbChampionSquad[di].Possess(si) != OBJECT_NULL) {
-				//^2759:04FE
-				return si;
+		for (i16 iInvSlot = C07_INVENTORY_SCABBARD_2; iInvSlot <= C09_INVENTORY_SCABBARD_4; iInvSlot++) {	// si
+			if (glbChampionSquad[iLChampIdx].Possess(iInvSlot) != OBJECT_NULL) {
+				return iInvSlot;
 			}
-			//^2759:0502
 		}
 	}
-	//^2759:050A
-	else if (yy == 0) {	// POUCH
-		//^2759:0510
-		if (glbChampionSquad[di].Possess(INVENTORY_POUCH_1) != OBJECT_NULL) {	// Possess(11)
-			//^2759:0520
-			return INVENTORY_POUCH_1;	// 11
+	else if (iIsScabbardOrPouch == 0) {	// POUCH
+		if (glbChampionSquad[iLChampIdx].Possess(C11_INVENTORY_POUCH_1) != OBJECT_NULL) {	// Possess(11)
+			return C11_INVENTORY_POUCH_1;	// 11
 		}
-		//^2759:0525
-		if (glbChampionSquad[di].Possess(INVENTORY_POUCH_2) != OBJECT_NULL) {	// Possess(6)
-			//^2759:0535
-			return INVENTORY_POUCH_2;	// 6
+		if (glbChampionSquad[iLChampIdx].Possess(C06_INVENTORY_POUCH_2) != OBJECT_NULL) {	// Possess(6)
+			return C06_INVENTORY_POUCH_2;	// 6
 		}
 	}
-	//^2759:053A
 	return -1;
 }
 
@@ -610,41 +514,25 @@ i16 SkWinCore::FIND_POUCH_OR_SCABBARD_POSSESSION_POS(i16 player, i16 yy)	// yy =
 // Hence, NEOPHYTE would return 2 and ARCHMASTER 16
 U16 SkWinCore::QUERY_PLAYER_SKILL_LV(i16 player, U16 skill, U16 yy)
 {
-	//^2C1D:0A47
 	ENTER(8);
-	//^2C1D:0A4D
-	U16 di = skill;
-	//^2C1D:0A50
+	U16 iReqSkill = skill;	// di
 	if (cd.pi.glbIsPlayerSleeping != 0) {
-		//^2C1D:0A57
 		return 1;
 	}
-	//^2C1D:0A5D
-	Champion *champion = &glbChampionSquad[player]; //*bp04
-	//^2C1D:0A6E
-	U32 bp08 = champion->skills[di];	// Amount of current xp for that skill
-	//^2C1D:0A86
-	if (di > 3) {	// A subskill is requested
-		//^2C1D:0A8B
-		bp08 += (champion->skills[(di -4) >> 2]) * ((yy != 0) ? (i16(champion->skillBonus[(di -4) >> 2]) +1) : 1);
-		//^2C1D:0AD2
-		bp08 >>= 1;
+	Champion* xChampion = &glbChampionSquad[player]; //*bp04
+	U32 iXPAmount = xChampion->skills[iReqSkill];	// bp08 / Amount of current xp for that skill
+	if (iReqSkill > 3) {	// A subskill is requested
+		iXPAmount += (xChampion->skills[(iReqSkill - 4) >> 2]) * ((yy != 0) ? (i16(xChampion->skillBonus[(iReqSkill - 4) >> 2]) +1) : 1);
+		iXPAmount >>= 1;
 	}
-	//^2C1D:0AE2
-	U16 si = 1;	// Minimum level is 1 and equal to NONE.
-	//^2C1D:0AE5
-	while (bp08 >= SKILL_EXPERIENCE_BASE_LEVEL) {	// (bp08 >= 512)
-		//^2C1D:0AE7
-		bp08 >>= 1; si++;
-		//^2C1D:0AF8
+	U16 iSkillLevel = 1;	// si / Minimum level is 1 and equal to NONE.
+	while (iXPAmount >= SKILL_EXPERIENCE_BASE_LEVEL) {	// (bp08 >= 512)
+		iXPAmount >>= 1; iSkillLevel++;
 	}
-	//^2C1D:0B07
 	if (yy != 0) {
-		//^2C1D:0B0D
-		si = max_value(1, champion->skillBonus[di] + si);
+		iSkillLevel = max_value(1, xChampion->skillBonus[iReqSkill] + iSkillLevel);
 	}
-	//^2C1D:0B26
-	return si;
+	return iSkillLevel;
 }
 
 //^2759:02D6
@@ -758,7 +646,7 @@ _0425:
 		//^2759:048F
 	}
 	//^2759:049B
-	_4976_53a4 = di;
+	glbCommandSlotsNum = di;
 	glbChampionItemInUse = si;
 	//^2759:04A3
 	if (IS_CONTAINER_MAP(si) != 0)
@@ -799,7 +687,7 @@ U16 SkWinCore::_1031_009e_PFN12_05(sk1891 *ref)
 U16 SkWinCore::_1031_012d_PFN12_08(sk1891 *ref)
 {
 	ENTER(0);
-	return (cd.pi.glbChampionIndex != 0 && ref->b1 == _4976_53a4) ? 1 : 0;
+	return (cd.pi.glbChampionIndex != 0 && ref->b1 == glbCommandSlotsNum) ? 1 : 0;
 }
 
 //^1031:014F
@@ -817,7 +705,7 @@ U16 SkWinCore::_1031_0184_PFN12_10(sk1891 *ref)
 	ENTER(0);
 	return (cd.pi.glbChampionIndex != 0) 
 		? (((glbMagicalMapFlags & 0x8000) != 0) 
-			? ((ref->b1 == _4976_53a4) 
+			? ((ref->b1 == glbCommandSlotsNum) 
 				? 1 
 				: 0
 			)
@@ -866,33 +754,22 @@ void SkWinCore::PUT_ITEM_TO_PLAYER(U16 championIndex)
 {
 	// click player panel to store leader's holding item into your back pack.
 
-	//^2C1D:0654
 	ENTER(0);
-	//^2C1D:0659
 	if (cd.pi.glbLeaderHandPossession.object != OBJECT_NULL) {
-		//^2C1D:0660
 		if (glbChampionSquad[championIndex].curHP() != 0) {
-			X16 si;
-			//^2C1D:0671  
-			for (si=INVENTORY_BACKPACK_1; si <= INVENTORY_BACKPACK_LAST; si++) {	// (si=13; si<30; si++)
-				//^2C1D:0676
-				if (glbChampionSquad[championIndex].Possess(si) == OBJECT_NULL)
+			X16 iInvSlotIdx;	// si
+			for (iInvSlotIdx = C13_INVENTORY_BACKPACK_1; iInvSlotIdx <= C29_INVENTORY_BACKPACK_LAST; iInvSlotIdx++) {	// (si=13; si<30; si++)
+				if (glbChampionSquad[championIndex].Possess(iInvSlotIdx) == OBJECT_NULL)
 					break;
-				//^2C1D:068D  
 			}
-			//^2C1D:0693
-			if (si != (INVENTORY_BACKPACK_LAST+1)) {	// (si != 30)
-				//^2C1D:0698
-				ObjectID di = REMOVE_OBJECT_FROM_HAND();
-				//^2C1D:069F
+			if (iInvSlotIdx != (C29_INVENTORY_BACKPACK_LAST+1)) {	// (si != 30)
+				ObjectID di = REMOVE_OBJECT_FROM_HAND();	// di
 				if (di != OBJECT_NULL) {
-					//^2C1D:06A4
-					EQUIP_ITEM_TO_INVENTORY(championIndex, di, si);
+					EQUIP_ITEM_TO_INVENTORY(championIndex, di, iInvSlotIdx);
 				}
 			}
 		}
 	}
-	//^2C1D:06B1
 	return;
 }
 
@@ -1009,7 +886,7 @@ void SkWinCore::REVIVE_CHAMPION(U16 xx, U16 yy, U16 dir, U16 zz, U16 iEventCode)
 		xx += glbXAxisDelta[dir];
 		yy += glbYAxisDelta[dir];
 
-		for (U16 iInventoryIndex = 0; iInventoryIndex < INVENTORY_MAX_SLOT; iInventoryIndex++) {	// bp0a < 30
+		for (U16 iInventoryIndex = 0; iInventoryIndex < C30_INVENTORY_MAX_SLOT; iInventoryIndex++) {	// bp0a < 30
 			ObjectID tObject = xChampion->Possess(iInventoryIndex);	// di
 			if (tObject != OBJECT_NULL) {
 				CUT_RECORD_FROM(tObject, NULL, xx, yy);
@@ -2160,7 +2037,7 @@ void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 
 	xChampion->playerPos(iLocalIndex + cd.pi.glbPlayerDir);
 	xChampion->direction = U8(cd.pi.glbPlayerDir);
-	for (iLocalIndex = 0; iLocalIndex < INVENTORY_MAX_SLOT; iLocalIndex++)	// init inventory
+	for (iLocalIndex = 0; iLocalIndex < C30_INVENTORY_MAX_SLOT; iLocalIndex++)	// init inventory
 		xChampion->Possess(iLocalIndex, OBJECT_NULL);
 
 	U8 sChampionNameBuffer[0x80];	// bp0094
@@ -2455,7 +2332,7 @@ void SkWinCore::SEARCH_STARTER_CHAMPION() // _2f3f_0789
 			//^2F3F:07A3
 			_4976_57de = 0xff;
 			//^2F3F:07A8
-			_443c_0434();
+			CHANGE_CURSOR_HAND_ITEM();
 		}
 		else {
 			i16 si = glbChampionLeader;
@@ -2640,47 +2517,38 @@ void SkWinCore::PROCESS_POISON(i16 iChampIdx, U16 iPoisonValue) {
 
 
 //^2C1D:135D
-X16 SkWinCore::_2c1d_135d(i16 play, U16 ww)
+// SPX: _2c1d_135d renamed CHAMPION_COMPUTE_SOME_SHIELD
+X16 SkWinCore::CHAMPION_COMPUTE_SOME_SHIELD(i16 play, U16 ww)
 {
-	//^2C1D:135D
 	ENTER(8);
-	//^2C1D:1363
 	Champion *champion = &glbChampionSquad[play];	//*bp04
 	U16 bp06 = ww & 0x8000;
 	if (bp06 != 0)
 		ww &= 0x7fff;
 	X16 bp08 = 0;
-	//^2C1D:138B
 	i16 si;
 	U16 di;
 	for (si = 0; si <= 1; si++) {
-		//^2C1D:138F
 		// SPX: Checking armour value
 		di = QUERY_GDAT_DBSPEC_WORD_VALUE(champion->Possess(si), GDAT_ITEM_STATS_ARMOR_CLASS);
 		if ((di & 0x8000) != 0) {
 			bp08 = (((_2c1d_132c(di, bp06) + COMPUTE_PLAYER_ATTACK_OR_THROW_STRENGTH(play, si, 7)) * _4976_3fc8[RCJ(6,ww)]) << ((si == ww) ? 4 : 5)) +bp08;
 		}
-		//^2C1D:13EF
 	}
-	//^2C1D:13F5
 	si = RAND16((GET_PLAYER_ABILITY(champion, abVit, 0) >> 3) +1);
 	if (bp06 != 0)
 		si >>= 1;
 	if (glbChampionSquad[play].enchantmentAura == ENCHANTMENT_PARTY_SHIELD) {	// == 2
 		si += glbChampionSquad[play].enchantmentPower;
 	}
-	//^2C1D:143A
 	si += champion->handDefenseClass[0] +champion->handDefenseClass[1] +bp08;
 	if (ww > 1) {
-		//^2C1D:1456
 		di = QUERY_GDAT_DBSPEC_WORD_VALUE(champion->Possess(ww), GDAT_ITEM_STATS_ARMOR_CLASS);
 		si = si +_2c1d_132c(di, bp06);
 	}
-	//^2C1D:147D
 	if ((champion->bodyFlag & (1 << ww)) != 0) {
 		si = si -(RAND02() +8);
 	}
-	//^2C1D:149C
 	if (cd.pi.glbIsPlayerSleeping != 0)
 		si >>= 1;
 	return BETWEEN_VALUE(0, si >> 1, 0x64);
@@ -2720,7 +2588,7 @@ U16 SkWinCore::WOUND_PLAYER(i16 iCharIdx, i16 iSourceAttackDamage, U16 iMask, U1
 		for (iBodySlot = C00_INVENTORY_BODYPART_FIRST; iBodySlot <= C05_INVENTORY_BODYPART_LAST; iBodySlot++) {	// check body parts for wounds
 			if (((1 << iBodySlot) & iMask) != 0) {
 				iWoundCount++;
-				iDefense += _2c1d_135d(iCharIdx, ((iAttackType == C4_ATTACK_SHARP) ? MASK0x8000_USE_SHARP_DEFENSE : MASK0x0000_DO_NOT_USE_SHARP_DEFENSE) | iBodySlot);
+				iDefense += CHAMPION_COMPUTE_SOME_SHIELD(iCharIdx, ((iAttackType == C4_ATTACK_SHARP) ? MASK0x8000_USE_SHARP_DEFENSE : MASK0x0000_DO_NOT_USE_SHARP_DEFENSE) | iBodySlot);
 			}
 		}
 		if (iWoundCount != 0) {
@@ -2883,7 +2751,7 @@ void SkWinCore::BRING_CHAMPION_TO_LIFE(X16 xx) { // TODO: Unr
 		bp04->curWeight(0);
 		//^2F3F:0727
 		U16 si;
-		for (si = 0; si < INVENTORY_MAX_SLOT; si++) {
+		for (si = 0; si < C30_INVENTORY_MAX_SLOT; si++) {
 			//^2F3F:072B
 			bp04->Possess(si, oFFFF);
 			//^2F3F:073B
@@ -2944,23 +2812,17 @@ void SkWinCore::BRING_CHAMPION_TO_LIFE(X16 xx) { // TODO: Unr
 
 
 //^2C1D:14DE
-void SkWinCore::DROP_PLAYER_ITEMS(U16 player)
+void SkWinCore::DROP_PLAYER_ITEMS(U16 iChampionIdx)
 {
-	//^2C1D:14DE
 	ENTER(2);
-	//^2C1D:14E4
-	X16 di = glbChampionSquad[player].playerPos();
-	X16 si;
-	for (si = 0; si < INVENTORY_MAX_SLOT; si++) {
-		//^2C1D:14FA
-		ObjectID bp02 = REMOVE_POSSESSION(player, _4976_3fce[si]);
-		if (bp02 != OBJECT_NULL) {
-			//^2C1D:1512
-			MOVE_RECORD_TO(ObjectID(bp02, di), -1, 0, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
+	X16 iQuarterPos = glbChampionSquad[iChampionIdx].playerPos();	// di
+	X16 iInvSlot;	// si
+	for (iInvSlot = 0; iInvSlot < C30_INVENTORY_MAX_SLOT; iInvSlot++) {
+		ObjectID oChampItem = REMOVE_POSSESSION(iChampionIdx, tblDropChampionInventory[iInvSlot]);	// bp02
+		if (oChampItem != OBJECT_NULL) {
+			MOVE_RECORD_TO(ObjectID(oChampItem, iQuarterPos), -1, 0, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
 		}
-		//^2C1D:1535
 	}
-	//^2C1D:153B
 	return;
 }
 
@@ -3261,7 +3123,7 @@ void SkWinCore::GLOBAL_UPDATE_UNKNOW1()
 	if (cd.pi.glbLeaderHandPossession.object != OBJECT_NULL && (QUERY_GDAT_DBSPEC_WORD_VALUE(cd.pi.glbLeaderHandPossession.object, 0)&0x8000) != 0 && (bp01 = GET_ITEM_ICON_ANIM_FRAME(cd.pi.glbLeaderHandPossession.object, -1, 1)) != _4976_57de) {
 		//^2E62:0DB8
 		DRAW_ITEM_IN_HAND(&cd.pi.glbLeaderHandPossession);
-		_443c_0434();
+		CHANGE_CURSOR_HAND_ITEM();
 		_4976_57de = bp01;
 	}
 	//^2E62:0DCE

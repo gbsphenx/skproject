@@ -449,7 +449,7 @@ extern U8	_4976_00bc[8][4]; //Rp
 extern sk3b74	_4976_3b74[55]; //Rp
 extern sk0cea	_4976_0ce0[19]; //Rp
 extern U16		_4976_49d4[5][2]; //Rp
-extern U8		_4976_3fce[30]; //Rp
+extern U8		tblDropChampionInventory[C30_INVENTORY_MAX_SLOT]; //Rp (_4976_3fce)
 extern U8		tlbCreatureCommandsFlags[86]; //Rr
 extern U8	_04bf_02be[128]; //Rp // rawkey to ascii
 extern U8	_04bf_033e[128]; //Rp // rawkey+shift to ascii
@@ -578,6 +578,10 @@ bool	CheckSafePointer(void* p);
 #define outportb(PORT,VAL)
 
 //--- Special READ / WRITE for the Image Buffer header at pos -2, -4, -6 for height, width and bpp
+
+#define READ_IMGBUFF_HEIGHT(PTR)		READ_UI16(PTR,-2)
+#define READ_IMGBUFF_WIDTH(PTR)			READ_UI16(PTR,-4)
+#define READ_IMGBUFF_BPP(PTR)			READ_UI16(PTR,-6)
 
 #define WRITE_IMGBUFF_HEIGHT(PTR,VAL)	WRITE_UI16(PTR,-2,VAL)
 #define WRITE_IMGBUFF_WIDTH(PTR,VAL)	WRITE_UI16(PTR,-4,VAL)

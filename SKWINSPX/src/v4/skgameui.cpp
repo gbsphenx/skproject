@@ -302,7 +302,7 @@ _1201:
 					//^1031:1422
 					CALC_CENTERED_RECT_IN_RECT(&bp14, &bp48.rc2, bp0a, bp0c);
 					//^1031:143A
-					_0b36_129a(
+					DRAW_STUFF_0b36_129a(
 						&bp48, 
 						bp14.x, 
 						bp14.y +bp14.cy -1, 

@@ -200,51 +200,36 @@ void SkWinCore::DISPLAY_TAKEN_ITEM_NAME(ObjectID rl)
 //^32CB:0E03
 void SkWinCore::DRAW_TEXT_TO_BACKBUFF(i16 xx, i16 yy, U8 *str)
 {
-	//^32CB:0E03
 	ENTER(24);
-	//^32CB:0E07
 	if (QUERY_MBCS_PRESENCE(str) == 0) {
-		//^32CB:0E18
 		for (U8 *bp04 = str; *bp04 != 0; bp04++) {
-			//^32CB:0E26
 			if (*bp04 >= 'A' && *bp04 <= 'Z') {
-				//^32CB:0E35
 				*bp04 = *bp04 -0x40;
 			}
-			//^32CB:0E42
 			else if (*bp04 >= 0x7B) {
-				//^32CB:0E4B
 				*bp04 = *bp04 - 0x60;
 			}
-			//^32CB:0E52
 		}
 	}
-	//^32CB:0E5E
 	i16 bp06;
 	i16 bp08;
 	if (QUERY_STR_METRICS(str, &bp06, &bp08) != 0) {
-		//^32CB:0E7A
 		U8 bp18[16];
 		COPY_MEMORY(glbPaletteT16, bp18, 16);
-		//^32CB:0E93
 		_0b36_037e(bp18, U8(_4976_5a88), -1, -1, 16);
-		//^32CB:0EAA
-		DRAW_STRONG_TEXT(_4976_4c16, -1, _4976_00f6, xx -(bp06 >> 1), yy, bp18[15], bp18[0]|0x4000, str);
+		DRAW_STRONG_TEXT(glbBackBuffViewport, -1, _4976_00f6, xx -(bp06 >> 1), yy, bp18[15], bp18[0]|0x4000, str);
 	}
-	//^32CB:0EE3
 	return;
 }
 
 
 //^2066:33C4
-void SkWinCore::_2066_33c4(U8 *str, U16 yy) 
+// SPX: _2066_33c4 renamed COPY_STRING_2066_33c4
+void SkWinCore::COPY_STRING_2066_33c4(U8 *str, U16 yy) 
 {
-	//^2066:33C4
 	ENTER(0);
-	//^2066:33C7
 	SK_STRCPY(str, _4976_3b68);
-	str[5] = yy +0x30;
-	//^2066:33E5
+	str[5] = yy + 0x30;
 	return;
 }
 
@@ -286,7 +271,7 @@ void SkWinCore::DIALOG_2066_3820(U8 *xx, U16 yy)
 	ENTER(8);
 	SRECT bp08;
 	QUERY_EXPANDED_RECT(RECT_453, &bp08);
-	DRAW_DIALOGUE_PICT(QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x1A_DIALOG_BOXES, 0x81, 0x00), _4976_4c16, &bp08, 
+	DRAW_DIALOGUE_PICT(QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x1A_DIALOG_BOXES, 0x81, 0x00), glbBackBuffViewport, &bp08, 
 		bp08.x, bp08.y, -1, QUERY_GDAT_IMAGE_LOCALPAL(GDAT_CATEGORY_x1A_DIALOG_BOXES, 0x81, 0x00));
 	DRAW_VP_STR(bp08.x, bp08.y +4, glbPaletteT16[COLOR_YELLOW], xx);
 	if (yy != 0) {
@@ -786,7 +771,7 @@ void SkWinCore::DRAW_VP_STR(Bit16u dstx, Bit16u dsty, Bit16u clr1, const Bit8u *
 	//^3929:0B6C
 	//^3929:0B6F
 	DRAW_STRING(
-		_4976_4c16,
+		glbBackBuffViewport,
 		-1,
 		_4976_00f6,
 		dstx,

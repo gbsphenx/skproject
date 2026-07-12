@@ -1358,11 +1358,14 @@ void SkWinCore::FILL_ENTIRE_PICT(U8* xImageBuffer, U16 fill)
 	ENTER(8);
 	if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(xImageBuffer))
 		return;
-	X16 iImgBPP = READ_UI16(xImageBuffer,-6);	// si
+	//X16 iImgBPP = READ_UI16(xImageBuffer,-6);	// si
+	X16 iImgBPP = READ_IMGBUFF_BPP(xImageBuffer);	// si
 	SRECT tRect;	// bp08
 	tRect.x = tRect.y = 0;
-	tRect.cx = (((iImgBPP == IMG_4_BPP) ? 2 : 1) +READ_UI16(xImageBuffer,-4) -1) & (~(((iImgBPP == IMG_4_BPP) ? 2 : 1) -1));
-	tRect.cy = READ_UI16(xImageBuffer,-2);
+	//tRect.cx = (((iImgBPP == IMG_4_BPP) ? 2 : 1) +READ_UI16(xImageBuffer,-4) -1) & (~(((iImgBPP == IMG_4_BPP) ? 2 : 1) -1));
+	tRect.cx = (((iImgBPP == IMG_4_BPP) ? 2 : 1) + READ_IMGBUFF_WIDTH(xImageBuffer) -1) & (~(((iImgBPP == IMG_4_BPP) ? 2 : 1) -1));
+	//tRect.cy = READ_UI16(xImageBuffer,-2);
+	tRect.cy = READ_IMGBUFF_HEIGHT(xImageBuffer);
 	FIRE_FILL_RECT_ANY(xImageBuffer, &tRect, fill, tRect.cx, iImgBPP);
 	return;
 }
@@ -2763,7 +2766,7 @@ void SkWinCore::UPDATE_RIGHT_PANEL(U16 xx)
 						glbPreviousRightPanelType = glbRightPanelType;
 					}
 					//^2759:0D2B
-					_29ee_0b2b();
+					DRAW_SEVERAL_CMD_SLOTS();
 				}
 				//^2759:0D32
 				else if (glbRightPanelType == RIGHT_PANEL_MAGIC_MAP) {	// 3
@@ -3678,9 +3681,14 @@ void SkWinCore::INIT_BACKBUFF()
 	if (_4976_5be6 != 0) {
 		FIRE_FILL_BACKBUFF_RECT(&_4976_5938, glbPaletteT16[COLOR_BLACK]);
 	}
-	WRITE_UI16(_4976_4c16,-4,_4976_00f6); // width
-	WRITE_UI16(_4976_4c16,-2,_4976_00f8); // height
-	WRITE_UI16(_4976_4c16,-6,8); // bpp
+//	WRITE_UI16(_4976_4c16,-4,_4976_00f6); // width
+//	WRITE_UI16(_4976_4c16,-2,_4976_00f8); // height
+//	WRITE_UI16(_4976_4c16,-6,8); // bpp
+
+	WRITE_IMGBUFF_HEIGHT(glbBackBuffViewport,_4976_00f8);
+	WRITE_IMGBUFF_WIDTH(glbBackBuffViewport,_4976_00f6);
+	WRITE_IMGBUFF_BPP(glbBackBuffViewport,IMG_8_BPP);
+
 	_4976_022c = 0;
 	return;
 }
@@ -4698,7 +4706,7 @@ void SkWinCore::DRAW_WAKE_UP_TEXT()
 {
 	ENTER(40);
 	// This fills the main viewport in black
-	FILL_ENTIRE_PICT(_4976_4c16, glbPaletteT16[COLOR_BLACK]);
+	FILL_ENTIRE_PICT(glbBackBuffViewport, glbPaletteT16[COLOR_BLACK]);
 	U8 bp28[40];
 	// SPX: drawing the "Wake up" string
 	DRAW_VP_RC_STR(
@@ -4765,7 +4773,7 @@ i16 SkWinCore::DIALOG_2066_33e7()
 				&& _4976_5250[si].w38 == 0xBEEF
 			) {
 				//^2066:3449
-				_2066_33c4(_4976_5268, si);
+				COPY_STRING_2066_33c4(_4976_5268, si);
 				//^2066:3455
 				break;
 			}
@@ -4819,7 +4827,7 @@ i16 SkWinCore::DIALOG_2066_33e7()
 				//^2066:34DF
 				if (*bp04 == 0) {
 					//^2066:34E8
-					_2066_33c4(bp04, si);
+					COPY_STRING_2066_33c4(bp04, si);
 				}
 				//^2066:34F6
 				DIALOG_2066_3820(bp04, 0);
@@ -4847,7 +4855,7 @@ i16 SkWinCore::DIALOG_2066_33e7()
 					&& _4976_5250[si].w38 == 0xBEEF
 				) {
 					//^2066:3579
-					_2066_33c4(_4976_5268, si);
+					COPY_STRING_2066_33c4(_4976_5268, si);
 				}
 				else {
 					//^2066:3587
@@ -9385,7 +9393,7 @@ void SkWinCore::CHANGE_VIEWPORT_TO_INVENTORY(U16 xx) //#DS=4976
 			iHideMouseCursor = 1;
 		}
 	}
-	BLIT_IMAGE_00eb_0845(_4976_4c16, &xRect, (cd.pi.glbIsPlayerMoving != 0) ? 0x8008 : 0x0008) CALL_IBMIO;
+	BLIT_IMAGE_00eb_0845(glbBackBuffViewport, &xRect, (cd.pi.glbIsPlayerMoving != 0) ? 0x8008 : 0x0008) CALL_IBMIO;
 	if (glbPaletteIRGBLoaded == 0 && iHideMouseCursor != 0) {
 		FIRE_SHOW_MOUSE_CURSOR();
 	}
@@ -9397,7 +9405,7 @@ void SkWinCore::_0aaf_002f()
 {
 	if (cd.gg.glbGameHasEnded != 0) {
 		FIRE_HIDE_MOUSE_CURSOR();
-		DRAW_GAMELOAD_DIALOGUE_TO_SCREEN(_4976_4c16, 5, -1, NULL);
+		DRAW_GAMELOAD_DIALOGUE_TO_SCREEN(glbBackBuffViewport, 5, -1, NULL);
 		FIRE_SHOW_MOUSE_CURSOR();
 	}
 	else {
@@ -14245,7 +14253,7 @@ _2eda:
 						SRECT bp2e;
 						_44c8_20a4(
 							bp04,
-							_4976_4c16,
+							glbBackBuffViewport,
 							NULL,
 							QUERY_EXPANDED_RECT(4, &bp2e),
 							(RAND() & 0x1f) + (bp24 - 0x28),
@@ -14382,7 +14390,7 @@ U16 SkWinCore::_2fcf_16ff(ObjectID rl)
 		if (champion->curHP() == 0)
 			continue;
 		bp08 = champion->inventory;
-		for (si = 0; si < INVENTORY_MAX_SLOT && bp0c == 0; si++) {
+		for (si = 0; si < C30_INVENTORY_MAX_SLOT && bp0c == 0; si++) {
 			//^2FCF:1737
 			di = *bp08; bp08++;
 			//^2FCF:1741
@@ -17757,17 +17765,12 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_00()
 //^38C8:00C8
 void SkWinCore::_38c8_00c8_ALLOC_PICT()
 {
-	//^38C8:00C8
 	ENTER(0);
-	//^38C8:00CB
-	_4976_4c16 = _4726_02ac();
-	if (_4976_4c16 == NULL) {
-		//^38C8:00DB
-		_4976_4c16 = ALLOC_PICT_BUFF(_4976_00f6, _4976_00f8, afUseUpper, 8);
+	glbBackBuffViewport = MEM_PREPARE_VIEWPORT();
+	if (glbBackBuffViewport == NULL) {
+		glbBackBuffViewport = ALLOC_PICT_BUFF(_4976_00f6, _4976_00f8, afUseUpper, 8);
 	}
-	//^38C8:00F6
 	_4976_5ca0 = 0xB798;
-	//^38C8:0102
 	return;
 }
 
@@ -19938,7 +19941,7 @@ _00a4:
 			_4976_4e64 = 0;
 			if (glbShowMousePointer != 0) {
 				glbShowMousePointer = 0;
-				_443c_0434();	// DM2_events_443c_0434
+				CHANGE_CURSOR_HAND_ITEM();	// DM2_events_443c_0434
 			}
 			IBMIO_USER_INPUT_CHECK();
 		}
@@ -19951,7 +19954,7 @@ _00a4:
 		if ((X16(glbGameTick) & ((cd.pi.glbIsPlayerSleeping != 0) ? 15 : 0x3F)) == 0)
 			UPDATE_CHAMPIONS_STATS();
 		GLOBAL_UPDATE_UNKNOW1();
-		_2e62_0cfa(1);
+		UPDATE_GENERAL_CHAMPIONS_STAT_DISP(1);
 		if (cd.pi.glbPlayerDefeated != 0)
 			return;
 		glbGameTick++;
@@ -20101,7 +20104,7 @@ _00a4_proceed_timers:
 			_4976_4e64 = 0;
 			if (glbShowMousePointer != 0) {
 				glbShowMousePointer = 0;
-				_443c_0434();	// DM2_events_443c_0434
+				CHANGE_CURSOR_HAND_ITEM();	// DM2_events_443c_0434
 			}
 			IBMIO_USER_INPUT_CHECK();
 		}
@@ -20114,7 +20117,7 @@ _00a4_proceed_timers:
 		if ((X16(glbGameTick) & ((cd.pi.glbIsPlayerSleeping != 0) ? 15 : 0x3F)) == 0)
 			UPDATE_CHAMPIONS_STATS();
 		GLOBAL_UPDATE_UNKNOW1();
-		_2e62_0cfa(1);
+		UPDATE_GENERAL_CHAMPIONS_STAT_DISP(1);
 		if (cd.pi.glbPlayerDefeated != 0)
 			return -1;
 		glbGameTick++;
@@ -20387,7 +20390,7 @@ SkWinCore::SkWinCore()
 	_4976_4e64 = 0;
 //	glbPtrTransmittedUIEvent = NULL;
 	glbHoldedContainerType = 0;
-	_4976_53a4 = 0;
+	glbCommandSlotsNum = 0;
 	zeroMem(glbItemSelected, sizeof(glbItemSelected));
 	glbMagicalMapFlags = 0;
 	glbPtrTransmittedUIEvent = NULL;

@@ -23,27 +23,26 @@ U16 SkWinCore::IS_ITEM_FIT_FOR_EQUIP(ObjectID recordLink, i16 inventorySlot, U16
 	i16 iInvSlot = inventorySlot;	// si
 	U16 iFlagsValue = QUERY_GDAT_DBSPEC_WORD_VALUE(recordLink, GDAT_ITEM_STATS_EQUIP_FLAGS);	// di, 4
 	if (onlyBodyPart != 0) {
-		if (iInvSlot < INVENTORY_BACKPACK_1) {	// 0x0D = 13 = backpack first
+		if (iInvSlot < C13_INVENTORY_BACKPACK_1) {	// 0x0D = 13 = backpack first
 			if (iInvSlot < 0) {
 				return iFlagsValue & ITEM_EQUIP_FLAG_0400;	// 0x0400
 			}
-			return _4976_49e8_ItemHoldMask[RCJ(INVENTORY_BACKPACK_1,iInvSlot)] & iFlagsValue;	// _4976_49e8[RCJ(13,si)] & di
+			return _4976_49e8_ItemHoldMask[RCJ(C13_INVENTORY_BACKPACK_1,iInvSlot)] & iFlagsValue;	// _4976_49e8[RCJ(13,si)] & di
 		}
 		return 0;
 	}
-	if (iInvSlot < INVENTORY_BACKPACK_1) {	// 0x000D
+	if (iInvSlot < C13_INVENTORY_BACKPACK_1) {	// 0x000D
 		if (iInvSlot > C01_INVENTORY_HAND_LAST) {	// 0x0001
-			return iFlagsValue & _4976_49e8_ItemHoldMask[RCJ(INVENTORY_BACKPACK_1,iInvSlot)];	// _4976_49e8[RCJ(13,si)]
+			return iFlagsValue & _4976_49e8_ItemHoldMask[RCJ(C13_INVENTORY_BACKPACK_1,iInvSlot)];	// _4976_49e8[RCJ(13,si)]
 		}
 	}
-	//^_023e
 	// That part would be for arrows within quiver which are moved to scabbard
-	if (iInvSlot >= INVENTORY_OVER_1) {	// 0x001E
-		if (iInvSlot < INVENTORY_MAX_OVER) {	// 00x26
+	if (iInvSlot >= C30_INVENTORY_OVER_1) {	// 0x001E
+		if (iInvSlot < C38_INVENTORY_MAX_OVER) {	// 00x26
 			if ((iFlagsValue & ITEM_EQUIP_FLAG_CONTAINER_2) != 0) {	// 0x8000
 				return 0;
 			}
-			if (IS_ITEM_FIT_FOR_EQUIP(_4976_3de2[(cd.pi.glbChampionIndex << 1) + (glbSelectedHandAction)], INVENTORY_SCABBARD_1, 0x0000) != 0) {	// 0x000c
+			if (IS_ITEM_FIT_FOR_EQUIP(_4976_3de2[(cd.pi.glbChampionIndex << 1) + (glbSelectedHandAction)], C12_INVENTORY_SCABBARD_1, 0x0000) != 0) {	// 0x000c
 				return iFlagsValue & ITEM_EQUIP_FLAG_SCABBARD;	// 0x0040
 			}
 		}

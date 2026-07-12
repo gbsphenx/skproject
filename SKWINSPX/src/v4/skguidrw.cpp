@@ -962,9 +962,10 @@ void SkWinCore::DRAW_CMD_SLOT(U16 cmdSlot, U8 ww)
 }
 
 //^29EE:0B2B
-void SkWinCore::_29ee_0b2b()
+// SPX: _29ee_0b2b renamed _29ee_0b2b
+void SkWinCore::DRAW_SEVERAL_CMD_SLOTS()
 {
-	for (U16 si = 0; si < _4976_53a4; si++) {
+	for (U16 si = 0; si < glbCommandSlotsNum; si++) {
 		DRAW_CMD_SLOT(si, 0);
 	}
 	DRAW_PLAYER_ATTACK_DIR();
@@ -1696,19 +1697,12 @@ void SkWinCore::DRAW_MAJIC_MAP(ObjectID recordLink)
 			}
 		}
 	}
-	//^29EE:1E26
 	if ((glbMagicalMapFlags & 0x0400) == 0) {
-		//^29EE:1E2E
 		DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x14_MAGICAL_MAPS, glbHoldedContainerType, 0x10, &_4976_3f6c, 92, -1);
-		//^29EE:1E46
-		for (U16 si = 0; si < _4976_53a4; si++) {
-			//^29EE:1E4A
+		for (U16 si = 0; si < glbCommandSlotsNum; si++) {
 			DRAW_CMD_SLOT(si, 0);
-			//^29EE:1E53
 		}
-		//^29EE:1E5A
 		_29ee_1d03(0);
-		//^29EE:1E61
 		glbMagicalMapFlags |= 0x0400;
 	}
 	//^29EE:1E67
@@ -1895,69 +1889,52 @@ void SkWinCore::CHOOSE_HIGHLIGHT_ARROW_PANEL()
 
 
 //^00EB:03E7
-void SkWinCore::IBMIO_FILL_HALFTONE_RECT(SRECT *rc) //#DS=04BF
+void SkWinCore::IBMIO_FILL_HALFTONE_RECT(SRECT *xRect) //#DS=04BF
 {
-	//^00EB:03E7
 	ENTER(4);
-	//^00EB:03ED
 	LOADDS(0x0c48);
-	//^00EB:03F3
-	for (i16 si = rc->y; rc->y + rc->cy -1 >= si; si++) {
-		//^00EB:03FC
-		U8 *bp04 = &pbVram[si * 320 + rc->x];
-		//^00EB:0416
-		for (i16 di = rc->x; rc->x + rc->cx -1 >= di; bp04++, di++) {
-			//^00EB:041E
-			if (((di ^ si) & 1) == 0) {
-				//^00EB:0429
-				*bp04 = 0;
+	for (i16 y = xRect->y; xRect->y + xRect->cy -1 >= y; y++) {	// si
+		U8* xVMem = &pbVram[y * 320 + xRect->x];	// bp04
+		for (i16 x = xRect->x; xRect->x + xRect->cx -1 >= x; xVMem++, x++) {	// di
+			if (((x ^ y) & 1) == 0) {
+				*xVMem = 0;
 			}
-			//^00EB:0430
 		}
-		//^00EB:0447
 	}
-	//^00EB:0458
 #if UseAltic
 	//skwin.UpdateRect(rc->x, rc->y, rc->cx, rc->cy);
-	skWinApp->renderScreen(vram, rc->x, rc->y, rc->cx, rc->cy);
+	skWinApp->renderScreen(vram, xRect->x, xRect->y, xRect->cx, xRect->cy);
 #endif
 	return;
 }
 
 //^44C8:1D11
-void SkWinCore::FIRE_FILL_HALFTONE_RECTV(SRECT *rc, U16 aa)
+void SkWinCore::FIRE_FILL_HALFTONE_RECTV(SRECT* xRect, U16 aa)
 {
-	//^44C8:1D11
 	ENTER(0);
-	//^44C8:1D14
-	IBMIO_FILL_HALFTONE_RECT(rc) CALL_IBMIO;
-	//^44C8:1D24
+	IBMIO_FILL_HALFTONE_RECT(xRect) CALL_IBMIO;
     return;
 }
 
 //^44C8:1DDA
-void SkWinCore::FIRE_FILL_HALFTONE_RECTI(U16 rectno, U16 aa)
+void SkWinCore::FIRE_FILL_HALFTONE_RECTI(U16 iRectNo, U16 aa)
 {
-	//^44C8:1DDA
 	ENTER(8);
-	//^44C8:1DDE
-	SRECT bp08;
-	FIRE_FILL_HALFTONE_RECTV(QUERY_EXPANDED_RECT(rectno, &bp08), aa);
+	SRECT xRect;	// bp08
+	FIRE_FILL_HALFTONE_RECTV(QUERY_EXPANDED_RECT(iRectNo, &xRect), aa);
 }
 
 //------------------------------------------------------------------------------
 
 
 //^0B36:129A
-void SkWinCore::_0b36_129a(sk3f6c *ref, i16 xx, i16 yy, U8 clr1, U8 clr2, U8 *str)
+// SPX: _0b36_129a renamed DRAW_STUFF_0b36_129a
+void SkWinCore::DRAW_STUFF_0b36_129a(sk3f6c *ref, i16 xx, i16 yy, U8 clr1, U8 clr2, U8 *str)
 {
-	//^0B36:129A
 	ENTER(4);
-	//^0B36:129E
 	i16 bp02;
 	i16 bp04;
 	if (QUERY_STR_METRICS(str, &bp02, &bp04) != 0) {
-		//^0B36:12BA
 		DRAW_STRING(
 			reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(ref->w0)),
 			ref->w0,
@@ -1969,13 +1946,11 @@ void SkWinCore::_0b36_129a(sk3f6c *ref, i16 xx, i16 yy, U8 clr1, U8 clr2, U8 *st
 			str,
 			8
 			);
-		//^0B36:12F5
 		_0b36_0d67(
 			ref, 
 			ALLOC_TEMP_RECT(xx, yy, bp02, bp04)
 			);
 	}
-	//^0B36:1318
 	return;
 }
 
@@ -2203,7 +2178,7 @@ void SkWinCore::DRAW_STATIC_PIC(U8 iCategory, U8 iItemNo, U8 iEntry, U16 rectno,
 	QUERY_GDAT_SUMMARY_IMAGE(&bp013a, iCategory, iItemNo, iEntry);
 	bp013a.colorKeyPassThrough = colorkey;
 	bp013a.rectNo = rectno;
-	bp013a.pb44 = _4976_4c16;
+	bp013a.pb44 = glbBackBuffViewport;
 	bp013a.iXOffset = 0;
 	bp013a.iYOffset = 0;
 	DRAW_PICST(QUERY_PICST_IT(&bp013a));
@@ -2217,7 +2192,7 @@ void SkWinCore::DRAW_STATIC_PIC_X_SRECT(SRECT xRectangle, U8 iCategory, U8 iItem
 	QUERY_GDAT_SUMMARY_IMAGE(&extPict, iCategory, iItemNo, iEntry);
 	extPict.colorKeyPassThrough = colorkey;
 	extPict.rectNo = rectno;
-	extPict.pb44 = _4976_4c16;
+	extPict.pb44 = glbBackBuffViewport;
 	extPict.iXOffset = 0;
 	extPict.iYOffset = 0;
 	DRAW_PICST_X_SRECT(xRectangle, QUERY_PICST_IT(&extPict));
@@ -2409,7 +2384,7 @@ void SkWinCore::DRAW_PLAYER_DAMAGE(U16 player)
 
 //^2E62:02EA
 
-void SkWinCore::DRAW_CUR_MAX_HMS(U16 rectno, i16 curVal, i16 maxVal)
+void SkWinCore::DRAW_CUR_MAX_HMS(U16 iRectNo, i16 curVal, i16 maxVal)
 {
 // SPX: original code below
 	if (!SkCodeParam::bUseDM2ExtendedMode)
@@ -2417,29 +2392,22 @@ void SkWinCore::DRAW_CUR_MAX_HMS(U16 rectno, i16 curVal, i16 maxVal)
 		ATLASSERT(curVal >= 0 && curVal <= 999);
 		ATLASSERT(maxVal >= 0 && maxVal <= 999);
 
-		//^2E62:02EA
 		ENTER(8);
-		//^2E62:02EE
-		U8 bp08[8];	// 3 + slash + 3 + eol
-		SK_STRCPY(bp08, FMT_NUM(curVal, 1, 3)); // format cur
-		//^2E62:030B
-		SK_STRCAT(bp08, strSlash); // add slash
-		//^2E62:031C
-		SK_STRCAT(bp08, FMT_NUM(maxVal, 1, 3)); // format max
-		//^2E62:0339
-		DRAW_LOCAL_TEXT(rectno, glbPaletteT16[COLOR_LIGHTER_GRAY], glbPaletteT16[COLOR_DARK_GRAY] | 0x4000, bp08);
-		//^2E62:035E
+		U8 sStatString[8];	// bp08	3 + slash + 3 + eol
+		SK_STRCPY(sStatString, FMT_NUM(curVal, 1, 3)); // format cur
+		SK_STRCAT(sStatString, strSlash); // add slash
+		SK_STRCAT(sStatString, FMT_NUM(maxVal, 1, 3)); // format max
+		DRAW_LOCAL_TEXT(iRectNo, glbPaletteT16[COLOR_LIGHTER_GRAY], glbPaletteT16[COLOR_DARK_GRAY] | 0x4000, sStatString);
 		return;
 	}
 // SPX: modified function one to handle 4 char string in basic stats
 	ATLASSERT(curVal >= 0 && curVal <= 9999);
 	ATLASSERT(maxVal >= 0 && maxVal <= 9999);
-	ENTER(8);
-	U8 bp08[12];	// 4 + slash + 4 + eol
-	SK_STRCPY(bp08, FMT_NUM(curVal, 1, 4)); // format cur
-	SK_STRCAT(bp08, strSlash); // add slash
-	SK_STRCAT(bp08, FMT_NUM(maxVal, 1, 4)); // format max
-	DRAW_LOCAL_TEXT(rectno, glbPaletteT16[COLOR_LIGHTER_GRAY], glbPaletteT16[COLOR_DARK_GRAY] | 0x4000, bp08);
+	U8 sStatString[12];	// 4 + slash + 4 + eol
+	SK_STRCPY(sStatString, FMT_NUM(curVal, 1, 4)); // format cur
+	SK_STRCAT(sStatString, strSlash); // add slash
+	SK_STRCAT(sStatString, FMT_NUM(maxVal, 1, 4)); // format max
+	DRAW_LOCAL_TEXT(iRectNo, glbPaletteT16[COLOR_LIGHTER_GRAY], glbPaletteT16[COLOR_DARK_GRAY] | 0x4000, sStatString);
 	return;
 }
 
@@ -2711,7 +2679,8 @@ void SkWinCore::DRAW_GUIDED_STR(const U8 *ref)
 }
 
 //^24A5:0732
-void SkWinCore::_24a5_0732(i16 xx, i16 yy, U8 *str)
+// _24a5_0732 renamed DRAW_STUFF_STRINGS
+void SkWinCore::DRAW_STUFF_STRINGS(i16 xx, i16 yy, U8 *str)
 {
 	//^24A5:0732
 	ENTER(208);
@@ -2756,32 +2725,27 @@ void SkWinCore::_24a5_0732(i16 xx, i16 yy, U8 *str)
 //^24A5:07F6
 void SkWinCore::DRAW_SCROLL_TEXT(ObjectID rl)
 {
-	//^24A5:07F6
 	ENTER(418);
-	//^24A5:07FC
 	U8 bp00da[200];
 	U8 bp01a2[200];
 	U8 *bp04;
 	ATLASSERT(rl.DBType() == dbScroll);
 	QUERY_MESSAGE_TEXT(bp04 = bp00da, rl, 0x8002);
 	glbInventorySubpanel = 5;
-	DRAW_STATIC_PIC(0x07, 0, 0x01, 0x1ee, -1);
-	DRAW_STATIC_PIC(0x12, 0, 0x10, 0x1ee, 12);
+	DRAW_STATIC_PIC(GDAT_CATEGORY_x07_INTERFACE_CHARSHEET, 0, 0x01, RECT_494_INVENTORY_FOOD_WATER_SCROLL_CHEST, -1);	// dark grey inventory slab (food / water stats)
+	DRAW_STATIC_PIC(GDAT_CATEGORY_x12_SCROLLS, 0, 0x10, RECT_494_INVENTORY_FOOD_WATER_SCROLL_CHEST, 12);	// open scroll panel
+	//SPX: check if background/transparency is OK ?
 	X16 si;
 	for (si = 0; *bp04 != 0; bp04++) {
-		//^24A5:0848
 		if (*bp04 == 0xa)
 			si++;
-		//^24A5:0852
 	}
-	//^24A5:085E
 	if (bp04[-1] != 0xa) {
 		si++;
 	}
 	else if (bp04[-2] == 0xa) {
 		si--;
 	}
-	//^24A5:0873
 	i16 bp08;
 	i16 bp0a;
 	QUERY_TOPLEFT_OF_RECT(0x230, &bp08, &bp0a);
@@ -2789,27 +2753,21 @@ void SkWinCore::DRAW_SCROLL_TEXT(ObjectID rl)
 	QUERY_EXPANDED_RECT(0x1ee, &bp12);
 	X16 di;
 	if (QUERY_MBCS_PRESENCE(bp00da) == 0) {
-		//^24A5:08A9
 		di = glbPanelStatsYDelta;
 		bp0a -= ((di * si -_4976_0124 -1) >> 1) - _4976_011e;
 	}
 	else {
-		//^24A5:08BD
 		di = _4976_013a;
 		bp0a -= ((di * si - _4976_0136 -1) >> 1) - _4976_0130;
 	}
-	//^24A5:08D2
 	U16 bp06 = 0;
 	while (bp00da[bp06] != 0) {
-		//^24A5:08D9
 		_3929_04e2_DRAW_TEXT_STRINGS(bp00da, bp01a2, &bp06, bp12.cx);
-		_24a5_0732(bp08, bp0a, bp01a2);
+		DRAW_STUFF_STRINGS(bp08, bp0a, bp01a2);
 		bp0a += di;
 		if (bp00da[bp06] == 0xa)
 			bp06++;
-		//^24A5:091D
 	}
-	//^24A5:092C
 	return;
 }
 
@@ -2817,116 +2775,89 @@ void SkWinCore::DRAW_SCROLL_TEXT(ObjectID rl)
 // SPX: _2405_02e8 renamed DRAW_ITEM_ICON
 void SkWinCore::DRAW_ITEM_ICON(ObjectID recordLink, i16 xx, U16 yy, U16 zz, U16 ww)
 {
-	//^2405:02E8
 	ENTER(20);
-	//^2405:02EE
-	i16 si = xx;
-	//^2405:02F1
-	U8 bp0b;
-	U8 bp0c;
-	U8 bp09;
+	i16 iInventorySlotID = xx;	// si
+	U8 iCls1ItemCat;	// bp0b cls1
+	U8 iCls2ItemId;	// bp0c cls2
+	U8 bp09;	// bp09
 	if (recordLink == OBJECT_NULL) {
-		//^2405:02F7
-		bp0b = 7;
-		bp0c = 0;
-		//^2405:02FF
-		bp09 = _4976_3b74[si].b2 +U8(yy);
+		iCls1ItemCat = GDAT_CATEGORY_x07_INTERFACE_CHARSHEET;
+		iCls2ItemId = 0;
+		bp09 = _4976_3b74[iInventorySlotID].b2 +U8(yy);
 	}
 	else {
-		//^2405:030D
-		bp0b = QUERY_CLS1_FROM_RECORD(recordLink);
-		bp0c = QUERY_CLS2_FROM_RECORD(recordLink);
-		//^2405:0325
-		bp09 = (si < 8)
-			? GET_ITEM_ICON_ANIM_FRAME(recordLink, si & 1, 1)
-			: GET_ITEM_ICON_ANIM_FRAME(recordLink, si -8, 1);
+		iCls1ItemCat = QUERY_CLS1_FROM_RECORD(recordLink);
+		iCls2ItemId = QUERY_CLS2_FROM_RECORD(recordLink);
+		bp09 = (iInventorySlotID < 8)
+			? GET_ITEM_ICON_ANIM_FRAME(recordLink, iInventorySlotID & 1, 1)
+			: GET_ITEM_ICON_ANIM_FRAME(recordLink, iInventorySlotID - 8, 1);
 	}
-	//^2405:0348
-	U16 di = _4976_3b74[si].w0;
-	//^2405:0351
-	if (si < 0x26) {
-		//^2405:0359
-		SRECT bp14;
-		QUERY_EXPANDED_RECT(di, &bp14);
-		//^2405:0367
-		U8 *bp04;
-		if (si < 8) {
-			//^2405:036C
-			bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(0x01, 0x02, 0x00);
-			//^2405:0380
+	U16 di = _4976_3b74[iInventorySlotID].w0;
+	if (iInventorySlotID < C38_INVENTORY_MAX_OVER) {	// si < 0x26
+		SRECT xRect;	// bp14
+		QUERY_EXPANDED_RECT(di, &xRect);
+		U8* xImageBuffer;	// bp04
+		if (iInventorySlotID < 8) {
+			xImageBuffer = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 0x02, 0x00);
 			DRAW_ICON_PICT_BUFF(
-				bp04,
+				xImageBuffer,
 				&_4976_3ff0,
-				&bp14,
-				bp14.x - _4976_3ff0.rc2.x,
-				bp14.y - _4976_3ff0.rc2.y,
+				&xRect,
+				xRect.x - _4976_3ff0.rc2.x,
+				xRect.y - _4976_3ff0.rc2.y,
 				-1,
 				0,
-                QUERY_GDAT_IMAGE_LOCALPAL(0x01, 0x02, 0x00)
+                QUERY_GDAT_IMAGE_LOCALPAL(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 0x02, 0x00)	// champion hands slab
 				);
 		}
 		else {
-			//^2405:03BD
-			bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(0x07, 0x00, 0x00);
-			//^2405:03D1
+			xImageBuffer = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x07_INTERFACE_CHARSHEET, 0x00, 0x00);
 			DRAW_DIALOGUE_PICT(
-				bp04,
-				_4976_4c16,
-				&bp14,
-				bp14.x,
-				bp14.y,
+				xImageBuffer,
+				glbBackBuffViewport,
+				&xRect,
+				xRect.x,
+				xRect.y,
 				-1,
-				QUERY_GDAT_IMAGE_LOCALPAL(0x07, 0x00, 0x00)
+				QUERY_GDAT_IMAGE_LOCALPAL(GDAT_CATEGORY_x07_INTERFACE_CHARSHEET, 0x00, 0x00)	// inventory charsheet
 				);
 		}
 	}
-	//^2405:0404
-	if (ww != 0 && si < 14) {
-		//^2405:0415
-		SRECT bp14;
-		_2405_011f_RECT(di, &bp14);
-		//^2405:0422
+	if (ww != 0 && iInventorySlotID < 14) {
+		SRECT xRect;	// bp14
+		_2405_011f_RECT(di, &xRect);
 		U8 iIconSlabGfxId = (zz != 0)	// bp0a
-			? 6
+			? GDAT_x06_CHAR_ICON_SLAB_BLUE_READY	// blue frame ready
 			: (yy != 0)
 				? GDAT_x05_CHAR_ICON_SLAB_RED_FRAME
 				: GDAT_x04_CHAR_ICON_SLAB_GREY;
-		//^2405:043E
-		U8 *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 0x02, iIconSlabGfxId);
-		//^2405:0454
-		U8 *bp08 = QUERY_GDAT_IMAGE_LOCALPAL(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 0x02, iIconSlabGfxId);
-		//^2405:046A
-		if (si < 8) {
-			//^2405:046F
+		U8* xIconGreySlab = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 0x02, iIconSlabGfxId);	// bp04
+		U8* xIconLocalPal = QUERY_GDAT_IMAGE_LOCALPAL(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 0x02, iIconSlabGfxId);	// bp08
+		if (iInventorySlotID < 8) {
 			DRAW_ICON_PICT_BUFF(
-				bp04,
+				xIconGreySlab,
 				&_4976_3ff0,
-				&bp14,
+				&xRect,
 				0,
 				0,
 				12,
 				0,
-				bp08
+				xIconLocalPal
 				);
 		}
-		//^2405:0496
 		DRAW_DIALOGUE_PARTS_PICT(
-			bp04,
-			&bp14,
+			xIconGreySlab,
+			&xRect,
 			12,
-			bp08
+			xIconLocalPal
 			);
 	}
-	//^2405:04B1
-	if (bp09 == 0xff)
-		//^2405:04B5
+	if (bp09 == 0xFF)
 		return;
-	//^2405:04B7
-	if (si < 8) {
-		//^2405:04BC
+	if (iInventorySlotID < 8) {
 		DRAW_ICON_PICT_ENTRY(
-			bp0b,
-			bp0c,
+			iCls1ItemCat,
+			iCls2ItemId,
 			bp09,
 			&_4976_3ff0,
 			di,
@@ -2934,16 +2865,14 @@ void SkWinCore::DRAW_ITEM_ICON(ObjectID recordLink, i16 xx, U16 yy, U16 zz, U16 
 			);
 	}
 	else {
-		//^2405:04D9
 		DRAW_STATIC_PIC(
-			bp0b,
-			bp0c,
+			iCls1ItemCat,
+			iCls2ItemId,
 			bp09,
 			di,
 			12
 			);
 	}
-	//^2405:04F0
 	return;
 }
 
@@ -3002,7 +2931,7 @@ void SkWinCore::DRAW_ITEM_STATS_BAR(U16 rectno, i16 curVal, i16 maxVal, U8 chr, 
 	bp08.cy -= 2;
 	//^24A5:0B68
 	DRAW_STRONG_TEXT(
-		_4976_4c16,
+		glbBackBuffViewport,
 		-1,
 		_4976_00f6,
 		bp08.x -9,
@@ -3015,7 +2944,7 @@ void SkWinCore::DRAW_ITEM_STATS_BAR(U16 rectno, i16 curVal, i16 maxVal, U8 chr, 
 	bp0a[0] = RUNE_LO;	// 0x60
 	//^24A5:0BAC
 	DRAW_STRONG_TEXT(
-		_4976_4c16,
+		glbBackBuffViewport,
 		-1,
 		_4976_00f6,
 		bp08.x +3,
@@ -3028,7 +2957,7 @@ void SkWinCore::DRAW_ITEM_STATS_BAR(U16 rectno, i16 curVal, i16 maxVal, U8 chr, 
 	bp0a[0] = RUNE_MON;	// 0x65
 	//^24A5:0BEE
 	DRAW_STRONG_TEXT(
-		_4976_4c16,
+		glbBackBuffViewport,
 		-1,
 		_4976_00f6,
 		bp08.x +bp08.cx -1 - _4976_011e -1,
@@ -3232,7 +3161,7 @@ U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, U16 xx)
 		{
 			sprintf(str, "CHARGES: %d", iNbCharges);
 			DRAW_STRONG_TEXT(
-				_4976_4c16,
+				glbBackBuffViewport,
 				-1,
 				_4976_00f6,
 				100,
@@ -3264,7 +3193,7 @@ U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, U16 xx)
 				}
 				sprintf(str, "%c%d %s", sign, value, getStatBonusName(bonus));
 				DRAW_STRONG_TEXT(
-					_4976_4c16,
+					glbBackBuffViewport,
 					-1,
 					_4976_00f6,
 					100,
@@ -3365,7 +3294,7 @@ void SkWinCore::DRAW_LOCAL_TEXT(U16 rectno, U16 clr1, U16 clr2, U8 *str)
 			// The charsheet image can be changed.
 			bp0c.y -= 1;
 			DRAW_STRONG_TEXT(
-				_4976_4c16,
+				glbBackBuffViewport,
 				-1,
 				_4976_00f6,
 				bp0c.x,
@@ -3601,7 +3530,7 @@ void SkWinCore::REFRESH_PLAYER_STAT_DISP(i16 iChampIdx)
 				QUERY_EXPANDED_RECT(549, &bp24);
 				DRAW_DIALOGUE_PICT(
 					QUERY_GDAT_IMAGE_ENTRY_BUFF(0x07, 0x00, 0x00),
-					_4976_4c16,
+					glbBackBuffViewport,
 					&bp24,
 					bp24.x,
 					bp24.y,
@@ -3737,7 +3666,7 @@ _0a25:
 			QUERY_EXPANDED_RECT(RECT_554_CHAMPION_SHEET_IMAGE, &xRectCharSheet);
 			DRAW_DIALOGUE_PICT(
 				QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x07_INTERFACE_CHARSHEET, 0x00, 0x00),
-				_4976_4c16,
+				glbBackBuffViewport,
 				&xRectCharSheet,
 				xRectCharSheet.x,
 				xRectCharSheet.y,
@@ -3807,7 +3736,8 @@ void SkWinCore::DRAW_ITEM_IN_HAND(LeaderPossession *ref)
 
 
 //^2E62:0CFA
-void SkWinCore::_2e62_0cfa(U16 xx)
+// SPX: _2e62_0cfa renamed UPDATE_GENERAL_CHAMPIONS_STAT_DISP
+void SkWinCore::UPDATE_GENERAL_CHAMPIONS_STAT_DISP(U16 xx)
 {
 	ENTER(4);
 	for (U16 iChampionIndex = 0; iChampionIndex < cd.pi.glbChampionsCount; iChampionIndex++) {
@@ -3817,7 +3747,7 @@ void SkWinCore::_2e62_0cfa(U16 xx)
 	}
 	if (glbChampionInventory != 0) {
 		U16 si = glbChampionInventory - 1;
-		Champion *champion = &glbChampionSquad[si];
+		Champion* champion = &glbChampionSquad[si];
 		if (champion->enchantmentPower != 0 && champion->enchantmentAura >= ENCHANTMENT_AURA_FIRST && champion->enchantmentAura <= ENCHANTMENT_AURA_LAST) {
 			champion->heroFlag |= (glbShowItemStats != 0 && cd.pi.glbLeaderHandPossession.object == OBJECT_NULL) ? CHAMPION_FLAG_3000 : CHAMPION_FLAG_1000;	// 0x3000 or 0x1000
 		}
@@ -3828,53 +3758,36 @@ void SkWinCore::_2e62_0cfa(U16 xx)
 }
 
 //^443C:0004
-void SkWinCore::_443c_0004(U8 *buffSrc, U8 *buffDst, U8 *localpal)
+// SPX: _443c_0004 renamed DRAW_SHADOWED_HAND_CURSOR
+void SkWinCore::DRAW_SHADOWED_HAND_CURSOR(U8 *buffSrc, U8 *buffDst, U8 *localpal)
 {
-	//^443C:0004
 	ENTER(20);
-	//^443C:0009
-	U8 *bp04 = ALLOC_PICT_BUFF(16, 16, afDefault, 4);
-	//^443C:001F
-	U8 bp14[16];
-	for (i16 si = 0; si < 16; si++) {
-		//^443C:0023
-		bp14[si] = glbPaletteT16[COLOR_BLACK];
-		//^443C:002D
+	U8* xIconBuffer = ALLOC_PICT_BUFF(16, 16, afDefault, 4);	// bp04
+	U8 iBlackPalette[16];	// bp14
+	for (i16 iPalIdx = 0; iPalIdx < 16; iPalIdx++) {	// si
+		iBlackPalette[iPalIdx] = glbPaletteT16[COLOR_BLACK];
 	}
-	//^443C:0033
-	bp14[12] = localpal[12];
-	//^443C:003D
+	iBlackPalette[12] = localpal[12];	// 12 here is the transparency color
 	FILL_ENTIRE_PICT(buffDst, localpal[12]);
-	//^443C:0052
-	DRAW_DIALOGUE_PICT(buffSrc, buffDst, &_4976_4942, 0, 0, 12, bp14);
-	//^443C:0075
+	DRAW_DIALOGUE_PICT(buffSrc, buffDst, &_4976_4942, 0, 0, 12, iBlackPalette);
 	DRAW_DIALOGUE_PICT(buffSrc, buffDst, &_4976_494a, 0, 0, 12, localpal);
-	//^443C:0099
-	FREE_PICT_BUFF(bp04);
-	//^443C:00A6
+	FREE_PICT_BUFF(xIconBuffer);
 	return;
 }
 
 //^443C:0434
-void SkWinCore::_443c_0434()
+// SPX: _443c_0434 renamed CHANGE_CURSOR_HAND_ITEM
+void SkWinCore::CHANGE_CURSOR_HAND_ITEM()
 {
-	//^443C:0434
 	ENTER(4);
-	//^443C:0438
 	_4976_5dac = (cd.pi.glbLeaderHandPossession.object != OBJECT_NULL) ? 1 : 0;
-	//^443C:0449
 	if (_4976_5dac != 0) {
-		//^443C:044D
-		U8 *bp04 = ALLOC_PICT_BUFF(18, 18, afDefault, 8);
-		//^443C:0463
-		_443c_0004(cd.pi.glbLeaderHandPossession.pb2, bp04, cd.pi.glbLeaderHandPossession.b6);
-		//^443C:047C
-		IBMIO_SET_CURSOR_PATTERN(2, bp04, 8, 8, 18, 18, 8, NULL, cd.pi.glbLeaderHandPossession.b6[12]) INDIRECT_CALL;
-		//^443C:04A3
-		FREE_PICT_BUFF(bp04);
+		U8* xCursorImage = ALLOC_PICT_BUFF(18, 18, afDefault, 8);	// bp04
+		DRAW_SHADOWED_HAND_CURSOR(cd.pi.glbLeaderHandPossession.pb2, xCursorImage, cd.pi.glbLeaderHandPossession.b6);
+		IBMIO_SET_CURSOR_PATTERN(2, xCursorImage, 8, 8, 18, 18, 8, NULL, cd.pi.glbLeaderHandPossession.b6[12]) INDIRECT_CALL;
+		FREE_PICT_BUFF(xCursorImage);
 	}
 	_443c_040e_MOUSE();
-	//^443C:04B4
 	return;
 }
 
@@ -4101,7 +4014,7 @@ void SkWinCore::_32cb_0f82_SHOP_GLASS(Actuator *ref, U8 cls4, i16 bb, i16 cellPo
 				//^32CB:1526
 			}
 			//^32CB:152C
-			DRAW_DIALOGUE_PICT(bp08, _4976_4c16, QUERY_BLIT_RECT(bp08, &bp34, rectno|0x8000, &bp2a, &bp2c, gg), 
+			DRAW_DIALOGUE_PICT(bp08, glbBackBuffViewport, QUERY_BLIT_RECT(bp08, &bp34, rectno|0x8000, &bp2a, &bp2c, gg), 
 				0, 0, colorkey1, glbTempPicture.b58);
 			//^32CB:1576
 			FREE_TEMP_CACHE_INDEX(bp1c);
@@ -4370,7 +4283,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		}
 		bp01d6.w56 = 16;
 		_32cb_0804(bp01d6.b58, U8(iYDist), si, -1, bp01d6.w56);
-		bp01d6.pb44 = _4976_4c16;
+		bp01d6.pb44 = glbBackBuffViewport;
 		bp01d6.rectNo = iRectno;
 		bp01d6.w26 = iRefPoint;
 		bp01d6.iXOffset = bp2c;
@@ -4451,7 +4364,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		DRAW_PICST(&bp0310);
 		FREE_PICT_MEMENT(&bp0310);
 		bp0310.colorKeyPassThrough = bp0310.b58[si];
-		bp0310.pb44 = _4976_4c16;
+		bp0310.pb44 = glbBackBuffViewport;
 		bp0310.rectNo = iRectno;
 		bp0310.w26 = iRefPoint;
 		bp0310.w56 = 0;
@@ -4874,7 +4787,7 @@ void SkWinCore::DRAW_DIALOGUE_PARTS_PICT(U8 *buffsrc, SRECT *rc, i16 colorkey, U
 
 	FIRE_BLIT_PICTURE(
 		buffsrc,
-		_4976_4c16,
+		glbBackBuffViewport,
 		rc,
 		0,
 		0,
@@ -5274,7 +5187,7 @@ void SkWinCore::DRAW_DUNGEON_GRAPHIC(U8 cls1, U8 cls2, U8 cls4, X16 rectno, i16 
 	_0b36_037e(bp013a.b58, U8(_4976_5a88), colorkey, -1, bp013a.w56);
 	bp013a.colorKeyPassThrough = colorkey;
 	bp013a.rectNo = si;
-	bp013a.pb44 = _4976_4c16;
+	bp013a.pb44 = glbBackBuffViewport;
 	bp013a.mirrorFlip = mirrorflip;
 	if (cd.pi.glbIsPlayerMoving != 0) {
 		if (si == 700) {
@@ -5793,7 +5706,7 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 							QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(iCacheNo, &xPicture);
 							// SPX: that draws the main door (without ornate)
 							COPY_MEMORY(&xPicture, &glbTempPicture, sizeof(ExtendedPicture));
-							glbTempPicture.pb44 = _4976_4c16;
+							glbTempPicture.pb44 = glbBackBuffViewport;
 						}
 						else {
 							iCacheNo = -1;
@@ -6113,7 +6026,7 @@ X16 SkWinCore::DRAW_EXTERNAL_TILE(i16 xx)
 			DRAW_PICST(&bp0164);
 			FREE_PICT_MEMENT(&bp0164);
 			bp0164.colorKeyPassThrough = bp0164.b58[bp0e];
-			bp0164.pb44 = _4976_4c16;
+			bp0164.pb44 = glbBackBuffViewport;
 			bp0164.rectNo = bp0c;
 			bp0164.w26 = bp12;
 			bp0164.w56 = 0;
@@ -6466,7 +6379,7 @@ void SkWinCore::DRAW_TELEPORTER_TILE(i16 iViewportCell, X16 iGDatCls1Category, X
 	}
 	_44c8_20a4(
 		bp0c, 
-		_4976_4c16, 
+		glbBackBuffViewport, 
 		bp08, 
 		&bp22, 
 		(bp04[0] +RAND01()) << 4, 
@@ -6608,7 +6521,7 @@ void SkWinCore::DRAW_WALL(i16 iViewportCell)	// i16 xx
 			xExtPicWall.w56 = 0;
 			QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(iPicture, &xExtPicWall);
 			COPY_MEMORY(&xExtPicWall, &glbTempPicture, sizeof(ExtendedPicture));
-			glbTempPicture.pb44 = _4976_4c16;
+			glbTempPicture.pb44 = glbBackBuffViewport;
 			glbTempPicture.rectNo = 3 + 0x2BE;
 			DRAW_TEMP_PICST();
 			if (iPicture >= 0)
@@ -6858,7 +6771,7 @@ void SkWinCore::DRAW_RAIN()
 		bp04 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(si));
 	}
 	//^32CB:0BFD
-	_44c8_20a4(bp04, _4976_4c16, NULL, &bp14, READ_UI16(bp04,-4) * READ_UI16(bp04,-2) -40 -(RAND() & 0x1f), RAND() & 255, _4976_00f6, 0,
+	_44c8_20a4(bp04, glbBackBuffViewport, NULL, &bp14, READ_UI16(bp04,-4) * READ_UI16(bp04,-2) -40 -(RAND() & 0x1f), RAND() & 255, _4976_00f6, 0,
 		_32cb_0649(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, bp07, 0)
 		);
 	if (bp06 == 1) {

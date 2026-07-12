@@ -617,8 +617,7 @@ void SkWinApp::skwin_Sleep(U32 millisecs)
 #elif defined (__LINUX__)
 	usleep(millisecs*1000);
 #elif defined (__DJGPP__)
-	//delay(millisecs);
-	delay(10);
+	delay(millisecs);
 #endif
 }
 
@@ -702,7 +701,7 @@ bool SkWinApp::skwin_IsAvail()
 bool SkWinApp::skwin_ML() {
 
 	bool bMessageLoopResult = true;
-	if (SkCodeParam::bRenderingEngineSDL || SkCodeParam::bRenderingEngineMFC)
+	if (SkCodeParam::bRenderingEngineSDL || SkCodeParam::bRenderingEngineMFC || SkCodeParam::bRenderingEngineDOS)
 		bMessageLoopResult = xSkWinRenderer->ML();
 	//else
 	//	this->skwin_Sleep(1);
@@ -1015,11 +1014,15 @@ void SkWinApp::processKinput(U32 nChar, bool press)
 		p->raw = (press) ? (v) : (v | 0x80);
 	}
 
-#else	// NO_DSL
-	U8 v = 0x002D; // 'x'
+#elif defined (__DJGPP__)
 	CSkKinput *p = allocKinput();
 	if (p != NULL)
+	{
+		U8 v = 0;
+		v = nChar;
+		printf("Keyboard char = %d => Virtual key = %d\n", nChar, v);
 		p->raw = (press) ? (v) : (v | 0x80);
+	}
 
 #endif
 }

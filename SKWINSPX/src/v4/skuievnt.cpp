@@ -297,7 +297,7 @@ ObjectID SkWinCore::REMOVE_OBJECT_FROM_HAND()
 		//^2C1D:0762
 		FIRE_HIDE_MOUSE_CURSOR();
 		_2405_00e7();
-		_443c_0434();
+		CHANGE_CURSOR_HAND_ITEM();
 		FIRE_SHOW_MOUSE_CURSOR();
 		//^2C1D:0776
 		PROCESS_ITEM_BONUS(glbChampionLeader, si, -1, -1);
@@ -340,7 +340,7 @@ void SkWinCore::TAKE_OBJECT(ObjectID rl, U16 xx)
 		}
 		else {
 			//^2C1D:0708
-			_443c_0434();
+			CHANGE_CURSOR_HAND_ITEM();
 		}
 		//^2C1D:070D
 		FIRE_SHOW_MOUSE_CURSOR();
@@ -399,12 +399,12 @@ void SkWinCore::CLICK_ITEM_SLOT(Bit16u xx)
 		// SPX: translate to have the inventory position
 		si = xx -8;
 		//^2C1D:08E8
-		di = ((si >= INVENTORY_MAX_SLOT) ? cd.pi.glbChampionIndex : glbChampionInventory) -1;
+		di = ((si >= C30_INVENTORY_MAX_SLOT) ? cd.pi.glbChampionIndex : glbChampionInventory) -1;
 	}
 	//^2C1D:08F8
 	ObjectID bp02 = cd.pi.glbLeaderHandPossession.object;
 	//^2C1D:08FE
-	ObjectID bp04 = (si >= INVENTORY_MAX_SLOT) ? glbCurrentContainerItems[si - INVENTORY_MAX_SLOT] : glbChampionSquad[di].Possess(si);
+	ObjectID bp04 = (si >= C30_INVENTORY_MAX_SLOT) ? glbCurrentContainerItems[si - C30_INVENTORY_MAX_SLOT] : glbChampionSquad[di].Possess(si);
 	//^2C1D:0926
 	if (bp04 == OBJECT_NULL && bp02 == OBJECT_NULL)
 		//^2C1D:0932
@@ -435,26 +435,19 @@ void SkWinCore::CLICK_ITEM_SLOT(Bit16u xx)
 		EQUIP_ITEM_TO_INVENTORY(di, bp02, si);
 	}
 	//^2C1D:098A
-	_2e62_0cfa(0);
+	UPDATE_GENERAL_CHAMPIONS_STAT_DISP(0);
 	//^2C1D:0992
 	//if (si == 11 || si == 6 || si == 12 || ((si < 7 || si > 9) && si >= 30)) {
-	if (si == INVENTORY_POUCH_1 || si == INVENTORY_POUCH_2 || si == INVENTORY_SCABBARD_1 
-		|| ((si < INVENTORY_SCABBARD_2 || si > INVENTORY_SCABBARD_4) && si >= INVENTORY_MAX_SLOT)) {
-		//^2C1D:09B0
+	if (si == C11_INVENTORY_POUCH_1 || si == C06_INVENTORY_POUCH_2 || si == C12_INVENTORY_SCABBARD_1 
+		|| ((si < C07_INVENTORY_SCABBARD_2 || si > C09_INVENTORY_SCABBARD_4) && si >= C30_INVENTORY_MAX_SLOT)) {
 		glbSomeChampionPanelFlag = 1;
-		//^2C1D:09B6
 		UPDATE_RIGHT_PANEL(0);
 	}
-	//^2C1D:09BE
 	if (glbShowMousePointer != 0) {
-		//^2C1D:09C5
 		glbShowMousePointer = 0;
-		//^2C1D:09CB
-		_443c_0434();
+		CHANGE_CURSOR_HAND_ITEM();
 	}
-	//^2C1D:09D0
 	FIRE_SHOW_MOUSE_CURSOR();
-	//^2C1D:09D5
 	return;
 }
 
@@ -1130,7 +1123,7 @@ _1ab8:
 	}
 	else if (si >= UI_EVENTCODE_x10 && si <= UI_EVENTCODE_x13) {	// (si >= 0x10 && si <= 0x13)
 		SELECT_CHAMPION_LEADER(GET_PLAYER_AT_POSITION((si - UI_EVENTCODE_x10 + cd.pi.glbPlayerDir) & 3));
-		_2e62_0cfa(0);
+		UPDATE_GENERAL_CHAMPIONS_STAT_DISP(0);
 	}
 	else if (si >= UI_EVENTCODE_x07_VIEW_CHAMPION_1 && si <= UI_EVENTCODE_x0B_RETURN_VIEWPORT) { // >= 0x07 and <= 0x0B
 		if (cd.pi.glbNextChampionNumber != 0 && si <= UI_EVENTCODE_x0B_RETURN_VIEWPORT) {
@@ -1196,7 +1189,7 @@ _1ab8:
 	else if (si == UI_EVENTCODE_x93_PAUSE) {	// 0x93
 		_4976_4c02 = 0;
 		_38c8_0002();
-		FILL_ENTIRE_PICT(_4976_4c16, glbPaletteT16[COLOR_BLACK]);
+		FILL_ENTIRE_PICT(glbBackBuffViewport, glbPaletteT16[COLOR_BLACK]);
 		Bit8u bp2e[40];
 		// SPX: text = GAME PAUSED
 		DRAW_VP_RC_STR(

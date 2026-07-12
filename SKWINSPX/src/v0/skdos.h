@@ -13,6 +13,7 @@
 //..............................................................................
 
 class SkVRAM;
+class SkWinApp;
 
 //------------------------------------------------------------------------------
 
@@ -37,6 +38,8 @@ public:
 	UINT ResetTextCursor();
 	UINT Render();
 	UINT Close();
+
+	bool ML();
 
 	UINT AudioPlaySound(const U8 *xSoundBuffer, U32 iBufferSize, i8 iSoundVolume, U16 iPlaybackFrequency);
 };

@@ -1286,7 +1286,7 @@ void SkWinCore::INIT_CHAMPION(Champion *xChampion)
 	xChampion->timerIndex = TIMER_NONE;
 	xChampion->playerDir(0);
 
-	for (iInventoryIndex = 0; iInventoryIndex < INVENTORY_MAX_SLOT; iInventoryIndex++)
+	for (iInventoryIndex = 0; iInventoryIndex < C30_INVENTORY_MAX_SLOT; iInventoryIndex++)
 		xChampion->Possess(iInventoryIndex, OBJECT_NULL);
 
 	sprintf((char*)xChampion->firstName, "%s", "Champ");

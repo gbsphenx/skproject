@@ -1178,7 +1178,7 @@ U8	_4976_00bc[8][4]; //Rp
 sk3b74	_4976_3b74[55]; //Rp
 sk0cea	_4976_0ce0[19]; //Rp
 U16		_4976_49d4[5][2]; //Rp
-U8		_4976_3fce[30]; //Rp
+U8		tblDropChampionInventory[C30_INVENTORY_MAX_SLOT]; //Rp (_4976_3fce)
 U8		tlbCreatureCommandsFlags[MAX_CREATURE_COMMANDS]; //Rr	(_4976_37a6[86]) for holding 86 creature command info ?
 U8	_04bf_02be[128]; //Rp // rawkey to ascii
 U8	_04bf_033e[128]; //Rp // rawkey+shift to ascii
