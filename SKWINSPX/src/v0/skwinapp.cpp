@@ -617,7 +617,8 @@ void SkWinApp::skwin_Sleep(U32 millisecs)
 #elif defined (__LINUX__)
 	usleep(millisecs*1000);
 #elif defined (__DJGPP__)
-	delay(millisecs);
+	//delay(millisecs);
+	delay(1);
 #endif
 }
 

@@ -974,7 +974,7 @@ _1a94:
 						bp1a = 1;
 						if (bp16 != 0 || si == 0x400) {
 							//^19F0:1C85
-							_2fcf_0434(glbCurrentThinkingCreatureID, xx, yy, xx3, yy2, 0);
+							SOMETHING_TELEPORT_OR_PITS(glbCurrentThinkingCreatureID, xx, yy, xx3, yy2, 0);
 							if (glbCurrentMapIndex == _4976_581c && xx3 == _4976_5826 && yy2 == _4976_5828)
 								goto _1df6;
 							//^19F0:1CB8

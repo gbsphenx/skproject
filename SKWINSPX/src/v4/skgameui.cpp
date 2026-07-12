@@ -86,279 +86,194 @@ void SkWinCore::UI_CONSUME_KEYBOARD_INPUT()
 
 
 //^1031:111E
-void SkWinCore::HANDLE_UI_EVENT_1031_111e(Bit16u xx)
+void SkWinCore::HANDLE_UI_EVENT_1031_111e(U16 xx)
 {
 	
-	//^1031:111E
 	ENTER(72);
-	//^1031:1124
-	i16 di = xx;
-	//^1031:1127
+	i16 di = xx;	// di
 	if (_4976_4df4 != 0) {
-		//^1031:112E
 		if (_4976_4df4 <= di) {
-			//^1031:1134
 			di -= _4976_4df4;
-			//^1031:1138
 			_4976_4df4 = 0;
 		}
 		else {
-			//^1031:1140
 			_4976_4df4 -= di;
-			//^1031:113E
 			return;
 		}
 	}
-	//^1031:1147
 	if (_4976_4e62 != 0 || _4976_4e48 != 0 || _4976_4e64 != 0 || glbPtrTransmittedUIEvent == NULL)
-		//^1031:116E
 		return;
-	//^1031:1171
 	sk3f6c bp48;
-	bp48.w0 = 0xffff;
-	Bit8u bp05;
+	bp48.w0 = 0xFFFF;
+	U8 iRawUIEvent;	// bp05
 	do {
-		//^1031:1176
-		bp05 = *(glbPtrTransmittedUIEvent++);
-		//^1031:1184
+		iRawUIEvent = *(glbPtrTransmittedUIEvent++);	// bp05
 		i16 si;
-		SkD((DLV_DBG_UI, "HANDLEUI %04X => %04X\n", bp05, (bp05 & 0xff3f)));
-		switch (bp05 & 0xff3f) {
-			case 0:
+		SkD((DLV_DBG_UI, "HANDLEUI %04X => %04X\n", iRawUIEvent, (iRawUIEvent & 0xFF3F)));
+		printf("INPUT %d : HANDLEUI %04X => %04X\n", xx, iRawUIEvent, (iRawUIEvent & 0xFF3F));
+		switch (iRawUIEvent & 0xFF3F) {
+			case 0:	// 0:
 				{
-					//^1031:119A
 					_4976_4df4 = *glbPtrTransmittedUIEvent;
-					//^1031:11A6
 					glbPtrTransmittedUIEvent++;
-					//^1031:11AA
 					break;
 				}
-			case 4:
-			case 6:
+			case 4:	// 4:
+			case 6:	// 6: click viewport / sleep
 				{
-					//^1031:11AD
 					si = glbUIClickEventLast + 1; // si
-					//^1031:11B3
 					if (si > 2)
-						//^1031:11B8
 						si = 0;
-					//^1031:11BA
 					if (glbUIClickEventIndex == si) {
-						//^1031:11C0
 						if (_4976_4e62 == 0)
-							//^1031:11C7
 							_4976_4e62 = 1;
-						//^1031:11CD
 						glbPtrTransmittedUIEvent--;
-						//^1031:11D1
 						goto _1534;
 					}
-					//^1031:11D4
 					tlbUIClickEvents[glbUIClickEventLast] = glbMousePosition;
-					//^1031:11ED
 					glbUIClickEventLast = si;
-					//^1031:11F1
-					if ((bp05 & 0xff3f) == 4)
-						//^1031:11FE
+					if ((iRawUIEvent & 0xFF3F) == 4)
 						break;
 
 					goto _1201;
 				}
-			case 1:
+			case 1:	// 1: 
 				{
-					//^1031:1201
 _1201:
 					_4976_4e62 = glbUIClickEventLast - glbUIClickEventIndex;
-					//^1031:120B
 					if (_4976_4e62 >= 0)
-						//^1031:120F
 						break;
-					//^1031:1212
 					_4976_4e62 += 3;
-					//^1031:1217
 					break;
 				}
-			case 2:
+			case 2:	// 2:
 				{
-					//^1031:121A
 					_4976_4e48 = 1;
-					//^1031:1220
 					break;
 				}
-			case 3:
+			case 3:	// 3:
 				{
-					//^1031:1223
 					_4976_4e64 = 1;
-					//^1031:1229
 					break;
 				}
-			case 5:
+			case 5:	// 5: click on inventory item or dialog button
 				{
-					//^1031:122C
 					if (HANDLE_UI_EVENT(&glbMousePosition) != 0) {
-						//^1031:123B
 						if (cd.gg.glbRefreshViewport == 0)
-							//^1031:1242
 							break;
-						//^1031:1245
 						goto _1201;
 					}
-					//^1031:1247
 					glbPtrTransmittedUIEvent--;
-					//^1031:124B
 					break;
 				}
-			case 7:
+			case 7:	// 7: move arrow
 				{
-					//^1031:124E
-					Bit8u bp06 = *(glbPtrTransmittedUIEvent++);
-					//^1031:125C
-					Bit8u bp07 = *(glbPtrTransmittedUIEvent++);
-					//^1031:126A
-					Bit8u bp08 = *(glbPtrTransmittedUIEvent++);
-					//^1031:1278
-					Bit8u *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(bp06, bp07, bp08);
-					//^1031:128F
-					SRECT bp14;
-					_1031_10c8(&bp48, &bp14, READ_UI16(bp04,-4), READ_UI16(bp04,-2));
-					//^1031:12AB
+					U8 iImgCls1Category = *(glbPtrTransmittedUIEvent++);	// bp06
+					U8 iImgCls2MainId = *(glbPtrTransmittedUIEvent++);	// bp07
+					U8 iImgCls4EntryId = *(glbPtrTransmittedUIEvent++);	// bp08
+					U8* xImgMoveArrow = QUERY_GDAT_IMAGE_ENTRY_BUFF(iImgCls1Category, iImgCls2MainId, iImgCls4EntryId); // bp04
+					printf("EVENT for ARROW IMG BUFF : %d %d %d\n", iImgCls1Category, iImgCls2MainId, iImgCls4EntryId);
+					SRECT xRect;	// bp14
+					//_1031_10c8(&bp48, &xRect, READ_UI16(bp04,-4), READ_UI16(bp04,-2));
+					_1031_10c8(&bp48, &xRect, READ_IMGBUFF_WIDTH(xImgMoveArrow), READ_IMGBUFF_HEIGHT(xImgMoveArrow));
 					DRAW_ICON_PICT_BUFF(
-						QUERY_GDAT_IMAGE_ENTRY_BUFF(bp06, bp07, bp08),
+						QUERY_GDAT_IMAGE_ENTRY_BUFF(iImgCls1Category, iImgCls2MainId, iImgCls4EntryId),
 						&bp48,
-						&bp14,
+						&xRect,
 						0,
 						0,
 						*(glbPtrTransmittedUIEvent++),
 						0,
-						QUERY_GDAT_IMAGE_LOCALPAL(bp06, bp07, bp08)
+						QUERY_GDAT_IMAGE_LOCALPAL(iImgCls1Category, iImgCls2MainId, iImgCls4EntryId)
 						);
-					//^1031:12FC
 					break;
 				}
-			case 8:
+			case 8:	// 8: select spell caster or leader
 				{
-					//^1031:12FF
 					si = GET_PLAYER_AT_POSITION((*(glbPtrTransmittedUIEvent++) + cd.pi.glbPlayerDir) & 3);
-					//^1031:131C
 					if (si < 0)
-						//^1031:1320
 						break;
-					//^1031:1323
 					DRAW_SQUAD_SPELL_AND_LEADER_ICON(si, 1);
-					//^1031:132D
 					_0b36_0cbe(&_4976_3f6c, 1);
-					//^1031:133B
 					break;
 				}
-			case 9:
+			case 9:	// 9 : champion hand action
 				{
-					//^1031:133E
 					if (cd.pi.glbChampionIndex > 0) {
-						//^1031:1345
 						si = cd.pi.glbChampionIndex - 1;
 					}
-					//^1031:134D
 					//else if (glbMousePosition.event >= 0x74 && glbMousePosition.event <= 0x7b) {
 					else if (glbMousePosition.event >= UI_EVENTCODE_x74_CHAMPION1_ACTION_HAND_RIGHT && glbMousePosition.event <= UI_EVENTCODE_x7B_CHAMPION4_ACTION_HAND_LEFT) {
-						//^1031:135B
 						si = (glbMousePosition.event -UI_EVENTCODE_x74_CHAMPION1_ACTION_HAND_RIGHT) >> 1;
 					}
 					else {
-						//^1031:1365
-						//^1031:11A6
 						glbPtrTransmittedUIEvent++;
-						//^1031:11AA
 						break;
 					}
-					//^1031:1368
 					DRAW_HAND_ACTION_ICONS(si, *(glbPtrTransmittedUIEvent++), 1);
-					//^1031:1381
 					goto _148a;
 				}
-			case 10:
+			case 10:	// 10: push rune cell button (add rune)
 				{
-					//^1031:1384
-					Bit8u *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(0x01, 0x05, 0x08);
-					//^1031:1398
-					SRECT bp14;
-					_1031_10c8(&bp48, &bp14, READ_UI16(bp04,-4), READ_UI16(bp04,-2));
-					//^1031:13B4
+					U8* xImgCellBuffer = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x05_SPELLMENU, GDAT_x08_RUNE_CELL__PUSHED);	// // 0x01, 0x05, 0x08
+					SRECT xRect;	// bp14
+					//_1031_10c8(&bp48, &bp14, READ_UI16(bp04,-4), READ_UI16(bp04,-2));
+					_1031_10c8(&bp48, &xRect, READ_IMGBUFF_WIDTH(xImgCellBuffer), READ_IMGBUFF_HEIGHT(xImgCellBuffer));
 					DRAW_ICON_PICT_BUFF(
-						QUERY_GDAT_IMAGE_ENTRY_BUFF(0x01, 0x05, 0x08),
+						QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x05_SPELLMENU, GDAT_x08_RUNE_CELL__PUSHED),	// 0x01, 0x05, 0x08
 						&bp48,
-						&bp14,
+						&xRect,
 						0,
 						0,
 						-1,
 						0,
-						QUERY_GDAT_IMAGE_LOCALPAL(0x01, 0x05, 0x08)
+						QUERY_GDAT_IMAGE_LOCALPAL(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x05_SPELLMENU, GDAT_x08_RUNE_CELL__PUSHED)
 						);
-					//^1031:13EE
-					_4976_4df6[0] = (glbChampionTable[cd.pi.glbChampionIndex].runesCount * 6) +U8(glbMousePosition.event) -5;
-					//^1031:140C
+					_4976_4df6[0] = (glbChampionTable[cd.pi.glbChampionIndex].runesCount * 6) + U8(glbMousePosition.event) - 5;
 					i16 bp0a;
 					i16 bp0c;
 					QUERY_STR_METRICS(_4976_4df6, &bp0a, &bp0c);
-					//^1031:1422
-					CALC_CENTERED_RECT_IN_RECT(&bp14, &bp48.rc2, bp0a, bp0c);
-					//^1031:143A
+					CALC_CENTERED_RECT_IN_RECT(&xRect, &bp48.rc2, bp0a, bp0c);
 					DRAW_STUFF_0b36_129a(
 						&bp48, 
-						bp14.x, 
-						bp14.y +bp14.cy -1, 
+						xRect.x, 
+						xRect.y + xRect.cy - 1, 
 						glbPaletteT16[COLOR_BLACK], 
 						glbPaletteT16[COLOR_CYAN], 
 						_4976_4df6
 						);
-					//^1031:1467
 					break;
 				}
-			case 11:
+			case 11:	// 11: validate spell
 				{
-					//^1031:146A
 					DRAW_SPELL_TO_BE_CAST(1);
-					//^1031:1471
-					//^1031:14D4
 					goto _148a;
 				}
-			case 12:
+			case 12:	// 12: hand action
 				{
-					//^1031:1473
 					DRAW_CMD_SLOT(*(glbPtrTransmittedUIEvent++), 1);
-					//^1031:148A
 _148a:
 					_0b36_0cbe(&_4976_3f6c, 1);
-					//^1031:1498
 					break;
 				}
-			case 13:
+			case 13:	// 13: return to viewport
 				{
-					//^1031:149A
 					si = glbChampionInventory;
-					//^1031:149F
 					if (si != 0) {
-						//^1031:14A3
 						_4976_581a |= *glbPtrTransmittedUIEvent;
-						//^1031:14B0
 						REFRESH_PLAYER_STAT_DISP(--si);
 					}
-					//^1031:14BD
-					//^1031:11A6
 					glbPtrTransmittedUIEvent++;
-					//^1031:11AA
 					break;
 				}
-			case 14:
+			case 14:	// 14: magic map button
 				{
-					//^1031:14C0
 					_29ee_1d03(*(glbPtrTransmittedUIEvent++));
-					//^1031:14D4
 					goto _148a;
 				}
-			case 15:
+			case 15:	// dialog button
 			case 16:
 				{
-					//^1031:14D6
 					glbGDATItemCls1Category = *glbPtrTransmittedUIEvent; glbPtrTransmittedUIEvent++;
 					glbGDATItemCls2MainItemId = *glbPtrTransmittedUIEvent; glbPtrTransmittedUIEvent++;
 					glbGDATItemCls4EntryId = *glbPtrTransmittedUIEvent; glbPtrTransmittedUIEvent++;
@@ -369,22 +284,15 @@ _148a:
 					break;
 				}
 		}
-		//^1031:1517
-		if ((bp05 & 0x80) != 0) {
-			//^1031:151D
+		if ((iRawUIEvent & 0x80) != 0) {
 			glbPtrTransmittedUIEvent = NULL;
-			//^1031:1529
 			break;
 		}
-		//^1031:152B
-	} while ((bp05 & 0x40) != 0);
+	} while ((iRawUIEvent & 0x40) != 0);
 
-	//^1031:1534
 _1534:
 	if (bp48.w0 != 0xffff) {
-		//^1031:153A
 		_0b36_0cbe(&bp48, 1);
 	}
-	//^1031:1549
 	return;
 }

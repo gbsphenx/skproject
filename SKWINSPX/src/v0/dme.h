@@ -2063,9 +2063,9 @@ namespace DM2Internal {
 		i16 w12;	// @12
 		U16 w14;		// @14
 		U16 w16;		// @16
-		i16 width;	// @18 // (i16 w18) width
-		i16 height;	// @20 // (i16 w20) height
-		i16 w22;	// @22 // bpp
+		i16 iWidth;		// @18 // (i16 w18) width
+		i16 iHeight;	// @20 // (i16 w20) height
+		i16 iBpp;		// @22 // bpp
 	};
 	// 
 	// SPX: skxxx4 renamed ExtendedPicture

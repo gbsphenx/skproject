@@ -114,166 +114,121 @@ Bit8u *SkWinCore::TRANSMIT_UI_EVENT(MousePosition *xx)
 	if (si == 0 || si > UI_EVENTCODE_xEF_LAST_EVENT) {
 		return 0;
 	}
-	Bit16u di;
-	//^1031:0DC8
+	U16 iEventIdx;	// di
 	//if ((si >= 0x14 && si < 0x42) || (si >= 0x7d && si <= 0x81) || (si >= 0x10 && si <= 0x13)) {
 	if ((si >= UI_EVENTCODE_x14_ITEM_SLOT_FIRST && si < UI_EVENTCODE_x42_ITEM_SLOT_LAST) 
 		|| (si >= UI_EVENTCODE_x7D_TAKE_CHAMPION_TOP_LEFT && si <= UI_EVENTCODE_x81_UPDATE_CHAMPION_POSITION) 
 		|| (si >= UI_EVENTCODE_x10 && si <= UI_EVENTCODE_x13)) {
-		//^1031:0DE7
-		di = 1;
-		goto _0f23;
+		iEventIdx = 1;
+		goto return_uievent;
 	}
-	//^1031:0DED
 	//else if (si >= 0x01 && si <= 0x06) {
 	else if (si >= UI_EVENTCODE_x01_ARROW_DIR_FIRST && si <= UI_EVENTCODE_x06_ARROW_DIR_LAST) {
-		//^1031:0DF7
-		di = (si - UI_EVENTCODE_x01_ARROW_DIR_FIRST) * 15 +2;
-		goto _0f23;
+		iEventIdx = (si - UI_EVENTCODE_x01_ARROW_DIR_FIRST) * 15 + 2;
+		goto return_uievent;
 	}
-	//^1031:0E04
 	//else if (si >= 0x74 && si <= 0x7b) {
 	else if (si >= UI_EVENTCODE_x74_CHAMPION1_ACTION_HAND_RIGHT && si <= UI_EVENTCODE_x7B_CHAMPION4_ACTION_HAND_LEFT) {
-		//^1031:0E0E
-		di = ((si -UI_EVENTCODE_x74_CHAMPION1_ACTION_HAND_RIGHT) & 1) * 5 + 0x5c;
-		goto _0f23;
+		iEventIdx = ((si -UI_EVENTCODE_x74_CHAMPION1_ACTION_HAND_RIGHT) & 1) * 5 + 0x5C;
+		goto return_uievent;
 	}
-	//^1031:0E21
 	//else if (si >= 0x5f && si <= 0x62) {
 	else if (si >= UI_EVENTCODE_x5F_SPELL_OR_LEADER_1 && si <= UI_EVENTCODE_x62_SPELL_OR_LEADER_4) {
-		//^1031:0E2B
-		di = (si -UI_EVENTCODE_x5F_SPELL_OR_LEADER_1) * 5 + 0x66;
-		goto _0f23;
+		iEventIdx = (si -UI_EVENTCODE_x5F_SPELL_OR_LEADER_1) * 5 + 0x66;
+		goto return_uievent;
 	}
-	//^1031:0E3B
 	//else if (si == 0x70) {
 	else if (si == UI_EVENTCODE_x70_HAND_RUNE_QUIT) {
-		//^1031:0E40
-		di = 0x7a;
-		goto _0f23;
+		iEventIdx = 0x7A;
+		goto return_uievent;
 	}
-	//^1031:0E46
 	//else if (si == 0x5d || si == 0x5e) {
 	else if (si == UI_EVENTCODE_x01_TURN_LEFT || si == UI_EVENTCODE_x02_TURN_RIGHT) {
-		//^1031:0E50
-		di = ((si - UI_EVENTCODE_x01_TURN_LEFT) << 3) + 0x82;
-		goto _0f23;
+		iEventIdx = ((si - UI_EVENTCODE_x01_TURN_LEFT) << 3) + 0x82;
+		goto return_uievent;
 	}
-	//^1031:0E5D
 	//else if (si >= 0x65 && si <= 0x6a) {
 	else if (si >= UI_EVENTCODE_x65_ADD_RUNE_1 && si <= UI_EVENTCODE_x6A_ADD_RUNE_6) {
-		//^1031:0E67
-		di = 0x92;
-		goto _0f23;
+		iEventIdx = 0x92;
+		goto return_uievent;
 	}
-	//^1031:0E6D
 	//else if (si == 0x6b) {
 	else if (si == UI_EVENTCODE_x6B_REMOVE_RUNE) {
-		//^1031:0E72
-		di = 0x96;
-		goto _0f23;
+		iEventIdx = 0x96;
+		goto return_uievent;
 	}
-	//^1031:0E78
 	//else if (si == 0x6c) {
 	else if (si == UI_EVENTCODE_x6C_VALIDATE_SPELL) {
-		//^1031:0E7D
-		di = 0x9e;
-		goto _0f23;
+		iEventIdx = 0x9E;
+		goto return_uievent;
 	}
-	//^1031:0E83
 	//else if (si >= 0x71 && si <= 0x73) {
 	else if (si >= UI_EVENTCODE_x71_HAND_ACTION_1 && si <= UI_EVENTCODE_x73_HAND_ACTION_3) {
-		//^1031:0E8D
-		di = (si - UI_EVENTCODE_x71_HAND_ACTION_1) * 5 +0xa2;
-		goto _0f23;
+		iEventIdx = (si - UI_EVENTCODE_x71_HAND_ACTION_1) * 5 +0xA2;
+		goto return_uievent;
 	}
-	//^1031:0E9C
 	//else if (si == 0x0b || si == 0xa1) {
 	else if (si == UI_EVENTCODE_x0B_RETURN_VIEWPORT || si == UI_EVENTCODE_xA1_EXIT_CRYOCELL) {
-		//^1031:0EA7
-		di = 0xb1;
-		goto _0f23;
+		iEventIdx = 0xB1;
+		goto return_uievent;
 	}
-	//^1031:0EAC
 	//else if (si == 0x91) {
 	else if (si == UI_EVENTCODE_x91_SLEEP) {
-		//^1031:
-		di = 0xb6;
-		goto _0f23;
+		iEventIdx = 0xB6;
+		goto return_uievent;
 	}
-	//^1031:0EB7
 	//else if (si == 0x8c) {
 	else if (si == UI_EVENTCODE_x8C_DISK_OP) {
-		//^1031:0EBD
-		di = 0xbb;
-		goto _0f23;
+		iEventIdx = 0xBB;
+		goto return_uievent;
 	}
-	//^1031:0EC2
 	//else if (si >= 0x97 && si <= 0x9a) {
 	else if (si >= UI_EVENTCODE_x97_MAGIC_MAP_RUNE_1 && si <= UI_EVENTCODE_x9A_MAGIC_MAP_RUNE_4) {
-		//^1031:0ECE
-		di = (si -UI_EVENTCODE_x97_MAGIC_MAP_RUNE_1) * 7 +0xc0;
-		goto _0f23;
+		iEventIdx = (si - UI_EVENTCODE_x97_MAGIC_MAP_RUNE_1) * 7 +0xC0;
+		goto return_uievent;
 	}
-	//^1031:0EDF
 	//else if (si >= 0xdb && si <= 0xde) {
 	else if (si >= UI_EVENTCODE_xDB_DIALOG_BUTTON_1 && si <= UI_EVENTCODE_xDE_DIALOG_BUTTON_4) {
-		//^1031:0EEB
 		switch (_4976_4bd2 -1) {
 			case 0:
 			case 1:
-				//^1031:0EFC
-				di = 0xe3;
+				iEventIdx = 0xE3;
 				break;
 			case 2:
-				//^1031:0F01
 				if (si < UI_EVENTCODE_xDC_DIALOG_BUTTON_2) {
-					//^1031:0F05
-					//^1031:0EFC
-					di = 0xe3;
+					iEventIdx = 0xE3;
 				}
 				else {
-					//^1031:0F07
-					di = 0xdc;
+					iEventIdx = 0xDC;
 				}
 				break;
 			case 3:
-				//^1031:0F07
-				di = 0xdc;
+				iEventIdx = 0xDC;
 				break;
 			case 4:
 			case 5:
-				//^1031:0F0C
 				if (si <= UI_EVENTCODE_xDC_DIALOG_BUTTON_2) {
-					//^1031:0F10
-					//^1031:0F07
-					di = 0xdc;
+					iEventIdx = 0xDC;
 					break;
 				}
-				//^1031:0F12
-				di = 1;
+				iEventIdx = 1;
 				break;
 			default:
-				//^1031:0F12
-				di = 1;
+				iEventIdx = 1;
 				break;
 		}
-		goto _0f23;
+		goto return_uievent;
 	}
-	//^1031:0F17
 	//else if (si == 0x50) {
 	else if (si == UI_EVENTCODE_x50_CLICK_VIEWPORT) {
-		//^1031:0F1C
-		di = 0xea;
-		goto _0f23;
+		iEventIdx = 0xEA;
+		goto return_uievent;
 	}
 	else {
-		//^1031:0F21
-		di = 0;
+		iEventIdx = 0;
 	}
-	//^1031:0F23
-_0f23:
-	return &tlbUIEventTable[RCJ(236,di)];
+return_uievent:	// _0f23
+	return &tlbUIEventTable[RCJ(236,iEventIdx)];
 }
 
 
@@ -283,29 +238,22 @@ ObjectID SkWinCore::REMOVE_OBJECT_FROM_HAND()
 {
 	// CSBwinSimilarity: TAG01576a,RemoveObjectFromHand
 
-	//^2C1D:073D
 	ENTER(0);
-	//^2C1D:0741
 	ObjectID si = cd.pi.glbLeaderHandPossession.object;
-	//^2C1D:0746
 	if (si != OBJECT_NULL) {
-		//^2C1D:074B
 		glbLeaderItemFlags = 0;
 		glbLeaderItemWeight = 0;
 		cd.pi.glbLeaderHandPossession.object = OBJECT_NULL;
 		_4976_57de = 0xff;
-		//^2C1D:0762
 		FIRE_HIDE_MOUSE_CURSOR();
 		_2405_00e7();
 		CHANGE_CURSOR_HAND_ITEM();
 		FIRE_SHOW_MOUSE_CURSOR();
-		//^2C1D:0776
 		PROCESS_ITEM_BONUS(glbChampionLeader, si, -1, -1);
 // SPX: that part is for giving item sound when put it back to inventory or on ground
 		if (SkCodeParam::bUseExtendedSound)
 			QUEUE_NOISE_GEN2(QUERY_CLS1_FROM_RECORD(si), QUERY_CLS2_FROM_RECORD(si), SOUND_ITEM_PUT_DOWN, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0, 0);
 	}
-	//^2C1D:079E
 	return si;
 }
 

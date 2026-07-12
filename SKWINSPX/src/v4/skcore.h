@@ -282,7 +282,7 @@ protected:
 
 	i16		glbMouseStateRingIndex;			// _4976_19a5 mouse state ring index
 	U16	_4976_19a7;
-	Bit32u	_4976_19a9;
+	U32	glbTickCounterLastInputCheck;	// _4976_19a9
 	U16	_4976_19ad;	// _4976_19ad
 	U16	_4976_19af;
 	ObjectID	glbTableToMove;	// (_4976_19ba) moving table. set oFFFF if no table.
@@ -472,7 +472,7 @@ protected:
 	U16	glbEndCounter;		// _4976_4dfe
 	i16	_4976_4e00;
 	U16	_4976_4e44;		// rectno?
-	U16	_4976_4e46;
+	U16	glbUserInputCheck;		// _4976_4e46, always 0, to check IBMIO_USER_INPUT_CHECK
 	U16	_4976_4e48;
 	U16	glbMouseInfoX;	// _4976_4e4a
 	U16	glbMouseInfoY;	// _4976_4e4c
@@ -486,7 +486,7 @@ protected:
 	U16	_4976_4e68;
 	U16	glbMouseInfoButton;	// _4976_4e6a
 	MousePosition	tlbUIClickEvents[3];	// _4976_4e6c click event table
-	Bit8u	*glbPtrTransmittedUIEvent;	// _4976_4e96
+	U8*		glbPtrTransmittedUIEvent;	// _4976_4e96
 	U16	_4976_4e9a;
 	U16	_4976_4e9c;
 	SRECT	_4976_4e9e;
@@ -708,7 +708,7 @@ protected:
 	i16		_4976_5a9c;
 	i16		_4976_5a9e;
 	U16		_4976_5aa0;		// base dir
-	U16		_4976_5aa2;		// 1=doing table operation
+	U16		glbTryMoveObjectOrTable;		// (_4976_5aa2) 1=doing table operation
 	U8		(*_4976_5aa4)[17]; // (cx,cy)=(17,21). 17*21+1Å®358 bytes
 	ExtendedPicture	glbDrawExtPicture;	// (_4976_5aa8)
 	U32		(*_4976_5be2)[23];
@@ -1562,7 +1562,7 @@ protected:
 	U16 _2759_0155(ObjectID rl);
 	void DRAW_ITEM_STATS_BAR(U16 rectno, i16 curVal, i16 maxVal, U8 chr, U16 color);
 	U16 DRAW_ITEM_SURVEY(ObjectID recordLink, U16 xx);	// quite modified
-	U16 DRAW_2e62_03b5(U16 iChampIdx, U16 itemNo, U16 yy);	// 2e62_03b5
+	U16 DRAW_ITEMS_HANDS_OR_INVENTORY(U16 iChampIdx, U16 itemNo, U16 yy);	// 2e62_03b5
 	void DRAW_LOCAL_TEXT(U16 rectno, U16 clr1, U16 clr2, Bit8u *str);
 	U16 GET_PLAYER_ABILITY(Champion *ref, U16 parm7, U16 getMax);
 	void FILL_STR(Bit8u *buff, U16 count, Bit8u value, U16 delta);
@@ -1607,7 +1607,7 @@ protected:
 	void SELECT_CHAMPION_LEADER(U16 xx);
 	void ADD_ITEM_TO_PLAYER(U16 player, ObjectID rl);
 	void REVIVE_CHAMPION(U16 xx, U16 yy, U16 dir, U16 zz, U16 ee); // _2f3f_04ea
-	void INTERFACE_CHAMPION(U16 xx); // _24a5_1798
+	void INTERFACE_CHAMPION(U16 iChampionIndex); // _24a5_1798
 	void INIT_BACKBUFF();
 	SpellDefinition* FIND_SPELL_BY_RUNES(U8* runes);
 	i16 FIND_HAND_WITH_EMPTY_FLASK(Champion *ref);
@@ -2105,7 +2105,7 @@ protected:
 	U8 _48ae_01af(X16 xx, X16 yy);
 	void MAKE_PUT_DOWN_ITEM_CLICKABLE_ZONE(X16 xx, ObjectID rl, i16 yy, X16 zz);
 	X16 DIR_FROM_5x5_POS(X16 _5x5);
-	void _32cb_2cf3(U8 cls2, U16 scale64, U16 mirrorFlip, U16 rectno);
+	void DRAW_SOME_CLOUD_EXPLOSION(U8 cls2, U16 scale64, U16 mirrorFlip, U16 rectno);	// _32cb_2cf3
 	void _32cb_2d8c_DRAW_TILE(ObjectID rl, X16 iViewportCell, X32 aa);
 	void _32cb_3edd(i16 xx);
 	void DRAW_STAIRS_SIDE(i16 xx);
@@ -2170,7 +2170,7 @@ protected:
 	void PLACE_OR_REMOVE_OBJECT_IN_ROOM(i16 xpos, i16 ypos, ObjectID recordLink, U16 ss, U16 place, U16 uu); // _2fcf_2444
 	ObjectID ROTATE_RECORD_BY_TELEPORTER(Teleporter *ref, ObjectID recordLink);
 	void ROTATE_SQUAD(U16 dir);
-	U16 _2fcf_0434(ObjectID recordLink, i16 xpos, i16 ypos, i16 xx, i16 yy, U16 zz);	// big funct
+	U16 SOMETHING_TELEPORT_OR_PITS(ObjectID recordLink, i16 xpos, i16 ypos, i16 xx, i16 yy, U16 zz);	// (_2fcf_0434) big funct
 	i16 ABS16(i16 val);
 	U16 CALC_VECTOR_DIR(i16 x1, i16 y1, i16 x2, i16 y2);
 	U16 CALC_SQUARE_DISTANCE(i16 x1, i16 y1, i16 x2, i16 y2);

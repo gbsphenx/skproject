@@ -937,110 +937,64 @@ void SkWinCore::REVIVE_CHAMPION(U16 xx, U16 yy, U16 dir, U16 zz, U16 iEventCode)
 
 //^24A5:1798
 // SPX: _24a5_1798 renamed INTERFACE_CHAMPION (not sure of what's inside)
-void SkWinCore::INTERFACE_CHAMPION(U16 xx)
+void SkWinCore::INTERFACE_CHAMPION(U16 iChampionIndex)
 {
-	//^24A5:1798
 	ENTER(8);
-	//^24A5:179E
-	i16 di = xx;
-	//^24A5:17A1
+	i16 iChampIdx = iChampionIndex;	// di
 	U16 bp06 = 0;
 	glbInventorySubpanel = 0;
 	_4976_3d30 = OBJECT_NULL;
-	//^24A5:17B2
-	if (di < 4 && glbChampionSquad[di].curHP() == 0)
-		//^24A5:17C7
+	if (iChampIdx < 4 && glbChampionSquad[iChampIdx].curHP() == 0)
 		return;
-	//^24A5:17CA
 	if (_4976_4c3e != 0 || glbTryPushPullObject != 0 || _4976_4bfe != 0 || glbShowItemStats != 0)
-		//^24A5:17EF
 		return;
-	//^24A5:17F2
 	cd.gg.glbRefreshViewport = 1;
-	//^24A5:17F8
 	U16 si = glbChampionInventory;
-	//^24A5:17FC
-	if (di +1 == si)
-		//^24A5:1803
-		di = 4;
-	//^24A5:1806
-	if (si == 0 || di == 4) {
-		//^24A5:180F
+	if (iChampIdx + 1 == si)
+		iChampIdx = 4;
+	if (si == 0 || iChampIdx == 4) {
 		bp06 = 1;
-		//^24A5:1814
 		FIRE_HIDE_MOUSE_CURSOR();
 	}
-	//^24A5:1819
 	if (si != 0) {
-		//^24A5:1820
 		glbChampionInventory = 0;
-		//^24A5:1826
-		Champion *bp04 = &glbChampionSquad[si -1];
-		//^24A5:1837
-		if (bp04->curHP() != 0 && cd.pi.glbNextChampionNumber == 0) {
-			//^24A5:1848
-			bp04->heroFlag |= CHAMPION_FLAG_4000;	// 0x4000
-			//^24A5:184E
+		Champion* xChampion = &glbChampionSquad[si -1];	// bp04
+		if (xChampion->curHP() != 0 && cd.pi.glbNextChampionNumber == 0) {
+			xChampion->heroFlag |= CHAMPION_FLAG_4000;	// 0x4000
 			REFRESH_PLAYER_STAT_DISP(si -1);
 		}
-		//^24A5:1858
 		for (i16 bp08 = 0; bp08 < 4; bp08++) {
-			//^24A5:185F
 			glbChampionMajorSkillsLevel[si -1][bp08] -= _4976_52c0[bp08];
-			//^24A5:1875
 		}
-		//^24A5:187E
 		if (cd.pi.glbIsPlayerSleeping != 0) {
-			//^24A5:1885
 			if (bp06 != 0) {
-				//^24A5:188E
 				_443c_040e_MOUSE();
 				FIRE_SHOW_MOUSE_CURSOR();
 			}
-			//^24A5:1898
 			goto _1913;
 		}
-		//^24A5:189A
-		if (di == 4) {
-			//^24A5:189F
+		if (iChampIdx == 4) {
 			if (_4976_3d59 != 0)
-				//^24A5:18A6
 				DRAW_ARROW_PANEL();
-			//^24A5:18AB
 			if (bp06 != 0)
-				//^24A5:18B1
 				FIRE_SHOW_MOUSE_CURSOR();
-			//^24A5:18B6
 			INIT_BACKBUFF();
-			//^24A5:18BB
 			goto _1913;
 		}
 	}
-	//^24A5:18BD
-	glbChampionInventory = di +1;
-	//^24A5:18C3
+	glbChampionInventory = iChampIdx + 1;
 	if (si == 0)
-		//^24A5:18C7
 		FIRE_FILL_HALFTONE_RECTI(9, 0);
-	//^24A5:18D2
 	ZERO_MEMORY(_4976_52c0, 4);
-	//^24A5:18E2
-	glbChampionSquad[di].heroFlag |= CHAMPION_FLAG_FC00;	// 0xFC00
+	glbChampionSquad[iChampIdx].heroFlag |= CHAMPION_FLAG_FC00;	// 0xFC00
 	_4976_581a = 0;
-	//^24A5:18F7
-	REFRESH_PLAYER_STAT_DISP(di);
-	//^24A5:18FE
+	REFRESH_PLAYER_STAT_DISP(iChampIdx);
 	if (bp06 != 0)
-		//^24A5:1904
 		FIRE_SHOW_MOUSE_CURSOR();
-	//^24A5:1909
 	_1031_0541(8);
-	//^24A5:1911
 	return;
-	//^24A5:1913
 _1913:
 	_1031_0667();
-	//^24A5:1918
 	return;
 }
 

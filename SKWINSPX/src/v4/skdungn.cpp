@@ -1764,7 +1764,7 @@ void SkWinCore::_32cb_4185_TILE_ROOM(i16 xx, i16 yy, i16 cellPos, i16 dir)
 			if (bp1a == dbCreature) {
 				//^32CB:4465
 				i16 bp16;
-				if (_4976_5aa2 != 0 && cellPos == 3) {
+				if (glbTryMoveObjectOrTable != 0 && cellPos == 3) {
 					//^32CB:4472
 					bp16 = _4976_41d0[RCJ(7,glbTargetTypeMoveObject)];
 					bp16 = ROTATE_5x5_POS(bp16, _4976_44bd[RCJ(4,dir)]);
@@ -2806,7 +2806,7 @@ Bit16u SkWinCore::MOVE_RECORD_TO(ObjectID rlWhatYouMove, i16 xposFrom, i16 yposF
 	Bit16u di = 0; // defaulting to 0
 	if (xposTo >= 0) {
 		//^2FCF:0E53
-		bp10 = _2fcf_0434(si, xposFrom, yposFrom, xposTo, yposTo, 1); // SPX: check if going into pit or teleporter ?
+		bp10 = SOMETHING_TELEPORT_OR_PITS(si, xposFrom, yposFrom, xposTo, yposTo, 1); // SPX: check if going into pit or teleporter ?
 		//^2FCF:0E6C
 		if (si != OBJECT_NULL) {
 			//^2FCF:0E71

@@ -2999,7 +2999,7 @@ void SkWinCore::PROCEED_TIMERS()
 	for (; IS_TIMER_TO_PROCEED() != 0; iTimerCount++) {	// This kind of loop may lead to infinite loop.
 		if (SkCodeParam::bUsePowerDebug && iTimerCount >= glbTimersActiveCount)		
 			break;	// SPX: this is a way to get out of an infinite loop
-		//LOGX(("3A15:3AB0 %u %u %u %d", (U32)_4976_4e46, (U32)glbAbsoluteTickCounter, (U32)_4976_19a9, (i16)_4976_4e62, (U16)_4976_4e48, (U16)_4976_4e64));
+		//LOGX(("3A15:3AB0 %u %u %u %d", (U32)glbUserInputCheck, (U32)glbAbsoluteTickCounter, (U32)_4976_19a9, (i16)_4976_4e62, (U16)_4976_4e48, (U16)_4976_4e64));
 		IBMIO_USER_INPUT_CHECK();
 		GET_AND_DELETE_NEXT_TIMER(xCurrentTimer);
 		CHANGE_CURRENT_MAP_TO(timer.GetMap());

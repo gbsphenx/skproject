@@ -2849,43 +2849,29 @@ void SkWinCore::CLEAR_TRY_PUSH_PULL_OBJECT()
 //^1031:050C
 void SkWinCore::_1031_050c()
 {
-	//^1031:050C
 	ENTER(0);
-	//^1031:050F
 	if (glbShowItemStats != 0 || _4976_4bfe != 0 || _4976_4c3e != 0) {
-		//^1031:0524
 		_4976_4c3e = 0;
 		_4976_4bfe = 0;
 		glbShowItemStats = 0;
-		//^1031:052F
 		FIRE_MOUSE_RELEASE_CAPTURE();
-		//^1031:0534
 		glbMouseVisibility = 1;
-		//^1031:053A
 		FIRE_SHOW_MOUSE_CURSOR();
 	}
-	//^1031:053F
 	return;
 }
 
 //^1031:0675
 void SkWinCore::_1031_0675(U16 xx)
 {
-	//^1031:0675
 	ENTER(0);
-	//^1031:0678
 	_4976_4ea8 = _4976_19ad;
-	//^1031:067E
 	_4976_4e64 = 0;
 	_4976_4e48 = 0;
 	glbPtrTransmittedUIEvent = 0;
-	//^1031:0692
 	CHAMPION_SQUAD_RECOMPUTE_POSITION();
-	//^1031:0698
 	_1031_050c();
-	//^1031:069B
 	_1031_0541(xx);
-	//^1031:06A3
 	return;
 }
 
@@ -2937,40 +2923,28 @@ U16 SkWinCore::_1031_01ba_PFN12_11(sk1891 *ref)
 // _1031_027e renamed _1031_027e
 void SkWinCore::_1031_027e(sk1891 *ref)
 {
-	//^1031:027E
 	ENTER(8);
-	//^1031:0282
 	U8 *bp08 = _1031_023b(ref);
 
 	do {
-		//^1031:0294
 		sk1891 *bp04 = &_4976_1574[*bp08 & 0xff7f];
-		//^1031:02AB
 		if ((this->*_4976_0cba_PFN_12[ref->b0_0_6()])(bp04) != 0) {
-			//^1031:02CA
 			if ((bp04->b0 & 0x80) == 0x80) {
-				//^1031:02D6
 				_1031_027e(bp04);
 			}
 			else {
-				//^1031:02E4
 				_4976_16ed[bp04->w2].b6 |= 0x40;
 			}
 		}
-		//^1031:02F7
 		bp08++;
-		//^1031:02FA
 	} while ((*bp08 & 0x80) == 0);
-	//^1031:0308
 	return;
 }
 
 //^098D:025D
 U16 SkWinCore::PT_IN_RECT(SRECT *rc, i16 xx, i16 yy)
 {
-	//^098D:025D
 	ENTER(0);
-	//^098D:0261
 	return (true
 			&& rc->x <= xx 
 			&& rc->x + rc->cx -1 >= xx 
@@ -9522,7 +9496,8 @@ LOGX(("%40s: C%02d=I%02X=E%02X=T%03d to %08X", "QUERY_GDAT_ENTRY_IF_LOADABLE", i
 //^0B36:000A
 U16 SkWinCore::CALC_IMAGE_BYTE_LENGTH(U8* xImageBuffer)
 {
-	return ((READ_UI16(xImageBuffer,-6) == 4) ? (((READ_UI16(xImageBuffer,-4) +1) & 0xFFFE) >> 1) : READ_UI16(xImageBuffer,-4) & 0xFFFF) * READ_UI16(xImageBuffer,-2);
+	//return ((READ_UI16(xImageBuffer,-6) == 4) ? (((READ_UI16(xImageBuffer,-4) +1) & 0xFFFE) >> 1) : READ_UI16(xImageBuffer,-4) & 0xFFFF) * READ_UI16(xImageBuffer,-2);
+	return ((READ_IMGBUFF_BPP(xImageBuffer) == IMG_4_BPP) ? (((READ_IMGBUFF_WIDTH(xImageBuffer) +1) & 0xFFFE) >> 1) : READ_IMGBUFF_WIDTH(xImageBuffer) & 0xFFFF) * READ_IMGBUFF_HEIGHT(xImageBuffer);
 }
 
 
@@ -9913,9 +9888,13 @@ U8 *SkWinCore::ALLOC_PICT_BUFF(U16 iImageWidth, U16 iImageHeight, U16 flags, U16
 	U16 iLocalWidth = iImageWidth;	// si
 	U8* xPictBuff = ALLOC_MEMORY_RAM((((bpp == 4) ? (((iLocalWidth +1) & 0xFFFE) >> 1) : (iLocalWidth & 0xFFFF)) * iImageHeight) +6, flags, 8) + 6;	// bp04
 	//xPictBuff = xPictBuff;	// ???
-	WRITE_UI16(xPictBuff, -6, bpp);	// bpp
-	WRITE_UI16(xPictBuff, -4, iLocalWidth);		// image width
-	WRITE_UI16(xPictBuff, -2, iImageHeight);	// image height
+	//WRITE_UI16(xPictBuff, -6, bpp);	// bpp
+	//WRITE_UI16(xPictBuff, -4, iLocalWidth);		// image width
+	//WRITE_UI16(xPictBuff, -2, iImageHeight);	// image height
+	WRITE_IMGBUFF_BPP(xPictBuff, bpp);
+	WRITE_IMGBUFF_WIDTH(xPictBuff, iLocalWidth);
+	WRITE_IMGBUFF_HEIGHT(xPictBuff, iImageHeight);
+
 	return xPictBuff;
 }
 
@@ -13834,12 +13813,9 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 //^32CB:2730
 void SkWinCore::CHANCE_TABLE_OPERATION()
 {
-	//^32CB:2730
 	ENTER(12);
-	//^32CB:2736
-	if (_4976_5aa2 == 0 || glbTableToMove != OBJECT_NULL)
+	if (glbTryMoveObjectOrTable == 0 || glbTableToMove != OBJECT_NULL)
 		return;
-	//^32CB:274A
 	i16 bp0a;
 	i16 bp0c;
 	MOUSE_STATE_443c_08ab(&bp0a, &bp0c, &_4976_5dae.rc4.cy);
@@ -13847,7 +13823,6 @@ void SkWinCore::CHANCE_TABLE_OPERATION()
 	i16 di = bp0c - _4976_00ea;
 	if (bp02 < 0 || di < 0 || bp02 >= _4976_00f6 || glbScreenHeight - _4976_00ea <= di)
 		return;
-	//^32CB:279D
 	bp02 -= _4976_00f6 >> 1; // horz pos in viewport
 	di -= _4976_00f8 >> 1; // vert pos in viewport
 	X16 si;
@@ -13855,14 +13830,11 @@ void SkWinCore::CHANCE_TABLE_OPERATION()
 	X16 bp06;
 	X16 bp08;
 	if (ABS16(bp02) < 20) {
-		//^32CB:27BA
 		if (ABS16(di) < 15)
 			goto _28bc;
 		si = (di < 0) ? 0 : 3; // 0=move forward, 3=move back
 	}
-	//^32CB:27D6
 	else if (bp02 < 0) {
-		//^32CB:27DC
 		if (ABS16(di) < 15) {
 			si = 5; // 5=move forward left
 		}
@@ -13874,38 +13846,30 @@ void SkWinCore::CHANCE_TABLE_OPERATION()
 		}
 	}
 	else if (ABS16(di) < 15) {
-		//^32CB:2804
 		si = 1; // 1=move forward right
 	}
 	else if (di < 0) {
-		//^32CB:280D
 		si = 0;
 	}
 	else {
-		//^32CB:280F
 		si = 2; // 2=move back right
 	}
-	//^32CB:2812
 	bp04 = (tlbPullPushPlayerMoveDirs[RCJ(6,si)] + cd.pi.glbPlayerDir) & 3;
 	bp06 = cd.pi.glbPlayerPosX;
 	bp08 = cd.pi.glbPlayerPosY;
 	bp06 += glbXAxisDelta[bp04];
 	bp08 += glbYAxisDelta[bp04];
 	if (IS_TILE_BLOCKED(GET_TILE_VALUE(bp06, bp08)) == 0) {
-		//^32CB:2861
 		bp04 = (tlbPullPushObjectMoveDirs[RCJ(6,si)] + cd.pi.glbPlayerDir) & 3;
 		if (IS_CREATURE_MOVABLE_THERE(cd.pi.glbPlayerPosX + glbXAxisDelta[cd.pi.glbPlayerDir], cd.pi.glbPlayerPosY + glbYAxisDelta[cd.pi.glbPlayerDir], bp04, NULL) != 0) {
-			//^32CB:28A3
 			HIGHLIGHT_ARROW_PANEL(tlbPullPushArrow[RCJ(6,si)], tlbPullPushArrowRectno[RCJ(6,si)], 1);
 			goto _28bf;
 		}
 	}
-	//^32CB:28BC
 _28bc:
 	si = 6;
 _28bf:
 	glbTargetTypeMoveObject = si;
-	//^32CB:28C3
 	return;
 }
 
@@ -14288,7 +14252,7 @@ _2eda:
 				i16 bp22 = _4976_418e[RCJ(6,bp1c)][2 -(bp20 / 5)];
 				X16 bp10 = QUERY_CREATURE_BLIT_RECTI(di, bp1e, cd.pi.glbPlayerDir) |0x8000;
 				X16 bp12 = (max_value(0x30, bp14 +1) * bp22) >> 8;
-				_32cb_2cf3(bp15, bp12, bp0e, bp10);
+				DRAW_SOME_CLOUD_EXPLOSION(bp15, bp12, bp0e, bp10);
 				i16 bp0a = bp14 -0xa0;
 				if (bp0a > 0) {
 					bp0a = 0xc0 - bp0a;
@@ -15046,7 +15010,8 @@ void SkWinCore::ROTATE_SQUAD(U16 dir)
 
 //^2FCF:0434
 // TODO related to teleporter and falling into pits
-U16 SkWinCore::_2fcf_0434(ObjectID recordLink, i16 xpos, i16 ypos, i16 xx, i16 yy, U16 zz)
+// SPX: _2fcf_0434 renamed SOMETHING_TELEPORT_OR_PITS
+U16 SkWinCore::SOMETHING_TELEPORT_OR_PITS(ObjectID recordLink, i16 xpos, i16 ypos, i16 xx, i16 yy, U16 zz)
 {
 	//^2FCF:0434
 	//^2FCF:043A
@@ -18009,7 +17974,6 @@ void SkWinCore::DEALLOC_BIGPOOL_STRUCT_BEFORE(U8 *ref)
 // _2481_007d renamed SHOW_MENU_SCREEN
 void SkWinCore::SHOW_MENU_SCREEN()
 {
-	//^2481:007D
 	ENTER(0);
 	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_RED, BLACK);
 	SkD((SkCodeParam::bEngineNoDisplay||DLV_DBG_INIT, "DISPLAY TITLE MENU SCREEN\n"));
@@ -18022,37 +17986,45 @@ void SkWinCore::SHOW_MENU_SCREEN()
 
 	SkD((DLV_DBG_INIT, "SHOW_MENU_SCREEN\n"));
 
-	//^2481:0080
 	cd.mo.glbImageCreditScreen = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x05_TITLE, 0x0, 0x1);		// Credit screen (tombstone)
 	if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x05_TITLE, 0x0, dt07, 0x4) != 0xFFFF)	// 64000 bytes raw data for menu screen ?
 	{
-		//^2481:00AA
 		_4976_3d2c = 1;
 		cd.mo.glbImageMenuScreen = QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_x05_TITLE, 0x0, dt07, 4);
 	}
 	else {
-		//^2481:00C9
 		cd.mo.glbImageMenuScreen = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x05_TITLE, 0x0, 0x4);
-		_4976_52ba = cd.mo.glbImageMenuScreen + (
+/*		_4976_52ba = cd.mo.glbImageMenuScreen + (
 			(READ_UI16(cd.mo.glbImageMenuScreen,-6) == 4)
 				? (((READ_UI16(cd.mo.glbImageMenuScreen,-4) +1) & 0xFFFE) >> 1)
 				: (  READ_UI16(cd.mo.glbImageMenuScreen,-4)     & 0xFFFF)
-												) * READ_UI16(cd.mo.glbImageMenuScreen,-2);
+												) * READ_UI16(cd.mo.glbImageMenuScreen,-2);*/
+		_4976_52ba = cd.mo.glbImageMenuScreen + (
+			(READ_IMGBUFF_BPP(cd.mo.glbImageMenuScreen) == IMG_4_BPP)
+				? (((READ_IMGBUFF_WIDTH(cd.mo.glbImageMenuScreen) +1) & 0xFFFE) >> 1)
+				: (  READ_IMGBUFF_WIDTH(cd.mo.glbImageMenuScreen)     & 0xFFFF)
+												) * READ_IMGBUFF_HEIGHT(cd.mo.glbImageMenuScreen);
+
 	}
 	// cd.mo.glbImageMenuScreen - 6   would be like 06 FA 00 00 | 02 00 => FA06 = 64006 | 0002 = afUseLower
 	// cd.mo.glbImageCreditScreen - 6 would be like 04 00 40 01 | C8 00 => 
 
 
 	//^2481:0116
-	_4976_52b6 = cd.mo.glbImageCreditScreen +((READ_UI16(cd.mo.glbImageCreditScreen,-6) == 4) // 4bits image, meaning 2 pixel per byte
+/*	_4976_52b6 = cd.mo.glbImageCreditScreen +((READ_UI16(cd.mo.glbImageCreditScreen,-6) == 4) // 4bits image, meaning 2 pixel per byte
 		? (((READ_UI16(cd.mo.glbImageCreditScreen,-4) +1) & 0xFFFE) >> 1)	// (0x140 + 1 & 0xFFFE) = 0x140 >> 1 = 0xA0 (160)
 		: (  READ_UI16(cd.mo.glbImageCreditScreen,-4)     & 0xFFFF)
 		) * READ_UI16(cd.mo.glbImageCreditScreen,-2)	// 00C8 (200)
+		*/
 		; // 0xA0 * 0xC8 = 0x7D00 (160*200)
+	_4976_52b6 = cd.mo.glbImageCreditScreen +((READ_IMGBUFF_BPP(cd.mo.glbImageCreditScreen) == IMG_4_BPP) // 4bits image, meaning 2 pixel per byte
+		? (((READ_IMGBUFF_WIDTH(cd.mo.glbImageCreditScreen) +1) & 0xFFFE) >> 1)	// (0x140 + 1 & 0xFFFE) = 0x140 >> 1 = 0xA0 (160)
+		: (  READ_IMGBUFF_WIDTH(cd.mo.glbImageCreditScreen)     & 0xFFFF)
+		) * READ_IMGBUFF_HEIGHT(cd.mo.glbImageCreditScreen)	// 00C8 (200)
+		;
 	// then _4976_52b6 = p(cd.mo.glbImageCreditScreen) + 0x7D00 => end of this image
 	GRAPHICS_DATA_CLOSE();
 	_1031_0541(0);
-	//^2481:015B
 	do {
 		//printf("SHOW_MENU_SCREEN Loop ...\n");
 		DRAW_TITLE_MENU_SCREEN();
@@ -19925,11 +19897,11 @@ _00a4:
 					CHECK_RECOMPUTE_LIGHT(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
 				
 				if (cd.pi.glbIsPlayerMoving != 0)
-					DISPLAY_VIEWPORT(_4976_4c40, _4976_4c32, _4976_4c34);
+					DISPLAY_VIEWPORT(_4976_4c40, _4976_4c32, _4976_4c34);	// scaled/stretched display
 				else
 					DISPLAY_VIEWPORT(cd.pi.glbPlayerDir, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
 				
-				CHANGE_VIEWPORT_TO_INVENTORY(1);
+				CHANGE_VIEWPORT_TO_INVENTORY(1);	// display regular viewport
 				_4976_4bc8 = 0;
 			}
 			if (cd.pi.glbIsPlayerMoving != 0) {
@@ -19973,7 +19945,7 @@ _00a4:
 			, (Bitu)(U8)glbTabCreaturesInfo[1].b32
 			, (Bitu)(U8)glbTabCreaturesInfo[1].iSeqControl
 			));
-		if ((X16(glbGameTick) & 0x1ff) == 0)	// every 511 tick, burn lighting items
+		if ((X16(glbGameTick) & 0x1FF) == 0)	// every 511 tick, burn lighting items
 			BURN_PLAYER_LIGHTING_ITEMS();
 		// SPX: This is the freeze value
 		if (glbGlobalSpellEffects.FreezeCounter != 0)	{
@@ -20182,7 +20154,6 @@ _01f7:
 UINT SkWinCore::SKLIB_GAMELOOP()
 {
 	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_YELLOW, BLACK);
-	printf("GAME LOOP\n");
 	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
 	GAME_LOOP();
 	return 0;
@@ -20384,9 +20355,9 @@ SkWinCore::SkWinCore()
 	_4976_4ea6 = 0;
 	_4976_4e00 = 0;
 	glbEndCounter = 0;
-	_4976_4e46 = 0;
+	glbUserInputCheck = 0;
 	glbAbsoluteTickCounter = 0;
-	_4976_19a9 = -1;
+	glbTickCounterLastInputCheck = -1;
 	_4976_4e64 = 0;
 //	glbPtrTransmittedUIEvent = NULL;
 	glbHoldedContainerType = 0;

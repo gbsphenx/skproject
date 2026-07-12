@@ -684,11 +684,11 @@ void SkWinCore::MOUSE_STATE_443c_08ab(i16 *xx, i16 *yy, i16 *zz)
 void SkWinCore::IBMIO_USER_INPUT_CHECK() //#DS=4976
 {
 	ENTER(14);
-	if (_4976_4e46 == 0) {
-		Bit32u bp04 = glbAbsoluteTickCounter;
-		Bit32u bp08 = bp04 - _4976_19a9;
-		if (bp08 != 0) {
-			_4976_19a9 = bp04;
+	if (glbUserInputCheck == 0) {
+		U32 iAbsTickCounter = glbAbsoluteTickCounter;	// bp04
+		U32 iIsTickDifferent = iAbsTickCounter - glbTickCounterLastInputCheck;	// bp08
+		if (iIsTickDifferent != 0) {
+			glbTickCounterLastInputCheck = iAbsTickCounter;
 			if (_4976_4e62 == 0 && _4976_4e48 == 0 && _4976_4e64 == 0) {
 				while (glbPtrTransmittedUIEvent == 0) {
 					_4976_19a7 = 1;
@@ -739,10 +739,11 @@ _0fa6:
 					_4976_19a7 = 0;
 					_1031_0b7e_MOUSE();
 					glbPtrTransmittedUIEvent = TRANSMIT_UI_EVENT(&glbMousePosition);
-					bp08 = 0;
+					printf("TRANSMIT %x %d\n", glbPtrTransmittedUIEvent, *glbPtrTransmittedUIEvent);
+					iIsTickDifferent = 0;
 				}
 			}
-			HANDLE_UI_EVENT_1031_111e(Bit16u(bp08));
+			HANDLE_UI_EVENT_1031_111e(Bit16u(iIsTickDifferent));
 		}
 	}
 	return;

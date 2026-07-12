@@ -378,8 +378,8 @@ U16 SkWinCore::QUERY_MULTILAYERS_PIC(ExtendedPicture *ref, U8 cls1, U8 cls2, U8 
 	COPY_MEMORY(&glbTempPicture, ref, sizeof(ExtendedPicture));
 	ALLOC_PICT_MEMENT(ref);
 	ref->colorKeyPassThrough = colorkey2;
-	SET_ORIGIN_RECT(&ref->rc36, ref->width, ref->height);
-	ref->pb44 = ALLOC_NEW_PICT(iRCAlloc = ALLOC_TEMP_CACHE_INDEX(), ref->width, ref->height, 8);
+	SET_ORIGIN_RECT(&ref->rc36, ref->iWidth, ref->iHeight);
+	ref->pb44 = ALLOC_NEW_PICT(iRCAlloc = ALLOC_TEMP_CACHE_INDEX(), ref->iWidth, ref->iHeight, 8);
 	return iRCAlloc;
 }
 
@@ -772,7 +772,7 @@ void SkWinCore::_32cb_0c7d(ExtendedPicture *ref, U16 xx, U16 yy)
 	si = READ_I16(bp04,-4) * READ_I16(bp04,-2);
 	//^32CB:0DA7
 	_44c8_20a4(bp04, reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(xx)), NULL, &ref->rc36, 
-		si -(RAND() & 31) -16, RAND16(60), ref->width, -1, bp10);
+		si -(RAND() & 31) -16, RAND16(60), ref->iWidth, -1, bp10);
 	//^32CB:0DF8
 	FREE_TEMP_CACHE_INDEX(di);
 	//^32CB:0DFF
@@ -859,7 +859,7 @@ void SkWinCore::QUERY_CREATURE_PICST(U16 xx, i16 iDistToPlayer, Creature *xCreat
 	if (SkCodeParam::bDM2V5Mode)
 		iOffsetPosition = CREATURE_GET_ANIMATION_OFFSET_POS_V5(iCreatureType, iFrameID2);
 	//^32CB:2AC1
-	if (xx == 3 && _4976_5aa2 != 0) {
+	if (xx == 3 && glbTryMoveObjectOrTable != 0) {
 		//^32CB:2ACE
 		iOffsetPosition = _4976_41d0[RCJ(7,glbTargetTypeMoveObject)];
 		iImageScale = _4976_41d7[RCJ(7,glbTargetTypeMoveObject)];
@@ -1751,12 +1751,19 @@ void SkWinCore::FREE_PICT_BUFF(U8* xImageBuffer)
 	// READ_UI16(buff,-6) -> bpp(4 or 8)
 	// READ_UI16(buff,-4) -> width
 	// READ_UI16(buff,-2) -> height
-
+/*
 	DEALLOC_UPPER_MEMORY(
 		(	(READ_UI16(xImageBuffer,-6) == 4)	// bpp
 			? (((READ_UI16(xImageBuffer,-4) +1) & 0xFFFE) >> 1)	// if 4 bpp, round up width to byte align.
 			:   (READ_UI16(xImageBuffer,-4)     & 0xFFFF)		// if 8 bpp, already byte aligned.
 		) * READ_UI16(xImageBuffer,-2) +6
+	);*/
+
+	DEALLOC_UPPER_MEMORY(
+		(	(READ_IMGBUFF_BPP(xImageBuffer) == IMG_4_BPP)	// bpp
+			? (((READ_IMGBUFF_WIDTH(xImageBuffer) +1) & 0xFFFE) >> 1)	// if 4 bpp, round up width to byte align.
+			:   (READ_IMGBUFF_WIDTH(xImageBuffer)     & 0xFFFF)		// if 8 bpp, already byte aligned.
+		) * READ_IMGBUFF_HEIGHT(xImageBuffer) +6
 	);
 }
 
@@ -1809,9 +1816,9 @@ X8* SkWinCore::QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(i16 iCacheIndex, Picture *ref
 		ref->pb0 = xImageDataBuff;
 		ref->w14 = 0;
 		ref->w16 = 0;
-		ref->width = READ_UI16(xImageDataBuff,-4);
-		ref->height = READ_UI16(xImageDataBuff,-2);
-		ref->w22 = READ_UI16(xImageDataBuff,-6);
+		ref->iWidth = READ_IMGBUFF_WIDTH(xImageDataBuff);	// READ_UI16(xImageDataBuff,-4);
+		ref->iHeight = READ_IMGBUFF_HEIGHT(xImageDataBuff);	// READ_UI16(xImageDataBuff,-2);
+		ref->iBpp = READ_IMGBUFF_BPP(xImageDataBuff);	// READ_UI16(xImageDataBuff,-6);
         ref->w12 = iCacheIndex;
 		ref->w4 = 8;
 	}
@@ -1830,9 +1837,9 @@ X8* SkWinCore::QUERY_PICST_IMAGE(Picture* xPicture)
 	xPicture->pb0 = xImageDataBuff;
 	xPicture->w14 = 0;
 	xPicture->w16 = 0;
-	xPicture->width = READ_UI16(xImageDataBuff,-4);
-	xPicture->height = READ_UI16(xImageDataBuff,-2);
-	xPicture->w22 = READ_UI16(xImageDataBuff,-6);	// bpp
+	xPicture->iWidth = READ_IMGBUFF_WIDTH(xImageDataBuff);		// READ_UI16(xImageDataBuff,-4);
+	xPicture->iHeight = READ_IMGBUFF_HEIGHT(xImageDataBuff);	// READ_UI16(xImageDataBuff,-2);
+	xPicture->iBpp = READ_IMGBUFF_BPP(xImageDataBuff);	// bpp	READ_UI16(xImageDataBuff,-6);
 	xPicture->w4 = 4;
 	return xImageDataBuff;
 }
@@ -2386,20 +2393,20 @@ ExtendedPicture *SkWinCore::QUERY_PICST_IT(ExtendedPicture* xExtPicture)
 		bp016c.iXStretch = 64;
 		U16 bp1a;
 		if (ADD_CACHE_HASH(CALC_PICT_ENT_HASH(&bp016c), &bp1a) == 0) {
-			bp08 = ALLOC_NEW_PICT(bp1a, bp32.width, bp32.height, bp32.w22);
-			Bit8u *bp0c = QUERY_PICT_BITS(&bp32);
+			bp08 = ALLOC_NEW_PICT(bp1a, bp32.iWidth, bp32.iHeight, bp32.iBpp);	// bp08
+			U8* bp0c = QUERY_PICT_BITS(&bp32);	// bp0c
 			FIRE_BLIT_PICTURE(
 				bp0c,
 				bp08,
-				ALLOC_TEMP_ORIGIN_RECT(bp32.width, bp32.height),
+				ALLOC_TEMP_ORIGIN_RECT(bp32.iWidth, bp32.iHeight),
 				bp32.w14,
 				bp32.w16,
-				READ_UI16(bp0c,-4),
-				READ_UI16(bp08,-4),
+				READ_IMGBUFF_WIDTH(bp0c),	// READ_UI16(bp0c,-4)
+				READ_IMGBUFF_WIDTH(bp08),	// READ_UI16(bp08,-4)
                 -1,
 				0,
-				bp32.w22,
-				bp32.w22,
+				bp32.iBpp,
+				bp32.iBpp,
 				NULL
 				);
 		}
@@ -2408,21 +2415,21 @@ ExtendedPicture *SkWinCore::QUERY_PICST_IT(ExtendedPicture* xExtPicture)
 		ALLOC_PICT_MEMENT(&bp32);
 	}
 	if (iIsStretched != 0) {
-		i16 iWidthStretched = CALC_STRETCHED_SIZE(bp32.width, xExtPicture->iXStretch);	// di
-		i16 iHeightStretched = CALC_STRETCHED_SIZE(bp32.height, xExtPicture->iYStretch);	// si
+		i16 iWidthStretched = CALC_STRETCHED_SIZE(bp32.iWidth, xExtPicture->iXStretch);	// di
+		i16 iHeightStretched = CALC_STRETCHED_SIZE(bp32.iHeight, xExtPicture->iYStretch);	// si
 		if (iWidthStretched <= 0 || iHeightStretched <= 0) {
-			xExtPicture->width = iWidthStretched;
-			xExtPicture->height = iHeightStretched;
+			xExtPicture->iWidth = iWidthStretched;
+			xExtPicture->iHeight = iHeightStretched;
 		}
 		else {
-			ALLOC_NEW_PICT(bp18, iWidthStretched, iHeightStretched, bp32.w22);
+			ALLOC_NEW_PICT(bp18, iWidthStretched, iHeightStretched, bp32.iBpp);
 			bp08 = QUERY_PICT_BITS(&bp32);
 			bp04 = QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(bp18, xExtPicture);
-			if (bp32.w22 == 8) {
-				_44c8_2351(bp08, bp04, bp32.width, bp32.height, iWidthStretched, iHeightStretched);
+			if (bp32.iBpp == IMG_8_BPP) {
+				_44c8_2351(bp08, bp04, bp32.iWidth, bp32.iHeight, iWidthStretched, iHeightStretched);
 			}
 			else {
-				FIRE_STRETCH_BLIT_TO_MEMORY_4TO4BPP(bp08, bp04, bp32.width, bp32.height, iWidthStretched, iHeightStretched, NULL);
+				FIRE_STRETCH_BLIT_TO_MEMORY_4TO4BPP(bp08, bp04, bp32.iWidth, bp32.iHeight, iWidthStretched, iHeightStretched, NULL);
 			}
 		}
 	}
@@ -2433,11 +2440,12 @@ ExtendedPicture *SkWinCore::QUERY_PICST_IT(ExtendedPicture* xExtPicture)
 
 
 //^32CB:2CF3
-void SkWinCore::_32cb_2cf3(U8 cls2, U16 scale64, U16 mirrorFlip, U16 rectno)
+// SPX: _32cb_2cf3 renamed _32cb_2cf3
+void SkWinCore::DRAW_SOME_CLOUD_EXPLOSION(U8 cls2, U16 scale64, U16 mirrorFlip, U16 rectno)
 {
 	ENTER(0);
 	U16 si = scale64;
-	si = BETWEEN_VALUE(8, si & 0xfffe, 64);
+	si = BETWEEN_VALUE(8, si & 0xFFFE, 64);
 	QUERY_GDAT_SUMMARY_IMAGE(&glbTempPicture, GDAT_CATEGORY_x0D_SPELL_MISSILES, cls2, C65_GDAT_IMG_SPELL_EXPLOSION_FRONT);	// 0x0d, cls, 0x41
 	glbTempPicture.w32 = glbTempPicture.iXOffset;
 	glbTempPicture.w34 = glbTempPicture.iYOffset;

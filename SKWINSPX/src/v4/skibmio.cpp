@@ -1678,9 +1678,6 @@ void SkWinCore::FIRE_SELECT_PALETTE_SET(U8 iPaletteSet)
 //^00EB:0353
 void SkWinCore::IBMIO_FILL_SCREEN_LINE(U16 offDst, U16 fill, U16 size) //#DS=04BF?
 {
-	//^00EB:0353
-	//^00EB:0357
-
 	// TODO: Alt impl
 	memset(_04bf_0e34 + offDst, fill, size);
 }
@@ -1688,21 +1685,13 @@ void SkWinCore::IBMIO_FILL_SCREEN_LINE(U16 offDst, U16 fill, U16 size) //#DS=04B
 //^00EB:0383
 void SkWinCore::IBMIO_FILL_RECT_SCREEN(SRECT *rc, U16 fill) //#DS=04BF
 {
-	//^00EB:0383
-	//^00EB:0389
 	LOADDS(0x0c48);
-	//^00EB:038E
 	_04bf_0e34 = pbVram;
-	//^00EB:039A
 	U16 di = rc->y * 320 + rc->x;
 	U16 si = 0;
-    //^00EB:03AD
 	for (; rc->cy > si; di += 320, si++) {
-		//^00EB:03AF
 		IBMIO_FILL_SCREEN_LINE(di, fill, rc->cx);
-		//^00EB:03C2
 	}
-	//^00EB:03D0
 #if UseAltic
 	//skwin.UpdateRect(rc->x, rc->y, rc->cx, rc->cy);
 	skWinApp->renderScreen(vram, rc->x, rc->y, rc->cx, rc->cy);
