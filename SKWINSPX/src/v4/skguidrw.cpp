@@ -4413,48 +4413,30 @@ i16 SkWinCore::_0b36_1446_BLIT_PICTURE(Picture* ref, i16 xx, i16 yy, U16 colorke
 // _32cb_00f1 renamed _32cb_00f1_DRAW_PICTURE
 U16 SkWinCore::_32cb_00f1_DRAW_PICTURE(U16 xx, U16 yy, i16 zz)
 {
-	//^32CB:00F1
 	ENTER(10);
-	//^32CB:00F7
 	U16 si = xx;
 	U16 di = yy;
-	//^32CB:00FD
 	if (PT_IN_RECT(&glbTempPicture.rc36, si, di) == 0) {
-		//^32CB:010F
 		return 0;
 	}
-	//^32CB:0114
-	// SPX: This test mirror flip (horizontal)
+	// SPX: This tests mirror flip (horizontal)
 	if ((glbTempPicture.mirrorFlip & 1) != 0) {
-		//^32CB:011C
 		si = glbTempPicture.rc36.x + glbTempPicture.rc36.cx -1 -si + glbTempPicture.w32;
 	}
 	else {
-		//^32CB:0128
 		si = si - glbTempPicture.rc36.x + glbTempPicture.w32;
 	}
-	//^32CB:0134
 	// SPX: Try to display mirror flip on y axis .. . This does nothing!!
 	//di = glbTempPicture.rc36.y + glbTempPicture.rc36.cy -1 -di + glbTempPicture.w34;
 	di = di - glbTempPicture.rc36.y + glbTempPicture.w34;
-	//^32CB:0140
 	U8 *bp0a = QUERY_PICT_BITS(&glbTempPicture);
-	//^32CB:0151
 	U16 bp04 = READ_I16(bp0a,-4) >> 1;
-	//^32CB:015D
 	_4976_5a94 = ((si - glbTempPicture.w14 -bp04) * 100) / bp04;
-	//^32CB:0172
 	U16 bp06 = READ_I16(bp0a,-2) >> 1;
-	//^32CB:017B
 	_4976_5a96 = ((di -bp06) * 100) / bp06;
-	//^32CB:018C
 	i16 bp02 = _0b36_1446_BLIT_PICTURE(&glbTempPicture, si, di, zz);
-	//^32CB:01A0
 	if (bp02 == -1 || bp02 == 1)
-		//^32CB:01AC
-		//^32CB:010F
 		return 0;
-	//^32CB:01AF
 	return 1;
 }
 
@@ -4580,26 +4562,20 @@ void SkWinCore::DRAW_ITEM(ObjectID rl, i16 xx, U16 yy, U16 zz, i16 iDisplaceShif
 // SPX: _32cb_4e1c renamed DRAW_STAIRS_FRONT
 void SkWinCore::DRAW_STAIRS_FRONT(i16 xx)
 {
-	//^32CB:4E1C
 	ENTER(4);
-	//^32CB:4E22
 	U8 gfxset = glbMapGraphicsSet;	// bp04
 	U16 colorkey = glbSceneColorKey;		// di
 	X16 si = (tblCellTilesRoom[xx].xsrd.tfoi[0] != 0) ? 1 : 0;
 	i16 bp02 = _4976_45ae[RCJ(16,xx)][RCJ(2,si)];
 	if (bp02 < 0)
 		return;
-	//^32CB:4E5F
 	X8 bp03 = tlbGraphicsStairsFront1[RCJ(16,xx)][RCJ(2,si)];
 	if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x08_GRAPHICSSET, gfxset, dtImage, bp03) != 0) {
-		//^32CB:4E80
 		DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_x08_GRAPHICSSET, gfxset, bp03, bp02, colorkey, 0);
 		return;
 	}
-	//^32CB:4E99
 	QUERY_TEMP_PICST(1, 64, 64, 0, 0, 0, bp02, -1, colorkey, -1, 8, gfxset, tlbGraphicsStairsFront2[RCJ(16,xx)][RCJ(2,si)]);
 	DRAW_TEMP_PICST();
-	//^32CB:4EC8
 	return;
 }
 

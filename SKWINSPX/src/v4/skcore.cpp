@@ -9416,12 +9416,12 @@ RawEntry *SkWinCore::QUERY_GDAT_ENTRYPTR(U8 iGDatCategory, U16 iGDatItemId, U8 i
 	if (iGDatCategory > U8(glbGDatEntries.iTotalClass1)) {
 		return NULL;
 	}
-	U16 si = glbGDatEntries.pw0[iGDatCategory];	// si
-	if (glbGDatEntries.pw0[iGDatCategory + 1] - si < iGDatEntryType) {	// SPX: this test feels weird
+	U16 si = glbGDatEntries.tblCls1toCls2[iGDatCategory];	// si
+	if (glbGDatEntries.tblCls1toCls2[iGDatCategory + 1] - si < iGDatEntryType) {	// SPX: this test feels weird
 		return NULL;
 	}
 	si += iGDatEntryType;
-	U16 di = glbGDatEntries.pw4[si];	// di
+	U16 di = glbGDatEntries.tblCls2toCls3[si];	// di
 //		3E74:17E6  8BF8                 mov  di,ax
 //		3E74:17E8  33D2                 xor  dx,dx							DX:AX=0000:1399
 //		3E74:17EA  05FFFF               add  ax,FFFF
@@ -9445,7 +9445,7 @@ RawEntry *SkWinCore::QUERY_GDAT_ENTRYPTR(U8 iGDatCategory, U16 iGDatItemId, U8 i
 	// SPX: replaced di / si with boundary
 	U16 iLowerBound = 0;
 	U16 iUpperBound = 0;
-	iUpperBound = glbGDatEntries.pw4[si + 1] - di + 1;
+	iUpperBound = glbGDatEntries.tblCls2toCls3[si + 1] - di + 1;
 	iLowerBound = 0;
 	while (true) {
 		U16 iMidIndex = (iLowerBound + iUpperBound) / 2;	// bp0a
@@ -12681,10 +12681,10 @@ _19c0:
 	}
 	do {
 		//^3E74:1A13
-		X16 bp0a = glbGDatEntries.pw0[ref->cls1cur()];
+		X16 bp0a = glbGDatEntries.tblCls1toCls2[ref->cls1cur()];
 		U16 si;
 		U16 di;
-		if (glbGDatEntries.pw0[ref->cls1cur() +1] != bp0a) {
+		if (glbGDatEntries.tblCls1toCls2[ref->cls1cur() +1] != bp0a) {
 			//^3E74:1A47
 			RawEntry *bp04;
 			if (bp0c == 0) {
@@ -12701,7 +12701,7 @@ _19c0:
 				ref->cls3cur(0x00);
 				//^3E74:1A92
 _1a92:
-				ref->cls3base(U8(glbGDatEntries.pw0[ref->cls1cur() +1]) -bp0a -1);
+				ref->cls3base(U8(glbGDatEntries.tblCls1toCls2[ref->cls1cur() +1]) -bp0a -1);
 			}
 			//^3E74:1AAE
 			else if (bp0e != 0) {
@@ -12716,9 +12716,9 @@ _1a92:
 			}
 			//^3E74:1AD3
 			bp0a += ref->cls3cur();
-			si = ref->w24 = glbGDatEntries.pw4[bp0a++];
+			si = ref->w24 = glbGDatEntries.tblCls2toCls3[bp0a++];
 			ref->w22 = bp0a;
-			ref->w26 = glbGDatEntries.pw4[ref->w22];
+			ref->w26 = glbGDatEntries.tblCls2toCls3[ref->w22];
 			ref->pv14 = bp04 = &glbGDatEntries.pv8[si];
 			do {
 				//^3E74:1B3E
@@ -12793,7 +12793,7 @@ _1c82:
 				if (ref->cls3cur() > ref->cls3base())
 					break;
 				si = ref->w26;
-				ref->w26 = glbGDatEntries.pw4[++ref->w22];
+				ref->w26 = glbGDatEntries.tblCls2toCls3[++ref->w22];
 			} while (true);
 		}
 		//^3E74:1CB9
@@ -17091,9 +17091,7 @@ X16 SkWinCore::LANG_FILTER(U16 entryIndex)
 // SPX: With help from Kentaro to enable more memory when loading GDAT (specially to go over 0x1C categories)
 void SkWinCore::BUILD_GDAT_ENTRY_DATA(GDATEntries *ref, X16 (SkWinCore::*pfnIfLoad)(U16 xx), U8 *zz)
 {
-	//^3E74:1D5F
 	ENTER(14);
-	//^3E74:1D65
 	// SPX: Original value was 0x3a0, so 0x1D max categories
 	const int buffSize = (GDAT_CATEGORY_LIMIT+1) * 16 * 2;
 	U16 *bp04 = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(buffSize, afUseLower|afZeroMem, 0x400));
@@ -17102,115 +17100,83 @@ void SkWinCore::BUILD_GDAT_ENTRY_DATA(GDATEntries *ref, X16 (SkWinCore::*pfnIfLo
 	U16 si;
 	U8 bp0a;
 	for (si = 0; si < glbGDatNumberOfRawEntries; si++) {
-		//^3E74:1D91
 		if ((this->*pfnIfLoad)(si) == 0)
 			continue;
-		//^3E74:1D9D
 		bp0a = U8(QUERY_GDAT_ENTRY_VALUE(si, EPcls1));
 		U8 bp09 = U8(QUERY_GDAT_ENTRY_VALUE(si, EPcls3));
 		if (bp0a > GDAT_CATEGORY_LIMIT || bp09 > 0xe)
 			continue;
-		//^3E74:1DC1
 		ref->w16++;
 		if (ref->iTotalClass1 < bp0a) {
-			//^3E74:1DD3
 			ref->iTotalClass1 = bp0a;
 		}
-		//^3E74:1DDC
 		bp04[(bp0a << 4) + (bp09)]++;
 		if (bp04[(bp0a << 4) +15] <= bp09) {
-			//^3E74:1E11
 			bp04[(bp0a << 4) +15] = bp09 +1;
 		}
-		//^3E74:1E2C
 	}
-	//^3E74:1E36
 	X16 bp0c = 0;
 	for (bp0a = 0; ref->iTotalClass1 >= bp0a; bp0a++) {
-		//^3E74:1E41
 		bp0c += bp04[(bp0a << 4) +15];
-		//^3E74:1E59
 	}
-	//^3E74:1E6A
 	ref->w14 = bp0c;
 	ref->w18 = 0;
 	ref->w20 = 0;
 	U16 di;
 	for (di = 0; di < 7; di++) {
-		//^3E74:1E81
 		if (di <= 4) {
-			//^3E74:1E86
 			ref->b36[di] = _4976_483f[RCJ(5,di)];
 			ref->w18 += _4976_483f[RCJ(5,di)];
 			ref->w22[di] = 0xffff;
 			if (_4976_483f[RCJ(5,di)] > 0) {
-				//^3E74:1EAA
 				ref->w20++;
 			}
 			continue;
 		}
-		//^3E74:1EB3
 		if (zz[di] != 0) {
 			ref->w22[di] = ref->w18;
 			ref->b36[di] = _4976_5d50[RCJ(7,di)];
 			ref->w18 += _4976_5d50[RCJ(7,di)];
 			ref->w20++;
 		}
-		//^3E74:1EE2
 	}
-	//^3E74:1EE8
-	ref->pw0 = reinterpret_cast<X16 *>(ALLOC_MEMORY_RAM((ref->iTotalClass1 +2) << 1, afUseUpper, 0x400));
-	ref->pw4 = reinterpret_cast<X16 *>(ALLOC_MEMORY_RAM((ref->w14 +1) << 1, afUseUpper, 0x400));
+	ref->tblCls1toCls2 = reinterpret_cast<X16 *>(ALLOC_MEMORY_RAM((ref->iTotalClass1 +2) << 1, afUseUpper, 0x400));
+	ref->tblCls2toCls3 = reinterpret_cast<X16 *>(ALLOC_MEMORY_RAM((ref->w14 +1) << 1, afUseUpper, 0x400));
 	ref->pv8 = reinterpret_cast<RawEntry *>(ALLOC_MEMORY_RAM(U32(ref->w16) << 2, afUseUpper, 0x400));
 	bp0c = 0;
 	si = 0;
 	U8 bp09;
 	for (bp0a = 0; ref->iTotalClass1 >= bp0a; bp0a++) {
-		//^3E74:1F66
-		ref->pw0[bp0a] = bp0c;
+		ref->tblCls1toCls2[bp0a] = bp0c;
 		di = bp04[(bp0a << 4) +15];
 		for (bp09 = 0; bp09 < di; bp0c++, bp09++) {
-			//^3E74:1F96
-			ref->pw4[bp0c] = si;
+			ref->tblCls2toCls3[bp0c] = si;
 			si += bp04[(bp0a << 4) +bp09];
-			//^3E74:1FC6
 		}
-		//^3E74:1FCF
 	}
-	//^3E74:1FE0
-	ref->pw0[ref->iTotalClass1 +1] = bp0c;
-	//^3E74:1FFC
-	ref->pw4[ref->w14] = ref->w16;
-	//^3E74:2021
+	ref->tblCls1toCls2[ref->iTotalClass1 +1] = bp0c;
+	ref->tblCls2toCls3[ref->w14] = ref->w16;
 	ZERO_MEMORY(bp04, buffSize);	// Original buffsize = 0x3a0
 	ZERO_MEMORY(ref->pv8, U32(ref->w16) << 2);
-	//^3E74:2059
 	X16 bp0e;
 	for (si = 0; si < glbGDatNumberOfRawEntries; si++) {
-		//^3E74:205E
 		if ((this->*pfnIfLoad)(si) == 0)
 			continue;
-		//^3E74:206A
 		bp0a = QUERY_GDAT_ENTRY_VALUE(si, EPcls1);
 		bp09 = QUERY_GDAT_ENTRY_VALUE(si, EPcls3);
 		if (bp0a > GDAT_CATEGORY_LIMIT || bp09 > 0xe)
 			continue;
-		//^3E74:2094
 		di = bp04[(bp0a << 4) +bp09]++;
-		RawEntry *bp08 = &ref->pv8[ref->pw4[ref->pw0[bp0a] +bp09] +di];
-		bp08->cls2 = QUERY_GDAT_ENTRY_VALUE(si, EPcls2);
-		bp08->cls4 = QUERY_GDAT_ENTRY_VALUE(si, EPcls4);
-		bp08->data = QUERY_GDAT_ENTRY_VALUE(si, EPdata);
+		RawEntry* xRawEntry = &ref->pv8[ref->tblCls2toCls3[ref->tblCls1toCls2[bp0a] +bp09] +di];	//bp08
+		xRawEntry->cls2 = QUERY_GDAT_ENTRY_VALUE(si, EPcls2);
+		xRawEntry->cls4 = QUERY_GDAT_ENTRY_VALUE(si, EPcls4);
+		xRawEntry->data = QUERY_GDAT_ENTRY_VALUE(si, EPdata);
 		bp0e = QUERY_GDAT_ENTRY_VALUE(si, EPcls6);
 		if (bp0e == 1) {
-			//^3E74:2140
-			bp08->data |= 0x8000;
+			xRawEntry->data |= 0x8000;
 		}
-		//^3E74:2149
 	}
-	//^3E74:2153
 	DEALLOC_LOWER_MEMORY(buffSize);		// Original buffsize = 0x3a0
-	//^3E74:215E
 	return;
 }
 
@@ -17944,11 +17910,11 @@ U8 SkWinCore::GDAT_GET_ENTRIES_NUMBER(X8 iGDatCategory, X8 iGDatEntryId)
 	if (iGDatCategory > U8(glbGDatEntries.iTotalClass1))
 		return 0;
 
-	X16 si = glbGDatEntries.pw0[iGDatCategory];
-	if (glbGDatEntries.pw0[iGDatCategory + 1] - si <= iGDatEntryId)
+	X16 si = glbGDatEntries.tblCls1toCls2[iGDatCategory];
+	if (glbGDatEntries.tblCls1toCls2[iGDatCategory + 1] - si <= iGDatEntryId)
 		return 0;
 
-	return glbGDatEntries.pv8[U32(glbGDatEntries.pw4[iGDatEntryId + si + 1]) - 1].cls2;
+	return glbGDatEntries.pv8[U32(glbGDatEntries.tblCls2toCls3[iGDatEntryId + si + 1]) - 1].cls2;
 }
 
 

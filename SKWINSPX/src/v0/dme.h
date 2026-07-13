@@ -1259,6 +1259,7 @@ namespace DM2Internal {
 	// w4+w6 is a mement address
 	// w8+w10 is a mement address
 	// then i would remove direct access to these and manage with real pointers
+	// although, w4, w6 and w8 alone seem to be used as markers
 	struct mement {		// 18 bytes
 		i32 _dw0;		// @0 // length. negative if it directs from lower to upper. it contains this header size.
 		X16 _w4;		// @4 // w4 + w6 builds a 32-bits pointer for mement1
@@ -1266,8 +1267,8 @@ namespace DM2Internal {
 		X16 _w8;		// @8 // mement index for chain image? // w8 + w10 builds a 32-bits pointer for mement2
 		X16 _w10;		// @10 // raw data index? (for chain image?)
 // SPX: pointers to replace w4+w6 and w8+w10 and allow 64 bits compilation / this addition breaks place assuming mement to be stricly 18 bytes long
-		mement* xMementRef1;
-		mement* xMementRef2;
+		mement* xMementRef1;	// replaces w4+w6
+		mement* xMementRef2;	// replaces w8+w10
 		U8 pDummyPad1;	// just here to test non 18-bytes mement struct.
 // SPX: !!! these 6 bytes must remain at the end of structure !!! because these are the 6 bytes checked from an image buffer pointer -6 !
 		X16 _w12;		// @12 // bpp
@@ -1277,34 +1278,34 @@ namespace DM2Internal {
 		i32 dw0() const { return _dw0; }
 		void dw0(i32 val) { _dw0 = val; }
 
-		X16 w4() const { return _w4; }
-		X16 w6() const { return _w6; }
-		X16 w8() const { return _w8; }
-		X16 getRawDataIndex() const { return _w10; }	// w10
-		void w4(X16 val) { _w4 = val; }
-		void w6(X16 val) { _w6 = val; }
-		void w8(X16 val) { _w8 = val; }
-		void w10(X16 val) { _w10 = val; }
-		void w12(X16 val) { _w12 = val; }
-		void w14(X16 val) { _w14 = val; }
-		void w16(X16 val) { _w16 = val; }
+		X16 getMark4() const { return _w4; }	// w4() 
+		X16 getMark6() const { return _w6; }	// w6() 
+		X16 getMark8() const { return _w8; }	// w8()
+		X16 getRawDataIndex() const { return _w10; }	// w10()
+		void setMark4(X16 val) { _w4 = val; }	// w4(X16 val)
+		void setMark6(X16 val) { _w6 = val; }	// w6(X16 val)
+		void setMark8(X16 val) { _w8 = val; }		// w8(X16 val)
+		void w10(X16 val) { _w10 = val; }	// w10(X16 val)
+		void w12(X16 val) { _w12 = val; }	// w12(X16 val)
+		void w14(X16 val) { _w14 = val; }	// w14(X16 val)
+		void w16(X16 val) { _w16 = val; }	// w16(X16 val)
 
-		void pv4(mement *pv) {
-			U32ptr val = reinterpret_cast<U32ptr>(pv);
-			_w4 = U16(val);
-			_w6 = U16(val >> 16);
+		void setMement1(mement *pv) {	// pv4(mement *pv)
+			//U32ptr val = reinterpret_cast<U32ptr>(pv);
+			//_w4 = U16(val);
+			//_w6 = U16(val >> 16);
 			xMementRef1 = pv;	// SPX: real pointer to handle 64-bits
 		}
-		void pv8(mement *pv) {
+		void setMement2(mement *pv) {	// pv8(mement *pv)
 			U32ptr val = reinterpret_cast<U32ptr>(pv);
 			_w8 = U16(val);
 			_w10 = U16(val >> 16);
 			xMementRef2 = pv;	// SPX: real pointer to handle 64-bits
 		}
-//		mement *pv4() { return reinterpret_cast<mement *>(_w4 | (_w6 << 16)); }
-//		mement *pv8() { return reinterpret_cast<mement *>(_w8 | (_w10 << 16)); }
-		mement *pv4() { return reinterpret_cast<mement *>(xMementRef1); }
-		mement *pv8() { return reinterpret_cast<mement *>(xMementRef2); }
+//		mement *pv4() { return reinterpret_cast<mement *>(_w4 | (_w6 << 16)); }	// *pv4()
+//		mement *pv8() { return reinterpret_cast<mement *>(_w8 | (_w10 << 16)); }	// *pv8()
+		mement *getMement1() { return reinterpret_cast<mement *>(xMementRef1); }	// *pv4()
+		mement *getMement2() { return reinterpret_cast<mement *>(xMementRef2); }	// *pv8()
 	};
 	// 
 	struct IMG3 {	// 10 bytes
@@ -2823,9 +2824,9 @@ namespace DM2Internal {
 	// 
 	// SPX: sk5cb6 renamed 
 	struct GDATEntries { // ? bytes (max 44 bytes)
-		X16 *pw0;		// cls1-to-cls2
-		X16 *pw4;		// cls2-to-cls3?
-		RawEntry *pv8;
+		X16* tblCls1toCls2;		// pw0	cls1-to-cls2
+		X16* tblCls2toCls3;		// pw4	cls2-to-cls3?
+		RawEntry* pv8;
 		U16 iTotalClass1;		// w12 cnt cls1
 		X16 w14;		// total cnt of cls2
 		X16 w16;

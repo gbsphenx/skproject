@@ -1361,7 +1361,7 @@ protected:
 	int TEST_MEMENT(mement* xMemEntry);	// SPX: changed "void" to "int"
 	mement *_3e74_48c9_MEMENT(U16 mementi); // _3e74_48c9
 	void FREE_CACHE_INDEX(U16 cacheIndex);
-	void MEMENT_3e74_4549(U16 xx);	// _3e74_4549
+	void MEMENT_3e74_4549(U16 iMemEntIdx);	// _3e74_4549
 	void MEMENT_3e74_0c8c(mement *ref);	// _3e74_0c8c
 	void MEMENT_3e74_0d32(mement *ref);	// _3e74_0d32
 	virtual bool ValidateMements(bool display);
@@ -1386,7 +1386,7 @@ protected:
 	void _01b0_0c70_MOUSE(U16 xx); // _01b0_0c70
 	void _01b0_0ca4_MOUSE(U16 *xx, U16 yy); // _01b0_0ca4
 	void _443c_040e_MOUSE(); // _443c_040e
-	Bit8u *ALLOC_NEW_PICT(U16 index, U16 width, U16 height, U16 bpp);
+	U8* ALLOC_NEW_PICT(U16 index, U16 width, U16 height, U16 bpp);
 	Bit32u GET_TEMP_CACHE_HASH();
 	U16 ALLOC_TEMP_CACHE_INDEX();
 	void _0b36_0d67(sk3f6c *ref, SRECT *rc);

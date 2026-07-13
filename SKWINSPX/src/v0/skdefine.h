@@ -22,6 +22,12 @@
 #define IMG_4_BPP					4			// 4 bits per pixel => 16 colors
 #define IMG_8_BPP					8			// 8 bits per pixel => 256 colors
 
+// mement special values
+#define MEMENT_MARK_P0_0000				0x0000
+#define MEMENT_MARK_P1_0001				0x0001
+#define MEMENT_MARK_M1_FFFF				0xFFFF
+#define MEMENT_MARK_M2_FFFE				0xFFFE
+#define MEMENT_MARK_M3_FFFD				0xFFFD
 
 //------------------------------------------------------------------------------
 //	DATABASE / CATEGORIES
