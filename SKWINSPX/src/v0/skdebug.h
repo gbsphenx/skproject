@@ -15,6 +15,7 @@
 	#define SkD(X) SkwinDEBUG X
 #endif // __DJGPP__
 
+#define SkDP(X) {if (SkCodeParam::bDebugPrint == true) {SkwinDEBUG (1, X);}}
 
 #ifdef _DEBUG
 	#define LOGX(X) Write2LOGX X

@@ -2339,17 +2339,12 @@ _1c6d:
 //^0B36:0CBE
 void SkWinCore::_0b36_0cbe(sk3f6c *ref, U16 yy)
 {
-	//^0B36:0CBE
 	ENTER(4);
-	//^0B36:0CC3
 	if (ref->w10 != 0) {
-		//^	0B36:0CCD
 		SRECT *bp04 = ref->w12;
-		//^0B36:0CDC
 		FIRE_HIDE_MOUSE_CURSOR();
 
 		do {
-			//^0B36:0CE1
 			FIRE_BLIT_PICTURE(
 				QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(ref->w0),
 				_4976_4964,
@@ -2360,25 +2355,18 @@ void SkWinCore::_0b36_0cbe(sk3f6c *ref, U16 yy)
 				glbScreenWidth,
 				-1,
 				0,
-				8,
-				8,
+				IMG_8_BPP,
+				IMG_8_BPP,
 				NULL
 				);
-			//^0B36:0D38
 			bp04++;
-			//^0B36:0D3C
 		} while (--ref->w10 != 0);
-		//^0B36:0D45
 		FIRE_SHOW_MOUSE_CURSOR();
 	}
-	//^0B36:0D4A
 	if (yy != 0) {
-		//^0B36:0D50
 		FREE_TEMP_CACHE_INDEX(ref->w0);
-		//^0B36:0D5C
-		ref->w0 = 0xffff;
+		ref->w0 = 0xFFFF;
 	}
-	//^0B36:0D64
 	return;
 }
 
@@ -2388,445 +2376,298 @@ void SkWinCore::_0b36_0cbe(sk3f6c *ref, U16 yy)
 //SPX: _2759_0644 renamed UPDATE_RIGHT_PANEL
 void SkWinCore::UPDATE_RIGHT_PANEL(U16 xx)
 {
-	//^2759:0644
-	//^2759:064A
 	U16 bp0a = 0;
 	U16 bp0c = 0;
 	U16 bp0e = 0;
 	U16 bp12 = 0;
-	//^2759:065E
+	SkDP("URP\n");
 	if (cd.pi.glbNextChampionNumber == 0) {
-		//^2759:0668
+		SkDP("URP-1\n");
 		if (cd.pi.glbChampionsCount == 0) {
-			//^2759:066F
 			if (_4976_531c != 0 || glbSomeChampionPanelFlag != 0) {
-				//^2759:067D
 				glbSomeChampionPanelFlag = 0;
 				_4976_531c = 0;
-				//^2759:0685
 				_29ee_00a3(1);
 			}
-			//^2759:068D
 			glbRightPanelType = RIGHT_PANEL_UNDEFINED;
 			goto _0e03;
 		}
-		//^2759:0696
+		SkDP("URP-2\n");
 		if (xx != 0) {
-			//^2759:069F
 			for (U16 bp06=0; bp06 < cd.pi.glbChampionsCount; bp06++) {
-				//^2759:06A6
 				// SPX: ??BUG?? The b42 is table of 2 elements only; shouldn't it be si < 2 ??
-				for (U16 si=0; si <= 2; si++) {
-					//^2759:06AA
+				for (U16 si=0; si < 2; si++) {	// (U16 si=0; si <= 2; si++)
 					if (glbChampionSquad[bp06].handCooldown[si] != 0) {
-						//^2759:06BB
 						glbChampionSquad[bp06].handCooldown[si] = glbChampionSquad[bp06].handCooldown[si] -1;
-						//^2759:06DB
 						if (glbChampionSquad[bp06].handCooldown[si] == 0) {
-							//^2759:06DF
 							LOAD_PROJECTILE_TO_HAND(bp06, si);
 						}
 					}
-					//^2759:06EA
 				}
-				//^2759:06F0
 			}
-			//^2759:06FC
 			if (glbRightPanelType == RIGHT_PANEL_MAGIC_MAP) {	// 3
-				//^2759:0703
 				ATLASSERT(cd.pi.glbChampionIndex < cd.pi.glbChampionsCount + 1);
 				Champion *champion = &glbChampionTable[cd.pi.glbChampionIndex];	//*bp04
-				//^2759:0714
 				if ((glbMagicalMapFlags & 0x0200) != 0) {
-					//^2759:071C
 					if (--_4976_5316 == 0) {
-						//^2759:0722
 						if (champion->manaCurrent != 0) {
-							//^2759:072C
 							champion->manaCurrent--;
-							//^2759:0730
 							champion->heroFlag |= CHAMPION_FLAG_0800;
-							//^2759:0736
 							_4976_5316 = 25 / _4976_531a;
 						}
 						else {
-							//^2759:0743
 							glbSomeChampionPanelFlag = 1;
 							glbMagicalMapFlags = 0;
 						}
 					}
 				}
-				//^2759:0751
 				else if (champion->manaCurrent != 0) {
-					//^2759:075B
 					glbSomeChampionPanelFlag = 1;
 					glbMagicalMapFlags = 0;
 				}
 			}
 		}
-		//^2759:0767
+		SkDP("URP-3\n");
 		if (glbChampionAttackDamage != 0) {
-			//^2759:076E
 			SHOW_ATTACK_RESULT(glbChampionAttackDamage);
-			//^2759:0778
 			_4976_531c = 1;
 			glbChampionAttackDamage = 0;
 			glbRightPanelType = RIGHT_PANEL_ATTACK_RESULT;	// 6
 			goto _0e03;
 		}
-		//^2759:078D
+		SkDP("URP-4\n");
 		if (cd.pi.glbChampionIndex > 0) {
-			//^2759:0794
 			i16 bp06 = cd.pi.glbChampionIndex -1;
-			//^2759:079B
 			if (bp06 >= 0 && glbSelectedHandAction != 2) {
-				//^2759:07A9
 				if (_4976_3de6[RCJ(4,bp06)][RCJ(2,glbSelectedHandAction)] != glbChampionSquad[bp06].Possess(glbSelectedHandAction)) {
-					//^2759:07D4
 					DISPLAY_RIGHT_PANEL_SQUAD_HANDS();
 				}
 			}
 		}
-		//^2759:07D8
 		U8 bp1c[4];
+		SkDP("URP-5\n");
 		if (cd.pi.glbChampionIndex >= 0) {
-			//^2759:07E2
 			U16 bp06;
 			for (bp06=0; bp06 < cd.pi.glbChampionsCount; bp06++) {
-				//^2759:07EA
 				Champion *bp04 = &glbChampionSquad[bp06];
-				//^2759:07FB
 				bp1c[bp06] = 0;
-				//^2759:0807
 				U8 bp07 = (bp04->playerDir() +4 - cd.pi.glbPlayerDir) & 3;
-				//^2759:0819
 				i8 bp08 = (bp04->playerPos() +4 - cd.pi.glbPlayerDir) & 3;
-				//^2759:0828
 				if (bp04->curHP() != 0 && bp08 +1 == _4976_5dbc) {
-					//^2759:0837
 					bp08 = -1;
 				}
-				//^2759:083B
 				if (READ_UI8(_4976_3de2, bp06) != bp08 || _4976_3dde[RCJ(4,bp06)] != bp07) {
-					//^2759:0850
 					bp0c = 1;
 					bp12 = 1;
-					//^2759:0859
 					if (bp08 != -1) {
-						//^2759:085F
 						_4976_531c = 1;
 					}
-					//^2759:0865
 					WRITE_UI8(_4976_3de2, bp06, bp08);
 					_4976_3dde[RCJ(4,bp06)] = bp07;
 				}
-				//^2759:0876
 			}
-			//^2759:0885
 			if (glbSquadInterfaceMapGfxSet != glbMapGraphicsSet || glbGlobalSpellEffects.AuraOfSpeed != 0 || (!_4976_532c) != (!glbGlobalSpellEffects.Invisibility)) {
-				//^2759:08AC
 				bp0c = 1;
 				glbSquadInterfaceMapGfxSet = glbMapGraphicsSet;
 				_4976_532c = (glbGlobalSpellEffects.Invisibility != 0) ? 1: 0;
 			}
 		}
-		//^2759:08C8
+		SkDP("URP-6\n");
 		if (_4976_531c != 0) {
-			//^2759:08CF
 			if (glbSomeChampionPanelFlag > 1) {
-				//^2759:08D6
-				//^2759:0BE2
 				glbSomeChampionPanelFlag--;
-				//^2759:0BE6
 				goto _0e03;
 			}
-			//^2759:08D9
 			_29ee_00a3(1);
-			//^2759:08E1
 			_4976_531c = 0;
-			//^2759:08E7
 			bp0a = 1;
 		}
-		//^2759:08EC
+		SkDP("URP-7\n");
 		if (cd.pi.glbChampionIndex == 0) {
-			//^2759:08F6
 			glbRightPanelType = 0;
-			//^2759:08FC
 			if (bp0a == 0 && bp12 != 0) {
-				//^2759:0908
 				glbPreviousRightPanelType = 0xffff;
 			}
-			//^2759:090E
+			SkDP("URP-71\n");
 			for (U16 bp06=0; bp06 < cd.pi.glbChampionsCount; bp06++) {
-				//^2759:0916
 				Champion *champion = &glbChampionSquad[bp06];
-				//^2759:0927
 				if (champion->curHP() == 0 && GET_PLAYER_AT_POSITION(champion->playerPos()) >= 0) {
-					//^2759:0942
 					continue;
 				}
-				//^2759:0945
+				SkDP("URP-72\n");
 				bp0e = bp1c[bp06];
-				//^2759:0955
 				if (glbChampionAlive[bp06] != ((champion->curHP() > 0) ? 1 : 0)) {
-					//^2759:0973
 					glbChampionAlive[bp06] = ((champion->curHP() > 0) ? 1 : 0);
-					//^2759:098D
 					bp0e = 1;
 					glbPreviousRightPanelType = 0xffff;
 				}
-				//^2759:0998
+				SkDP("URP-73\n");
 				U16 bp16 = ((ABS16(glbSomeChampionIndex) -1 == bp06) ? 1 : 0);
-				//^2759:09B2
 				//SPX: 0 to 1 = hands
 				for (U16 si=0; si <= 1; si++) {
-					//^2759:09B7
 					U16 bp14 = 0;
 					U16 bp10 = 0;
-					//^2759:09BF
 					if (bp16 != 0 && glbSelectedHand_2 == si) {
-						//^2759:09CB
 						if (glbSomeChampionIndex > 0) {
-							//^2759:09D2
 							bp14 = 1;
 						}
-						//^2759:09D7
 						bp10 = 1;
 					}
-					//^2759:09DC
+					SkDP("URP-74\n");
 					U8 bp17 = (champion->handCooldown[si] != 0) ? 1 : 0;
-					//^2759:09F0
 					if (glbChampionHandCoolingDown[bp06][si] != bp17) {
-						//^2759:0A03
 						glbChampionHandCoolingDown[bp06][si] = bp17;
-						//^2759:0A14
 						bp10 = 1;
 					}
-					//^2759:0A19
 					if (_4976_3de6[RCJ(4,bp06)][RCJ(2,si)] != champion->Possess(si) || bp0a != 0 || bp0e != 0) {
-						//^2759:0A45
 						_4976_3de6[RCJ(4,bp06)][RCJ(2,si)] = champion->Possess(si);
-						//^2759:0A68
 						bp10 = 1;
 					}
-					//^2759:0A6D
+					SkDP("URP-75\n");
 					if (bp0a != 0 || bp0e != 0 || bp10 != 0) {
-						//^2759:0A7F
+						SkD((SkCodeParam::bDebugPrint, "URP-75 - %d %d %d\n", bp06, si, bp14));
 						DRAW_HAND_ACTION_ICONS(bp06, si, bp14);
 					}
-					//^2759:0A8E
 				}
-				//^2759:0A97
+				SkDP("URP-76\n");
 				U16 bp14 = 0;
-				//^2759:0A9C
 				// SPX: == 2 => spell selected instead of hand
 				if (bp16 != 0 && glbSelectedHand_2 == 2) {
-					//^2759:0AA9
 					if (glbSomeChampionIndex > 0) {
-						//^2759:0AB0
 						bp14 = 1;
 					}
-					//^2759:0AB5
 					bp0e = 1;
 				}
-				//^2759:0ABA
+				SkDP("URP-77\n");
 				U8 bp17 = (champion->herob44 != 0) ? 1 : 0;
-				//^2759:0ACE
 				if (glbChampionHandCoolingDown[bp06][2] != bp17) {
-					//^2759:0AE1
 					glbChampionHandCoolingDown[bp06][2] = bp17;
-					//^2759:0AF2
 					bp0e = 1;
 				}
-				//^2759:0AF7
+				SkDP("URP-78\n");
 				if (bp0a != 0 || bp0e != 0 || (_4976_3df7 != glbChampionLeader && (_4976_3df7 == bp06 || glbChampionLeader == bp06))) {
-					//^2759:0B19
 					DRAW_SQUAD_SPELL_AND_LEADER_ICON(bp06, bp14);
 				}
-				//^2759:0B26
+				SkDP("URP-79\n");
 				if (glbChampionSquad[bp06].enchantmentPower != 0 || _4976_3f68 != 0) {
-					//^2759:0B3E
 					bp0c = 1;
 				}
-				//^2759:0B43
 				if (glbChampionSquad[bp06].enchantmentPower != 0) {
-					//^2759:0B54
 					_4976_3f68 |= 1 << bp06;
 				}
 				else {
-					//^2759:0B62
 					_4976_3f68 &= ~(1 << bp06);
 				}
-				//^2759:0B70
 			}
-			//^2759:0B7F
+			
 			if (glbSomeChampionIndex < 0) {
-				//^2759:0B86
 				glbSomeChampionIndex = 0;
 			}
-			//^2759:0B8C
+			SkDP("URP-79\n");
 			glbSomeChampionIndex = -glbSomeChampionIndex;
-			//^2759:0B94
 			if (bp0a != 0 || bp0c != 0) {
-				//^2759:0BA0
 				DRAW_SQUAD_POS_INTERFACE();
 			}
 		}
-		//^2759:0BA5
+		SkDP("URP-8\n");
 		_4976_3df7 = glbChampionLeader;
-		//^2759:0BB0
 		if (cd.pi.glbChampionIndex > 0 && (glbSomeChampionPanelFlag != 0 || bp0a != 0 || bp0c != 0 || (glbRightPanelType == RIGHT_PANEL_MAGIC_MAP && xx != 0))) {
-			//^2759:0BDB
 			if (glbSomeChampionPanelFlag > 1) {
-				//^2759:0BE2
 				glbSomeChampionPanelFlag--;
-				//^2759:0BE6
 				goto _0e03;
 			}
-			//^2759:0BE9
 			if (glbMagicalMapFlags != 0 && glbSomeChampionPanelFlag == 0 && bp0a == 0) {
-				//^2759:0BFD
 				_29ee_00a3(0);
 			}
 			else {
-				//^2759:0C07
 				_29ee_00a3(1);
-				//^2759:0C0F
 				DRAW_PLAYER_NAME_AT_CMDSLOT();
-				//^2759:0C14
 				glbMagicalMapFlags &= 0xfbff;
 			}
-			//^2759:0C1A
 			if (glbSelectedHandAction == 2) {
-				//^2759:0C21
 				glbRightPanelType = RIGHT_PANEL_SPELL;
-				//^2759:0C27
 				DRAW_SPELL_PANEL();
 			}
 			else {
-				//^2759:0C2F
 				U16 bp06 = cd.pi.glbChampionIndex -1;
-				//^2759:0C36
 				Champion *champion = &glbChampionSquad[bp06];	//*bp04
-				//^2759:0C44
 				ObjectID di = champion->Possess(glbSelectedHandAction);
-				//^2759:0C53
 				if (IS_CONTAINER_MAP(di) != 0 && glbMagicalMapFlags == 0) {
-					//^2759:0C65
 					_4976_531a = 1;
 					_4976_5316 = 25;
-					//^2759:0C71
 					if (champion->curMP() != 0) {
-						//^2759:0C7B
 						champion->manaCurrent--;
-						//^2759:0C7F
 						champion->heroFlag |= CHAMPION_FLAG_0800;	// 0x0800
-						//^2759:0C85
 						glbMagicalMapFlags = 0x8200;	// 0x8200
 					}
 					else {
-						//^2759:0C8D
 						glbMagicalMapFlags = 0x8000;	// 0x8000
 					}
-					//^2759:0C93
 					glbRightPanelType = RIGHT_PANEL_MAGIC_MAP;	// 3
 				}
-				//^2759:0C9B
 				else if (IS_CONTAINER_MONEYBOX(di) != 0) {
-					//^2759:0CA6
 					glbRightPanelType = RIGHT_PANEL_MONEY_BOX;	// 4
 				}
-				//^2759:0CAE
 				else if (IS_CONTAINER_CHEST(di) != 0 && glbRightPanelType != RIGHT_PANEL_CONTAINER) {	// != 5
-					//^2759:0CB9
 					__CHECK_ROOM_FOR_CONTAINER(di, GET_ADDRESS_OF_RECORD9(di));
-					//^2759:0CD2
 					glbRightPanelType = RIGHT_PANEL_CONTAINER;	// 5
 				}
 
-				//^2759:0CD8
 				if (glbRightPanelType == RIGHT_PANEL_MONEY_BOX) {	// 4
-					//^2759:0CDF
 					DRAW_MONEYBOX(di);
 				}
-				//^2759:0CE7
 				else if (glbRightPanelType == RIGHT_PANEL_CONTAINER) {	// 5
-					//^2759:0CEE
 					DRAW_CONTAINER_PANEL(di, 1);
 				}
-				//^2759:0CFA
 				else if (IS_ITEM_HAND_ACTIVABLE(bp06, di, glbSelectedHandAction) != 0 && glbRightPanelType != RIGHT_PANEL_MAGIC_MAP) {
-					//^2759:0D14
 					glbRightPanelType = RIGHT_PANEL_HAND_ACTIONS;
-					//^2759:0D1A
 					if (glbRightPanelType != glbPreviousRightPanelType) {
-						//^2759:0D20
 						_1031_0667();
-						//^2759:0D25
 						glbPreviousRightPanelType = glbRightPanelType;
 					}
-					//^2759:0D2B
 					DRAW_SEVERAL_CMD_SLOTS();
 				}
-				//^2759:0D32
 				else if (glbRightPanelType == RIGHT_PANEL_MAGIC_MAP) {	// 3
-					//^2759:0D39
 					if ((glbMagicalMapFlags & 0x0400) == 0) {
-						//^2759:0D41
-						glbPreviousRightPanelType = 0xffff;
+						glbPreviousRightPanelType = 0xFFFF;
 					}
-					//^2759:0D47
 					DRAW_MAJIC_MAP(di);
 				}
 				else {
-					//^2759:0D50
 					cd.pi.glbChampionIndex = 0;
 					glbRightPanelType = RIGHT_PANEL_SQUAD_HANDS;
 				}
 			}
 
-			//^2759:0D5C
 			glbSomeChampionPanelFlag = 0;
 		}
 		else {
-			//^2759:0D64
 			if (cd.pi.glbChampionIndex > 0 && glbRightPanelType == RIGHT_PANEL_CONTAINER && xx != 0) {
-				//^2759:0D78
 				_29ee_00a3(0);
-				//^2759:0D80
 				DRAW_CONTAINER_PANEL(glbChampionTable[cd.pi.glbChampionIndex].Possess(glbSelectedHandAction), 0);
 			}
 		}
-		//^2759:0D9F
+		SkDP("URP-9\n");
 		if (cd.pi.glbChampionIndex > 0 && _4976_3df9[RCJ(7,glbRightPanelType)] != 0 && (glbChampionTable[cd.pi.glbChampionIndex].enchantmentPower != 0 || _4976_3f68 != 0)) {
-			//^2759:0DC9
 			DRAW_PLAYER_ATTACK_DIR();
-			//^2759:0DCE
 			if (glbChampionTable[cd.pi.glbChampionIndex].enchantmentPower != 0) {
-				//^2759:0DDF
 				_4976_3f68 |=   1 << (i8(cd.pi.glbChampionIndex) -1);
 			}
 			else {
-				//^2759:0DF1
 				_4976_3f68 &= ~(1 << (i8(cd.pi.glbChampionIndex) -1));
 			}	
 		}
 
-		//^2759:0E03
 _0e03:
-		if (_4976_3f6c.w0 != 0xffff) {
-			//^2759:0E0A
+		SkDP("URP-10\n");
+		if (_4976_3f6c.w0 != 0xFFFF) {
 			_0b36_0cbe(&_4976_3f6c, 1);
 		}
-		//^2759:0E18
 		if (glbRightPanelType != glbPreviousRightPanelType) {
-			//^2759:0E21
 			_1031_0667();
-			//^2759:0E26
 			glbPreviousRightPanelType = glbRightPanelType;
 		}
 	}
-	//^2759:0E2C
 	//SkD((DLV_TWEET, "Tweet: Right panel %d\n", glbRightPanelType));
 	return;
 }
@@ -19817,10 +19658,12 @@ void SkWinCore::GAME_LOOP()
 		//SkD((DLV_DBG_GAME_LOOP, "-----------------------------------------------------------\n"));
 		if (iLoopCount%10 == 0 || iLoopCount <= 10)
 			SkD((SkCodeParam::bEngineNoDisplay||DLV_DBG_GAME_LOOP, "GAME_LOOP (%08d)\n", iLoopCount));
-		iLoopCount++,
+		iLoopCount++;
+
+		SkD((SkCodeParam::bDebugPrint, "GAME LOOP %08d> SET TICK BALANCE\n", iLoopCount));
 
 		//DISPLAY_HINT_TEXT(COLOR_YELLOW, message);
-		// SPX get speed from window menu
+		// SPX get speed from window menu 
 		//stdTickBalance = skWinApp->spfact*4;
 #if defined (__DJGPP__)
 		SkCodeParam::iTickSpeedFactor = 0;	// max speed
@@ -19839,12 +19682,14 @@ void SkWinCore::GAME_LOOP()
 			MOVE_RECORD_TO(OBJECT_NULL, -1, 0, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
 			glbMapToLoad = 0xFFFF;
 _00a4:
+			SkDP("PROCEED TIMERS\n");
 			PROCEED_TIMERS();
 			if (glbMapToLoad != 0xFFFF)
 				continue;
 			break;
 		}
 
+		SkDP("UPDATE WEATHER\n");
 		//SkD((DLV_DBG_GAME_LOOP, "GL (%08d) - AFTER TIMERS\n", iLoopCount));
 		UPDATE_WEATHER(0);
 		
@@ -19883,20 +19728,27 @@ _00a4:
 			}
 			IBMIO_USER_INPUT_CHECK();
 		}
+		SkDP("CHOOSE ARROW PANEL\n");
 		CHOOSE_HIGHLIGHT_ARROW_PANEL();
+		SkDP("SOUND_482b_05bf\n");
 		SOUND_482b_05bf(0);
+		SkDP("PROCESS_PLAYERS_DAMAGE\n");
 		PROCESS_PLAYERS_DAMAGE();
 		if (glbGlobalSpellEffects.AuraOfSpeed != 0)
 			glbGlobalSpellEffects.AuraOfSpeed--;
 		/// SPX: glbGameTick is a general tick counter : each 16 or 64 then do update
 		if ((X16(glbGameTick) & ((cd.pi.glbIsPlayerSleeping != 0) ? 15 : 0x3F)) == 0)
 			UPDATE_CHAMPIONS_STATS();
+		SkDP("GLOBAL_UPDATE_UNKNOW1\n");
 		GLOBAL_UPDATE_UNKNOW1();
+		SkDP("UPDATE_GENERAL_CHAMPIONS_STAT_DISP\n");
 		UPDATE_GENERAL_CHAMPIONS_STAT_DISP(1);
+		SkD((SkCodeParam::bDebugPrint, "DEFEATED ? %d\n", cd.pi.glbPlayerDefeated));
 		if (cd.pi.glbPlayerDefeated != 0)
 			return;
 		glbGameTick++;
 		//ATLASSERT(ValidateMements());
+		SkDP("PROCESS QUEUED DEALLOC RECORD\n");
 		PROCESS_QUEUED_DEALLOC_RECORD();
 
 		SkD((DLV_SYS,"SYS: Tick increased to %u ------------------------------\n", (Bitu)glbGameTick));
@@ -19929,6 +19781,7 @@ _01f7:
 			_1031_0d36_KEYBOARD(0x20, SPECIAL_UI_KEY_TRANSFORMATION());
 		}
 
+		SkDP("START MESSAGE LOOP\n");
 		MessageLoop(true); // in game
 		do {
 			if (IS_THERE_KEY_INPUT_2() != 0) {
@@ -19950,6 +19803,7 @@ _01f7:
 			//SkD((DLV_DBG_GAME_LOOP, "GL (%08d) - TICK STEP = %d / _4976_4c02 = %d\n", iLoopCount, glbTickStepReached, _4976_4c02));
 
 		} while (glbTickStepReached == 0 || _4976_4c02 == 0);
+		SkDP("END MESSAGE LOOP\n");
 		iLocalMap = glbMapToLoad;
 		if (iLocalMap != 0xFFFF) {
 			iLocalMap = glbCurrentMapIndex;
@@ -19960,7 +19814,9 @@ _01f7:
 			CHANGE_CURRENT_MAP_TO(iLocalMap);
 		}
 		//DM2DOS_R_BA7(ddata.v1e0266);
+		SkDP("REQUEST MUSIC\n");
 		REQUEST_PLAY_MUSIC_FROM_MAP(cd.pi.glbPlayerMap);
+		SkDP("!!! END OF GAME LOOP STEP !!!\n");
 		continue;
 	}
 	return;

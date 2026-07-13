@@ -248,108 +248,87 @@ void SkWinCore::DISPLAY_RIGHT_PANEL_SQUAD_HANDS()
 
 //^2405:05B4
 // SPX: _2405_05b4 renamed DRAW_ITEM_ON_WOOD_PANEL
-U8 *SkWinCore::DRAW_ITEM_ON_WOOD_PANEL(U16 player, U16 possessionIndex, Picture *ref)
+U8 *SkWinCore::DRAW_ITEM_ON_WOOD_PANEL(U16 iChampionIndex, U16 possessionIndex, Picture *ref)
 {
-	//^2405:05B4
 	ENTER(348);
-	//^2405:05BA
-	if (IS_ITEM_HAND_ACTIVABLE(player, glbChampionSquad[player].Possess(possessionIndex), possessionIndex) == 0) {
-		//^2405:05E1
-		//^2405:07BE
+	if (IS_ITEM_HAND_ACTIVABLE(iChampionIndex, glbChampionSquad[iChampionIndex].Possess(possessionIndex), possessionIndex) == 0) {
 		return NULL;
 	}
-	//^2405:05E8
+	SkDP("DIOWP-01\n");
 	U16 bp0c = glbRectX_0106 + _4976_010e;
 	U16 bp0e = glbRectY_0108 + _4976_0110;
-	//^2405:05FC
 	U16 bp0a = ALLOC_TEMP_CACHE_INDEX();
-	//^2405:0604
-    U8 *bp04 = ALLOC_NEW_PICT(bp0a, bp0c, bp0e, 8);
-	//^2405:061D
-	ObjectID di = glbChampionSquad[player].Possess(possessionIndex);
-	//^2405:0634
+    U8* bp04 = ALLOC_NEW_PICT(bp0a, bp0c, bp0e, IMG_8_BPP);
+	ObjectID di = glbChampionSquad[iChampionIndex].Possess(possessionIndex);
 	U8 bp05;
 	U8 bp06;
 	U8 bp07;
 	U16 bp12;
+	SkDP("DIOWP-02\n");
 	if (di == OBJECT_NULL) {
-		//^2405:0639
 		bp05 = 1;
 		bp06 = 2;
-		//^2405:0641
 		bp07 = (possessionIndex == 1) ? 8 : 7;
 		bp12 = 1;
 	}
 	else {
-		//^2405:0657
 		bp05 = QUERY_CLS1_FROM_RECORD(di);
-		//^2405:0661
 		bp06 = QUERY_CLS2_FROM_RECORD(di);
-		//^2405:066B
 		bp07 = GET_ITEM_ICON_ANIM_FRAME(di, -1, 0);
-		//^2405:067A
 		bp12 = 0;
 	}
-	//^2405:067F
-	ExtendedPicture bp014c;
-	QUERY_GDAT_SUMMARY_IMAGE(&bp014c, bp05, bp06, bp07);
-	//^2405:0699
-	QUERY_PICST_IT(&bp014c);
-	//^2405:06A6
-	U8 bp0f = glbPaletteT16[COLOR_RED];	// SPX: RED here is used as transparent for hand icon ..
-	//^2405:06B1
-	FILL_ENTIRE_PICT(bp04 = QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(bp0a, ref), bp0f);
-	//^2405:06D5
+	ExtendedPicture xExtPict;	// bp014c
+	SkDP("DIOWP-03\n");
+	QUERY_GDAT_SUMMARY_IMAGE(&xExtPict, bp05, bp06, bp07);
+	QUERY_PICST_IT(&xExtPict);
+	U8 iColorkey = glbPaletteT16[COLOR_RED];	// (bp0f) SPX: RED here is used as transparent for hand icon ..
+	SkDP("DIOWP-04\n");
+	FILL_ENTIRE_PICT(bp04 = QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(bp0a, ref), iColorkey);
+	SkDP("DIOWP-05\n");
 	if (bp12 != 0) {
-		//^2405:06DB
-		//^2405:0792
 		DRAW_DIALOGUE_PICT(
-			QUERY_PICT_BITS(&bp014c),
+			QUERY_PICT_BITS(&xExtPict),
 			bp04,
-			ALLOC_TEMP_ORIGIN_RECT(bp014c.iWidth, bp014c.iHeight),
+			ALLOC_TEMP_ORIGIN_RECT(xExtPict.iWidth, xExtPict.iHeight),
 			0,
 			0,
 			12,
-			bp014c.b58
+			xExtPict.iPal256
 			);
 	}
 	else {
-		//^2405:06F2
-		U8 bp015c[16];
-		for (U16 si = 0; si < 16; si++) {
-			//^2405:06F6
-			bp015c[si] = glbPaletteT16[COLOR_BLACK];
-			//^2405:0701
+		SkDP("DIOWP-06\n");
+		U8 iLocPalette[16];	// bp015c palette
+		for (U16 iColIdx = 0; iColIdx < 16; iColIdx++) {	// si
+			iLocPalette[iColIdx] = glbPaletteT16[COLOR_BLACK];
 		}
-		//^2405:0707
-		bp015c[12] = bp0f;
-		//^2405:070E
+		iLocPalette[12] = iColorkey;	// replace the special colorkey
+		SkDP("DIOWP-07\n");
 		DRAW_DIALOGUE_PICT(
-			QUERY_PICT_BITS(&bp014c),
+			QUERY_PICT_BITS(&xExtPict),
 			bp04,
 			ALLOC_TEMP_RECT(_4976_010e, _4976_0110, glbRectX_0106, glbRectY_0108),
 			0,
 			0,
 			-1,
-			bp015c
+			iLocPalette
 			);
-		//^2405:0751
-		TRANSLATE_PALETTE(bp014c.b58, 1, 0, 1, 16);
-		//^2405:0767
+		SkDP("DIOWP-08\n");
+		TRANSLATE_PALETTE(xExtPict.iPal256, 1, 0, 1, 16);
+		SkDP("DIOWP-09\n");
 		bp04 = QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(bp0a, ref);
-		//^2405:077E
-		//^2405:0792
+		SkDP("DIOWP-10\n");
 		DRAW_DIALOGUE_PICT(
-			QUERY_PICT_BITS(&bp014c),
+			QUERY_PICT_BITS(&xExtPict),
 			bp04,
 			ALLOC_TEMP_ORIGIN_RECT(glbRectX_0106, glbRectY_0108),
 			0,
 			0,
 			12,
-			bp014c.b58
+			xExtPict.iPal256
 			);
+		SkDP("DIOWP-11\n");
 	}
-	//^2405:07B8
 	return bp04;
 }
 
@@ -379,59 +358,51 @@ void SkWinCore::DRAW_GRAY_OVERLAY(sk3f6c *ref, SRECT *rc, U16 xx)
 
 //^29EE:026C
 // SPX: _29ee_026c renamed DRAW_HAND_ACTION_ICONS
-void SkWinCore::DRAW_HAND_ACTION_ICONS(U16 playerIndex, U16 possessionIndex, U16 leftOrRight)
+void SkWinCore::DRAW_HAND_ACTION_ICONS(U16 iChampionIndex, U16 possessionIndex, U16 leftOrRight)
 {
-	//^29EE:026C
 	ENTER(48);
-	//^29EE:0271
 	_29ee_00a3(0);
-	//^29EE:0278
-	Champion *champion = &glbChampionSquad[playerIndex];
-	//^29EE:0289
-	U16 si = (possessionIndex == 1) ? 0x46 : 0x4A;
-	//^29EE:0297
-	si += (champion->playerPos() +4 - cd.pi.glbPlayerDir) & 3;
-	//^29EE:02AC
-	SRECT bp10;
-	QUERY_EXPANDED_RECT(si, &bp10);
-	//^29EE:02BA
-	if (champion->curHP() == 0) {
-		//^29EE:02C4
-		SRECT bp10;
-		FILL_RECT_SUMMARY(&_4976_3f6c, &bp10, glbPaletteT16[COLOR_BLACK]);
+	Champion* xChampion = &glbChampionSquad[iChampionIndex];
+	U16 iRectNo = (possessionIndex == 1) ? 0x46 : 0x4A;	// si
+	iRectNo += (xChampion->playerPos() + 4 - cd.pi.glbPlayerDir) & 3;
+	SRECT xRect1;	// bp10
+	SkDP("DHAI-01\n");
+	QUERY_EXPANDED_RECT(iRectNo, &xRect1);
+	SkDP("DHAI-02\n");
+	if (xChampion->curHP() == 0) {
+		SRECT xRect1;	// bp10
+		FILL_RECT_SUMMARY(&_4976_3f6c, &xRect1, glbPaletteT16[COLOR_BLACK]);
 	}
 	else {
-		//^29EE:02DF
+		SkDP("DHAI-03\n");
 		// SPX: Draw background item square
-		DRAW_ICON_PICT_ENTRY(0x01, 0x04, (U8(possessionIndex) << 1) + U8(leftOrRight) +2, &_4976_3f6c, si, -1);
-		//^29EE:02FD
-		Picture bp30;
-		U8 *bp08 = DRAW_ITEM_ON_WOOD_PANEL(playerIndex, possessionIndex, &bp30);
-		//^29EE:0316
-		if (bp08 != NULL) {
-			//^29EE:031A
-			SRECT bp18;
+		DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x04_CHAMPION, (U8(possessionIndex) << 1) + U8(leftOrRight) +2, &_4976_3f6c, iRectNo, -1);
+		Picture xPicture;	// bp30
+		SkDP("DHAI-04\n");
+		U8* xImgBuffer = DRAW_ITEM_ON_WOOD_PANEL(iChampionIndex, possessionIndex, &xPicture);	// bp08
+		if (xImgBuffer != NULL) {
+			SRECT xRect2;	// bp18
 			// SPX: draw item (weapon, shield, flask, etc ..) in hand
+			SkDP("DHAI-05\n");
 			DRAW_ICON_PICT_BUFF(
-				bp08,
+				xImgBuffer,
 				&_4976_3f6c,
-				CALC_CENTERED_RECT_IN_RECT(&bp18, &bp10, READ_UI16(bp08,-4), READ_UI16(bp08,-2)),
+				CALC_CENTERED_RECT_IN_RECT(&xRect2, &xRect1, READ_UI16(xImgBuffer,-4), READ_UI16(xImgBuffer,-2)),
 				0,
 				0,
 				glbPaletteT16[COLOR_RED],
 				0,
 				NULL
 				);
-			//^29EE:0360
-			FREE_PICT_MEMENT(&bp30);
+			SkDP("DHAI-06\n");
+			FREE_PICT_MEMENT(&xPicture);
 		}
-		//^29EE:036C
-		if (champion->handCooldown[possessionIndex] != 0 || cd.pi.glbIsPlayerSleeping != 0) {
-			//^29EE:0380
-			DRAW_GRAY_OVERLAY(&_4976_3f6c, &bp10, 0);
+		SkDP("DHAI-07\n");
+		if (xChampion->handCooldown[possessionIndex] != 0 || cd.pi.glbIsPlayerSleeping != 0) {
+			DRAW_GRAY_OVERLAY(&_4976_3f6c, &xRect1, 0);
 		}
 	}
-	//^29EE:0393
+	SkDP("DHAI-END\n");
 	return;
 }
 
@@ -439,87 +410,61 @@ void SkWinCore::DRAW_HAND_ACTION_ICONS(U16 playerIndex, U16 possessionIndex, U16
 // SPX: _29ee_058d renamed DRAW_SQUAD_SPELL_AND_LEADER_ICON
 void SkWinCore::DRAW_SQUAD_SPELL_AND_LEADER_ICON(U16 player, U16 yy)
 {
-	//^29EE:058D
     ENTER(324);
-	//^29EE:0593
 	_29ee_00a3(0);
-	//^29EE:059A
 	U16 si = (glbChampionSquad[player].playerPos() +4 - cd.pi.glbPlayerDir) & 3;
-	//^29EE:05B6
 	SRECT bp0a;
 	FILL_RECT_SUMMARY(
 		&_4976_3f6c,
 		QUERY_EXPANDED_RECT(si + 0x4f, &bp0a),
 		glbPaletteT16[COLOR_BLACK]
 		);
-	//^29EE:05E1
 	if (glbChampionSquad[player].curHP() != 0) {
-		//^29EE:05F5
 		U16 di = (si == 1 || si == 2) ? 1 : 0;
-		//^29EE:0606
 		U8 bp01;
 		U8 bp02;
 		if (si <= 1) {
-			//^29EE:060B
 			bp01 = 10;
 			bp02 = 6;
 		}
 		else {
-			//^29EE:0615
 			bp01 = 12;
 			bp02 = 8;
 		}
-		//^29EE:061D
 		if (player == glbChampionLeader) {
-			//^29EE:0626
 			bp01++;
 		}
-		//^29EE:0629
 		if (yy != 0) {
-			//^29EE:062F
 			bp02++;
 		}
-		//^29EE:0632
 		ExtendedPicture bp0144;
 		QUERY_GDAT_SUMMARY_IMAGE(&bp0144, 1, 4, bp02);
-		//^29EE:0648
 		bp0144.mirrorFlip = di;
-		//^29EE:064C
 		_0b36_11c0(
 			QUERY_PICST_IT(&bp0144),
 			&_4976_3f6c,
 			si + 0x57,
 			4
 			);
-		//^29EE:066F
 		if (cd.pi.glbIsPlayerSleeping != 0 || glbChampionSquad[player].herob44 != 0) {
-			//^29EE:0687
 			bp0144.rc36.x += _4976_3f6c.rc2.x;
 			bp0144.rc36.y += _4976_3f6c.rc2.y;
-			//^29EE:0695
 			DRAW_GRAY_OVERLAY(&_4976_3f6c, &bp0144.rc36, 0);
 		}
-		//^29EE:06A9
 		QUERY_GDAT_SUMMARY_IMAGE(&bp0144, 0x01, 0x04, bp01);
-		//^29EE:06BF
 		bp0144.mirrorFlip = di;
-		//^29EE:06C3
 		_0b36_11c0(
 			QUERY_PICST_IT(&bp0144),
 			&_4976_3f6c,
 			si + 0x53,
 			4
 			);
-		//^29EE:06E6
 		if (cd.pi.glbIsPlayerSleeping != 0) {
-			//^29EE:06ED
 			bp0144.rc36.x = _4976_3f6c.rc2.x;
 			bp0144.rc36.y = _4976_3f6c.rc2.y;
-			//^29EE:06FB
 			DRAW_GRAY_OVERLAY(&_4976_3f6c, &bp0144.rc36, 0);
 		}
 	}
-	//^29EE:070F
 	return;
 }
 
@@ -2031,7 +1976,7 @@ void SkWinCore::DRAW_PICST_X_SRECT(SRECT xRectangle, ExtendedPicture *ref)
 			ref->mirrorFlip,					// mirrorFlip
 			READ_I16(bp04,-6),					// srcBpp
 			bp0c,								// dstBpp
-			(ref->w56 == 0) ? NULL : ref->b58	// local pal
+			(ref->w56 == 0) ? NULL : ref->iPal256	// local pal
 			);
 	}
 	ref->w32 = bp08;
@@ -2140,7 +2085,7 @@ void SkWinCore::DRAW_PICST(ExtendedPicture *ref)
 			ref->mirrorFlip,					// mirrorFlip
 			READ_IMGBUFF_BPP(bp04),				// srcBpp	// READ_I16(bp04,-6)
 			bp0c,								// dstBpp
-			(ref->w56 == 0) ? NULL : ref->b58	// local pal
+			(ref->w56 == 0) ? NULL : ref->iPal256	// local pal
 			);
 	}
 	//^0B36:0C3D
@@ -3710,19 +3655,23 @@ void SkWinCore::DRAW_ITEM_IN_HAND(LeaderPossession *ref)
 void SkWinCore::UPDATE_GENERAL_CHAMPIONS_STAT_DISP(U16 xx)
 {
 	ENTER(4);
+	SkDP("UGCSD:Before Loop\n");
+	SkD((SkCodeParam::bDebugPrint, "DEFEATED ? %d\n", cd.pi.glbChampionsCount));
 	for (U16 iChampionIndex = 0; iChampionIndex < cd.pi.glbChampionsCount; iChampionIndex++) {
 		if (iChampionIndex + 1 != glbChampionInventory) {
 			REFRESH_PLAYER_STAT_DISP(iChampionIndex);
 		}
 	}
+	SkDP("UGCSD:Before Loop 2\n");
 	if (glbChampionInventory != 0) {
-		U16 si = glbChampionInventory - 1;
-		Champion* champion = &glbChampionSquad[si];
-		if (champion->enchantmentPower != 0 && champion->enchantmentAura >= ENCHANTMENT_AURA_FIRST && champion->enchantmentAura <= ENCHANTMENT_AURA_LAST) {
-			champion->heroFlag |= (glbShowItemStats != 0 && cd.pi.glbLeaderHandPossession.object == OBJECT_NULL) ? CHAMPION_FLAG_3000 : CHAMPION_FLAG_1000;	// 0x3000 or 0x1000
+		U16 iChampionIndex = glbChampionInventory - 1;	// si
+		Champion* xChampion = &glbChampionSquad[iChampionIndex];
+		if (xChampion->enchantmentPower != 0 && xChampion->enchantmentAura >= C03_ENCHANTMENT_AURA_FIRST && xChampion->enchantmentAura <= C06_ENCHANTMENT_AURA_LAST) {
+			xChampion->heroFlag |= (glbShowItemStats != 0 && cd.pi.glbLeaderHandPossession.object == OBJECT_NULL) ? CHAMPION_FLAG_3000 : CHAMPION_FLAG_1000;	// 0x3000 or 0x1000
 		}
 		REFRESH_PLAYER_STAT_DISP(glbChampionInventory -1);
 	}
+	SkDP("UGCSD:Before Right Panel\n");
 	UPDATE_RIGHT_PANEL(xx);
 	return;
 }
@@ -3985,7 +3934,7 @@ void SkWinCore::_32cb_0f82_SHOP_GLASS(Actuator *ref, U8 cls4, i16 bb, i16 cellPo
 			}
 			//^32CB:152C
 			DRAW_DIALOGUE_PICT(bp08, glbBackBuffViewport, QUERY_BLIT_RECT(bp08, &bp34, rectno|0x8000, &bp2a, &bp2c, gg), 
-				0, 0, colorkey1, glbTempPicture.b58);
+				0, 0, colorkey1, glbTempPicture.iPal256);
 			//^32CB:1576
 			FREE_TEMP_CACHE_INDEX(bp1c);
 			//^32CB:157F
@@ -4241,18 +4190,18 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 		bp01d6.iXStretch = iStretchHorizontal;
 		bp01d6.iYStretch = iStretchVertical;
 		if (bp4c != 0) {
-			bp01d6.b58[1] = glbPaletteT16[COLOR_BLACK];
-			bp01d6.b58[2] = glbPaletteT16[COLOR_BROWN];
+			bp01d6.iPal256[1] = glbPaletteT16[COLOR_BLACK];
+			bp01d6.iPal256[2] = glbPaletteT16[COLOR_BROWN];
 		}
 		else {
 			COPY_MEMORY(
 				QUERY_GDAT_IMAGE_LOCALPAL(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_x03_LETTERS),	// 08 .. 03
-				bp01d6.b58,
+				bp01d6.iPal256,
 				16
 				);
 		}
 		bp01d6.w56 = 16;
-		_32cb_0804(bp01d6.b58, U8(iYDist), si, -1, bp01d6.w56);
+		_32cb_0804(bp01d6.iPal256, U8(iYDist), si, -1, bp01d6.w56);
 		bp01d6.pb44 = glbBackBuffViewport;
 		bp01d6.rectNo = iRectno;
 		bp01d6.w26 = iRefPoint;
@@ -4329,11 +4278,11 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 			&bp0310, GDAT_CATEGORY_x09_WALL_GFX, bp1f, iImageEntry, iStretchHorizontal, iStretchVertical, iYDist, iFlipImage, si,
 			QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x09_WALL_GFX, bp1f, dtWordValue, GDAT_IMG_WALL_COLORKEY_2)	// 0x11 is colorkey2 for seeing outside through window (0xC8 image)
 			);
-		_32cb_0c7d(&bp0310, bp26, si);
+		DRAW_RAIN_32cb_0c7d(&bp0310, bp26, si);
 		bp0310.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp26));
 		DRAW_PICST(&bp0310);
 		FREE_PICT_MEMENT(&bp0310);
-		bp0310.colorKeyPassThrough = bp0310.b58[si];
+		bp0310.colorKeyPassThrough = bp0310.iPal256[si];
 		bp0310.pb44 = glbBackBuffViewport;
 		bp0310.rectNo = iRectno;
 		bp0310.w26 = iRefPoint;
@@ -5088,7 +5037,7 @@ void SkWinCore::DRAW_DUNGEON_GRAPHIC(U8 cls1, U8 cls2, U8 cls4, X16 rectno, i16 
 	X16 si = rectno;
 	ExtendedPicture bp013a;
 	QUERY_GDAT_SUMMARY_IMAGE(&bp013a, U8(cls1), U8(cls2), U8(cls4));
-	_0b36_037e(bp013a.b58, U8(_4976_5a88), colorkey, -1, bp013a.w56);
+	_0b36_037e(bp013a.iPal256, U8(_4976_5a88), colorkey, -1, bp013a.w56);
 	bp013a.colorKeyPassThrough = colorkey;
 	bp013a.rectNo = si;
 	bp013a.pb44 = glbBackBuffViewport;
@@ -5605,7 +5554,7 @@ void SkWinCore::DRAW_DOOR(i16 iCellPos, X16 yy, X16 zz, X32 aa)	// i16 xx, X16 y
 								DRAW_TEMP_PICST();
 							}
 #endif // XDM1_EXTENDED_SEETHRUWALLS
-							xPicture.colorKeyPassThrough = xPicture.b58[iDoorColorPassThrough];
+							xPicture.colorKeyPassThrough = xPicture.iPal256[iDoorColorPassThrough];
 							xPicture.w56 = 0;
 							QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(iCacheNo, &xPicture);
 							// SPX: that draws the main door (without ornate)
@@ -5919,17 +5868,17 @@ X16 SkWinCore::DRAW_EXTERNAL_TILE(i16 xx)
 				);
 			if (bp1e != 0) {
 				//^32CB:226E
-				_32cb_0c7d(&bp0164, bp20, bp0e);
+				DRAW_RAIN_32cb_0c7d(&bp0164, bp20, bp0e);
 			}
 			else {
 				//^32CB:2283
-				FILL_ENTIRE_PICT(reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp20)), bp0164.b58[bp0e]);
+				FILL_ENTIRE_PICT(reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp20)), bp0164.iPal256[bp0e]);
 			}
 			//^32CB:22A5
 			bp0164.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp20));
 			DRAW_PICST(&bp0164);
 			FREE_PICT_MEMENT(&bp0164);
-			bp0164.colorKeyPassThrough = bp0164.b58[bp0e];
+			bp0164.colorKeyPassThrough = bp0164.iPal256[bp0e];
 			bp0164.pb44 = glbBackBuffViewport;
 			bp0164.rectNo = bp0c;
 			bp0164.w26 = bp12;
@@ -6421,7 +6370,7 @@ void SkWinCore::DRAW_WALL(i16 iViewportCell)	// i16 xx
 			//------
 
 			//--- Get correct pass through color
-			xExtPicWall.colorKeyPassThrough = xExtPicWall.b58[iColorkey1];
+			xExtPicWall.colorKeyPassThrough = xExtPicWall.iPal256[iColorkey1];
 			xExtPicWall.w56 = 0;
 			QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(iPicture, &xExtPicWall);
 			COPY_MEMORY(&xExtPicWall, &glbTempPicture, sizeof(ExtendedPicture));
@@ -7067,7 +7016,7 @@ void SkWinCore::DRAW_DEF_PICT(ExtendedPicture *ref)
 			ref->mirrorFlip,
 			READ_IMGBUFF_BPP(xImageBuffer),		// READ_UI16(bp04,-6),
 			iDestBpp,
-			(ref->w56 == 0) ? NULL : ref->b58
+			(ref->w56 == 0) ? NULL : ref->iPal256
 			);
 	}
 	ref->w32 = bp08;

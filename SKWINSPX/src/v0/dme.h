@@ -2097,7 +2097,7 @@ namespace DM2Internal {
 		U16 iXStretch;		// @52 // horz stretch factor? (unstretch is 64)
 		U16 iYStretch;		// @54 // vert stretch factor? (unstretch is 64)
 		U16 w56;		// @56 // palentcnt
-		U8 b58[256];	// @58 // local palette 256 colors
+		U8 iPal256[256];	// @58 // local palette 256 colors
 	};
 	// SPX: about colorkey2 (w48), there can be these values : -1, -2, -3! what meaning?
 

@@ -732,8 +732,8 @@ U16 SkWinCore::GET_PLAYER_ABILITY(Champion *ref, U16 parm7, U16 getMax)
 	if (true
 		&& (getMax == 0)
 		&& (di = ref->enchantmentPower) != 0
-		&& (bp01 = ref->enchantmentAura) >= ENCHANTMENT_AURA_FIRST
-		&& (bp01) <= ENCHANTMENT_AURA_LAST
+		&& (bp01 = ref->enchantmentAura) >= C03_ENCHANTMENT_AURA_FIRST
+		&& (bp01) <= C06_ENCHANTMENT_AURA_LAST
 		&& (bp01 + i16(-2)) == parm7
 	) {
 		//^2C1D:0EED
@@ -1850,7 +1850,7 @@ void SkWinCore::PLAYER_CONSUME_OBJECT(U16 player, ObjectID rlConsume, i16 posses
 				//^24A5:1357
 				si += (si >> 1);
 				//^24A5:135D
-				PROCEED_ENCHANTMENT_SELF(1 << player, ENCHANTMENT_PARTY_SHIELD, si, si * si);
+				PROCEED_ENCHANTMENT_SELF(1 << player, C02_ENCHANTMENT_PARTY_SHIELD, si, si * si);
 				//^24A5:1373
 				break;
 
@@ -2475,7 +2475,7 @@ void SkWinCore::PROCESS_POISON(i16 iChampIdx, U16 iPoisonValue) {
 X16 SkWinCore::CHAMPION_COMPUTE_SOME_SHIELD(i16 play, U16 ww)
 {
 	ENTER(8);
-	Champion *champion = &glbChampionSquad[play];	//*bp04
+	Champion* xChampion = &glbChampionSquad[play];	//*bp04
 	U16 bp06 = ww & 0x8000;
 	if (bp06 != 0)
 		ww &= 0x7fff;
@@ -2484,23 +2484,23 @@ X16 SkWinCore::CHAMPION_COMPUTE_SOME_SHIELD(i16 play, U16 ww)
 	U16 di;
 	for (si = 0; si <= 1; si++) {
 		// SPX: Checking armour value
-		di = QUERY_GDAT_DBSPEC_WORD_VALUE(champion->Possess(si), GDAT_ITEM_STATS_ARMOR_CLASS);
+		di = QUERY_GDAT_DBSPEC_WORD_VALUE(xChampion->Possess(si), GDAT_ITEM_STATS_ARMOR_CLASS);
 		if ((di & 0x8000) != 0) {
 			bp08 = (((_2c1d_132c(di, bp06) + COMPUTE_PLAYER_ATTACK_OR_THROW_STRENGTH(play, si, 7)) * _4976_3fc8[RCJ(6,ww)]) << ((si == ww) ? 4 : 5)) +bp08;
 		}
 	}
-	si = RAND16((GET_PLAYER_ABILITY(champion, abVit, 0) >> 3) +1);
+	si = RAND16((GET_PLAYER_ABILITY(xChampion, abVit, 0) >> 3) +1);
 	if (bp06 != 0)
 		si >>= 1;
-	if (glbChampionSquad[play].enchantmentAura == ENCHANTMENT_PARTY_SHIELD) {	// == 2
+	if (glbChampionSquad[play].enchantmentAura == C02_ENCHANTMENT_PARTY_SHIELD) {	// == 2
 		si += glbChampionSquad[play].enchantmentPower;
 	}
-	si += champion->handDefenseClass[0] +champion->handDefenseClass[1] +bp08;
+	si += xChampion->handDefenseClass[0] + xChampion->handDefenseClass[1] + bp08;
 	if (ww > 1) {
-		di = QUERY_GDAT_DBSPEC_WORD_VALUE(champion->Possess(ww), GDAT_ITEM_STATS_ARMOR_CLASS);
+		di = QUERY_GDAT_DBSPEC_WORD_VALUE(xChampion->Possess(ww), GDAT_ITEM_STATS_ARMOR_CLASS);
 		si = si +_2c1d_132c(di, bp06);
 	}
-	if ((champion->bodyFlag & (1 << ww)) != 0) {
+	if ((xChampion->bodyFlag & (1 << ww)) != 0) {
 		si = si -(RAND02() +8);
 	}
 	if (cd.pi.glbIsPlayerSleeping != 0)
@@ -2571,12 +2571,12 @@ U16 SkWinCore::WOUND_PLAYER(i16 iCharIdx, i16 iSourceAttackDamage, U16 iMask, U1
 			goto _processNoScaledDefense;
 		case C5_ATTACK_MAGIC://^1A20
 			iLocalAttackDamage = USE_ABILITY_ATTRIBUTE(xChampion, abAntiMagic, iLocalAttackDamage);
-			if (xChampion->enchantmentAura == ENCHANTMENT_SPELL_SHIELD)	// == 1
+			if (xChampion->enchantmentAura == C01_ENCHANTMENT_SPELL_SHIELD)	// == 1
 				iLocalAttackDamage -= xChampion->enchantmentPower;
 			goto _processNoScaledDefense;
 		case C1_ATTACK_FIRE://^1A44
 			iLocalAttackDamage = USE_ABILITY_ATTRIBUTE(xChampion, abAntiFire, iLocalAttackDamage);
-			if (xChampion->enchantmentAura == ENCHANTMENT_FIRE_SHIELD)	// == 0
+			if (xChampion->enchantmentAura == C00_ENCHANTMENT_FIRE_SHIELD)	// == 0
 				iLocalAttackDamage -= xChampion->enchantmentPower;
 			break;
 		case C2_ATTACK_SELF://^1A68

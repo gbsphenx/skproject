@@ -273,23 +273,23 @@ _2540:	// Do light
 
 				// SPX: (DM1 : OH EW RA See thru walls, used TT_71)
 				case C02_SPELL_ENCHANTMENT_SPELLSHIELD:	// Spell shield
-					bp0a = ENCHANTMENT_SPELL_SHIELD;	// type shield = 1
+					bp0a = C01_ENCHANTMENT_SPELL_SHIELD;	// type shield = 1
 _25b4:
 					bp08 = bp08 * bp08 + 100;
 					goto _25e8;
 
 				case C08_SPELL_ENCHANTMENT_FIRESHIELD:	// Fire shield
-					bp0a = ENCHANTMENT_FIRE_SHIELD;		// type shield = 0
+					bp0a = C00_ENCHANTMENT_FIRE_SHIELD;		// type shield = 0
 					goto _25b4;
 
 				case C04_SPELL_ENCHANTMENT_PARTY_SHIELD:	// Party shield (YA IR)
-					bp0a = ENCHANTMENT_PARTY_SHIELD;	// type shield = 2
+					bp0a = C02_ENCHANTMENT_PARTY_SHIELD;	// type shield = 2
 					bp08 = bp08 * bp08;
 					goto _25e8;
 
 					// SPX: DM1: Was YA-BRO-ROS Foot prints
 				case C06_SPELL_ENCHANTMENT_AURA_WISDOM:	// Aura of Wisdom
-					bp0a = ENCHANTMENT_AURA_WISDOM;		// type = 5
+					bp0a = C05_ENCHANTMENT_AURA_WISDOM;		// type = 5
 _25db:
 					bp08 += 3;
 					bp08 = bp08 * bp08;
@@ -298,15 +298,15 @@ _25e8:
 					break;
 				// SPX DM1 : Was ZO KATH RA
 				case C07_SPELL_ENCHANTMENT_AURA_DEXTERITY:	// Aura of Dexterity
-					bp0a = ENCHANTMENT_AURA_DEXTERITY;	// type = 4
+					bp0a = C04_ENCHANTMENT_AURA_DEXTERITY;	// type = 4
 					goto _25db;
 
 				case C09_SPELL_ENCHANTMENT_AURA_VITALITY:	// Aura of Vitality
-					bp0a = ENCHANTMENT_AURA_VITALITY;	// type = 6
+					bp0a = C06_ENCHANTMENT_AURA_VITALITY;	// type = 6
 					goto _25db;
 
 				case C10_SPELL_ENCHANTMENT_AURA_STRENGTH:	// Aura of Strength
-					bp0a = ENCHANTMENT_AURA_STRENGTH;	// type = 3
+					bp0a = C03_ENCHANTMENT_AURA_STRENGTH;	// type = 3
 					goto _25db;
 
 				case C11_SPELL_ENCHANTMENT_AURA_SPEED:	// Aura of Speed

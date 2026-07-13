@@ -256,7 +256,7 @@ _08fe:
 	glbTempPicture.pb44 = glbBackBuffViewport;
 	glbTempPicture.colorKeyPassThrough = colorkey1;
 	//^32CB:0972
-	_32cb_0804(glbTempPicture.b58, di, colorkey1, colorkey2, glbTempPicture.w56);
+	_32cb_0804(glbTempPicture.iPal256, di, colorkey1, colorkey2, glbTempPicture.w56);
 	//^32CB:0988
 	QUERY_PICST_IT(&glbTempPicture);
 	//^32CB:0993
@@ -732,50 +732,34 @@ void SkWinCore::_44c8_1e43(U8 *src, U8 *dst, U8 *zz, SRECT *prc, U16 ss, U16 tt,
 
 
 //^32CB:0C7D
-void SkWinCore::_32cb_0c7d(ExtendedPicture *ref, U16 xx, U16 yy)
+// yy is index in palette
+// SPX: _32cb_0c7d renamed DRAW_RAIN_32cb_0c7d
+void SkWinCore::DRAW_RAIN_32cb_0c7d(ExtendedPicture *ref, U16 xx, U16 yy)
 {
-	//^32CB:0C7D
 	ENTER(16);
-	//^32CB:0C83
 	if (glbRainStrength == 0) {
-		//^32CB:0C8A
-		FILL_ENTIRE_PICT(reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(xx)), ref->b58[yy]);
-		//^32CB:0CAA
+		FILL_ENTIRE_PICT(reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(xx)), ref->iPal256[yy]);
 		return;
 	}
-	//^32CB:0CAD
 	U8 bp0b;
 	U16 bp0a;
 	QUERY_RAINFALL_PARAM(&bp0b, &bp0a);
-	//^32CB:0CBE
 	i16 bp06;
 	i16 bp08;
 	QUERY_GDAT_IMAGE_METRICS(0x17, glbMapGraphicsSet, bp0b, &bp06, &bp08);
-	//^32CB:0CDA
 	U16 di = ALLOC_TEMP_CACHE_INDEX();
-	//^32CB:0CE1
 	ALLOC_NEW_PICT(di, ref->rc36.cx, bp08, 4);
-	//^32CB:0CF6
 	U16 si = (ref->rc36.cx +1) & 0xfffe;
-	//^32CB:0D03
 	U8 *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(0x17, glbMapGraphicsSet, bp0b);
-	//^32CB:0D1B
 	FIRE_BLIT_PICTURE(bp04, QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(di), ALLOC_TEMP_ORIGIN_RECT(si, READ_I16(bp04,-2)), 
 		0, 0, READ_I16(bp04,-4), si, -1, (bp0a == 1) ? 1 : 0, 4, 4, NULL);
-	//^32CB:0D64
 	bp04 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(di));
-	//^32CB:0D71
 	U8 *bp10 = _32cb_0649(0x17, glbMapGraphicsSet, bp0b, 0);
-	//^32CB:0D8A
-	bp10[0] = ref->b58[yy];
-	//^32CB:0D9A
+	bp10[0] = ref->iPal256[yy];
 	si = READ_I16(bp04,-4) * READ_I16(bp04,-2);
-	//^32CB:0DA7
 	_44c8_20a4(bp04, reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(xx)), NULL, &ref->rc36, 
 		si -(RAND() & 31) -16, RAND16(60), ref->iWidth, -1, bp10);
-	//^32CB:0DF8
 	FREE_TEMP_CACHE_INDEX(di);
-	//^32CB:0DFF
 	return;
 }
 
@@ -1939,7 +1923,7 @@ ExtendedPicture *SkWinCore::QUERY_GDAT_SUMMARY_IMAGE(ExtendedPicture* xExtPictur
 		Bit8u *bp06 = QUERY_GDAT_IMAGE_LOCALPAL(iGDatCls1Category, iGDatCls2MainItemId, iGDatCls4EntryId);
 		if (bp06 == NULL) {
 			xExtPicture->w56 = 256;
-			bp06 = xExtPicture->b58;
+			bp06 = xExtPicture->iPal256;
 			i16 bp08 = 0;
 			for (; bp08 < 256; bp08++) {
 				bp06[bp08] = (Bit8u)bp08;
@@ -1947,7 +1931,7 @@ ExtendedPicture *SkWinCore::QUERY_GDAT_SUMMARY_IMAGE(ExtendedPicture* xExtPictur
 		}
 		else {
 			xExtPicture->w56 = 16;
-			COPY_MEMORY(bp06, xExtPicture->b58, 16);
+			COPY_MEMORY(bp06, xExtPicture->iPal256, 16);
 		}
 	}
 	return xExtPicture;
@@ -2459,7 +2443,7 @@ void SkWinCore::DRAW_SOME_CLOUD_EXPLOSION(U8 cls2, U16 scale64, U16 mirrorFlip, 
 
 
 
-	_0b36_037e(glbTempPicture.b58, i8(_4976_5a88), 10, -1, glbTempPicture.w56);
+	_0b36_037e(glbTempPicture.iPal256, i8(_4976_5a88), 10, -1, glbTempPicture.w56);
 	QUERY_PICST_IT(&glbTempPicture);
 
 	// SPX: it seems to be missing the displacement from GDAT, else, a cloud/explosion appears on the floor
@@ -2480,7 +2464,14 @@ void SkWinCore::DRAW_SOME_CLOUD_EXPLOSION(U8 cls2, U16 scale64, U16 mirrorFlip, 
 X8* SkWinCore::TRANSLATE_PALETTE(X8* localpal, U8 iGDatCategory, U8 iGDatItemId, U8 iGDatEntryId, i16 palentcnt)
 {
 	ENTER(4);
+	SkD((SkCodeParam::bDebugPrint, "TRANSPAL: %8x, %d %d %d (%d)\n", localpal, iGDatCategory, iGDatItemId, iGDatEntryId, palentcnt));
+	// 1-0-1 is a 256 palette of grey, replacing all other hues (so it is precomputed from the standard color palette), used for replacing weapons in hand with greys
 	X8* xTranslatePalette = QUERY_GDAT_ENTRY_DATA_PTR(iGDatCategory, iGDatItemId, dtRaw7, iGDatEntryId);	// bp04
+	SkD((SkCodeParam::bDebugPrint, "xTranslatePalette = %8x\n", xTranslatePalette));
+	
+	if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(xTranslatePalette))	// if palette is not found, don't translate (and don't crash)
+		return localpal;
+
 	for (U16 iPalIndex = 0; iPalIndex < palentcnt; iPalIndex++) {
 		localpal[iPalIndex] = xTranslatePalette[localpal[iPalIndex]];
 	}

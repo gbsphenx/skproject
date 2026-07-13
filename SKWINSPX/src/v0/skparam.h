@@ -101,6 +101,8 @@ public:
 	static bool bDebugTileset;
 	static bool bDebugNoCreatureCollision;
 
+	static bool bDebugPrint;
+
 	static bool bForceOrnateSound;
 
 	static bool bDebugInfoMapInit;

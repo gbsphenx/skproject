@@ -1437,11 +1437,11 @@ protected:
 	void PUT_OBJECT_INTO_CONTAINER();
 	void DISPLAY_RIGHT_PANEL_SQUAD_HANDS();
 	X8* TRANSLATE_PALETTE(X8* localpal, U8 iGDatCategory, U8 iGDatItemId, U8 iGDatEntryId, i16 palentcnt);
-	Bit8u *DRAW_ITEM_ON_WOOD_PANEL(U16 player, U16 possessionIndex, Picture *ref);
+	Bit8u *DRAW_ITEM_ON_WOOD_PANEL(U16 iChampionIndex, U16 possessionIndex, Picture *ref);
 	void FIRE_BLIT_TO_MEMORY_ROW_4TO8BPP(U16 offSrc, U16 offDst, U16 width, i16 colorkey);
 	void _44c8_1aca(Bit8u *buff, SRECT *rc, U16 xx, U16 yy);
 	void DRAW_GRAY_OVERLAY(sk3f6c *ref, SRECT *rc, U16 xx);	// _0b36_105b
-	void DRAW_HAND_ACTION_ICONS(U16 playerIndex, U16 possessionIndex, U16 leftOrRight);
+	void DRAW_HAND_ACTION_ICONS(U16 iChampionIndex, U16 possessionIndex, U16 leftOrRight);
 	void DRAW_SQUAD_SPELL_AND_LEADER_ICON(U16 player, U16 yy);
 	void __CHECK_ROOM_FOR_CONTAINER(ObjectID rl, Container *ref);
 	void DRAW_MONEYBOX(ObjectID rl);
@@ -1702,7 +1702,7 @@ protected:
 	U16 _44c8_1e1a(U8 *xx, U16 yy);
 	void _44c8_1e43(U8 *src, U8 *dst, U8 *zz, SRECT *prc, U16 ss, U16 tt, U16 aa, U16 bb, U16 hazeWidth, U16 dstWidth, i16 colorkey, U8 *localpal);
 	void _44c8_20a4(U8 *src, U8 *dst, U8 *zz, SRECT *prc, U16 ss, U16 tt, U16 oo, i16 pp, U8 *localpal);
-	void _32cb_0c7d(ExtendedPicture *ref, U16 xx, U16 yy);
+	void DRAW_RAIN_32cb_0c7d(ExtendedPicture *ref, U16 xx, U16 yy);	// _32cb_0c7d
 	Bit8u *QUERY_GDAT_ENTRY_DATA_BUFF(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4);
 	Bit8u *QUERY_GDAT_ENTRY_DATA_BUFF_FORCE(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4);	// SPX: added, bypass the critical for load
 	U8 QUERY_ITEMDB_FROM_DISTINCTIVE_ITEMTYPE(U16 actuatorData);
@@ -1936,7 +1936,7 @@ protected:
 	void FIRE_BLIT_TO_MEMORY_8TO8BPP(const void *src,	void *dst,	SRECT *rc,	i16 srcx,	i16 srcy,	i16 srcPitch,	i16 dstPitch,	i16 colorkey,	i16 mirrorFlip	);	
 	void _44c8_0f29(const void *src,	void *dst,	SRECT *rc,	i16 srcx,	i16 srcy,	i16 srcPitch,	i16 dstPitch,	i16 colorkey,	i16 mirrorFlip,	const void *localPal	);		// TODO: Unr
 
-	void FIRE_BLIT_PICTURE(const void *src,	void *dst,	SRECT *rc,	U16 srcx,	U16 srcy,	U16 srcPitch,	U16 dstPitch,	i16 colorkey,	U16 mirrorFlip,	U16 srcBpp,	U16 dstBpp,	const U8 *localPal	);	
+	void FIRE_BLIT_PICTURE(const void *src,	void *dst,	SRECT *rc,	U16 srcx,	U16 srcy,	U16 srcPitch,	U16 dstPitch,	i16 colorkey,	U16 mirrorFlip,	U16 srcBpp,	U16 dstBpp,	const U8 *localPal	);
 	void IBMIO_BLIT_TO_SCREEN_8TO8BPP(void *src, void *dst,	SRECT *prc,	i16 srcx,	i16 srcy,	i16 srcpitch,	i16 dstpitch,	i16 colorkey);
 
 	U16 _476d_030a(U16 xx); // TODO: Unr

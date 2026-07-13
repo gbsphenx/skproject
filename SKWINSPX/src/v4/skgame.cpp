@@ -1369,7 +1369,7 @@ U16 SkWinCore::ENGAGE_COMMAND(U16 player, i16 cmdSlot)
 			//^2759:1B8C
 			U16 enchantmentType;
 //				bp0c = (bp1c == CmSpellshield) ? 1 : ((bp1c == CmFireshield) ? 0 : 2);
-			enchantmentType = (bp1c == CmSpellshield) ? ENCHANTMENT_SPELL_SHIELD : ((bp1c == CmFireshield) ? ENCHANTMENT_FIRE_SHIELD : ENCHANTMENT_PARTY_SHIELD);
+			enchantmentType = (bp1c == CmSpellshield) ? C01_ENCHANTMENT_SPELL_SHIELD : ((bp1c == CmFireshield) ? C00_ENCHANTMENT_FIRE_SHIELD : C02_ENCHANTMENT_PARTY_SHIELD);
 			//^2759:1BAB
 			si = max_value(32, si) * 3;
 			//^2759:1BBC

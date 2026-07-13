@@ -81,6 +81,8 @@ bool SkCodeParam::bDebugNoCreatures = false;		// drop all creatures -- don't gen
 bool SkCodeParam::bDebugTileset = false;
 bool SkCodeParam::bDebugNoCreatureCollision = false;
 
+bool SkCodeParam::bDebugPrint = false;
+
 bool SkCodeParam::bMIDIMusicEnabled = true;
 bool SkCodeParam::bWAVMusicEnabled = false;
 
