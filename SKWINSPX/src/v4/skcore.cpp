@@ -1600,38 +1600,29 @@ i16 SkWinCore::BETWEEN_VALUE(i16 minv, i16 newv, i16 maxv)
 
 
 //^3E74:506B
-U8 *SkWinCore::QUERY_GDAT_ENTRY_DATA_PTR(U8 cls1, U8 cls2, U8 cls3, U8 cls4)
+X8* SkWinCore::QUERY_GDAT_ENTRY_DATA_PTR(U8 iGDatCls1Category, U8 iGDatCls2MainItemId, U8 iGDatCls3DataType, U16 iGDatCls4EntryId)
 {
-LOGX(("%40s: C%02d=I%02X=E%02X=T%03d", "QUERY_GDAT_ENTRY_DATA_PTR for ", cls1, cls2, cls4, cls3 ));
-	//^3E74:506B
+LOGX(("%40s: C%02d=I%02X=E%02X=T%03d", "QUERY_GDAT_ENTRY_DATA_PTR for ", iGDatCls1Category, iGDatCls2MainItemId, iGDatCls4EntryId, iGDatCls3DataType ));
 	ENTER(6);
-	//^3E74:5070
-	U16 si = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, cls3, cls4);
-	//^3E74:5089
-	if (cls3 == dtImage && IS_CLS1_CRITICAL_FOR_LOAD(cls1) == 0) {
-		//^3E74:509C
-		if (si == 0xffff || glbShelfMemoryTable[si].Absent()) {
-			//^3E74:50BE
-			si = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x15_MISCELLANEOUS, GDAT_ITEM_DEFAULT_INDEX, dtImage, 0xFE);	// yukman face
+	U16 iRawDatIndex = QUERY_GDAT_ENTRY_DATA_INDEX(iGDatCls1Category, iGDatCls2MainItemId, iGDatCls3DataType, iGDatCls4EntryId);	// si
+	if (iGDatCls3DataType == dtImage && IS_CLS1_CRITICAL_FOR_LOAD(iGDatCls1Category) == 0) {
+		if (iRawDatIndex == 0xFFFF || glbShelfMemoryTable[iRawDatIndex].Absent()) {
+			iRawDatIndex = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x15_MISCELLANEOUS, GDAT_ITEM_DEFAULT_INDEX, dtImage, 0xFE);	// yukman face
 		}
 	}
 #if UseAltic
-	if (si == 0xFFFFU) {
+	if (iRawDatIndex == 0xFFFFU) {
 		return NULL;
 	}
 #endif
-	//^3E74:50D1
-	U8 *bp04;
-	U16 bp06;
-	if (glbShelfMemoryTable[si].Absent() && IS_CLS1_CRITICAL_FOR_LOAD(cls1) != 0) {
-		//^3E74:50FB
-		bp04 = QUERY_GDAT_DYN_BUFF(si, &bp06, 0);
+	X8* bp04;	// bp04
+	U16 bp06;	// bp06
+	if (glbShelfMemoryTable[iRawDatIndex].Absent() && IS_CLS1_CRITICAL_FOR_LOAD(iGDatCls1Category) != 0) {
+		bp04 = QUERY_GDAT_DYN_BUFF(iRawDatIndex, &bp06, 0);
 	}
 	else {
-		//^3E74:510C
-		bp04 = REALIZE_GRAPHICS_DATA_MEMORY(glbShelfMemoryTable[si]);
+		bp04 = REALIZE_GRAPHICS_DATA_MEMORY(glbShelfMemoryTable[iRawDatIndex]);
 	}
-	//^3E74:5124
 	return bp04;
 }
 
@@ -3669,43 +3660,30 @@ void SkWinCore::MAKE_BUTTON_CLICKABLE(SRECT *prc, U8 xx, U8 yy)
 //^3E74:5AD9
 void SkWinCore::QUERY_GDAT_IMAGE_METRICS(U8 cls1, U8 cls2, U8 cls4, i16 *pcx, i16 *pcy)
 {
-	//^3E74:5AD9
 	ENTER(4);
-	//^3E74:5ADE
-	U16 si = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, dtImage, cls4);
-	//^3E74:5AF5
-	if (glbShelfMemoryTable[si].Absent()) {
-		//^3E74:5B10
-		U8 *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(cls1, cls2, cls4);
-		//^3E74:5B29
-		*pcx = READ_I16(bp04,-4);
-		*pcy = READ_I16(bp04,-2);
+	U16 iRawDatIndex = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, dtImage, cls4);	// si
+	if (glbShelfMemoryTable[iRawDatIndex].Absent()) {
+		U8* xImageBuffer = QUERY_GDAT_IMAGE_ENTRY_BUFF(cls1, cls2, cls4);	// bp04
+		*pcx = READ_IMGBUFF_WIDTH(xImageBuffer);	//	READ_I16(bp04,-4);
+		*pcy = READ_IMGBUFF_HEIGHT(xImageBuffer);	//	READ_I16(bp04,-2);
 	}
 	else {
-		//^3E74:5B3F
-		U8 *bp04 = QUERY_GDAT_ENTRY_DATA_PTR(cls1, cls2, dtImage, cls4);
-		//^3E74:5B5A
-		*pcx = READ_I16(bp04,+0) & 1023;
-		*pcy = READ_I16(bp04,+2) & 1023;
+		U8* xImageBuffer = QUERY_GDAT_ENTRY_DATA_PTR(cls1, cls2, dtImage, cls4);	// bp04
+		*pcx = READ_I16(xImageBuffer,+0) & 1023;
+		*pcy = READ_I16(xImageBuffer,+2) & 1023;
 	}
-	//^3E74:5B79
 	return;
 }
 
 //^32CB:158F
 U8 SkWinCore::SKCHR_TO_SCRIPTCHR(U8 xx)
 {
-	//^32CB:158F
 	ENTER(0);
-	//^32CB:1592
 	U8 dl = xx;
 	if (dl >= 'A' && dl <= 'Z')
-		//^32CB:159F
 		return dl +0xBF;
-	//^32CB:15A5
 	if (dl == '.')
 		return 0x1B;
-	//^32CB:15B4
 	return 0x1A;
 }
 
@@ -9403,7 +9381,8 @@ void SkWinCore::RECT_0aaf_01db(U16 iRectNo, U16 yy)
 			return;
 		U8* xImageBuffer = QUERY_GDAT_IMAGE_ENTRY_BUFF(glbGDATItemCls1Category, glbGDATItemCls2MainItemId, glbGDATItemCls4EntryId);	// bp04
 		SRECT bp10;
-		CALC_CENTERED_RECT_IN_RECT(&bp10, &_4976_4e9e, READ_UI16(xImageBuffer,-4), READ_UI16(xImageBuffer,-2));
+		// CALC_CENTERED_RECT_IN_RECT(&bp10, &_4976_4e9e, READ_UI16(xImageBuffer,-4), READ_UI16(xImageBuffer,-2));
+		CALC_CENTERED_RECT_IN_RECT(&bp10, &_4976_4e9e, READ_IMGBUFF_WIDTH(xImageBuffer), READ_IMGBUFF_HEIGHT(xImageBuffer));
 		if (_4976_4e44 != 0xffff) {
 			i16 bp12;
 			i16 bp14;
@@ -9807,20 +9786,20 @@ U16 SkWinCore::QUERY_GDAT_RAW_DATA_LENGTH(U16 index)
     //shelf_memory bp04 = glbShelfMemoryTable[index];
 	// SPX : rewritten block; I encountered the case where index is > to glbGDatNumberOfData
 	// which is not correct ... => added assert.
-	shelf_memory bp04;
+	shelf_memory xShelfMem;	// bp04
 	if (index > glbGDatNumberOfData && SkCodeParam::bUsePowerDebug)
 	{
 	//	ATLASSERT(index < glbGDatNumberOfData);
 		return 0;
 	}
 	
-	bp04 = glbShelfMemoryTable[index];
+	xShelfMem = glbShelfMemoryTable[index];
 	//--- SPX END
 
-	if (bp04.Present()) {
-		return READ_UI16(REALIZE_GRAPHICS_DATA_MEMORY(bp04),-2);
+	if (xShelfMem.Present()) {
+		return READ_RAW_DATA_LENGTH(REALIZE_GRAPHICS_DATA_MEMORY(xShelfMem));	// READ_UI16(REALIZE_GRAPHICS_DATA_MEMORY(bp04),-2);
 	}
-	return bp04.SizeIfAbsent();
+	return xShelfMem.SizeIfAbsent();
 }
 
 //^3E74:1586
@@ -12852,7 +12831,7 @@ _37e9:
 		if (_3e74_00ed(&_4976_5d12, bp08) == 0 && _3e74_00ed(&_4976_5d7e, bp08) == 0)
 			continue;
 		bp12 = bp04[si];
-		bp12 &= ((bp12 & 1) != 0) ? 0xfff9 : 0x0020;
+		bp12 &= ((bp12 & 1) != 0) ? 0xFFF9 : 0x0020;
 		bp04[si] = U8(bp12);
 		_3e74_3200(si);
 		//^3E74:3898
@@ -12878,10 +12857,10 @@ _38db:
 		shelf_memory bp08 = glbShelfMemoryTable[si];
 		if (bp08.Present()) {
 			//^3E74:3975
-			bp10 = ((READ_UI16(REALIZE_GRAPHICS_DATA_MEMORY(bp08),-2) +1) & 0xfffe) +4;
+			bp10 = ((READ_RAW_DATA_LENGTH(REALIZE_GRAPHICS_DATA_MEMORY(bp08)) +1) & 0xfffe) +4;	// bp10 = ((READ_UI16(REALIZE_GRAPHICS_DATA_MEMORY(bp08),-2) +1) & 0xfffe) +4;
 			if (_3e74_00ed(&_4976_5d12, bp08) != 0) {
 				//^3E74:39B7
-				bp04[si] |= 0x0a;
+				bp04[si] |= 0x0A;
 				if ((bp12 & 1) == 0) {
 					bp04[si] |= 0x40;
 				}
@@ -12905,7 +12884,7 @@ _39ec:
 		}
 		//^3E74:3A62
 		if ((bp12 & 1) != 0) {
-			bp10 = ((bp08.SizeIfAbsent() +1) & 0xfffe) +4;
+			bp10 = ((bp08.SizeIfAbsent() +1) & 0xFFFE) +4;
 			if (bp1e == 0 || (bp12 & 0x40) != 0) {
 				//^3E74:3A8D
 				bp04[si] |= 8;
@@ -13145,10 +13124,10 @@ _4173:
 			else {
 				//^3E74:432A
 				glbShelfMemoryTable[si] = CONVERT_PHYS_TO_SHELF_FORM(t2ptr(bp08 +2));
-				WRITE_UI16(t2ptr(bp08),+bp10 -4,si);
+				WRITE_UI16(t2ptr(bp08),+bp10 -4,si);	// WRITE_UI16(t2ptr(bp08),+bp10 -4,si);
 			}
 			//^3E74:4380
-			WRITE_UI16(t2ptr(bp08),-2,bp30);
+			WRITE_RAW_DATA_LENGTH(t2ptr(bp08),bp30);	// WRITE_UI16(t2ptr(bp08),-2,bp30);
 			if (bp34 == 0) {
 				DIALOG_BOX_2066_03e0(0);
 				GRAPHICS_DATA_OPEN();
@@ -14050,11 +14029,10 @@ _2eda:
 							if (bp18 > 3)
 								iCloudInsideVisualSize++;
 						}
-						//^32CB:2EF8
 						U8 *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x0D_SPELL_MISSILES, bp15, U8(iCloudInsideVisualSize) + C66_GDAT_IMG_SPELL_EXPLOSION_INSIDE_LOW);
 						ALLOC_IMAGE_MEMENT(GDAT_CATEGORY_x0D_SPELL_MISSILES, bp15, iCloudInsideVisualSize + C66_GDAT_IMG_SPELL_EXPLOSION_INSIDE_LOW);
-						X16 bp24 = READ_UI16(bp04,-2) * READ_UI16(bp04,-4);
-						//^32CB:2F34
+						//X16 bp24 = READ_UI16(bp04,-2) * READ_UI16(bp04,-4);
+						X16 bp24 = READ_IMGBUFF_HEIGHT(bp04) * READ_IMGBUFF_WIDTH(bp04);
 						SRECT bp2e;
 						_44c8_20a4(
 							bp04,
@@ -16782,47 +16760,36 @@ U32 SkWinCore::QUERY_GDAT_ENTRY_VALUE(U16 entryIndex, U16 entryPos)
 {
 	ATLASSERT(entryPos < 7);
 
-	//^3E74:16ED
 	ENTER(8);
-	//^3E74:16F3
 	X16 di = entryPos;
 	U8 *bp04 = PTR_PADD(PTR_PADD(_4976_5d38,U32(entryIndex) * _4976_5d3e),_4976_5d42[di]);
 	i16 si = _4976_5d50[di];
 	U32 bp08 = 0;
 	while (si-- > 0) {
-		//^3E74:1746
 		bp08 = (bp08 << 8) + i16(*bp04);
 		bp04++;
 	}
-	//^3E74:1782
 	return bp08;
 }
 
 //^3E74:216A
 void SkWinCore::LOAD_GDAT_ENTRIES()
 {
-	//^3E74:216A
 	ENTER(12);
-	//^3E74:2170
 	X16 di;
 	for (di = 0; di < glbGDatNumberOfRawEntries; di++) {
-		//^3E74:2175
 		if (QUERY_GDAT_ENTRY_VALUE(di, EPcls6) != 0xff)
 			continue;
 		U8 bp05 = QUERY_GDAT_ENTRY_VALUE(di, EPcls3);
 		if (bp05 == fmtWordVal || bp05 == fmtPicOff)	// (bp05 == 0xb || bp05 == 0xc)
 			continue;
-		//^3E74:21A3
 		X16 si = QUERY_GDAT_ENTRY_VALUE(di, EPdata);
 		if (glbShelfMemoryTable[si].Present())
 			continue;
-		//^3E74:21CC
 		U16 bp08;
 		if (QUERY_GDAT_ENTRY_VALUE(di, EPcls1) != 1) {
-			//^3E74:21DC
 			shelf_memory bp0c = ALLOC_MEMORY_EMS((bp08 = QUERY_GDAT_RAW_DATA_LENGTH(si)) +2, afUseUpper, 0xc00) +2;
 			U8 *bp04 = REALIZE_GRAPHICS_DATA_MEMORY(bp0c);
-			//^3E74:2214
 			WRITE_UI16(bp04,-2,bp08);
 //LOGX(("LOAD_GDAT_RAW_DATA call from LOAD_GDAT_ENTRIES (1)"));
 			LOAD_GDAT_RAW_DATA(si, glbShelfMemoryTable[si] = bp0c);
@@ -16831,7 +16798,6 @@ void SkWinCore::LOAD_GDAT_ENTRIES()
 			SkD((DLV_GLD, "GLD: Load Raw#%4d at EMS(%08X)\n", (Bitu)si, (Bitu)bp0c.val));
 		}
 		else {
-			//^3E74:225B
 			U8 *bp04 = ALLOC_MEMORY_RAM((bp08 = QUERY_GDAT_RAW_DATA_LENGTH(si)) +2, afUseUpper, 0x400);
 			WRITE_UI16(bp04,+0,bp08);
 //LOGX(("LOAD_GDAT_RAW_DATA call from LOAD_GDAT_ENTRIES (2)"));
@@ -16839,17 +16805,14 @@ void SkWinCore::LOAD_GDAT_ENTRIES()
 
 			SkD((DLV_GLD, "GLD: Load Raw#%4d at RAM(%08X)\n", (Bitu)si, bp04));
 		}
-		//^3E74:22C1
 	}
-	//^3E74:22CB
 	return;
 }
 //^3E74:2162
-X16 SkWinCore::_3e74_2162(U16 xx)
+// SPX: _3e74_2162 renamed LANG_NO_FILTER
+X16 SkWinCore::LANG_NO_FILTER(U16 xx)
 {
-	//^3E74:2162
 	ENTER(0);
-	//^3E74:2165
 	return 1;
 }
 
@@ -16871,7 +16834,7 @@ X16 SkWinCore::LANG_FILTER(U16 entryIndex)
 	if (cls3 == fmtText) {
 
 		if (cls5 == s_textLangSel[cls1][cls2][cls4]) {
-			// already elected
+			// already selected
 			return 1;
 		}
 
@@ -16884,7 +16847,7 @@ X16 SkWinCore::LANG_FILTER(U16 entryIndex)
 		}
 
 		if (cls5 == skWinApp->skwin_GetLang()) {
-			// elected language
+			// selected language
 			if (s_textLangSel[cls1][cls2][cls4] == 0xFF) {
 				s_textLangSel[cls1][cls2][cls4] = cls5;
 				return 1;
@@ -16900,7 +16863,7 @@ X16 SkWinCore::LANG_FILTER(U16 entryIndex)
 
 	// SPX: manages also localized images only for char interface
 #if DM2_EXTENDED_LOCALIZED_IMAGES == 1
-	if (SkCodeParam::bUseMultilanguageExtended) {
+	/*if (SkCodeParam::bUseMultilanguageExtended) {
 		if (cls3 == fmtImage && (cls1 == GDAT_CATEGORY_x07_INTERFACE_CHARSHEET || cls1 == GDAT_CATEGORY_x05_TITLE)) {
 			U8 iLangSelect = (cls5 & 0xF0);	// Do not take variation 0x08 into account
 
@@ -16922,7 +16885,7 @@ X16 SkWinCore::LANG_FILTER(U16 entryIndex)
 			}
 		return 0;
 		}
-	}
+	}*/
 #endif // DM2_EXTENDED_LOCALIZED_IMAGES
 	
 	return 1; // always pass for non text entry.
@@ -16933,32 +16896,32 @@ X16 SkWinCore::LANG_FILTER(U16 entryIndex)
 void SkWinCore::BUILD_GDAT_ENTRY_DATA(GDATEntries *ref, X16 (SkWinCore::*pfnIfLoad)(U16 xx), U8 *zz)
 {
 	ENTER(14);
-	// SPX: Original value was 0x3a0, so 0x1D max categories
-	const int buffSize = (GDAT_CATEGORY_LIMIT+1) * 16 * 2;
-	U16 *bp04 = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(buffSize, afUseLower|afZeroMem, 0x400));
+	// SPX: Original value was 0x3A0, so 0x1D max categories (0x1D (29) * 16 * 2 = 29*32 = 928 (0x3A0)
+	const int buffSize = (GDAT_CATEGORY_LIMIT+1) * 16 * 2;	// get mem for 16 items per category
+	U16* xWorkTable = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(buffSize, afUseLower|afZeroMem, 0x400));	// bp04
 	ref->iTotalClass1 = 0;
 	ref->w16 = 0;
-	U16 si;
+	U16 iRawEntIdx;	// si
 	U8 bp0a;
-	for (si = 0; si < glbGDatNumberOfRawEntries; si++) {
-		if ((this->*pfnIfLoad)(si) == 0)
+	for (iRawEntIdx = 0; iRawEntIdx < glbGDatNumberOfRawEntries; iRawEntIdx++) {
+		if ((this->*pfnIfLoad)(iRawEntIdx) == 0)	// filter by lang
 			continue;
-		bp0a = U8(QUERY_GDAT_ENTRY_VALUE(si, EPcls1));
-		U8 bp09 = U8(QUERY_GDAT_ENTRY_VALUE(si, EPcls3));
-		if (bp0a > GDAT_CATEGORY_LIMIT || bp09 > 0xe)
+		bp0a = U8(QUERY_GDAT_ENTRY_VALUE(iRawEntIdx, EPcls1));
+		U8 bp09 = U8(QUERY_GDAT_ENTRY_VALUE(iRawEntIdx, EPcls3));
+		if (bp0a > GDAT_CATEGORY_LIMIT || bp09 > 0xE)
 			continue;
 		ref->w16++;
 		if (ref->iTotalClass1 < bp0a) {
 			ref->iTotalClass1 = bp0a;
 		}
-		bp04[(bp0a << 4) + (bp09)]++;
-		if (bp04[(bp0a << 4) +15] <= bp09) {
-			bp04[(bp0a << 4) +15] = bp09 +1;
+		xWorkTable[(bp0a << 4) + (bp09)]++;
+		if (xWorkTable[(bp0a << 4) +15] <= bp09) {
+			xWorkTable[(bp0a << 4) +15] = bp09 +1;
 		}
 	}
 	X16 bp0c = 0;
 	for (bp0a = 0; ref->iTotalClass1 >= bp0a; bp0a++) {
-		bp0c += bp04[(bp0a << 4) +15];
+		bp0c += xWorkTable[(bp0a << 4) +15];
 	}
 	ref->w14 = bp0c;
 	ref->w18 = 0;
@@ -16985,34 +16948,34 @@ void SkWinCore::BUILD_GDAT_ENTRY_DATA(GDATEntries *ref, X16 (SkWinCore::*pfnIfLo
 	ref->tblCls2toCls3 = reinterpret_cast<X16 *>(ALLOC_MEMORY_RAM((ref->w14 +1) << 1, afUseUpper, 0x400));
 	ref->pv8 = reinterpret_cast<RawEntry *>(ALLOC_MEMORY_RAM(U32(ref->w16) << 2, afUseUpper, 0x400));
 	bp0c = 0;
-	si = 0;
+	iRawEntIdx = 0;
 	U8 bp09;
 	for (bp0a = 0; ref->iTotalClass1 >= bp0a; bp0a++) {
 		ref->tblCls1toCls2[bp0a] = bp0c;
-		di = bp04[(bp0a << 4) +15];
+		di = xWorkTable[(bp0a << 4) +15];
 		for (bp09 = 0; bp09 < di; bp0c++, bp09++) {
-			ref->tblCls2toCls3[bp0c] = si;
-			si += bp04[(bp0a << 4) +bp09];
+			ref->tblCls2toCls3[bp0c] = iRawEntIdx;
+			iRawEntIdx += xWorkTable[(bp0a << 4) +bp09];
 		}
 	}
 	ref->tblCls1toCls2[ref->iTotalClass1 +1] = bp0c;
 	ref->tblCls2toCls3[ref->w14] = ref->w16;
-	ZERO_MEMORY(bp04, buffSize);	// Original buffsize = 0x3a0
+	ZERO_MEMORY(xWorkTable, buffSize);	// Original buffsize = 0x3a0
 	ZERO_MEMORY(ref->pv8, U32(ref->w16) << 2);
 	X16 bp0e;
-	for (si = 0; si < glbGDatNumberOfRawEntries; si++) {
-		if ((this->*pfnIfLoad)(si) == 0)
+	for (iRawEntIdx = 0; iRawEntIdx < glbGDatNumberOfRawEntries; iRawEntIdx++) {
+		if ((this->*pfnIfLoad)(iRawEntIdx) == 0)	// filter by lang
 			continue;
-		bp0a = QUERY_GDAT_ENTRY_VALUE(si, EPcls1);
-		bp09 = QUERY_GDAT_ENTRY_VALUE(si, EPcls3);
+		bp0a = QUERY_GDAT_ENTRY_VALUE(iRawEntIdx, EPcls1);
+		bp09 = QUERY_GDAT_ENTRY_VALUE(iRawEntIdx, EPcls3);
 		if (bp0a > GDAT_CATEGORY_LIMIT || bp09 > 0xe)
 			continue;
-		di = bp04[(bp0a << 4) +bp09]++;
+		di = xWorkTable[(bp0a << 4) +bp09]++;
 		RawEntry* xRawEntry = &ref->pv8[ref->tblCls2toCls3[ref->tblCls1toCls2[bp0a] +bp09] +di];	//bp08
-		xRawEntry->cls2 = QUERY_GDAT_ENTRY_VALUE(si, EPcls2);
-		xRawEntry->cls4 = QUERY_GDAT_ENTRY_VALUE(si, EPcls4);
-		xRawEntry->data = QUERY_GDAT_ENTRY_VALUE(si, EPdata);
-		bp0e = QUERY_GDAT_ENTRY_VALUE(si, EPcls6);
+		xRawEntry->cls2 = QUERY_GDAT_ENTRY_VALUE(iRawEntIdx, EPcls2);
+		xRawEntry->cls4 = QUERY_GDAT_ENTRY_VALUE(iRawEntIdx, EPcls4);
+		xRawEntry->data = QUERY_GDAT_ENTRY_VALUE(iRawEntIdx, EPdata);
+		bp0e = QUERY_GDAT_ENTRY_VALUE(iRawEntIdx, EPcls6);
 		if (bp0e == 1) {
 			xRawEntry->data |= 0x8000;
 		}
@@ -17071,7 +17034,7 @@ void SkWinCore::LOAD_ENT1()
 	memset(s_imageLangSel, 0xFF, sizeof(s_imageLangSel));
 #endif
 	memset(s_textLangSel, 0xFF, sizeof(s_textLangSel));
-	//BUILD_GDAT_ENTRY_DATA(&glbGDatEntries, &SkWinCore::_3e74_2162, _4976_4844);
+	//BUILD_GDAT_ENTRY_DATA(&glbGDatEntries, &SkWinCore::LANG_NO_FILTER, _4976_4844);
 	BUILD_GDAT_ENTRY_DATA(&glbGDatEntries, &SkWinCore::LANG_FILTER, _4976_4844);
 	DEALLOC_LOWER_MEMORY(bp08);
 	_4976_5d38 = NULL;
@@ -17767,7 +17730,7 @@ void SkWinCore::DEALLOC_BIGPOOL_STRUCT_BEFORE(U8 *ref)
 	///if (_4976_5d76 != 0)
 	if (_4976_5d76 != 0 && ref != NULL)
 		return;
-	if (READ_UI16(ref,-6+4) == 0) {
+	if (READ_UI16(ref,-6+4) == 0) {	// SPX: is this testing height of image ? or something else ?
 		DEALLOC_UPPER_MEMORY(READ_UI32(ref,-6)); // how does this work with 64-bits
 	}
 	else {

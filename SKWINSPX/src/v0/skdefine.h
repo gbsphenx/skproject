@@ -11,12 +11,12 @@
 #define _OPTION_CLI_TITLE_CREDITS				3
 
 
-#define _GDAT_LANG_ENGLISH_					0x10
-#define _GDAT_LANG_JAPANESE_				0x20
-#define _GDAT_LANG_GERMAN_					0x30
-#define _GDAT_LANG_FRENCH_					0x40
-#define _GDAT_LANG_SPANISH_					0x50	// SPX: Additional value
-#define _GDAT_LANG_ITALIAN_					0x60	// SPX: Additional value
+#define _GDAT_x10_LANG_ENGLISH_					0x10
+#define _GDAT_x20_LANG_JAPANESE_				0x20
+#define _GDAT_x30_LANG_GERMAN_					0x30
+#define _GDAT_x40_LANG_FRENCH_					0x40
+#define _GDAT_x50_LANG_SPANISH_					0x50	// SPX: Additional value
+#define _GDAT_x60_LANG_ITALIAN_					0x60	// SPX: Additional value
 
 
 #define IMG_4_BPP					4			// 4 bits per pixel => 16 colors

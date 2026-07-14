@@ -1939,31 +1939,31 @@ ExtendedPicture *SkWinCore::QUERY_GDAT_SUMMARY_IMAGE(ExtendedPicture* xExtPictur
 
 
 //^3E74:58BF
-void SkWinCore::ALLOC_IMAGE_MEMENT(Bit8u cls1, Bit8u cls2, Bit8u cls4)
+void SkWinCore::ALLOC_IMAGE_MEMENT(U8 iGDatCls1Category, U8 iGDatCls2MainItemId, U8 iGDatCls4EntryId)
 {
 	ENTER(4);
-	U16 si = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, dtImage, cls4);
-	if (si != 0xffff && glbShelfMemoryTable[si].Absent()) {
-		si = QUERY_GDAT_ENTRY_DATA_INDEX(0x15,0xfe,dtImage,0xfe);			
+	U16 iRawDataIndex = QUERY_GDAT_ENTRY_DATA_INDEX(iGDatCls1Category, iGDatCls2MainItemId, dtImage, iGDatCls4EntryId);	// si
+	if (iRawDataIndex != 0xFFFF && glbShelfMemoryTable[iRawDataIndex].Absent()) {
+		iRawDataIndex = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x15_MISCELLANEOUS,0xFE,dtImage,0xFE);	// yukman		
 	}
-	if (si != 0xffff) {
-		U16 di = QUERY_MEMENTI_FROM(si);
-		if (di == 0xffff) {
-			if (glbShelfMemoryTable[si].Absent()) {
+	if (iRawDataIndex != 0xFFFF) {
+		U16 iMementIdx = QUERY_MEMENTI_FROM(iRawDataIndex);	// di
+		if (iMementIdx == 0xFFFF) {
+			if (glbShelfMemoryTable[iRawDataIndex].Absent()) {
 				return;
 			}
-			SkImage *bp04 = reinterpret_cast<SkImage *>(REALIZE_GRAPHICS_DATA_MEMORY(glbShelfMemoryTable[si]));
-			if (bp04->Yoffset() != -32) {
+			SkImage* xImage = reinterpret_cast<SkImage *>(REALIZE_GRAPHICS_DATA_MEMORY(glbShelfMemoryTable[iRawDataIndex]));	// bp04
+			if (xImage->Yoffset() != -32) {
 				return;
 			}
-			if (bp04->BitsPixel() != 8) {
+			if (xImage->BitsPixel() != IMG_8_BPP) {
 				return;
 			}
-			glbRawDataNoAllocated = si;
+			glbRawDataNoAllocated = iRawDataIndex;
 			return;
 		}
 		else {
-			MEMENT_3e74_4549(di);
+			MEMENT_3e74_4549(iMementIdx);
 		}
 	}
 	return;

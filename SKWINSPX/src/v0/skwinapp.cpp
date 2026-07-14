@@ -227,27 +227,27 @@ void SkWinApp::ProcessArgs(int argc, char** argv)
 		// Options: language
 		else if (!strcmp(argv[iArgIndex], "-en")) {
 			printf("Option: language = english\n");
-			lang = _GDAT_LANG_ENGLISH_;	// english
+			lang = _GDAT_x10_LANG_ENGLISH_;	// english
 		}
 		else if (!strcmp(argv[iArgIndex], "-jp")) {
 			printf("Option: language = japanese\n");
-			lang = _GDAT_LANG_JAPANESE_;	// japanese
+			lang = _GDAT_x20_LANG_JAPANESE_;	// japanese
 		}
 		else if (!strcmp(argv[iArgIndex], "-de")) {
 			printf("Option: language = german\n");
-			lang = _GDAT_LANG_GERMAN_;	// german
+			lang = _GDAT_x30_LANG_GERMAN_;	// german
 		}
 		else if (!strcmp(argv[iArgIndex], "-fr")) {
 			printf("Option: language = french\n");
-			lang = _GDAT_LANG_FRENCH_;	// french
+			lang = _GDAT_x40_LANG_FRENCH_;	// french
 		}
 		else if (!strcmp(argv[iArgIndex], "-es")) {
 			printf("Option: language = spanish\n");
-			lang = _GDAT_LANG_SPANISH_;	// spanish
+			lang = _GDAT_x50_LANG_SPANISH_;	// spanish
 		}
 		else if (!strcmp(argv[iArgIndex], "-it")) {
 			printf("Option: language = italian\n");
-			lang = _GDAT_LANG_ITALIAN_;	// italian
+			lang = _GDAT_x60_LANG_ITALIAN_;	// italian
 		}
 
 

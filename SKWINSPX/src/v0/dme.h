@@ -1254,7 +1254,15 @@ namespace DM2Internal {
 	// 	U8 b10; // @10
 	// 	U8 b11; // @11
 	// };
-	// 
+	//
+	
+	// SPX: add this specific structure for the 6 extra bytes allocated before image
+	struct ImageExtraHeader {
+		X16 iBpp;
+		X16 iWidth;
+		X16 iHeight;
+	};
+
 	// SPX: this mement clearly breaks in 64-bits compilation
 	// w4+w6 is a mement address
 	// w8+w10 is a mement address
@@ -1994,14 +2002,14 @@ namespace DM2Internal {
 
 	// there seems to be some correspondance between SkImage and sk5cfc_image
 	struct SkImage {	// size=14?
-		i16 w0_;		// @0
-		i16 w2_;		// @2
-		U16 w4_;			// @4
-		U16 w6_;			// @6
+		i16 w0_;		// @0	w0_
+		i16 w2_;		// @2	w2_
+		U16 iBpp;			// @4	w4_
+		U16 w6_;			// @6	w6_
 
 		i16 Xoffset() const { return w0_ >> 10; }
 		i16 Yoffset() const { return w2_ >> 10; }
-		U16 BitsPixel() const { return w4_; }
+		U16 BitsPixel() const { return iBpp; }
 		U16 AllocLower() const { return w6_; }
 	};
 	// 

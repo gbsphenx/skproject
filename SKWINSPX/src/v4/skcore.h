@@ -1405,7 +1405,7 @@ protected:
 	void EQUIP_ITEM_TO_INVENTORY(U16 player, ObjectID rl, U16 inventorySlot);
 	U16 CHECK_SOME_HAND_READY(U16 player, ObjectID rl, i16 hand);	// _2759_0e93
 	void LOAD_PROJECTILE_TO_HAND(U16 player, i16 hand);
-	Bit8u *QUERY_GDAT_ENTRY_DATA_PTR(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4);
+	X8* QUERY_GDAT_ENTRY_DATA_PTR(U8 iGDatCls1Category, U8 iGDatCls2MainItemId, U8 iGDatCls3DataType, U16 iGDatCls4EntryId);
 	void FREE_PICT6(SkImage *ref);
 	i16 QUERY_GDAT_PICT_OFFSET(Bit8u cls1, Bit8u cls2, Bit8u cls4);
 	ExtendedPicture *QUERY_GDAT_SUMMARY_IMAGE(ExtendedPicture *ref, Bit8u cls1, Bit8u cls2, Bit8u cls4);
@@ -1415,10 +1415,10 @@ protected:
 	i16 CALC_STRETCHED_SIZE(i16 val, i16 fact64);
 	X8* QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(i16 iCacheIndex, Picture *ref);	// (_0b36_00c3)
 	X8* QUERY_PICST_IMAGE(Picture *ref);
-	void ALLOC_IMAGE_MEMENT(Bit8u cls1, Bit8u cls2, Bit8u cls4);
 
+	void ALLOC_IMAGE_MEMENT(U8 iGDatCls1Category, U8 iGDatCls2MainItemId, U8 iGDatCls4EntryId);
 	void ALLOC_PICT_MEMENT(Picture* xPicture);
-	Bit32u CALC_PICT_ENT_HASH(ExtendedPicture* xExtPicture);
+	U32 CALC_PICT_ENT_HASH(ExtendedPicture* xExtPicture);
 	void FREE_IMAGE_MEMENT(U8 iGDatCls1Category, U8 iGDatCls2MainItemId, U8 iGDatCls4EntryId);
 	void FREE_PICT_MEMENT(Picture* xPicture);
 
@@ -2233,7 +2233,7 @@ protected:
 	void SWAP_OBJECTDATA(U16* xData, U8 iCategory, U16 iNbItems);	// SPX: addition for swapping objects/items data
 	U32 QUERY_GDAT_ENTRY_VALUE(U16 entryIndex, U16 entryPos);
 	void LOAD_GDAT_ENTRIES();
-	X16 _3e74_2162(U16 xx);	// RETURNS 1!!
+	X16 LANG_NO_FILTER(U16 xx);	// (_3e74_2162) RETURNS 1!!
 	X16 LANG_FILTER(U16 entryIndex);
 	void BUILD_GDAT_ENTRY_DATA(GDATEntries *ref, X16 (SkWinCore::*pfnIfLoad)(U16 xx), U8 *zz);
 	void LOAD_ENT1();

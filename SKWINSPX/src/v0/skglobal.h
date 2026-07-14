@@ -587,6 +587,8 @@ bool	CheckSafePointer(void* p);
 #define WRITE_IMGBUFF_WIDTH(PTR,VAL)	WRITE_UI16(PTR,-4,VAL)
 #define WRITE_IMGBUFF_BPP(PTR,VAL)		WRITE_UI16(PTR,-6,VAL)
 
+#define READ_RAW_DATA_LENGTH(PTR)		READ_UI16(PTR,-2)
+#define WRITE_RAW_DATA_LENGTH(PTR,VAL)	WRITE_UI16(PTR,-2,VAL)
 
 
 //--- Some Debug/Test flags => SPX: to be removed !! use SkCodeParam instead
