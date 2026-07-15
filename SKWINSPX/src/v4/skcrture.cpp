@@ -731,7 +731,7 @@ _169f:
 			goto _1df6;
 		//^19F0:178D
 		bp16 = 1;
-		_1c9a_0648(bp0e);
+		CHANGE_GLOBAL_CREATURE_POS(bp0e);
 		xx3 = xx;
 		yy2 = yy;
 		yy = xx = -1;
@@ -986,11 +986,11 @@ _1a94:
 									goto _1df6;
 								}
 								//^19F0:1CE7
-								_1c9a_0648(_4976_581c);
+								CHANGE_GLOBAL_CREATURE_POS(_4976_581c);
 							}
 							//^19F0:1CF1
 							bp1a = CREATURE_GO_THERE(aa | bp1e, _4976_5826, _4976_5828, _4976_5826, _4976_5828, 6);
-							_1c9a_0648(bp0e);
+							CHANGE_GLOBAL_CREATURE_POS(bp0e);
 							goto _1df6;
 						}
 						//^19F0:1D20
@@ -1128,7 +1128,7 @@ _1f9a:
 	//^19F0:1FF2
 _1ff2:
 	if (bp16 != 0)
-		_1c9a_0648(bp14);
+		CHANGE_GLOBAL_CREATURE_POS(bp14);
 	//^19F0:2001
 	SkD((DLV_CAI, "CAI: CREATURE_GO_THERE %c \n"
 		, (Bitu)((bp1a ? 'o' : 'x'))
@@ -4685,7 +4685,7 @@ U16 SkWinCore::CREATURE_WALK_NOW()
 		glbCreatureTimer.XcoordB((U8)_4976_5826);
 		glbCreatureTimer.YcoordB((U8)_4976_5828);
 		glbSomeMap_4976_4ee7 = (U8)_4976_581c;
-		_1c9a_0648(glbSomeMap_4976_4ee7);
+		CHANGE_GLOBAL_CREATURE_POS(glbSomeMap_4976_4ee7);
 		if (si != 0) {
 			//^1887:01DB
 			OPERATE_PIT_TELE_TILE(glbCreatureTimerGetX, glbCreatureTimerGetY, 0);
@@ -4762,7 +4762,7 @@ X16 SkWinCore::CREATURE_JUMPS()
 			glbCreatureTimer.XcoordB(U8(_4976_5826));
 			glbCreatureTimer.YcoordB(U8(_4976_5828));
 			glbSomeMap_4976_4ee7 = U8(_4976_581c);
-			_1c9a_0648(glbSomeMap_4976_4ee7);
+			CHANGE_GLOBAL_CREATURE_POS(glbSomeMap_4976_4ee7);
 			break;
 	}
 	//^1887:0349
@@ -4771,16 +4771,12 @@ X16 SkWinCore::CREATURE_JUMPS()
 //^1887:05AA
 void SkWinCore::CREATURE_CCM06()
 {
-	//^1887:05AA
 	ENTER(0);
-	//^1887:05AE
 	i16 si = glbCurrentThinkingCreatureData->b29;
 	if (((glbCurrentThinkingCreatureRec->b15_0_1() -si)&3) == 2) {
 		si = ((RAND()&2) +si +1)&3;
 	}
-	//^1887:05DE
 	glbCurrentThinkingCreatureRec->b15_0_1(si&3);
-	//^1887:05F0
 	return;
 }
 //^075F:1C74
@@ -5483,93 +5479,58 @@ X16 SkWinCore::CREATURE_ACTIVATES_WALL()
 //^1887:034E
 X16 SkWinCore::CREATURE_USES_LADDER_HOLE()
 {
-	//^1887:034E
 	ENTER(18);
-	//^1887:0354
-	CreatureInfoData *bp04 = glbCurrentThinkingCreatureData;
-	//^1887:0361
-	if (CREATURE_GO_THERE(bp04->b32|0x80, glbCreatureTimerGetX, glbCreatureTimerGetY, glbCreatureTempTargetX, glbCreatureTempTargetY, bp04->b27) == 0)
-		//^1887:0393
-		//^1887:05A3
+	CreatureInfoData* xCreatureInfo = glbCurrentThinkingCreatureData;	// bp04
+	if (CREATURE_GO_THERE(xCreatureInfo->b32|0x80, glbCreatureTimerGetX, glbCreatureTimerGetY, glbCreatureTempTargetX, glbCreatureTempTargetY, xCreatureInfo->b27) == 0)
 		return 1;
-	//^1887:0396
-	if ((tlbCreatureCommandsFlags[RCJ(MAX_CREATURE_COMMANDS,bp04->Command)] & 4) == 0)
-		//^1887:03A7
-		//^1887:05A3
+	if ((tlbCreatureCommandsFlags[RCJ(MAX_CREATURE_COMMANDS,xCreatureInfo->Command)] & 4) == 0)
 		return 1;
-	//^1887:03AA
 	X16 si = glbCurrentThinkingCreatureRec->b15_0_1();
-	glbCreatureTempTargetX = bp04->w24.GetX();
-	glbCreatureTempTargetY = bp04->w24.GetY();
-	//^1887:03D1
-	if (bp04->Command == ccm39 || bp04->Command == ccm3A) {
-		//^1887:03E2
+	glbCreatureTempTargetX = xCreatureInfo->w24.GetX();
+	glbCreatureTempTargetY = xCreatureInfo->w24.GetY();
+	if (xCreatureInfo->Command == ccm39 || xCreatureInfo->Command == ccm3A) {
 		Actuator *bp0e;
 		i16 di;
-		si = FIND_LADDER_AROUND(glbCreatureTimerGetX, glbCreatureTimerGetY, di = (bp04->Command == ccm39) ? -1 : 1, reinterpret_cast<Actuator **>(&bp0e));
-		//^1887:0412  
+		si = FIND_LADDER_AROUND(glbCreatureTimerGetX, glbCreatureTimerGetY, di = (xCreatureInfo->Command == ccm39) ? -1 : 1, reinterpret_cast<Actuator **>(&bp0e));
 		if (bp0e != NULL) {
-			//^1887:041A
 			if (bp0e->RevertEffect() != 0) {
-				//^1887:042B
 				si = bp0e->ActionType();
 			}
 			else {
-				//^1887:0439
 				si = (si +bp0e->ActionType()) & 3;
 			}
 		}
 		else {
-			//^1887:0452
 			i16 bp08;
 			i16 bp10, bp12;
 			i16 bp0a = LOCATE_OTHER_LEVEL(bp08 = glbCurrentMapIndex, di, &bp10, &bp12, NULL);
-			//^1887:0483
 			CHANGE_CURRENT_MAP_TO(bp0a);
-			//^1887:048C
 			si = FIND_LADDER_AROUND(bp10, bp12, -di, reinterpret_cast<Actuator **>(&bp0e));
 		}
 	}
-	//^1887:04AF
 	X16 bp06 = glbAIDef->CanActivatePitTeleport(); // actually, 0x40 or 0
 	if (bp06 != 0) {
-		//^1887:04C2
 		OPERATE_PIT_TELE_TILE(glbCreatureTimerGetX, glbCreatureTimerGetY, 1);
 	}
-	//^1887:04D7
 	MOVE_RECORD_TO(glbCurrentThinkingCreatureID, glbCreatureTimerGetX, glbCreatureTimerGetY, -1, 0);
-	//^1887:04F3
-	_1c9a_0648(bp04->w24.GetMap());
-	//^1887:0507
-	if (bp04->Command == ccm35 || bp04->Command == ccm36) {
-		//^1887:0518
+	CHANGE_GLOBAL_CREATURE_POS(xCreatureInfo->w24.GetMap());
+	if (xCreatureInfo->Command == ccm35 || xCreatureInfo->Command == ccm36) {
 		si = _0cee_06dc_GET_TILE_DIRECTION(glbCreatureTempTargetX, glbCreatureTempTargetY);
 	}
-	//^1887:0529
 	glbCurrentThinkingCreatureRec->b15_0_1(si);
-	//^1887:053B
 	if (MOVE_RECORD_TO(glbCurrentThinkingCreatureID, -1, 0, glbCreatureTempTargetX, glbCreatureTempTargetY) != 0) {
-		//^1887:0557
 		glbCreatureActionProceeded = 1;
-		//^1887:059F
 		return 0;
 	}
-	//^1887:055E
 	glbCreatureTimer.XcoordB((U8)_4976_5826);//glbCreatureTimerGetX
 	glbCreatureTimer.YcoordB((U8)_4976_5828);//glbCreatureTimerGetY
-	_1c9a_0648(glbSomeMap_4976_4ee7 = (U8)_4976_581c);
-	//^1887:0579
+	CHANGE_GLOBAL_CREATURE_POS(glbSomeMap_4976_4ee7 = (U8)_4976_581c);
 	if (bp06 != 0) {
-		//^1887:057F
 		OPERATE_PIT_TELE_TILE(glbCreatureTimerGetX, glbCreatureTimerGetY, 0);
 	}
-	//^1887:0594
 	if (_4976_514e.b1 > 0)
-		//^1887:059B
 		_4976_514e.b1--;
-	//^1887:059F
 	return 0;
-	//^1887:05A6
 }
 
 //^1887:126D

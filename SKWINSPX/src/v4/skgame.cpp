@@ -3893,7 +3893,7 @@ U8 *SkWinCore::PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timer
 	U8* xLocalThinkCreatureData = NULL;	// bp04
 	i16 bp0e = glbCurrentMapIndex;
 	glbCurrentMapIndex = -1;
-	_1c9a_0648(bp0e);
+	CHANGE_GLOBAL_CREATURE_POS(bp0e);
 	glbCreatureSomeX = 0xffff;
 	if (_4976_5160 != 0) {
 		// reach here when DRAGOTH creates DRAGOTH ATTACK MINION.

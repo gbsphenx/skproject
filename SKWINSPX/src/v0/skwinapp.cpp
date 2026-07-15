@@ -368,6 +368,13 @@ void SkWinApp::ProcessArgs(int argc, char** argv)
 			SkCodeParam::bOptionNewGame = _OPTION_CLI_TITLE_RESUME_SCREEN;
 		}
 
+		// Options
+		else if (!strcmp(argv[iArgIndex], "-nostep")) {
+			printf("Option: no half-steps\n");
+			SkCodeParam::bEnableDoubleStepMove = false;
+		}
+
+
 		/// Options: special option
 		else if (!strcmp(argv[iArgIndex], "-debugprint")) {
 			printf("Option: debug print\n");

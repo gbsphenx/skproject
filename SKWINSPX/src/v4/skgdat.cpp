@@ -363,7 +363,7 @@ void SkWinCore::DECODE_IMG3_UNDERLAY_LOCAL(IMG3 *xx, U8 *yy)
 }
 
 //^3E74:4B48
-U8 *SkWinCore::EXTRACT_GDAT_IMAGE(U16 iGDatIndex, i16 allocUpper)
+U8* SkWinCore::EXTRACT_GDAT_IMAGE(U16 iGDatIndex, i16 allocUpper)
 {
 	SkD((DLV_DBG_GETPIC,"DBG: EXTRACT_GDAT_IMAGE(%4u,%u)\n", (Bitu)iGDatIndex, (Bitu)allocUpper));
 
@@ -381,7 +381,7 @@ U8 *SkWinCore::EXTRACT_GDAT_IMAGE(U16 iGDatIndex, i16 allocUpper)
 				xMemEnt = tblMementsPointers[iMemEntIdx];
 			}
 			else {
-				xMemEnt = _3e74_48c9_MEMENT(iMemEntIdx);
+				xMemEnt = GET_MEMENT_FROM_MEMENTINDEX(iMemEntIdx);
 			}
 			return reinterpret_cast<U8 *>(&xMemEnt[1]); // +18 bytes
 		}
@@ -407,27 +407,27 @@ U8 *SkWinCore::EXTRACT_GDAT_IMAGE(U16 iGDatIndex, i16 allocUpper)
 		}
 	}
 	shelf_memory bp10 = glbShelfMemoryTable[iLocalGDatIdx];
-	IMG3 *bp08;
+	IMG3* xImage;	// bp08
 	if (bp10.Absent()) {
-		bp08 = reinterpret_cast<IMG3 *>(QUERY_GDAT_DYN_BUFF(iLocalGDatIdx, reinterpret_cast<U16 *>(&bp16), (_4976_5d76 != 0) ? 1 : (!allocUpper)));
+		xImage = reinterpret_cast<IMG3 *>(QUERY_GDAT_DYN_BUFF(iLocalGDatIdx, reinterpret_cast<U16 *>(&bp16), (_4976_5d76 != 0) ? 1 : (!allocUpper)));
 	}
 	else {
-		bp08 = reinterpret_cast<IMG3 *>(REALIZE_GRAPHICS_DATA_MEMORY(bp10));
+		xImage = reinterpret_cast<IMG3 *>(REALIZE_GRAPHICS_DATA_MEMORY(bp10));
 	}
-	if (bp08->OffsetY() == -32) { // uncompressed 4bpp/8bpp. but 8bpp is untested!
+	if (xImage->OffsetY() == -32) { // uncompressed 4bpp/8bpp. but 8bpp is untested!
 		if (bp16 < 0) {
-			U8 *bp04 = _3e74_0245(iLocalGDatIdx, allocUpper);
+			U8* bp04 = MEMENT_3e74_0245(iLocalGDatIdx, allocUpper);
 			return bp04;
 		}
 		else {
-			U8 *bp04 = PTR_PADD(bp08,+10);
+			U8* bp04 = PTR_PADD(xImage,+10);
 			return bp04;
 		}
 	}
-	U16 bp12 = bp08->Width();
-	U16 bp14 = bp08->Height();
+	U16 bp12 = xImage->Width();
+	U16 bp14 = xImage->Height();
 #if DM2_EXTENDED_MODE == 1
-	i32 bp0c = bp08->GetImageSize();
+	i32 bp0c = xImage->GetImageSize();
 #else
 	i32 bp0c = (((bp12 +1) & 0xFFFE) >> 1) * bp14;
 #endif
@@ -443,15 +443,15 @@ U8 *SkWinCore::EXTRACT_GDAT_IMAGE(U16 iGDatIndex, i16 allocUpper)
 		bp0c += sizeof(mement) + sizeof(i32);
 		mement *bp04 = ALLOC_LOWER_CPXHEAP(bp0c);
 		if (bp16 >= 0) {
-			bp08 = reinterpret_cast<IMG3 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp16));
+			xImage = reinterpret_cast<IMG3 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp16));
 		}
 		si = FIND_FREE_MEMENTI();
 		tblRawDataToMement[iLocalGDatIdx] = si;
 		ATLASSERT(tblMementsPointers[si] == NULL);
 		tblMementsPointers[si] = bp04;
-		bp04->w10(iLocalGDatIdx);
+		bp04->setCacheIndex(iLocalGDatIdx);
 #if DM2_EXTENDED_MODE == 1
-		bp04->w12(bp08->GetBitsCount());
+		bp04->w12(xImage->GetBitsCount());
 #else
 		bp04->w12(4);
 #endif
@@ -470,14 +470,14 @@ U8 *SkWinCore::EXTRACT_GDAT_IMAGE(U16 iGDatIndex, i16 allocUpper)
 		bp04[-1].w6 = (allocUpper != 0) ? 0 : 2;
 		bp04[-1].iGDatRawDataIdx = iLocalGDatIdx;
 #if DM2_EXTENDED_MODE == 1
-		bp04[-1].w8 = bp08->GetBitsCount();
+		bp04[-1].w8 = xImage->GetBitsCount();
 #else
 		bp04[-1].w8 = IMG_4_BPP;
 #endif
 		bp04[-1].width = bp12;
 		bp04[-1].height = bp14;
 		COPY_MEMORY(
-			PTR_PADD(bp08,+QUERY_GDAT_RAW_DATA_LENGTH(iLocalGDatIdx) -16),
+			PTR_PADD(xImage,+QUERY_GDAT_RAW_DATA_LENGTH(iLocalGDatIdx) -16),
 			PTR_PADD(bp04,+bp0c -16),
 			16
 			);
@@ -489,20 +489,20 @@ U8 *SkWinCore::EXTRACT_GDAT_IMAGE(U16 iGDatIndex, i16 allocUpper)
 			bp20 = QUERY_MEMENTI_FROM(bp1c);
 			bp1a = reinterpret_cast<U8 *>(&tblMementsPointers[bp20][1]); // +18 bytes
 		}
-		DECODE_IMG3_OVERLAY(bp1a, bp08, _bp04);
+		DECODE_IMG3_OVERLAY(bp1a, xImage, _bp04);
 	}
 	else {
 #if DM2_EXTENDED_MODE == 1
-		switch (bp08->Getpf()) {
+		switch (xImage->Getpf()) {
 			case pfC8:
-				DECODE_IMG9(bp08, _bp04);
+				DECODE_IMG9(xImage, _bp04);
 				break;
 			case pfC4:
-				DECODE_IMG3_UNDERLAY_LOCAL(bp08, _bp04);
+				DECODE_IMG3_UNDERLAY_LOCAL(xImage, _bp04);
 				break;
 		}
 #else
-		DECODE_IMG3_UNDERLAY_LOCAL(bp08, _bp04);
+		DECODE_IMG3_UNDERLAY_LOCAL(xImage, _bp04);
 #endif
 	}
 	if (_4976_5d76 != 0) {
@@ -518,7 +518,7 @@ U8 *SkWinCore::EXTRACT_GDAT_IMAGE(U16 iGDatIndex, i16 allocUpper)
 		return _bp04;
 	}
 	if (bp10.Absent()) {
-		DEALLOC_BIGPOOL_STRUCT_BEFORE(reinterpret_cast<U8 *>(bp08));
+		DEALLOC_BIGPOOL_STRUCT_BEFORE(reinterpret_cast<U8 *>(xImage));
 	}
 	if (bp1e != 0) {
 		FREE_PICT_ENTRY(bp1a);

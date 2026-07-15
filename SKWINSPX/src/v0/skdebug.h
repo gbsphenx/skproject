@@ -17,11 +17,15 @@
 
 #define SkDP(X) {if (SkCodeParam::bDebugPrint == true) {SkwinDEBUG (1, X);}}
 
+
+#define LOGX(X) Write2LOGX X
+/*
 #ifdef _DEBUG
 	#define LOGX(X) Write2LOGX X
 #else
 	#define LOGX(X) ;;
 #endif // _DEBUG
+*/
 
 #define DLV_BUGHERE 1
 
@@ -67,7 +71,7 @@
 #define DLV_DBG_GAME_LOOP	1
 #define DLV_DBG_LUA			0
 #define DLV_DBG_SND			0
-#define DLV_USE_LOGX		0
+#define DLV_USE_LOGX		1
 
 #ifdef __DJGPP__
 #define DLV_DBG_DOS			1

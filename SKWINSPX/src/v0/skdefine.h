@@ -1759,6 +1759,8 @@ typedef enum
 // Is used for tblCacheToMement
 #endif
 
+#define MEM_ENT_x8000_FLAG_CACHE			0x8000
+
 //------------------------------------------------------------------------------
 
 #define C1_CHECKMOVE_OLD_TILE_STAIRS			1

@@ -85,12 +85,19 @@ void Write2LOGX(LPCTSTR pszFormat, ...) {
 void Write2LOGX(const char *message, ...) {
 #if DLV_USE_LOGX
 
+#if defined (__DJGPP__)
+	static char flogName[] = "SKLOGDOS.TXT";
+#elif defined (__LINUX__)
+	static char flogName[] = "sklinux.log";
+#else
+	static char flogName[] = "SkWinLog.txt";
+#endif
 	va_list args;
 	va_start (args, message);
 
 	static FILE *flog = NULL;
 	if (flog == NULL)
-		flog = fopen("LOGX.txt", "wt");
+		flog = fopen(flogName, "wt");
 	if (flog != NULL)
 	{
 		vfprintf (flog, message, args);

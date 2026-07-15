@@ -1426,21 +1426,24 @@ void SkWinCore::FIRE_BLIT_PICTURE(
 	const U8 *localPal
 	)
 {
-	SkD((DLV_GUI, "GUI: xTox (%p,%p,(%3d,%3d,%3d,%3d),%3d,%3d,%3d,%3d,%2d,%d,%d,%d,%p)\n", src, dst
+	SkD((DLV_GUI||SkCodeParam::bDebugPrint, "FIRE_BLIT_PICT: xTox (%p,%p,(%3d,%3d,%3d,%3d),%3d,%3d,%3d,%3d,%2d,%d,%d,%d,%p)\n", src, dst
 		, (Bitu)rc->x, (Bitu)rc->y, (Bitu)rc->cx, (Bitu)rc->cy, (Bitu)srcx, (Bitu)srcy
 		, (Bitu)srcPitch, (Bitu)dstPitch, (Bitu)colorkey, (Bitu)mirrorFlip, (Bitu)srcBpp, (Bitu)dstBpp, localPal));
-#if UseAltic
+	LOGX(("FIRE_BLIT_PICT: xTox (%p,%p,(%3d,%3d,%3d,%3d),%3d,%3d,%3d,%3d,%2d,%d,%d,%d,%p)\n", src, dst
+		, (Bitu)rc->x, (Bitu)rc->y, (Bitu)rc->cx, (Bitu)rc->cy, (Bitu)srcx, (Bitu)srcy
+		, (Bitu)srcPitch, (Bitu)dstPitch, (Bitu)colorkey, (Bitu)mirrorFlip, (Bitu)srcBpp, (Bitu)dstBpp, localPal));
+//#if UseAltic
 	ATLASSERT((srcBpp == IMG_4_BPP || srcBpp == IMG_8_BPP) && (dstBpp == IMG_4_BPP || dstBpp == IMG_8_BPP));
 	ATLASSERT(colorkey == -1 || (0 <= colorkey && colorkey <= 255));
 	U16 dstibpp = IMG_8_BPP, dsticx = 320, dsticy = 200;
 	if (dst != NULL) {
-		dstibpp = READ_I16(dst,-6);
-		dsticx = READ_I16(dst,-4);
-		dsticy = READ_I16(dst,-2);
+		dstibpp = READ_IMGBUFF_BPP(dst);	// READ_I16(dst,-6);
+		dsticx = READ_IMGBUFF_WIDTH(dst);	// READ_I16(dst,-4);
+		dsticy = READ_IMGBUFF_HEIGHT(dst);	// READ_I16(dst,-2);
 	}
 	ATLASSERT(dstBpp == dstibpp);
-	ATLASSERT((dstBpp == 4) ? RUp2(dstPitch) == RUp2(dsticx) : true);
-	ATLASSERT((dstBpp == 8) ? (dstPitch == dsticx) : true);
+	ATLASSERT((dstBpp == IMG_4_BPP) ? RUp2(dstPitch) == RUp2(dsticx) : true);
+	ATLASSERT((dstBpp == IMG_8_BPP) ? (dstPitch == dsticx) : true);
 	ATLASSERT(rc->x >= 0);
 	ATLASSERT(rc->y >= 0);
 	ATLASSERT(rc->cx >= 0);
@@ -1449,45 +1452,32 @@ void SkWinCore::FIRE_BLIT_PICTURE(
 	ATLASSERT((0 +rc->x +RUp2(dsticx) * (rc->y +rc->cy -1) +rc->cx) <= (RUp2(dsticx) * dsticy));
 	if (SkCodeParam::bUsePowerDebug && (!CheckSafePointer((void*)src) /*|| dst == NULL *//*|| rc == NULL */ /*|| localPal == NULL*/))
 		return;
-#endif
+//#endif
 
-	//^44C8:1101
 	ENTER(0);
-	//^44C8:1106
 	U16 di = srcPitch;
 	U16 si = colorkey;
-	//^44C8:110C
 	if (dst == NULL) {
-		//^44C8:1114
 		IBMIO_BLIT_TO_SCREEN_xTO8BPP(src, rc, srcx, srcy, di, si, localPal, srcBpp) CALL_IBMIO;
-		//^44C8:113C
 	}
 	else {
-		//^44C8:113F
-		if (srcBpp == 4) {
-			//^44C8:1145
-			if (dstBpp == 4) {
-				//^44C8:114B
+		if (srcBpp == IMG_4_BPP) {
+			if (dstBpp == IMG_4_BPP) {
 				FIRE_BLIT_TO_MEMORY_4TO4BPP(src, dst, rc, srcx, srcy, srcPitch, dstPitch, colorkey, mirrorFlip);
 			}
 			else {
-				//^44C8:1171
 				FIRE_BLIT_TO_MEMORY_4TO8BPP(src, dst, rc, srcx, srcy, srcPitch, dstPitch, colorkey, mirrorFlip, localPal);
 			}
 		}
 		else {
-			//^44C8:11A0
 			if (localPal == NULL) {
-				//^44C8:11A8
 				FIRE_BLIT_TO_MEMORY_8TO8BPP(src, dst, rc, srcx, srcy, srcPitch, dstPitch, colorkey, mirrorFlip);
 			}
 			else {
-				//^44C8:11D1
 				_44c8_0f29(src, dst, rc, srcx, srcy, di, dstPitch, si, mirrorFlip, localPal);
 			}
 		}
 	}
-	//^44C8:11FE
 	return;
 }
 

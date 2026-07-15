@@ -13,8 +13,8 @@
 
 
 //^3E74:48C9
-// _3e74_48c9 renamed _3e74_48c9_MEMENT
-mement* SkWinCore::_3e74_48c9_MEMENT(U16 mementi)
+// _3e74_48c9 renamed GET_MEMENT_FROM_MEMENTINDEX
+mement* SkWinCore::GET_MEMENT_FROM_MEMENTINDEX(U16 mementi)
 {
 	// cqOk @ 21:03 2007/02/21
 
@@ -365,9 +365,10 @@ void SkWinCore::FREE_INDEXED_MEMENT(U16 index)
 		i32 iMemEntReadSize = READ_I32(xMemEntry,-sizeof(i32));	// bp10 READ_I32(xMemEntry,-4);
 //		printf("WHAT IS bp10 = %08x\n", iMemEntReadSize);
 //		printf("AFTER READ_I32 %p\n", xMemEntry);
+		LOGX(("FREE INDEXED MEMENT %04X => pX]%p S=%06X RS=%08X (NEG:%08X) [(-4)%08X (0)%08X]", index, xMemEntry, iMementSize, iMemEntReadSize, -iMemEntReadSize, *(((U32*)xMemEntry)-1), *((U32*)xMemEntry) ));
 		SkD((SkCodeParam::bDebugPrint, "Mement Readsize = %X (%d) (bounds %X to %X)\n", iMemEntReadSize, iMemEntReadSize, -BUFF_SIZE_MAX, BUFF_SIZE_MAX));
-		ATLASSERT(-BUFF_SIZE_MAX < iMemEntReadSize && iMemEntReadSize < BUFF_SIZE_MAX);
-		//ATLASSERT(-60000 < bp10 && bp10 < 60000);
+		ATLASSERT(-BUFF_SIZE_MAX < iMemEntReadSize && iMemEntReadSize < BUFF_SIZE_MAX);	//ATLASSERT(-60000 < bp10 && bp10 < 60000);
+
 		if (iMemEntReadSize > 0) {
 			PTR_PSBA(xMemEntry,iMemEntReadSize);
 			TEST_MEMENT(xMemEntry);
@@ -520,7 +521,7 @@ U16 SkWinCore::ADD_CACHE_HASH(Bit32u cacheHash, U16 *piYaCacheIndex)
 	if (FIND_ICI_FROM_CACHE_HASH(cacheHash, &bp02) != 0) {
 		*piYaCacheIndex = _4976_5c7e_cache_ici[bp02];
 		U16 si = QUERY_MEMENTI_FROM(*piYaCacheIndex | 0x8000);
-		_3e74_48c9_MEMENT(si);
+		GET_MEMENT_FROM_MEMENTINDEX(si);
 		return 1;
 	}
 	*piYaCacheIndex = INSERT_CACHE_HASH_AT(cacheHash, bp02);
@@ -534,7 +535,7 @@ U8* SkWinCore::QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(U16 cacheIndex)
 	U8* pMementP1 = NULL;
 	mement* xMement = NULL;
 	U16 iMement = QUERY_MEMENTI_FROM(cacheIndex | 0x8000);
-	xMement = _3e74_48c9_MEMENT(iMement);
+	xMement = GET_MEMENT_FROM_MEMENTINDEX(iMement);
 	if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(xMement))
 		return NULL;
 	pMementP1 = reinterpret_cast<U8*> (&xMement[1]);
@@ -693,9 +694,11 @@ _2da5:
 		i32 bp0c = xMemEnt->dw0() - buffSize;
 		if (bp0c >= 30) {
 			xMemEnt2 = reinterpret_cast<mement *>(PTR_PADD(xMemEnt,buffSize));
-			WRITE_I32(xMemEnt2,bp0c -sizeof(i32),bp0c);	// WRITE_I32(xMemEnt2,bp0c -4,bp0c);
+			WRITE_I32(xMemEnt2,bp0c - sizeof(i32),bp0c);	// WRITE_I32(xMemEnt2,bp0c -4,bp0c);
+			LOGX(("WRITE MEMENT(2) @pX]%p - %08X | size = %08X abs(%8X/%d) (written @pX]%p", xMemEnt2, bp0c - sizeof(i32), bp0c, abs(bp0c), abs(bp0c), ((X8*)(xMemEnt2)+(bp0c - sizeof(i32))) ));
 			xMemEnt2->dw0(bp0c);
 			MEMENT_3e74_0d32(xMemEnt2);
+			LOGX(("pX]%p S=%06X RS=%08X [(-4)%08X (0)%08X]", xMemEnt2, bp0c - sizeof(i32), READ_I32(xMemEnt2,-sizeof(i32)), *(((U32*)xMemEnt2)-1), *((U32*)xMemEnt2) ));
 		}
 		else {
 			buffSize = xMemEnt->dw0();
@@ -704,6 +707,8 @@ _2da5:
 	_4976_5cf8 -= buffSize;
 	xMemEnt->dw0(-buffSize);
 	WRITE_I32(xMemEnt,+buffSize -sizeof(i32),-buffSize);
+	LOGX(("WRITE MEMENT(1) @pX]%p - %08X | size = %08X abs(%8X/%d) (written @pX]%p", xMemEnt, buffSize -sizeof(i32), -buffSize, buffSize, buffSize, ((X8*)(xMemEnt)+(buffSize -sizeof(i32))) ));
+	LOGX(("pX]%p S=%06X RS=%08X [(-4)%08X (0)%08X]", xMemEnt, buffSize -sizeof(i32), READ_I32(xMemEnt,-sizeof(i32)), *(((U32*)xMemEnt)-1), *((U32*)xMemEnt) ));
 	reinterpret_cast<mement *>(xMemEnt)->setMark8(MEMENT_MARK_M1_FFFF);
 	reinterpret_cast<mement *>(xMemEnt)->setMark6(MEMENT_MARK_M1_FFFF);
 	reinterpret_cast<mement *>(xMemEnt)->setMark4(MEMENT_MARK_M1_FFFF);
@@ -722,29 +727,32 @@ _2da5:
 
 //^3E74:5708
 // returns a *mement ?
-U8* SkWinCore::ALLOC_CPXHEAP_MEM(U16 index, U32 buffSize)
+U8* SkWinCore::ALLOC_CPXHEAP_MEM(U16 iCacheIndex, U32 iBufferSize)
 {
-	if (SkCodeParam::bUsePowerDebug && index == 0xFFFF)
+	if (SkCodeParam::bUsePowerDebug && iCacheIndex == 0xFFFF)
 		return NULL;
+	ATLASSERT(iCacheIndex < glbCacheRecyclerMax);
 
-	buffSize += (sizeof(mement) + sizeof(i32));	// +4
-	if ((buffSize & 1) != 0) {
-		buffSize++;
+	iBufferSize += (sizeof(mement) + sizeof(i32));	// +4
+	if ((iBufferSize & 1) != 0) {
+		iBufferSize++;
 	}
 
-	mement* xMement = ALLOC_LOWER_CPXHEAP(buffSize);	// bp04
-	U16 si = FIND_FREE_MEMENTI();
-	if (SkCodeParam::bUsePowerDebug && si == 0xFFFF)
+	mement* xMement = ALLOC_LOWER_CPXHEAP(iBufferSize);	// bp04
+	U16 iMemEntryIndex = FIND_FREE_MEMENTI();	// si
+	if (SkCodeParam::bUsePowerDebug && iMemEntryIndex == 0xFFFF) {
+		LOGX(("WARNING! Can't find free Mementi\n"));
 		return NULL;
+	}
 
-	ATLASSERT(tblCacheToMement[index] == U16(-1));
-	tblCacheToMement[index] = si;
+	ATLASSERT(tblCacheToMement[iCacheIndex] == U16(-1));	// that cache slot must be empty
+	tblCacheToMement[iCacheIndex] = iMemEntryIndex;
 
-	ATLASSERT(tblMementsPointers[si] == 0);
-	tblMementsPointers[si] = xMement;
-	xMement->w10(index | 0x8000);
+	ATLASSERT(tblMementsPointers[iMemEntryIndex] == NULL);	// that mem entry table must be empty == 0
+	tblMementsPointers[iMemEntryIndex] = xMement;
+	xMement->setCacheIndex(iCacheIndex | MEM_ENT_x8000_FLAG_CACHE);
 
-	SkD((DLV_CPX,"DBG: CPX Alloc Ci#%02d Mi#%02d (%5u) = %p\n", index, si, 0U + buffSize, xMement));
+	SkD((DLV_CPX,"DBG: CPX Alloc Ci#%02d Mi#%02d (%5u) = %p\n", iCacheIndex, iMemEntryIndex, 0U + iBufferSize, xMement));
 
 	return reinterpret_cast<U8 *>(&xMement[1]); // +18 bytes (sizeof(mement))
 }
@@ -753,7 +761,7 @@ U8* SkWinCore::ALLOC_CPXHEAP_MEM(U16 index, U32 buffSize)
 // _3e74_585a renamed _3e74_585a_CACHE
 void SkWinCore::_3e74_585a_CACHE(U16 iCacheIndex, U16 yy)
 {
-	U16 iMementIndex = QUERY_MEMENTI_FROM(iCacheIndex | 0x8000);	// si
+	U16 iMementIndex = QUERY_MEMENTI_FROM(iCacheIndex | MEM_ENT_x8000_FLAG_CACHE);	// si
 	if (iMementIndex == 0xFFFF) {
 		FREE_CACHE_INDEX(iCacheIndex);
 	}
@@ -789,7 +797,7 @@ void SkWinCore::FREE_TEMP_CACHE_INDEX(U16 iCacheIndex)
 {
 	ENTER(0);
 	_3e74_585a_CACHE(iCacheIndex, 0);
-	FREE_INDEXED_MEMENT(iCacheIndex | 0x8000);
+	FREE_INDEXED_MEMENT(iCacheIndex | MEM_ENT_x8000_FLAG_CACHE);
 	return;
 }
 
@@ -833,7 +841,7 @@ void SkWinCore::RECYCLE_MEMENTI(U16 iMemEntIdx, U16 yy)
 		return;
 	TEST_MEMENT(xMemEntry);
 	if (xMemEntry->getMark4() != MEMENT_MARK_M1_FFFF) {
-		_3e74_48c9_MEMENT(iLocalMemEntIdx);
+		GET_MEMENT_FROM_MEMENTINDEX(iLocalMemEntIdx);
 		return;
 	}
 	mement* xMemEntry02;	// bp0c
@@ -945,7 +953,7 @@ X32 SkWinCore::_3e74_5673_CACHE(X32 cacheHash, U16 *piYaCacheIndex, X16 ifTryIns
 	}
 	*piYaCacheIndex = _4976_5c7e_cache_ici[ici];
 // SPX: Break down to catch and prevent NULL / crash
-	mement* xMemEnt = _3e74_48c9_MEMENT(QUERY_MEMENTI_FROM(*piYaCacheIndex | 0x8000));	// xm
+	mement* xMemEnt = GET_MEMENT_FROM_MEMENTINDEX(QUERY_MEMENTI_FROM(*piYaCacheIndex | MEM_ENT_x8000_FLAG_CACHE));	// xm
 	if (CheckSafePointer(xMemEnt))
 		return *reinterpret_cast<i32 *>(xMemEnt) - (sizeof(mement)) - (sizeof(i32));	// -22 = -sizeof(mement) - 4
 		// SPX: what is this -4 ? some size/length is stored in these -4 before mement pointer
@@ -961,7 +969,7 @@ U8 *SkWinCore::_3e74_5788_CACHE(U16 xx, i32 yy)
 {
 	ENTER(0);
 	cd.mc._4976_5c90_cache = 1;
-	FREE_INDEXED_MEMENT(xx|0x8000);
+	FREE_INDEXED_MEMENT(xx|MEM_ENT_x8000_FLAG_CACHE);
 	cd.mc._4976_5c90_cache = 0;
 	return ALLOC_CPXHEAP_MEM(xx, yy);
 }

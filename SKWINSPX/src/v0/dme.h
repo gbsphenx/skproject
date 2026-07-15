@@ -8,6 +8,7 @@
 #include <skver.h>
 #include <sktypes.h>
 #include <skdefine.h>
+#include <skdebug.h>
 
 //#include <skparam.h> // SPX: allow control of DM1 vs DM2 behaviour
 
@@ -1177,7 +1178,7 @@ namespace DM2Internal {
 		U8 bRainRelated2;
 		U32 dwRainSpecialNextTick;
 	};
-	// 
+	// when allocated, shelf_memory should have a 2 more bytes before to store its data length as i16
 	struct shelf_memory {
 		U32 val;
 
@@ -1273,27 +1274,30 @@ namespace DM2Internal {
 		X16 _w4;		// @4 // w4 + w6 builds a 32-bits pointer for mement1
 		X16 _w6;		// @6
 		X16 _w8;		// @8 // mement index for chain image? // w8 + w10 builds a 32-bits pointer for mement2
-		X16 _w10;		// @10 // raw data index? (for chain image?)
+		//X16 _w10;		// @10 // raw data index? (for chain image?)
+		X16 iMemEntCacheIndex;	// @10	cache index which holds this mement
 // SPX: pointers to replace w4+w6 and w8+w10 and allow 64 bits compilation / this addition breaks place assuming mement to be stricly 18 bytes long
 		mement* xMementRef1;	// replaces w4+w6
 		mement* xMementRef2;	// replaces w8+w10
-		U8 pDummyPad1;	// just here to test non 18-bytes mement struct.
+		U8 pDummyPad1;	// SPX: just here to test non 18-bytes mement structure unalignment and catch execution crash
 // SPX: !!! these 6 bytes must remain at the end of structure !!! because these are the 6 bytes checked from an image buffer pointer -6 !
 		X16 _w12;		// @12 // bpp
 		X16 _w14;		// @14 // width
 		X16 _w16;		// @16 // height
 
 		i32 dw0() const { return _dw0; }
-		void dw0(i32 val) { _dw0 = val; }
+		//void dw0(i32 val) { _dw0 = val; }
+		void dw0(i32 val) { LOGX(("SET MEMENT %p dw0 = %08X", this, val)); _dw0 = val; }
 
 		X16 getMark4() const { return _w4; }	// w4() 
 		X16 getMark6() const { return _w6; }	// w6() 
 		X16 getMark8() const { return _w8; }	// w8()
-		X16 getRawDataIndex() const { return _w10; }	// w10()
+		X16 getRawDataIndex() const { return iMemEntCacheIndex; }	// w10()
 		void setMark4(X16 val) { _w4 = val; }	// w4(X16 val)
 		void setMark6(X16 val) { _w6 = val; }	// w6(X16 val)
 		void setMark8(X16 val) { _w8 = val; }		// w8(X16 val)
-		void w10(X16 val) { _w10 = val; }	// w10(X16 val)
+		//void w10(X16 val) { _w10 = val; }	// w10(X16 val)
+		void setCacheIndex(X16 iIndex) { iMemEntCacheIndex = iIndex; }	// w10(X16 val)
 		void w12(X16 val) { _w12 = val; }	// w12(X16 val)
 		void w14(X16 val) { _w14 = val; }	// w14(X16 val)
 		void w16(X16 val) { _w16 = val; }	// w16(X16 val)
@@ -1305,9 +1309,9 @@ namespace DM2Internal {
 			xMementRef1 = pv;	// SPX: real pointer to handle 64-bits
 		}
 		void setMement2(mement *pv) {	// pv8(mement *pv)
-			U32ptr val = reinterpret_cast<U32ptr>(pv);
-			_w8 = U16(val);
-			_w10 = U16(val >> 16);
+			//U32ptr val = reinterpret_cast<U32ptr>(pv);
+			//_w8 = U16(val);
+			//_w10 = U16(val >> 16);
 			xMementRef2 = pv;	// SPX: real pointer to handle 64-bits
 		}
 //		mement *pv4() { return reinterpret_cast<mement *>(_w4 | (_w6 << 16)); }	// *pv4()

@@ -800,12 +800,12 @@ protected:
 	i32		glbFreeRAMMemPool;		// (_4976_5d30) for allocmem. avail size of free memory pool(#1). 325732 bytes avail when dosbox runs
 	U16	_4976_5d34;		// (_4976_5d34)
 	i16		glbCacheRecyclerCurrentIndex;		// (_4976_5d36) index to (_4976_5d08|_4976_5c7e). for recycle indexer?
-	U16		*_4976_5d38;	// (_4976_5d38) at first it points [1st rawdata], at second it points [1st CGDEntry]
+	U16*	tblGDatEntries;	// (U16* _4976_5d38) at first it points [1st rawdata], at second it points [1st CGDEntry]
 	X16		glbGDatNumberOfRawEntries;		// (_4976_5d3c) w2 of 1st raw (cnt of raw entries)
-	X16		_4976_5d3e;		// (_4976_5d3e) size of CGDEntry
+	X16		glbGDatEntrySize;		// (_4976_5d3e) size of CGDEntry
 	X16		_4976_5d40;		// (_4976_5d40) w4 of 2nd raw
-	i16		_4976_5d42[7];	// (_4976_5d42[7])
-	U8		_4976_5d50[7];	// (_4976_5d50[7])
+	i16		tblGDatEntryPosOrder[7];	// (_4976_5d42[7])
+	U8		tblGDatEntryPosSize[7];	// (_4976_5d50[7])	// size of each GDat Entry value (Cls1, cls2, etc ...) (=> each are 1 byte except the data value which is 2 bytes)
 	U16		_4976_5d58;		// (_4976_5d58)
 	tiamat	_4976_5d5a;	// for allocmem. most upper address of largest memory pool (#2) in ibmio?
 	mement*	glbMement5;	// (_4976_5d5e) mement#5
@@ -1359,7 +1359,7 @@ protected:
 	U16 FIND_ICI_FROM_CACHE_HASH(Bit32u cacheHash, U16 *ici);
 	void RECYCLE_MEMENTI(U16 mementi, U16 yy);
 	int TEST_MEMENT(mement* xMemEntry);	// SPX: changed "void" to "int"
-	mement *_3e74_48c9_MEMENT(U16 mementi); // _3e74_48c9
+	mement* GET_MEMENT_FROM_MEMENTINDEX(U16 mementi); // _3e74_48c9
 	void FREE_CACHE_INDEX(U16 cacheIndex);
 	void MEMENT_3e74_4549(U16 iMemEntIdx);	// _3e74_4549
 	void MEMENT_3e74_0c8c(mement *ref);	// _3e74_0c8c
@@ -1792,7 +1792,7 @@ protected:
 	U16 _19f0_000a(i16 xx, i16 yy);
 	U16 _1c9a_1bae(i16 xx, i16 yy);
 	U16 FIND_WALK_PATH(i16 xx, i16 yy, U16 aa, U16 bb, i16 cc, skxxx9 *ss, WalkPath *wp);	// One very big func
-	void _1c9a_0648(U16 mapno);
+	void CHANGE_GLOBAL_CREATURE_POS(U16 iMapNo);	// _1c9a_0648
 	void CHECK_RECOMPUTE_LIGHT(i16 xx, i16 yy);
 	void __INIT_GAME_38c8_03ad();
 	void END_GAME(U16 xx);
@@ -1965,7 +1965,7 @@ protected:
 	shelf_memory CONVERT_PHYS_TO_SHELF_FORM(Bit8u *buff);
 	Bit8u *QUERY_GDAT_DYN_BUFF(U16 index, U16 *yy, U16 allocUpper);
 	Bit8u *QUERY_GDAT_IMAGE_LOCALPAL(Bit8u cls1, Bit8u cls2, Bit8u cls4);
-	U8 *_3e74_0245(X16 xx, X16 yy);
+	U8* MEMENT_3e74_0245(X16 xx, X16 yy);	// _3e74_0245
 	X8 READ_IMG3_NIBBLE();
 	U16 READ_IMG3_DURATION();
 	void SPILL_IMG3_PIXELS(X16 offDst, X16 offSrc, X16 size);
@@ -2231,7 +2231,7 @@ protected:
 	U32 SWAP32(U32 xx);	// SPX: addition for convenience and read LE gdat item
 	void SWAPWPX(U16* xData, U16 iNbItems); // SPX: addition for swapping array of memory
 	void SWAP_OBJECTDATA(U16* xData, U8 iCategory, U16 iNbItems);	// SPX: addition for swapping objects/items data
-	U32 QUERY_GDAT_ENTRY_VALUE(U16 entryIndex, U16 entryPos);
+	U32 QUERY_GDAT_ENTRY_VALUE(U16 iEntryIndex, U16 entryPos);
 	void LOAD_GDAT_ENTRIES();
 	X16 LANG_NO_FILTER(U16 xx);	// (_3e74_2162) RETURNS 1!!
 	X16 LANG_FILTER(U16 entryIndex);
