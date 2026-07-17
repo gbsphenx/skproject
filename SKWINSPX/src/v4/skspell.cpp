@@ -64,7 +64,7 @@ U8 *SkWinCore::_32cb_0649(U8 cls1, U8 cls2, U8 cls4, i16 colorkey)
 		COPY_MEMORY(bp04, _4976_582a, 16);
 		bp06 = 16;
 	}
-	return _0b36_037e(_4976_582a, U8(_4976_5a88), colorkey, -1, bp06);
+	return PALETTE_SOMETHING_0b36_037e(_4976_582a, U8(_4976_5a88), colorkey, -1, bp06);
 }
 
 

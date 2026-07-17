@@ -175,7 +175,7 @@ _1201:
 					printf("EVENT for ARROW IMG BUFF : %d %d %d\n", iImgCls1Category, iImgCls2MainId, iImgCls4EntryId);
 					SRECT xRect;	// bp14
 					//_1031_10c8(&bp48, &xRect, READ_UI16(bp04,-4), READ_UI16(bp04,-2));
-					_1031_10c8(&bp48, &xRect, READ_IMGBUFF_WIDTH(xImgMoveArrow), READ_IMGBUFF_HEIGHT(xImgMoveArrow));
+					SOME_COPY_RECT_1031_10c8(&bp48, &xRect, READ_IMGBUFF_WIDTH(xImgMoveArrow), READ_IMGBUFF_HEIGHT(xImgMoveArrow));
 					DRAW_ICON_PICT_BUFF(
 						QUERY_GDAT_IMAGE_ENTRY_BUFF(iImgCls1Category, iImgCls2MainId, iImgCls4EntryId),
 						&bp48,
@@ -218,7 +218,7 @@ _1201:
 					U8* xImgCellBuffer = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x05_SPELLMENU, GDAT_x08_RUNE_CELL__PUSHED);	// // 0x01, 0x05, 0x08
 					SRECT xRect;	// bp14
 					//_1031_10c8(&bp48, &bp14, READ_UI16(bp04,-4), READ_UI16(bp04,-2));
-					_1031_10c8(&bp48, &xRect, READ_IMGBUFF_WIDTH(xImgCellBuffer), READ_IMGBUFF_HEIGHT(xImgCellBuffer));
+					SOME_COPY_RECT_1031_10c8(&bp48, &xRect, READ_IMGBUFF_WIDTH(xImgCellBuffer), READ_IMGBUFF_HEIGHT(xImgCellBuffer));
 					DRAW_ICON_PICT_BUFF(
 						QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x05_SPELLMENU, GDAT_x08_RUNE_CELL__PUSHED),	// 0x01, 0x05, 0x08
 						&bp48,
@@ -268,7 +268,7 @@ _148a:
 				}
 			case 14:	// 14: magic map button
 				{
-					_29ee_1d03(*(glbPtrTransmittedUIEvent++));
+					DRAW_SOME_MAGICAL_MAP_STRING_29ee_1d03(*(glbPtrTransmittedUIEvent++));
 					goto _148a;
 				}
 			case 15:	// dialog button

@@ -366,7 +366,7 @@ void SkWinCore::DECODE_IMG3_UNDERLAY_LOCAL(IMG3 *xx, U8 *yy)
 U8* SkWinCore::EXTRACT_GDAT_IMAGE(U16 iGDatIndex, i16 allocUpper)
 {
 	SkD((DLV_DBG_GETPIC,"DBG: EXTRACT_GDAT_IMAGE(%4u,%u)\n", (Bitu)iGDatIndex, (Bitu)allocUpper));
-
+	LOGX(("EXTRACT_GDAT_IMAGE(%4u,%u)", (Bitu)iGDatIndex, (Bitu)allocUpper));
 	if (SkCodeParam::bUseFixedMode && iGDatIndex >= 65535)
 		return NULL;
 
@@ -383,16 +383,16 @@ U8* SkWinCore::EXTRACT_GDAT_IMAGE(U16 iGDatIndex, i16 allocUpper)
 			else {
 				xMemEnt = GET_MEMENT_FROM_MEMENTINDEX(iMemEntIdx);
 			}
-			return reinterpret_cast<U8 *>(&xMemEnt[1]); // +18 bytes
+			return reinterpret_cast<U8 *>(&xMemEnt[1]); // +18 bytes / pointer to the image buffer
 		}
 	}
 	else {
-		sk5cfc_image *bp04 = _4976_5cfc.pv0;
-		while (bp04 != NULL) {
-			if (bp04->iGDatRawDataIdx == iLocalGDatIdx) {
-				return (U8 *)&bp04[1]; // +14 bytes
+		sk5cfc_image* xLinkedImage = gblLinkedImageRoot.pNextImage;	// bp04
+		while (xLinkedImage != NULL) {
+			if (xLinkedImage->iGDatRawDataIdx == iLocalGDatIdx) {
+				return (U8 *)&xLinkedImage[1]; // +14 bytes
 			}
-			bp04 = bp04->pv0;
+			xLinkedImage = xLinkedImage->pNextImage;
 		}
 	}
 	U16 bp1e = 0;
@@ -406,13 +406,13 @@ U8* SkWinCore::EXTRACT_GDAT_IMAGE(U16 iGDatIndex, i16 allocUpper)
 			bp1a = EXTRACT_GDAT_IMAGE(bp1c, (_4976_5d76 != 0) ? 1 : (!allocUpper));
 		}
 	}
-	shelf_memory bp10 = glbShelfMemoryTable[iLocalGDatIdx];
+	shelf_memory xShelfMem = glbShelfMemoryTable[iLocalGDatIdx];	// bp10
 	IMG3* xImage;	// bp08
-	if (bp10.Absent()) {
+	if (xShelfMem.Absent()) {
 		xImage = reinterpret_cast<IMG3 *>(QUERY_GDAT_DYN_BUFF(iLocalGDatIdx, reinterpret_cast<U16 *>(&bp16), (_4976_5d76 != 0) ? 1 : (!allocUpper)));
 	}
 	else {
-		xImage = reinterpret_cast<IMG3 *>(REALIZE_GRAPHICS_DATA_MEMORY(bp10));
+		xImage = reinterpret_cast<IMG3 *>(REALIZE_GRAPHICS_DATA_MEMORY(xShelfMem));
 	}
 	if (xImage->OffsetY() == -32) { // uncompressed 4bpp/8bpp. but 8bpp is untested!
 		if (bp16 < 0) {
@@ -420,7 +420,8 @@ U8* SkWinCore::EXTRACT_GDAT_IMAGE(U16 iGDatIndex, i16 allocUpper)
 			return bp04;
 		}
 		else {
-			U8* bp04 = PTR_PADD(xImage,+10);
+			printf("Sizeof(IMG3) = %d\n", sizeof(IMG3));
+			U8* bp04 = PTR_PADD(xImage,+10);	// what is this +10 ??? IMG3 is said to takes 10 bytes, but it should be 6??
 			return bp04;
 		}
 	}
@@ -441,7 +442,7 @@ U8* SkWinCore::EXTRACT_GDAT_IMAGE(U16 iGDatIndex, i16 allocUpper)
 			bp0c++;
 		}
 		bp0c += sizeof(mement) + sizeof(i32);
-		mement *bp04 = ALLOC_LOWER_CPXHEAP(bp0c);
+		mement* bp04 = ALLOC_LOWER_CPXHEAP(bp0c);	// bp04
 		if (bp16 >= 0) {
 			xImage = reinterpret_cast<IMG3 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp16));
 		}
@@ -463,25 +464,43 @@ U8* SkWinCore::EXTRACT_GDAT_IMAGE(U16 iGDatIndex, i16 allocUpper)
 		// SkD((DLV_DBG_GETPIC,"DBG: CPX Alloc #%02d (Raw #%04d)\n", si, di));
 	}
 	else {
-		sk5cfc_image *bp04 = reinterpret_cast<sk5cfc_image *>(ALLOC_MEMORY_RAM(bp0c +sizeof(sk5cfc_image), (allocUpper != 0) ? afDefault : afUseLower, 8));
-		bp04->pv0 = _4976_5cfc.pv0;
-		_4976_5cfc.pv0 = bp04;
-		bp04++;
-		bp04[-1].w6 = (allocUpper != 0) ? 0 : 2;
-		bp04[-1].iGDatRawDataIdx = iLocalGDatIdx;
+		sk5cfc_image* xLinkedImage = reinterpret_cast<sk5cfc_image *>(ALLOC_MEMORY_RAM(bp0c +sizeof(sk5cfc_image), (allocUpper != 0) ? afDefault : afUseLower, 8));	// bp04
+		LOGX(("Linked Image (%p) pv0 = %p", xLinkedImage, gblLinkedImageRoot.pNextImage));
+		xLinkedImage->pNextImage = gblLinkedImageRoot.pNextImage;
+		gblLinkedImageRoot.pNextImage = xLinkedImage;
+		xLinkedImage++;	// what's for ? ...
+		// xLinkedImage++ goes +14 (= sizeof(sk5cfc_image)), but from there, xLinkedImage[-1] goes to the original xLinkedImage->pv0
+		LOGX(("Linked Image++ (%p) Linked Image[-1] (%p) / Linked Image pv0 = %p (sizeof(sk5cfc_image) = %X)", xLinkedImage, &xLinkedImage[-1], xLinkedImage[-1], sizeof(sk5cfc_image)));
+
+		
+		xLinkedImage[-1].iMemPool = (allocUpper != 0) ? 0 : 2;
+		xLinkedImage[-1].iGDatRawDataIdx = iLocalGDatIdx;
 #if DM2_EXTENDED_MODE == 1
-		bp04[-1].w8 = xImage->GetBitsCount();
+		xLinkedImage[-1].iBpp = xImage->GetBitsCount();
 #else
-		bp04[-1].w8 = IMG_4_BPP;
+		xLinkedImage[-1].iBpp = IMG_4_BPP;
 #endif
-		bp04[-1].width = bp12;
-		bp04[-1].height = bp14;
-		COPY_MEMORY(
+		xLinkedImage[-1].iWidth = bp12;
+		xLinkedImage[-1].iHeight = bp14;
+		
+		/*
+		xLinkedImage->pv0->w6 = (allocUpper != 0) ? 0 : 2;
+		xLinkedImage->pv0->iGDatRawDataIdx = iLocalGDatIdx;
+#if DM2_EXTENDED_MODE == 1
+		xLinkedImage->pv0->iBpp = xImage->GetBitsCount();
+#else
+		xLinkedImage->pv0->iBpp = IMG_4_BPP;
+#endif
+		xLinkedImage->pv0->iWidth = bp12;
+		xLinkedImage->pv0->iHeight = bp14;
+		*/
+// rewrite without the ++/-1
+		COPY_MEMORY(	// what is this -16 ??? related to sk5cfc_image size ???
 			PTR_PADD(xImage,+QUERY_GDAT_RAW_DATA_LENGTH(iLocalGDatIdx) -16),
-			PTR_PADD(bp04,+bp0c -16),
+			PTR_PADD(xLinkedImage,+bp0c -16),
 			16
 			);
-		_bp04 = reinterpret_cast<U8 *>(bp04);
+		_bp04 = reinterpret_cast<U8 *>(xLinkedImage);
 	}
 	U16 bp20;
 	if (bp1e != 0) {
@@ -517,11 +536,91 @@ U8* SkWinCore::EXTRACT_GDAT_IMAGE(U16 iGDatIndex, i16 allocUpper)
 		RECYCLE_MEMENTI(bp20, 0);
 		return _bp04;
 	}
-	if (bp10.Absent()) {
+	if (xShelfMem.Absent()) {
 		DEALLOC_BIGPOOL_STRUCT_BEFORE(reinterpret_cast<U8 *>(xImage));
 	}
 	if (bp1e != 0) {
 		FREE_PICT_ENTRY(bp1a);
 	}
 	return _bp04;
+}
+
+//^3929:0CA8
+void SkWinCore::KANJI_FONT_LOAD(X8 cls2)
+{
+	ENTER(660);
+	X16 bp0e = 0;
+	X16 bp10 = 0x20;
+	X16 si = 0xef;
+	skxxxf bp0294[64];
+	skxxxf *bp08 = bp0294;
+	U8 bp0b;
+	U8 *bp04;
+	for (bp0b = 0; (bp04 = QUERY_GDAT_ENTRY_DATA_BUFF(GDAT_CATEGORY_x1C_JAPANESE_FONT, cls2, dtImage, bp0b)) != NULL; ) {
+		X16 bp0a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x1C_JAPANESE_FONT, cls2, dtWordValue, bp0b);
+		if (bp0a != 0) {
+			bp0e = bp0a >> 8;
+			bp10 = U8(bp0a);
+		}
+		bp0a = QUERY_GDAT_PICT_OFFSET(GDAT_CATEGORY_x1C_JAPANESE_FONT, cls2, bp0b);
+		bp08->b0 = X8(bp0e);
+		bp08->b1 = X8(bp10);
+		bp08->w6 = i8(bp0a >> 8);
+		bp08->w2 = i16(READ_UI16(bp04,+0) & 0x3FF) / bp08->w6;
+		bp08->w8 = i8(bp0a);
+		bp08->w4 = i16(READ_UI16(bp04,+2) & 0x3FF) / bp08->w8;
+		bp0b++;
+		if (bp0b >= 0x40)
+			continue;
+		bp10 += bp08->w2 * bp08->w4;
+		if (bp10 > si) {
+			if (bp0e == 0) {
+				bp0e = 0xEF;
+				si = 0xFF;
+			}
+			bp0e++;
+			bp10 = 0x20;
+		}
+		bp08++;
+	}
+	_4976_5bf8[cls2] = bp0b;
+	U32 bp14 = bp0b * 10;
+	COPY_MEMORY(
+		bp0294, 
+		_4976_5bfa[cls2] = reinterpret_cast<skxxxf *>(ALLOC_MEMORY_RAM(bp14, afUseUpper, 0x400)),
+		bp14
+		);
+	return;
+}
+
+
+//^470A:0003
+// TODO: this does nothing ?!
+// SPX: _470a_0003 renamed FONT_LOAD_NOTHING
+void SkWinCore::FONT_LOAD_NOTHING()
+{
+	ENTER(0);
+	return;
+}
+
+//^3929:0E16
+void SkWinCore::_3929_0e16_FONT_LOAD()
+{
+	ENTER(8);
+	_3929_07e1(0, 0);
+	_4976_5c08 = ALLOC_PICT_BUFF(_4976_013e, _4976_0140, afUseUpper, 8);
+	_4976_5c0e = ALLOC_MEMORY_RAM(0x300, afUseUpper, 0x400);
+	LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 0x0, dt07, 0x0, _4976_5c0e);	// default font
+	U16 iMessageNo = 0; // si
+	for (iMessageNo = 0; iMessageNo < 1; iMessageNo++) {
+		//tlbTimerTickRemoveHintMessage[iMessageNo] = 0xffffffff;
+		tblTimerTickRemoveHintMessage[iMessageNo] = -1;
+	}
+	SRECT bp08;
+	QUERY_EXPANDED_RECT(RECT_015_BOTTOM_MESSAGE_3_LINES, &bp08); // 00 00|B4 00|40 01|14 00 (0,180,320,20)
+	_4976_5c12 = (bp08.cy - (_4976_013a - _4976_0134)) >> 1;
+	KANJI_FONT_LOAD(1);
+	FONT_LOAD_NOTHING();
+	_4976_4750 = 1;
+	return;
 }

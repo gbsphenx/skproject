@@ -196,7 +196,7 @@ _4976_474e = 0x1; _4976_4750 = 0x0;
 _4976_475c = 0x0;
 _4976_475e = 0xFF;
 glbTimer_4976_4762 = (i16) 0xFFFF;
-_4976_47fc = 0x1;
+glbStartQuickRain = 0x1;
 glbThunderJustCast = 0x0;
 glbFireUnknownGLCK = 0x20;	// _4976_4806
 glbRawDataNoAllocated = 0xFFFF;
@@ -498,7 +498,7 @@ _4976_5cae = 0x0;
 glbGDatStructureRead = 0x0;
 _4976_5cea = 0x0;
 _4976_5cee = 0x0;
-_4976_5cf8 = 0;
+glbFreeCPXMemory = 0;
 glbGDatOpenCloseFlag = 0x0;
 glbCacheRecyclerMax = 0x0;
 _4976_5d26 = 0;

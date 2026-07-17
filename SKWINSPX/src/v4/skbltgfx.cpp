@@ -215,8 +215,10 @@ void SkWinCore::QUERY_TEMP_PICST(
 	SkD((DLV_DBG_GETPIC, "DBG: QUERY_TEMP_PICST(%X,%3d,%3d,%3d,%3d,%04X,%04X,%04X,%2d,%2d,%02X,%02X,%02X)\n"
 		, (Bitu)mirrorflip, (Bitu)horzStretch, (Bitu)vertStretch, (Bitu)offx, (Bitu)offy
 		, (Bitu)uu, (Bitu)rectno, (Bitu)pp, (Bitu)colorkey1, (Bitu)colorkey2, (Bitu)cls1, (Bitu)cls2, (Bitu)cls4));
+	LOGX(("QUERY_TEMP_PICST(MF:%X,%%X%2d %%Y%2d,OX:%3d-OY:%3d,%04X,R=%04X,%04X,CK:%2d+%2d,CLS:%02X-%02X-%02X)"
+		, (Bitu)mirrorflip, (Bitu)horzStretch, (Bitu)vertStretch, (Bitu)offx, (Bitu)offy
+		, (Bitu)uu, (Bitu)rectno, (Bitu)pp, (Bitu)colorkey1, (Bitu)colorkey2, (Bitu)cls1, (Bitu)cls2, (Bitu)cls4));
 
-	//^32CB:08C1
 	ENTER(2);
 	//^32CB:08C7
 	i16 di = uu;
@@ -256,7 +258,7 @@ _08fe:
 	glbTempPicture.pb44 = glbBackBuffViewport;
 	glbTempPicture.colorKeyPassThrough = colorkey1;
 	//^32CB:0972
-	_32cb_0804(glbTempPicture.iPal256, di, colorkey1, colorkey2, glbTempPicture.w56);
+	PALETTE_SOMETHING_32cb_0804(glbTempPicture.iPal256, di, colorkey1, colorkey2, glbTempPicture.iPaletteSize);
 	//^32CB:0988
 	QUERY_PICST_IT(&glbTempPicture);
 	//^32CB:0993
@@ -274,7 +276,8 @@ void SkWinCore::DRAW_TEMP_PICST()
 
 //^0B36:037E
 // TODO: gfx related
-U8 *SkWinCore::_0b36_037e(U8 *localpal, i8 xx, i16 colorkey1, i16 colorkey2, i16 palentcnt)
+// SPX: _0b36_037e renamed PALETTE_SOMETHING_0b36_037e
+U8 *SkWinCore::PALETTE_SOMETHING_0b36_037e(U8 *localpal, i8 xx, i16 colorkey1, i16 colorkey2, i16 palentcnt)
 {
 	//^0B36:037E
 	ENTER(8);
@@ -287,21 +290,21 @@ U8 *SkWinCore::_0b36_037e(U8 *localpal, i8 xx, i16 colorkey1, i16 colorkey2, i16
 			//^0B36:03B7
 			if (bp02 != colorkey1 && bp02 != colorkey2) {
 				//^0B36:03CA
-				U16 di = _4976_4be2[RCX(256,localpal[bp02])].b0;
+				U16 di = tblOfsk4be2Palette[RCX(256,localpal[bp02])].b0;
 				i16 si = 0;
 				//^0B36:03E6
-				i16 bp04 = max_value((_4976_4bde[RCX(16,di)].pv1[_4976_4be2[localpal[bp02]].b1] * xx) >> 6, 0);
+				i16 bp04 = max_value((tblOfsk4bdePalette[RCX(16,di)].pTabRow1[tblOfsk4be2Palette[localpal[bp02]].b1] * xx) >> 6, 0);
 				//^0B36:0433
-				for (; _4976_4bde[di].b0 -1 > si; si++) {
+				for (; tblOfsk4bdePalette[di].iRowSize -1 > si; si++) {
 					//^0B36:0435
 					if (true
-						&& _4976_4bde[di].pv1[si] <= bp04
-						&& _4976_4bde[di].pv1[si +1] >= bp04
+						&& tblOfsk4bdePalette[di].pTabRow1[si] <= bp04
+						&& tblOfsk4bdePalette[di].pTabRow1[si +1] >= bp04
 					) {
 						//^0B36:046C
-						i16 bp06 = bp04 - _4976_4bde[di].pv1[si   ];
+						i16 bp06 = bp04 - tblOfsk4bdePalette[di].pTabRow1[si];
 						//^0B36:048A
-						i16 bp08 = _4976_4bde[di].pv1[si +1] -bp04;
+						i16 bp08 = tblOfsk4bdePalette[di].pTabRow1[si +1] -bp04;
 						//^0B36:04A7
 						if (bp06 > bp08)
 							//^0B36:04AF
@@ -312,10 +315,10 @@ U8 *SkWinCore::_0b36_037e(U8 *localpal, i8 xx, i16 colorkey1, i16 colorkey2, i16
 					//^0B36:04B2
 				}
 				//^0B36:04CD
-				si = min_value(si, _4976_4bde[di].b0 -1);
+				si = min_value(si, tblOfsk4bdePalette[di].iRowSize -1);
 				//^0B36:04EB
 
-				localpal[bp02] = _4976_4bde[di].pv5[si];
+				localpal[bp02] = tblOfsk4bdePalette[di].pTabRow2[si];
 			}
 			//^0B36:0508
 		}
@@ -325,7 +328,8 @@ U8 *SkWinCore::_0b36_037e(U8 *localpal, i8 xx, i16 colorkey1, i16 colorkey2, i16
 }
 
 //^32CB:0804
-void SkWinCore::_32cb_0804(U8 *localpal, i16 cls4, U16 colorkey1, i16 colorkey2, U16 palentcnt)
+// SPX: _32cb_0804 renamed PALETTE_SOMETHING_32cb_0804
+void SkWinCore::PALETTE_SOMETHING_32cb_0804(U8 *localpal, i16 cls4, U16 colorkey1, i16 colorkey2, U16 palentcnt)
 {
 	//^32CB:0804
 	ENTER(0);
@@ -357,11 +361,11 @@ void SkWinCore::_32cb_0804(U8 *localpal, i16 cls4, U16 colorkey1, i16 colorkey2,
 		//^32CB:086C
 		TRANSLATE_PALETTE(localpal, GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, U8(cls4), di);
 		//^32CB:0885
-		_0b36_037e(localpal, i8(_4976_5a88), colorkey1, colorkey2, di);
+		PALETTE_SOMETHING_0b36_037e(localpal, i8(_4976_5a88), colorkey1, colorkey2, di);
 	}
 	else {
 		//^32CB:0892
-		_0b36_037e(localpal, 64 -U8(((64 -si) * (64 - _4976_5a88)) >> 6), colorkey1, colorkey2, di);
+		PALETTE_SOMETHING_0b36_037e(localpal, 64 -U8(((64 -si) * (64 - _4976_5a88)) >> 6), colorkey1, colorkey2, di);
 	}
 	//^32CB:08BD
 	return;
@@ -946,26 +950,31 @@ U16 SkWinCore::_32cb_01b6(U16 xx, U16 yy, U16 ss, U16 tt, U16 *ww)
 
 
 //^3E74:0AE3
-void SkWinCore::FREE_PICT_ENTRY(Bit8u *buff)
+void SkWinCore::FREE_PICT_ENTRY(U8* xPictureBuffer)
 {
-	SkD((DLV_MEM, "FREE_PICT_ENTRY: S(sk5cfc_image) = %d || BUFF = %08X\n", sizeof(sk5cfc_image), buff));
+	SkD((DLV_MEM, "FREE_PICT_ENTRY: S(sk5cfc_image) = %d || BUFF = %08X\n", sizeof(sk5cfc_image), xPictureBuffer));
 	//LOG_HEXA((X8*)buff, 8);
 	//LOG_HEXA((X8*)buff-int(sizeof(sk5cfc_image)), sizeof(sk5cfc_image));
 	if (_4976_5d76 == 0) {
-		sk5cfc_image *bp04 = reinterpret_cast<sk5cfc_image *>(&_4976_5cfc);
-		SkD((DLV_MEM, "FREE_PICT_ENTRY: bp04 = %08X / bp04->pv0 = %08X / BUFF-S(sk5cfc) = %08X\n", bp04, bp04->pv0, PTR_PADD(buff,-int(sizeof(sk5cfc_image)))));
-		for (; (void *)PTR_PADD(buff,-int(sizeof(sk5cfc_image))) != (void *)bp04->pv0; ) {
-			bp04 = bp04->pv0;
+		sk5cfc_image *bp04 = reinterpret_cast<sk5cfc_image *>(&gblLinkedImageRoot);
+		SkD((DLV_MEM, "FREE_PICT_ENTRY: bp04 = %08X / bp04->pNextImage = %08X / BUFF-S(sk5cfc) = %08X\n", bp04, bp04->pNextImage, PTR_PADD(xPictureBuffer,-int(sizeof(sk5cfc_image)))));
+		LOGX(("FREE_PICT_ENTRY: bp04 = %p / bp04->pNextImage = %p / BUFF-S(sk5cfc) = %p", bp04, bp04->pNextImage, PTR_PADD(xPictureBuffer,-int(sizeof(sk5cfc_image)))));
+		for (; (void *)PTR_PADD(xPictureBuffer,-int(sizeof(sk5cfc_image))) != (void *)bp04->pNextImage; ) {
+			bp04 = bp04->pNextImage;
 		}
-		bp04->pv0 = bp04->pv0->pv0;
-		Bit32u bp08 = CALC_IMAGE_BYTE_LENGTH(buff) + 0x1E;	// what is this x1E exactly ???
-		SkD((DLV_MEM, "FREE_PICT_ENTRY ImageLen + 0x1E = %08X => Size = %05d\n", buff, bp08));
-		{
-			SkImage* xImage = reinterpret_cast<SkImage *>(PTR_PADD(buff,-int(sizeof(sk5cfc_image))));
+		bp04->pNextImage = bp04->pNextImage->pNextImage;
+		U32 bp08 = CALC_IMAGE_BYTE_LENGTH(xPictureBuffer) + 0x1E;	// bp08 what is this x1E exactly ???
+		SkD((DLV_MEM, "FREE_PICT_ENTRY ImageLen + 0x1E = %08X => Size = %05d\n", xPictureBuffer, bp08));
+		LOGX(("FREE_PICT_ENTRY ImageLen + 0x1E = %p => Size = %05d", xPictureBuffer, bp08));
+		// SPX: some struct* adaptation
+		//{
+			//SkImage* xImage = reinterpret_cast<SkImage *>(PTR_PADD(xPictureBuffer,-int(sizeof(sk5cfc_image))));
+			SkImageDealloc* xImage = reinterpret_cast<SkImageDealloc *>(PTR_PADD(xPictureBuffer,-int(sizeof(sk5cfc_image))));
 			//LOG_HEXA((X8*)xImage, sizeof(SkImage*) + 4);
-		}
+		//}
+		LOGX(("FREE_PICT_ENTRY SkImage %p / pv0 %p", xImage, xImage->pNextImage));
 //		if (reinterpret_cast<SkImage *>(PTR_PADD(buff,-int(sizeof(sk5cfc_image))))->AllocLower() == 0) {	// original 32-bits
-		if (reinterpret_cast<SkImageDealloc *>(PTR_PADD(buff,-int(sizeof(sk5cfc_image))))->AllocLower() == 0) { // fix for 32/64 bits
+		if (reinterpret_cast<SkImageDealloc *>(PTR_PADD(xPictureBuffer,-int(sizeof(sk5cfc_image))))->AllocLower() == 0) { // fix for 32/64 bits
 			DEALLOC_UPPER_MEMORY(bp08);
 		}
 		else {
@@ -1834,7 +1843,7 @@ void SkWinCore::FREE_PICT6(SkImage *ref)
 {
 	ENTER(0);
 	if (_4976_5d76 == 0) {
-		if (READ_UI16(ref,-6 +4) == afDefault) {
+		if (READ_UI16(ref,-6 +4) == afDefault) {	// afDefault == 0 (upper first)
 			DEALLOC_UPPER_MEMORY(READ_UI32(ref,-6 +0));
 		}
 		else {
@@ -1849,7 +1858,7 @@ i16 SkWinCore::QUERY_GDAT_PICT_OFFSET(Bit8u cls1, Bit8u cls2, Bit8u cls4)
 {
 	ENTER(8);
 	U16 di = 0;
-	RawEntry *bp04 = QUERY_GDAT_ENTRYPTR(cls1, cls2, dtImage, cls4);
+	RawEntry* bp04 = QUERY_GDAT_ENTRYPTR(cls1, cls2, dtImage, cls4);
 	if (bp04 == NULL) {
 		return 0;
 	}
@@ -1902,14 +1911,14 @@ ExtendedPicture *SkWinCore::QUERY_GDAT_SUMMARY_IMAGE(ExtendedPicture* xExtPictur
 	xExtPicture->iGDatCls2MainItemId = iGDatCls2MainItemId;
 	xExtPicture->iGDatCls3DataType = dtImage;
 	xExtPicture->iGDatCls4EntryId = iGDatCls4EntryId;
-	xExtPicture->iYStretch = 64;
-	xExtPicture->iXStretch = 64;
-	xExtPicture->rectNo = 0xffff;
-	xExtPicture->w26 = 0xffff;
+	xExtPicture->iYStretch = 64;	// default 100% of stretch
+	xExtPicture->iXStretch = 64;	// default 100% of stretch
+	xExtPicture->rectNo = 0xFFFF;
+	xExtPicture->w26 = 0xFFFF;
 	xExtPicture->pb44 = _4976_4964;
 	xExtPicture->colorKeyPassThrough = -1;
 	if (iGDatCls1Category != 0xFF) {
-		xExtPicture->w6 = QUERY_GDAT_ENTRY_DATA_INDEX(iGDatCls1Category, iGDatCls2MainItemId, dtImage, iGDatCls4EntryId);
+		xExtPicture->iRawDataIndex = QUERY_GDAT_ENTRY_DATA_INDEX(iGDatCls1Category, iGDatCls2MainItemId, dtImage, iGDatCls4EntryId);
 		i16 bp02 = QUERY_GDAT_ENTRY_DATA_INDEX(iGDatCls1Category, iGDatCls2MainItemId, dtImageOffset, 0xFE);
 		if (bp02 != 0) {
 			xExtPicture->iXOffset += i8(bp02 >> 8);
@@ -1920,18 +1929,18 @@ ExtendedPicture *SkWinCore::QUERY_GDAT_SUMMARY_IMAGE(ExtendedPicture* xExtPictur
 			xExtPicture->iXOffset += i8(bp02 >> 8);
 			xExtPicture->iYOffset += i8(bp02);
 		}
-		Bit8u *bp06 = QUERY_GDAT_IMAGE_LOCALPAL(iGDatCls1Category, iGDatCls2MainItemId, iGDatCls4EntryId);
-		if (bp06 == NULL) {
-			xExtPicture->w56 = 256;
-			bp06 = xExtPicture->iPal256;
-			i16 bp08 = 0;
-			for (; bp08 < 256; bp08++) {
-				bp06[bp08] = (Bit8u)bp08;
+		U8* xLocalPal = QUERY_GDAT_IMAGE_LOCALPAL(iGDatCls1Category, iGDatCls2MainItemId, iGDatCls4EntryId);	// bp06
+		if (xLocalPal == NULL) {
+			xExtPicture->iPaletteSize = C256_GDAT_PALETTE_SIZE_256;
+			xLocalPal = xExtPicture->iPal256;
+			i16 iColorIdx = 0;	// bp08
+			for (; iColorIdx < C256_GDAT_PALETTE_SIZE_256; iColorIdx++) {
+				xLocalPal[iColorIdx] = (U8)iColorIdx;
 			}
 		}
 		else {
-			xExtPicture->w56 = 16;
-			COPY_MEMORY(bp06, xExtPicture->iPal256, 16);
+			xExtPicture->iPaletteSize = C016_GDAT_PALETTE_SIZE_16;
+			COPY_MEMORY(xLocalPal, xExtPicture->iPal256, C016_GDAT_PALETTE_SIZE_16);
 		}
 	}
 	return xExtPicture;
@@ -1999,7 +2008,7 @@ void SkWinCore::FREE_PICT_MEMENT(Picture* xPicture)
 Bit32u SkWinCore::CALC_PICT_ENT_HASH(ExtendedPicture *xExtPicture)
 {
 	ENTER(0);
-	return (Bit32u(xExtPicture->w6 & 0x1fff) << 12) | ((xExtPicture->iXStretch & 0x007f) << 5) | (xExtPicture->iYStretch & 0x001f);
+	return (Bit32u(xExtPicture->iRawDataIndex & 0x1FFF) << 12) | ((xExtPicture->iXStretch & 0x007f) << 5) | (xExtPicture->iYStretch & 0x001f);
 }
 
 //^3E74:5992
@@ -2322,7 +2331,7 @@ ExtendedPicture *SkWinCore::QUERY_PICST_IT(ExtendedPicture* xExtPicture)
 	ENTER(364);
 	U16 iIsStretched = (xExtPicture->iXStretch != 64 || xExtPicture->iYStretch != 64) ? 1 : 0;	// bp12
 	U16 bp14 = 0;
-	U16 bp16 = (xExtPicture->w6 == 0xFFFF && xExtPicture->w12 >= 0) ? 1 : 0;
+	U16 bp16 = (xExtPicture->iRawDataIndex == GDAT_xFFFF_RAW_DATA_INDEX__NONE && xExtPicture->w12 >= 0) ? 1 : 0;
 	if (iIsStretched != 0) {
 		xExtPicture->iXOffset = CALC_STRETCHED_SIZE(xExtPicture->iXOffset, xExtPicture->iXStretch);
 		xExtPicture->iYOffset = CALC_STRETCHED_SIZE(xExtPicture->iYOffset, xExtPicture->iYStretch);
@@ -2443,7 +2452,7 @@ void SkWinCore::DRAW_SOME_CLOUD_EXPLOSION(U8 cls2, U16 scale64, U16 mirrorFlip, 
 
 
 
-	_0b36_037e(glbTempPicture.iPal256, i8(_4976_5a88), 10, -1, glbTempPicture.w56);
+	PALETTE_SOMETHING_0b36_037e(glbTempPicture.iPal256, i8(_4976_5a88), 10, -1, glbTempPicture.iPaletteSize);
 	QUERY_PICST_IT(&glbTempPicture);
 
 	// SPX: it seems to be missing the displacement from GDAT, else, a cloud/explosion appears on the floor

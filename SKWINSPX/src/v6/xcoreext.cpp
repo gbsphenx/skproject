@@ -330,7 +330,7 @@ void SkWinCore::DRAW_EXTENDED_INTERWALLS_DIRECT_FACE(i16 iDisplayCell, U8 iWallF
 	if (iWallGFXID == 0xB3 || iWallGFXID == 0x93)
 		MAKE_BUTTON_CLICKABLE(&glbTempPicture.rc36, 7, U8(iDisplayCell));	// 7 is a new value catched by CLICK_VWPT
 
-	_098d_0c45();
+	DRAW_RESET_SOME_RECTANGLE();
 	return;
 }
 

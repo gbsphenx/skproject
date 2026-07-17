@@ -2894,17 +2894,17 @@ void SkWinCore::PROCESS_TIMER_AMBIENT_SOUND(Timer *ref)
 
 	U16 rainLevel = 0;
 	U16 iSoundID = 0x80;
-	if (glbRainStrength >= RAIN_THRESHOLD_LEVEL_3) {
-		rainLevel = 4;
+	if (glbRainStrength >= RAIN_THRESHOLD_x80_LEVEL_3) {
+		rainLevel = C04_RAIN_POWERLEVEL_STRONGEST;
 	}
-	else if (glbRainStrength >= RAIN_THRESHOLD_LEVEL_2) {
-		rainLevel = 3;
+	else if (glbRainStrength >= RAIN_THRESHOLD_x40_LEVEL_2) {
+		rainLevel = C03_RAIN_POWERLEVEL_STRONG;
 	}
-	else if (glbRainStrength >= RAIN_THRESHOLD_LEVEL_1) {
-		rainLevel = 2;
+	else if (glbRainStrength >= RAIN_THRESHOLD_x10_LEVEL_1) {
+		rainLevel = C02_RAIN_POWERLEVEL_MEDIUM;
 	}
-	else if (glbRainStrength > RAIN_THRESHOLD_LEVEL_0 && glbRainStrength < RAIN_THRESHOLD_LEVEL_1) {
-		rainLevel = 1;
+	else if (glbRainStrength > RAIN_THRESHOLD_x00_LEVEL_0 && glbRainStrength < RAIN_THRESHOLD_x10_LEVEL_1) {
+		rainLevel = C01_RAIN_POWERLEVEL_SMALL;
 	}
 	iSoundID = 0x70 + rainLevel;
 

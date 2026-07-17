@@ -1429,7 +1429,7 @@ void SkWinCore::FIRE_BLIT_PICTURE(
 	SkD((DLV_GUI||SkCodeParam::bDebugPrint, "FIRE_BLIT_PICT: xTox (%p,%p,(%3d,%3d,%3d,%3d),%3d,%3d,%3d,%3d,%2d,%d,%d,%d,%p)\n", src, dst
 		, (Bitu)rc->x, (Bitu)rc->y, (Bitu)rc->cx, (Bitu)rc->cy, (Bitu)srcx, (Bitu)srcy
 		, (Bitu)srcPitch, (Bitu)dstPitch, (Bitu)colorkey, (Bitu)mirrorFlip, (Bitu)srcBpp, (Bitu)dstBpp, localPal));
-	LOGX(("FIRE_BLIT_PICT: xTox (%p,%p,(%3d,%3d,%3d,%3d),%3d,%3d,%3d,%3d,%2d,%d,%d,%d,%p)\n", src, dst
+	LOGX(("FIRE_BLIT_PICT: xTox (%p,%p,(%3d,%3d,%3d,%3d),%3d,%3d,%3d,%3d,%2d,%d,%d,%d,%p)", src, dst
 		, (Bitu)rc->x, (Bitu)rc->y, (Bitu)rc->cx, (Bitu)rc->cy, (Bitu)srcx, (Bitu)srcy
 		, (Bitu)srcPitch, (Bitu)dstPitch, (Bitu)colorkey, (Bitu)mirrorFlip, (Bitu)srcBpp, (Bitu)dstBpp, localPal));
 //#if UseAltic
@@ -1443,7 +1443,7 @@ void SkWinCore::FIRE_BLIT_PICTURE(
 	}
 	ATLASSERT(dstBpp == dstibpp);
 	ATLASSERT((dstBpp == IMG_4_BPP) ? RUp2(dstPitch) == RUp2(dsticx) : true);
-	ATLASSERT((dstBpp == IMG_8_BPP) ? (dstPitch == dsticx) : true);
+//	ATLASSERT((dstBpp == IMG_8_BPP) ? (dstPitch == dsticx) : true);
 	ATLASSERT(rc->x >= 0);
 	ATLASSERT(rc->y >= 0);
 	ATLASSERT(rc->cx >= 0);

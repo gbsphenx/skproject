@@ -428,11 +428,16 @@ enum SkillLevel {
 
 
 // Rain levels
-#define RAIN_THRESHOLD_LEVEL_0			0x00
-#define RAIN_THRESHOLD_LEVEL_1			0x10
-#define RAIN_THRESHOLD_LEVEL_2			0x40
-#define RAIN_THRESHOLD_LEVEL_3			0x80
+#define RAIN_THRESHOLD_x00_LEVEL_0			0x00
+#define RAIN_THRESHOLD_x10_LEVEL_1			0x10
+#define RAIN_THRESHOLD_x40_LEVEL_2			0x40
+#define RAIN_THRESHOLD_x80_LEVEL_3			0x80
 
+#define C00_RAIN_POWERLEVEL_NONE					0
+#define C01_RAIN_POWERLEVEL_SMALL					1
+#define C02_RAIN_POWERLEVEL_MEDIUM					2
+#define C03_RAIN_POWERLEVEL_STRONG					3
+#define C04_RAIN_POWERLEVEL_STRONGEST				4
 
 //------------------------------------------------------------------------------
 //	STANDARD SOUNDS CODES
@@ -499,6 +504,10 @@ enum SkillLevel {
 #define SOUND_CREATURE_SPAWN			0x10	// Rocky, CaveIn, Minion, Mummy
 #define SOUND_CREATURE_DEATH			0x11
 #define SOUND_CREATURE_ATTACK_2			0x12	// Thorn Demon
+
+
+
+
 
 
 //------------------------------------------------------------------------------
@@ -732,11 +741,11 @@ enum SkillLevel {
 #define GDAT_ENVWTH_RAINFALL_OBLIQUE_1			0x6D
 #define GDAT_ENVWTH_RAINFALL_STRAIGHT_1			0x71
 
-#define GFX_ENVIRONMENT_IMG_THUNDER			0x64	// 3
-#define GFX_ENVIRONMENT_IMG_SKY_CLOUDS		0x67	// 3
-#define GFX_ENVIRONMENT_IMG_WET_GROUND		0x6A	// 3
-#define GFX_ENVIRONMENT_IMG_RAIN_SLANTED	0x6D	// 4
-#define GFX_ENVIRONMENT_IMG_RAIN_STRAIGHT	0x71	// 4
+#define GFX_ENVIRONMENT_IMG_THUNDER				0x64	// 3
+#define GFX_ENVIRONMENT_IMG_SKY_CLOUDS			0x67	// 3
+#define GFX_ENVIRONMENT_IMG_WET_GROUND			0x6A	// 3
+#define GFX_ENVIRONMENT_IMG_RAIN_SLANTED		0x6D	// 4
+#define GFX_ENVIRONMENT_IMG_RAIN_STRAIGHT		0x71	// 4
 
 //------------------------------------------------------------------------------
 //	WALL ORNATE ATTRIBUTES or GRAPHICS
@@ -1653,6 +1662,9 @@ typedef enum
 //	INTERFACE RECTANGLES
 //------------------------------------------------------------------------------
 
+
+#define RECT_009_PANEL_ARROW__ZONE					9
+
 #define RECT_015_BOTTOM_MESSAGE_3_LINES				15
 
 #define RECT_040_PANEL_ARROW__TURN_LEFT				40	// 0x28
@@ -1759,7 +1771,13 @@ typedef enum
 // Is used for tblCacheToMement
 #endif
 
-#define MEM_ENT_x8000_FLAG_CACHE			0x8000
+#define MEM_ENT_x8000_FLAG_CACHE				0x8000
+
+#define GDAT_xFFFF_RAW_DATA_INDEX__NONE			0xFFFF		// or (U16)-1
+
+#define C000_GDAT_PALETTE_SIZE_ZERO				0
+#define C016_GDAT_PALETTE_SIZE_16				16
+#define C256_GDAT_PALETTE_SIZE_256				256
 
 //------------------------------------------------------------------------------
 

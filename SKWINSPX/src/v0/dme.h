@@ -1145,6 +1145,7 @@ namespace DM2Internal {
 		U16 w36;		// w36
 		U16 w38;		// w38
 		U16 w40;		// w40
+		// note : 40/38 can get DEADBEEF, are they a 32bits pointer ??
 	};
 	// structure of data used in savegame.dat
 	struct skload_table_60 { // 56 bytes
@@ -1269,8 +1270,8 @@ namespace DM2Internal {
 	// w8+w10 is a mement address
 	// then i would remove direct access to these and manage with real pointers
 	// although, w4, w6 and w8 alone seem to be used as markers
-	struct mement {		// 18 bytes
-		i32 _dw0;		// @0 // length. negative if it directs from lower to upper. it contains this header size.
+	struct mement {		// 18 bytes	// new test structure : 18 + 1 (dummy) + 4*2 (32 bits) or 8*2 (64 bits) = 27 bytes or 35 bytes
+		i32 iNegBuffSize;		// @0 // _dw0 / length. negative if it directs from lower to upper. it contains this header size.
 		X16 _w4;		// @4 // w4 + w6 builds a 32-bits pointer for mement1
 		X16 _w6;		// @6
 		X16 _w8;		// @8 // mement index for chain image? // w8 + w10 builds a 32-bits pointer for mement2
@@ -1285,9 +1286,9 @@ namespace DM2Internal {
 		X16 _w14;		// @14 // width
 		X16 _w16;		// @16 // height
 
-		i32 dw0() const { return _dw0; }
+		i32 getNegativeTotalBufferSize() const { return iNegBuffSize; }
 		//void dw0(i32 val) { _dw0 = val; }
-		void dw0(i32 val) { LOGX(("SET MEMENT %p dw0 = %08X", this, val)); _dw0 = val; }
+		void setNegativeTotalBufferSize(i32 val) { LOGX(("SET MEMENT %p dw0 = %08X", this, val)); iNegBuffSize = val; }
 
 		X16 getMark4() const { return _w4; }	// w4() 
 		X16 getMark6() const { return _w6; }	// w6() 
@@ -1323,7 +1324,7 @@ namespace DM2Internal {
 	struct IMG3 {	// 10 bytes
 		i16 cx;		// @0
 		i16 cy;		// @2
-		i16 w4;		// @4
+		i16 iBpp;		// @4	w4 bpp
 
 		U16 Width() const { return cx & 0x3FF; }
 		U16 Height() const { return cy & 0x3FF; }
@@ -1336,10 +1337,10 @@ namespace DM2Internal {
 				return DMEncyclopaedia::pfC8;
 			}
 			else if (OffsetY() == -32) {
-				if (w4 == 8) {
+				if (iBpp == IMG_8_BPP) {
 					return DMEncyclopaedia::pfU8;
 				}
-				else if (w4 == 4) {
+				else if (iBpp == IMG_4_BPP) {
 					return DMEncyclopaedia::pfU4;
 				}
 			}
@@ -1349,9 +1350,9 @@ namespace DM2Internal {
 			switch (Getpf()) {
 			case DMEncyclopaedia::pfC8:
 			case DMEncyclopaedia::pfU8:
-				return 8;
+				return IMG_8_BPP;
 			default:
-				return 4;
+				return IMG_4_BPP;
 			}
 		}
 		i32 GetImageSize() const {
@@ -1382,7 +1383,7 @@ namespace DM2Internal {
 		U32 dw00;	// @0
 		U8 ttype;		// @4	b04
 		U8 actor;	// @5	// b5 player index or creature type or other ...
-		U16 value;		// @6	// w6 => position x & y	// SPX: don't it take object ID ? or spell power ? it can also be an object! (door) ..
+		U16 value;		// @6	// w6 => position x & y	// SPX: doesn't it take object ID ? or spell power ? it can also be an object! (door) ..
 		U16 w8;		// @8
 
 		X16 GetMap() const { return X16(dw00 >> 24); }
@@ -2004,38 +2005,41 @@ namespace DM2Internal {
 */
 
 
+
+	// SPX: only used in EXTRACT_GDAT_IMAGE
+	struct sk5cfc_image { // 10 bytes + 1 pointer = 14 bytes / 18 bytes 64-bits
+		sk5cfc_image *pNextImage;	// @0	*pv0, spx: previous image ?
+		X16 iGDatRawDataIdx;			// @4		// w4 iGDAT Raw Data Index
+		X16 iMemPool;			// @6		// w6
+		X16 iBpp;			// @8		// w8 bmp structure : resolution + bits
+		X16 iWidth;		// @10		// w10 width
+		X16 iHeight;		// @12		// w12 height
+	};
+
 	// there seems to be some correspondance between SkImage and sk5cfc_image
+	// SPX: would w0 + w2 a real pointer for sk5cfc_image* ? then it would break in 64 bits
 	struct SkImage {	// size=14?
 		i16 w0_;		// @0	w0_
 		i16 w2_;		// @2	w2_
 		U16 iBpp;			// @4	w4_
-		U16 w6_;			// @6	w6_
+		U16 iMemPool;			// @6	w6_
 
 		i16 Xoffset() const { return w0_ >> 10; }
 		i16 Yoffset() const { return w2_ >> 10; }
 		U16 BitsPixel() const { return iBpp; }
-		U16 AllocLower() const { return w6_; }
-	};
-	// 
-	struct sk5cfc_image { // 14 bytes / 18 bytes 64-bits
-		sk5cfc_image *pv0;	// @0
-		X16 iGDatRawDataIdx;			// @4		// iGDAT Raw Data Index
-		X16 w6;			// @6
-		X16 w8;			// @8		// bmp structure : resolution + bits
-		X16 width;		// @10		// w10 width
-		X16 height;		// @12		// w12 height
+		U16 AllocLower() const { return iMemPool; }
 	};
 	// SPX new structure instead of SkImage to handle FREE_PICT_ENTRY as 32 or 64 bits
 	struct SkImageDealloc {
-		sk5cfc_image *pv0;	// @0
-		U16 w4_;			// @4 / @8
-		U16 w6_;			// @6 / @10
-		U16 BitsPixel() const { return w4_; }
-		U16 AllocLower() const { return w6_; }
+		sk5cfc_image *pNextImage;	// @0	/ *pv0
+		U16 iBpp;			// @4 / w4_
+		U16 iMemPool;			// @6 / w6_
+		U16 BitsPixel() const { return iBpp; }
+		U16 AllocLower() const { return iMemPool; }
 	};
-	// 
-	struct sk5cfc_root {	// 4 bytes
-		sk5cfc_image	*pv0;			// @0
+	// SPX: unused structure ?
+	struct sk5cfc_root {	// 4 bytes, or 8 bytes in 64bits
+		sk5cfc_image	*pNextImage;			// @0	*pv0, spx: next image ?
 	};
 	// 
 
@@ -2053,22 +2057,22 @@ namespace DM2Internal {
 	};
 
 	// 
-	struct sk3f6c { // ? bytes
+	struct sk3f6c { // 32 bytes
 		U16 w0;	// index. use with _4976_5d08[w0]
-		SRECT rc2;
+		SRECT rc2;	// rc2 (w2 w4 w6 w8)
 		//  w2 = w2.x
 		//  w4 = w2.y
 		//  w6 = w2.cx
 		//  w8 = w2.cy
-		U16 w10;
-		SRECT w12[5];
+		U16 iCacheIndex;	// w10
+		SRECT w12[5];	// w12 => 4 bytes * 5
 	};
 	// 
 	// SPX: skxxx5 renamed Picture
 	struct Picture { // 24 bytes
 		U8 *pb0;		// @0 // pic bits
 		U16 w4;		// @4 // 4=Use (b8,b9,b11), 8=Use w12 for cacheIndex
-		U16 w6;		// @6 // raw data index
+		U16 iRawDataIndex;		// @6 // w6 raw data index
 		U8 iGDatCls1Category;		// @8 // cls1
 		U8 iGDatCls2MainItemId;		// @9 // cls2
 		U8 iGDatCls3DataType;		// @10 // cls3
@@ -2108,7 +2112,7 @@ namespace DM2Internal {
 		U16 mirrorFlip;		// @50 // (w50) mirror flip
 		U16 iXStretch;		// @52 // horz stretch factor? (unstretch is 64)
 		U16 iYStretch;		// @54 // vert stretch factor? (unstretch is 64)
-		U16 w56;		// @56 // palentcnt
+		U16 iPaletteSize;			// @56 // w56 palentcnt, either 16 or 256 colors
 		U8 iPal256[256];	// @58 // local palette 256 colors
 	};
 	// SPX: about colorkey2 (w48), there can be these values : -1, -2, -3! what meaning?
@@ -2446,16 +2450,16 @@ namespace DM2Internal {
 		i8 posy;			// @1 // b1 y-pos
 		ExtendedTileInfo xsrd;		// @2 // x2 summary room data
 	};
-	// 
-	struct sk4be2 { // 2 bytes
-		U8 b0;			// @0
-		U8 b1;			// @1
+	// sk4be2, loaded from 01-02-07 (raw07), last table of 512 bytes, 256 * 2
+	struct sk4be2Palette { // 2 bytes
+		U8 b0;			// @0	// b0
+		U8 b1;			// @1	// b1
 	};
-	// 
-	struct sk4bde { // 9 bytes
-		U8 b0;			// @0
-		U8 *pv1;		// @1
-		U8 *pv5;		// @5
+	// sk4bde, loaded from 01-02-07 (raw07), result of 3 tables within this item
+	struct sk4bdePalette { // 9 bytes (32bits) or 17 bytes (64bits)
+		U8 iRowSize;			// @0	// b0
+		U8 *pTabRow1;		// @1	// *pv1
+		U8 *pTabRow2;		// @5	// *pv5
 	};
 
 	// 

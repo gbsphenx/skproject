@@ -337,7 +337,7 @@ protected:
 	U16		_4976_475c;
 	Bit8u	_4976_475e;
 	i16	glbTimer_4976_4762;				// (_4976_4762) timer related ?
-	X16		_4976_47fc;
+	X16		glbStartQuickRain;			// (_4976_47fc)
 	X16		glbThunderJustCast;	// (_4976_47fe)
 	X8		glbFireUnknownGLCK;		// (_4976_4806)
 	U16		glbRawDataNoAllocated;	// (_4976_4807)
@@ -382,8 +382,8 @@ protected:
 	U8		glbGDATItemCls4EntryId;		// (_4976_4bd4) =0x01
 	U16		_4976_4bd8;		// dialogue visibility: 1=dialog mode
 	U8		*glbPaletteT16;	// (_4976_4a02) probably, a palette set (16 bytes).
-	sk4bde	*_4976_4bde;
-	sk4be2	*_4976_4be2;
+	sk4bdePalette*	tblOfsk4bdePalette;	// _4976_4bde	// also related to palette transformation ?
+	sk4be2Palette*	tblOfsk4be2Palette;	// _4976_4be2	// apparently used for some palette transformation ?
 	U16		_4976_4be6;
 	//U16	glbIsPlayerSleeping; // (_4976_4be8) 1 if sleep?
 	//U16	glbIsPlayerMoving; // (_4976_4bea) 0 if you stay, not 0 if stepping forward/backward
@@ -697,7 +697,7 @@ protected:
 	U16		glbSceneFlags;	// (_4976_5a7a) flags defined in word 0x65 of graphicsset category
 	U32		(*_4976_5a7c)[23];
 	CellTileDetail	*tblCellTilesRoom;	// _4976_5a80
-	U8		(*_4976_5a84)[17]; // (cx,cy)=(17,21). 17*21+1¨358 bytes
+	U8		(*_4976_5a84)[17]; // (cx,cy)=(17,21). 17*21+1 = 358 bytes
 	i16		_4976_5a88;	// light level?
 	U32		_4976_5a8a;
 	Creature	*_4976_5a8e;
@@ -776,23 +776,23 @@ protected:
 	Bit32u	_4976_5caa;		// copy of GRAPHICS.DAT absolute file position of 2nd raw data
 	X16		_4976_5cae;
 	U16		glbGDatStructureRead;			// (_4976_5cb0) set at the end of READ_GRAPHICS_STRUCTURE
-	mement	*_4976_5cb2;	// for complex alloc mem. most lower address of memory pool(#x1) in FIRE.exe?
+	mement	*glbCpxHeapCurrentMementPtr;	// (_4976_5cb2) for complex alloc mem. most lower address of memory pool(#x1) in FIRE.exe?
 	GDATEntries	glbGDatEntries;		// (sk5cb6 _4976_5cb6) entries for loaded gdat
-	U8		*_4976_5ce2;	// for complex alloc mem. most upper address of memory pool(#x1) in FIRE.exe
+	U8		*glbCpxHeapLimitPtr;	// (_4976_5ce2) for complex alloc mem. most upper address of memory pool(#x1) in FIRE.exe
 	mement	*_4976_5ce6;	// (_4976_5ce6) mement init pool
 	Bit32u	_4976_5cea;		// size of GRAPH1.DAT or GRAPHICS.DAT
 	U16		_4976_5cee;
 	U8		*_4976_5cf0;
 	Bit8u	*_4976_5cf4;	// for allocmem. most upper address of free memory pool(#1) in FIRE.exe
-	i32		_4976_5cf8;		// for complex alloc mem. avail size of memory pool(#x1)?
-	sk5cfc_root	_4976_5cfc;
+	i32		glbFreeCPXMemory;		// (_4976_5cf8) for complex alloc mem. avail size of memory pool(#x1)?
+	sk5cfc_root	gblLinkedImageRoot;	// _4976_5cfc
 	sk5d00	*_4976_5d00;	// EMS mapped memory location. always point to E000:0000. also first mement located at first EMS page
 	U8		*_4976_5d04;	// temp buffer. size=1024
 	U16*	tblCacheToMement;	// (_4976_5d08) cacheindex-to-mementi. use with tblMementsPointers[_4976_5d08[xxx]]
 	sk5d0c	*_4976_5d0c;	// image chain table
 	U16	glbGDatOpenCloseFlag;		// (_4976_5d10) some open/close? flag related to Graphics.dat file
 	sk5d12	_4976_5d12;
-	shelf_memory _4976_5d20;	// top of EMS
+	shelf_memory glbShelfMemTopEMS;		// (_4976_5d20) top of EMS
 	U16		glbCacheRecyclerMax;	// _4976_5d24 / cache relaed ? / value =128?
 	i32		_4976_5d26; // 9E AA 01 00 -> 0001AA9E
 	Bit32u	glbGameTickHoldFromMement;		// (_4976_5d2a) tick?
@@ -1344,7 +1344,7 @@ protected:
 	//-------------- Gfx Rectangles
 	void _2405_00ec_RECT(U16 iRectNo, SRECT* xRect); // _2405_00ec
 	void _2405_011f_RECT(U16 iRectNo, SRECT* xRect); // _2405_011f
-	void _1031_10c8(sk3f6c *ref, SRECT* xRect, U16 cx, U16 cy);
+	void SOME_COPY_RECT_1031_10c8(sk3f6c *ref, SRECT* xRect, U16 cx, U16 cy);	// _1031_10c8
 
 
 
@@ -1376,7 +1376,7 @@ protected:
 	U16 FIND_FREE_MEMENTI();
 	void GUARANTEE_FREE_CPXHEAP_SIZE(i32 iBufferSize);
 	void MEMENT_INIT_GFX_TABLE();	// _3e74_2b30
-	mement *ALLOC_LOWER_CPXHEAP(i32 buffSize);
+	mement *ALLOC_LOWER_CPXHEAP(i32 iBufferSize);
 	Bit8u *ALLOC_CPXHEAP_MEM(U16 index, Bit32u buffSize);
 	void _3e74_585a_CACHE(U16 iCacheIndex, U16 yy); // _3e74_585a
 	void FILL_ENTIRE_PICT(Bit8u *buff, U16 fill);
@@ -1389,11 +1389,11 @@ protected:
 	U8* ALLOC_NEW_PICT(U16 index, U16 width, U16 height, U16 bpp);
 	Bit32u GET_TEMP_CACHE_HASH();
 	U16 ALLOC_TEMP_CACHE_INDEX();
-	void _0b36_0d67(sk3f6c *ref, SRECT *rc);
-	sk3f6c *_0b36_0c52(sk3f6c *ref, U16 rectno, U16 ww);
+	void SOME_RECT_0b36_0d67(sk3f6c *ref, SRECT *rc);	// _0b36_0d67
+	sk3f6c* SOME_RECT_PICT_0b36_0c52(sk3f6c *ref, U16 iRectNo, U16 ww);	// _0b36_0c52
 	SRECT *OFFSET_RECT(const sk3f6c *refOrg, const SRECT *prcSrc, SRECT *prcOut);
 	void FILL_RECT_SUMMARY(sk3f6c *ref, SRECT *rc, Bit8u fill);
-	void _29ee_00a3(U16 xx);
+	void SOMETHING_RIGHT_PANEL_29ee_00a3(U16 xx);	// _29ee_00a3
 	U16 IS_MISSILE_VALID_TO_LAUNCHER(U16 player, i16 hand, ObjectID rlWhatYouLaunch);
 	i16 BETWEEN_VALUE(i16 minv, i16 newv, i16 maxv);
 	void RECALC_LIGHT_LEVEL();
@@ -1411,7 +1411,7 @@ protected:
 	ExtendedPicture *QUERY_GDAT_SUMMARY_IMAGE(ExtendedPicture *ref, Bit8u cls1, Bit8u cls2, Bit8u cls4);
 	void DRAW_DEF_PICT(ExtendedPicture *ref);
 	Bit8u *QUERY_PICT_BITS(Picture *ref);
-	void _0b36_11c0(ExtendedPicture *xx, sk3f6c *yy, U16 ss, i16 colorkey2);
+	void DRAW_SOME_PICTURE_0b36_11c0(ExtendedPicture *xx, sk3f6c *yy, U16 ss, i16 colorkey2);	// _0b36_11c0
 	i16 CALC_STRETCHED_SIZE(i16 val, i16 fact64);
 	X8* QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(i16 iCacheIndex, Picture *ref);	// (_0b36_00c3)
 	X8* QUERY_PICST_IMAGE(Picture *ref);
@@ -1474,7 +1474,7 @@ protected:
 	Bit8u *QUERY_CMDSTR_NAME(Bit8u cls1, Bit8u cls2, Bit8u cls4);
 	void DRAW_CMD_SLOT(U16 cmdSlot, Bit8u ww);
 	void DRAW_SEVERAL_CMD_SLOTS();	// _29ee_0b2b
-	void _29ee_1d03(U16 xx);
+	void DRAW_SOME_MAGICAL_MAP_STRING_29ee_1d03(U16 xx);	// _29ee_1d03
 	i16 FIND_LADDER_AROUND(i16 xx, i16 yy, i16 isupper, Actuator **ref);
 	U16 _19f0_124b(i16 *xx, i16 *yy, U16 ww, i16 ss, U16 tt);
 	void _29ee_18eb(U16 xx, U16 yy, U16 zz);
@@ -1565,7 +1565,7 @@ protected:
 	U16 DRAW_ITEMS_HANDS_OR_INVENTORY(U16 iChampIdx, U16 itemNo, U16 yy);	// 2e62_03b5
 	void DRAW_LOCAL_TEXT(U16 rectno, U16 clr1, U16 clr2, Bit8u *str);
 	U16 GET_PLAYER_ABILITY(Champion *ref, U16 parm7, U16 getMax);
-	void FILL_STR(Bit8u *buff, U16 count, Bit8u value, U16 delta);
+	void FILL_STR(U8* xBuffer, U16 iMaxCount, U8 iValue, U16 iDeltaStep);
 	U8 *FMT_NUM(U16 value, U16 clean, U16 keta);
 	U8 *SK_STRCPY(U8 *strTo, const U8 *strFrom);
 	U8 *SK_STRCAT(U8 *strTo, const U8 *strFrom);
@@ -1692,8 +1692,8 @@ protected:
 	void MAKE_BUTTON_CLICKABLE(SRECT *prc, U8 xx, U8 yy);	// _32cb_0a4c
 	void QUERY_GDAT_IMAGE_METRICS(U8 cls1, U8 cls2, U8 cls4, i16 *pcx, i16 *pcy);
 	U8 SKCHR_TO_SCRIPTCHR(U8 xx);
-	U8 *_0b36_037e(U8 *localpal, i8 xx, i16 colorkey1, i16 colorkey2, i16 palentcnt);
-	void _32cb_0804(U8 *localpal, i16 cls4, U16 colorkey1, i16 colorkey2, U16 palentcnt);
+	U8 *PALETTE_SOMETHING_0b36_037e(U8 *localpal, i8 xx, i16 colorkey1, i16 colorkey2, i16 palentcnt);	// _0b36_037e
+	void PALETTE_SOMETHING_32cb_0804(U8 *localpal, i16 cls4, U16 colorkey1, i16 colorkey2, U16 palentcnt);	// _32cb_0804
 	U16 QUERY_MULTILAYERS_PIC(ExtendedPicture *ref, U8 cls1, U8 cls2, U8 cls4, U16 horzRes, U16 vertRes, i16 zz, U16 mirrorflip, i16 colorkey1, U16 colorkey2);
 	void QUERY_RAINFALL_PARAM(U8 *iRainImageID, U16 *isMirrored);
 	U8 *_32cb_0649(U8 cls1, U8 cls2, U8 cls4, i16 colorkey);
@@ -1842,7 +1842,7 @@ protected:
 	void SK_PREPARE_EXIT();
 	void ACTIVATE_TICK_GENERATOR(Actuator *ref, ObjectID recordLink);
 	void DRAW_DIALOGUE_PARTS_PICT(Bit8u *buffsrc, SRECT *rc, i16 colorkey, Bit8u *localpal);
-	void FREE_PICT_ENTRY(Bit8u *buff);
+	void FREE_PICT_ENTRY(U8* xPictureBuffer);
 	void DRAW_VP_RC_STR(U16 rectno, U16 clr1, const U8 *str);
 	U16 QUERY_MBCS_PRESENCE(const Bit8u *str);
 	skxxxf *QUERY_CHAR_METRICS(U8 cls2, U8 yy, U8 chr, U8 *tableIdxOut);
@@ -1965,7 +1965,7 @@ protected:
 	shelf_memory CONVERT_PHYS_TO_SHELF_FORM(Bit8u *buff);
 	Bit8u *QUERY_GDAT_DYN_BUFF(U16 index, U16 *yy, U16 allocUpper);
 	Bit8u *QUERY_GDAT_IMAGE_LOCALPAL(Bit8u cls1, Bit8u cls2, Bit8u cls4);
-	U8* MEMENT_3e74_0245(X16 xx, X16 yy);	// _3e74_0245
+	U8* MEMENT_3e74_0245(X16 iRawDatIdx, X16 iRecycle);	// _3e74_0245
 	X8 READ_IMG3_NIBBLE();
 	U16 READ_IMG3_DURATION();
 	void SPILL_IMG3_PIXELS(X16 offDst, X16 offSrc, X16 size);
@@ -2084,9 +2084,9 @@ protected:
 	void LOAD_DYN4(SkLoadEnt *ref, i16 aa);	// big func
 	void LOAD_MISCITEM();
 	void SET_TIMER_WEATHER(U32 tickDelta);
-	void _3df7_0037(X16 ww);
+	void INIT_WEATHER_RAIN(X16 ww);	// _3df7_0037
 	X16 RETRIEVE_ENVIRONMENT_CMD_CD_FW(DistantEnvironment *ref);
-	X16 _098d_04c7(X16 rcno1, X16 rcno2, X16 scale, X16 *ss, X16 *tt);
+	X16 SOMETHING_WITH_SCALED_RECTANGLES(X16 rcno1, X16 rcno2, X16 scale, X16 *ss, X16 *tt);	// _098d_04c7
 	void UPDATE_WEATHER(U16 aa);
 	void LOAD_LOCALLEVEL_DYN();	//*	interesting stuff in there
 	void CHANCE_TABLE_OPERATION();
@@ -2095,13 +2095,13 @@ protected:
 	void TRIM_BLIT_RECT(i16 xx, i16 yy, i16 ss, i16 tt);
 	X16 SET_GRAPHICS_FLIP_FROM_POSITION(X16 aa, X16 ww, X16 xx, X16 yy);
 	void DRAW_DUNGEON_GRAPHIC(U8 cls1, U8 cls2, U8 cls4, X16 rectno, i16 colorkey, U16 mirrorflip);
-	void _098d_0c45();
+	void DRAW_RESET_SOME_RECTANGLE();	// _098d_0c45
 	void ENVIRONMENT_DRAW_DISTANT_ELEMENT(DistantEnvironment *ref, X16 dir, X16 xx, X16 yy);
 	i16 _32cb_54ce(X16 dir, i16 *xx, i16 *yy, X16 xl, X16 yl);
 	X16 ENVIRONMENT_SET_DISTANT_ELEMENT(DistantEnvironment *ref, U8 *str, X16 dir, X16 xx, X16 yy);
 	void ENVIRONMENT_DISPLAY_ELEMENTS(X16 dir, X16 xx, X16 yy);
-	void _32cb_5c67();
-	void _32cb_5a8f();
+	void GET_SOME_VIEWPORT_INFO_TELEPORTER();	// _32cb_5c67
+	void SET_SOME_CELL_INFO_32cb_5a8f();	// _32cb_5a8f
 	U8 _48ae_01af(X16 xx, X16 yy);
 	void MAKE_PUT_DOWN_ITEM_CLICKABLE_ZONE(X16 xx, ObjectID rl, i16 yy, X16 zz);
 	X16 DIR_FROM_5x5_POS(X16 _5x5);
@@ -2249,7 +2249,7 @@ protected:
 	void _38c8_00c8_ALLOC_PICT();
 	void KANJI_FONT_LOAD(X8 cls2);
 
-	void _470a_0003();	// NOTHING??
+	void FONT_LOAD_NOTHING();	// _470a_0003 NOTHING??
 	void _3929_0e16_FONT_LOAD();	// _3929_0e16
 	void _2405_0009_ALLOC_ITEM_HAND_PICT();	// _2405_0009
 	void _01b0_08b6_SET_RECEIVER(U16 (SkWinCore::*pfn)(U16 xx, U16 yy, i16 zz));	// _01b0_08b6
@@ -2263,9 +2263,9 @@ protected:
 	void DEALLOC_BIGPOOL_STRUCT_BEFORE(U8 *ref);	// _3e74_0a77
 	void SHOW_MENU_SCREEN();
 	void _3e74_07b2();
-	void _3e74_0820();
+	void MEMORY_3e74_0820(); // _3e74_0820
 	X16 _38c8_0109(X8 **buff, X32 *xx, X16 *yy);
-	void _38c8_0104();
+	void ALLOC_CPX_NOTHING();	// _38c8_0104
 	void INIT_CPXHEAP(sk5d12 *ref, tiamat poolBuff, U32 poolSize, U16 poolflag);
 	X16 LOAD_MAPS_PROGRESS_BAR(X16 xx, i32 yy);	// _38c8_0224
 	void ALLOC_CPX_SETUP(X8 *xx);	// _3e74_1330 renamed ALLOC_CPX_SETUP
