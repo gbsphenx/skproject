@@ -346,7 +346,7 @@ extern U8 _4976_3932[28]; //Rr
 //extern U8 _4976_3b6f[5]; //Rr
 extern X16 _4976_3d5b[9]; //Rr
 extern X16 _4976_3d6d[6]; //Rr
-extern U8 _4976_3e1e[4]; //Rr
+extern U8 tblMagicMapRuneMana[4]; //Rr	_4976_3e1e[4]
 extern U8 _4976_3fc8[6]; //Rr
 
 extern i8 _4976_406c[4][4]; //Rp

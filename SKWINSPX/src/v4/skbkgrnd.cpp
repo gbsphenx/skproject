@@ -105,22 +105,18 @@ i16 SkWinCore::_32cb_54ce(X16 dir, i16 *xx, i16 *yy, X16 xl, X16 yl)
 	X16 di;
 	switch (dir) {
 		case 0://^54E3
-			//^32CB:54E3
 			si = *xx -yl;
 			di = xl -*xx;
 			break;
 		case 1://^54F9
-			//^32CB:54F9
 			si = xl -*xx;
 			di = yl -*yy;
 			break;
 		case 2://^550C
-			//^32CB:550C
 			si = yl -*yy;
 			di = *xx -xl;
 			break;
 		case 3://^5522
-			//^32CB:5522
 			si = *xx -xl;
 			di = *yy -yl;
 			break;

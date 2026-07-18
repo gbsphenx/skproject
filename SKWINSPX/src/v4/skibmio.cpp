@@ -390,9 +390,7 @@ void SkWinCore::IBMIO_INIT_VID()
 #if UseAltic
 	_04bf_09de = 0;
 #else
-	//^00EB:0C21
 	ENTER(0);
-	//^00EB:0C24
 	_crt88_setvect(255, _04bf_0090);
 	__asm mov ah,0xf
 	__asm int 0x10
@@ -400,7 +398,6 @@ void SkWinCore::IBMIO_INIT_VID()
 	__asm mov ah,0
 	__asm mov al,0x13
 	__asm int 0x10
-	//^00EB:0C4A
 	return;
 #endif
 }
@@ -490,224 +487,156 @@ void SkWinCore::IBMIO_STORE_KEYBOARD_INPUT(X16 iKeyboardVInput)
 // _01b0_00fc renamed IBMIO_CHECK_KEYBOARD_INPUT
 void SkWinCore::IBMIO_CHECK_KEYBOARD_INPUT()
 {
-	//^01B0:00FC
 	ENTER(6);
-	//^01B0:0102
 	do {
 		U16 bp06 = SK_UI_IMPORTB(0x60);	// get "v" keyboard value
 		if (bp06 == 0xE0) {
-			//^01B0:0110
 			_04bf_0e7e |= 0x1000;
 			continue;
 		}
-		//^01B0:0119
 		X16 si = 0;
 		U16 *bp04;
 		if ((_04bf_0e7e & 0x1000) != 0) {
-			//^01B0:0123
 			bp04 = _04bf_0e6a;
 			si = 1;
 		}
 		else {
-			//^01B0:0130
 			bp04 = _04bf_0e54;
 			if ((_04bf_0e7e & 0x800) != 0) {
-				//^01B0:0140
 				_04bf_1862 = 1;
 				switch (bp06) {
 				case 72://^0158
-					//^01B0:0158
 					_04bf_18a8 |= 1; break;
 				case 75://^015F
-					//^01B0:015F
 					_04bf_18a8 |= 4; break;
 				case 77://^0166
-					//^01B0:0166
 					_04bf_18a8 |= 8; break;
 				case 80://^016D
-					//^01B0:016D
 					_04bf_18a8 |= 2; break;
 				case 71://^0174
-					//^01B0:0174
 					_04bf_18a8 |= 0x20; break;
 				case 73://^017B
-					//^01B0:017B
 					_04bf_18a8 |= 0x40; break;
 				case 79://^0182
-					//^01B0:0182
 					_04bf_18a8 |= 0x80; break;
 				case 81://^018A
-					//^01B0:018A
 					_04bf_18a8 |= 0x100; break;
 				case 78://^0192
-					//^01B0:0192
 					_04bf_18a8 |= 0x10; break;
 				case 74://^0199
 				case 76://^0199
 				default:
-					//^01B0:0199
 					_04bf_1862 = 0; break;
 				}
 			}
 		}
-		//^01B0:019F
 		if (_04bf_1862 == 0) {
-			//^01B0:01AB
 			if ((_04bf_0e7e & 0x1000) == 0) {
-				//^01B0:01B8
 				X16 di = bp06;
 				switch (di) {
 				case 0x2A://^01D1
-					//^01B0:01D1
 					_04bf_0e7e = _04bf_0e7e|0x8000; break;
 				case 0x36://^01DD
-					//^01B0:01DD
 					_04bf_0e7e |= 0x4000; break;
 				case 0x1D://^01E5
-					//^01B0:01E5
 					_04bf_0e7e |= 0x400; break;
 				case 0x38://^01ED
-					//^01B0:01ED
 					_04bf_0e7e |= 0x800; break;
 				case 0xAA://^01F5
-					//^01B0:01F5
 					_04bf_0e7e = _04bf_0e7e & 0x7fff; break;
 				case 0xB6://^01FD
-					//^01B0:01FD
 					_04bf_0e7e &= 0xbfff; break;
 				case 0x9D://^0205
-					//^01B0:0205
 					_04bf_0e7e &= 0xfbff; break;
 				case 0xB8://^020D
-					//^01B0:020D
 					_04bf_0e7e &= 0xf7ff; break;
 				case 0xC8://^0215
-					//^01B0:0215
 					_04bf_18a8 &= 0xfffe; break;
 				case 0xCB://^021D
-					//^01B0:021D
 					_04bf_18a8 &= 0xfffb; break;
 				case 0xCD://^0225
-					//^01B0:0225
 					_04bf_18a8 &= 0xfff7; break;
 				case 0xD0://^022D
-					//^01B0:022D
 					_04bf_18a8 &= 0xfffd; break;
 				case 0xC7://^0235
-					//^01B0:0235
 					_04bf_18a8 &= 0xffdf; break;
 				case 0xC9://^023D
-					//^01B0:023D
 					_04bf_18a8 &= 0xffbf; break;
 				case 0xCF://^0245
-					//^01B0:0245
 					_04bf_18a8 &= 0xff7f; break;
 				case 0xD1://^024D
-					//^01B0:024D
 					_04bf_18a8 &= 0xfeff; break;
 				case 0xCE://^0255
-					//^01B0:0255
 					_04bf_18a8 &= 0xffef; break;
 				default:
-					//^01B0:025D
 					si = 1; break;
 				}
 			}
-			//^01B0:0260
 			if (si != 0 && (bp06 & 0x80) == 0) {
-				//^01B0:0275
 				switch (bp06) {
 					case 0x3b://^_0284
-						//^01B0:0284
 						if (_04bf_0296 > 0)
 							_04bf_0296--;
-						//^01B0:028F
 		_028f:
 						_04bf_0298 = _04bf_029c[RCJ(8,_04bf_0296)];
 						_04bf_029a = _04bf_02ac[RCJ(8,_04bf_0298)];
 						break;
 					case 0x3c://^_02ab
-						//^01B0:02AB
 						if (_04bf_0296 < 7)
 							_04bf_0296++;
 						goto _028f;
 					default: //^_02ba
-						//^01B0:02BA
 						if ((bp04[(bp06 >> 4)&7] & (1 << (bp06&15))) == 0) {
-							//^01B0:02DA
 							IBMIO_STORE_KEYBOARD_INPUT((_04bf_0e7e & 0x1e00)|bp06);
 							break;
 						}
 				}
 			}
 		}
-		//^01B0:02EB
 		if ((bp06 & 0x80) != 0) {
-			//^01B0:02F2
 			bp04[(bp06 >> 4)&7] &= ~(1 << (bp06&15));
 		}
 		else {
-			//^01B0:0314
 			bp04[(bp06 >> 4)&7] |=   1 << (bp06&15);
 		}
-		//^01B0:0332
 		if ((_04bf_0e7e & 0x8000) != 0 || (_04bf_0e7e & 0x4000) != 0) {
-			//^01B0:0342
 			_04bf_0e7e |= 0x200;
 		}
 		else {
-			//^01B0:034A
 			_04bf_0e7e &= 0xfdff;
 		}
-		//^01B0:0350
 		if ((_04bf_18a8 & 0x61) != 0) {
-			//^01B0:0358
 			_04bf_185c |= 1;
 		}
 		else {
-			//^01B0:035F
 			_04bf_185c &= 0xfffe;
 		}
-		//^01B0:0365
 		if ((_04bf_18a8 & 0x182) != 0) {
-			//^01B0:036D
 			_04bf_185c |= 2;
 		}
 		else {
-			//^01B0:0374
 			_04bf_185c &= 0xfffd;
 		}
-		//^01B0:037A
 		if ((_04bf_18a8 & 0x148) != 0) {
-			//^01B0:0382
 			_04bf_185c |= 8;
 		}
 		else {
-			//^01B0:0389
 			_04bf_185c &= 0xfff7;
 		}
-		//^01B0:038F
 		if ((_04bf_18a8 & 0xa4) != 0) {
-			//^01B0:0397
 			_04bf_185c |= 4;
 		}
 		else {
-			//^01B0:039E
 			_04bf_185c &= 0xfffb;
 		}
-		//^01B0:03A4
 		if ((_04bf_18a8 & 0x10) != 0) {
-			//^01B0:03AC
 			_04bf_185c |= 0x10;
 		}
 		else {
 			_04bf_185c &= 0xffef;
 		}
-		//^01B0:03B9
 		_04bf_0e7e &= 0xefff;
-		//^01B0:03BF
 	} while ((SK_UI_IMPORTB(0x64) & 2) != 0);
-	//^01B0:03C8
 	return;
 }
 
@@ -723,52 +652,39 @@ void SkWinCore::_01b0_237f() { // TODO: Unr
 //^01B0:20FF
 void SkWinCore::_01b0_20ff()
 {
-	//^01B0:20FF
 	ENTER(0);
-	//^01B0:2102
     if (glbCounterZero_0517 == 0)
 		return;
 	if (glbSomeCounter_0519 <= 0) {
 		do {
-			//^01B0:2119
 			glbSomeCounter_0519 += _01b0_292b() * 240;
-			//^01B0:212C
 		} while (glbSomeCounter_0519 <= 0);
-		//^01B0:213C
 		if (_04bf_0e64 != 0) {
-			//^01B0:2143
 			_04bf_18a4 = 0;
 			_01b0_237f();
 			glbCounterZero_0517 = 0;
 		}
 	}
 	else {
-		//^01B0:2156
 		glbSomeCounter_0519 -= glbDecreasing120;
 	}
-	//^01B0:2162
 	return;
 }
 
 //^01B0:0E2C
 U16 SkWinCore::_01b0_0e2c()
 {
-	//^01B0:0E2C
 	ENTER(0);
-	//^01B0:0E2C
 	outportb(0x43,0x80);
 	U8 al = SK_UI_IMPORTB(0x42);	// always return 0 ?
 	U8 ah = SK_UI_IMPORTB(0x42);	// always return 0 ?
 	return (ah<<8)|al;
-	//^01B0:0E43
 }
 
 //^01B0:0E27
 X16 SkWinCore::_01b0_0e27(X16 xx) 
 {
-	//^01B0:0E27
 	ENTER(0);
-	//^01B0:0E2A
 	while ((SK_UI_IMPORTB(0x0201) & 3) != 0) {
 	}
 	U16 tmp0 = _01b0_0e2c();
@@ -789,203 +705,134 @@ X16 SkWinCore::_01b0_0e27(X16 xx)
 	else {
 		return 0;//unstable value
 	}
-	//^01B0:0E7E
 }
 
 //^01B0:0FA3
 void SkWinCore::_01b0_0fa3()
 {
-	//^01B0:0FA3
 	ENTER(0);
-	//^01B0:0FA7
 	if (glbPType == 1 && sysMousePositionCaptured == 0 && sysSomeSemaphore == 0) {
-		//^01B0:0FCB
 		sysSomeSemaphore = 1;
 		outportb(0x20,0x20);
 		if ((_04bf_0e4c++ & 1) != 0) {
-			//^01B0:0FE2
 			_04bf_1798 = (_01b0_0e27(1) -100) / _04bf_0298;
 		}
 		else {
-			//^01B0:0FF6
 			_04bf_03c8 = _04bf_1798;
 			if (_04bf_03c8 > 0x13f) {
-				//^01B0:1004
 				_04bf_03c8 = 0x13f;
 			}
-			//^01B0:100C
 			else if (_04bf_03c8 < 0) {
-				//^01B0:1013
 				_04bf_03c8 = 0;
 			}
-			//^01B0:1019
 			_04bf_03ca = (_01b0_0e27(2) -100) / _04bf_029a;
 			if (_04bf_03ca > 0xc7) {
-				//^01B0:1033
 				_04bf_03ca = 0xc7;
 			}
-			//^01B0:103B
 			else if (_04bf_03ca < 0) {
-				//^01B0:1042
 				_04bf_03ca = 0;
 			}
 		}
-		//^01B0:1048
 		_04bf_03d0 = SK_UI_IMPORTB(0x201);
 		_04bf_03d0 = ((_04bf_03d0 >> 4) ^ 3)&3;
 		sysSomeSemaphore = 0;
 	}
 	else {
-		//^01B0:1067
 		if (glbPType != 2 && glbPType != 3)
 			return;
-		//^01B0:107A
 		_04bf_179a = (cd.sc.glbSoundBlasterBasePort != 0 && glbPType == 2) ? (SK_UI_IMPORTB(_01b0_3378 +1)) : 0x78;
-		//^01B0:109B
 		if (_04bf_03d2 == 1) {
 			if ((_04bf_179a & 0x80) == 0) {
-				//^01B0:10A9
 				_04bf_03d2 = 0;
 			}
-			//^01B0:10B1
 			else if (((_04bf_179a ^ _04bf_0e4a)&0x78) != 0) {
-				//^01B0:10BC
 				if ((_04bf_179a & 8) == 0) {
-					//^01B0:10C3
 					IBMIO_STORE_KEYBOARD_INPUT(0x48);
 				}
 				else if ((_04bf_179a & 16) == 0) {
-					//^01B0:10CE
 					IBMIO_STORE_KEYBOARD_INPUT(0x50);
 				}
 				else if ((_04bf_179a & 32) == 0) {
-					//^01B0:10D9
 					IBMIO_STORE_KEYBOARD_INPUT(0x47);
 				}
 				else if ((_04bf_179a & 64) == 0) {
-					//^01B0:10E4
 					IBMIO_STORE_KEYBOARD_INPUT(0x49);
 				}
 			}
 		}
-		//^01B0:10EB
 		if (_04bf_03d2 == 0) {
-			//^01B0:10F7
 			if (sysMousePositionCaptured == 0) {
-				//^01B0:1103
 				if ((_04bf_179a & 0x78) != 0x78 || (_04bf_185c & 15) != 0) {
-					//^01B0:111D
 					if ((_04bf_179a & 8) == 0 || (_04bf_185c & 1) != 0) {
-						//^01B0:112C
 						_04bf_03ca -= ((++_04bf_03ce +1) / 3) +1;
 					}
-					//^01B0:113F
 					if ((_04bf_179a & 0x10) == 0 || (_04bf_185c & 2) != 0) {
-						//^01B0:114E
 						_04bf_03ca += ((++_04bf_03ce +1) / 3) +1;
 					}
-					//^01B0:1161
 					if ((_04bf_179a & 0x40) == 0 || (_04bf_185c & 8) != 0) {
-						//^01B0:1170
 						_04bf_03c8 += ((++_04bf_03cc +1) / 3) +1;
 					}
-					//^01B0:1183
 					if ((_04bf_179a & 0x20) == 0 || (_04bf_185c & 4) != 0) {
-						//^01B0:1192
 						_04bf_03c8 -= ((++_04bf_03cc +1) / 3) +1;
 					}
 				}
-				//^01B0:11A5
 				if (_04bf_03cc > 0x64)
-					//^01B0:11AC
 					_04bf_03cc = 0x64;
-				//^01B0:11B2
 				if (_04bf_03ce > 0x64)
-					//^01B0:11B9
 					_04bf_03ce = 0x64;
-				//^01B0:11BF
 				if (_04bf_03c8 < 0)
-					//^01B0:11C6
 					_04bf_03c8 = 0;
-				//^01B0:11CC
 				if (_04bf_03c8 > 0x13f)
-					//^01B0:11D4
 					_04bf_03c8 = 0x13f;
-				//^01B0:11DA
 				if (_04bf_03ca < 0)
-					//^01B0:11E1
 					_04bf_03ca = 0;
-				//^01B0:11E7
 				if (_04bf_03ca > 0xc7)
-					//^01B0:11EF
 					_04bf_03ca = 0xc7;
 			}
-			//^01B0:11F5
 			if (((_04bf_179a ^ _04bf_0e4a)&0x18) != 0)
-				//^01B0:1200
 				_04bf_03ce = 0;
-			//^01B0:1206
 			if (((_04bf_179a ^ _04bf_0e4a)&0x60) != 0)
-				//^01B0:1211
 				_04bf_03cc = 0;
-			//^01B0:1217
 			if (((_04bf_185c ^ _04bf_18a6)&3) != 0)
-				//^01B0:1223
 				_04bf_03ce = 0;
-			//^01B0:1229
 			if (((_04bf_185c ^ _04bf_18a6)&12) != 0)
-				//^01B0:1235
 				_04bf_03cc = 0;
-			//^01B0:123B
 			_04bf_03d0 = ((_04bf_179a >> 7) & 1) | ((_04bf_185c >> 4) & 1);
 			if ((_04bf_179a & 0x80) != 0) {
-				//^01B0:125C
 				if ((_04bf_03c8 >= 0xe8 && _04bf_03c8 <= 0x13f && _04bf_03ca >= 0x7b && _04bf_03ca <= 0xa8) || _04bf_03ca > 0xa8)
-					//^01B0:1283
 					_04bf_03d2 = 1;
 			}
 		}
-		//^01B0:1289
 		_04bf_0e4a = _04bf_179a;
 		_04bf_18a6 = _04bf_185c;
 	}
-	//^01B0:1295
 	X16 cx = _04bf_03c8;
 	X16 dx = _04bf_03ca;
 	X16 bx = _04bf_03d0;
 	if (_04bf_0e7a == 0) {
-		//^01B0:12AC
 		IBMIO_MOUSE_EVENT_RECEIVER(cx, dx, bx);
 		return;
 	}
-	//^01B0:12BA
 	if (_04bf_17a4 < 10) {
-		//^01B0:12C1
 		X16 di;
 		if (_04bf_17a4 != 0) {
-			//^01B0:12C8
 			di = _04bf_0e50;
 			if (_04bf_17ac[di].w0 == bx) {
-				//^01B0:12DA
 				_04bf_17ac[di].w2 = cx;
 				_04bf_17ac[di].w4 = dx;
 				return;
 			}
 		}
-		//^01B0:12E5
 		_04bf_17a4++;
 		di = _04bf_0e50 +1;
-		//^01B0:12EE
 		if (di == 10)
 			di = 0;
-		//^01B0:12F6
 		_04bf_0e50 = di;
 		_04bf_17ac[di].w0 = bx;
 		_04bf_17ac[di].w2 = cx;
 		_04bf_17ac[di].w4 = dx;
 		return;
 	}
-	//^01B0:1312
 	return;
 }
 
@@ -1051,20 +898,14 @@ void SkWinCore::IBMIO_INIT_TIMER()
 		// __asm mov al,4
 		// __asm out dx,al
 	}
-	//^01B0:134F
 	_01b0_14db = cd.sc.glbSoundBlasterBasePort;
 	if (cd.sc.glbSoundBlasterBasePort != 0 && (cd.sc.glbSoundCardType == 3 || cd.sc.glbSoundCardType == 5)) {
-		//^01B0:136D
 	}
-	//^01B0:1383
 	_01b0_13be = _sys_getvect(0x08);
 	_sys_setvect(0x08, &SkWinCore::_INT08_HANDLER);
-	//^01B0:13A3
 	X16 bp02 = 0x136b;
 	_01b0_13c2 = _01b0_13c8 = bp02;
 	glbSoundFreq_13ce = 0x180c;	// 0x180c = 6156
-	//^01B0:13BB
-	//^01B0:188F
 	return;
 }
 //^01B0:1893
@@ -1077,7 +918,6 @@ void SkWinCore::IBMIO_UNINIT_TIMER()
 		sndLockSoundBuffer = 0;
 #endif
 	}
-	//^01B0:18A4
 	outportb(0x43,0x36);
 	outportb(0x40,0);
 	outportb(0x40,0);
@@ -1363,9 +1203,7 @@ void SkWinCore::IBMIO_BLIT_TO_SCREEN_8TO8BPP(
 	ATLASSERT(srcx >= 0 && srcy >= 0 && srcpitch >= 0 && dstpitch >= 0 && srcpitch <= 320 && dstpitch <= 320);
 	ATLASSERT(prc->x >= 0 && prc->y >= 0 && prc->cx < 320 && prc->cy < 200);
 
-	//^00EB:0254
 	ENTER(6);
-	//^00EB:025A
 	glbBlitBufferSource = reinterpret_cast<U8 *>(src);
 	_04bf_0e34 = reinterpret_cast<U8 *>(dst);
 	X16 bp04 = prc->cx;
@@ -1373,23 +1211,17 @@ void SkWinCore::IBMIO_BLIT_TO_SCREEN_8TO8BPP(
 	//printf("cx =%d / cy = %d\n", bp04, bp02);
 	if (bp04 <= 0 || bp02 <= 0)
 		return;
-	//^00EB:0291
 	X16 di = prc->y *dstpitch +prc->x;
 	X16 si = srcy *srcpitch +srcx;
 	X16 bp06 = 0;
 	for (; bp06 < bp02; si += srcpitch, di += dstpitch, bp06++) {
-		//^00EB:02B2
 		if (colorkey < 0) {
-			//^00EB:02B8
 			MOVE_MEMORY_WITH_DELTA(si, di, bp04);
 		}
 		else {
-			//^00EB:02C6
 			COPY_MEMORY_WITH_DELTA_AND_TRANSPARENT(si, di, bp04, U8(colorkey));
 		}
-		//^00EB:02D6
 	}
-	//^00EB:02E7
 
 	//printf("dst = %08x / vram = %08x\n", dst, vram);
 #ifdef __DJGPP__
@@ -1508,90 +1340,62 @@ void SkWinCore::FIRE_BLIT_TO_MEMORY_8TO8BPP(
 	dp.buff = (U8 *)dst; dp.ox = rc->x; dp.oy = rc->y; dp.pitch = dstPitch; dp.cy = 0; dp.dx = 1; dp.dy = 1;
 	BlitSvc(sp, dp, rc->cx, rc->cy, colorkey);
 #else
-	//^44C8:0C74
 	ENTER(6);
-	//^44C8:0C7A
 	_4976_5e64 = reinterpret_cast<U8 *>(const_cast<void *>(src));
 	_4976_5e6a = reinterpret_cast<U8 *>(dst);
 	U16 bp04 = rc->cx;
 	U16 bp02 = rc->cy;
 	if (bp04 <= 0 && bp02 <= 0)
 		return;
-	//^44C8:0CB7
 	U16 di = rc->y * dstPitch +rc->x;
 	U16 si;
 	U16 bp06;
 	switch (mirrorFlip) {
 		case 3://^_0cde
-			//^44C8:0CDE
-			//^44C8:0CE0
 			si = srcy * srcPitch;
 			for (bp06 = 0; bp06 < bp02; si += srcPitch, di += dstPitch, bp06++) {
-				//^44C8:0CF2
 				if (colorkey < 0) {
-					//^44C8:0CF8
 					_44c8_0b8d(si, di, bp04);
 				}
 				else {
-					//^44C8:0D06
 					_44c8_0bc5(si, di, bp04, U8(colorkey));
 				}
-				//^44C8:0D16
 			}
-			//^44C8:0D27
 			break;
 		case 2://^_0d2a
-			//^44C8:0D2A
 			si = (srcy +bp02 -1) * srcPitch +srcx;
 			for (bp06 = 0; bp06 < bp02; si -= srcPitch, di += dstPitch, bp06++) {
-				//^44C8:0D42
 				if (colorkey < 0) {
-					//^44C8:0D48
 					_44c8_0b8d(si, di, bp04);
 				}
 				else {
-					//^44C8:0D56
 					_44c8_0bc5(si, di, bp04, U8(colorkey));
 				}
-				//^44C8:0D66
 			}
-			//^44C8:0D77
 			break;
 		case 1://^_0d7a
-			//^44C8:0D7A
 			si = srcy * srcPitch +srcx;
 			for (bp06 = 0; bp06 < bp02; si += srcPitch, di += dstPitch, bp06++) {
-				//^44C8:0D8C
 				if (colorkey < 0) {
-					//^44C8:0D92
 					_44c8_0bf8(si, di, bp04);
 				}
 				else {
-					//^44C8:0DA0
 					_44c8_0c3c(si, di, bp04, U8(colorkey));
 				}
-				//^44C8:0DB0
 			}
-			//^44C8:0DC1
 			break;
 		default: //^_0dc3
-			//^44C8:0DC3
 			si = (srcy +bp02 -1) * srcPitch +srcx;
 			for (bp06 = 0; bp06 < bp02; si -= srcPitch, di += dstPitch, bp06++) {
-				//^44C8:0DDB
 				if (colorkey < 0) {
-					//^44C8:0DE1
 					_44c8_0bf8(si, di, bp04);
 				}
 				else {
-					//^44C8:0DEF
 					_44c8_0c3c(si, di, bp04, U8(colorkey));
 				}
-				//^44C8:0DFF
 			}
 			break;
 	}
-	//^44C8:0E10
 	return;
 #endif
 }
@@ -1695,31 +1499,23 @@ void SkWinCore::FIRE_FILL_4BPP_PICT_LINE(U16 offDst, U16 fill, U16 size)
 {
 	ATLASSERT(size != 0);
 
-	//^44C8:1233
-	//^44C8:1237
 	Bit8u *di = _4976_5e6a;
 	U16 bx = offDst;
 	U16 cx = size;
 	U8 ah = Bit8u(fill);
 	U8 al;
-	//^44C8:1245
 	bool carry = (bx & 1) ? true : false;
 	bx >>= 1;
 	di += bx;
-	//^44C8:124B
 	if (carry) {
-		//^44C8:124D
 		al = *di;
 		al &= 0xf0;
 		al |= ah;
 		stosb(di, al);
-		//^44C8:1255
 		cx--;
 		if (cx == 0)
-			//^44C8:1256
 			return;
 	}
-	//^44C8:1258
 	al = ah;
 	al <<= 4;
 	al |= ah;
@@ -1731,11 +1527,9 @@ void SkWinCore::FIRE_FILL_4BPP_PICT_LINE(U16 offDst, U16 fill, U16 size)
 			bool carry = (cx & 1) ? true : false;
 			cx >>= 1;
 			if (carry) {
-				//^44C8:1268
 				stosb(di, al);
 			}
 			while (cx != 0) {
-				//^44C8:1269
 				stosb(di, al);
 				stosb(di, ah);
 				cx--;
@@ -1749,84 +1543,59 @@ void SkWinCore::FIRE_FILL_4BPP_PICT_LINE(U16 offDst, U16 fill, U16 size)
 			stosb(di, al);
 		}
 	}
-	//^44C8:127B
 	return;
 }
 
 //^44C8:1A1E
 void SkWinCore::FIRE_FILL_RECT_4BPP_PICT(Bit8u *buff, SRECT *rc, U16 fill, U16 width)
 {
-	//^44C8:1A1E
-	//^44C8:1A23
 	_4976_5e6a = buff;
-	//^44C8:1A30
 	width = (width + 1) & 0xfffe;
-	//^44C8:1A3A
 	U16 di = rc->y * width + rc->x;
 	U16 si = 0;
-	//^44C8:1A4B
 	for (; rc->cy > si; di += width, si++) {
-		//^44C8:1A4D
 		FIRE_FILL_4BPP_PICT_LINE(di, fill, rc->cx);
-		//^44C8:1A60
 	}
-	//^44C8:1A6D
 	return;
 }
 
 //^44C8:127E
 void SkWinCore::FIRE_FILL_8BPP_PICT_LINE(U16 offDst, U16 fill, U16 size)
 {
-	//^44C8:127E
-	//^44C8:1282
 	Bit8u *di = _4976_5e6a + offDst;
 	U16 cx = size;
 	Bit8u al = Bit8u(fill);
-	//^44C8:1292
 	U16 dx = cx;
 	dx &= 1;
 	if (dx != 0) {
-		//^44C8:1299
 		stosb(di, al);
 		cx--;
 	}
-	//^44C8:129B
 	dx = cx;
 	cx >>= 1;
 	if (cx != 0) {
-		//^44C8:12A1
 		U16 ax = al | (al << 8);
 		while (cx != 0) {
 			stosw(di, ax);
 			cx--;
 		}
 	}
-	//^44C8:12A5
 	dx &= 1;
 	if (dx != 0) {
-		//^44C8:12AA
 		stosb(di, al);
 	}
-	//^44C8:12AB
 	return;
 }
 
 //^44C8:19D5
 void SkWinCore::FIRE_FILL_RECT_8BPP_PICT(Bit8u *buff, SRECT *rc, U16 fill, U16 width)
 {
-	//^44C8:19D5
-	//^44C8:19DA
 	_4976_5e6a = buff;
-	//^44C8:19E7
 	U16 di = rc->y * width + rc->x;
 	U16 si = 0;
-	//^44C8:19F8
 	for (; rc->cy > si; di += width, si++) {
-		//^44C8:19FA
 		FIRE_FILL_8BPP_PICT_LINE(di, fill, rc->cx);
-		//^44C8:1A0D
 	}
-	//^44C8:1A1A
 	return;
 }
 
@@ -2012,13 +1781,11 @@ void SkWinCore::VIDEO_MEM_MOVE(SRECT *prc, i16 yy)
 	LOADDS(0x0C48);
 	i16 si = prc->y + yy;
 	while (prc->y + prc->cy - 1 >= si) {
-		//^00EB:06B3
 		MOVE_MEMORY(
 			&pbVram[si * 320],
 			&pbVram[(si - yy) * 320],
 			prc->x + prc->cx - 1 -prc->x + 1
 			);
-		//^00EB:06F7
 	}
 	return;
 }
@@ -2035,9 +1802,7 @@ void SkWinCore::VIDEO_MEM_MOVE(SRECT *prc, i16 yy)
 // SPX: _0759_08e7 renamed ANIM_MAIN
 int SkWinCore::ANIM_MAIN(i16 argc, const char **argv, char **env) // #DS=089C
 {
-	//^0759:08E7
 	ENTER(214);
-	//^0759:08ED
 	X16 bp2a = 0;
 	X16 bp2e = 0;
 	X16 bp32 = 0;
@@ -2054,73 +1819,55 @@ int SkWinCore::ANIM_MAIN(i16 argc, const char **argv, char **env) // #DS=089C
 	X16 bp6c = 0;
 	char bp0096[0x0096 -0x6e] = {0};
 	i16 si = 1;
-	//^0759:093A
 	U8 *bp64;
 	for (; si < argc; si++) {
-		//^0759:093D
 		if (argv[si][0] == '+' && ANIM_TOUPPER(argv[si][1]) == 'A') { // TODO: check whether this is toupper
-			//^0759:0974
 			switch (ANIM_TOUPPER(argv[si][2])) {
 			case 'B'://^09A1
-				//^0759:09A1
 				bp44 = 1;
 				break;
 			case 'L'://^09A9
-				//^0759:09A9
 				bp44 = 1;
 				bp32 = 1;
 				break;
 			case 'D'://^09B6
-				//^0759:09B6
 				bp34 = 1;
 				break;
 			case 'H'://^09BE
-				//^0759:09BE
 				bp46 = 1;
 				break;
 			case 'E'://^09C6
-				//^0759:09C6
 				bp48 = 1;
 				break;
 			case 'S'://^09CE
-				//^0759:09CE
 				bp4a = 1;
 				break;
 			case 'M'://^09D6
-				//^0759:09D6
 				bp5e = 1;
 				break;
 			case 'F'://^09DE
 				{
-				//^0759:09DE
 				X16 bp30;
 				if (IS_NEGATIVE(bp30 = ANIM_FILE_OPEN(&argv[si][3])) != 0)
 					break;
-				//^0759:0A09
 				U32 bp68 = ANIM_GET_FILE_SIZE(bp30);
 				bp64 = ANIM_farmalloc(bp68);
 				if (bp64 != NULL) {
-					//^0759:0A35
 					ANIM_READ_HUGE_FILE(bp30, bp68, bp64);
 					bp60 = 1;
 				}
-				//^0759:0A50
 				ANIM_FILE_CLOSE(bp30);
 				break;
 				}
 			case 'V'://^0A5B
-				//^0759:0A5B
 				bp69 = _069a_03fc(&argv[si][3]);
 				if (bp69 > 15) {
-					//^0759:0A80
 					bp69 = 15;
 				}
 				break;
 			case 'O'://^0A86
-				//^0759:0A86
 				bp6c = _069a_03fc(&argv[si][3]);
 				if (bp6c > 0xfe) {
-					//^0759:0AAC
 					bp6c = 0xe;
 				}
 				break;
@@ -2140,127 +1887,91 @@ int SkWinCore::ANIM_MAIN(i16 argc, const char **argv, char **env) // #DS=089C
 			}
 		}
 		else if (bp36 == 0) {
-			//^0759:0AB9
 			ANIM_STRCPY(bp0096, argv[si]);
-			//^0759:0AD8
 			bp36 = 1;
 		}
-		//^0759:0ADD
 	}
-	//^0759:0AE6
 	_0759_0126();
 	_0759_06db();
-	//^0759:0AEE
 	while (IS_THERE_KEY_INPUT_1() != 0) {
 		UI_CONSUME_KEYBOARD_INPUT();
 	}
-	//^0759:0AFC
 	X16 bp30;
 	if (bp0096[0] == 0 || IS_NEGATIVE(bp30 = ANIM_FILE_OPEN(bp0096)) != 0) {
-		//^0759:0B1C
 #if UseAltic
 		if (IS_NEGATIVE(ANIM_FILE_OPEN(_089c_00d8)) != 0) {
-			//^0759:0B33
 			return (0);
 		}
 #else
 		if (IS_NEGATIVE(ANIM_FILE_OPEN(_089c_00d8)) == 0) {
-			//^0759:0B33
 			return (0);
 		}
 #endif
 	}
-	//^0759:0B3B
 	U8 *bp08 = ANIM_farmalloc(32000);
 	if (bp08 == NULL) {
-		//^0759:0B58
 		return (0);
 	}
-	//^0759:0B60
 	U8 *bp10;
 	X16 bp50;
 	if (IS_SCARD_PRESENT() CALL_IBMIO != 0 && (bp10 = ANIM_farmalloc(32000)) != NULL) {
-		//^0759:0B8C
 		if (_RELOAD_SOUND_BUFFER(bp10, 32000, PLAYBACK_FREQUENCY) CALL_IBMIO != 0) {
-			//^0759:0BA7
 			bp50 = 1;
 		}
 		else {
-			//^0759:0BAE
 			bp50 = 0;
 			ANIM_farfree(bp10);
 		}
 	}
 	else {
-		//^0759:0BC2
 		bp50 = 0;
 	}
-	//^0759:0BC7
 	U32 bp14 = ANIM_GET_FILE_SIZE(bp30);
 	U8 *bp04;
 	X16 di;
 	if (bp5e != 0 || ANIM_farcoreleft() < bp14) {
-		//^0759:0BF2
 		X32 bp4e = _0759_07f2(_089c_034c);
 		if (bp4e < bp14) {
-			//^0759:0C0E
 			_0759_0855();
 			return (0);
 		}
-		//^0759:0C1A
 		U32 bp54 = bp14;
 		U32 bp58 = 0;
-		//^0759:0C30
 		for (; bp54 <= 0; ) {
-			//^0759:0C32
 			U16 bp5a;
 			if (bp54 > 16000) {
-				//^0759:0C41
 				bp5a = 16000;
 			}
 			else {
-				//^0759:0C48
 				bp5a = U16(bp54);
 			}
-			//^0759:0C4E
 			ANIM_READ_HUGE_FILE(bp30, bp5a, _0759_0869(bp58));
 			bp58 += bp5a;
 			bp54 -= bp5a;
-			//^0759:0C7C
 		}
-		//^0759:0C8A
 		di = 1;
 	}
 	else {
-		//^0759:0C8F
 		di = 0;
 		bp04 = ANIM_farmalloc(bp14);
 		if (bp04 == NULL) {
-			//^0759:0CAF
 			return (0);
 		}
-		//^0759:0CB7
 		ANIM_READ_HUGE_FILE(bp30, bp14, bp04);
 	}
-	//^0759:0CCD
 	ANIM_FILE_CLOSE(bp30);
-	//^0759:0CD5
 	if (bp4a != 0)
-		//^0759:0CDB
 		_0759_06b5();
-	//^0759:0CDF
 	ANIM_SELECT_PALETTE_SET(0);
 	ANIM_SET_BLACK_SCREEN();
 	X32 bp18 = 0; // anim read offset?
 	X32 bp24 = 0;
-	//^0759:0CFA
 	X16 bp2c = 0;
 	X16 bp5c = 1;
 	if (bp60 != 0) {
 #if UseAltic
 		ATLASSERT(false);
 #else
-		//^0759:0D0A
 		_xxxx_xxxx(bp64, 0, bp69 << 4, 0);
 #endif
 	}
@@ -2271,11 +1982,9 @@ int SkWinCore::ANIM_MAIN(i16 argc, const char **argv, char **env) // #DS=089C
 	// The below identifications are brought from above file spec site.
 
 	do {
-		//^0759:0D28
 		U8 *bp0c = (di != 0)
 			? _0759_0869(bp18)
 			: bp04 +bp18;
-		//^0759:0D51
 		X16 bp28 = bp0c[5] | (bp0c[4] << 8); // 1 word (big endian): Item attribute
 		X32 bp1c = bp18 +U32((bp0c[2] << 8) | bp0c[3]) +6; // next memory position
 		X16 bp6e = (bp0c[1] << 8) | bp0c[0]; // 2 bytes: Item type
@@ -2287,70 +1996,51 @@ int SkWinCore::ANIM_MAIN(i16 argc, const char **argv, char **env) // #DS=089C
 		U16 bp26;
 		switch (bp6e) {
 		case 0x4157://^0E21 // "WA"
-			//^0759:0E21
 			if (bp28 == 1) {
-				//^0759:0E2C
 				ANIM_WA_0759_0792();
 			}
 			break;
 		case 0x4453://^0E33 // "SD"
-			//^0759:0E33
 			if (bp5c != 0) {
-				//^0759:0E3C
 				if (di != 0) {
-					//^0759:0E40
 					_0759_0869(_089c_02c0[bp42++] = bp18 +6);
 				}
 				else {
-					//^0759:0E6D
 					_089c_02c0[bp42] = bp18 +6;
 					bp3a = bp04;
 					bp42++;
 					break;
 				}
-				//^0759:0EA7
 				bp40 = (bp3a[0] << 8) | (bp3a[1]);
 				si = 0;
-				//^0759:0EBF
 				for (; U16(si) < bp40; si++) {
-					//^0759:0EC1
 					bp3a[si +2] = bp3a[si +2] +0x80;
-					//^0759:0ECE
 				}
-				//^0759:0ED4
 				if (di == 0)
 					break;
-				//^0759:0EDB
 				bp0c = _0759_0869(bp18);
 			}
 			break;
 		case 0x4F53://^0EF0 // "SO"
-			//^0759:0EF0
 			bp3e = 0xff;
 			bp3c = 5500;
 			bp3a = (di != 0)
 				? _0759_0869(_089c_02c0[bp28])
 				: &bp04[_089c_02c0[bp28 -1]];
-			//^0759:0F35
 			ANIM_SO_0759_0739(bp3a, bp3e, bp3c);
 			if (di != 0) {
-				//^0759:0F4F
 				bp0c = _0759_0869(bp18);
 			}
 			break;
 		case 0x4C44://^0F64 // "DL"
 		case 0x4E45://^0F64 // "EN"
-			//^0759:0F64
 			_089c_0344 = bp28;
 			if (bp0c[6] == 0xff && bp0c[7] == 0x81) {
-				//^0759:0FA4
 				ANIM_DECODE_IMG1(&bp0c[8], bp08);
 			}
 			else {
-				//^0759:0FB7
 				ANIM_DECODE_IMG1(&bp0c[6], bp08);
 			}
-			//^0759:0FD6
 			ANIM_SELECT_PALETTE_SET(1);
 			bp2a++;
 			while (_089c_0344 > 0 && bp34 == 0) {
@@ -2366,85 +2056,60 @@ int SkWinCore::ANIM_MAIN(i16 argc, const char **argv, char **env) // #DS=089C
 				ATLASSERT(false);
 #endif
 			}
-			//^0759:0FF6
 			if (bp2e != 0) {
-				//^0759:0FFF
 				bp2e = 0;
 				bp1c = bp20;
 			}
 			break;
 		case 0x4C50://^1013 // "PL"
-			//^0759:1013
 			bp26 = 0;
-			//^0759:1018
 			for (si = 0; si < 64; si++) {
-				//^0759:101C
 				if (bp0c[si +8] != _089c_0090[si])
-					//^0759:103E
 					bp26 = 1;
-				//^0759:1043
 				_089c_0090[si] = bp0c[si +8];
-				//^0759:1063
 			}
-			//^0759:1069
 			if (bp26 != 0) { // is palette updated?
-				//^0759:1072
 				skxxxj bp00d6[16];
 				for (si = 0; si < 64; si += 4) {
-					//^0759:1077
 					bp00d6[si >> 2].b0 = bp0c[si + 8];
 					bp00d6[si >> 2].b1 = bp0c[si + 9] << 4;
 					bp00d6[si >> 2].b2 = bp0c[si +10] << 4;
 					bp00d6[si >> 2].b3 = bp0c[si +11] << 4;
-					//^0759:113C
 				}
-				//^0759:1147
 				ANIM_SELECT_PALETTE_SET(0);
 				_0759_0688(bp00d6, 0);
 			}
 			break;
 		case 0x4F46://^1160 // "FO"
-			//^0759:1160
 			bp0c = (di != 0)
 				? _0759_0869(bp1c)
 				: &bp04[bp1c];
-			//^0759:1189
 			_089c_025a[bp2c +1].w4 = bp28;
 			_089c_025a[bp2c +1].dw0 = bp1c +((bp0c[2] << 8) | bp0c[3]) +6;
 			bp2c++;
 			if (di != 0)
 				goto _12ce;
-			//^0759:1204
 			bp0c = &bp04[bp18];
 			break;
 		case 0x454E://^121E // "NE"
-			//^0759:121E
 			bp26 = -- _089c_025a[bp2c].w4;
 			if (bp26 > 0 && bp26 < 10) {
-				//^0759:123F
 				bp2e = 1;
 				bp20 = _089c_025a[bp2c].dw0;
 				break;
 			}
-			//^0759:125F
 			bp2c--;
 			if (di != 0)  {
-				//^0759:1266
 				bp0c = _0759_0869(bp1c);
 			}
-			//^0759:1278
 			bp1c = bp1c +((bp0c[2] << 8) | bp0c[3]) +6;
-			//^0759:12CA
 			if (di != 0) {
-				//^0759:12CE
 _12ce:
 				bp0c = _0759_0869(bp18);
 			}
 		}
-		//^0759:12E0
 		bp18 = bp1c;
 		if (bp32 != 0 && bp18 >= bp14) {
-			//^0759:1301
 			bp5c = 0;
 			bp18 = bp24;
 		}
@@ -2452,48 +2117,35 @@ _12ce:
 			UI_CONSUME_KEYBOARD_INPUT();
 			break;
 		}
-		//^0759:132C
 	} while (bp18 < bp14);
-	//^0759:1344
 	if (bp60 != 0) {
 #if UseAltic
 		ATLASSERT(false);
 #else
-		//^0759:134A
 		_xxxx_xxxx(bp6c);
 #endif
 	}
-	//^0759:1356
 	if (bp48 != 0) {
-		//^0759:135C
 		_0759_06b5();
 	}
 	if (bp46 == 0) {
-		//^0759:1366
 		ANIM_SELECT_PALETTE_SET(0);
 	}
 	if (di != 0) {
-		//^0759:1371
 		_0759_0855();
 	}
 	else {
-		//^0759:1377
 		ANIM_farfree(bp04);
 	}
-	//^0759:1384
 	if (bp60 != 0) {
 		_01b0_1983_AUDIO() CALL_IBMIO;
 		ANIM_farfree(bp64);
 	}
-	//^0759:139F
 	if (bp50 != 0) {
-		//^0759:13A5
 		_01b0_18d3_AUDIO(0) CALL_IBMIO;
 		ANIM_farfree(bp10);
 	}
-	//^0759:13BD
 	return (0);
-	////^0759:13C5
 	//return 0;
 }
 
@@ -2555,43 +2207,31 @@ void SkWinCore::ANIM_SELECT_PALETTE_SET(U8 iPaletteSet)
 //^00EB:04BC
 void SkWinCore::_00eb_04bc(skxxxj *xx, U16 yy) //#DS=04BF
 {
-	//^00EB:04BC
 	ENTER(0);
-	//^00EB:04C1
 	LOADDS(0x0c48);
 	X16 si = 0;
 	X16 di = yy << 4;
-	//^00EB:04D1
 	for (si = 0; si < 16; si++) {
-		//^00EB:04D6
 		glbPaletteRGB[(si +di)][0] = U8(xx[si].b1 >> 2);
 		glbPaletteRGB[(si +di)][1] = U8(xx[si].b2 >> 2);
 		glbPaletteRGB[(si +di)][2] = U8(xx[si].b3 >> 2);
 		if (yy == 0) {
-			//^00EB:0548
 			_04bf_0a50[si][0] = U8(xx[si].b1 >> 2);
 			_04bf_0a50[si][1] = U8(xx[si].b2 >> 2);
 			_04bf_0a50[si][2] = U8(xx[si].b3 >> 2);
 		}
-		//^00EB:05AE
 	}
-	//^00EB:05B7
 	if (glbUpdatePalette == 1) {
-		//^00EB:05BE
 		IBMIO_UPDATE_PALETTE_SET();
 	}
-	//^00EB:05C2
 	return;
 }
 
 //^0759:0688
 void SkWinCore::_0759_0688(skxxxj *xx, U16 yy)
 {
-	//^0759:0688
 	ENTER(0);
-	//^0759:068B
 	_00eb_04bc(xx, yy) CALL_IBMIO;
-	//^0759:069F
 	return;
 }
 
@@ -2613,41 +2253,29 @@ void SkWinCore::ANIM_SO_0759_0739(U8 *xx, U16 yy, U16 zz) {
 //^0759:0330
 void SkWinCore::ANIM_DECODE_IMG1(U8 *xx, U8 *yy)
 {
-	//^0759:0330
 	ENTER(14);
-	//^0759:0336
 	_089c_0348 = xx;
 	_089c_0354 = yy;
-	//^0759:0350
 	U16 bp02 = _089c_0348[1] | (_089c_0348[0] << 8); // image width
-	//^0759:036A
 	U16 bp04 = _089c_0348[3] | (_089c_0348[2] << 8); // image height
-	//^0759:03B9
 	_089c_0348 += 4;
-	//^0759:03C8
 	X16 bp06;
 	X16 bp08;
 	bp08 = (bp06 = (bp02 +1)&0xfffe) * bp04;
 	U16 di = 0;
 	U16 bp0c = 0;
 	do {
-		//^0759:03DF
 		i8 bp09 = (_089c_0348++)[0];
 		X16 si;
 		if ((bp09 & 0x80) == 0) {
-			//^0759:03FC
 			si = (bp09 >> 4) +1;
-			//^0759:0404
 			ANIM_FILL_SEQ_4BPP(di, bp09&15, si);
-			//^0759:0413
 			di += si;
 			continue;
 		}
-		//^0759:0418
 		X16 bp0e = bp09 & 0x30;
 		switch (bp0e) {
 		case 0x00://^043C
-			//^0759:043C
 			if ((bp09 & 0x40) == 0) {
 				si = (_089c_0348[0]) +1;
 				_089c_0348++;
@@ -2656,102 +2284,69 @@ void SkWinCore::ANIM_DECODE_IMG1(U8 *xx, U8 *yy)
 				si = (_089c_0348[1] | (_089c_0348[0] << 8)) +1;
 				_089c_0348 += 2;
 			}
-			//^0759:048F
-			//^0759:0404
 			ANIM_FILL_SEQ_4BPP(di, bp09&15, si);
-			//^0759:0413
 			di += si;
 			continue;
 		case 0x10://^0495
-			//^0759:0495
 			if ((bp09 & 0x40) == 0) {
-				//^0759:049B
 				si = (_089c_0348[0]) +1;
 				_089c_0348++;
 			}
 			else {
-				//^0759:04AE
 				si = (_089c_0348[1] | (_089c_0348[0] << 8)) +1;
 				_089c_0348 += 2;
 			}
-			//^0759:04E8
 			if ((si & 1) != 0) {
-				//^0759:04EE
 				ANIM_SETPIXEL_SEQ_4BPP(di, bp09&15);
-				//^0759:04FB
 				di++;
 				si--;
 			}
-			//^0759:04FD
 			ANIM_BLIT_TO_MEMORY_ROW_4TO4BPP(0, di, si);
 			_089c_0348 += si >> 1;
-			//^0759:0518
-			//^0759:0413
 			di += si;
 			continue;
 		case 0x20://^051B
-			//^0759:051B
 			if (bp0c < di) {
-				//^0759:0520
 				IBMIO_BLIT_0759_0310(bp0c, di -bp0c);
 			}
-			//^0759:052F
 			si = ((bp09 >> 2)&16)|(bp09&15);
 			if (si == 0x1d) {
-				//^0759:054B
 				si = _089c_0348[0] +1;
 				_089c_0348++;
 			}
-			//^0759:0568
 			else if (si == 0x1e) {
-				//^0759:056D
 				si = _089c_0348[0] +0x101;
 				_089c_0348++;
 			}
-			//^0759:057B
 			else if (si == 0x1f) {
-				//^0759:0580
 				si = (_089c_0348[1] | (_089c_0348[0] << 8)) +1;
 				_089c_0348 += 2;
 			}
 			else {
-				//^0759:05B2
 				si++;
 			}
-			//^0759:05B3
 			di += si;
 			bp0c = di;
-			//^0759:05B8
 			break;
 		case 0x30://^05BB
-			//^0759:05BB
 			if ((bp09 & 0x40) == 0) {
-				//^0759:05C1
 				si = _089c_0348[0] +1;
 				_089c_0348++;
 			}
 			else {
-				//^0759:05D4
 				si = (_089c_0348[1] | (_089c_0348[0] << 8)) +1;
 				_089c_0348 += 2;
 			}
-			//^0759:060E
 			_0759_02c6(di, di -bp06, si);
-			//^0759:061D
 			di += si;
 			ANIM_SETPIXEL_SEQ_4BPP(di++, bp09&15);
-			//^0759:062F
 			break;
 		}
-		//^0759:062F
 	} while (di < bp08);
 	ATLASSERT(di <= bp08);
-	//^0759:0637
 	if (bp0c < di) {
-		//^0759:063C
 		IBMIO_BLIT_0759_0310(bp0c, di -bp0c);
 	}
-	//^0759:064B
 	return;
 }
 
@@ -2797,9 +2392,7 @@ U32 SkWinCore::ANIM_farcoreleft()
 #if UseAltic
 	return 1024*1024; // Win32 supplies almost infinite memory pool compared to MS-DOS env.
 #else
-	//^069A:040D
 	ENTER(0);
-	//^069A:040D
 	return _crt_farcoreleft();
 #endif
 }
@@ -2813,42 +2406,29 @@ U8 *SkWinCore::ANIM_farmalloc(U32 size)
 //^0759:002D
 U16 SkWinCore::ANIM_READ_HUGE_FILE(X16 fh, U32 readSize, U8 *buff)
 {
-	//^0759:002D
 	ENTER(6);
-	//^0759:0031
 	U8 *bp06 = buff;
 	for (; readSize > 0; ) {
-		//^0759:003F
 		U16 bp02;
 		if (readSize > 32768) {
-			//^0759:004E
 			bp02 = 0x8000;
 		}
 		else {
-			//^0759:0055
 			bp02 = U16(readSize);
 		}
-		//^0759:005B
 		if (fset.fileRead(fh, bp02, bp06) != bp02) {
-			//^0759:006F
 			return 0;
 		}
-		//^0759:0073
 		readSize -= bp02;
 		bp06 += bp02;
-		//^0759:008C
 	}
-	//^0759:009A
 	return 1;
 }
 //^0759:0021
 void SkWinCore::ANIM_FILE_CLOSE(X16 fh)
 {
-	//^0759:0021
 	ENTER(0);
-	//^0759:0024
 	fset.fileClose(fh);
-	//^0759:002B
 	return;
 }
 U8 SkWinCore::_069a_03fc(const char *xx)
@@ -2865,9 +2445,7 @@ char *SkWinCore::ANIM_STRCPY(char *xx, const char *yy)
 //^0759:000C
 X16 SkWinCore::ANIM_FILE_OPEN(const char *filename)
 {
-	//^0759:000C
 	ENTER(0);
-	//^0759:000F
 	return fset.fileOpen(reinterpret_cast<const char *>(filename));
 }
 
@@ -2979,5 +2557,21 @@ void SkWinCore::IBMIO_GET_ALL_DRIVE_NAMES()
 	//SPX: 0x40 = 'A'-1
 	strDirLetter[0] = glbDriveNumber + 0x40;
 	strDirLetter2[0] = glbDriveNumber2 +0x40;
+	return;
+}
+
+//^1031:050C
+// SPX: _1031_050c renamed FIRE_1031_050c
+void SkWinCore::FIRE_1031_050c()
+{
+	ENTER(0);
+	if (glbShowItemStats != 0 || _4976_4bfe != 0 || _4976_4c3e != 0) {
+		_4976_4c3e = 0;
+		_4976_4bfe = 0;
+		glbShowItemStats = 0;
+		FIRE_MOUSE_RELEASE_CAPTURE();
+		glbMouseVisibility = 1;
+		FIRE_SHOW_MOUSE_CURSOR();
+	}
 	return;
 }

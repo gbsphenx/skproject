@@ -33,32 +33,26 @@ void SkWinCore::_1031_098e() //#DS=4976
 	ENTER(0);
 	while (IS_THERE_KEY_INPUT_2() != 0)
 		SPECIAL_UI_KEY_TRANSFORMATION();
-	//^1031:09A3
 	_4976_19a7 = 1;
-	//^1031:09A9
 	i16 iRingIndex1 = _4976_4ea6;	// di
 	i16 iRingIndex2 = glbMouseStateRingIndex + 1;	// si
 	if (iRingIndex2 > 10) {
 		iRingIndex2 = 0;
 	}
-	//^1031:09BA
 	if (iRingIndex2 != iRingIndex1) {
 		iRingIndex2 = iRingIndex1;
 		_4976_4e00 = 0;
 
 		while (true) {
-			//^1031:09C9
 			if (false
 				|| tlbMouseStateRing[iRingIndex2].MouseButton() == 0x0040
 				|| tlbMouseStateRing[iRingIndex2].MouseButton() == 0x0060
 				|| tlbMouseStateRing[iRingIndex2].MouseButton() == 0x0004
 			) {
-				//^1031:09F9
 				tlbMouseStateRing[iRingIndex1] = tlbMouseStateRing[iRingIndex2];
 				iRingIndex1++;
 				if (iRingIndex1 > 10)
 					iRingIndex1 = 0;
-				//^1031:0A23
 				_4976_4e00++;
 			}
 			if (iRingIndex2 == glbMouseStateRingIndex)
@@ -73,7 +67,6 @@ void SkWinCore::_1031_098e() //#DS=4976
 		}
 		glbMouseStateRingIndex = iRingIndex1;
 	}
-	//^1031:0A47
 	_4976_4e62 = 0;
 	glbUIClickEventIndex = 0;
 	glbUIClickEventLast = 0;
@@ -84,63 +77,44 @@ void SkWinCore::_1031_098e() //#DS=4976
 	glbUIEventCode = 0;
 	_4976_4dfc = 0;
 	_4976_19a7 = 0;
-	//^1031:0A7F
 	_1031_0b7e_MOUSE();
-	//^1031:0A84
 	return;
 }
 
 //^1031:0BA4
 void SkWinCore::FIRE_QUEUE_MOUSE_EVENT(Bit16u xx, Bit16u yy, Bit16u button)
 {
-	//^1031:0BA4
 	ENTER(0);
-	//^1031:0BA9
 	Bit16u di = button;
-	//^1031:0BAC
 	if (_4976_19a7 == 0) {
-		//^1031:0BB3
 		_4976_19a7 = 1;
-		//^1031:0BB9
 	}
 	else {
-		//^1031:0BBB
 		_4976_4e9a = 1;
-		//^1031:0BC1
 		glbMouseInfoX = xx;
 		glbMouseInfoY = yy;
 		glbMouseInfoButton = di;
-		//^1031:0BD1
 		return;
 	}
-	//^1031:0BD4
 	i16 cx = ((di == 4 && _4976_19af == 0) || di == 0x0040 || di == 0x0060) ? 9 : 7;
-	//^1031:0BF2
 	_4976_19af = 0;
-	//^1031:0BF8
 	i16 iRingIndex = glbMouseStateRingIndex + 1;	// si
 	if (iRingIndex > 10) {
 		iRingIndex -= 11;
 	}
-	//^1031:0C06
 	if (_4976_4e00 >= cx) {
-		//^1031:0C0D
 		if (di == 2) {
-			//^1031:0C12
 			_4976_19af = 1;
 		}
 	}
 	else {
-		//^1031:0C1A
 		_4976_4e00++;
 		glbMouseStateRingIndex = iRingIndex;
 		tlbMouseStateRing[iRingIndex].MouseButton(di);
 		tlbMouseStateRing[iRingIndex].MouseX(xx);
 		tlbMouseStateRing[iRingIndex].MouseY(yy);
 	}
-	//^1031:0C4E
 	_4976_19a7 = 0;
-	//^1031:0C54
 	return;
 }
 
@@ -209,7 +183,6 @@ void SkWinCore::IBMIO_BLIT_MOUSE_CURSOR(Bit8u *buff, SRECT *rc, Bit16u srcx, Bit
 //^01B0:07F8
 void SkWinCore::LOCK_MOUSE_EVENT() //#DS=04BF
 {
-	//printf("LOCK_MOUSE_EVENT\n");
 	//LOADDS(0x3083)
 	_04bf_0e7a++;
 }
@@ -235,25 +208,15 @@ void SkWinCore::_443c_0889_UNLOCK_MOUSE()
 // _443c_00a9 renamed _443c_00a9_MOUSE
 void SkWinCore::_443c_00a9_MOUSE(sk0cea *ref, i16 x, i16 cx, i16 y, i16 cy)
 {
-	//^443C:00A9
 	ENTER(0);
-	//^443C:00AC
 	_4976_5da4 = ref;
-	//^443C:00B9
 	_4976_5da8 = _4976_5d98 = x;
-	//^443C:00C2
 	_4976_5dae.rc4.x = cx;
-	//^443C:00C8
 	_4976_5d9c = _4976_5dae.rc4.x -x +1;
-	//^443C:00CF
 	_4976_5daa = _4976_5d9a = y;
-	//^443C:00D8
 	_4976_5dae.rc4.y = cy;
-	//^443C:00DE
 	_4976_5d9e = _4976_5dae.rc4.y -y +1;
-	//^443C:00E5
 	_01b0_0ca4_MOUSE(&_4976_5d98, 0x20);
-	//^443C:00F6
 	return;
 }
 
@@ -263,7 +226,6 @@ void SkWinCore::_443c_00a9_MOUSE(sk0cea *ref, i16 x, i16 cx, i16 y, i16 cy)
 // Basically, zones are viewport, champions, positionning, action panel, move arrows, bottom text
 X16 SkWinCore::_443c_00f8_MOUSE(X16 xx, X16 yy)
 {
-	//printf("_443c_00f8_MOUSE\n");
 	ENTER(14);
 	if (glbMouseVisibility > 0)
 		return 0xffff;
@@ -277,68 +239,48 @@ X16 SkWinCore::_443c_00f8_MOUSE(X16 xx, X16 yy)
 		U16 iMaxPosX = glbScreenWidth;	// bp0c
 		U16 iMaxPosY = glbScreenHeight;	// si
 		for (; bp04 != NULL; ) {
-			//^443C:0160
 			SRECT *bp08 = &bp04->pv6()->rc4;
 			//printf("SRECT = %08X\n", bp08);
 			X16 bp0e = 0;
 			if (bp08->x > xx) {
-				//^443C:0184
 				iMaxPosX = min_value(iMaxPosX, bp08->x);
 			}
-			//^443C:0189
 			else if (bp08->x +bp08->cx -1 < xx) {
-				//^443C:019D
 				bp0a = max_value(bp0a, bp08->x +bp08->cx -1);
 			}
 			else {
-				//^443C:01BC
 				bp0e = 1;
 				bp0a = max_value(bp0a, bp08->x);
 				iMaxPosX = min_value(iMaxPosX, bp08->x +bp08->cx -1);
 			}
-			//^443C:01F1
 			if (bp08->y > yy) {
-				//^443C:01FD
 				iMaxPosY = min_value(iMaxPosY, bp08->y);
 			}
 			else if (bp08->y +bp08->cy -1 < yy) {
-				//^443C:021F
 				di = max_value(di, bp08->y +bp08->cy -1);
 			}
 			else {
-				//^443C:0235
 				di = max_value(di, bp08->y);
 				iMaxPosY = min_value(iMaxPosY, bp08->y +bp08->cy -1);
 				if (bp0e != 0) {
-					//^443C:0263
 					_4976_4952 = bp04->b2();
 					if (bp04 != _4976_5da4 && bp04->b4() != 0)
-						//^443C:028B
 						FIRE_QUEUE_MOUSE_EVENT(xx, yy, bp04->b0());
 					break;
 				}
 			}
-			//^443C:02A2
 			bp04 = bp04->pv6()->pv0;
-			//^443C:02B6
 		}
-		//^443C:02C1
 		if (_4976_5da4 != NULL && bp04 != _4976_5da4 && _4976_5da4->b5() != 0) {
-			//^443C:02E7
 			FIRE_QUEUE_MOUSE_EVENT(xx, yy, _4976_5da4->b5());
 		}
-		//^443C:02FC
 		_443c_00a9_MOUSE(bp04, bp0a, iMaxPosX, di, iMaxPosY);
 	}
-	//^443C:0311
 	if (_4976_4952 == 2)
 		return 3;
-	//^443C:031D
 	if (_4976_4952 == 1 && glbChampionLeader >= 0) {
-		//^443C:032B
 		return (_4976_5dac != 0) ? 2 : 1;
 	}
-	//^443C:033C
 	return 0;
 }
 
@@ -347,7 +289,6 @@ X16 SkWinCore::_443c_00f8_MOUSE(X16 xx, X16 yy)
 // _01b0_05ae renamed _01b0_05ae_PRECALL_BLIT_MOUSE
 void SkWinCore::_01b0_05ae_PRECALL_BLIT_MOUSE() //#DS=04BF
 {
-	//printf("_01b0_05ae_PRECALL_BLIT_MOUSE\n");
 	if ((true
 		&& _04bf_1850 != 0
 		&& cd.dos.glbMouseEventReceiverSet != 0
@@ -466,7 +407,6 @@ void SkWinCore::IBMIO_MOUSE_EVENT_RECEIVER(Bit16u cursorx, Bit16u cursory, Bit16
 //^01B0:080B
 void SkWinCore::UNLOCK_MOUSE_EVENT() //#DS=04BF
 {
-	//printf("UNLOCK_MOUSE_EVENT\n");
 	LOADDS(0x3083)
 	while (_04bf_17a4 > 0) {
 		_04bf_17a4--;
@@ -483,7 +423,6 @@ void SkWinCore::UNLOCK_MOUSE_EVENT() //#DS=04BF
 // _01b0_0aa8 renamed _01b0_0aa8_MOUSE
 void SkWinCore::_01b0_0aa8_MOUSE() //#DS=04BF
 {
-	//printf("_01b0_0aa8_MOUSE\n");
 	LOADDS(0x3083);
 	if ((_04bf_17a2--) == 1) {
 		LOCK_MOUSE_EVENT();
@@ -498,7 +437,6 @@ void SkWinCore::_01b0_0aa8_MOUSE() //#DS=04BF
 //^443C:086B
 void SkWinCore::FIRE_SHOW_MOUSE_CURSOR()
 {
-	//printf("FIRE_SHOW_MOUSE_CURSOR\n");
 	glbMouseVisibility--;
 	_01b0_0aa8_MOUSE() CALL_IBMIO;
 }
@@ -524,7 +462,6 @@ void SkWinCore::IBMIO_01b0_08d8()
 //^01B0:091E
 void SkWinCore::IBMIO_SET_MOUSE_HANDLER()
 {
-	//printf("IBMIO_SET_MOUSE_HANDLER\n");
 #if UseAltic
 	ENTER(0);
 	if (_04bf_18b2 == 0)
@@ -550,46 +487,33 @@ void SkWinCore::IBMIO_MOUSE_HANDLER()	// serves as MOUSE CALLBACK from _int33_mo
 	//printf("IBMIO_MOUSE_HANDLER\n");
 	//SkD((DLV_MOUSE,"DBG: M(%3d,%3d) Btn:(%2d) C(%3d,%3d) P(%3d,%3d)\n", glbMouseXPos, glbMouseYPos, mice_btn, cx, dx, glbMousePreviousXPos, glbMousePreviousYPos));
 
-	//^01B0:0985
 	if (_01b0_0933 == 0) {
-		//^01B0:0990
 		bx &= 3;
 		if (sysMousePositionCaptured != 0) {
 			cx = cd.mk.glbMouseXPos;
 			dx = cd.mk.glbMouseYPos;
 		}
-		//^01B0:09B3
 		if (_04bf_0e7a == 0) {
-			//^01B0:09BE
 			IBMIO_MOUSE_EVENT_RECEIVER(cx, dx, bx);
 		}
-		//^01B0:09CC
 		else if (_04bf_17a4 < 10) {
-			//^01B0:09D3
 			X16 di;
 			if (_04bf_17a4 != 0 && _04bf_17ac[di = _04bf_0e50].w0 == bx) {
-				//^01B0:09EC
 				_04bf_17ac[di].w2 = cx;
 				_04bf_17ac[di].w4 = dx;
 			}
 			else {
-				//^01B0:09F7
 				_04bf_17a4++;
 				X16 di = _04bf_0e50 +1;
-				//^01B0:0A00
 				if (di == 10)
 					di = 0;
-				//^01B0:0A08
 				_04bf_0e50 = di;
 				_04bf_17ac[_04bf_0e50].w0 = bx;
 				_04bf_17ac[_04bf_0e50].w2 = cx;
 				_04bf_17ac[_04bf_0e50].w4 = dx;
 			}
 		}
-		//^01B0:0A23
-		//^01B0:0A24
 	}
-	//^01B0:0A2E
 }
 
 
@@ -860,72 +784,42 @@ void SkWinCore::IBMIO_SET_CURSOR_PATTERN(
 		localPal = _xDefaultFMTownsPalette;
 	
 	//#DS=04BF
-	//^01B0:0B01
-	//^01B0:0B07
 	LOADDS(0x3083);
-	//^01B0:0B0D
-	//^01B0:0B0F
 	if (index >= 0 && index < 4) {
-		//^01B0:0B25
 		LOCK_MOUSE_EVENT();
-		//^01B0:0B29
 		sk0e80 *bp08 = &_04bf_0e80[index];
-		//^01B0:0B3A
 		if (srcBits == 4) {
-			//^01B0:0B45
 			Bit16u di = 0;
-			//^01B0:0B47
 			Bit16u bp0a = (srcWidth +1) & 0xfffe;
 			Bit16u bp04 = 0;
 
-			//^01B0:0B56
 			for (; bp04 < srcHeight; bp04++) {
-				//^01B0:0B59
 				Bit16u bp02 = 0;
-				//^01B0:0B5E
 				for (; bp02 < srcWidth; di++, bp02++) {
-					//^01B0:0B60
 					Bit16u si = bp0a * bp04 + bp02;
-					//^01B0:0B6B
 					if ((si & 0x0001) != 0) {
-						//^01B0:0B71
 						bp08->b6[di] = localPal[buffSrc[si >> 1] & 15];
 					}
 					else {
-						//^01B0:0B91
 						bp08->b6[di] = localPal[buffSrc[si >> 1] >> 4];
 					}
-					//^01B0:0BCF
 				}
-				//^01B0:0BDF
 			}
-			//^01B0:0BEF
 			bp08->b4 = localPal[U8(colorkey)];
-			//^01B0:0C0D
 		}
 		else {
-			//^01B0:0C0F
 			i16 si = 0;
-			//^01B0:0C11
 			for (; srcWidth * srcHeight > si; si++) {
-				//^01B0:0C13
 				bp08->b6[si] = buffSrc[si];
-				//^01B0:0C33
 			}
-			//^01B0:0C3E
 			bp08->b4 = U8(colorkey);
 		}
-		//^01B0:0C44
-		//^01B0:0C48
 		bp08->b0 = zz;
 		bp08->b1 = ss;
 		bp08->b2 = U8(srcWidth);
 		bp08->b3 = U8(srcHeight);
-		//^01B0:0C66
 		UNLOCK_MOUSE_EVENT();
 	}
-	//^01B0:0C6A
-	//^01B0:0C6B
 	return;
 }
 
@@ -941,16 +835,12 @@ void SkWinCore::FIRE_HIDE_MOUSE_CURSOR()
 //^01B0:0ADB
 void SkWinCore::_01b0_0adb() //#DS=04BF
 {
-	//^01B0:0ADB
 	LOADDS(0x3083);
-	//^01B0:0AE4
 	if (_04bf_17a2++ == 0) {
-		//^01B0:0AF1
 		LOCK_MOUSE_EVENT();
 		_01b0_073d_MOUSE();
 		UNLOCK_MOUSE_EVENT();
 	}
-	//^01B0:0AFD
 	return;
 }
 
@@ -970,35 +860,22 @@ void SkWinCore::_3929_0b20(U16 xx, U32 yy) { // TODO: Unr
 //^1031:0D36
 void SkWinCore::_1031_0d36_KEYBOARD(U16 xx, U16 yy) // yy = keyboard key
 {
-	//^1031:0D36
 	ENTER(0);
-	//^1031:0D3A
 	_3e74_5b7c_KEYBOARD(yy);
-	//^1031:0D43
 	_4976_19a7 = 1;
-	//^1031:0D49
 	if (_4976_4e00 < 7) {
-		//^1031:0D50
 		i16 si = glbMouseStateRingIndex + 2;
-		//^1031:0D57
 		if (si > 10)	// because MouseState tlbMouseStateRing[11]
-			//^1031:0D5C
 			si -= 11;
-		//^1031:0D5F
 		if (si-- == 0)
-			//^1031:0D66
 			si = 10;
-		//^1031:0D69
 		glbMouseStateRingIndex = si;
 		tlbMouseStateRing[glbMouseStateRingIndex].MouseButton(xx);
 		tlbMouseStateRing[glbMouseStateRingIndex].MouseX(yy);
 		_4976_4e00++;
 	}
-	//^1031:0D91
 	_4976_19a7 = 0;
-	//^1031:0D97
 	_1031_0b7e_MOUSE();
-	//^1031:0D9B
 	return;
 }
 

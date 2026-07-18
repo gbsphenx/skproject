@@ -22,6 +22,7 @@
 #include <skglobal.h> // for skwin
 
 
+//## Extended function : call external lua script on event
 void SkWinCore::LUA_CALL_SCRIPT(U8 iScriptEvent, i16 iPosMap, i16 iPosX, i16 iPosY, i16 iDir)
 {
 	char sScriptName[512];
@@ -59,135 +60,95 @@ void SkWinCore::LUA_CALL_SCRIPT(U8 iScriptEvent, i16 iPosMap, i16 iPosX, i16 iPo
 //^0CEE:26E5
 U16 SkWinCore::IS_CONTAINER_MONEYBOX(ObjectID recordLink)
 {
-	//^0CEE:26E5
 	if (recordLink.DBType() == dbContainer) {
-		//^0CEE:26F9
 		if (GET_ADDRESS_OF_RECORD9(recordLink)->ContainerType() == 0) {
-			//^0CEE:2710
 			if (QUERY_GDAT_ENTRY_DATA_INDEX(0x14, QUERY_CLS2_FROM_RECORD(recordLink), 0x0005, 0x0040) != (U16)-1) {
 				// Exists possible item list? (e.g. "J26-28 J8 J56 J6<00>")
 				return 1;
 			}
 		}
 	}
-	//^0CEE:272F
 	return 0;
 }
 
 //^0CEE:25E5
 U16 SkWinCore::QUERY_GDAT_DBSPEC_WORD_VALUE(ObjectID rl, Bit8u cls4)
 {
-	//^0CEE:25E5
 	ObjectID si = rl;
-	//^0CEE:25EC
 	if (si == OBJECT_NULL)
 		return 0;
-	//^0CEE:25F5
 	return QUERY_GDAT_ENTRY_DATA_INDEX(QUERY_CLS1_FROM_RECORD(si), QUERY_CLS2_FROM_RECORD(si), dtWordValue, cls4);
 }
 
 //^0CEE:2ACC
 i32 SkWinCore::QUERY_ITEM_VALUE(ObjectID recordLink, Bit8u cls4)
 {
-	//^0CEE:2ACC
 	ObjectID si = recordLink;
 	if (si == OBJECT_NULL) {
-		//^0CEE:2ADA
 		return 0;
 	}
-	//^0CEE:2AE1
 	i32 bp08 = QUERY_GDAT_DBSPEC_WORD_VALUE(si, cls4);
 	if (cls4 == 1) { // 0x01 -> Weight in Kg (x10)
-		//^0CEE:2AFA
 		i32 bp0c = QUERY_GDAT_DBSPEC_WORD_VALUE(si, 0x34); // 0x34 -> Max charge count
-		//^0CEE:2B0B
 		if (bp0c > 0) {
-			//^0CEE:2B15
 			bp08 += ADD_ITEM_CHARGE(si, 0) * bp0c;
 		}
 	}
-	//^0CEE:2B34
 	if (cls4 == 2) { // 0x02 -> Money value
-		//^0CEE:2B3D
 		i32 bp0c = QUERY_GDAT_DBSPEC_WORD_VALUE(si, GDAT_ITEM_BONUS_MONEY_PER_CHARGE); // 0x35 -> Additional money value per charge??
-		//^0CEE:2B4E
 		if (bp0c > 0) {
-			//^0CEE:2B58
 			bp08 += ADD_ITEM_CHARGE(si, 0) * bp0c;
 		}
-		//^0CEE:2B77
 		if (si.DBType() == dbPotion && bp08 > 1) {
-			//^0CEE:2B92
 			bp08 /= 2;
-			//^0CEE:2BA2
 			bp08 += (GET_ADDRESS_OF_RECORD(si)->castToPotion()->PotionPower() * bp08) / 255L;
 		}
 	}
-	//^0CEE:2BD3
 	if (si.DBType() == dbContainer) {
-		//^0CEE:2BE3
 		Container *bp04 = GET_ADDRESS_OF_RECORD(si)->castToContainer();
-		//^0CEE:2BEF
 		if (bp04->ContainerType() == 0) {
-			//^0CEE:2C02
 			U16 di = IS_CONTAINER_MONEYBOX(si);
 			ObjectID si = bp04->GetContainedObject();
 			i32 bp0c = 0;
-			//^0CEE:2C1B
 			for (; si != OBJECT_END_MARKER; si = GET_NEXT_RECORD_LINK(si)) {
-				//^0CEE:2C1D
 				if (di != 0) {
-					//^0CEE:2C21
 					if (si.DBType() == dbMiscellaneous_item) {
-						//^0CEE:2C2E
 						bp0c += QUERY_GDAT_DBSPEC_WORD_VALUE(si, cls4) * (GET_ADDRESS_OF_RECORD(si)->castToMisc()->Charge() +1L);
 						continue;
 					}
 				}
-				//^0CEE:2C65
 				bp08 += QUERY_ITEM_VALUE(si, cls4);
-				//^0CEE:2C76
 			}
-			//^0CEE:2C83
 			if (di != 0) {
-				//^0CEE:2C87
 				if (cls4 == 1) {
-					//^0CEE:2C8D
 					bp08 += (bp0c +4L) / 5L;
 				}
 				else {
-					//^0CEE:2CAC
 					bp08 += bp0c;
 				}
 			}
 		}
 	}
-	//^0CEE:2CB8
 	return bp08;
 }
 
 //^0CEE:2CC2
 i32 SkWinCore::QUERY_ITEM_WEIGHT(ObjectID recordLink)
 {
-	//^0CEE:2CC2
 	return QUERY_ITEM_VALUE(recordLink, 1);
 }
 
 //^0CEE:2734
 U16 SkWinCore::IS_CONTAINER_CHEST(ObjectID recordLink)
 {
-	//^0CEE:2734
 	ObjectID si = recordLink;
-	//^0CEE:273B
 	if (true
 		&& si.DBType() == dbContainer
 		&& IS_CONTAINER_MONEYBOX(si) == 0
 		&& GET_ADDRESS_OF_RECORD9(si)->ContainerType() == 0
 	) {
-		//^0CEE:2769
 		return 1;
 	}
-	//^0CEE:276E
 	return 0;
 }
 
@@ -244,8 +205,6 @@ void SkWinCore::CHANGE_CURRENT_MAP_TO(U16 new_map)
 //^0CEE:0510
 i16 SkWinCore::LOCATE_OTHER_LEVEL(U16 curmap, i16 zDelta, i16 *xx, i16 *yy, Bit8u **ss)
 {
-	//^0CEE:0510
-	//^0CEE:0516
 	Map_definitions *bp04 = &dunMapsHeaders[curmap];
 	i16 bp0a = (*xx += bp04->MapOffsetX());
 	i16 bp0c = (*yy += bp04->MapOffsetY());
@@ -265,85 +224,55 @@ i16 SkWinCore::LOCATE_OTHER_LEVEL(U16 curmap, i16 zDelta, i16 *xx, i16 *yy, Bit8
 		bp0c = (*yy += iXtraDisY);
 	}
 	
-	//^0CEE:0560
 	if (bp16 >= 0 && bp16 < MAXDEPTH) {
-		//^0CEE:0572
 		U16 bp14 = _4976_4cb0[bp16];
-		//^0CEE:0581
 		if (bp14 != 0xffff) {
-			//^0CEE:0589
 			Bit8u *bp08;
 			if (ss != NULL && *ss != NULL) {
-				//^0CEE:059D
 				bp08 = *ss + 1;
 			}
 			else {
-				//^0CEE:05AE
 				bp08 = &_4976_4c72[bp14];
 			}
 
 			i16 bp0e;
 			for (; (bp0e = ((i8)*bp08)) != -1; bp08++) {
-				//^0CEE:05BA
 				bp04 = &dunMapsHeaders[bp0e];
-				//^0CEE:05D0
 				i16 di = bp04->MapOffsetX();
-				//^0CEE:05DB
 				if (di -1 <= bp0a) {
-					//^0CEE:05E4
 					if (di + bp04->RawColumn() + 1 >= bp0a) {
-						//^0CEE:05FB
 						i16 si = bp04->MapOffsetY();
-						//^0CEE:0603
 						if (si -1 <= bp0c) {
-							//^0CEE:060C
 							if (si + bp04->RawRow() >= bp0c) {
-								//^0CEE:0623
 								di = bp0a - di;
 								si = bp0c - si;
-								//^0CEE:0631
 								U16 bp12 = glbCurrentMapIndex;
-								//^0CEE:0637
 								CHANGE_CURRENT_MAP_TO(bp0e);
-								//^0CEE:063F
 								U16 bp10 = GET_TILE_VALUE(di, si) >> 5;
-								//^0CEE:0651
 								if (bp10 == ttTeleporter) {
-									//^0CEE:0656
 									if (GET_ADDRESS_OF_TILE_RECORD((Bit8u)di, (Bit8u)si)->castToTeleporter()->w4_0_0() != 0) {
-										//^0CEE:066E
 										bp10 = 7;
 									}
 								}
-								//^0CEE:0673
 								CHANGE_CURRENT_MAP_TO(bp12);
-								//^0CEE:067B
 								if (bp10 != ttMapExit) {
-									//^0CEE:0681
 									*xx = di;
 									*yy = si;
-									//^0CEE:068D
 									if (ss != NULL) {
-										//^0CEE:0695
 										*ss = bp08;
 									}
-									//^0CEE:06A5
 									return bp0e;
 								}
 							}
 						}
 					}
 				}
-				//^0CEE:06AA
 			}
 		}
 	}
-	//^0CEE:06BF
 	if (ss != NULL) {
-		//^0CEE:06C7
 		*ss = 0;
 	}
-	//^0CEE:06D5
 	// SPX: This case is bad. It will make the further SET_TILE_ATTRIBUTE_02 function crash
 	return -1;
 }
@@ -359,123 +288,78 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 		sprintf((char*)message, "PRECOMP LIGHT %d\n", glbPrecomputedLight);
 		//DISPLAY_HINT_TEXT(COLOR_YELLOW, message);
 	}
-	//^24A5:013D
 	ENTER(28);
-	//^24A5:0143
 	if (dunMapsHeaders[cd.pi.glbPlayerMap].Difficulty() == 0) {
-		//^24A5:015D
 		glbLightLevel = 1;
 		if (SkCodeParam::bAutoDefaultMaxLight)
 			glbLightLevel = 0;
 	}
 	else {
-		//^24A5:0166
 		U16 itemLightBonus[9];		// (bp1c) SPX: light bonus for holded item (1) + items in hand (2*4)
 		ZERO_MEMORY(itemLightBonus, 9);
-		//^24A5:0177
 		U16 bonusIndex = 0;	// bp06
-		//^24A5:017C
 		// Give light bonus for item currently in hand (if any)
 		if ((QUERY_GDAT_DBSPEC_WORD_VALUE(cd.pi.glbLeaderHandPossession.object, GDAT_ITEM_STATS_GEN_FLAGS) & ITEM_FLAG_PRODUCE_LIGHT) != 0) {
-			//^24A5:018E
 			itemLightBonus[bonusIndex] = ADD_ITEM_CHARGE(cd.pi.glbLeaderHandPossession.object, 0);
 			bonusIndex++;
 		}
-		//^24A5:01AB
 		U16 si;
 		// Pass through all items in hands
 		for (si=0; si < cd.pi.glbChampionsCount; si++) {
-			//^24A5:01AF
 			for (U16 bp04=0; bp04 <= 1; bp04++) {
-				//^24A5:01B6
 				U16 bp08;
 				if ((QUERY_GDAT_DBSPEC_WORD_VALUE(bp08 = glbChampionSquad[si].Possess(bp04), GDAT_ITEM_STATS_GEN_FLAGS) & ITEM_FLAG_PRODUCE_LIGHT) != 0) {
-					//^24A5:01DC
 					itemLightBonus[bonusIndex] = ADD_ITEM_CHARGE(bp08, 0);
-					//^24A5:01F5
 					bonusIndex++;
 				}
-				//^24A5:01F8
 			}
-			//^24A5:0201
 		}
-		//^24A5:0208
 		//for (si=0; bonusIndex -1 > si; si++) {
 		// One pass of bubble sort, what for ?
 		for (si=0; si < bonusIndex -1; si++) {
-			//^24A5:020C
 			if (itemLightBonus[si] > itemLightBonus[si +1]) {
-				//^24A5:0226
 				U16 bp04 = itemLightBonus[si];
-				//^24A5:0235
 				itemLightBonus[si] = itemLightBonus[si +1];
-				//^24A5:024D
 				itemLightBonus[si +1] = bp04;
 			}
-			//^24A5:025C
 		}
-		//^24A5:0265
 		U16 bp02 = 6;
-		//U16 di;
 		i16 di = 0;	// SPX (2016-11-02) replacing unsigned by signed to hold negative light (with use of darkness) and hit minimum threshold
 		// SPX: This is strange ... does that mean that each new value to add is decreased by its position on the light bonus table?
 		for (di=0, si=0; si < bonusIndex; si++) {
-			//^24A5:0270
 			di += (tLightLevelItem[RCJ(16,itemLightBonus[si])] << bp02) >> 6;
-			//^24A5:028B
 			bp02 = max_value(0, bp02 -1);
-			//^24A5:029C
 		}
-		//^24A5:02A2
 		di += glbPrecomputedLight;	// SPX: is some sort of precalculed light level (depending on door and such?)
 		di += glbGlobalSpellEffects.Light;
-		//^24A5:02AA
 		di = di + QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_x67_AMBIANT_LIGHT);
-		// SPX: GDAT_CATEGORY_x08_GRAPHICSSET is 0x08
-		//^24A5:02C2
 		if (glbRainFlagSomething != 0) {
-			//^24A5:02C9
 			di += tLightLevelTable[RCJ(6,BETWEEN_VALUE(0, glbRainAmbientLightModifier + glbRainSomeLightMod, 5))];
 		}
 		if (SkCodeParam::bUseFixedMode && di < 0)
 			di = 0;
-		//^24A5:02EA
 		// Light threshold is at 100 for the brighter light => lightlevel = 5.
 		for (glbLightLevel=0; glbLightLevel <= 5; glbLightLevel++) {
-			//^24A5:02F2
 			if (tLightLevelTable[RCJ(6,glbLightLevel)] < di)
 				break;
-			//^24A5:02FF
 		}
-		//^24A5:030A
 		// SPX: Get the highest default light (from wallset type)
 		i16 bp0a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_x68_HIGHEST_LIGHT_LEVEL);
 		if (SkCodeParam::bAutoDefaultMaxLight)
 			bp0a = 0;
-		//^24A5:031F
 		if (glbLightLevel < bp0a) {
-			//^24A5:0327
 			glbLightLevel = bp0a;
 		}
-		//^24A5:032D
 		if (glbRainFlagSomething != 0) {
-			//^24A5:0334
 			if (glbRecalcLightIndicator != 0) {
-				//^24A5:033B
 				glbLightLevel = 0;
 			}
 		}
 	}
-	//^24A5:0341
-	//printf("Light level before modifier is %d\n", glbLightLevel);
 	glbLightLevel -= (glbLightModifier > 12) ? 1 : 0;
-	//printf("Light level before bound is %d\n", glbLightLevel);
-	//^24A5:0353
 	glbLightLevel = BETWEEN_VALUE(0, glbLightLevel, 5);	// SPX: minimum is 5 ? but it can be even darker with 6
 	if (SkCodeParam::bFullLight)	// SPX: debug feature added to always get full light
 		glbLightLevel = 0;
-	//printf("Light level final is %d\n", glbLightLevel);
-	//^24A5:0366
 }
 
 
@@ -512,64 +396,40 @@ U16 SkWinCore::_1031_0023_PFN12_02(sk1891 *ref)
 // SPX: _12b4_0141 renamed PERFORM_TURN_SQUAD
 void SkWinCore::PERFORM_TURN_SQUAD(U16 xx)
 {
-	//^12B4:0141
 	ENTER(6);
-	//^12B4:0146
 	if (xx == 0)
-		//^12B4:014C
-		//^12B4:023C
 		return;
-	//^12B4:014F
 	cd.gg.glbRefreshViewport = 1;
-	//^12B4:0155
 	RESET_SQUAD_DIR();
-	//^12B4:0159
 	U16 si = GET_TILE_VALUE(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
-	//^12B4:016C
 	if (si >> 5 == ttStairs) {
-		//^12B4:0173
 		// _12b4_00af(si & 4); // original
-		_12b4_00af(si & 4, si & 8);
-		//^12B4:017E
-		//^12B4:023C
+		_12b4_00af(si & 4, si & 8);	// SPX TODO: modified => may use a define/param to control original behaviour vs custom
 		return;
 	}
-	//^12B4:0181
 	TELE_inf bp06;
 	if (GET_TELEPORTER_DETAIL(&bp06, U8(cd.pi.glbPlayerPosX), U8(cd.pi.glbPlayerPosY)) != 0) {
-		//^12B4:019A
 		CHANGE_CURRENT_MAP_TO(cd.pi.glbPlayerMap);
-		//^12B4:01A4
 		MOVE_RECORD_TO(OBJECT_NULL, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, -1, 0);
-		//^12B4:01BA
 		LOAD_NEWMAP(bp06.b4);
-		//^12B4:01C6
 		MOVE_RECORD_TO(OBJECT_NULL, -1, 0, bp06.b2, bp06.b3);
-		//^12B4:01E0
 		ROTATE_SQUAD(bp06.b1);
-		//^12B4:01EB
-		//^12B4:023C
 		return;
 	}
-	//^12B4:01ED
 	PLACE_OR_REMOVE_OBJECT_IN_ROOM(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, OBJECT_NULL, 1, FCT_REMOVE_OFF, 0);
-	//^12B4:0205
 	ROTATE_SQUAD((cd.pi.glbPlayerDir + ((xx == 2) ? 1 : 3)) & 3);
-	//^12B4:0224
 	PLACE_OR_REMOVE_OBJECT_IN_ROOM(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, OBJECT_NULL, 1, FCT_PLACE_ON, 0);
 	LUA_CALL_SCRIPT(_EXP_SCRIPT__PLAYER_TURN_ON_TILE_, cd.pi.glbPlayerMap, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 0);
-	//^12B4:023C
 	return;
 }
 
 
 //^2405:00E7
-// NOTHING ?!
-void SkWinCore::_2405_00e7()
+// SPX: _2405_00e7 renamed DO_NOTHING_FROM_REMOVE_HAND
+// Check DM2-V5 ?
+void SkWinCore::DO_NOTHING_FROM_REMOVE_HAND()
 {
-	//^2405:00E7
 	ENTER(0);
-	//^2405:00EA
 	return;
 }
 
@@ -589,23 +449,15 @@ void SkWinCore::SHOOT_ITEM(ObjectID rlItemThrown, U16 xx, U16 yy, U16 dir, U16 a
 	ATLASSERT(rlItemThrown.DBType() != db13); // you cannot throw this kind of objects.
 	ATLASSERT(rlItemThrown.IsMissile() || (!rlItemThrown.IsMissile() && rlItemThrown.DBType() != dbCloud)); // you cannot throw this kind of objects.
 
-	//^075F:000B
 	ENTER(14);
-	//^075F:0011
 	ObjectID di = rlItemThrown;
-	//^075F:0014
 	ObjectID si = ALLOC_NEW_RECORD(dbMissile);
-	//^075F:001E
 	if (si == OBJECT_NULL) {
-		//^075F:0023
 		if (di.DBType() != dbCloud) {
-			//^075F:0033
 			MOVE_RECORD_TO(ObjectID(di, dir), -1, 0, xx, yy);
 		}
-		//^075F:0054
 		return;
 	}
-	//^075F:0057
 	QUEUE_NOISE_GEN2(
 		QUERY_CLS1_FROM_RECORD(di),
 		QUERY_CLS2_FROM_RECORD(di),
@@ -617,43 +469,25 @@ void SkWinCore::SHOOT_ITEM(ObjectID rlItemThrown, U16 xx, U16 yy, U16 dir, U16 a
 		0x6e,
 		0x80
 		);
-	//^075F:0082
 	si = ObjectID(si, dir);
-	//^075F:0092
 	Missile *missile = GET_ADDRESS_OF_RECORDE(si);	//*bp04
-	//^075F:009F
 	missile->SetMissileObject(di);
-	//^075F:00A6
 	missile->EnergyRemaining(U8(min_value(energyVal, 255)));
-	//^075F:00BD
 	missile->EnergyRemaining2(U8(ene2Val));
-	//^075F:00C4
 	APPEND_RECORD_TO(si, NULL, xx, yy);
-	//^075F:00D7
 	if (missile->GetMissileObject() == OBJECT_EFFECT_FIREBALL && glbCurrentMapIndex == cd.pi.glbPlayerMap)	// oFF80
-		//^075F:00EA
 		glbDoLightCheck = 1;
-	//^075F:00F0
 	Timer bp0e;
 	bp0e.SetMap(glbCurrentMapIndex);
 	bp0e.SetTick(glbGameTick +1);
-	//^075F:0113
 	bp0e.TimerType((_4976_4b7e != 0) ? tty1E : tty1D);
-	//^075F:0124
 	bp0e.actor = TIMER_ACTOR__00;
-	//^075F:0128
 	bp0e.value = si;
-	//^075F:012B
 	bp0e.w8_0_4(xx);
-	//^075F:0138
 	bp0e.w8_5_9(yy);
-	//^075F:0149
 	bp0e.w8_c_f(dd);
-	//^075F:015B
 	bp0e.w8_a_b(aa);
-	//^075F:016B
 	missile->TimerIndex(QUEUE_TIMER(&bp0e));
-	//^075F:017E
 	return;
 }
 
@@ -861,39 +695,23 @@ void SkWinCore::ADD_RUNE_TO_TAIL(U16 symbol_0to5)
 //SPX: _2c1d_11bf renamed COMPUTE_PLAYER_ATTACK_OR_THROW_STRENGTH
 U16 SkWinCore::COMPUTE_PLAYER_ATTACK_OR_THROW_STRENGTH(U16 xx, U16 yy, i16 zz)
 {
-	//^2C1D:11BF
 	ENTER(8);
-	//^2C1D:11C5
 	Champion *bp04 = &glbChampionSquad[xx];
-	//^2C1D:11D6
 	i16 si = (RAND() & 15) + GET_PLAYER_ABILITY(bp04, abStr, 0);
-	//^2C1D:11F5
 	ObjectID bp08 = bp04->Possess(yy);
-	//^2C1D:1207
 	U16 bp06 = QUERY_ITEM_WEIGHT(bp08);
-	//^2C1D:1211
 	U16 di = MAX_LOAD(bp04) >> 4;
-	//^2C1D:1222
 	si = (bp06 -12) +si;
-	//^2C1D:122E
 	if (bp06 > di) {
-		//^2C1D:1233
 		si = si - ((bp06 -di) >> 1);
-		//^2C1D:123E
 		di += (di -12) >> 1;
-		//^2C1D:1249
 		if (di < bp06) {
-			//^2C1D:124E
 			si = si -((bp06 -di) << 1);
 		}
 	}
-	//^2C1D:1259
 	if (zz >= 0) {
-		//^2C1D:125F
 		si = (QUERY_PLAYER_SKILL_LV(xx, zz, 1) << 1) +si;
-		//^2C1D:1276
 		di = 0;
-		//^2C1D:1278
 		switch (zz) {
 			case  0:	// fighter 0	(global)
 			case  4:	// fighter 1	swing
@@ -901,33 +719,22 @@ U16 SkWinCore::COMPUTE_PLAYER_ATTACK_OR_THROW_STRENGTH(U16 xx, U16 yy, i16 zz)
 			case  6:	// fighter 3	club
 			case  7:	// fighter 4	parry
 			case  9:	// ninja 2		fight
-				//^2C1D:1287
 				di = QUERY_GDAT_DBSPEC_WORD_VALUE(bp08, GDAT_ITEM_WEAPON_MELEE_STRENGTH);
-				//^2C1D:1295
 				break;
 
 			case  1:	// ninja 0		(global)
 			case 10:	// ninja 3		throw
 			case 11:	// ninja 4		shoot
-				//^2C1D:1297
 				di = QUERY_GDAT_DBSPEC_WORD_VALUE(bp08, GDAT_ITEM_WEAPON_THROW_STRENGTH);
-				//^2C1D:12A5
 				if (di == 0)
-					//^2C1D:12A7
 					break;
-				//^2C1D:12A9
 				// SPX: x8000 = is a weapon that shoots items
 				if ((QUERY_GDAT_DBSPEC_WORD_VALUE(bp08, GDAT_ITEM_WEAPON_PROJECTILE_FLAG) & 0x8000) != 0) {
-					//^2C1D:12BA
 					if (zz != 11)
-						//^2C1D:12C0
 						di = 0;
-					//^2C1D:12C2
 					break;
 				}
-				//^2C1D:12C4
 				if (zz == 11)
-					//^2C1D:12CA
 					di = 0;
 
 				break;
@@ -938,16 +745,11 @@ U16 SkWinCore::COMPUTE_PLAYER_ATTACK_OR_THROW_STRENGTH(U16 xx, U16 yy, i16 zz)
 
 				break;
 		}
-		//^2C1D:12CC
 		si = si + di;
 	}
-	//^2C1D:12D2
 	si = STAMINA_ADJUSTED_ATTR(bp04, si);
-	//^2C1D:12E2
 	if ((bp04->bodyFlag & ((yy == 0) ? 1 : 2)) != 0)
-		//^2C1D:12FD
 		si >>= 1;
-	//^2C1D:12FF
 	return BETWEEN_VALUE(0, si >> 1, 100);
 }
 
@@ -959,44 +761,26 @@ void SkWinCore::TRANSFER_PLAYER(i16 xx, i16 yy, U16 zz, U16 dir)
 	SkD((DLV_DBM, "DBM: TRANSFER_PLAYER(%2d,%2d,%2d,%d)\n"
 		, (Bitu)xx, (Bitu)yy, (Bitu)zz, (Bitu)dir));
 
-	//^2FCF:183C
 	ENTER(0);
-	//^2FCF:1841
 	i16 di = yy;
-	//^2FCF:1844
 	U16 si = (zz != cd.pi.glbPlayerMap) ? 1 : 0;
-	//^2FCF:1856
 	if (si != 0)
-		//^2FCF:185A
 		CHANGE_CURRENT_MAP_TO(zz);
-	//^2FCF:1863
 	if (xx >= 0 && xx < glbCurrentMapWidth && di >= 0 && di < glbCurrentMapHeight) {
-		//^2FCF:187C
 		if (si != 0) {
-			//^2FCF:1880
 			CHANGE_CURRENT_MAP_TO(cd.pi.glbPlayerMap);
-			//^2FCF:188A
 			MOVE_RECORD_TO(OBJECT_NULL, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, -1, 0);
-			//^2FCF:189F
 			LOAD_NEWMAP(U8(zz));
-			//^2FCF:18A8
-			//^2FCF:18BE
 			MOVE_RECORD_TO(OBJECT_NULL, -1, 0, xx, di);
 		}
 		else {
-			//^2FCF:18B2
 			MOVE_RECORD_TO(OBJECT_NULL, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, xx, di);
 		}
-		//^2FCF:18C7
 		ROTATE_SQUAD(dir);
-		//^2FCF:18CF
 		return;
 	}
-	//^2FCF:18D1
 	if (si != 0)
-		//^2FCF:18D5
 		CHANGE_CURRENT_MAP_TO(cd.pi.glbPlayerMap);
-	//^2FCF:18DF
 	return;
 }
 
@@ -1010,32 +794,21 @@ U16 SkWinCore::ENGAGE_X_TELEPORTER()
 	// return 0 if failed.
 	// return 1 if succeeded.
 
-	//^2FCF:18E3
 	ENTER(10);
-	//^2FCF:18E9
 	ObjectID si = GET_TILE_RECORD_LINK(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
-	//^2FCF:18F8
 	U16 bp06;
 	for (; si != OBJECT_END_MARKER && (bp06 = si.DBType()) <= dbActuator; si = GET_NEXT_RECORD_LINK(si)) {
-		//^2FCF:18FB
 		if (bp06 == dbText) {
-			//^2FCF:1904
 			Text *bp04 = GET_ADDRESS_OF_RECORD2(si);
-			//^2FCF:1911
 			if (bp04->TextMode() == 1) {
-				//^2FCF:1925
 				U16 di;
 				switch (bp04->SimpleTextExtUsage()) {
 					case 16: // 16 -> Teleporter with flag
-						//^2FCF:1942
 						di = SDFSM_CMD_X_ANCHOR;	// 5
-						//^2FCF:1945
 						goto _194a;
 
 					case 15: // 15 -> Teleporter
-						//^2FCF:1947
 						di = SDFSM_CMD_X_TELEPORTER;	// 4
-						//^2FCF:194A
 _194a:
 						i16 bp08;
 						i16 bp0a;
@@ -1046,19 +819,14 @@ _194a:
 						destMap = SEARCH_DUNGEON_FOR_SPECIAL_MARKER(di, 0, bp04->TextIndex() & 0xff, &bp08, &bp0a);
 						if (destMap >= 0)
 						{
-							//^2FCF:1977
 							// SPX: There is BUG here, bp06 is the db type instead of required map
 //								TRANSFER_PLAYER(bp08, bp0a, bp06, glbPlayerDir);
 							TRANSFER_PLAYER(bp08, bp0a, destMap, cd.pi.glbPlayerDir);
-							//^2FCF:198B
 							// SPX: This is used by the special teleporter ground cross		
 							QUEUE_NOISE_GEN2(GDAT_CATEGORY_x0A_FLOOR_GFX, bp04->TextIndex() & 0xff, SOUND_STD_ACTIVATION, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0x8c, 0x80);
-							//^2FCF:19BB
 							if (di == SDFSM_CMD_X_TELEPORTER) {	// di == 4
-								//^2FCF:19C0
 								bp04->TextVisibility(1);
 							}
-							//^2FCF:19C8
 							return 1;
 						}
 
@@ -1066,9 +834,7 @@ _194a:
 				}
 			}
 		}
-		//^2FCF:19CD
 	}
-	//^2FCF:19EE
 	return 0;
 }
 
@@ -1082,62 +848,35 @@ U16 SkWinCore::ENGAGE_COMMAND(U16 player, i16 cmdSlot)
 	// is 1 if 2nd command is selected on right command panel.
 	// is 2 if 3rd command is selected on right command panel.
 
-	//^2759:16AC
 	ENTER(84);
-	//^2759:16B2
 	U16 di = player;
-	//^2759:16B5
 	U16 bp4a = 0;
-	//^2759:16BA
 	U16 bp48 = cmdSlot & 0x8000;
-	//^2759:16C3
 	cmdSlot &= 0x7fff;
-	//^2759:16C8
 	glbItemGDATCategory = glbItemSelected[cmdSlot].category;
-	//^2759:16D5
 	glbItemGDATIndex = glbItemSelected[cmdSlot].index;
-	//^2759:16E2
 	glbItemGDATEntry = glbItemSelected[cmdSlot].entry;
-	//^2759:16EF
 	U16 bp34 = glbSelectedHandAction;
-	//^2759:16F5
 	U16 bp3a = bp34 ^ 1;
-	//^2759:16FB
 	Champion *champion = &glbChampionSquad[di];	//*bp04
-	//^2759:170B
 	if (champion->curHP() == 0)
-		//^2759:1715
 		return 0;
-	//^2759:171A
 	U16 bp1c = QUERY_CUR_CMDSTR_ENTRY(CnCM_Command);		// Command
-	//^2759:1724
 	U8 cmdSound = U8(QUERY_CUR_CMDSTR_ENTRY(CnSD_Sound));		// bp36 Sound
-	//^2759:172E
 	U16 bp38 = 0;
-	//^2759:1733
 	champion->handCommand[bp34] = U8(bp1c);
-	//^2759:1740
 	Container *bp08 = NULL;
-	//^2759:174A
 	ObjectID bp2e = champion->Possess(bp34);
-	//^2759:175C
 	if (bp2e != OBJECT_NULL) {
-		//^2759:1761
 		bp08 = GET_ADDRESS_OF_RECORD9(bp2e);
 	}
-	//^2759:1770
 	U16 bp22 = champion->playerDir();
-	//^2759:177C
 	U16 bp1e = cd.pi.glbPlayerPosX + glbXAxisDelta[bp22];
-	//^2759:178A
 	U16 bp20 = cd.pi.glbPlayerPosY + glbYAxisDelta[bp22];
-	//^2759:1799
 	glbObjectID_4976_534c = GET_CREATURE_AT(bp1e, bp20);
-	//^2759:17A9
 	U8 bp35;
 	AIDefinition *bp1a;
 	if (glbObjectID_4976_534c != OBJECT_NULL) {
-		//^2759:17AE
 		bp1a = QUERY_CREATURE_AI_SPEC_FROM_TYPE(bp35 = QUERY_CLS2_FROM_RECORD(glbObjectID_4976_534c));
 	}
 	U16 bp26 = QUERY_CUR_CMDSTR_ENTRY(CnBZ_Busy);	// bp26 Busy
@@ -1149,9 +888,7 @@ U16 SkWinCore::ENGAGE_COMMAND(U16 player, i16 cmdSlot)
 	i16 iPouchOrScabbard = 0;// bp46 (SPX: added for clarity)
 	champion->handDefenseClass[bp34] = U8(QUERY_CUR_CMDSTR_ENTRY(CnTA_TemporaryArmor));	// Armor modified
 	U16 bp24 = GET_TILE_VALUE(bp1e, bp20);
-	//^2759:182F
 	U16 bp0e = 1;
-	//^2759:1834
 	ObjectID bp44;
 	U16 bp42;
 	i16 bp0c;
@@ -1164,65 +901,41 @@ U16 SkWinCore::ENGAGE_COMMAND(U16 player, i16 cmdSlot)
 	U16 bp3c;
 	switch (bp1c) {
 		case CmConfuse: // 5
-			//^2759:1848
 			si = si + QUERY_PLAYER_SKILL_LV(di, SKILL_PRIEST_INFLUENCE, 1);
-			//^2759:185B
 			bp0e = CONFUSE_CREATURE(si, bp1e, bp20);
-			//^2759:186C
 			if (bp0e == 0)
-				//^2759:1870
 				bp2c >>= 2;
-			//^2759:1874
 			bp38 = 0;
-			//^2759:1879
 			break;
 
 		case CmInvisibility: // 2
-			//^2759:187C
 			si = max_value(32, si);
-			//^2759:1888
 			bp50 = 0x47;
-			//^2759:188C
 			if (glbGlobalSpellEffects.Invisibility++ == 0 && glbChampionInventory != 0) {
-				//^2759:18A0
 				glbChampionTable[glbChampionInventory].heroFlag |= CHAMPION_FLAG_4000;	// 0x4000
 			}
-			//^2759:18B0
 			Timer bp54;
 			bp54.SetMap(cd.pi.glbPlayerMap);
 			bp54.SetTick(glbGameTick +si);
-			//^2759:18D8
 			QUEUE_TIMER(&bp54);
-			//^2759:18E4
 			break;
 
 		case CmLaunchMissile: // 3 magical missile
-			//^2759:18E7
 			bp44 = ObjectID::MissileRecord(QUERY_CUR_CMDSTR_ENTRY(CnPA_Parameter));
-			//^2759:18F4
 			//bp42 = 7 - min_value(6, QUERY_PLAYER_SKILL_LV(di, bp2a, 1));
 			bp42 = 7 - min_value(SkLvlCraftsman, QUERY_PLAYER_SKILL_LV(di, bp2a, 1));
-			//^2759:1914
 			if (champion->curMP() < bp42) {
-				//^2759:1920
 				si = max_value(2, (champion->curMP() * si) / bp42);
-				//^2759:1936
 				bp42 = champion->curMP();
 			}
-			//^2759:1940
 			bp0e = CAST_CHAMPION_MISSILE_SPELL(di, bp44, si, bp42);
-			//^2759:1953
 			if (bp0e == 0)
-				//^2759:195A
 				bp2c >>= 1;
-			//^2759:195D
 			break;
 
 		case CmPhysicalDamage4: // 4
 		case CmPhysicalDamage8: // 8
-			//^2759:1960
 			if ((bp24 >> 5) == ttDoor && (bp24 & 7) == 4) {
-				//^2759:1973
 				ATTACK_DOOR(
 					bp1e,
 					bp20,
@@ -1231,11 +944,8 @@ U16 SkWinCore::ENGAGE_COMMAND(U16 player, i16 cmdSlot)
 					2
 					);
 
-				//^2759:1995
 				bp26 = 6;
-				//^2759:199A
 				Door *bp12 = GET_ADDRESS_OF_TILE_RECORD(U8(bp1e), U8(bp20))->castToDoor();
-				//^2759:19AD
 				// SPX: Sound made by the door when hit?
 				QUEUE_NOISE_GEN2(
 					GDAT_CATEGORY_x0E_DOORS,
@@ -1248,55 +958,37 @@ U16 SkWinCore::ENGAGE_COMMAND(U16 player, i16 cmdSlot)
 					0x3c,
 					0xc8
 					);
-				//^2759:19DB
 				break;
 			}
-			//^2759:19DE
 			if (true
 				&& glbObjectID_4976_534c != OBJECT_NULL 
 				&& bp1a->IsStaticObject() != 0 
 				&& bp1a->ArmorClass == AI_DEF_ARMOR_MAX 
 				&& bp1a->Defense == 255
 			) {
-				//^2759:19FD
 				bp2c >>= 1;
 			}
 			else {
-				//^2759:1A02
 				bp44 = QUERY_CUR_CMDSTR_ENTRY(CnPA_Parameter);		// Spell missile
-				//^2759:1A0C
 				bp0e = WIELD_WEAPON(di, bp44, bp1e, bp20, bp2a, iAttackType);
-				//^2759:1A26
 				if (bp0e == 0) {
-					//^2759:1A2A
 					bp2c >>= 1;
-					//^2759:1A2D
 					bp26 >>= 1;
-					//^2759:1A30
 					break;
 				}
-				//^2759:1A33
 				if (glbObjectID_4976_534c == OBJECT_NULL)
-					//^2759:1A3A
 					break;
 			}
-			//^2759:1A3D
 			QUEUE_NOISE_GEN1(GDAT_CATEGORY_x0F_CREATURES, bp35, SOUND_OBJECT_GETHIT, 0x3c, 0xc8, bp1e, bp20, bp38 +1);
-			//^2759:1A5E
 			break;
 
 		case CmSpellReflection: // 7
-			//^2759:1A61
 			CREATE_CLOUD(OBJECT_EFFECT_REFLECTOR, max_value(2, si), cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 255);
-			//^2759:1A81
 			break;
 
 		case CmAuraOfSpeed: // 9
-			//^2759:1A84
 			si = max_value(32, si);
-			//^2759:1A90
 			glbGlobalSpellEffects.AuraOfSpeed = U8(min_value(glbGlobalSpellEffects.AuraOfSpeed +si, 255));
-			//^2759:1AA5
 			break;
 
 // Check CSBWin TAG01bf9a/_Attack
@@ -1324,31 +1016,19 @@ U16 SkWinCore::ENGAGE_COMMAND(U16 player, i16 cmdSlot)
 			  break;
 			}
 		case CmLaunchProjectile: // 32
-			//^2759:1AA8
 			if (IS_MISSILE_VALID_TO_LAUNCHER(di, bp34, champion->Possess(bp3a)) == 0) {
-				//^2759:1AC6
 				if (bp48 == 0) {
-					//^2759:1ACC
 					glbSomeChampionPanelFlag = max_value(1, 8 - UPDATE_GLOB_VAR(C067_GLOB_BYTE_03_CHAMPION_NEED_AMMO, 1, C03_GLOBAL_VAR_OP_ADD));
-					//^2759:1AEC
 					glbChampionAttackDamage = ATTACK_REQUIRES_HAND_ITEM;	// -2
-					//^2759:1AF2
 					glbWeaponShooterNum = QUERY_GDAT_DBSPEC_WORD_VALUE(bp2e, GDAT_ITEM_WEAPON_PROJECTILE_FLAG);	// 5
-					//^2759:1B01
 					glbWeaponMissileHand = bp3a;
-					//^2759:1B07
 					bp2c = 0;
 				}
-				//^2759:1B0C
 				bp0e = 0;
-				//^2759:1B11
 				break;
 			}
-			//^2759:1B14
 			bp30 = REMOVE_POSSESSION(di, bp3a);
-			//^2759:1B22
 			bp0a = QUERY_PLAYER_SKILL_LV(di, SKILL_NINJA_SHOOT, 1);
-			//^2759:1B32
 			// SPX: bp2e is the SHOOTER/LAUNCHER, bp30 is the PROJECTILE
 			// param3 = energy (max 255) / param4 = energy2 / param5 = dd
 			SHOOT_CHAMPION_MISSILE(
@@ -1358,168 +1038,107 @@ U16 SkWinCore::ENGAGE_COMMAND(U16 player, i16 cmdSlot)
 				(bp0a << 1) + QUERY_GDAT_DBSPEC_WORD_VALUE(bp30, GDAT_ITEM_STATS_0x0C),	// 12
 				QUERY_GDAT_DBSPEC_WORD_VALUE(bp30, GDAT_ITEM_STATS_0x0C)
 				);
-			//^2759:1B84
 			bp4a = 1;
-			//^2759:1B89
 			break;
 
 		case CmSpellshield: // 33
 		case CmFireshield: // 34
 		case CmShield: // 35
-			//^2759:1B8C
 			U16 enchantmentType;
 //				bp0c = (bp1c == CmSpellshield) ? 1 : ((bp1c == CmFireshield) ? 0 : 2);
 			enchantmentType = (bp1c == CmSpellshield) ? C01_ENCHANTMENT_SPELL_SHIELD : ((bp1c == CmFireshield) ? C00_ENCHANTMENT_FIRE_SHIELD : C02_ENCHANTMENT_PARTY_SHIELD);
-			//^2759:1BAB
 			si = max_value(32, si) * 3;
-			//^2759:1BBC
 			if (CALL_ENCHANTMENT_SELF(champion, enchantmentType, si, 1) != 0)
-				//^2759:1BD5
 				break;
-			//^2759:1BD8
 			bp2c >>= 2;
-			//^2759:1BDC
 			bp26 >>= 1;
-			//^2759:1BDF
 			break;
 
 		case CmConsume: // 16
-			//^2759:1BE2
 			PLAYER_CONSUME_OBJECT(di, bp2e, bp34);
-			//^2759:1BF1
 			break;
 
 		case CmPouch: // 17
-			//^2759:1BF4
 			bp4a = 1;
-			//^2759:1BF9
 			iPouchOrScabbard = FIND_POUCH_OR_SCABBARD_POSSESSION_POS(di, bp34);
 			if (iPouchOrScabbard < 0)
 				break;
 			bp2e = REMOVE_POSSESSION(di, iPouchOrScabbard);
-			//^2759:1C1D
 			EQUIP_ITEM_TO_INVENTORY(di, bp2e, bp34);
-			//^2759:1C2C
 			break;
 
 		case CmHealing: // 36
-			//^2759:1C2F
 			bp0c = champion->maxHP() - champion->curHP();	// how much HP missing
-			//^2759:1C3D
 			if (bp0c <= 0)
 				break;
-			//^2759:1C44
 			if (champion->curMP() == 0)
-				//^2759:1C4B
 				break;
-			//^2759:1C4E
 			bp0a = min_value(SkLvlMasterLo, QUERY_PLAYER_SKILL_LV(di, SKILL_PRIEST_HEAL, 1));	// skill, caped 10
-			//^2759:1C68
 			bp2c = 2;
 
 			do {
-				//^2759:1C6D
 				bp0e = min_value(bp0c, bp0a);	// Minimum step between initial HP missing and skill level (max = 10)
-				//^2759:1C7D
 				champion->curHP(champion->curHP() +bp0e);
-				//^2759:1C84
 				bp2c += 2;
-				//^2759:1C88
 				champion->curMP(champion->curMP() -2);
-				//^2759:1C8D
 			} while (champion->curMP() > 0 && (bp0c -= champion->curMP()) != 0);
 
-			//^2759:1C94
 			if (champion->curMP() < 0)
-				//^2759:1C9E
 				champion->curMP(0);
-			//^2759:1CA4
 			champion->heroFlag |= CHAMPION_FLAG_0800;	// 0x0800 Refresh bar stat?
-			//^2759:1CAD
 			bp0e = 1;
-			//^2759:1CB2
 			break;
 
 		case CmUseRope: // 10
-			//^2759:1CB5
 			bp1e = cd.pi.glbPlayerPosX + glbXAxisDelta[cd.pi.glbPlayerDir];
-			//^2759:1CC5
 			bp20 = cd.pi.glbPlayerPosY + glbYAxisDelta[cd.pi.glbPlayerDir];
-			//^2759:1CD5
 			bp40 = 1;
-			//^2759:1CDA
 			bp32 = GET_CREATURE_AT(bp1e, bp20);
-			//^2759:1CEA
 			if (bp32 != OBJECT_NULL && (QUERY_CREATURE_AI_SPEC_FLAGS(bp32) & 0x8000) == 0) {
-				//^2759:1CFD
 				bp40 = 0;
 			}
-			//^2759:1D02
 			if ((GET_TILE_VALUE(bp1e, bp20) >> 5) == 2 && bp40 != 0) {
-				//^2759:1D1E
 				_4976_5824 = 1;
-				//^2759:1D24
 				MOVE_RECORD_TO(OBJECT_NULL, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, bp1e, bp20);
-				//^2759:1D3C
 				_4976_5824 = 0;
-				//^2759:1D42
 				break;
 			}
-			//^2759:1D45
 			bp26 = 0;
-			//^2759:1D4A
 			break;
 
 		case CmFreezeLife: // 11
-			//^2759:1D4D
 			glbGlobalSpellEffects.FreezeCounter = U8(min_value(EFFECT_FREEZE_MAX, glbGlobalSpellEffects.FreezeCounter +si));
-			//^2759:1D62
 			break;
 
 		case CmAuraOfDex: // 12
-			//^2759:1D65
 			bp0c = 5;
-			//^2759:1D6A
 _1d6a:
 			si = max_value(32, si) << 2;
-			//^2759:1D79
 			if (CALL_ENCHANTMENT_SELF(champion, bp0c, si, 0) != 0)
-				//^2759:1D92
 				break;
-			//^2759:1D95
 			bp2c >>= 2;
 			bp26 >>= 1;
-			//^2759:1D9C
 			break;
 
 		case CmAuraOfWiz: // 13
-			//^2759:1D9F
 			bp0c = 4;
-			//^2759:1DA4
 			goto _1d6a;
 
 		case CmAuraOfVit: // 14
-			//^2759:1DA6
 			bp0c = 6;
-			//^2759:1DAB
 			goto _1d6a;
 
 		case CmAuraOfStr: // 15
-			//^2759:1DAD
 			bp0c = 3;
-			//^2759:1DB2
 			goto _1d6a;
 
 		case CmDarkness:	// 6
 		case CmLight:		// 38
 		case CmLongLight:	// 39
-			//^2759:1DB4
 			PROCEED_LIGHT(bp1c, si);
-			//^2759:1DBE
 			break;
 
 		case CmThrow: // 42
-			//^2759:1DC1
 			bp0e = _2c1d_1de2_CHAMPION_SHOOT(
 				di,
 				bp34,
@@ -1529,66 +1148,43 @@ _1d6a:
 						: 0
 					: 1
 				);
-			//^2759:1E02
 			break;
 
 		case CmMark: // 44
-			//^2759:1E05
 			bp0e = SET_DESTINATION_OF_MINION_MAP(bp2e, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerMap);
-			//^2759:1E1F
 			if (bp0e != 0)
-				//^2759:1E23
 				break;
-			//^2759:1E26
 			bp2c = 0;
 			bp26 = 1;
-			//^2759:1E30
 			break;
 
 		case CmCallScout: // 47
-			//^2759:1E33
 			bp35 = CREATURE_GOOD_SCOUT_MINION;		// SPX: 0x30 = Scout Minion
 			//SPX: bp35 holds creature to generate
-			//^2759:1E37
 			goto _1ebe;
 
 		case CmCallCarry: // 45
 		case CmCallFetch: // 46
-			//^2759:1E3A
 			if (GET_MISSILE_REF_OF_MINION(bp08->GetContainedObject(), bp2e) != NULL) {
 				GET_ADDRESS_OF_RECORD4(bp08->GetContainedObject())->CreatureType((bp1c == CmCallCarry) ? 0x32 : 0x33);
 				_1c9a_0247_FREE_CACHE_FROM_CREATURE(bp08->GetContainedObject());
 			}
-			//^2759:1E7F
 			else if (bp1c == CmCallFetch) {
-				//^2759:1E85
 				bp35 = CREATURE_GOOD_FETCH_MINION;	// SPX: Fetch Minion
-				//^2759:1E89
 				bp0a = cd.pi.glbPlayerDir;
-				//^2759:1E8F
 				bp1e = bp08->GetDestX();
-				//^2759:1E9C
 				bp20 = bp08->GetDestY();
-				//^2759:1EA9
 				bp22 = 0xffff;
-				//^2759:1EAE
 				bp0c = bp08->GetDestMap();
-				//^2759:1EB8
 				goto _1ed8;
 			}
 			else {
-				//^2759:1EBA
 				bp35 = CREATURE_GOOD_CARRY_MINION;	// SPX: Carry Minion
-				//^2759:1EBE
 _1ebe:
 				bp1e = cd.pi.glbPlayerPosX;
-				//^2759:1EC4
 				bp20 = cd.pi.glbPlayerPosY;
-				//^2759:1ECA
 				bp0a = (cd.pi.glbPlayerDir +2) & 3;
-				//^2759:1ED5
 				bp0c = cd.pi.glbPlayerMap;
-				//^2759:1EDB
 _1ed8:
 				bp3e = CREATE_MINION(
 					bp35,
@@ -1600,72 +1196,48 @@ _1ed8:
 					bp2e,
 					bp22
 					);
-				//^2759:1F0E
 				bp0e = (bp3e != OBJECT_NULL) ? 1 : 0;
-				//^2759:1F1E
 				if (bp0e != 0) {
-					//^2759:1F22
 					if (bp1c == CmCallScout) {
-						//^2759:1F28
 						SET_DESTINATION_OF_MINION_MAP(bp2e, _4976_5826, _4976_5828, _4976_581c);
 					}
-					//^2759:1F3F
 					bp08->SetContainedObject(bp3e);
-					//^2759:1F49
 					break;
 				}
-				//^2759:1F4C
 				bp2c >>= 2;
 				bp26 >>= 1;
-				//^2759:1F53
 				CREATE_CLOUD(OBJECT_EFFECT_CLOUD, 0x6e, bp1e, bp20, 255);
-				//^2759:1F68
 				break;
 
-				//^2759:1F6B
 //_1f6b:
 _ReleaseMinion:
 				RELEASE_MINION(bp08->GetContainedObject());
 			}
-			//^2759:1F77
-			//^2759:1F78
 			break;
 
 		case CmKillMinion: // 48
 			goto _ReleaseMinion;
 
 		case CmGuardMinion: // 50
-			//^2759:1F7B
 			bp3c = CREATURE_GOOD_GUARD_MINION;	// Guard Minion
-			//^2759:1F80
 			goto _CreateMinion;
 
 		case CmUHaulMinion: // 51
-			//^2759:1F82
 			bp3c = CREATURE_GOOD_U_HAUL_MINION;	// U-Haul Minion
-			//^2759:1F87
 			goto _CreateMinion;
 
 		case CmAttackMinion: // 49
-			//^2759:1F89
 			bp3c = CREATURE_GOOD_ATTACK_MINION;	// Attack Minion
-			//^2759:1F8E
 //_1f8e:
 _CreateMinion:
 			if (CREATE_MINION(bp3c, si >> 3, (cd.pi.glbPlayerDir +2) & 3, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerMap, bp2e, cd.pi.glbPlayerDir) != OBJECT_NULL)
-				//^2759:1FBE
 				break;
-			//^2759:1FC0
 			CREATE_CLOUD(OBJECT_EFFECT_CLOUD, 0x6E, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 255);
-			//^2759:1FD7
 			break;
 
 		case CmTeleport: // 54
-			//^2759:1FD9
 			if (ENGAGE_X_TELEPORTER() != 0)
-				//^2759:1FE0
 				break;
-			//^2759:1FE2
 			glbSomeChampionPanelFlag = max_value(1, 8 - UPDATE_GLOB_VAR(C071_GLOB_BYTE_07_CHAMPION_NEED_TELEPORT_MARK, 1, C03_GLOBAL_VAR_OP_ADD));
 			glbChampionAttackDamage = ATTACK_FAILURE_X_TELEPORT;
 
@@ -1695,46 +1267,29 @@ _CreateMinion:
 
 			break;
 	}
-	//^2759:2008
 	if (bp4a == 0) {
-		//^2759:200E
 		QUEUE_NOISE_GEN2(glbItemGDATCategory, glbItemGDATIndex, cmdSound, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, bp38, 0x73, 0xC8);
 	}
-	//^2759:2035
 	if (champion->curHP() == 0 || bp48 != 0)
-		//^2759:2048
 		return bp0e;
-	//^2759:204B
 	if (bp26 != 0) {
-		//^2759:2051
 		ADJUST_HAND_COOLDOWN(di, bp26, bp34);
 	}
-	//^2759:205F
 	if (bp28 != 0) {
-		//^2759:2065
 		ADJUST_STAMINA(di, bp28);
 	}
-	//^2759:2070
 	if (bp2c != 0) {
-		//^2759:2076
 		ADJUST_SKILLS(di, bp2a, bp2c);
 	}
-	//^2759:2085
 	if (bp0e != 0) {
-		//^2759:208B
 		sk536e *bp16 = &glbChampionEngagingHandCommand[di][bp34];
-		//^2759:20A8
 		bp16->w0 = QUERY_CUR_CMDSTR_ENTRY(CnRP_Repeat);
-		//^2759:20B5
 		if (bp16->w0 != 0) {
-			//^2759:20B9
 			bp16->b2 = 1;
-			//^2759:20BE
 			bp16->id4 = bp2e;
 			bp16->b3 = i8(cmdSlot);
 		}
 	}
-	//^2759:20CC
 	return bp0e;
 }
 
@@ -1840,16 +1395,13 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 	// SPX: this seems to behave differently from DM1. DM1 would check the last actuator to determine what is activable from user.
 	// specially seen on alcoves under key hole / coin slot to protect items to be taken in any case.
 
-	//^2FCF:19F4
 	ENTER(68);
-	//^2FCF:19FA
 	ObjectID si = rlWhatYouPlace;
 	U16 bp26 = 0;
 	U16 bp2a = 0;
 	U16 bDelayedActuatorsRotation = 0; // SPX: DM1 retrocompatibility
 	U16 iWallSideToRotate = -1; // SPX: DM1 retrocompatibility
 	ObjectID bp34 = OBJECT_NULL;
-	//^2FCF:1A0C
 	ObjectID bp0e = GET_TILE_RECORD_LINK(xx, yy);
 	//printf("Click on wall : ---------------\n");
 
@@ -1878,15 +1430,10 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 #endif // __SKWIN_PUBLIC_VERSION__
 	bp0e = GET_TILE_RECORD_LINK(xx, yy);
 
-	//^2FCF:1A1C
 	for (U16 bp28 = 0; bp0e != OBJECT_END_MARKER && bp28 == 0; bp0e = GET_NEXT_RECORD_LINK(bp0e)) {
-		//^2FCF:1A24
 		U16 bp10 = bp0e.Dir();
-		//^2FCF:1A2D
 		if (bp10 != dir)
-			//^2FCF:1A32
 			continue;
-		//^2FCF:1A35
 		if (IS_WALL_ORNATE_ALCOVE_FROM_RECORD(bp0e) != 0) {
 			//printf("Click on wall %04X (dir=%d): this is a wall alcove!\n", bp0e, bp10);
 			// SPX: for DM1 compatibility, we check if this actuator is the top actuator to consider its effect as alcove
@@ -1896,41 +1443,24 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 				// BUT we want to check its actuator code, so that we have to jump further
 				goto checkactuator;
 			}
-			//^2FCF:1A45
 			if (si == OBJECT_NULL) {
-				//^2FCF:1A4A
 				ObjectID bp32 = GET_WALL_TILE_ANYITEM_RECORD(xx, yy);
-				//^2FCF:1A5A
 				ObjectID bp30 = OBJECT_NULL;
-				//^2FCF:1A5F
 				for (; bp32 != OBJECT_END_MARKER; bp32 = GET_NEXT_RECORD_LINK(bp32)) {
-					//^2FCF:1A61
 					if (bp32.Dir() == bp10) {
-						//^2FCF:1A6C
 						bp30 = bp32;
 					}
-					//^2FCF:1A72
 				}
-				//^2FCF:1A84
 				if (bp30 == OBJECT_NULL)
-					//^2FCF:1A8A
 					break;
-				//^2FCF:1A8D
 				U16 bp2e = bp30.DBType();
-				//^2FCF:1A99
 				if (bp2e < dbWeapon || bp2e > dbMiscellaneous_item)
-					//^2FCF:1AA8
 					break;
-				//^2FCF:1AAB
 				MOVE_RECORD_TO(bp30, xx, yy, -1, 0);
-				//^2FCF:1ABF
 				bp34 = bp30;
-				//^2FCF:1AC5
 				break;
 			}
-			//^2FCF:1AC8
 			bp2a = 1;
-			//^2FCF:1ACD
 			MOVE_RECORD_TO(ObjectID(si, bp10), -1, 0, xx, yy);
 			
 			// SPX: Actually, DM2 code seems not to like multiple wall actuators on the same side and breaks after triggering the first one, unlike DM1 which
@@ -1938,71 +1468,45 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 			if (SkCodeParam::bDM1Mode)
 				goto checkactuator;
 				//continue;
-			//^2FCF:1AED
 			break;
 		}
-		//^2FCF:1AF0
 		if (IS_WALL_ORNATE_SPRING(bp0e) != 0) {
 			//printf("Click on wall %04X (dir=%d): this is a wall fountain!\n", bp0e, bp10);
-			//^2FCF:1B00
 			if (si == OBJECT_NULL) {
-				//^2FCF:1B05
 				if (glbChampionLeader == -1)
-					//^2FCF:1B0C
 					break;
-				//^2FCF:1B0F
 				for (i16 championIndex = 0; championIndex < MAX_CHAMPIONS; championIndex++) {
-					//^2FCF:1B16
 					if (glbChampionSquad[championIndex].curHP() != 0) {
-						//^2FCF:1B27
 						glbChampionSquad[championIndex].curWater(WATER_MAX);
 					}
-					//^2FCF:1B37
 				}
-				//^2FCF:1B40
 				// SPX: Sound when drinking from wall
 				QUEUE_NOISE_GEN2(GDAT_CATEGORY_x16_CHAMPIONS, glbChampionSquad[glbChampionLeader].HeroType(), SOUND_CHAMPION_EAT_DRINK, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 0, 0x96, 0x80);
-				//^2FCF:1B6F
 				break;
 			}
-			//^2FCF:1B72
 			if ((QUERY_GDAT_DBSPEC_WORD_VALUE(si, 0) & 1) != 0) {
-				//^2FCF:1B81
 				ADD_ITEM_CHARGE(si, 15);
-				//^2FCF:1B8B
 				bp2a = 1;
 				bp34 = si;
-				//^2FCF:1B93
 				break;
 			}
 			if (!SkCodeParam::bDM1Mode) {
-			//^2FCF:1B96
 			if (GET_DISTINCTIVE_ITEMTYPE(si) != 0x0194) // SPX: not sure ? creature fountain ? (or tree ?)
-				//^2FCF:1BA2
 				break;
-			//^2FCF:1BA5
 			SET_ITEMTYPE(si, 15);
-			//^2FCF:1BAF
 			bp2a = 1;
 			bp34 = si;
-			//^2FCF:1BB7
 			break;
 			}
 		}
 //SPX: added for easy jump from DM1 mode
 checkactuator:
-		//^2FCF:1BBA
 		U16 bp1c = bp0e.DBType();
-		//^2FCF:1BC6
 		U16 bp16;
 		if (bp1c == dbActuator) {
-			//^2FCF:1BCE
 			Actuator *bp04 = GET_ADDRESS_OF_ACTU(bp0e);
-			//^2FCF:1BDD
 			bp16 = bp04->ActuatorType();
-			//^2FCF:1BEA
 			U16 bp18 = bp04->ActuatorData();
-			//^2FCF:1BF7
 			U16 bp1a = bp04->ActionType();
 			// SPX: more data to check
 			U16 iStatus = bp04->ActiveStatus();
@@ -2011,38 +1515,26 @@ checkactuator:
 			U16 iOnce = bp04->OnceOnlyActuator();
 			U16 iDisabled = bp04->IsDisabled();
 			//printf("Clicking on wall Actuator %04X (dir=%d) ACT=%02d (1=%d DIS=%d) action=%04x (R=%d) data=%04x status=%d toggler=%d\n", bp0e, bp10, bp16, iOnce, iDisabled, bp1a, iRevert, bp18, iStatus, iToggler);
-			//^2FCF:1C04
 			//if (glbChampionLeader == -1 && bp16 != 0x7e)
 			if (glbChampionLeader == -1 && (bp16 != ACTUATOR_x7E_TYPE_RESURECTOR && bp16 != ACTUATOR_x7F_TYPE_CHAMPION_MIRROR)) // SPX : Add 0x7F
-				//^2FCF:1C11
 				continue;
-			//^2FCF:1C14
 			U8 bp23 = GET_WALL_DECORATION_OF_ACTUATOR(bp04);
-			//^2FCF:1C24
 			if (bp16 == 0)
-				//^2FCF:1C2A
 				continue;
-			//^2FCF:1C2D
 			U16 di = 1;
-			//^2FCF:1C30
 			U16 bp44 = bp16;
-			//^2FCF:1C36
 			U16 bp2c;
 			Door *bp14;
 			U16 bp1e;
 			U16 bp36;
 			switch (bp44) {
 				default:
-					//^2FCF:1C48
 					continue;
 
 
 				case ACTUATOR_TYPE_SHOP_PANEL: // 0x3F -> 'Shop panel'
-					//^2FCF:1C4F
 					if (si == OBJECT_NULL)
-						//^2FCF:1C57
 						bp04->ActiveStatus(0);
-					//^2FCF:1C5F
 					break;
 
 				// SPX: removed native DM2 x01 case for activating back DM1 push button x01
@@ -2062,11 +1554,7 @@ checkactuator:
 				case ACTUATOR_TYPE_X02: // 0x02 -> ?
 				//case ACTUATOR_TYPE_DM1_ALCOVE_ITEM:
 					if (SkCodeParam::bDM1Mode == false) { // DM2 behavior
-					//^2FCF:1C7C
 					di = (bp04->RevertEffect() != ((si == OBJECT_NULL) ? 1 : 0)) ? 1 : 0;
-					//^2FCF:1CA2
-					//^2FCF:1E65
-					//^2FCF:1E67
 					}
 					else { // DM1 alcove item = ACTUATOR_TYPE_DM1_ALCOVE_ITEM
 						;
@@ -2074,26 +1562,18 @@ checkactuator:
 					break;
 
 				case ACTUATOR_TYPE_CHARGED_ITEM_WATCHER: // 0x15 -> 'Activator, charged item watcher'
-					//^2FCF:1CA5
 					if (ADD_ITEM_CHARGE(si, 0) == 0)
-						//^2FCF:1CB3
 						break;
 
 					goto _1cb6;
 
 				case ACTUATOR_TYPE_ITEM_WATCHER: // 0x03 -> 'Activator, item watcher
-					//^2FCF:1CB6
 _1cb6:
 					bp2c = (GET_DISTINCTIVE_ITEMTYPE(si) == bp18) ? 1 : 0;
-					//^2FCF:1CCC
 					di = (bp04->RevertEffect() == bp2c) ? 1 : 0;
-					//^2FCF:1CE7
 					if (bp2c == 0 || bp04->OnceOnlyActuator() == 0)
-						//^2FCF:1D01
 						break;
-					//^2FCF:1D04
 					DEALLOC_RECORD(REMOVE_OBJECT_FROM_HAND());
-					//^2FCF:1D10
 					break;
 
 				// SPX: addition for DM1 retrocompatibility
@@ -2165,11 +1645,8 @@ _1cb6:
 					continue; // because toggler will be moved, but still need to operate
 
 				case ACTUATOR_TYPE_PUSH_BUTTON_WALL_SWITCH: // 0x46 -> 'Activator, seal-able push button wall switch'
-					//^2FCF:1D13
 					bp14 = GET_ADDRESS_OF_TILE_RECORD(bp04->Xcoord(), bp04->Ycoord())->castToDoor();
-					//^2FCF:1D39
 					if (bp14->DoorBit13C() == 0)
-						//^2FCF:1D4A
 						continue;
 
 					goto _1d4d;
@@ -2201,7 +1678,6 @@ _1cb6:
 
 				case ACTUATOR_TYPE_DM1_WALL_SWITCH: // SPX: Add DM1 retrocompatibility : 0x01
 					if (si != OBJECT_NULL || bp04->ActiveStatus() != 0)
-						//^2FCF:1D52
 						continue;
 					// NOTE: DM1 wall switch can't check "disabled" flag because it is the same for "rotate" which is used here. A disabled wall switch is actually changed to "NONE" actuator.
 					Timer bp40;
@@ -2242,70 +1718,42 @@ _1cb6:
 					continue;
 
 				case ACTUATOR_TYPE_WALL_SWITCH: // 0x18 -> 'Activator, push button wall switch'
-					//^2FCF:1D4D
 _1d4d:
 					if (si != OBJECT_NULL || bp04->ActiveStatus() != 0)
-						//^2FCF:1D52
 						continue;
-					//^2FCF:1D66
 					Timer xtimer;
 					xtimer.SetMap(glbCurrentMapIndex);
 					xtimer.SetTick(glbGameTick +bp18 +2);
-					//^2FCF:1D8F
 					xtimer.TimerType(ttyWallButton);
 					xtimer.actor = TIMER_ACTOR__00;
-					//^2FCF:1D97
 					xtimer.value = bp0e;
-					//^2FCF:1D9D
 					QUEUE_TIMER(&xtimer);
-					//^2FCF:1DA9
 						bp04->ActiveStatus(1);
 					
-					//^2FCF:1DB1
 					di = 0;
-					//^2FCF:1DB3
 					if (di != 0 || bp1a != 3) // SPX: if actuator effect is not 3 (step in open / step out close), then break
-						//^2FCF:1DC0
 						break;
-					//^2FCF:1DC3
 					bp26 = 1;
-					//^2FCF:1DC8
 					if (bp04->SoundEffect() != 0) {
-						//^2FCF:1DD6
 						QUEUE_NOISE_GEN2(GDAT_CATEGORY_x09_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0x8C, 0x80);
 					}
-					//^2FCF:1DFA
 					INVOKE_ACTUATOR(bp04, 0, 0);
-					//^2FCF:1E0B
 					INVOKE_ACTUATOR(bp04, 1, bp18 +1);
-					//^2FCF:1E1F
 					continue;
 
 				case ACTUATOR_TYPE_2_STATE_WALL_SWITCH: // 0x17 -> 'Activator, 2 state wall switch'
-					//^2FCF:1E22
 					if (si != OBJECT_NULL)
-						//^2FCF:1E27
 						continue;
-					//^2FCF:1E2A
 					bp04->OnceOnlyActuator(bp04->OnceOnlyActuator() ^ 1);
-					//^2FCF:1E49
 					di = !(bp04->OnceOnlyActuator() ^ bp04->RevertEffect());
-					//^2FCF:1E65
-					//^2FCF:1E67
 					break;
 
 				case ACTUATOR_x7E_TYPE_RESURECTOR: // 0x7E -> 'Activator, resuscitation'
-					//^2FCF:1E6A
 					if (bp04->OnceOnlyActuator() == 0 || ((cd.pi.glbPlayerDir + 2) & 3) != dir)
-						//^2FCF:1E8B
 						break;
-					//^2FCF:1E8E
 					SELECT_CHAMPION(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerDir, cd.pi.glbPlayerMap);
-					//^2FCF:1EA6
 					bp28 = 1;
-					//^2FCF:1EAB
 					di = 0;
-					//^2FCF:1EAD
 					break;
 
 				// SPX: addition for DM1 retrocompatibility
@@ -2320,139 +1768,85 @@ _1d4d:
 
 
 				case ACTUATOR_TYPE_KEY_HOLE: // 0x1A -> 'Activator, key hole'
-					//^2FCF:1EB0
 					bp1e = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x09_WALL_GFX, bp23, dtWordValue, GDAT_WALL_ORNATE__IS_ITEM_TRIGGERED);
-					//^2FCF:1EC5
 					if (bp04->OnceOnlyActuator() != 0) {
-						//^2FCF:1ED6
 						if (si != OBJECT_NULL)
-							//^2FCF:1EDB
 							goto _22b1;
-						//^2FCF:1EDE
 						si = FIND_DISTINCTIVE_ITEM_ON_TILE(xx, yy, bp10, bp1e);
-						//^2FCF:1EF3
 						if (si == OBJECT_END_MARKER) {
-							//^2FCF:1EF8
 							si = ALLOC_NEW_DBITEM(bp1e);
-							//^2FCF:1F03
 							if (si == OBJECT_NULL)
-								//^2FCF:1F08
 								continue;
-							//^2FCF:1F0B
 							APPEND_RECORD_TO(si = ObjectID(si, bp10), NULL, xx, yy);
 						}
-						//^2FCF:1F30
 						ADD_ITEM_CHARGE(si, 15);
-						//^2FCF:1F3A
 						MOVE_RECORD_TO(si, xx, yy, -1, 0);
-						//^2FCF:1F4C
 						bp34 = si;
 					}
 					else {
-						//^2FCF:1F51
 						if (si == OBJECT_NULL || GET_DISTINCTIVE_ITEMTYPE(si) != bp1e)
-							//^2FCF:1F65
 							continue;
-						//^2FCF:1F68
 						bp2a = 1;
-						//^2FCF:1F6D
 						MOVE_RECORD_TO(ObjectID(si, bp10), -1, 0, xx, yy);
 					}
-					//^2FCF:1F8D
 					si = OBJECT_NULL;
-					//^2FCF:1F90
 					goto _22ab;
 
 				case ACTUATOR_TYPE_X1B: // 0x1b -> ?
-					//^2FCF:1F96
 					if (bp18 == 0)
-						//^2FCF:1F9C
 						continue;
-					//^2FCF:1F9F
 					bp1e = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x09_WALL_GFX, bp23, dtWordValue, 0x0e);
-					//^2FCF:1FB4
 					if (GET_DISTINCTIVE_ITEMTYPE(si) != bp1e)
-						//^2FCF:1FC0
 						continue;
-					//^2FCF:1FC3
 					bp2a = 1;
-					//^2FCF:1FC8
 					si = OBJECT_NULL;
-					//^2FCF:1FCB
 					if (--bp18 == 0) {
-						//^2FCF:1FD5
 						di = 0;
-						//^2FCF:1FD7
 						bp04->ActiveStatus(1);
 					}
-					//^2FCF:1FDF
 					bp04->ActuatorData(bp18);
-					//^2FCF:1FF5
 					break;
 
 				case ACTUATOR_TYPE_SIMPLE_LADDER: // 0x1c -> ? (comes from BETA)
 					if (SkCodeParam::bUseFixedMode == false)	// SPX: this actuator type seems to be used only in BETA dungeon, as a ladder. Though with the original code here, it does not trigger.
 					{
-					//^2FCF:1FF8
 					if (si != OBJECT_NULL || bp04->OnceOnlyActuator() != 0)
-						//^2FCF:2011
 						continue;
 					}
 					else	// SPX: I am not sure here, I keep the condition in another way so that the ladder triggers when player click on it.
 						if (si == OBJECT_NULL && bp04->OnceOnlyActuator() == 0)
 							continue;
-					//^2FCF:2014
 					bp36 = (bp04->RevertEffect() != 0) ? bp04->ActionType() : ((bp04->ActionType() + cd.pi.glbPlayerDir) & 3);
-					//^2FCF:204E
 					TRANSFER_PLAYER(bp04->Xcoord(), bp04->Ycoord(), bp18 & 0x3f, bp36);
-					//^2FCF:2078
 					_1031_098e();
 
 					break;
 			}
-			//^2FCF:207D
 			if (bp1a == 3) {
-				//^2FCF:2083
 				bp1a = (di != 0) ? 1 : 0;
-				//^2FCF:2091
 				di = 0;
 			}
-			//^2FCF:2093
 			if (di != 0)
-				//^2FCF:2097
 				continue;
-			//^2FCF:209A
 			bp26 = 1;
-			//^2FCF:209F
 			if (bp04->SoundEffect() != 0) {
-				//^2FCF:20B0
 				QUEUE_NOISE_GEN2(GDAT_CATEGORY_x09_WALL_GFX, bp23, SOUND_STD_ACTIVATION, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0x8c, 0x80);
 			}
-			//^2FCF:20D4
 			INVOKE_ACTUATOR(bp04, bp1a, 0);
-			//^2FCF:20E6
 			continue;
 		}
-		//^2FCF:20E9
 		U8 bp23;
 		Text *bp0c;
 		SimpleActuator *xSimpleActuator;
 		if (rlUnk == OBJECT_NULL && bp1c == dbText) {
-			//^2FCF:20FB
 			bp0c = GET_ADDRESS_OF_RECORD2(bp0e);
 			xSimpleActuator = (SimpleActuator*) bp0c;
 			//printf("Current Simple Actuator GFX = %d (%02x)\n", xSimpleActuator->graphism, xSimpleActuator->graphism);
-			//^2FCF:210A
 			if (bp0c->TextMode() != 1)
-				//^2FCF:211B
 				continue;
-			//^2FCF:211E
 			bp23 = bp0c->TextIndex() & 0xff;
-			//^2FCF:212D
 			if (glbChampionLeader == -1)
-				//^2FCF:2134
 				continue;
-			//^2FCF:2137
 			i16 bp20;
 			i16 bp22;
 			i16 bp36;
@@ -2460,70 +1854,43 @@ _1d4d:
 			switch (bp16 = bp0c->SimpleTextExtUsage()) {
 				case  4: // Holder (Torch holder)
 				case  8: // Recharge (Blue gem crop)
-					//^2FCF:2161
 					bp1e = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x09_WALL_GFX, bp23, dtWordValue, GDAT_WALL_ORNATE__SWITCH_ITEM);
-					//^2FCF:2176
 					if (bp0c->TextVisibility() != 0) {
-						//^2FCF:2187
 						if (si != OBJECT_NULL)
-							//^2FCF:218C
 							goto _22b1;
-						//^2FCF:218F
 						si = FIND_DISTINCTIVE_ITEM_ON_TILE(xx, yy, bp10, bp1e);
-						//^2FCF:21A4
 						if (si == OBJECT_NULL) {
-							//^2FCF:21A9
 							si = ALLOC_NEW_DBITEM(bp1e);
-							//^2FCF:21B4
 							if (si == OBJECT_NULL)
-								//^2FCF:21B9
 								continue;
-							//^2FCF:21BC
 							APPEND_RECORD_TO(si = ObjectID(si, bp10), NULL, xx, yy);
 						}
-						//^2FCF:21E1
 						ADD_ITEM_CHARGE(si, 15);
-						//^2FCF:21EB
 						MOVE_RECORD_TO(si, xx, yy, -1, 0);
 
 						SkD((DLV_TWEET, "Tweet: You (x:%d, y:%d, map:%d) have taken %s from wall \n"
 							, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, glbCurrentMapIndex
 							, static_cast<LPCSTR>(getRecordNameOf(si))
 							));
-						//^2FCF:21FD
 						bp34 = si;
-						//^2FCF:2200
 						si = OBJECT_NULL;
-						//^2FCF:2203
 						if (bp16 != 8)
-							//^2FCF:2209
 							goto _22ab;
-						//^2FCF:220C
 						Timer bp40;
 						bp40.SetMap(glbCurrentMapIndex);
 						// SPX: 0x12 is the RESPAWN value, then trigger a timer to setup again the ornate (gem)
 						bp40.SetTick(QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x09_WALL_GFX, bp23, dtWordValue, GDAT_WALL_ORNATE__RESPAWN_COOLDOWN) + glbGameTick +2);
-						//^2FCF:224A
 						bp40.TimerType(ttySimpleActuTurnOn);
 						bp40.actor = TIMER_ACTOR__00;
-						//^2FCF:2252
 						bp40.value = bp0e;
-						//^2FCF:2258
 						QUEUE_TIMER(&bp40);
 					}
-					//^2FCF:2266
 					else if (bp16 != 8) {	// Is not Recharge (8), then it is Torch Holder (4)
-						//^2FCF:226C
 						if (si == OBJECT_NULL)
-							//^2FCF:2271
 							continue;
-						//^2FCF:2274
 						if (GET_DISTINCTIVE_ITEMTYPE(si) != bp1e)
-							//^2FCF:2280
 							continue;
-						//^2FCF:2283
 						bp2a = 1;
-						//^2FCF:2288
 						MOVE_RECORD_TO(ObjectID(si, bp10), -1, 0, xx, yy);
 
 						SkD((DLV_TWEET, "Tweet: You (x:%d, y:%d, map:%d) have placed %s at wall \n"
@@ -2531,56 +1898,37 @@ _1d4d:
 							, static_cast<LPCSTR>(getRecordNameOf(si))
 							));
 
-						//^2FCF:22A8
 						si = OBJECT_NULL;
 					}
-					//^2FCF:22AB
 _22ab:
 					glbDoLightCheck = 1;
-					//^2FCF:22B1
 _22b1:
 					bp28 = 1;
-					//^2FCF:22B6
 					continue;
 
 				case  7:	// ladder disabled
-					//^2FCF:22B9
 					if (bp0c->TextVisibility() != 0)
-						//^2FCF:22C7
 						continue;
 
 					goto _22ca;
 
 				case  6:	// ladder enabled
-					//^2FCF:22CA
 _22ca:
 					if (si != OBJECT_NULL)
-						//^2FCF:22CF
 						continue;
-					//^2FCF:22D2
 					bp36 = (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x09_WALL_GFX, bp23, dtWordValue, GDAT_WALL_ORNATE__IS_LADDER_UP) != 0) ? -1 : 1;
-					//^2FCF:22F4
 					bp20 = cd.pi.glbPlayerPosX;
 					bp22 = cd.pi.glbPlayerPosY;
-					//^2FCF:2300
 					bp36 = LOCATE_OTHER_LEVEL(cd.pi.glbPlayerMap, bp36, &bp20, &bp22, NULL);
-					//^2FCF:2320
 					if (bp36 < 0)
-						//^2FCF:2322
 						continue;
-					//^2FCF:2324
 					TRANSFER_PLAYER(bp20, bp22, bp36, cd.pi.glbPlayerDir);
-					//^2FCF:2338
 					_1031_098e();
-					//^2FCF:233D
 					continue;
 
 				case 13:	// 2 state ornate (such as window)
-					//^2FCF:233F
 					if (si != OBJECT_NULL)
-						//^2FCF:2342
 						continue;
-					//^2FCF:2344
 					bp0c->TextVisibility(bp0c->TextVisibility() ^ 1);
 
 					break;
@@ -2593,12 +1941,9 @@ _22ca:
 					continue;
 			}
 		}
-		//^2FCF:235F
 		// TODO DM2_EXTENDED_DATABASE
 		if (bp1c >= dbActuator)
-			//^2FCF:2363
 			break;
-		//^2FCF:2365
 	}
 
 
@@ -2607,36 +1952,23 @@ _22ca:
 		DM1_ROTATE_ACTUATOR_LIST(2, xx, yy, -1, iWallSideToRotate);
 
 	
-	//^2FCF:2380
 	if (rlUnk == OBJECT_NULL) {
-		//^2FCF:2386
 		if (bp2a != 0)
-			//^2FCF:238C
 			REMOVE_OBJECT_FROM_HAND();
-		//^2FCF:2391
 		if (bp34 != OBJECT_NULL) {
-			//^2FCF:2397
 			TAKE_OBJECT(bp34, 1);
 		}
-		//^2FCF:23A3
 		cd.gg.glbRefreshViewport = bp26;
-		//^2FCF:23A9
 		return;
 	}
-	//^2FCF:23AB
 	GenericContainerRecord *bp08 = GET_ADDRESS_OF_GENERIC_CONTAINER_RECORD(rlUnk);
-	//^2FCF:23BA
 	if (bp2a == 0 && rlWhatYouPlace != OBJECT_NULL) {
-		//^2FCF:23C6
 		APPEND_RECORD_TO(rlWhatYouPlace, &bp08->possession, -1, 0);
 	}
-	//^2FCF:23DE
 	if (bp34 != OBJECT_NULL) {
-		//^2FCF:23E4
 		APPEND_RECORD_TO(bp34, &bp08->possession, -1, 0);
 	}
 
-	//^2FCF:23FC
 	return;
 }
 
@@ -2722,9 +2054,7 @@ U16 SkWinCore::STORE_EXTRA_DUNGEON_DATA()
 // SPX: _24a5_036a renamed ADD_BACKGROUND_LIGHT_FROM_TILE
 void SkWinCore::ADD_BACKGROUND_LIGHT_FROM_TILE(i16 aa, U16 bb, i16 xx, i16 yy, U16 ww)
 {
-	//^24A5:036A
 	ENTER(46);
-	//^24A5:0370
 	X16 di = 0;
 	X16 bp12 = 0;
 	X16 bp14 = 0;
@@ -2740,7 +2070,6 @@ void SkWinCore::ADD_BACKGROUND_LIGHT_FROM_TILE(i16 aa, U16 bb, i16 xx, i16 yy, U
 	U16 bp0e;
 	switch (bp2e.w0) {
 		case 0://^03A4
-			//^24A5:03A4
 			if ((ww & 4) == 0)
 				break;
 			bp16 = bp2e.tfoi[2];
@@ -2753,15 +2082,12 @@ void SkWinCore::ADD_BACKGROUND_LIGHT_FROM_TILE(i16 aa, U16 bb, i16 xx, i16 yy, U
 			bp10 = ((si & 0x8000) != 0) ? 1 : 0;
 			si &= 0x7fff;
 			if (QUERY_GDAT_ENTRY_DATA_INDEX(9, bp0b, dtWordValue, 0x63) != 0) {
-				//^24A5:0408
 				bp1e = BETWEEN_VALUE(0, glbRainAmbientLightModifier + glbRainSomeLightMod, 5);
 				bp12 = (tLightLevelTable[RCJ(6,bp1e)] * si) / 0x64 +bp12;
 				break;
 			}
-			//^24A5:043F
 			if (bp10 != 0 && (bp16 >> 8) == 0)
 				break;
-			//^24A5:0452
 			di += si;
 			break;
 		case 1://^0457
@@ -2771,12 +2097,10 @@ void SkWinCore::ADD_BACKGROUND_LIGHT_FROM_TILE(i16 aa, U16 bb, i16 xx, i16 yy, U
 		case 17://^0457
 		case 18://^0457
 		case 19://^0457
-			//^24A5:0457
 			if ((ww & 1) == 0)
 				break;
 			if (bp2e.w0 != 1 && bp2e.w0 != 2 && bp2e.w0 != 5)
 				goto _0519;
-			//^24A5:0476
 			bp16 = bp2e.tfoi[2];
 			bp0b = X8(bp16);
 			if (bp0b == 0xff)
@@ -2786,44 +2110,34 @@ void SkWinCore::ADD_BACKGROUND_LIGHT_FROM_TILE(i16 aa, U16 bb, i16 xx, i16 yy, U
 				break;
 			bp10 = ((si & 0x8000) != 0) ? 1 : 0;
 			si &= 0x7fff;
-			//^24A5:04BA
 			TELE_inf bp1c;
 			if (GET_TELEPORTER_DETAIL(&bp1c, U8(xx), U8(yy)) != 0) {
-				//^24A5:04D1
 				bp1e = BETWEEN_VALUE(0, glbRainAmbientLightModifier + glbRainSomeLightMod, 5);
 				bp12 = (tLightLevelTable[RCJ(6,bp1e)] * si) / 0x64 +bp12;
 				goto _0519;
 			}
 			else {
-				//^24A5:0507
 				if (bp10 == 0 || (bp16 >> 8) != 0)
 					di += si;
-				//^24A5:0519
 _0519:
 				bp0a = bp2e.w4;
 			}
 			for (; bp0a != OBJECT_END_MARKER; bp0a = GET_NEXT_RECORD_LINK(bp0a)) {
-				//^24A5:051F
 				bp0e = bp0a.DBType();
 				if (bp0e == dbCloud) {
-					//^24A5:0530
 					Cloud *bp04 = GET_ADDRESS_OF_RECORDF(bp0a);
 					if (bp04->CloudType() != 2 && bp04->CloudType() != 0 && bp04->CloudType() != 0x30)
 						continue;
-					//^24A5:0565
 					bp14 = (bp04->b3_0_f() >> 1) +bp14;
 					continue;
 				}
-				//^24A5:057B
 				if (bp0e == dbMissile) {
 					Missile *bp08 = GET_ADDRESS_OF_RECORDE(bp0a);
 					if (bp08->GetMissileObject() == OBJECT_EFFECT_FIREBALL) {	// oFF80
 						bp14 += (i16(bp08->EnergyRemaining()) >> 1) - _4976_3d6d[3];
 					}
 				}
-				//^24A5:05A9
 			}
-			//^24A5:05BE
 			if ((ww & 2) != 0) {
 				bp0a = GET_CREATURE_AT(xx, yy);
 				if (bp0a != OBJECT_NULL) {
@@ -2846,7 +2160,6 @@ _0519:
 		case 15://^05EE
 			break;
 	}
-	//^24A5:05EE
 	// SPX: aa is distance between player and the current processed tile
 	if (aa <= 8 && bp12 != 0) {
 		bp12 = max_value(3, bp12 - _4976_3d5b[RCJ(9,aa)]);
@@ -2854,26 +2167,18 @@ _0519:
 	else {
 		bp12 = 0;
 	}
-	//^24A5:061A
 	if (aa > 5)
 		aa = 5;
-	//^24A5:0625
 	if (di != 0) {
-		//^24A5:0629
 		di = max_value(2, di - _4976_3d6d[RCJ(6,aa)]);
 	}
-	//^24A5:0640
 	//printf("Calculting light: %d + %d + %d => %d\n", glbPrecomputedLight, di, bp12, glbPrecomputedLight + di + bp12);
 	glbPrecomputedLight += di + bp12;
 
-	//^24A5:0649
 	if (bp14 != 0) {
-		//^24A5:064F
 		bp14 = max_value(2, bp14 - _4976_3d6d[RCJ(6,aa)]);
 	}
-	//^24A5:0668
 	glbLightModifier += bp14;
-	//^24A5:066F
 	return;
 }
 
@@ -2882,11 +2187,8 @@ _0519:
 // SPX: _1c9a_02f6 renamed CHECK_RECOMPUTE_LIGHT
 void SkWinCore::CHECK_RECOMPUTE_LIGHT(i16 xx, i16 yy)
 {
-	//^1C9A:02F6
 	ENTER(34);
-	//^1C9A:02FB
 	U16 recomputeLight = 0;	// si
-	//^1C9A:02FD
 	// SPX: Comparison of these 0x6D (GDAT_GFXSET_AMBIANT_DARKNESS) values ..
 	// VOID => 0
 	// THICKET => 3
@@ -2896,51 +2198,35 @@ void SkWinCore::CHECK_RECOMPUTE_LIGHT(i16 xx, i16 yy)
 	// MISTY => 3
 	// DEBUG => 8
 	i16 bp0c = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_x6D_AMBIANT_DARKNESS);
-	//^1C9A:0312
 	if (bp0c == 0) {
-		//^1C9A:0318
 		glbDoLightCheck = 0;
-		//^1C9A:031E
 		glbPrecomputedLight = 0;
 		glbPreviousPrecompLight = 0;
 		glbLightModifier = 0;
 		glbPreviousLightModifier = 0;
-		//^1C9A:032E
 		return;
 	}
-	//^1C9A:0330
 	if (bp0c > 8) {	// Thresholding at 8
-		//^1C9A:0336
 		bp0c = 8;
 	}
-	//^1C9A:033B
 	skxxx9 bp22;
 	bp22.b0 = i8(bp0c);
 	bp22.b1 = 0;
 	bp22.b7 = 0x17;
-	//^1C9A:0349
 	WalkPath bp0a[5]; // size=?
 	FIND_WALK_PATH(xx, yy, 7, 0, 1, &bp22, bp0a);
-	//^1C9A:0367
 	if (glbPrecomputedLight != glbPreviousPrecompLight) {
-		//^1C9A:0370
 		glbPreviousPrecompLight = glbPrecomputedLight;
 		recomputeLight = 1;
 	}
-	//^1C9A:0376
 	if (glbLightModifier != glbPreviousLightModifier) {
-		//^1C9A:037F
 		glbPreviousLightModifier = glbLightModifier;
 		recomputeLight = 1;
 	}
-	//^1C9A:0385
 	if (recomputeLight != 0) {
-		//^1C9A:0389
 		RECALC_LIGHT_LEVEL();
 	}
-	//^1C9A:038E
 	glbDoLightCheck = 0;
-	//^1C9A:0394
 	return;
 }
 
@@ -2998,46 +2284,28 @@ void SkWinCore::END_GAME(U16 xx)
 {
 	ENTER(2);
 	FIRE_HIDE_MOUSE_CURSOR();
-	//^101B:000A
 	if (xx != 0 && _4976_4c26 == 0) {
-		//^101B:0017
 		U8 bp01 = (cd.pi.glbChampionsCount > 0) ? glbChampionSquad[0].HeroType() : 0xFE;
-		//^101B:002A
 		// SPX: Sound when dying
 		QUEUE_NOISE_GEN2(GDAT_CATEGORY_x16_CHAMPIONS, bp01, SOUND_CHAMPION_SCREAM, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 0, 255, 255);
-		//^101B:004E
 		SLEEP_SEVERAL_TIME(240);
 	}
-	//^101B:0057
 	DIALOG_BOX_2066_03e0(0);
-	//^101B:005F
 	cd.gg.glbGameHasEnded = 1;
 #if DM2_EXTENDED_MODE == 1
 	glbXAmbientSoundActivated = 0;	// reinit that variable to get ambient sound again with a restart
 #endif
-	//^101B:0065
 	if (xx != 0) {
-		//^101B:006B
 		FIRE_FILL_SCREEN_RECT(2, 0);
-		//^101B:0076
 		if (_4976_5bf6 != 0) {
-			//^101B:007D
 			_4976_5bf2 = (DIALOG_BOX_0aaf_0067(_0aaf_02f8_DIALOG_BOX(DIALOGBOX_x10_RESTART_GAME, 0)) == 0) ? 1 : 0;
-			//^101B:009D
 			if (_4976_5bf2 != 0) {
-				//^101B:00A1
 				cd.mo.glbSpecialScreen = _MENU_SCREEN__RESUME_GAME_SELECT;
-				//^101B:00A7
 				if (GAME_LOAD() != -1) {
-					//^101B:00B1
 					__INIT_GAME_38c8_03ad();
-					//^101B:00B6
 					_4976_5bf2 = 0;
-					//^101B:00BC
 					FIRE_SHOW_MOUSE_CURSOR();
-					//^101B:00C1
 					_1031_098e();
-					//^101B:00C6
 					return;
 				}
 			}
@@ -3315,9 +2583,7 @@ U16 SkWinCore::_476d_04ed_DOES_NOTHING(U16 xx)
 //^2066:2CA8
 U16 SkWinCore::LOAD_NEW_DUNGEON() 
 {
-	//^2066:2CA8
 	ENTER(6);
-	//^2066:2CAD
 	X8 bp05 = 0;
 	U8 *bp04 = ALLOC_MEMORY_RAM(0x400, afDefault, 0x80);
 
@@ -3325,7 +2591,7 @@ U16 SkWinCore::LOAD_NEW_DUNGEON()
 
 	if (false) {
 		//^2066:2CCB
-
+		/// ???
 		//^2066:2D0C
 	}
 	DEALLOC_UPPER_MEMORY(0x400);
@@ -3371,7 +2637,7 @@ U16 SkWinCore::ORIGINAL__LOAD_NEW_DUNGEON()
 	U8 *bp04 = ALLOC_MEMORY_RAM(0x400, afDefault, 0x80);
 	if (false) {
 		//^2066:2CCB
-
+		/// ???
 		//^2066:2D0C
 	}
 	DEALLOC_UPPER_MEMORY(0x400);
@@ -3394,9 +2660,7 @@ U16 SkWinCore::ORIGINAL__LOAD_NEW_DUNGEON()
 //^2066:32BB
 i16 SkWinCore::SELECT_LOAD_GAME()
 {
-	//^2066:32BB
 	ENTER(14);
-	//^2066:32C1
 	if (_4976_5bf2 != 0)
 		return glbSKSaveNum;
 	__OPEN_DIALOG_PANEL(0x80, 5);
@@ -3412,7 +2676,6 @@ i16 SkWinCore::SELECT_LOAD_GAME()
 		while (IS_THERE_KEY_INPUT_2() != 0) {
 			_1031_0d36_KEYBOARD(0x20, SPECIAL_UI_KEY_TRANSFORMATION());
 		}
-		//^2066:3317
 		MAIN_LOOP();
 		SRECT bp0e;
 		i16 bp02;
@@ -3420,22 +2683,18 @@ i16 SkWinCore::SELECT_LOAD_GAME()
 		U16 di;
 		switch (_4976_4dfc) {
 			case 1://^_3330
-				//^2066:3330
 				si = -1;
 				goto _3333;
 			case 2://^_3333
-				//^2066:3333
 _3333:
 				bp06 = 1;
 				break;
 			case 3://^_333a
-				//^2066:333A
 				QUERY_EXPANDED_RECT(_4976_4df8, &bp0e);
 				QUERY_TOPLEFT_OF_RECT(_4976_4e44, &bp02, &bp04);
 				di = _4976_4e68;
 				di -= bp0e.y +bp04;
 				si = min_value(di / glbPanelStatsYDelta, 10);
-				//^2066:3380
 				if (_4976_5250[si].w40 == 0xDEAD && _4976_5250[si].w38 == 0xBEEF)
 					si = -1;
 				_2066_398a(si);
@@ -3443,11 +2702,8 @@ _3333:
 			default://^_33aa
 				break;
 		}
-		//^2066:33AA
 		_4976_4dfc = 0xffff;
-		//^2066:33B0
 	} while (bp06 == 0);
-	//^2066:33B9
 	DIALOG_2066_37f2();
 	return si;
 }
@@ -3456,96 +2712,64 @@ _3333:
 //^2066:1FAB
 void SkWinCore::ARRANGE_DUNGEON()
 {
-	//^2066:1FAB
-	//^2066:1FB1
 	SkD((DLV_DBG_GAME_LOAD, "ARRANGE_DUNGEON\n"));
 	for (U16 iMapIndex = 0; iMapIndex < dunHeader->nMaps; iMapIndex++) {
-		//^2066:1FB6
 
 		U16 bp2e = dunMapsHeaders[iMapIndex].RawColumn();
 		U16 bp30 = dunMapsHeaders[iMapIndex].RawRow();
-		//^2066:1FE6
 		X8 *bp04 = *glbMapTileValue[iMapIndex];
 		SkD((DLV_DBG_GAME_LOAD, "MAP %d/%d (C=%d, R=%d) TMAP=%08x\n", iMapIndex, dunHeader->nMaps, bp2e, bp30, bp04));
-		//^2066:2001
 		OID_T *bp1c = &dunGroundStacks[dunMapTilesObjectIndexPerColumn[dunMapColumnsSumArray[iMapIndex]]]; // U16 *bp1c
-		//^2066:202B
 		for (U16 bp2a=0; bp2a <= bp2e; bp2a++) {
-			//^2066:2033
 			for (U16 bp2c=0; bp2c <= bp30; bp2c++) {
-				//^2066:203B
 				X8 bp35 = *(bp04++);
-				//^2066:2047
 				if ((bp35 & 0x10) != 0) {
-					//^2066:204E
 					ObjectID di = *bp1c;
 					bp1c++;
-					//^2066:2058
 					do {
 						switch (di.DBType()) {
 							case dbTeleporter:
 								{
-									//^2066:22D0
 									Teleporter *bp0c = (Teleporter *)GET_ADDRESS_OF_RECORD(di);
-									//^2066:22DD
 									CHANGE_CURRENT_MAP_TO(bp0c->DestinationMap());
-									//^2066:22EE
 									ObjectID bp26 = GET_TILE_RECORD_LINK(bp0c->DestinationX(), bp0c->DestinationY());
-									//^2066:230E
 									if (bp26 == OBJECT_END_MARKER)
 										break;
-									//^2066:2316
 									if (bp26.DBType() != dbTeleporter)
 										break;
-									//^2066:2327
 									Teleporter *bp10 = GET_ADDRESS_OF_RECORD1(bp26);
-									//^2066:2336
 									if (bp10->DestinationX() != bp2a)
 										break;
-									//^2066:2348
 									if (bp10->DestinationY() != bp2c)
 										break;
-									//^2066:2357
 									if (bp10->DestinationMap() != iMapIndex)
 										break;
-									//^2066:2362
 									U16 bp3c = 0;
-									//^2066:2367
 									U16 bp32 = _2066_1f37(bp26, bp0c->DestinationMap(), &bp3c);
-									//^2066:2384
 									bp32 |= _2066_1f37(di, iMapIndex, &bp3c);
-									//^2066:2395
 									if (bp3c == 2) {
-										//^2066:239B
 										bp10->w0 = bp0c->w0 = _2066_1ec9(GET_NEXT_RECORD_LINK(di), GET_NEXT_RECORD_LINK(bp26));
 										break;
 									}
-									//^2066:23C1
 									if (bp3c == 0 && bp32 != 0)
 										goto _23de;
 									break;
 								}
 							case dbText:
 								{
-									//^2066:2071
 									Text *bp20 = GET_ADDRESS_OF_RECORD(di)->castToText();
-									//^2066:207E
 									if (bp20->TextMode() != 1)
 										break;
-									//^2066:2092
 									switch (bp20->SimpleTextExtUsage()) {
 										case 0x06: // Ladder enabled
 										case 0x07: // Ladder disabled
 											{
-												//^2066:20B4
 												U16 bp34 = di.Dir();
-												//^2066:20BC
 												SET_TILE_ATTRIBUTE_02(bp2a + glbXAxisDelta[bp34], bp2c + glbYAxisDelta[bp34], iMapIndex);
 												break;
 											}
 										case 0x08: // Recharge
 											{
-												//^2066:20E1
 												bp20->TextVisibility(1);
 												break;
 											}
@@ -3554,34 +2778,24 @@ void SkWinCore::ARRANGE_DUNGEON()
 								}
 							case dbActuator:
 								{
-									//^2066:20EB
 									Actuator *bp08 = GET_ADDRESS_OF_RECORD(di)->castToActuator();
-									//^2066:20F8
 									U16 bp3e = bp08->ActuatorType();
-									//^2066:2105
 									switch (bp3e) {
 										case ACTUATOR_TYPE_SIMPLE_LADDER: // 0x1C unused in retail ver.
 										case ACTUATOR_TYPE_SHOP_PANEL: // 0x3F Shop panel
-											//^2066:213E
 											bp08->ActiveStatus(0);
 											bp08->OnceOnlyActuator(1);
 											break;
 										case ACTUATOR_FLOOR_TYPE__CROSS_SCENE: // 0x27 Cross scene
 										case ACTUATOR_FLOOR_TYPE__INFINITE_ORNATE_ANIMATOR: // 0x2C Continuous ornate animator
-											//^2066:211E
 											if (bp08->OnceOnlyActuator() != 1)
 												break;
-											//^2066:2133
 											bp08->ActiveStatus(1);
 											break;
 										case ACTUATOR_TYPE_PUSH_BUTTON_WALL_SWITCH: // 0x46 Activator, seal-able push button wall switch
-											//^2066:214E
 											CHANGE_CURRENT_MAP_TO(iMapIndex);
-											//^2066:2155
 											if ((GET_TILE_VALUE(bp08->Xcoord(), bp08->Ycoord()) >> 5) != ttDoor)
 												break;
-											//^2066:2181
-											//^2066:2192
 											GET_ADDRESS_OF_TILE_RECORD(bp08->Xcoord(), bp08->Ycoord())->castToDoor()->DoorBit13B(bp08->OnceOnlyActuator() & 1);
 											break;
 									}
@@ -3589,27 +2803,18 @@ void SkWinCore::ARRANGE_DUNGEON()
 								}
 							case dbCreature:
 								{
-									//^2066:21C3
 									Creature *bp14 = GET_ADDRESS_OF_RECORD(di)->castToCreature();
-									//^2066:21D0
 									AIDefinition *bp18 = QUERY_CREATURE_AI_SPEC_FROM_TYPE(bp14->CreatureType());
-									//^2066:21E4
 									// SPX in non DM2 mode, creature HP is not defined by AIDef
 									if (!SkCodeParam::bDM1Mode && !SkCodeParam::bBWMode)
 										bp14->HP1(bp18->BaseHP);	// Otherwise, set HP from AIDef -- DM2 behaviour
-									//^2066:21F2
 									if (bp18->IsStaticObject() == 0) {
-										//^2066:21FC
 										bp14->HP3(0);
-										//^2066:2205
 										bp14->SetTriggerXPos(bp2a);
-										//^2066:2214
 										bp14->SetTriggerYPos(bp2c);
-										//^2066:2227
 										bp14->SetTriggerMap(iMapIndex);
 										break;
 									}
-									//^2066:223B
 									bp14->iAnimSeq = bp14->iAnimFrame = 0;
 									//bp14->iAnimSeq = 0x01EB;	// SPX add	0x01EB = spawn animation sequence
 									//bp14->iAnimFrame = 0x8001;	// SPX add => 1 frame
@@ -3617,65 +2822,45 @@ void SkWinCore::ARRANGE_DUNGEON()
 										bp14->HP1(0);
 										bp14->iAnimSeq = 0x00D3;	// SPX: not sure about this
 									}
-									//^2066:2248
 									CREATURE_SET_ANIM_FRAME(di);
-									//^2066:224F
 									if (bp14->b14_7_7() != 0)
 										break;
-									//^2066:2263
 									U16 bp28 = bp14->possession;
-									//^2066:226A
 									if (bp28 == 0xfffe)
 										break;
-									//^2066:2272
 									bp14->possession = (bp28 & 0x3fff) | (RAND02() << 14);
-									//^2066:228A
 									while (bp28 != 0xfffe) {
-										//^2066:228C
 										GenericRecord *bp24 = GET_ADDRESS_OF_RECORD(bp28);
-										//^2066:229B
 										if (bp24->w0 != 0xfffe) {
-											//^2066:22A4
 											bp24->w0.Dir(RAND02());
 										}
-										//^2066:22BB
 										bp28 = GET_NEXT_RECORD_LINK(bp28);
-										//^2066:22C7
 									}
 									break;
 								}
 						}
-						//^2066:23CD
 						di = GET_NEXT_RECORD_LINK(di);
 					} while(di != OBJECT_END_MARKER);
 				}
-				//^2066:23DE
 _23de:
 				if ((bp35 >> 5) == ttPit) {
-					//^2066:23EA
 					// SPX: The item 0x6A is 1 only for VOID. It does not exist for other tilesets.
 					// Beware! if this is not set to a map expecting it, it will crash the map loading!
 					if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, dunMapsHeaders[iMapIndex].MapGraphicsStyle(), dtWordValue, GDAT_GFXSET_x6A_VOID_RANDOM_FALL) == 0) {	// 0x6A
-						//^2066:2412
 						i16 xx = bp2a; //i16 bp38 = bp2a;
 						i16 yy = bp2c; //i16 bp3a = bp2c;
 						U16 iLocatedMap = LOCATE_OTHER_LEVEL(iMapIndex, 1, &xx, &yy, NULL); // bp34 = ...
 						//SPX: locate_other_level can return -1 (65535) and it will crash the next function
 						if (SkCodeParam::bUseFixedMode && iLocatedMap != 65535) // Use fixed mode to prevent crash
-							//^2066:243A
 							//SET_TILE_ATTRIBUTE_02(bp38, bp3a, bp34);
 							SET_TILE_ATTRIBUTE_02(xx, yy, iLocatedMap);
 					}
 				}
-				//^2066:244A
 				SkD((DLV_DBG_GAME_LOAD, "MAP %d/%d (CI=%d, RI=%d) TMAP=%08x\n", iMapIndex, dunHeader->nMaps, bp2a, bp2c, bp04));
 			}
-			//^2066:2458
 			SkD((DLV_DBG_GAME_LOAD, "MAP %d/%d (CI=%d)\n", iMapIndex, dunHeader->nMaps, bp2a));
 		}
-		//^2066:2466
 	}
-	//exit(1);
 }
 
 //^2C1D:0250
@@ -3695,61 +2880,47 @@ i16 SkWinCore::GET_PLAYER_AT_POSITION(U16 position)
 // SPX: _2fcf_0cdf renamed TRY_PUSH_OBJECT_TO
 U16 SkWinCore::TRY_PUSH_OBJECT_TO(ObjectID rl, i16 xpos, i16 ypos, i16 *xx, i16 *yy)
 {
-	//^2FCF:0CDF
 	ENTER(12);
-	//^2FCF:0CE5
 	X16 si = RAND02();
 	X16 bp0a;
 	i8 *bp04 = (rl == OBJECT_NULL) ? (bp0a = cd.pi.glbPlayerDir, _4976_406c[si]) : (bp0a = 0, _4976_407c[si]);
 	i16 di;
 	for (di = 0; di <= 3; di++) {
-		//^2FCF:0D1A
 		si = (bp04[di] +bp0a) &3;
 		X16 bp06 = xpos + glbXAxisDelta[si];
 		X16 bp08 = ypos + glbYAxisDelta[si];
 		si = GET_TILE_VALUE(bp06, bp08);
 		if (IS_TILE_BLOCKED(U8(si)) == 0 && (si = (si >> 5)) != ttStairs) {
 			if (rl.DBType() != dbCreature || (si != ttTeleporter && si != ttPit)) {
-				//^2FCF:0D86
 				ObjectID bp0c = GET_CREATURE_AT(bp06, bp08);
 				if (bp0c == OBJECT_NULL || (rl == OBJECT_NULL && (QUERY_CREATURE_AI_SPEC_FLAGS(bp0c) & CREATURE_AI_FLAG_8000) != 0)) {
-					//^2FCF:0DAF
 					*xx = bp06;
 					*yy = bp08;
 					return 1;
 				}
 			}
 		}
-		//^2FCF:0DC6
 	}
-	//^2FCF:0DCF
 	return 0;
 }
 
 //^2C1D:1C0C
 X16 SkWinCore::ATTACK_PARTY(U16 quantity, U16 yy, U16 zz)
 {
-	//^2C1D:1C0C
 	ENTER(4);
-	//^2C1D:1C12
 	X16 di = quantity;
 	if (quantity == 0)
 		return 0;
-	//^2C1D:1C1D
 	X16 si = 0;
 	X16 bp04 = (di >> 3) +1;
 	di -= bp04;
 	bp04 <<= 1;
 	U16 bp02;
 	for (bp02 = 0; bp02 < cd.pi.glbChampionsCount; bp02++) {
-		//^2C1D:1C34
 		if (WOUND_PLAYER(bp02, max_value(1, di + RAND16(bp04)), yy, zz) != 0) {
-			//^2C1D:1C60
 			si |= 1 << bp02;
 		}
-		//^2C1D:1C6A
 	}
-	//^2C1D:1C76
 	return si;
 }
 
@@ -3761,27 +2932,22 @@ void SkWinCore::ATTACK_CREATURE(ObjectID rl, i16 xx, i16 yy, U16 ss, i16 tt, U16
 {
 	// quantity=0 to warn the creature. e.g. hazard notice of incoming missile.
 	printf("ATTACK CREATURE @ %d,%d with %d\n", xx, yy, quantity);
-	//^13E4:0401
 	ENTER(20);
-	//^13E4:0407
 	U16 di = 0;
 	if (rl == OBJECT_NULL) {
 		rl = GET_CREATURE_AT(xx, yy);
 		if (rl == OBJECT_NULL)
 			return;
 	}
-	//^13E4:0427
 	U16 bp12 = ss & 0x4000;
 	if (bp12 != 0) {
 		ss &= 0xbfff;
 		if (RAND01() != 0)
 			bp12 = 0;
 	}
-	//^13E4:0447
 	U16 bp14 = ss & 0x2000;
 	if (bp14 != 0)
 		ss &= 0xdfff;
-	//^13E4:0459
 	Creature* xCreature = GET_ADDRESS_OF_RECORD4(rl); // bp04
 	AIDefinition* xAIDef = QUERY_CREATURE_AI_SPEC_FROM_TYPE(xCreature->CreatureType()); // bp0c
 	U16 bp10 = xAIDef->IsStaticObject();
@@ -3790,61 +2956,46 @@ void SkWinCore::ATTACK_CREATURE(ObjectID rl, i16 xx, i16 yy, U16 ss, i16 tt, U16
 			return;
 		ALLOC_CAII_TO_CREATURE(rl, xx, yy);
 	}
-	//^13E4:04AC
 	CreatureInfoData* xCreatureData = &glbTabCreaturesInfo[xCreature->InternalID()];	// bp08
 	xCreatureData->w20 += quantity;
 	quantity = xCreatureData->w20;
-	//^13E4:04DB
 	U16 si;	// si , new command
 	U16 bp0e;
 	if (bp10 == 0 && tt > 0) {
-		//^13E4:04ED
 		if ((xCreature->iAnimFrame & 4) == 0) {
 			if (quantity <= 0x1E && (quantity <= 4 || RAND02() != 0) && (((quantity * U32(0x64)) / xAIDef->BaseHP) > 15)) {
-				//^13E4:0537
 				xCreature->iAnimFrame |= 4;
 				bp12 = 1;
 			}
 		}
-		//^13E4:0545
 		if (bp12 != 0) {
-			//^13E4:054E
 			if ((tblAIStats01[QUERY_GDAT_CREATURE_WORD_VALUE(xCreature->CreatureType(), 1)] & 0x80) == 0 && RAND01() != 0) {
-				//^13E4:057A
 				si = CALC_VECTOR_DIR(xx, yy, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
 				if ((xCreature->iAnimFrame & 8) != 0 && RAND02() != 0)
 					goto _05bd;
 				if ((xCreature->b15 & 3) != si && RAND02() == 0) {
-					//^13E4:05BD
 _05bd:
 					si = (si +2) & 3;
 				}
-				//^13E4:05C6
 				if (xCreature->b15_0_1() == ((si +2) & 3)) {
 					si = (RAND01() != 0) ? 7 : 6;
 				}
-				//^13E4:05F1
 				else if (xCreature->b15_0_1() != si) {
 					si = (xCreature->b15_0_1() == ((si -1) & 3)) ? 7 : 6;
 				}
-				//^13E4:061A
 				else if (RAND02() == 0) {
 					si = (RAND01() != 0) ? 6 : 7;
 				}
 				else {
-					//^13E4:0638
 					si = 0xffff;
 				}
-				//^13E4:063B
 				if (si != 0xffff) {
 					CREATURE_SET_NEW_COMMAND(rl, xx, yy, U8(si), 0);
 				}
 			}
 		}
-		//^13E4:0653
 		di = (RAND16(0x64) < tt) ? 1 : 0;
 		if (di != 0) {
-			//^13E4:066D
 			bp0e = ss & 0x8000;
 			ss = 1 << (ss & 0xff);
 			if (bp0e != 0) {
@@ -3855,17 +3006,12 @@ _05bd:
 			}
 		}
 	}
-	//^13E4:069F
 	if (bp10 == 0 && bp14 != 0 && tt == 0) {
-		//^13E4:06B1
 		di = 1;
 	}
-	//^13E4:06B1
 	else if (di != 0 && ((bp0e == 0 && ((ss & 0x40) != 0)) || bp14 != 0) && (tlbCreatureCommandsFlags[RCJ(MAX_CREATURE_COMMANDS,xCreatureData->Command)] & 0x10) == 0) {
-		//^13E4:06DE
 		di = 1;
 	}
-	//^13E4:06E3
 	else {
 		di = 0;
 	}
@@ -3887,9 +3033,7 @@ U8 *SkWinCore::PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timer
 	SkD((DLV_DBG_CAI, "DBM: PREPARE_LOCAL_CREATURE_VAR(rl=%04X, z=%d, x=%d, y=%d, TiTy=%d)\n"
 		, (Bitu)rl.w, (Bitu)glbCurrentMapIndex, (Bitu)xx, (Bitu)yy, (Bitu)timerType));
 
-	//^13E4:0004
 	ENTER(14);
-	//^13E4:0008
 	U8* xLocalThinkCreatureData = NULL;	// bp04
 	i16 bp0e = glbCurrentMapIndex;
 	glbCurrentMapIndex = -1;
@@ -3906,7 +3050,6 @@ U8 *SkWinCore::PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timer
 	_4976_5160 = 1;
 	_4976_5161 = 0;
 	glbCurrentThinkingCreatureID = rl;
-	//^13E4:0073
 	Creature *xCreature = glbCurrentThinkingCreatureRec = GET_ADDRESS_OF_RECORD4(rl); // bp08
 	CreatureInfoData *xCreatureInfo = (xCreature->InternalID() != 0xFF) ? &glbTabCreaturesInfo[xCreature->InternalID()] : NULL; // bp0c
 #ifndef __DJGPP__
@@ -3925,15 +3068,12 @@ U8 *SkWinCore::PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timer
 			, (Bitu)xCreature->InternalID()
 		));
 #endif // __DJGPP__
-	//^13E4:00BA
 	glbCurrentThinkingCreatureData = xCreatureInfo;
 	glbAIDef = QUERY_CREATURE_AI_SPEC_FROM_TYPE(xCreature->CreatureType());
-	//^13E4:00DC
 	glbCreatureAnimSeqInfo = GET_CREATURE_INFO_DATA(xCreature, glbAIDef);
 	glbSomeMap_4976_4ee7 = U8(bp0e);
 	glbCreatureTimer.SetMap(bp0e);
 	glbCreatureTimer.SetTick(glbGameTick);
-	//^13E4:0118
 	glbCreatureTimer.actor = xCreature->CreatureType();
 	glbCreatureTimer.TimerType(U8(timerType));
 	glbCreatureTimer.XcoordB(U8(xx));
@@ -3941,14 +3081,12 @@ U8 *SkWinCore::PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timer
 	glbCreatureAnimationFrame = NULL;
 	glbCreatureActionProceeded = 0;
 	glbCreatureAIStatIndex = 0xffff;
-	//^13E4:014B
 	if (xCreatureInfo == NULL && SkCodeParam::bDebugBypassNullPointers == false) {
 		if (timerType == tty22) {
 			glbCreatureCommand_4976_4ee8 = 0;
 			_4976_4eea = 0;
 			glbCreatureCommandThinking = (xCreatureInfo->Command == -1) ? 0 : xCreatureInfo->Command;
 			if (xCreatureInfo != NULL) {
-				//^13E4:017D
 				ZERO_MEMORY(&xCreatureInfo->w24, 10);
 				xCreatureInfo->Command = ccmFF_Idle;
 			}
@@ -3959,7 +3097,6 @@ U8 *SkWinCore::PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timer
 	SkD((DLV_CCM, "Current creature CCM = %02x (%s) / %02X (%s)\n", glbCurrentThinkingCreatureData->Command, getCreatureCommandName(glbCurrentThinkingCreatureData->Command),
 		glbCurrentThinkingCreatureData->Command2, getCreatureCommandName(glbCurrentThinkingCreatureData->Command2)));
 	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
-	//^13E4:019B
 	return xLocalThinkCreatureData;
 }
 
@@ -3968,9 +3105,7 @@ U8 *SkWinCore::PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timer
 //^075F:084D
 U16 SkWinCore::ATTACK_WALL(i16 xTo, i16 yTo, i16 xFrm, i16 yFrm, U16 dirTo, ObjectID rlThrown)
 {
-	//^075F:084D
 	ENTER(16);
-	//^075F:0853
 	ObjectID si = rlThrown;
 	U16 bp0c = 0;
 	dirTo += 2;
@@ -3978,61 +3113,49 @@ U16 SkWinCore::ATTACK_WALL(i16 xTo, i16 yTo, i16 xFrm, i16 yFrm, U16 dirTo, Obje
 	ObjectID di = GET_TILE_RECORD_LINK(xTo, yTo);
 	Missile *bp08 = GET_ADDRESS_OF_RECORDE(si);
 	for (; di != OBJECT_END_MARKER; di = GET_NEXT_RECORD_LINK(di)) {
-		//^075F:0883
 		if (di.Dir() != dirTo)
 			continue;
-		//^075F:0890
 		if (true
 			&& bp08->GetMissileObject().DBType() != dbCloud 
 			&& bp0c == 0 
 			&& _0cee_319e_ALCOVE_GET_GDAT_X13(di) != 0 
 			&& RAND02() == 0
 		) {
-			//^075F:08BC
 			CUT_RECORD_FROM(si, NULL, xFrm, yFrm);
 			si.Dir(di.Dir());
 			DELETE_MISSILE_RECORD(si, NULL, xTo, yTo);
 			bp0c = 1;
 			continue;
 		}
-		//^075F:08FB
 		if (di.DBType() != dbActuator)
 			continue;
 		ObjectID bp0a = bp08->GetMissileObject();
 		if (bp0a.DBType() == dbCloud)
 			continue;
-		//^075F:0923
 		Actuator *bp04 = GET_ADDRESS_OF_ACTU(di);
 		U16 bp10 = bp04->ActuatorData();
 		U16 bp0e;
 		switch (bp04->ActuatorType()) {
 			case ACTUATOR_TYPE_FLYING_ITEM_CATCHER: // 0x22 -> Activator, knock sensor (flying item)
-				//^075F:0957
 				bp0e = (bp10 == 0x1ff || GET_DISTINCTIVE_ITEMTYPE(bp0a) == bp10) ? 1 : 0;
 				if ((bp04->RevertEffect() ^ bp0e) == 0)
 					continue;
 				if (bp04->ActionType() == 3) {
-					//^075F:099E
 					INVOKE_ACTUATOR(bp04, ((bp04->RevertEffect() ^ bp0e) != 0) ? 0 : 1, 0);
 				}
 				else {
-					//^075F:09BC
 					INVOKE_ACTUATOR(bp04, bp04->ActionType(), 0);
 				}
-				//^075F:09DA
 				if (bp0c != 0)
 					continue;
-				//^075F:09E3
 				if (bp04->OnceOnlyActuator() == 0)
 					continue;
-				//^075F:09F7
 				CUT_RECORD_FROM(si, NULL, xFrm, yFrm);
 				si.Dir(dirTo);
 				DELETE_MISSILE_RECORD(si, NULL, xTo, yTo);
 				bp0c = 1;
 				continue;
 			case ACTUATOR_TYPE_FLYING_ITEM_TELEPORTER: // 0x23 -> Item teleporter (flying item)
-				//^075F:0A34
 				if (bp0c != 0)
 					continue;
 				if (bp10 != 0x1ff && GET_DISTINCTIVE_ITEMTYPE(bp0a) != bp10)
@@ -4043,16 +3166,13 @@ U16 SkWinCore::ATTACK_WALL(i16 xTo, i16 yTo, i16 xFrm, i16 yFrm, U16 dirTo, Obje
 					? bp04->Direction()
 					: bp04->ActionType()
 					);
-				//^075F:0AB7
 				DELETE_MISSILE_RECORD(si, NULL, bp04->Xcoord(), bp04->Ycoord());
 				bp0c = 1;
 				break;
 			default: // ^_0ae1
 				break;
 		}
-		//^075F:0AE1
 	}
-	//^075F:0AF2
 	return bp0c;
 }
 
@@ -4067,37 +3187,28 @@ void SkWinCore::SET_ITEM_IMPORTANCE(ObjectID rlItem, X16 isImportant)
 	// for potion: important -> power visibility.
 	// for creature: ?
 
-	//^0CEE:0E44
 	ENTER(4);
-	//^0CEE:0E49
 	X16 si = isImportant;
 	GenericRecord *bp04 = GET_ADDRESS_OF_RECORD(rlItem);
-	//^0CEE:0E5A
 	switch (rlItem.DBType()) {
 	case dbCreature: // 4://^0E73
-		//^0CEE:0E73
 		bp04->castToCreature()->b15_2_2(si & 1);
 		break;
 	case dbCloth: // 6://^0E89
-		//^0CEE:0E89
 		goto _0e8d;
 	case dbWeapon: // 5://^0E8B
-		//^0CEE:0E8B
 		goto _0e8d;
 	case dbMiscellaneous_item: // 10://^0E8D
-		//^0CEE:0E8D
 _0e8d:
 		bp04->castToMisc()->Important(si & 1);
 		break;
 	case dbPotion: // 8://^0EA3
-		//^0CEE:0EA3
 		bp04->castToPotion()->VisiblePower(si & 1);
 		break;
 	case dbScroll: // 7://^0EB7
 	case dbContainer: // 9://^0EB7
 		break;
 	}
-	//^0CEE:0EB7
 	return;
 }
 

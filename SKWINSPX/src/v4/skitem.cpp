@@ -89,25 +89,19 @@ i16 SkWinCore::RETRIEVE_ITEM_BONUS(ObjectID x1, Bit8u x2, U16 x3, i16 iBonusDir)
 // SPX: _24a5_0930 renamed PUT_OBJECT_INTO_CONTAINER
 void SkWinCore::PUT_OBJECT_INTO_CONTAINER()
 {
-	//^24A5:0930
 	ENTER(4);
-	//^24A5:0936
 	if (glbObjectForContainer == OBJECT_NULL)
 		return;
-	//^24A5:093D
 	GenericContainerRecord *bp04 = GET_ADDRESS_OF_GENERIC_CONTAINER_RECORD(glbObjectForContainer);
 	glbObjectForContainer = OBJECT_NULL;
 	i16 si;
 	for (si = 0; si < 8; si++) {
-		//^24A5:0957
 		ObjectID di = glbCurrentContainerItems[si];
 		if (di != OBJECT_NULL) {
 			glbCurrentContainerItems[si] = OBJECT_NULL;
 			APPEND_RECORD_TO(di, &bp04->possession, -1, 0);
 		}
-		//^24A5:0986
 	}
-	//^24A5:098C
 	return;
 }
 
@@ -177,32 +171,21 @@ U16 SkWinCore::ADD_ITEM_CHARGE(ObjectID recordLink, i16 delta)
 // SPX: _24a5_0990 renamed __CHECK_ROOM_FOR_CONTAINER
 void SkWinCore::__CHECK_ROOM_FOR_CONTAINER(ObjectID rl, Container *ref)
 {
-	//^24A5:0990
 	ENTER(0);
-	//^24A5:0995
 	if (rl != OBJECT_NULL && rl != glbObjectForContainer) {
-		//^24A5:09A4
 		X16 di = 0;
 		X16 si = 0;
 		while (ref->GetContainedObject() != OBJECT_END_MARKER) {
-			//^24A5:09AC
 			if (++di > 8)
 				break;
-			//^24A5:09B4
 			glbCurrentContainerItems[si++] = ref->GetContainedObject();
 			CUT_RECORD_FROM(ref->GetContainedObject(), &ref->w2, -1, 0);
-			//^24A5:09E0
 		};
-		//^24A5:09EA
 		while (si < 8) {
-			//^24A5:09EC
 			glbCurrentContainerItems[si++] = OBJECT_NULL;
-			//^24A5:09F7
 		}
-		//^24A5:09FC
 		glbObjectForContainer = rl;
 	}
-	//^24A5:0A02
 	return;
 }
 
@@ -293,92 +276,60 @@ i16 SkWinCore::GET_ITEM_ORDER_IN_CONTAINER(ObjectID rl, i16 xx)
 	// if rl is money-box:
 	//  xx=0, return 5. (6th expensive coin BLUE-GEM)
 
-	//^48AE:04B7
 	ENTER(142);
-	//^48AE:04BD
 	U8 bp008e[128];
 	U8 *bp0e = QUERY_GDAT_TEXT(GDAT_CATEGORY_x14_CONTAINERS, QUERY_CLS2_FROM_RECORD(rl), 0x40, bp008e);
-    //^48AE:04E3
 	if (*bp0e == 0)
-		//^48AE:04E9
-		//^48AE:05A7
 		return -1;
-	//^48AE:04EC
 	U16 bp02 = 0;
 	U16 di = 0;
 	U16 bp08 = 0;
-	//^48AE:04F6
 	i16 si = -1;
 	i16 bp04 = -1;
 
 	while (bp02 == 0) {
-		//^48AE:04F9
 		U8 bp09 = *(bp0e++);
-		//^48AE:0505
 		if (bp09 >= '0' && bp09 <= '9') {
-			//^48AE:050F
 			di = di * 10 +bp09 -'0';
-			//^48AE:0522
 			continue;
 		}
-		//^48AE:0524
 		switch (bp09) {
 			case 'J':
 				{
-					//^48AE:0539
 					if (di != 0) {
-						//^48AE:053D
 						bp0e--;
-						//^48AE:0540
 						break;
 					}
-                    //^48AE:0542
 					bp04 = 256;
-					//^48AE:0547
 					continue;
 				}
 			case '-':
 				{
-					//^48AE:0549
 					si = di;
 					di = 0;
-					//^48AE:054D
 					continue;
 				}
 			case 0x00:
 				{
-					//^48AE:054F
 					bp02 = 1;
 
 					break;
 				}
 		}
-		//^48AE:0554
 		if (si < 0)
 			si = di;
-		//^48AE:055A
 		for (; si <= di; bp08++, si++) {
-			//^48AE:055C
 			if (bp08 == xx) {
-				//^48AE:0564
 				for (i16 bp06 = 0; bp06 < glbCountMoneyItems; bp06++) {
-					//^48AE:056B
 					if (glbMoneyItemsIDTable[bp06] == si +bp04) {
-						//^48AE:057B
 						return bp06;
 					}
-					//^48AE:0580
 				}
 			}
-			//^48AE:058C
 		}
-		//^48AE:0594
 		di = 0;
-		//^48AE:0596
 		si = bp04 = -1;
-		//^48AE:059E
 	}
-	//^48AE:05A7
 	return -1;
 }
 
@@ -389,40 +340,28 @@ i16 SkWinCore::GET_ITEM_ORDER_IN_CONTAINER(ObjectID rl, i16 xx)
 // This function will crash if more items are flagged "currency" than possible max (default = 10) (or increase MONEY_ITEM_MAX)
 void SkWinCore::MONEY_BOX_SURVEY(ObjectID recordLink)
 {
-	//^24A5:0A06
 	ENTER(36);
-	//^24A5:0A0C
 	i32 totalAmount = 0;	//bp06
-	//^24A5:0A16
 	i16 moneyTable[MONEY_ITEM_MAX];	//bp24[10]
 	COUNT_BY_COIN_TYPES(recordLink, moneyTable);
-	//^24A5:0A26
 	U16 bp02 = 618;
-	//^24A5:0A2B
 	U8 bp10[10];
 	for (i16 si = 0; si < MONEY_ITEM_MAX; si++) {
-		//^24A5:0A2F
 		i16 di = GET_ITEM_ORDER_IN_CONTAINER(recordLink, si);
-		//^24A5:0A3C
 		if (di >= 0) {
-			//^24A5:0A40
 			totalAmount += moneyTable[di] * glbMoneyItemsValueTable[di];
-			//^24A5:0A65
 			DRAW_VP_RC_STR(
 				bp02++,
 				glbPaletteT16[COLOR_LIGHTER_GRAY],
 				SK_LTOA10(moneyTable[di], bp10)
 				);
 		}
-		//^24A5:0A9D
 	}
-	//^24A5:0AA3
 	DRAW_VP_RC_STR(
 		569,
 		glbPaletteT16[COLOR_LIGHTER_GRAY],
 		SK_LTOA10(totalAmount, bp10)
 		);
-	//^24A5:0ACE
 	return;
 }
 
@@ -432,40 +371,29 @@ void SkWinCore::MONEY_BOX_SURVEY(ObjectID recordLink)
 //^0CEE:2902
 ObjectID SkWinCore::TAKE_COIN_FROM_WALLET(ObjectID rl, i16 xx)
 {
-	//^0CEE:2902
 	ENTER(10);
-	//^0CEE:2908
 	U16 bp0a = glbMoneyItemsIDTable[xx];
 	Container *bp08 = GET_ADDRESS_OF_RECORD9(rl);
 	ObjectID di = bp08->GetContainedObject();
 	ObjectID si = OBJECT_NULL;
-	//^0CEE:292C
 	for (; di != OBJECT_END_MARKER; di = GET_NEXT_RECORD_LINK(di)) {
-		//^0CEE:292E
 		if (di.DBType() == dbMiscellaneous_item) {
 			if (GET_DISTINCTIVE_ITEMTYPE(di) == bp0a)
 				si = di;
 			continue;
 		}
-		//^0CEE:294A
 		return OBJECT_NULL;
-		//^0CEE:294F
 	}
-	//^0CEE:295C
 	if (si != OBJECT_NULL) {
-		//^0CEE:2961
 		Miscellaneous_item *bp04 = GET_ADDRESS_OF_RECORDA(si);
 		if (bp04->Charge() == 0) {
-			//^0CEE:297B
 			CUT_RECORD_FROM(si, &bp08->w2, -1, 0);
 		}
 		else {
-			//^0CEE:2992
 			bp04->Charge(bp04->Charge() -1);
 			si = ALLOC_NEW_DBITEM(bp0a);
 		}
 	}
-	//^0CEE:29B3
 	return si;
 }
 
@@ -473,28 +401,17 @@ ObjectID SkWinCore::TAKE_COIN_FROM_WALLET(ObjectID rl, i16 xx)
 //^0CEE:2F2F
 U16 SkWinCore::SET_DESTINATION_OF_MINION_MAP(ObjectID rlContainer, i16 xx, i16 yy, U16 zz)
 {
-	//^0CEE:2F2F
 	ENTER(4);
-	//^0CEE:2F35
 	U16 di = glbCurrentMapIndex;
-	//^0CEE:2F39
 	CHANGE_CURRENT_MAP_TO(zz);
-	//^0CEE:2F41
 	U16 si = (xx >= 0 && xx < glbCurrentMapWidth && yy >= 0 && yy < glbCurrentMapHeight) ? 1 : 0;
-	//^0CEE:2F66
 	if (si != 0) {
-		//^0CEE:2F6C
 		Container *bp04 = GET_ADDRESS_OF_RECORD9(rlContainer);
-		//^0CEE:2F7A
 		bp04->SetDestX(xx);
-		//^0CEE:2F8C
 		bp04->SetDestY(yy);
-		//^0CEE:2F9F
 		bp04->SetDestMap(zz);
 	}
-	//^0CEE:2FB1
 	CHANGE_CURRENT_MAP_TO(di);
-	//^0CEE:2FB7
 	return si;
 }
 
@@ -502,35 +419,25 @@ U16 SkWinCore::SET_DESTINATION_OF_MINION_MAP(ObjectID rlContainer, i16 xx, i16 y
 //^0CEE:2ABC
 U16 SkWinCore::QUERY_GDAT_FOOD_VALUE_FROM_RECORD(ObjectID rl)
 {
-	//^0CEE:2ABC
 	ENTER(0);
-	//^0CEE:2ABF
 	return QUERY_GDAT_DBSPEC_WORD_VALUE(rl, 3);
 }
 
 //^24A5:10B3
 U16 SkWinCore::IS_MISCITEM_DRINK_WATER(ObjectID rlMiscItem)
 {
-	//^24A5:10B3
 	ENTER(0);
-	//^24A5:10B7
 	ObjectID si = rlMiscItem;
-	//^24A5:10BA
 	if (true
 		&& (QUERY_GDAT_DBSPEC_WORD_VALUE(si, 0) & 1) != 0
 		&& ADD_ITEM_CHARGE(si, 0) != 0
 	) {
-		//^24A5:10D7
 		ADD_ITEM_CHARGE(si, -1);
-		//^24A5:10E1
 		if (si == cd.pi.glbLeaderHandPossession.object) {
-			//^24A5:10E7
 			TAKE_OBJECT(si, 0);
 		}
-		//^24A5:10F1
 		return 1;
 	}
-	//^24A5:10F6
 	return 0;
 }
 
@@ -541,14 +448,11 @@ U16 SkWinCore::IS_OBJECT_FLOATING(ObjectID rl)
 	// return 0 if object can fall down.
 	// return 1 if object cannot be fall down.
 
-	//^2FCF:0109
 	ENTER(0);
-	//^2FCF:010D
 	U16 si = rl.DBType();
 	if (si == dbCreature) {
 		return IS_CREATURE_FLOATING(rl);
 	}
-	//^2FCF:0128
 	return (si == dbMissile || si == dbCloud) ? 1 : 0;
 }
 
@@ -559,45 +463,32 @@ U16 SkWinCore::IS_OBJECT_FLOATING(ObjectID rl)
 // SPX: Isn't a load misc only for money item ??
 void SkWinCore::LOAD_MISCITEM()
 {
-	//^48AE:03DE
 	ENTER(4);
-	//^48AE:03E4
 	if (glbMiscItemsLoaded != 0)
 		return;
-	//^48AE:03EE
 	glbMiscItemsLoaded = 1;
-	//^48AE:03F4
 	// SPX: Original code loads 128 (0x80) items, GDAT can contain more!
 	X8 max = ITEM_MISC_LOAD_MAX;	// 0x80
 	if (SkCodeParam::bUseDM2ExtendedMode)
 		max = ITEM_LOAD_MAX_EXTEND_1;
 	for (X8 item = 0; item < max; item++) {
-		//^48AE:03FB
 		if ((QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x15_MISCELLANEOUS, item, dtWordValue, GDAT_ITEM_STATS_GEN_FLAGS) & ITEM_FLAG_CURRENCY) == 0)
 			continue;
 		U16 moneyValue = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x15_MISCELLANEOUS, item, dtWordValue, GDAT_ITEM_STATS_MONEY_VALUE);
-		//^48AE:0429
 		i16 si;
 		for (si = 0; si < glbCountMoneyItems; si++) {
-			//^48AE:042D
 			if (glbMoneyItemsValueTable[si] >= moneyValue)
 				break;
-			//^48AE:0437
 		}
-		//^48AE:043E
 		if (si < glbCountMoneyItems) {
-			//^48AE:0444
 			i16 bp04 = (glbCountMoneyItems -si) << 1;
 			MOVE_MEMORY(&glbMoneyItemsValueTable[si], &glbMoneyItemsValueTable[si +1], bp04);
 			MOVE_MEMORY(&glbMoneyItemsIDTable[si], &glbMoneyItemsIDTable[si +1], bp04);
 		}
-		//^48AE:048B
 		glbMoneyItemsValueTable[si] = moneyValue;
 		glbMoneyItemsIDTable[si] = item +0x100;
 		glbCountMoneyItems++;
-		//^48AE:04A7
 	}
-	//^48AE:04B3
 	return;
 }
 
@@ -605,42 +496,26 @@ void SkWinCore::LOAD_MISCITEM()
 //^0CEE:2515
 void SkWinCore::SET_ITEMTYPE(ObjectID recordLink, Bit8u itemType)
 {
-	//^0CEE:2515
-	//^0CEE:251A
 	ObjectID si = recordLink;
-	//^0CEE:251D
 	if (si != OBJECT_NULL && si < OBJECT_EFFECT_FIREBALL) {	// oFF80
-		//^0CEE:252D
 		GenericRecord *_bp04 = GET_ADDRESS_OF_RECORD(si);
-		//^0CEE:2539
 		switch (si.DBType()) {
 			case dbCreature:
 				{
 					Creature *bp04 = _bp04->castToCreature();
-
-					//^0CEE:2554
 					bp04->CreatureType(itemType);
-					//^0CEE:255E
 					break;
 				}
 			case dbWeapon:
 				{
 					Weapon *bp04 = _bp04->castToWeapon();
-
-					//^0CEE:2560
-					//^0CEE:25C0
 					bp04->ItemType(itemType);
-
 					break;
 				}
 			case dbCloth:
 				{
 					Cloth *bp04 = _bp04->castToCloth();
-
-					//^0CEE:2562
-					//^0CEE:25C0
 					bp04->ItemType(itemType);
-
 					break;
 				}
 			case dbScroll:
@@ -650,21 +525,14 @@ void SkWinCore::SET_ITEMTYPE(ObjectID recordLink, Bit8u itemType)
 			case dbPotion:
 				{
 					Potion *bp04 = _bp04->castToPotion();
-
-					//^0CEE:2564
 					bp04->PotionType(itemType);
-					//^0CEE:2578
 					break;
 				}
 			case dbContainer:
 				{
 					Container *bp04 = _bp04->castToContainer();
-
-					//^0CEE:257A
 					bp04->ContainerFullType(itemType);
-					//^0CEE:25AA
 					if (bp04->ContainerType() == 1) {
-						//^0CEE:25B8
 						bp04->w6_0_f(0xffff);
 					}
 					break;
@@ -672,15 +540,11 @@ void SkWinCore::SET_ITEMTYPE(ObjectID recordLink, Bit8u itemType)
 			case dbMiscellaneous_item:
 				{
 					Miscellaneous_item *bp04 = _bp04->castToMisc();
-
-					//^0CEE:25C0
 					bp04->ItemType(itemType);
-
 					break;
 				}
 		}
 	}
-	//^0CEE:25D4
 }
 
 
@@ -695,26 +559,17 @@ U16 SkWinCore::GET_DISTINCTIVE_ITEMTYPE(ObjectID recordLink)
 	if (SkCodeParam::bDM1Mode == true)
 		return GET_DM1_DISTINCTIVE_ITEMTYPE(recordLink);
 
-	//^0CEE:2391
-	//^0CEE:2397
 	if (recordLink != OBJECT_NULL) {
-		//^0CEE:239D
-		Bit8u bp01 = QUERY_CLS2_FROM_RECORD(recordLink);
-		//^0CEE:23A9
+		U8 bp01 = QUERY_CLS2_FROM_RECORD(recordLink);
 		U16 di = recordLink.DBType();
-		//^0CEE:23B4
 		U16 si = glbActivationItemRangePerDB[di];
-		//^0CEE:23BC
 		if ((si & 0x8000) != 0) {
-			//^0CEE:23C2
 			si &= 0x7fff;
 			bp01 = 0;
 		}
-		//^0CEE:23CA
 		return si + bp01;
 	}
 	else {
-		//^0CEE:23D7
 		return 511;
 	}
 }

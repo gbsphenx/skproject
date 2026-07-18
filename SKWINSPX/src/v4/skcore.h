@@ -610,9 +610,9 @@ protected:
 	SkLoadEnt*	tblSkEntries;	// _4976_52fc
 	X16		glbSkEntriesCount;		// (_4976_5300) count of used _4976_52fc entries
 	Bit8u	glbStrBufferActionName[20]; // (_4976_5302[20])
-	U16	_4976_5316;
+	U16	glbMagicMapManaCounter;	// _4976_5316
 	i16	_4976_5318; // a map?
-	U16	_4976_531a;
+	U16	glbMagicMapManaDivisor;	// _4976_531a
 	U16	_4976_531c;	// _4976_531c
 	i16	glbSomeChampionIndex;	// SPX: somewhat a champion index (leader ??)
 	i16	_4976_5320;	// a x2?
@@ -1456,7 +1456,7 @@ protected:
 	Bit8u *SK_STRSTR(const Bit8u *xx, const Bit8u *yy);
 	U16 QUERY_CMDSTR_TEXT(const Bit8u *cmdStr, const Bit8u *name);
 	U16 QUERY_CMDSTR_ENTRY(Bit8u cls1, Bit8u cls2, Bit8u cls4, U16 cmdNum);
-	U16 _2759_01fe(U16 player, ObjectID recordLink, U16 cmdNum);
+	U16 COMMAND_ON_MAGIC_MAP(U16 player, ObjectID recordLink, U16 cmdNum);	// _2759_01fe
 	i16 FIND_POUCH_OR_SCABBARD_POSSESSION_POS(i16 player, i16 yy);	// yy = pouch or scabbard;
 	U16 QUERY_PLAYER_SKILL_LV(i16 player, U16 skill, U16 yy);
 	U16 IS_ITEM_HAND_ACTIVABLE(U16 player, ObjectID recordLink, i16 yy);
@@ -1505,8 +1505,8 @@ protected:
 	void FIRE_FILL_HALFTONE_RECTI(U16 rectno, U16 aa);
 	void IBMIO_MOUSE_RELEASE_CAPTURE();
 	void FIRE_MOUSE_RELEASE_CAPTURE();
-	void _1031_050c();
-	void _1031_0675(U16 xx);
+	void FIRE_1031_050c();	// _1031_050c
+	void SQUAD_SOMETHING_1031_0675(U16 xx);	// _1031_0675
 	U16 RETURN_1(sk1891 *ref);
 	U16 IS_GAME_ENDED(sk1891 *ref);
 	U16 _1031_0023_PFN12_02(sk1891 *ref);	// _1031_0023
@@ -1559,7 +1559,7 @@ protected:
 	i16 GET_ITEM_ORDER_IN_CONTAINER(ObjectID rl, i16 xx);
 	U8 *SK_LTOA10(i32 value, U8 *str);
 	void MONEY_BOX_SURVEY(ObjectID recordLink);
-	U16 _2759_0155(ObjectID rl);
+	U16 CHECK_ITEM_CAN_USE_CHARGES(ObjectID rl);	// _2759_0155
 	void DRAW_ITEM_STATS_BAR(U16 rectno, i16 curVal, i16 maxVal, U8 chr, U16 color);
 	U16 DRAW_ITEM_SURVEY(ObjectID recordLink, U16 xx);	// quite modified
 	U16 DRAW_ITEMS_HANDS_OR_INVENTORY(U16 iChampIdx, U16 itemNo, U16 yy);	// 2e62_03b5
@@ -1575,7 +1575,7 @@ protected:
 	void HANDLE_UI_EVENT_1031_111e(U16 xx);	// 1031_111e
 	void IBMIO_USER_INPUT_CHECK();
 	void RESET_SQUAD_DIR();
-	//void _12b4_00af(U16 xx);
+	//void _12b4_00af(U16 iStairsLead);
 	void _12b4_00af(U8 iStairsLead, U8 iStairsDir); // _12b4_00af // SPX: changing signature for more custom behaviour
 	U16 GET_ORNATE_ANIM_LEN(Actuator *ref, U16 isWall);
 	void TRY_ORNATE_NOISE(Actuator *ref, ObjectID rl, U16 xx, U16 yy, U16 animLen, U16 isWall);
@@ -1583,7 +1583,7 @@ protected:
 	void FILL_CAII_CUR_MAP();
 	void LOAD_NEWMAP(U8 newmap);
 	void PERFORM_TURN_SQUAD(U16 xx);
-	void _2405_00e7();
+	void DO_NOTHING_FROM_REMOVE_HAND();	// _2405_00e7
 	ObjectID REMOVE_OBJECT_FROM_HAND();
 	void DRAW_ITEM_IN_HAND(LeaderPossession *ref);
 	void VIDEO_MEM_MOVE(SRECT *prc, i16 yy);	// _00eb_069a
@@ -1635,7 +1635,7 @@ protected:
 	U16 WIELD_WEAPON(U16 iChampionIdx, U16 valPa, U16 xx, U16 yy, U16 valSk, U16 valAt);
 	i16 STAMINA_ADJUSTED_ATTR(Champion *ref, i16 quantity);
 	U16 COMPUTE_PLAYER_ATTACK_OR_THROW_STRENGTH(U16 xx, U16 yy, i16 zz);
-	U16 _2c1d_0e23(U16 xx);
+	U16 SOMETHING_ITEM_WEIGHT_2c1d_0e23(U16 xx);	// _2c1d_0e23
 	U16 _2c1d_1de2_CHAMPION_SHOOT(U16 xx, i16 yy, U16 zz); // _2c1d_1de2
 	U16 SET_DESTINATION_OF_MINION_MAP(ObjectID rlContainer, i16 xx, i16 yy, U16 zz);
 	void TRANSFER_PLAYER(i16 xx, i16 yy, U16 zz, U16 dir);
@@ -2277,7 +2277,7 @@ protected:
 	X16 _1c9a_17c7(U8 xx, U8 yy, U8 zz);
 	X8 _14cd_062e();
 	U8 *_3e74_5788_CACHE(U16 xx, i32 yy); // _3e74_5788
-	void _14cd_0276(skxxx9 *ref);
+	void CREATURE_PATH_14cd_0276(skxxx9 *ref);	// _14cd_0276
 	void _14cd_0f0a_EXE_17(U8 func, U8 xx, U8 yy, sk1bf9 *ss); // _14cd_0f0a
 	void _14cd_0f3c(i8 aa, sk1bf9 *ss, sk1bf9 *tt, X8 ww, i8 vv, Ax3 uu, U8 xx, U8 yy);
 	void _14cd_18cc_PFN17_00(U8 xx, U8 yy, sk1bf9 *ss); // _14cd_18cc
@@ -2287,7 +2287,7 @@ protected:
 	void _14cd_19a4_PFN17_01(U8 xx, U8 yy, sk1bf9 *ss); // _14cd_19a4
 	X16 _14cd_102e(X16 ww, ObjectID rl, i8 dir, X16 alsoPossession, X16 alsoContainer);
 	sk4f04 *_14cd_10d2(sk1bf9 *ss, i8 ww); // _14cd_10d2
-	void _14cd_19c2(U8 xx, U8 yy, sk1bf9 *ss, i8 vv, i8 ww); // _14cd_19c2
+	void CREATURE_14cd_19c2(U8 xx, U8 yy, sk1bf9 *ss, i8 vv, i8 ww); // _14cd_19c2
 	void _14cd_1a3c_PFN17_02(U8 xx, U8 yy, sk1bf9 *ss); // _14cd_1a3c
 	void _14cd_1a5a_PFN17_03(U8 xx, U8 yy, sk1bf9 *ss); // _14cd_1a5a
 	void _14cd_1a78(U8 xx, U8 yy, sk1bf9 *ss, X8 ww); // _14cd_1a78
@@ -2395,9 +2395,9 @@ protected:
 	void UPDATE_CHAMPIONS_STATS();
 	void GLOBAL_UPDATE_UNKNOW1();
 	void BURN_PLAYER_LIGHTING_ITEMS();
-	void _44c8_1dfc(SRECT *prc, U8 colorkey);
+	void FILL_RECT_ANY(SRECT* pRectZone, U8 colorkey); // _44c8_1dfc
 	void DRAW_MESSAGE_HINT_TEXTS();	// _3929_086f
-	X16 _0cee_04e5(X16 xx, X16 yy, X16 zz, i16 ss, i16 tt);
+	X16 GET_TILE_FROM_VECTOR_W_DIR(X16 xx, X16 yy, X16 zz, i16 ss, i16 tt);		// _0cee_04e5
 	void _2759_12e6();
 	void GAME_LOOP();
 	i16 FIRE_MAIN(i16 argc, const char **argv, char **env);

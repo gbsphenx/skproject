@@ -48,26 +48,18 @@ void SkWinCore::CALC_PLAYER_WEIGHT(U16 player)
 // SPX: _2c1d_0300 replaced by BOOST_ATTRIBUTE, called when consuming potion or special item
 void SkWinCore::BOOST_ATTRIBUTE(Champion *ref, U16 xx, U16 yy)
 {
-	//^2C1D:0300
 	ENTER(4);
-	//^2C1D:0306
 	i16 di = yy;
 	U8 *bp04 = ref->attributes[xx];
 	i16 si = bp04[0] +di -bp04[1];
-	//^2C1D:0333
 	if (((si < 0) ? 1 : 0) == (di < 0) ? 1 : 0) {
-		//^2C1D:034F
 		si = ABS16(si);
-		//^2C1D:0364
 		while (si > 20) {
-			//^2C1D:035A
 			di -= di / 4;
 			si -= 20;
 		}
 	}
-	//^2C1D:0369
 	bp04[0] = BETWEEN_VALUE(10, bp04[0] +di, 220);
-	//^2C1D:0387
 	return;
 }
 
@@ -77,41 +69,27 @@ void SkWinCore::BOOST_ATTRIBUTE(Champion *ref, U16 xx, U16 yy)
 void SkWinCore::PROCESS_ITEM_BONUS(i16 player, ObjectID recordLink, i16 inventorySlot, i16 x4)
 {
 	// SPX x4 = -1 when removed, 1 when added, 2 when consumed, 0 when done from SKRead
-	//^2C1D:03E7
 	ObjectID di = recordLink;
 	i16 si = x4;
 	i16 iBonusModifier = 0; // SPX: Added as a fix instead of using unsigned bp06
-	//^2C1D:03F3
 	if (player < 0)
 		return;
-	//^2C1D:03FC
 	if (di == OBJECT_NULL)
 		return;
-	//^2C1D:0404
 	if (inventorySlot < C30_INVENTORY_MAX_SLOT) {	// (possess < 30)
-		//^2C1D:040D
 		U16 bp06 = QUERY_GDAT_DBSPEC_WORD_VALUE(di, GDAT_ITEM_STATS_GEN_FLAGS);
-		//^2C1D:041A
 		// SPX: 00/00/00 => flags, 0x0010 = item providing light, so must recompute light
 		if (si != 0 && (bp06 & ITEM_FLAG_PRODUCE_LIGHT) != 0) {
-			//^2C1D:0425
 			RECALC_LIGHT_LEVEL();
 		}
-		//^2C1D:042A
 		if ((bp06 & ITEM_FLAG_2000) == 0) {
-			//^2C1D:0434
 			Champion *champion = &glbChampionSquad[player]; //*bp04 
-			//^2C1D:0445
 			U16 bp0a = IS_ITEM_FIT_FOR_EQUIP(di, inventorySlot, 1);
 			U16 bp0c = 0;
-			//^2C1D:045B
 			if (si != 0 && si != 3 && si != -2) {
-				//^2C1D:0472
 				// SPX: 0x14 MANA BONUS
 				iBonusModifier = RETRIEVE_ITEM_BONUS(di, GDAT_ITEM_BONUS_MANA, bp0a, si);
-				//^2C1D:0483
 				if (iBonusModifier != 0) {
-					//^2C1D:0487
 					if (si == 1 || si == -1) {
 						if (SkCodeParam::bUseFixedMode) // SPX: done to prevent weird cases of bonuses not taken into account correctly.
 						{
@@ -125,105 +103,69 @@ void SkWinCore::PROCESS_ITEM_BONUS(i16 player, ObjectID recordLink, i16 inventor
 							champion->manaMax = (U16) iChampionManaMax;
 						}
 						else
-							//^2C1D:0491
 							champion->manaMax += iBonusModifier;
 					}
 					else {
-						//^2C1D:049D
 						if (si == 2) {
-							//^2C1D:04A2
 							champion->curMP(BETWEEN_VALUE(0, champion->curMP() + iBonusModifier, MAXMP_BONUS));
 						}
 					}
-					//^2C1D:04C1
 					champion->heroFlag |= CHAMPION_FLAG_0800;	// 0x0800
 				}
-				//^2C1D:04CA
 				// SPX: Bonus 0x15 => 0x1B check for boosting attributes (x15 luck to x1B antifire)
 				for (U16 attributeIndex = 0; attributeIndex < ATTRIBUTE_COUNT; attributeIndex++) {
-					//^2C1D:04D1
 					iBonusModifier = RETRIEVE_ITEM_BONUS(di, attributeIndex + GDAT_ITEM_BONUS_ATTRIBUTE_FIRST, bp0a, si);
-					//^2C1D:04E6
 					if (iBonusModifier != 0) {
-						//^2C1D:04EA
 						if (si == 1 || si == -1) {
-							//^2C1D:04F4
 							champion->attributesEnhanced[attributeIndex] = champion->attributesEnhanced[attributeIndex] + iBonusModifier;
 						}
 						else {
-							//^2C1D:050D
 							BOOST_ATTRIBUTE(champion, attributeIndex, iBonusModifier);
 						}
-						//^2C1D:0520
 						champion->heroFlag |= CHAMPION_FLAG_3000;	// 0x3000
 					}
-					//^2C1D:0529
 				}
 			}
-			//^2C1D:0532
 			// SPX: Bonus 0x1E => 0x31 , 20 values = 4*5 skills
 			for (U16 skillIndex = 0; skillIndex < SKILL_COUNT; skillIndex++) {
-				//^2C1D:0539
 				iBonusModifier = RETRIEVE_ITEM_BONUS(di, skillIndex + GDAT_ITEM_BONUS_SKILL_FIRST, bp0a, si);
-				//^2C1D:054E
 				if (bp06 != 0) {
-					//^2C1D:0552
 					champion->skillBonus[skillIndex] = champion->skillBonus[skillIndex] + iBonusModifier;
-					//^2C1D:056B
 					champion->heroFlag |= CHAMPION_FLAG_2000;	// 0x2000
 					bp0c = 1;
 				}
-				//^2C1D:0579
 			}
-			//^2C1D:0582
 			// SPX: Bonus 0x33 : SPEED ?
 			iBonusModifier = RETRIEVE_ITEM_BONUS(di, GDAT_ITEM_BONUS_WALK_SPEED, bp0a, si);
-			//^2C1D:0593
 			if (iBonusModifier != 0) {
-				//^2C1D:0597
 				champion->walkSpeed = champion->walkSpeed + iBonusModifier;
 				bp0c = 1;
 			}
-			//^2C1D:05AC
 			// SPX: Bonus 0x32 : LIGHT
 			if (si != 2 && si != -1 && si != 3) {
-				//^2C1D:05BB
 				iBonusModifier = RETRIEVE_ITEM_BONUS(di, GDAT_ITEM_BONUS_LIGHT, bp0a, si);
-				//^2C1D:05CC
 				if (bp06 != 0) {
-					//^2C1D:05D0
 					glbGlobalSpellEffects.Light += iBonusModifier;
 					if (si != 0) {
-						//^2C1D:05D8
 						RECALC_LIGHT_LEVEL();
 					}
 				}
 			}
-			//^2C1D:05DD
 			if (bp0c != 0 && si == 2) {
-				//^2C1D:05E8
 				Timer bp16;
 				bp16.TimerType(ttyItemBonus);
-				//^2C1D:05EC
 				bp16.SetMap(cd.pi.glbPlayerMap);
 				bp16.SetTick(QUERY_GDAT_DBSPEC_WORD_VALUE(di, 0x0013) + glbGameTick);
-				//^2C1D:061C
 				bp16.actor = (Bit8u)player;
-				//^2C1D:0622
 				bp16.value = di.DBType();
-				//^2C1D:062D
 				bp16.w8 = QUERY_CLS2_FROM_RECORD(di);
-				//^2C1D:0637
 				QUEUE_TIMER(&bp16);
 			}
 		}
 	}
-	//^2C1D:0643
 	if (si != 0) {
-		//^2C1D:0647
 		CALC_PLAYER_WEIGHT(player);
 	}
-	//^2C1D:0650
 	return;
 }
 
@@ -320,8 +262,7 @@ void SkWinCore::LOAD_PROJECTILE_TO_HAND(U16 iChampionIdx, i16 hand)
 	U16 bp0c = xChampion->handCommand[hand];
 	xChampion->handCommand[hand] = 0xFF;
 	xChampion->handDefenseClass[hand] = 0;
-	//if (bp0c == 32) {
-	if (bp0c == CmLaunchProjectile) {
+	if (bp0c == CmLaunchProjectile) {	// 32
 		if (xChampion->Possess(iOtherHand) != OBJECT_NULL)
 			return;
 		U16 di = C12_INVENTORY_SCABBARD_1;	// 12
@@ -392,89 +333,49 @@ _1156:
 
 
 //^2759:01FE
-U16 SkWinCore::_2759_01fe(U16 player, ObjectID recordLink, U16 cmdNum)
+// SPX: _2759_01fe renamed COMMAND_ON_MAGIC_MAP
+U16 SkWinCore::COMMAND_ON_MAGIC_MAP(U16 player, ObjectID recordLink, U16 cmdNum)
 {
-	//^2759:01FE
     ENTER(8);
-	//^2759:0204
 	ObjectID di = recordLink;
 	U16 si = cmdNum;
-	//^2759:020A
 	if (di == OBJECT_NULL) {
-		//^2759:020F
 		return 0;
 	}
-	//^2759:0214
 	if (di.DBType() == dbContainer) {
-		//^2759:0224
 		Container *bp04 = GET_ADDRESS_OF_RECORD9(di);
-		//^2759:0231
 		if (bp04->ContainerType() == 1) {
-			//^2759:0245
 			U16 bp08 = bp04->b5_5_7();
-			//^2759:0252
 			if (false
 				|| bp08 == 1 // 1 - SCOUT MAP?
 				|| bp08 == 2 // 2 - MINION MAP?
 			) {
-				//^2759:025E
 				if (GET_MISSILE_REF_OF_MINION(bp04->GetContainedObject(), di) != NULL) {
-					//^2759:0271
 					if (si == CmKillMinion)
-						//^2759:0274
-						//^2759:02CF
 						return 1;
-					//^2759:0276
 					if (bp08 != 2)
-						//^2759:027A
-						//^2759:02CC
-						//^2759:020F
 						return 0;
-					//^2759:027C
 					Bit8u bp05 = GET_ADDRESS_OF_RECORD4(bp04->GetContainedObject())->CreatureType();
-					//^2759:0294
 					if (bp05 == 51) { // 51 - FETCH MINION
-						//^2759:029A
 						if (si != CmCallCarry)
-							//^2759:029D
-							//^2759:02CC
-							//^2759:020F
 							return 0;
-						//^2759:029F
-						//^2759:02CF
 						return 1;
 					}
-					//^2759:02A1
 					if (bp05 != 50) // 50 - CARRY MINION
-						//^2759:02A5
-						//^2759:02CC
-						//^2759:020F
 						return 0;
-					//^2759:02A7
 					if (si != CmCallFetch)
-						//^2759:02AA
-						//^2759:02CC
-						//^2759:020F
 						return 0;
-					//^2759:02AC
-					//^2759:02CF
 					return 1;
 				}
-				//^2759:02AE
 				if (si != CmCallScout && si != CmMark && (bp04->w6 == 0xffff || (si != CmCallCarry && si != CmCallFetch))) {
-					//^2759:02CC
-					//^2759:020F
 					return 0;
 				}
 			}
 			else {
-				//^2759:02CC
-				//^2759:020F
 				return 0;
 			}
 		}
 	}
-	//^2759:02CF
 	return 1;
 }
 
@@ -540,124 +441,73 @@ U16 SkWinCore::QUERY_PLAYER_SKILL_LV(i16 player, U16 skill, U16 yy)
 // SPX: _2759_02d6 renamed IS_ITEM_HAND_ACTIVABLE
 U16 SkWinCore::IS_ITEM_HAND_ACTIVABLE(U16 player, ObjectID recordLink, i16 yy)
 {
-	//^2759:02D6
 	ENTER(14);
-	//^2759:02DC
 	ObjectID si = recordLink;
 	Bit8u iCategory;	// bp01
 	Bit8u iItemIndex;	// bp02
 	if (recordLink == OBJECT_NULL) {
-		//^2759:02E4
 		iCategory = GDAT_CATEGORY_x16_CHAMPIONS;	// 0x16
         iItemIndex = glbChampionSquad[player].HeroType();
 	}
 	else {
-		//^2759:02F8
 		if (IS_CONTAINER_MONEYBOX(si) != 0 || IS_CONTAINER_CHEST(si) != 0)
-			//^2759:030E
 			return 1;
-		//^2759:0314
 		iCategory = QUERY_CLS1_FROM_RECORD(si);
 		iItemIndex = QUERY_CLS2_FROM_RECORD(si);
 	}
-	//^2759:0325
-	//^2759:0328
 	i16 di = 0;
 	// SPX: scans through champion basic commands : 8 = PUNCH, 9 = KICK, 10 = POUCH, 11 = SCABBARD
 	for (Bit8u iEntryNumber = 8; iEntryNumber < 12; iEntryNumber++) {	// Bit8u bp03
-		//^2759:0331
 		if (di >= 3)
-			//^2759:0336
 			break;
-		//^2759:0339
 		if (QUERY_GDAT_ENTRY_IF_LOADABLE(iCategory, iItemIndex, dtText, iEntryNumber) == 0)
-			//^2759:0353
 			continue;
-		//^2759:0356
 		U16 bp0a = QUERY_CMDSTR_ENTRY(iCategory, iItemIndex, iEntryNumber, CnCM_Command);	// CnCM_Command = Command
-		//^2759:036E
 		if (bp0a == 0)
-			//^2759:0372
 			continue;
-		//^2759:0375
 		U16 bp0e = QUERY_CMDSTR_ENTRY(iCategory, iItemIndex, iEntryNumber, CnWH_Where);	// CnWH_Where = where (pouch or scabbard?)
-		//^2759:038D
 		if (bp0e != 0 && bp0e -1 != yy)
-			//^2759:0399
 			continue;
-		//^2759:039C
 		if (si != OBJECT_NULL) {
-			//^2759:03A1
-			if (_2759_01fe(player, si, bp0a) == 0)
-				//^2759:03B3
+			if (COMMAND_ON_MAGIC_MAP(player, si, bp0a) == 0)
 				continue;
-			//^2759:03B6
 			i16 bp0c = QUERY_CMDSTR_ENTRY(iCategory, iItemIndex, iEntryNumber, CnNC_NumberCharge);	// NC = Number of charges consumed by action
 			if (SkCodeParam::bUnlimitedCharges == true)
 				bp0c = 0;
-			//^2759:03CE
 			if (bp0c == 18) {	// ?
-				//^2759:03D4
 				if (ADD_ITEM_CHARGE(si, 0) == 0) {
-					//^2759:03E0
 					goto _0425;
 				}
-				//^2759:03E2
 				continue;
 			}
-			//^2759:03E5
 			if (bp0c == 16 || bp0c == 17)
-				//^2759:03F1
 				bp0c = 1;
-			//^2759:03F6
 			if (bp0c == 0)
-				//^2759:03FA
 				goto _0425;
-			//^2759:03FC
 			if (ADD_ITEM_CHARGE(si, 0) >= bp0c)
-				//^2759:0409
 				goto _0425;
-			//^2759:040B
 			continue;
 		}
-		//^2759:040E
 		if (bp0a == CmPouch) {	// (bp0a == 17)
-			//^2759:0414
 			if (FIND_POUCH_OR_SCABBARD_POSSESSION_POS(player, yy) < 0)
-				//^2759:0423
 				continue;
 		}
-		//^2759:0425
 _0425:
 		U16 bp08 = QUERY_CMDSTR_ENTRY(iCategory, iItemIndex, iEntryNumber, CnSK_Skill);
-		//^2759:043D
 		U16 bp06 = QUERY_CMDSTR_ENTRY(iCategory, iItemIndex, iEntryNumber, CnLV_Level);
-		//^2759:0455
 		if (QUERY_PLAYER_SKILL_LV(player, bp08, 1) >= bp06) {
-			//^2759:046A
 			glbItemSelected[di].category = iCategory;
-			//^2759:0476
 			glbItemSelected[di].index = iItemIndex;
-			//^2759:0482
 			glbItemSelected[di].entry = iEntryNumber;
-			//^2759:048E
 			di++;
 		}
-		//^2759:048F
 	}
-	//^2759:049B
 	glbCommandSlotsNum = di;
 	glbChampionItemInUse = si;
-	//^2759:04A3
 	if (IS_CONTAINER_MAP(si) != 0)
-		//^2759:04AE
-		//^2759:030E
 		return 1;
-	//^2759:04B1
 	if (di > 0)
-		//^2759:04B5
 		return 1;
-	//^2759:04BA
 	return 0;
 }
 
@@ -675,9 +525,7 @@ U16 SkWinCore::_1031_007b_PFN12_04(sk1891 *ref)
 // _1031_009e renamed _1031_009e_PFN12_05
 U16 SkWinCore::_1031_009e_PFN12_05(sk1891 *ref)
 {
-	//^1031:009E
 	ENTER(0);
-	//^1031:00A1
 	return (GET_PLAYER_AT_POSITION((ref->b1 + cd.pi.glbPlayerDir) & 3) >= 0) ? 1 : 0;
 }
 
@@ -721,12 +569,9 @@ U16 SkWinCore::_1031_0184_PFN12_10(sk1891 *ref)
 //^2C1D:0EA2
 U16 SkWinCore::GET_PLAYER_ABILITY(Champion *ref, U16 parm7, U16 getMax)
 {
-	//^2C1D:0EA2
 	ENTER(2);
-	//^2C1D:0EA8
 	//SPX: Get attribute parm7, getMax = 0 : current / getMax = 1 : max
 	i16 si = ref->attributes[parm7][getMax];
-	//^2C1D:0EBD
 	U16 di;
 	U8 bp01;
 	if (true
@@ -736,14 +581,10 @@ U16 SkWinCore::GET_PLAYER_ABILITY(Champion *ref, U16 parm7, U16 getMax)
 		&& (bp01) <= C06_ENCHANTMENT_AURA_LAST
 		&& (bp01 + i16(-2)) == parm7
 	) {
-		//^2C1D:0EED
 		if (di > 100)
-			//^2C1D:0EF2
 			di = 100;
-		//^2C1D:0EF5
 		si += RAND16(((si * di) >> 7) +1) +4;
 	}
-	//^2C1D:0F09
 	return BETWEEN_VALUE(10, si +(ref->attributesEnhanced[parm7]), 220);
 }
 
@@ -778,36 +619,21 @@ void SkWinCore::PUT_ITEM_TO_PLAYER(U16 championIndex)
 // SPX: _1031_16a0 renamed SELECT_CHAMPION_LEADER
 void SkWinCore::SELECT_CHAMPION_LEADER(U16 xx)
 {
-	//^1031:16A0
 	ENTER(0);
-	//^1031:16A4
 	U16 si = xx;
-	//^1031:16A7
 	if (si == glbChampionLeader)
-		//^1031:16A7
 		return;
-	//^1031:16AD
 	if (si != 0xffff && glbChampionSquad[si].curHP() == 0)
-		//^1031:16C0
 		return;
-	//^1031:16C2
 	if (glbChampionLeader != -1) {
-		//^1031:16C9
 		glbChampionSquad[glbChampionLeader].heroFlag |= CHAMPION_FLAG_1400;	// 0x1400
 	}
-	//^1031:16D9
 	glbChampionLeader = si;
-	//^1031:16DD
 	if (si == 0xffff)
-		//^1031:16E0
 		return;
-	//^1031:16E2
 	if (si + 1 == cd.pi.glbNextChampionNumber)
-		//^1031:16E9
 		return;
-	//^1031:16EB
 	glbChampionSquad[si].heroFlag |= CHAMPION_FLAG_1400;	// 0x1400
-	//^1031:16FA
 	return;
 }
 
@@ -816,15 +642,10 @@ void SkWinCore::SELECT_CHAMPION_LEADER(U16 xx)
 //^2F3F:0000
 void SkWinCore::ADD_ITEM_TO_PLAYER(U16 player, ObjectID rl)
 {
-	//^2F3F:0000
 	ENTER(0);
-	//^2F3F:0005
 	for (U16 si = 0; si < 5; si++) {
-		//^2F3F:000A
 		U16 di = _4976_404d[si][0];
-		//^2F3F:0017
 		for (; _4976_404d[si][1] >= di; di++) {
-			//^2F3F:0019
 			if (true
 				&& glbChampionSquad[player].Possess(di) == OBJECT_NULL
 				&& IS_ITEM_FIT_FOR_EQUIP(rl, di, 0) != 0
@@ -833,16 +654,11 @@ void SkWinCore::ADD_ITEM_TO_PLAYER(U16 player, ObjectID rl)
 					|| rl.DBType() == _4976_404d[si][2]
 				)
 			) {
-				//^2F3F:006C
 				EQUIP_ITEM_TO_INVENTORY(player, rl, di);
-				//^2F3F:007B
 				return;
 			}
-			//^2F3F:007D
 		}
-		//^2F3F:008D
 	}
-	//^2F3F:0096
 	return;
 }
 
@@ -1008,24 +824,17 @@ i16 SkWinCore::FIND_HAND_WITH_EMPTY_FLASK(Champion *ref)
 	// return 0 if you've at right hand.
 	// return 1 if you've at left hand.
 
-	//^2759:21F5
 	ENTER(0);
-	//^2759:21FA
 	i16 si;
 	for (si = 2; --si >= 0; ) {
-		//^2759:21FF
 		ObjectID di = ref->Possess(si);
-		//^2759:220F
 		if (true
 			&& di.DBType() == dbPotion
-			&& QUERY_CLS2_FROM_RECORD(di) == 0x14
+			&& QUERY_CLS2_FROM_RECORD(di) == 0x14	// potion 0x14 is empty flash
 		) {
-			//^2759:2223
 			break;
 		}
-		//^2759:2225
 	}
-	//^2759:2228
 	return si;
 }
 
@@ -1036,61 +845,44 @@ void SkWinCore::ADJUST_SKILLS(U16 player, U16 yy, U16 zz)
 	// CSBwinSimilarity: TAG01605a,AdjustSkills
 	// SPX: Should really compare with CSBWin LevelUp
 
-	//^2C1D:0B2C
 	ENTER(142);
-	//^2C1D:0B32
 	U16 di = yy;	// main skill
 	U16 subSkill = di;
 	U16 baseXP = zz;
 	U16 doubleXP = 0;
 	U16 halfBaseXP = 0;
 	U16 halvedXP = zz;
-	//^2C1D:0B35
 	if (true
 		&& di >= 4 
 		&& di <= 11
 		&& (glbGameTick -150 > _4976_0090)
 	) {
-		//^2C1D:0B5B
 		zz >>= 1;
 		halfBaseXP = 1; // SPX added for info
 		halvedXP = zz;
 	}
-	//^2C1D:0B5E
 	if (zz == 0)
-		//^2C1D:0B64
 		return;
-	//^2C1D:0B67
 	U16 bp06 = dunMapLocalHeader->Difficulty();	// map XP multiplicator
 	U16 xpMapMultiplicator = bp06;	// SPX: added for reuse
 	U16	afterMapXP = 0; // for info
-	//^2C1D:0B78
 	if (bp06 != 0) {
-		//^2C1D:0B7C
 		zz = zz * bp06;
 	}
 	afterMapXP = zz;
-	//^2C1D:0B85
 	Champion *champion = &glbChampionSquad[player]; //*bp04
-	//^2C1D:0B96
 	U16 si = (di >= 4) ? ((di -4) >>2) : di;
 	U16 mainSkill = si;
-	//^2C1D:0BA9
 	bp06 = QUERY_PLAYER_SKILL_LV(player, si, 0);	// Current skill level
-	//^2C1D:0BB9
 	if (true
 		&& di >= 4
 		&& ((i32)glbGameTick -25 < (i32)_4976_0090)
 	) {
-		//^2C1D:0BD9
 		zz <<= 1;
 		doubleXP = 1; // SPX added for info
 	}
-	//^2C1D:0BDC
 	champion->skills[di] += zz;
-	//^2C1D:0BF2
 	if (di >= 4) {
-		//^2C1D:0BF7
 		champion->skills[si] += zz;
 	}
 	
@@ -1121,128 +913,75 @@ void SkWinCore::ADJUST_SKILLS(U16 player, U16 yy, U16 zz)
 
 	}
 
-	//^2C1D:0C0A
 	zz = QUERY_PLAYER_SKILL_LV(player, si, 0);	// Compare with new skill level
-	//^2C1D:0C1A
 	if (zz <= bp06)
-		//^2C1D:0C1F
 		return;
-	//^2C1D:0C22
 	U16 bp0c = zz;
-	//^2C1D:0C25
 	U16 bp08 = RAND01();		// 0 - 1
-	//^2C1D:0C2D
 	U16 bp0a = RAND01() +1;		// 1 - 2
-	//^2C1D:0C36
 	bp06 = RAND01();			// 0 - 1
-	//^2C1D:0C3E
 	if (si != 2)
-		//^2C1D:0C43
 		bp06 &= zz;
-	//^2C1D:0C49
 	champion->maxVit(champion->maxVit() +U8(bp06));
-	//^2C1D:0C57
 	bp06 = champion->curStamina();
-	//^2C1D:0C5E
 	champion->maxAntiF(champion->maxAntiF() + (RAND01() & (~zz)));
-	//^2C1D:0C77
 	U8 bp0d;
 	switch (si) {
 		case 0:
-			//^2C1D:0C88
 			bp0d = 6;		// 0x06 -> "<01>' JUST GAINED A FIGHTER LEVEL.<00>"
-			//^2C1D:0C8C
 			bp06 /= 16;		// Stamina increase
-			//^2C1D:0C90
 			// SPX: This is strange
 			//zz = bp06 * zz;
 			zz *= 3;
-			//^2C1D:0C9B
 			champion->maxStr(champion->maxStr() +U8(bp0a));	// STR + { 1 - 2 }
-			//^2C1D:0CA9
 			champion->maxDex(champion->maxDex() +U8(bp08));	// DEX + { 0 - 1 }
-			//^2C1D:0CB7
 			break;
 
 		case 1:
-			//^2C1D:0CBA
 			bp0d = 7;		// 0x07 -> "<01>' JUST GAINED A NINJA LEVEL.<00>"
-			//^2C1D:0CBE
 			bp06 = bp06 / 21;
-			//^2C1D:0CCB
 			zz <<= 1;
-			//^2C1D:0CCE
 			champion->maxStr(champion->maxStr() +U8(bp08));	// STR + { 0 - 1 }
-			//^2C1D:0CDC
 			champion->maxDex(champion->maxDex() +U8(bp0a));	// DEX + { 1 - 2 }
-			//^2C1D:0CE3
-			//^2C1D:0CB0
-			//^2C1D:0CB7
 			break;
 
 		case 3:
-			//^2C1D:0CE5
 			bp0d = 9;		// 0x09 -> "<01>' JUST GAINED A WIZARD LEVEL.<00>"
-			//^2C1D:0CE9
 			bp06 >>= 5;
-			//^2C1D:0CED
 			champion->maxMP(zz + (zz >> 1) + champion->maxMP());
-			//^2C1D:0D02
 			champion->maxWiz(champion->maxWiz() +U8(bp0a));	// WIS + { 1 - 2 }
-			//^2C1D:0D09
 			goto _0d3a;
 
 		case 2:
-			//^2C1D:0D0B
 			bp0d = 8;		// 0x08 -> "<01>' JUST GAINED A PRIEST LEVEL.<00>"
-			//^2C1D:0D0F
 			bp06 = bp06 / 25;
-			//^2C1D:0D1C
 			champion->maxMP(champion->maxMP() +zz);
-			//^2C1D:0D2A
 			zz += (zz +1) >> 1;
-			//^2C1D:0D33
 			champion->maxWiz(champion->maxWiz() +U8(bp08));	// WIS + { 0 - 1 }
-			//^2C1D:0D41
 // SPX: label _0d3a = end of check for wizard/priest
 _0d3a:
 			champion->maxMP(champion->maxMP() +min_value(RAND02(), bp0c -1));
-			//^2C1D:0D5E
 			// SPX: Removed hard coded 900
 			if (champion->maxMP() > MAXMP)
-				//^2C1D:0D63
 				champion->maxMP(MAXMP);
-			//^2C1D:0D69
 			champion->maxAntiM(champion->maxAntiM() +RAND02());
 
 			break;
 	}
-	//^2C1D:0D7B
 	//bp04->maxHP(RAND16((zz >> 1) +1) +zz +bp04->maxHP());
 	// SPX: From CSBWin11 LevelUp, it should be more like this:
 	champion->maxHP(RAND16((zz / 2) +1) +zz +champion->maxHP());
-	//^2C1D:0D98
 	if (champion->maxHP() > MAXHP)
-		//^2C1D:0D9F
 		champion->maxHP(MAXHP);
-	//^2C1D:0DA5
 	champion->maxStamina(RAND16((bp06 / 2) +1) +bp06 +champion->maxStamina());
-	//^2C1D:0DC2
 	if (champion->maxStamina() > MAXSP)
-		//^2C1D:0DC9
 		champion->maxStamina((i16)MAXSP);
-	//^2C1D:0DCF
 	champion->heroFlag |= CHAMPION_FLAG_3800;	// 0x3800
-	//^2C1D:0DD8
 	glbChampionMajorSkillsLevel[player][si]++;
-	//^2C1D:0DE2
 	DISPLAY_HINT_NEW_LINE();
-	//^2C1D:0DE7
 	glbChampionBonesIndex = player;
-	//^2C1D:0DED
 	U8 bp008e[128];
 	DISPLAY_HINT_TEXT(glbChampionColor[player], QUERY_GDAT_TEXT(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x00_BASE_DATA, bp0d, bp008e));
-	//^2C1D:0E17
 	return;
 }
 
@@ -1252,11 +991,8 @@ _0d3a:
 // SPX: _2c1d_1cf3 renamed SHOOT_CHAMPION_MISSILE
 void SkWinCore::SHOOT_CHAMPION_MISSILE(Champion *ref, ObjectID rl, U16 yy, U16 zz, U16 ww)
 {
-	//^2C1D:1CF3
 	ENTER(0);
-	//^2C1D:1CF7
 	U16 si = ref->playerDir();
-	//^2C1D:1D02
 	SHOOT_ITEM(
 		rl,
 		cd.pi.glbPlayerPosX,
@@ -1271,11 +1007,8 @@ void SkWinCore::SHOOT_CHAMPION_MISSILE(Champion *ref, ObjectID rl, U16 yy, U16 z
 	SkD((DLV_TWEET, "Tweet: You (x:%d, y:%d, map:%d) have thrown %s by cast! \n"
 		, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, glbCurrentMapIndex, static_cast<LPCSTR>(getRecordNameOf(rl))
 		));
-	//^2C1D:1D57
 	glbPlayerThrowCounter = 4;
-	//^2C1D:1D5D
 	_4976_4c0c = si;
-	//^2C1D:1D61
 	return;
 }
 
@@ -1284,32 +1017,19 @@ void SkWinCore::SHOOT_CHAMPION_MISSILE(Champion *ref, ObjectID rl, U16 yy, U16 z
 // SPX: _2c1d_1d64 renamed CAST_CHAMPION_MISSILE_SPELL
 U16 SkWinCore::CAST_CHAMPION_MISSILE_SPELL(U16 xx, ObjectID rl, i16 zz, U16 ww)
 {
-	//^2C1D:1D64
 	ENTER(4);
-	//^2C1D:1D6A
 	U16 di = zz;
-	//^2C1D:1D6D
 	Champion *champion = &glbChampionSquad[xx];	// *bp04
-	//^2C1D:1D7E
 	if (champion->curMP() < ww)
-		//^2C1D:1D8A
 		return 0;
-	//^2C1D:1D8E
 	champion->curMP(champion->curMP() -ww);
-	//^2C1D:1D9C
 	champion->heroFlag |= CHAMPION_FLAG_0800;	// 0x0800
-	//^2C1D:1DA2
 	U16 si = 10 - min_value(8, champion->maxStamina() >> 3);
-	//^2C1D:1DBA
 	if ((si << 2) > di) {
-		//^2C1D:1DC3
 		di += 3;
-		//^2C1D:1DC6
 		si--;
 	}
-	//^2C1D:1DC7
 	SHOOT_CHAMPION_MISSILE(champion, rl, di, 90, si);
-	//^2C1D:1DDB
 	return 1;
 }
 
@@ -1320,30 +1040,22 @@ U16 SkWinCore::CAST_CHAMPION_MISSILE_SPELL(U16 xx, ObjectID rl, i16 zz, U16 ww)
 // SPX: _2c1d_0186 replaced by CALL_ENCHANTMENT_SELF
 U16 SkWinCore::CALL_ENCHANTMENT_SELF(Champion *ref, i16 xx, U16 yy, U16 zz)
 {
-	//^2C1D:0186
 	ENTER(0);
-	//^2C1D:018B
 	X16 di = yy;
 	X16 si = 1;
 	if (zz != 0) {
-		//^2C1D:0197
 		if (ref->curMP() == 0)
 			return 0;
-		//^2C1D:01A5
 		if (ref->curMP() < 4) {
-			//^2C1D:01AF
 			di >>= 1;
 			ref->curMP(0);
 			si = 0;
 		}
 		else {
-			//^2C1D:01BB
 			ref->curMP(4);
 		}
 	}
-	//^2C1D:01C3
 	PROCEED_ENCHANTMENT_SELF(15, xx, di >> 5, di);
-	//^2C1D:01D7
 	return si;
 }
 
@@ -1351,47 +1063,30 @@ U16 SkWinCore::CALL_ENCHANTMENT_SELF(Champion *ref, i16 xx, U16 yy, U16 zz)
 // SPX: _2759_0f39 renamed ADJUST_HAND_COOLDOWN
 void SkWinCore::ADJUST_HAND_COOLDOWN(U16 player, U16 yy, U16 zz)
 {
-	//^2759:0F39
 	ENTER(6);
-	//^2759:0F3F
 	U16 di = yy;
 	U16 si = zz;
-	//^2759:0F45
 	Champion *champion = &glbChampionSquad[player];
-	//^2759:0F56
 	U16 bp06;
 	(si == 0xffff) ? (bp06 = 3, si = 0) : (bp06 = 1);
-	//^2759:0F69
 	if (glbGlobalSpellEffects.AuraOfSpeed != 0)
-		//^2759:0F70
 		di >>= 2;
-	//^2759:0F73
 	di += 2;
 
 	do {
-		//^2759:0F75
 		U16 cx = champion->handCooldown[si];
-		//^2759:0F80
 		if (cx < di) {
-			//^2759:0F84
 			cx = (cx >> 1) +di;
 		}
 		else {
-			//^2759:0F8E
 			cx += di >> 1;
 		}
-		//^2759:0F94
 		if (cx > 255)
-			//^2759:0F9A
 			cx = 255;
-		//^2759:0F9D
 		champion->handCooldown[si] = U8(cx);
-		//^2759:0FA6
 		si++;
-		//^2759:0FA7
 	} while (--bp06 != 0);
 
-	//^2759:0FAC
 	return;
 }
 
@@ -1401,125 +1096,76 @@ void SkWinCore::ADJUST_HAND_COOLDOWN(U16 player, U16 yy, U16 zz)
 //^075F:1F33
 U16 SkWinCore::CALC_PLAYER_ATTACK_DAMAGE(Champion *ref, U16 player, ObjectID rlEnemy, U16 xx, U16 yy, U16 valPb, U16 valDM, U16 valSk, U16 valAt)
 {
-	//^075F:1F33
 	ENTER(16);
-	//^075F:1F39
 	if (player >= cd.pi.glbChampionsCount)
-		//^075F:1F42
 		return 0;
-	//^075F:1F47
 	if (ref->curHP() == 0)
-		//^075F:1F51
-		//^075F:1F42
 		return 0;
-	//^075F:1F53
 	U16 bp0c = dunMapLocalHeader->Difficulty() << 1;
-	//^075F:1F66
 	Creature *bp08 = GET_ADDRESS_OF_RECORD4(rlEnemy);
-	//^075F:1F75
 	AIDefinition *bp04 = QUERY_CREATURE_AI_SPEC_FROM_TYPE(bp08->CreatureType());
-	//^075F:1F89
 	i16 si;
 	i16 di;
 	if (true
 		&& bp04->Defense != 255
 		&& ((bp04->w24 & 0x1000) == 0 || valAt == 1)
 	) {
-		//^075F:1FAA
 		ObjectID bp10 = GET_CREATURE_AT(xx, yy);
-		//^075F:1FBA
 		if (bp10 == OBJECT_NULL || CREATURE_1c9a_0958(bp10) == 0) {
-			//^075F:1FCF
 			U16 bp0e = valPb & 0x8000;
-			//^075F:1FD8
 			valPb &= 0x7fff;
-			//^075F:1FDD
 			if (bp04->w0_5_5() == 0 || bp0e != 0) {
-				//^075F:1FF0
 				if (false
 					|| USE_DEXTERITY_ATTRIBUTE(player) > (((RAND() & 31) + bp04->Defense +bp0c +(glbLightLevel << 1) -16) >> 1)
 					|| RAND02() == 0
 					|| USE_LUCK_ATTRIBUTE(ref, 75 -valPb) != 0
 				) {
-					//^075F:2047
 					si = COMPUTE_PLAYER_ATTACK_OR_THROW_STRENGTH(player, glbSelectedHandAction, valSk);
-					//^075F:205B
 					if (si != 0) {
-						//^075F:205F
 						si = RAND16((si >> 1) +1) +si;
-						//^075F:2071
 						si = (i32(si) * valDM) >> 5;
-						//^075F:208B
 						U16 bp0a = bp04->ArmorClass +(RAND() & 31) +bp0c;
-						//^075F:20A4
 						di = si = (RAND() & 31) +si -bp0a;
-						//^075F:20B5
 						if (di > 1)
-							//^075F:20B8
 							goto _2112;
 					}
-					//^075F:20BA
 					si = RAND02();
-					//^075F:20C1
 					if (si != 0) {
-						//^075F:20C8
 						si++;
-						//^075F:20C9
 						di = (RAND() & 15) +di;
-						//^075F:20D7
 						if (di > 0 || RAND01() != 0) {
-							//^075F:20E6
 							si = RAND02() +si;
-							//^075F:20F1
 							if (RAND02() == 0) {
-								//^075F:20FA
 								si += max_value(0, (RAND() & 15) +di);
 							}
 						}
-						//^075F:2112
 _2112:
 						si >>= 1;
-						//^075F:2114
 						si = RAND16(si) +RAND02() +si;
-						//^075F:2128
 						si = RAND16(si) +si;
-						//^075F:2135
 						si >>= 2;
-						//^075F:2138
 						si = RAND02() +si +1;
-						//^075F:2142
 						if ((RAND() & 63) < QUERY_PLAYER_SKILL_LV(player, valSk, 1)) {
-							//^075F:2160
 							si += si +10;
 						}
-						//^075F:2167
 						//SPX: Something to do with POISON
 						di = QUERY_GDAT_DBSPEC_WORD_VALUE(ref->Possess(glbSelectedHandAction), GDAT_ITEM_STATS_POISONOUS);	// 13
-						//^075F:2181
 						if (di != 0 && (RAND() & 31) < si) {
-							//^075F:2191
 							// Add poison damage
 							si = APPLY_CREATURE_POISON_RESISTANCE(rlEnemy, di) +si;
 						}
-						//^075F:21A2
 						ADJUST_SKILLS(player, valSk, ((bp04->w22_8_b() * si) >> 4) +3);
-						//^075F:21CA
 						ADJUST_STAMINA(player, RAND02() +4);
-						//^075F:21D2
 						goto _21dd;
 					}
 				}
 			}
 		}
 	}
-	//^075F:21D4
 	si = 0;
-	//^075F:21D6
 	ADJUST_STAMINA(player, RAND01() +2);
-	//^075F:21E8
 _21dd:
 	ATTACK_CREATURE(rlEnemy, xx, yy, 0x6002, 0x5a, si);
-	//^075F:21FF
 	return si;
 }
 
@@ -1587,50 +1233,30 @@ i16 SkWinCore::STAMINA_ADJUSTED_ATTR(Champion* xChampion, i16 iValue)
 // _2c1d_1de2 renamed _2c1d_1de2_CHAMPION_SHOOT
 U16 SkWinCore::_2c1d_1de2_CHAMPION_SHOOT(U16 xx, i16 yy, U16 zz)
 {
-	//^2C1D:1DE2
 	ENTER(16);
-	//^2C1D:1DE8
 	U16 di = xx;
-	//^2C1D:1DEB
 	Champion *bp04 = &glbChampionSquad[di];
-	//^2C1D:1DFB
 	U16 bp0e = 0;
-	//^2C1D:1E00
 	ObjectID bp0c ;
 	ObjectID si ;
 	if (yy < 0) {
-		//^2C1D:1E06
 		if (cd.pi.glbLeaderHandPossession.object == OBJECT_NULL)
-			//^2C1D:1E0D
 			return 0;
-		//^2C1D:1E12
         bp0c = bp04->Possess(1);
-		//^2C1D:1E1D
 		si = REMOVE_OBJECT_FROM_HAND();
-		//^2C1D:1E23
 		bp04->Possess(1, si);
-		//^2C1D:1E2B
 		yy = 1;
-		//^2C1D:1E30
 		bp0e = 1;
 	}
-	//^2C1D:1E35
 	i16 bp0a = COMPUTE_PLAYER_ATTACK_OR_THROW_STRENGTH(di, yy, 10);
-	//^2C1D:1E45
 	if (bp0e != 0) {
-		//^2C1D:1E4B
 		bp04->Possess(1, bp0c);
 	}
 	else {
-		//^2C1D:1E58
 		si = REMOVE_POSSESSION(di, yy);
-		//^2C1D:1E64
 		if (si == OBJECT_NULL)
-			//^2C1D:1E69
-			//^2C1D:1E0D
 			return 0;
 	}
-	//^2C1D:1E6B
 	QUEUE_NOISE_GEN2(
 		QUERY_CLS1_FROM_RECORD(si),
 		QUERY_CLS2_FROM_RECORD(si),
@@ -1641,50 +1267,31 @@ U16 SkWinCore::_2c1d_1de2_CHAMPION_SHOOT(U16 xx, i16 yy, U16 zz)
 		1,
 		0x6E,
 		0x80);
-	//^2C1D:1E98
-	ADJUST_STAMINA(di, _2c1d_0e23(si));
-	//^2C1D:1EA6
+	ADJUST_STAMINA(di, SOMETHING_ITEM_WEIGHT_2c1d_0e23(si));
 	ADJUST_HAND_COOLDOWN(di, 4, yy);
-	//^2C1D:1EB4
 	U16 bp08 = 8;
 	U16 bp06 = 1;
-	//^2C1D:1EBE
 	U16 bp10 = QUERY_GDAT_DBSPEC_WORD_VALUE(si, 9);
-	//^2C1D:1ECB
 	if (bp10 != 0) {
-		//^2C1D:1ECF
 		bp08 = (bp10 >> 2) +bp08 +4;
 		bp06 = bp10;
 	}
-	//^2C1D:1EE1
 	ADJUST_SKILLS(di, 10, bp08);
-	//^2C1D:1EEE
 	bp0a += bp06;
-	//^2C1D:1EF4
 	bp06 = QUERY_PLAYER_SKILL_LV(di, SKILL_NINJA_THROW, 1);
-	//^2C1D:1F03
 	bp0a = RAND16((bp0a >> 2) +8) +bp06 +bp0a;
-	//^2C1D:1F1C
 	bp0a = min_value(bp0a, 255);
-	//^2C1D:1F2C
 	bp08 = BETWEEN_VALUE(40, (RAND() & 31) + (bp06 << 3), 200);
-	//^2C1D:1F4D
 	bp10 = QUERY_GDAT_DBSPEC_WORD_VALUE(si, 12);
-	//^2C1D:1F5A
 	bp06 = (bp10 != 0) ? bp06 : max_value(5, 11 -bp06);
-	//^2C1D:1F70
-	//^2C1D:1F73
 	SHOOT_ITEM(si, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, (cd.pi.glbPlayerDir + zz) & 3, cd.pi.glbPlayerDir, bp0a, bp08, bp06);
 
 	SkD((DLV_TWEET, "Tweet: You (x:%d, y:%d, map:%d) have thrown %s! \n"
 		, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, glbCurrentMapIndex, static_cast<LPCSTR>(getRecordNameOf(si))
 		));
 
-	//^2C1D:1F9E
 	glbPlayerThrowCounter = 4;
-	//^2C1D:1FA4
 	_4976_4c0c = cd.pi.glbPlayerDir;
-	//^2C1D:1FAA
 	return 1;
 }
 
@@ -1803,82 +1410,52 @@ void SkWinCore::PLAYER_CONSUME_OBJECT(U16 player, ObjectID rlConsume, i16 posses
 			/// We could think of the potion with FUL symbol to boost antifire.
 			/// And the potion with ZO symbol would boost antimagic
 			default:
-				//^24A5:12E3
 				return;
 
 			case  6:			// ”é–ò{ROS}
-				//^24A5:12ED
 				BOOST_ATTRIBUTE(champion, ATTRIBUTE_DEXTERITY, si);	// 2 = DEX
-				//^24A5:12FE
 				break;
 
 			case  7:			// ”é–ò{KU}
-				//^24A5:1301
-				//^24A5:1318
 				BOOST_ATTRIBUTE(champion, ATTRIBUTE_STRENGTH, bp08->PotionPower() / 35 +5);	// 1 = STR
-				//^24A5:12FE
 				break;
 
 			case  8:			// ”é–ò{DAIN}
-				//^24A5:131A
-				//^24A5:131D
 				BOOST_ATTRIBUTE(champion, ATTRIBUTE_WISDOM, si);	// 3 = WIS
-				//^24A5:12FE
 				break;
 
 			case  9:			// ”é–ò{NETA}
-				//^24A5:131F
-				//^24A5:1322
 				BOOST_ATTRIBUTE(champion, ATTRIBUTE_VITALITY, si);	// 4 = DAIN
-				//^24A5:12FE
 				break;
 
 			case 10:			// ‘Î{VEN}”é–ò
-				//^24A5:1324
 				// SPX: immediate cure? not like in PC DM2 where poisons have different strengths?
 				CURE_POISON(player);
-				//^24A5:132D
 				break;
 
 			case 11:			// ”é–ò{MON}	Regain stamina
-				//^24A5:1330
 				champion->curStamina(champion->curStamina() +min_value(champion->maxStamina() -champion->curStamina(),champion->maxStamina() / iPowerDivisor));
-				//^24A5:1354
 				break;
 
 			case 12:			// ”é–ò{YA}		Cast party shield
-				//^24A5:1357
 				si += (si >> 1);
-				//^24A5:135D
 				PROCEED_ENCHANTMENT_SELF(1 << player, C02_ENCHANTMENT_PARTY_SHIELD, si, si * si);
-				//^24A5:1373
 				break;
 
 			case 13:			// ”é–ò{EE}		Regain mana
-				//^24A5:1375
 				bp0a = min_value(champion->curMP() +si +(si -8), MAXMP);
-				//^24A5:1393
 				if (champion->maxMP() < bp0a) {
-					//^24A5:139F
 					bp0a -= (bp0a -max_value(champion->curMP(), champion->maxMP())) >> 1;
 				}
-				//^24A5:13B8
 				champion->curMP(bp0a);
-				//^24A5:13C2
 				break;
 
 			case 14:			// ”é–ò{VI}		Regain health
-				//^24A5:13C5
 				bp0a = bp08->PotionPower() / 42;
-				//^24A5:13E3
 				champion->curHP(champion->curHP() + (champion->maxHP() / iPowerDivisor));
-				//^24A5:13FB
 				bp0e = champion->bodyFlag;
-				//^24A5:1402
 				if (bp0e == 0)
-					//^24A5:1404
 					break;
-				//^24A5:1406
 				iBodyFlagTestCounter = 10;	// bp0c
 				do {
 					for (si = 0; si < bp0a; si++) {
@@ -1897,61 +1474,40 @@ void SkWinCore::PLAYER_CONSUME_OBJECT(U16 player, ObjectID rlConsume, i16 posses
 				if (SkCodeParam::bUseDM2ExtendedMode)
 					WaterValue = QUERY_GDAT_WATER_VALUE_FROM_RECORD(tObjectConsumed);
 				
-				//^24A5:143E
 				champion->curWater(min_value(champion->curWater() +WaterValue, WATER_MAX));
 
 				break;
 		}
-		//^24A5:145A
 		if (possess == -1)
-			//^24A5:1460
 			REMOVE_OBJECT_FROM_HAND();
-		//^24A5:1465
 		DEALLOC_RECORD(tObjectConsumed);
-		//^24A5:146C
 		tObjectConsumed = ALLOC_NEW_RECORD(dbPotion);
-		//^24A5:1476
 		if (tObjectConsumed == OBJECT_NULL)
-			//^24A5:147B
 			return;
-		//^24A5:147E
 		SET_ITEMTYPE(tObjectConsumed, 0x14);
-		//^24A5:1488
 		if (possess == -1) {
-			//^24A5:148E
 			TAKE_OBJECT(tObjectConsumed, 0);
 		}
 		else {
-			//^24A5:149A
 			champion->Possess(possess, tObjectConsumed);
 		}
-		//^24A5:14A9
 _14a9:
 		if (champion->curStamina() > champion->maxStamina()) {
-			//^24A5:14B6
 			champion->curStamina(champion->maxStamina());
 		}
-		//^24A5:14BE
 		if (champion->curHP() > champion->maxHP()) {
-			//^24A5:14CB
 			champion->curHP(champion->maxHP());
 		}
-		//^24A5:14D3
 		// SPX: Sound made when eating/drinking
 		// 0x16 = Champion category, 0x83 = sound for eat/drink, 0xFE = default index
 		// So there could be a sound for eat and one for drink
 		QUEUE_NOISE_GEN2(GDAT_CATEGORY_x16_CHAMPIONS, champion->HeroType(), SOUND_CHAMPION_EAT_DRINK, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 0, 0x96, 0x80);
-		//^24A5:14FC
 		champion->heroFlag |= CHAMPION_FLAG_3800;	// 0x3800
-		//^24A5:1505
 		if (possess != -1) {
-			//^24A5:150B
 			champion->heroFlag |= CHAMPION_FLAG_4000;	// 0x4000
-			//^24A5:1511
 			CALC_PLAYER_WEIGHT(player);
 		}
 	}
-	//^24A5:151A
 	return;
 }
 
@@ -2259,14 +1815,10 @@ X16 SkWinCore::SELECT_CHAMPION(U16 iXPos, U16 iYPos, U16 iDir, U16 iMapNo)
 // SPX: _2e62_0cd8 renamed SET_PARTY_HERO_FLAG
 void SkWinCore::SET_PARTY_HERO_FLAG(U16 flagvalue)
 {
-	//^2E62:0CD8
 	ENTER(0);
-	//^2E62:0CDC
 	for (U16 si = 0; si < cd.pi.glbChampionsCount; si++) {
-		//^2E62:0CE0
 		glbChampionSquad[si].heroFlag |= flagvalue;
 	}
-	//^2E62:0CF7
 	return;
 }
 
@@ -2274,74 +1826,43 @@ void SkWinCore::SET_PARTY_HERO_FLAG(U16 flagvalue)
 // SPX: _2f3f_0789 renamed SEARCH_STARTER_CHAMPION
 void SkWinCore::SEARCH_STARTER_CHAMPION() // _2f3f_0789
 {
-	//printf("SEARCH_STARTER_CHAMPION enter\n"); getch();
-	//^2F3F:0789
 	ENTER(8);
-	//^2F3F:078F
 	if (cd.mo.glbSpecialScreen == _MENU_SCREEN__RESUME_GAME_SELECT) {
-		//^2F3F:0799
 		ObjectID di = cd.pi.glbLeaderHandPossession.object;
-		//^2F3F:079E
 		if (di == OBJECT_NULL) {
-			//^2F3F:07A3
 			_4976_57de = 0xff;
-			//^2F3F:07A8
 			CHANGE_CURSOR_HAND_ITEM();
 		}
 		else {
 			i16 si = glbChampionLeader;
-			//^2F3F:07B3
 			glbChampionLeader = -1;
-			//^2F3F:07B9
 			TAKE_OBJECT(di, 1);
-			//^2F3F:07C3
 			glbChampionLeader = si;
 		}
-		//^2F3F:07C7
 		Champion *champion = glbChampionSquad;	//*bp04
-		//^2F3F:07CF
 		U16 si;
 		for (si = 0; si < cd.pi.glbChampionsCount; si++, champion++) {
-			//^2F3F:07D36
 			champion->heroFlag &= 1023;	// 0x3FF
-			//^2F3F:07DC
 			WRITE_UI8(_4976_3de2,+si,0xff);
-			//^2F3F:07E1
 			glbChampionAlive[si] = 0;
-			//^2F3F:07EB
 			_4976_3dde[RCJ(4,si)] = 0xff;
-			//^2F3F:07F0
 			glbChampionHandCoolingDown[si][1] = 0;
-			//^2F3F:07FE
 			_4976_3de6[RCJ(4,si)][1] = 0xffff;
-			//^2F3F:0809
 			glbChampionHandCoolingDown[si][0] = 0;
-			//^2F3F:0817
 			_4976_3de6[RCJ(4,si)][0] = 0xffff;
-			//^2F3F:0822
 			glbChampionHandCoolingDown[si][2] = 0;
-			//^2F3F:0830
 		}
-		//^2F3F:083C
 		SET_PARTY_HERO_FLAG(0x4000);
-		//^2F3F:0845
 		si = glbChampionLeader;
-		//^2F3F:084A
 		if (si == 0xffff)
-			//^2F3F:084F
 			return;
-		//^2F3F:0852
 		glbChampionLeader = -1;
-		//^2F3F:0858
 		SELECT_CHAMPION_LEADER(si);
-		//^2F3F:085F
 		return;
 	}
 	//printf("cd.pi.glbLeaderHandPossession\n"); getch();
-	//^2F3F:0862
 	cd.pi.glbLeaderHandPossession.object = OBJECT_NULL;
 	_4976_57de = 0xff;
-	//^2F3F:086D
 	// SPX: DM2 will check a RESURECTOR at 0,0 (for TORHAM), while DM/TQ expects one at 1,0 for THERON.
 
 	// DM2 Original code : search for champion at 0,0 facing south
@@ -2394,12 +1915,9 @@ void SkWinCore::SEARCH_STARTER_CHAMPION() // _2f3f_0789
 // SPX: _443c_0662 renamed CHAMPION_SQUAD_RECOMPUTE_POSITION
 void SkWinCore::CHAMPION_SQUAD_RECOMPUTE_POSITION()
 {
-	//^443C:0662
 	if (_4976_5dbc != 0) {
-		//^443C:066C
 		CHANGE_PLAYER_POS(_4976_5dba | 0x8000);
 	}
-	//^443C:0678
 }
 
 
@@ -2697,30 +2215,22 @@ _15a9:
 // _2f3f_06fe renamed BRING_CHAMPION_TO_LIFE
 void SkWinCore::BRING_CHAMPION_TO_LIFE(X16 xx) { // TODO: Unr
 //	if (!SkCodeParam::bUseFixedMode) {
-		//^2F3F:06FE
 		ENTER(4);
-		//^2F3F:0703
 		Champion *bp04 = &glbChampionSquad[xx];
 		_2c1d_153f(xx);
 		bp04->curWeight(0);
-		//^2F3F:0727
 		U16 si;
 		for (si = 0; si < C30_INVENTORY_MAX_SLOT; si++) {
-			//^2F3F:072B
 			bp04->Possess(si, oFFFF);
-			//^2F3F:073B
 		}
-		//^2F3F:0741
 		si = bp04->maxHP();
 		bp04->maxHP(max_value(25, si - (si >> 6) - 1));
 		bp04->curHP(bp04->maxHP() >> 1);
-		//^2F3F:0769
 		bp04->heroFlag |= 0x4000;
 		bp04->enchantmentAura = 0;
 		bp04->enchantmentPower = 0;
 		_1031_0667();
 		_443c_040e_MOUSE();
-		//^2F3F:0786
 		return;
 //	}
 //	else if (SkCodeParam::bUseFixedMode)	// 
@@ -2786,9 +2296,7 @@ void SkWinCore::CHAMPION_DEFEATED(X16 player)
 {
 	// CSBwinSimilarity: TAG016c5a,KillCharacter
 
-	//^2C1D:15BA
 	ENTER(12);
-	//^2C1D:15C0
 	X16 di;
 	Champion *champion = &glbChampionSquad[di = player];
 
@@ -2800,56 +2308,42 @@ void SkWinCore::CHAMPION_DEFEATED(X16 player)
 #endif
 
 	if (cd.pi.glbChampionIndex -1 == di)
-		//^2C1D:15DB
 		DISPLAY_RIGHT_PANEL_SQUAD_HANDS();
-	//^2C1D:15E0
 	champion->curHP(0);
 	champion->herob44 = champion->handCooldown[C01_INVENTORY_HAND_LEFT] = champion->handCooldown[C00_INVENTORY_HAND_RIGHT] = 0;
 	champion->heroFlag |= CHAMPION_FLAG_4000;	// 0x4000
 	if (di +1 == glbChampionInventory) {
-		//^2C1D:1606
 		if (glbShowItemStats != 0) {
-			//^2C1D:160D
 			glbShowItemStats = 0;
 			FIRE_MOUSE_RELEASE_CAPTURE();
 			if (cd.pi.glbLeaderHandPossession.object != OBJECT_NULL)
-				//^2C1D:161F
 				DISPLAY_TAKEN_ITEM_NAME(cd.pi.glbLeaderHandPossession.object);
-			//^2C1D:1629
 			glbMouseVisibility = 1;
 		}
-		//^2C1D:1634
 		if (_4976_4bfe != 0) {
-			//^2C1D:163B
 			_4976_4bfe = 0;
 			FIRE_MOUSE_RELEASE_CAPTURE();
 			glbMouseVisibility = 1;
 			FIRE_SHOW_MOUSE_CURSOR();
 		}
-		//^2C1D:1651
 		INTERFACE_CHAMPION(4);
 	}
-	//^2C1D:1659
 	if (di == glbChampionLeader && _4976_4c3e != 0) {
-		//^2C1D:1666
 		_4976_4c3e = 0;
 		FIRE_MOUSE_RELEASE_CAPTURE();
 		glbMouseVisibility = 1;
 		FIRE_SHOW_MOUSE_CURSOR();
 	}
-	//^2C1D:167C
 	DROP_PLAYER_ITEMS(di);
 	X16 bp0a = champion->playerPos();
 	ObjectID bp0c = ALLOC_NEW_RECORD(0x800A); // bp0C
 	if (bp0c != OBJECT_NULL) {
-		//^2C1D:16A0
 		Miscellaneous_item *xItem = GET_ADDRESS_OF_RECORDA(bp0c); // bp08
 		xItem->ItemType(GET_CHAMPION_BONES_ITEM_ID()); // SPX: changed hardcoded 0 to function to get proper Bones ID depending on DM2 or DM1 mode
 		xItem->Important(1);
 		xItem->Bone(di);
 		MOVE_RECORD_TO(ObjectID(bp0c, bp0a), -1, 0, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
 	}
-	//^2C1D:16F1
 	FIRE_HIDE_MOUSE_CURSOR();
 	champion->RuneCnt(0);
 	champion->GetRunes()[0] = 0;
@@ -2863,7 +2357,6 @@ void SkWinCore::CHAMPION_DEFEATED(X16 player)
 	if (champion->PlagueValue != 0)
 		CURE_PLAGUE(di);
 #endif
-	//^2C1D:1739
 	X16 si;
 	for (si = 0; si < cd.pi.glbChampionsCount && glbChampionSquad[si].curHP() == 0; si++);
 	if (si == cd.pi.glbChampionsCount) {
@@ -2889,31 +2382,26 @@ void SkWinCore::PROCESS_PLAYERS_DAMAGE()
 
 	Champion* champion = glbChampionSquad;
 	for (U16 championIndex = 0; championIndex < cd.pi.glbChampionsCount; championIndex++, champion++) {
-		//^2C1D:1798
 		champion->bodyFlag = glbChampionsBodyFlags[championIndex];
 		glbChampionsBodyFlags[championIndex] = 0;
 		X16 di = cd.pi.glbChampionsPendingDamage[championIndex];
 		if (di == 0)
 			continue;
-		//^2C1D:17C5
 		cd.pi.glbChampionsPendingDamage[championIndex] = 0;
 		i16 si = champion->curHP();
 		if (si == 0)
 			continue;
-		//^2C1D:17E0
 		si = si -di;
 		if (si <= 0) {
 			CHAMPION_DEFEATED(championIndex);
 			continue;
 		}
-		//^2C1D:17F4
 		champion->curHP(si);
 		champion->damageSuffered = di;
 		champion->heroFlag |= CHAMPION_FLAG_0800;	// 0x800
 		si = champion->timerIndex;
 		//if (si == -1) {	// SPX: or == 0xFFFF ....
 		if (champion->timerIndex == TIMER_NONE) {
-			//^2C1D:1810
 			Timer bp10;
 			bp10.TimerType(tty0C);
 			bp10.SetMap(cd.pi.glbPlayerMap);
@@ -2922,92 +2410,71 @@ void SkWinCore::PROCESS_PLAYERS_DAMAGE()
 			champion->timerIndex = QUEUE_TIMER(&bp10);
 		}
 		else {
-			//^2C1D:1852
 			glbTimersTable[si].SetMap(cd.pi.glbPlayerMap);
 			glbTimersTable[si].SetTick(glbGameTick + 5);
 			TIMER_3a15_05f7(si);
 		}
-		//^2C1D:1892
 	}
-	//^2C1D:18A6
 	return;
 }
 //^2C1D:210A
 // SPX: _2c1d_210a renamed UPDATE_CHAMPIONS_STATS
 void SkWinCore::UPDATE_CHAMPIONS_STATS()
 {
-	//^2C1D:210A
 	ENTER(14);
-	//^2C1D:2110
 	if (cd.pi.glbChampionsCount == 0)
 		return;
-	//^2C1D:211A
 	glbChampionTable[0].enchantmentPower += 0x38;
 	if (glbChampionTable[0].enchantmentPower > 0x80U)
 		glbChampionTable[0].enchantmentPower -= 0x80;
-	//^2C1D:212D
 	U16 bp0e = 0;	
 	Champion *champion = glbChampionSquad;
 	X16 bp0c;
 	U16 bp0a;
 	for (; bp0e < cd.pi.glbChampionsCount; bp0e++, champion++) {
-		//^2C1D:213D
 		if (champion->curHP() == 0 || bp0e + 1 == cd.pi.glbNextChampionNumber)
 			continue;
 		if (champion->curMP() < champion->maxMP()) {
-			//^2C1D:2164
 			bp0a = QUERY_PLAYER_SKILL_LV(bp0e, SKILL_WIZARD_GLOBAL, 1) + QUERY_PLAYER_SKILL_LV(bp0e, SKILL_PRIEST_GLOBAL, 1);
 			if (GET_PLAYER_ABILITY(champion, abWiz, 0) +bp0a > glbChampionTable[0].enchantmentPower) {
-				//^2C1D:21A4
 				X16 si = champion->maxMP() / 40;
 				si++;
 				if (cd.pi.glbIsPlayerSleeping != 0)
 					si <<= 1;
-				//^2C1D:21BD
 				ADJUST_STAMINA(bp0e, si * max_value(7, 0x10 -bp0a));
 				champion->curMP(champion->curMP() +min_value(si, champion->maxMP() -champion->curMP()));
 			}
 		}
-		//^2C1D:21FA
 		// SPX: Decrease of current mana if it exceed maximum mana
 		else if (champion->curMP() > champion->maxMP()) {
 			champion->curMP(champion->curMP() -1);
 		}
-		//^2C1D:220B
 		bp0c = 4;
 		i16 si = champion->maxStamina();
 		for (; champion->curStamina() < (si >>= 1); bp0c += 2);
-		//^2C1D:222A
 		si = 0;
 		X16 di = BETWEEN_VALUE(1, (champion->maxStamina() >> 8) -1, 6);
 		bp0a = U16(glbGameTick) -U16(glbGameTick_4b80);
 		if (bp0a > 0x50) {
-			//^2C1D:2252
 			di++;
 			if (bp0a > 0xfa)
 				di++;
 		}
-		//^2C1D:225B
 		if (cd.pi.glbIsPlayerSleeping != 0)
 			di <<= 1;
-		//^2C1D:2264
 		do {
 			bp0a = (bp0c <= 4) ? 1 : 0;
 			if (champion->curFood() < FOOD_WARNING) {
-				//^2C1D:227F
 				if (bp0a != 0) {
 					si += di;
 					champion->curFood(champion->curFood() -2);
 				}
 			}
 			else {
-				//^2C1D:228E
 				if (champion->curFood() >= 0)
 					si -= di;
-				//^2C1D:229A
 				champion->curFood(champion->curFood() -((bp0a != 0) ? 2 : (bp0c >> 1)));
 			}
-			//^2C1D:22BC
 			if (champion->curWater() < WATER_WARNING) {
 				if (bp0a != 0) {
 					si += di;
@@ -3015,36 +2482,26 @@ void SkWinCore::UPDATE_CHAMPIONS_STATS()
 				}
 			}
 			else {
-				//^2C1D:22D5
 				if (champion->curWater() >= 0)
 					si -= di;
-				//^2C1D:22E1
 				champion->curWater(champion->curWater() -((bp0a != 0) ? 1 : (bp0c >> 2)));
 			}
-			//^2C1D:2304
 		} while (--bp0c != 0 && champion->curStamina() < champion->maxStamina());
 
-		//^2C1D:2320
 		ADJUST_STAMINA(bp0e, si);
 		if (champion->curFood() < FOOD_MIN)
 			champion->curFood(FOOD_MIN);
 		if (champion->curWater() < WATER_MIN)
 			champion->curWater(WATER_MIN);
-		//^2C1D:234C
 		if (champion->curHP() < champion->maxHP() && champion->curStamina() >= (champion->maxStamina() >> 2) && GET_PLAYER_ABILITY(champion, abVit, 0) > glbChampionTable[0].enchantmentPower) {
-			//^2C1D:2384
 			di = (champion->maxHP() >> 7) +1;
 			if (cd.pi.glbIsPlayerSleeping != 0)
 				di <<= 1;
-			//^2C1D:239A
 			// SPX : This is the regeneration function
 			champion->curHP(champion->curHP() +min_value(di, champion->maxHP() -champion->curHP()));
 		}
-		//^2C1D:23B5
 		if ((glbGameTick & ((cd.pi.glbIsPlayerSleeping != 0) ? 0x3f : 0xff)) == 0) {
-			//^2C1D:23CA
 			for (si = ATTRIBUTE_FIRST; si <= ATTRIBUTE_LAST; si++) {	// (si = 0; si <= 6; si++)
-				//^2C1D:23CE
 				U8 *attributes = champion->attributes[si];	// *bp08
                 U16 attrMax = attributes[ATTRIBUTE_MAX];	// bp0a
 				if (attributes[ATTRIBUTE_CURRENT] < attrMax) {
@@ -3053,16 +2510,12 @@ void SkWinCore::UPDATE_CHAMPIONS_STATS()
 				else if (attributes[ATTRIBUTE_CURRENT] > attrMax) {
 					attributes[ATTRIBUTE_CURRENT] -= attributes[ATTRIBUTE_CURRENT] / attrMax;
 				}
-				//^2C1D:241D
 			}
 		}
-		//^2C1D:2423
 		champion->heroFlag |= CHAMPION_FLAG_0800;	// 0x800
 		if (bp0e +1 == glbChampionInventory)
 			champion->heroFlag |= CHAMPION_FLAG_3000;	// 0x3000
-		//^2C1D:243C
 	}
-	//^2C1D:2450
 	return;
 }
 
@@ -3070,17 +2523,13 @@ void SkWinCore::UPDATE_CHAMPIONS_STATS()
 // SPX: _2e62_0d82 renamed GLOBAL_UPDATE_UNKNOW1
 void SkWinCore::GLOBAL_UPDATE_UNKNOW1()
 {
-	//^2E62:0D82
 	ENTER(2);
-	//^2E62:0D86
 	U8 bp01;
 	if (cd.pi.glbLeaderHandPossession.object != OBJECT_NULL && (QUERY_GDAT_DBSPEC_WORD_VALUE(cd.pi.glbLeaderHandPossession.object, 0)&0x8000) != 0 && (bp01 = GET_ITEM_ICON_ANIM_FRAME(cd.pi.glbLeaderHandPossession.object, -1, 1)) != _4976_57de) {
-		//^2E62:0DB8
 		DRAW_ITEM_IN_HAND(&cd.pi.glbLeaderHandPossession);
 		CHANGE_CURSOR_HAND_ITEM();
 		_4976_57de = bp01;
 	}
-	//^2E62:0DCE
 	return;
 }
 
@@ -3089,19 +2538,15 @@ void SkWinCore::GLOBAL_UPDATE_UNKNOW1()
 // SPX: _24a5_069b renamed BURN_PLAYER_LIGHTING_ITEMS
 void SkWinCore::BURN_PLAYER_LIGHTING_ITEMS()
 {
-	//^24A5:069B
 	ENTER(8);
-	//^24A5:06A1
 	X16 bRecomputeLight = 0;
 	X16 iLocalChampionCount = cd.pi.glbChampionsCount;
 	if (cd.pi.glbNextChampionNumber != 0)
 		--iLocalChampionCount;
 	Champion *xChampion = glbChampionSquad;	//*bp04
 	for (; iLocalChampionCount-- != 0; xChampion++) {
-		//^24A5:06BC
 		X16 iInventorySlot = 2;
 		for (; iInventorySlot-- != 0; ) { // go from inventory position 2 to 0 (hands)
-			//^24A5:06C3
 			ObjectID oItem = OBJECT_NULL; // SPX: add default init
 			if ((QUERY_GDAT_DBSPEC_WORD_VALUE(oItem = xChampion->Possess(iInventorySlot), 0) & ITEM_FLAG_PRODUCE_LIGHT) == 0) // if item does not have 0x10 flag, then it does not produces light.
 				continue;
@@ -3109,16 +2554,11 @@ void SkWinCore::BURN_PLAYER_LIGHTING_ITEMS()
 				continue;
 			if (ADD_ITEM_CHARGE(oItem, -1) == 0) // decrease one charge
 				SET_ITEM_IMPORTANCE(oItem, 0);
-			//^24A5:0709
 			bRecomputeLight = 1;	// Item charge has been changed
-			//^24A5:070E
 		}
-		//^24A5:0718
 	}
-	//^24A5:0724
 	if (bRecomputeLight != 0)
 		RECALC_LIGHT_LEVEL();
-	//^24A5:072E
 	return;
 }
 
@@ -3127,14 +2567,10 @@ void SkWinCore::BURN_PLAYER_LIGHTING_ITEMS()
 //^12B4:011E
 void SkWinCore::RESET_SQUAD_DIR()
 {
-	//^12B4:011E
 	ENTER(0);
-	//^12B4:0122
 	for (U16 si = 0; si < cd.pi.glbChampionsCount; si++) {
-		//^12B4:0126
 		glbChampionSquad[si].playerDir(U8(cd.pi.glbPlayerDir));
 	}
-	//^12B4:013E
 	return;
 }
 
@@ -3168,30 +2604,20 @@ void SkWinCore::_12b4_00af(U8 iStairsLead, U8 iStairsDir)
 //^2C1D:09D9
 U16 SkWinCore::_2c1d_09d9()
 {
-	//^2C1D:09D9
 	ENTER(4);
-	//^2C1D:09DF
 	X32 bp04 = 0;
 	U16 di;
 	for (di = 0; di < cd.pi.glbChampionsCount; di++) {
-		//^2C1D:09ED
 		U16 si;
 		for (si = 0; si < SKILL_MAJOR_COUNT; si++) {	// (si = 0; si <= 3; si++) 
-			//^2C1D:09F1
 			bp04 += glbChampionSquad[di].skills[si];
-			//^2C1D:0A0F
 		}
-		//^2C1D:0A15
 	}
-	//^2C1D:0A1C
 	X16 si;
 	for (si = 1; bp04 >= 0x200; ) {
-		//^2C1D:0A21
 		bp04 = bp04 >> 1;
 		si++;
-		//^2C1D:0A32
 	}
-	//^2C1D:0A41
 	return si;
 }
 
@@ -3211,27 +2637,17 @@ U16 SkWinCore::_2c1d_1fb1_CHAMPION_LEADER_SHOOT_DIR(U16 dir)
 // _121e_0351 renamed _121e_0351_THROW_LEFT_OR_RIGHT
 U16 SkWinCore::_121e_0351_THROW_LEFT_OR_RIGHT(U16 xx, U16 yy)
 {
-	//^121E:0351
 	ENTER(0);
-	//^121E:0356
 	U16 si = 0;
-	//^121E:0358
 	U16 di = (_4976_4dda == 17) ? 768 : 765; // rectangles ??
-	//^121E:0367
 	if (_098d_02a2(di, xx, yy) != 0) {
-		//^121E:037A
 		si = _2c1d_1fb1_CHAMPION_LEADER_SHOOT_DIR(0); // throw by left hand
 	}
-	//^121E:037E
 	else if (_098d_02a2(di +1, xx, yy) != 0) {
-		//^121E:0394
 		si = _2c1d_1fb1_CHAMPION_LEADER_SHOOT_DIR(1); // throw by right hand
 	}
-	//^121E:039E
 	if (si != 0)
-		//^121E:03A2
 		cd.gg.glbRefreshViewport = 1;
-	//^121E:03A8
 	return si;
 }
 

@@ -71,20 +71,15 @@ U8 *SkWinCore::_32cb_0649(U8 cls1, U8 cls2, U8 cls4, i16 colorkey)
 //^075F:1791
 X16 SkWinCore::CALC_CLOUD_DAMAGE(ObjectID rlCloud, ObjectID rlTarget)
 {
-	//^075F:1791
 	ENTER(12);
-	//^075F:1797
 	Cloud *bp04 = GET_ADDRESS_OF_RECORDF(rlCloud);
 	i16 si = 0;
 	U16 bp0a = bp04->CloudType();
-	//^075F:17B5
 	if (bp0a >= 8)
 		return si;
-	//^075F:17BD
 	U8 bp0b = _4976_00b4[RCJ(8, bp0a)];
 	if (bp0b == 0)
 		return si;
-	//^075F:17D0
 	GenericRecord *bp08;
 	U16 di = 0; // defaulting to 0
 	if (rlTarget == OBJECT_NULL) {
@@ -92,50 +87,38 @@ X16 SkWinCore::CALC_CLOUD_DAMAGE(ObjectID rlCloud, ObjectID rlTarget)
 			return si;
 	}
 	else {
-		//^075F:17E4
 		di = rlTarget.DBType();
 		if (di == dbDoor && (bp0b & 2) != 0) {
-			//^075F:17F9
 			bp08 = GET_ADDRESS_OF_RECORD(rlTarget);
 		}
 		else {
-			//^075F:180A
 			if (di != dbCreature)
 				return si;
-			//^075F:1812
 			if ((bp0b & 8) == 0)
 				return si;
 		}
 	}
-	//^075F:1820
 	if (di == dbCreature && (QUERY_CREATURE_AI_SPEC_FROM_RECORD(rlTarget)->w24 & 0x1000) != 0 && bp0a != 0)
 		return si;
-	//^075F:1843
 	si = bp04->b3_0_f();
 	if ((bp0b & 1) != 0) {
-		//^075F:1855
 		si = (bp04->b3_0_f() >> 1) +1;
 		si = RAND16(si) +si +1;
 	}
-	//^075F:186D
 	switch (bp0a) {
 		case missileLightning: // 2
-			//^075F:187C
 			si >>= 1;
 			goto _187e;
 		case missileFireball: // 0
-			//^075F:187E
 _187e:
 			if (di == dbDoor && bp08->castToDoor()->DestroyablebyFireball() == 0)
 				si = 0;
 			break;
 		case missileDispell: // 3
-			//^075F:1897
 			if ((QUERY_CREATURE_AI_SPEC_FLAGS(rlTarget) & 0x20) == 0)
 				si = 0;
 			break;
 		case missilePoisonCloud: // 7
-			//^075F:18A9
 			si = max_value(1, min_value(bp04->b3_5_f(), 4) + RAND01());
 			if (di == 4) {
 				si = APPLY_CREATURE_POISON_RESISTANCE(rlTarget, si);
@@ -146,7 +129,6 @@ _187e:
 		case missilePoisonBolt: // 6: // 6=Poison bolt
 			break;
 	}
-	//^075F:18E7
 	return si;
 }
 

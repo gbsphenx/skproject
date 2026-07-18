@@ -12,37 +12,26 @@
 //^01B0:1C8D
 void SkWinCore::_01b0_1c8d(U16 xx) //#DS=04BF
 {
-	//^01B0:1C8D
-	//^01B0:1C91
 	if (sndLockSoundBuffer == 0) {
-		//^01B0:1C9B
 		switch (cd.sc.glbSoundCardType) {
 			case Scard03:
-				//^01B0:1CAF
 				glbSoundFreq_13ce = 0x16b6;	// 0x16b6 = 5814
 
 				break;
 			case Scard05:
-				//^01B0:1CB8
 				glbSoundFreq_13ce = 0x1779;	// 0x1779 = 6009
 			
 				break;
 			case ScardSBlaster:
-				//^01B0:1CC1
 				glbSoundFreq_13ce = 0x170e;	// 0x170e = 5902
 
 				break;
 		}
-		//^01B0:1CC8
 		U16 bp02 = 0x001234dc / cd.sc.sndSoundPlaybackFrequency;
-		//^01B0:1CDB
 		_01b0_13c8 = bp02;
 	}
-	//^01B0:1CE2
 	if (xx > sndLockSoundBuffer)
-		//^01B0:1CEC
 		sndLockSoundBuffer = xx;
-	//^01B0:1CF0
 	return;
 }
 
@@ -55,46 +44,32 @@ U16 SkWinCore::IBMIO_SBLASTER_BLEND_TO_SNDBUFF(Bit8u *buff, U16 buffSize, i8 vol
 	skWinApp->skwin_SndPlayHi(buff, buffSize, volume);
 	return 1;
 #else
-	//^01B0:1CF3
-	//^01B0:1CF9
 	U16 bp02 = 0;
-	//^01B0:1CFE
 	if (sndSoundInBuffer != 0 && glbSoundBlasterBasePort != 0) {
-		//^01B0:1D12
 		if (Bit32u(sndSoundPlaybackFrequency * buffSize) / caller <= sndSoundBufferSize) {
-			//^01B0:1D36
 			volume >>= 1;
-			//^01B0:1D3B
 			Bit8u *di = sndSoundToPlayBuffer;
 			U16 bx = _01b0_14dd;
 			U16 dx = sndSoundToPlayBufferSize;
 			Bit8u *si = buff;
-			//^01B0:1D51
 			U16 bp06;
 			if (glbFreqComparator != caller) {
-				//^01B0:1D5A
 				U16 bp04 = buffSize;
 				bp06 = 0;
-				//^01B0:1D65
 				if (glbFreqComparator > caller) {
-					//^01B0:1D95
 					if (!SkCodeParam::bUsePowerDebug) // SPX bypass
 					ATLASSERT(false);
 				}
 				else {
-					//^01B0:1DCB
 					if (!SkCodeParam::bUsePowerDebug) // SPX bypass
 					ATLASSERT(false);
 				}
 			}
 			else {
-				//^01B0:1D6A
 				U16 cx = buffSize;
-				//^01B0:1D6D
 				bp06 = cx;
 
 				do {
-					//^01B0:1D70
 					i16 val = i16(i8(di[bx])) + (((i16(*(si++)) * i16(volume)) << 1) >> 8);
 
 					if (val < -128)
@@ -104,23 +79,16 @@ U16 SkWinCore::IBMIO_SBLASTER_BLEND_TO_SNDBUFF(Bit8u *buff, U16 buffSize, i8 vol
 
 					di[bx] = (Bit8u)val;
 
-					//^01B0:1D87
 					bx++;
-					//^01B0:1D88
 					if (bx >= dx) {
 						bx = 0;
 					}
-					//^01B0:1D8F
 				} while (--cx != 0);
 			}
-			//^01B0:1DFF
-			//^01B0:1E01
 			_01b0_1c8d(bp06);
-			//^01B0:1E09
 			bp02 = 1;
 		}
 	}
-	//^01B0:1E0E
 	return bp02;
 #endif
 }
@@ -167,67 +135,45 @@ U16 SkWinCore::IBMIO_BLEND_TO_SNDBUFF(X8* buff, U16 buffSize, U8 iVolume, U16 iF
 //^47EB:0333
 void SkWinCore::_47eb_0333(SoundStructure *ref)
 {
-	//^47EB:0333
-	//^47EB:0339
 	U16 bp08 = 0;
-	//^47EB:033E
 	i16 si = ref->b6;
 	i16 di = ref->b7;
-	//^47EB:034F
 	U8 *bp04 = &ref->b8;	// volume
-	//^47EB:035E
 	bp04[0] = (i8)(((ref->b5 << 8) / (si * si + di * di + 8)) >> 8);
-	//^47EB:0388
 	Bit8u cl;
 	if (si == 0) {
-		//^47EB:038C
 		cl = 8;
 	}
-	//^47EB:0390
 	else if (di == 0) {
-		//^47EB:0394
 		if (si < 0) {
-			//^47EB:0398
 			cl = 15;
 		}
 		else {
-			//^47EB:039C
 			cl = 1;
 		}
 	}
 	else {
-		//^47EB:03A0
 		if (si < 0) {
-			//^47EB:03A4
 			si = -si;
 			bp08 = 1;
 		}
-		//^47EB:03AF
 		if (di < 0) {
-			//^47EB:03B3
 			di = -di;
 		}
-		//^47EB:03B9
 		U16 bp06 = (si << 11) / di;
 		cl = 0;
 
-		//^47EB:03C7
 		while (_4976_49c0[cl++] > bp06);
 	}
 
-	//^47EB:03DA
 	if (bp08 != 0) {
-		//^47EB:03E0
 		bp04[1] = 16 - cl;
 		bp04[2] = cl;
 	}
 	else {
-		//^47EB:03EF
 		bp04[1] = cl;
 		bp04[2] = 16 - cl;
 	}
-	//^47EB:03FC
-	//^47EB:0400
 	return;
 }
 
@@ -275,9 +221,7 @@ U16 SkWinCore::PLAY_SOUND(U16 xx, SoundStructure *ref)
 			//skwin.SndPlayLo(_47eb_0048(xSoundStruct->pv0->ps0, 0), xSoundStruct->pv0->w4, xSoundStruct->b6, xSoundStruct->b7);
 			skWinApp->skwin_SndPlayLo(_47eb_0048(xSoundStruct->pv0->ps0, 0), xSoundStruct->pv0->w4, xSoundStruct->b6, xSoundStruct->b7);
 #else
-			//^47EB:026C
 			if (IBMIO_BLEND_TO_SNDBUFF(_47eb_0048(xSoundStruct->pv0->ps0, 0), xSoundStruct->pv0->w4, *bp0a, PLAYBACK_FREQUENCY) CALL_IBMIO == 0)
-			//^47EB:02A7
 				return si;
 #endif
 		}
@@ -305,53 +249,32 @@ U16 SkWinCore::QUERY_SND_ENTRY_INDEX(Bit8u cls1, Bit8u cls2, Bit8u cls4)
 //^482B:018B
 void SkWinCore::QUEUE_NOISE_GEN1(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u xx, Bit8u yy, i16 xpos, i16 ypos, i16 tickDelta)
 {
-	//^482B:018B
-	//^482B:0191
 	if (tickDelta > 0 && glbCurrentMapIndex != glbMap_4c28 && glbCurrentMapIndex != glbMap_4976_4c12) {
-		//^482B:01A6
 		return;
 	}
-	//^482B:01A9
 	if (_4976_49d0 == 20) {
-		//^482B:01B0
 		return;
 	}
-	//^482B:01B3
 	U16 bp0e = QUERY_SND_ENTRY_INDEX(cls1, cls2, cls4);
-	//^482B:01C9
 	if (bp0e == 0) {
-		//^482B:01CD
 		return;
 	}
-	//^482B:01D0
 	if (cd.pi.glbIsPlayerSleeping != 0) {
-		//^482B:01D7
 		yy >>= 1;
 	}
-	//^482B:01DA
 	if (tickDelta > 1) {
-		//^482B:01E3
 		U16 bp10 = 0;
-		//^482B:01E8
 		i16 si;
 		for (si = 0; si < 8; si++) {
-			//^482B:01EC
 			if (glbSoundList[si].w0 == 0) {
-				//^482B:01FF
 				bp10 = 1;
-				//^482B:0204
 				break;
 			}
-			//^482B:0206
 		}
-		//^482B:020C
 		if (bp10 == 0) {
-			//^482B:0212
 			return;
 		}
-		//^482B:0215
 		SoundEntryInfo *snd = &glbSoundList[si];	//*bp04
-		//^482B:022C
 		snd->w0 = 1;
 		snd->category = cls1;
 		snd->index = cls2;
@@ -361,114 +284,77 @@ void SkWinCore::QUEUE_NOISE_GEN1(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u xx, B
 		snd->b5 = (Bit8u)glbCurrentMapIndex;
 		snd->b6 = (Bit8u)xpos;
 		snd->b7 = (Bit8u)ypos;
-		//^482B:026C
 		Timer bp1a;
 		bp1a.SetMap(glbCurrentMapIndex);
 		bp1a.SetTick(glbGameTick +tickDelta -1);
 		bp1a.TimerType(ttySound);
 		bp1a.actor = xx;
 		bp1a.value = si;
-		//^482B:02A8
 		QUEUE_TIMER(&bp1a);
-		//^482B:02B4
 		return;
 	}
-	//^482B:02B7
 	sk5f0a *bp08 = &_4976_5f0a[tblSoundShortInfo[bp0e -1].w0];
-	//^482B:02DC
 	if (tickDelta > 0) {
-		//^482B:02E2
 		xpos += dunMapLocalHeader->MapOffsetX() - dunMapsHeaders[cd.pi.glbPlayerMap].MapOffsetX() - cd.pi.glbPlayerPosX;
-		//^482B:0308
 		ypos += dunMapLocalHeader->MapOffsetY() - dunMapsHeaders[cd.pi.glbPlayerMap].MapOffsetY() - cd.pi.glbPlayerPosY;
 	}
 	else {
-		//^482B:0330
 		xpos -= cd.pi.glbPlayerPosX;
 		ypos -= cd.pi.glbPlayerPosY;
 	}
-	//^482B:033C
 	i16 si;
 	switch (cd.pi.glbPlayerDir) {
 		case 1:
-			//^482B:0350
 			si = xpos;
 			xpos = ypos;
-            //^482B:035B
 			ypos = -si;
-			//^482B:0360
 			break;
 		case 2:
-			//^482B:0362
 			xpos = -xpos;
-			//^482B:036D
-			//^482B:035B
 			ypos = -ypos;
-			//^482B:0360
 			break;
 		case 3:
-			//^482B:036F
 			si = xpos;
 			xpos = -ypos;
 			ypos = si;
 
 			break;
 	}
-	//^482B:037D
 	SoundStructure *bp0c;
 	i16 di;
 	if (tickDelta < 0) {
-		//^482B:0383
 		if (_4976_49d2 == 6)
-			//^482B:038A
 			return;
-		//^482B:038D
 		bp0c = _4976_5efe;
 		di = _4976_49d2;
 	}
 	else {
-		//^482B:03A0
 		bp0c = _4976_5f02;
 		di = _4976_49d0;
 	}
-	//^482B:03B1
 	for (si=0; si < di; si++) {
-		//^482B:03B5
 		if (bp0c[si].pv0 != bp08) {
-			//^482B:03D2
 			if (bp08->pv0 != bp0c[si].pv0)
-				//^482B:03F8
 				continue;
 		}
-        //^482B:03FA
 		if (bp0c[si].b6 == xpos && bp0c[si].b7 == ypos)
-			//^482B:0426
 			return;
 
-		//^482B:0429
 	}
-	//^482B:042E
 	bp0c[di].pv0 = &_4976_5f0a[tblSoundShortInfo[bp0e -1].w0];
-	//^482B:0467
     bp0c[di].b4 = xx;
 	bp0c[di].b5 = yy;
 	bp0c[di].b6 = (i8)xpos;
 	bp0c[di].b7 = (i8)ypos;
-	//^482B:04B3
 	if (tickDelta == 0) {
-		//^482B:04B9
 		PLAY_SOUND(1, &bp0c[di]);
 	}
-	//^482B:04D5
 	else if (tickDelta > 0) {
-		//^482B:04DB
 		_4976_49d0++;
 	}
 	else {
-		//^482B:04E1
 		_4976_49d2++;
 	}
-	//^482B:04E5
 	return;
 }
 
@@ -496,9 +382,7 @@ void SkWinCore::QUEUE_NOISE_GEN2(Bit8u iGDatCategory, Bit8u iGDatItemId, Bit8u i
 // SOUND_482b_05bf is called with 0 or 1
 void SkWinCore::SOUND_482b_05bf(U16 xx)
 {
-	//^482B:05BF
 	ENTER(0);
-	//^482B:05C2
 	if (xx != 0) {	// xx == 1
 		if (_4976_49d2 > 0) {
 			PLAY_SOUND(_4976_49d2, _4976_5efe);
@@ -509,9 +393,7 @@ void SkWinCore::SOUND_482b_05bf(U16 xx)
 	if (_4976_49d0 > 0) {
 		PLAY_SOUND(_4976_49d0, _4976_5f02);
 	}
-	//^482B:0606
 	_4976_49d0 = 0;
-	//^482B:060C
 	return;
 }
 
@@ -529,47 +411,34 @@ void SkWinCore::_01b0_0ec3(X16 xx) { // TODO: Unr
 // SPX: _01b0_1a6d renamed BLEND_TO_SNDBUFF_GENERAL
 void SkWinCore::BLEND_TO_SNDBUFF_GENERAL(U8 *buff, U16 buffSize, U16 iVolume, U16 iFrequency, U16 iSoundCard, U16 tt)
 {
-	//^01B0:1A6D
 	ENTER(6);
-	//^01B0:1A73
 	//X16 si = volume;
 	//U16 di = caller;
 	if (iVolume == 0)
 		return;
-	//^01B0:1A80
 	if (iFrequency > 0x1f40 && tt != 0) {
-		//^01B0:1A8C
 		iFrequency >>= 1;
 		buffSize >>= 1;
 		_01b0_14d9 = 1;
 	}
 	else {
-		//^01B0:1AA3
 		_01b0_14d9 = 0;
 	}
-	//^01B0:1AAA
 	if (cd.sc.glbSoundBlasterBasePort == 0)
 		return;
-	//^01B0:1AB4
 	if (cd.sc._04bf_04f1 != 0) {
-		//^01B0:1ABC
 		if (_04bf_04f3 != 0) {
-			//^01B0:1AC3
 			U16 bp02;
 			for (bp02 = 0; bp02 < 0x100; bp02++) {
-				//^01B0:1ACA
 				X8 bp05 = (iSoundCard == Scard07)
 					? _04bf_03d6[RCJ(220,(bp02 * 220) >> 8)]
 					: ((((bp02 +0x80) * iVolume) >> 8) +0x80)
 					;
 				_01b0_13d8[bp02] = bp05;
-				//^01B0:1B00
 			}
 		}
-		//^01B0:1B0A
 		cd.sc._04bf_04f1 =  iVolume;
 		if (iSoundCard == Scard07) {
-			//^01B0:1B14
 			_01b0_0ec3(iVolume);
             _04bf_04f3 = 0;
 		}
@@ -611,23 +480,17 @@ void SkWinCore::BLEND_TO_SNDBUFF_SNDCARD_4(void *ref, U16 xx, U16 yy, U16 zz) { 
 //^47EB:02E0
 U16 SkWinCore::_47eb_02e0(SoundStructure *xx, SoundStructure *yy)
 {
-	//^47EB:02E0
 	ENTER(0);
-	//^47EB:02E4
 	U16 si;
 	if (xx->b4 > yy->b4)
-		//^47EB:02F4
 		return si = 1;
-	//^47EB:02F9
 	if (yy->b4 == yy->b4) {
-		//^47EB:0309
 		U8 cl = xx->b8;
 		U8 dl = yy->b8;
 		if (cl >= dl)
 			return si = 1;
 		return si = 0;
 	}
-	//^47EB:032C
 	return si = 0;
 }
 

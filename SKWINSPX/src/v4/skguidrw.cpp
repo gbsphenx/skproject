@@ -2938,7 +2938,7 @@ U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, U16 xx)
 	U8 rune;		// bp11 This holds the rune to be displayed along the power bar
 	U16 color = COLOR_CYAN;
 
-	if (_2759_0155(si) != 0) {
+	if (CHECK_ITEM_CAN_USE_CHARGES(si) != 0) {
 		i16 iNbCharges = ADD_ITEM_CHARGE(si, 0);	/// di
 		if (iNbCharges != 0) {
 			rune = RUNE_GOR;
@@ -4532,9 +4532,7 @@ void SkWinCore::__OPEN_DIALOG_PANEL(U8 cls2, U16 yy)
 {
 	int iTextButtonColor = COLOR_ORANGE; // V4
 	int iTextVersionColor = COLOR_GRAY; // V4
-	//^2066:3697
 	ENTER(104);
-	//^2066:369B
 
 	// SPX
 	if (SkCodeParam::bDM2V5Mode) {
@@ -4543,57 +4541,36 @@ void SkWinCore::__OPEN_DIALOG_PANEL(U8 cls2, U16 yy)
 	}
 
 	_4976_5250 = reinterpret_cast<sksave_header_asc *>(ALLOC_MEMORY_RAM(420, afDefault, 1024));
-	//^2066:36B4
 	U8 bp6a[40];
 	// SPX: Get dialog box button 1 text
 	U8 *bp18 = QUERY_GDAT_TEXT(0x1a, cls2, 0x00, bp6a); // LOAD
-	//^2066:36CF
 	U8 bp40[40];
 	// SPX: get dialog box button 2 text
 	U8 *bp14 = QUERY_GDAT_TEXT(0x1a, cls2, 0x01, bp40); // CANCEL
-	//^2066:36EA
 	U8 *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(0x1a, cls2, 0x00);
-	//^2066:3700
 	U8 *bp08;
 	if (_4976_5d76 != 0) {
-		//^2066:3707
 		bp08 = QUERY_GDAT_IMAGE_LOCALPAL(0x1a, cls2, 0x00);
 	}
 	else {
-		//^2066:371C
 		bp08 = bp04 +CALC_IMAGE_BYTE_LENGTH(bp04);
 	}
-	//^2066:3737
 	SRECT bp10;
 	DRAW_DIALOGUE_PARTS_PICT(bp04, QUERY_EXPANDED_RECT(4, &bp10), -1, bp08);
-	//^2066:375E
 	FREE_PICT_ENTRY(bp04);
-	//^2066:376B
 	FIRE_FADE_SCREEN(1);
 	// RESUME SCREEN with list of savegame, version number, LOAD and CANCEL button
-	//^2066:3773
 	DRAW_VP_RC_STR(0x1C2, glbPaletteT16[iTextVersionColor], strVersionNumber); // _4976_3b6f replaced by strVersionNumber
-	//^2066:378D
 	DRAW_VP_RC_STR(0x1D2, glbPaletteT16[iTextButtonColor], bp18);	// (COLOR_ORANGE) LOAD text
-	//^2066:37A9
 	DRAW_VP_RC_STR(0x1D3, glbPaletteT16[iTextButtonColor], bp14);	// (COLOR_ORANGE) CANCEL text
-	//^2066:37C5
 	READ_SAVEGAMES_FILENAMES();
-	//^2066:37CA
 	_4976_4bd2 = yy;
-	//^2066:37D0
-	_1031_0675(4);
-	//^2066:37D8
+	SQUAD_SOMETHING_1031_0675(4);
 	_4976_523a = 0;
-	//^2066:37DE
 	while (glbMouseVisibility > 0) {
-		//^2066:37E0
 		FIRE_SHOW_MOUSE_CURSOR();
-		//^2066:37E5
 		_4976_523a++;
-		//^2066:37E9
 	}
-	//^2066:37F0
 	return;
 }
 
@@ -4707,7 +4684,7 @@ U8 SkWinCore::DIALOG_BOX_0aaf_0067(U8 iDialogBoxID)
 	if (si == 0xffff && di == 1) {
 		si = 1;
 	}
-	_1031_0675(4);
+	SQUAD_SOMETHING_1031_0675(4);
 	U16 bp06;
 	for (bp06 = 0; glbMouseVisibility > 0; bp06++) {
 		FIRE_SHOW_MOUSE_CURSOR();
@@ -4719,9 +4696,9 @@ U8 SkWinCore::DIALOG_BOX_0aaf_0067(U8 iDialogBoxID)
 
 		MAIN_LOOP();
 		WAIT_SCREEN_REFRESH();
-		if (si != 0xffff) {
+		if (si != 0xFFFF) {
 			if (_476d_04ed_DOES_NOTHING(si) != 0) {
-				_1031_0781(bp08 + 0x00db);
+				_1031_0781(bp08 + 0x00DB);
 			}
 		}
 		if (_4976_4dfc == 0x00FF && IS_THERE_KEY_INPUT_2() != 0 && SPECIAL_UI_KEY_TRANSFORMATION() == 0x001C) {
@@ -7233,5 +7210,14 @@ void SkWinCore::DRAW_RESET_SOME_RECTANGLE()
 {
 	ENTER(0);
 	glb_4976_4bca_Rect.cx = 0;
+	return;
+}
+
+//^44C8:1DFC
+// SPC: _44c8_1dfc renamed FILL_RECT_ANY
+void SkWinCore::FILL_RECT_ANY(SRECT* pRectZone, U8 colorkey)
+{
+	ENTER(0);
+	FIRE_FILL_RECT_ANY(NULL, pRectZone, colorkey, 320, IMG_8_BPP);
 	return;
 }

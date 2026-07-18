@@ -19,9 +19,7 @@ void SkWinCore::ANIM_FILL_SEQ_4BPP(U16 offDst, i16 clr, U16 cnt)
 {
 	ATLASSERT(cnt != 0);
 
-	//^0759:016C
 	ENTER(0);
-	//^0759:0170
 	U8 *esdi = _089c_0354;
 	U16 bx = offDst;
 	U16 cx = cnt;
@@ -29,17 +27,14 @@ void SkWinCore::ANIM_FILL_SEQ_4BPP(U16 offDst, i16 clr, U16 cnt)
 	bool carry = (bx & 1) != 0;
 	bx >>= 1;
 	if (!carry) {
-		//^0759:0182
 		esdi += bx;
 	}
 	else {
-		//^0759:0186
 		esdi += bx;
 		U8 al = (*esdi & 0xf0) | ah;
 		stosb(esdi, al);
 		if (--cx == 0) return;
 	}
-	//^0759:0193
 	U8 al = (ah << 4) | ah;
 	ah = al;
 	bool carry2 = (cx & 1) != 0;
@@ -52,27 +47,22 @@ void SkWinCore::ANIM_FILL_SEQ_4BPP(U16 offDst, i16 clr, U16 cnt)
 	U16 ax = al | (ah << 8);
 	for (; cx != 0; cx--) stosw(esdi, ax);
 	if (carry2) {
-		//^0759:01B2
 		al = *esdi;
 		ax &= 0xf00f;
 		al |= U8(ax >> 8);
 		stosb(esdi, al);
 	}
-	//^0759:01BB
 	return;
 }
 //^0759:013B
 void SkWinCore::ANIM_SETPIXEL_SEQ_4BPP(U16 offDst, i8 clr)
 {
-	//^0759:013B
 	ENTER(0);
-	//^0759:013F
 	U8 *esdi = _089c_0354;
 	U16 bx = offDst;
 	bool carry = (bx & 1) != 0;
 	bx >>= 1;
 	if (carry) {
-		//^0759:014B
 		esdi += bx;
 		U8 al = *esdi;
 		al &= 0xf0;
@@ -80,14 +70,12 @@ void SkWinCore::ANIM_SETPIXEL_SEQ_4BPP(U16 offDst, i8 clr)
 		stosb(esdi, al);
 	}
 	else {
-		//^0759:0158
 		esdi += bx;
 		U8 al = *esdi;
 		al &= 0x0f;
 		al |= clr << 4;
 		stosb(esdi, al);
 	}
-	//^0759:0169
 	return;
 }
 //^0759:01BE
@@ -106,15 +94,11 @@ void SkWinCore::ANIM_BLIT_TO_MEMORY_ROW_4TO4BPP(U16 offSrc, U16 offDst, U16 widt
 //^00EB:0008
 void SkWinCore::IBMIO_LOAD_4TO8BPP_PAL(const U8 *pal)
 {
-	//^00EB:0008
 	ENTER(0);
-	//^00EB:000D
 	U8 *esdi = _00eb_0023;
 	const U8 *dssi = pal;
 	U16 cx = 16;
 	for (; cx != 0; cx--) movsb(esdi, dssi);
-	//^00EB:0021
-	//^00EB:0033
 	return;
 }
 
@@ -136,9 +120,7 @@ void SkWinCore::IBMIO_BLIT_SOURCE_4TO8BPP(U8 *buffSrc, U16 offSrc, U16 offDst, U
 //^00EB:0037
 void SkWinCore::IBMIO_BLIT_ROW_4TO8BPP(U16 offSrc, U16 offDst, U16 size)
 {
-	//^00EB:0037
 	ENTER(0);
-	//^00EB:003C
 	U8 *dsbx = _00eb_0023;
 	U8 *esdi = _04bf_0e34 + offDst;
 	U16 cx = size;
@@ -147,24 +129,19 @@ void SkWinCore::IBMIO_BLIT_ROW_4TO8BPP(U16 offSrc, U16 offDst, U16 size)
 	offSrc >>= 1;
 	dssi += offSrc;
 	if (carry1) {
-		//^00EB:005C
 		U8 al = lodsb(dssi);
 		al &= 0x0f;
 		al = dsbx[al];
 		if (--cx == 0) return;
 	}
-	//^00EB:0065
 	bool carry2 = (cx & 1) != 0;
 	cx >>= 1;
 	if (cx != 0) {
-		//^00EB:0069
 		bool carry3 = (cx & 1);
 		cx >>= 1;
 		if (cx != 0) {
-			//^00EB:006E
 			U16 bp = 0x0f0f;
 			do {
-				//^00EB:0073
 				U16 ax = lodsw(dssi);
 				U16 dx = ax >> 4;
 				dx &= bp;
@@ -177,11 +154,9 @@ void SkWinCore::IBMIO_BLIT_ROW_4TO8BPP(U16 offSrc, U16 offDst, U16 size)
 				dx = (dh << 8) | dl;
 				stosw(esdi, ax);
 				stosw(esdi, dx);
-				//^00EB:008F
 			} while (--cx != 0);
 		}
 		if (carry3) {
-			//^00EB:0095
 			U8 al = lodsb(dssi);
 			U8 ah = al;
 			al >>= 4;
@@ -192,16 +167,12 @@ void SkWinCore::IBMIO_BLIT_ROW_4TO8BPP(U16 offSrc, U16 offDst, U16 size)
 			stosb(esdi, al);
 		}
 	}
-	//^00EB:00A6
 	if (carry2) {
-		//^00EB:00A8
 		U8 al = lodsb(dssi);
 		al >>= 4;
 		al = dsbx[al];
 		stosb(esdi, al);
 	}
-	//^00EB:00B0
-	//^00EB:00B2
 	return;
 }
 
@@ -220,34 +191,23 @@ void SkWinCore::QUERY_TEMP_PICST(
 		, (Bitu)uu, (Bitu)rectno, (Bitu)pp, (Bitu)colorkey1, (Bitu)colorkey2, (Bitu)cls1, (Bitu)cls2, (Bitu)cls4));
 
 	ENTER(2);
-	//^32CB:08C7
 	i16 di = uu;
 	QUERY_GDAT_SUMMARY_IMAGE(&glbTempPicture, cls1, cls2, cls4);
-	//^32CB:08E2
 	if (horzStretch != vertStretch) {
-		//^32CB:08EA
 		U8 bp01;
 		if (di == 2) {
-			//^32CB:08EF
 			bp01 = 0x14;
-			//^32CB:08F3
 			goto _08fe;
 		}
-		//^32CB:08F5
 		else if (di == 3) {
-			//^32CB:08FA
 			bp01 = 0x15;
-			//^32CB:08FE
 _08fe:
 			U16 si = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, dtWordValue, bp01);
-			//^32CB:0916
 			if (si != 0) {
-				//^32CB:091A
 				horzStretch = ((((si >> 8) << 7) / (si & 255)) +1) >> 1;
 			}
 		}
 	}
-	//^32CB:0932
 	glbTempPicture.mirrorFlip = mirrorflip;
 	glbTempPicture.iXStretch = horzStretch;
 	glbTempPicture.iYStretch = vertStretch;
@@ -257,11 +217,8 @@ _08fe:
 	glbTempPicture.w26 = pp;
 	glbTempPicture.pb44 = glbBackBuffViewport;
 	glbTempPicture.colorKeyPassThrough = colorkey1;
-	//^32CB:0972
 	PALETTE_SOMETHING_32cb_0804(glbTempPicture.iPal256, di, colorkey1, colorkey2, glbTempPicture.iPaletteSize);
-	//^32CB:0988
 	QUERY_PICST_IT(&glbTempPicture);
-	//^32CB:0993
 	return;
 }
 
@@ -279,51 +236,32 @@ void SkWinCore::DRAW_TEMP_PICST()
 // SPX: _0b36_037e renamed PALETTE_SOMETHING_0b36_037e
 U8 *SkWinCore::PALETTE_SOMETHING_0b36_037e(U8 *localpal, i8 xx, i16 colorkey1, i16 colorkey2, i16 palentcnt)
 {
-	//^0B36:037E
 	ENTER(8);
-	//^0B36:0384
 	if (localpal != NULL && xx != 0) {
-		//^0B36:0398
 		xx = U8(max_value(0, 64 -xx));
-		//^0B36:03AF
 		for (i16 bp02 = 0; bp02 < palentcnt; bp02++) {
-			//^0B36:03B7
 			if (bp02 != colorkey1 && bp02 != colorkey2) {
-				//^0B36:03CA
 				U16 di = tblOfsk4be2Palette[RCX(256,localpal[bp02])].b0;
 				i16 si = 0;
-				//^0B36:03E6
 				i16 bp04 = max_value((tblOfsk4bdePalette[RCX(16,di)].pTabRow1[tblOfsk4be2Palette[localpal[bp02]].b1] * xx) >> 6, 0);
-				//^0B36:0433
 				for (; tblOfsk4bdePalette[di].iRowSize -1 > si; si++) {
-					//^0B36:0435
 					if (true
 						&& tblOfsk4bdePalette[di].pTabRow1[si] <= bp04
 						&& tblOfsk4bdePalette[di].pTabRow1[si +1] >= bp04
 					) {
-						//^0B36:046C
 						i16 bp06 = bp04 - tblOfsk4bdePalette[di].pTabRow1[si];
-						//^0B36:048A
 						i16 bp08 = tblOfsk4bdePalette[di].pTabRow1[si +1] -bp04;
-						//^0B36:04A7
 						if (bp06 > bp08)
-							//^0B36:04AF
 							si++;
-						//^0B36:04B0
 						break;
 					}
-					//^0B36:04B2
 				}
-				//^0B36:04CD
 				si = min_value(si, tblOfsk4bdePalette[di].iRowSize -1);
-				//^0B36:04EB
 
 				localpal[bp02] = tblOfsk4bdePalette[di].pTabRow2[si];
 			}
-			//^0B36:0508
 		}
 	}
-	//^0B36:03AF
 	return localpal;
 }
 
@@ -331,43 +269,30 @@ U8 *SkWinCore::PALETTE_SOMETHING_0b36_037e(U8 *localpal, i8 xx, i16 colorkey1, i
 // SPX: _32cb_0804 renamed PALETTE_SOMETHING_32cb_0804
 void SkWinCore::PALETTE_SOMETHING_32cb_0804(U8 *localpal, i16 cls4, U16 colorkey1, i16 colorkey2, U16 palentcnt)
 {
-	//^32CB:0804
 	ENTER(0);
-	//^32CB:0809
 	U16 di = palentcnt;
-	//^32CB:080C
 	i16 si;
 	if (cd.pi.glbIsPlayerMoving != 0) {
-		//^32CB:0813
 		if (cls4 < 0) {
-			//^32CB:0819
 			si = max_value(-_4976_5a88, _4976_421b[RCJ(6,-cls4)]);
-			//^32CB:0833
 			cls4 = 1;
 		}
 		else {
-			//^32CB:083A
 			si = _4976_4221[RCJ(5,cls4)];
-			//^32CB:0844
 			cls4 += 9;
 		}
 	}
 	else {
-		//^32CB:084A
 		si = _4976_4226[RCJ(5,cls4)];
 	}
 	//^32CB:0854	// SPX: That part is for translating palette in case of 'fog'
 	if (!SkCodeParam::bDisableFogEffect && QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dt07, U8(cls4)) != 0) {
-		//^32CB:086C
 		TRANSLATE_PALETTE(localpal, GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, U8(cls4), di);
-		//^32CB:0885
 		PALETTE_SOMETHING_0b36_037e(localpal, i8(_4976_5a88), colorkey1, colorkey2, di);
 	}
 	else {
-		//^32CB:0892
 		PALETTE_SOMETHING_0b36_037e(localpal, 64 -U8(((64 -si) * (64 - _4976_5a88)) >> 6), colorkey1, colorkey2, di);
 	}
-	//^32CB:08BD
 	return;
 }
 
@@ -401,75 +326,51 @@ void SkWinCore::FIRE_UPDATE_BLIT_PALETTE(const U8 *localpal)
 //^44C8:0791
 void SkWinCore::FIRE_BLIT_TO_MEMORY_ROW_4TO8BPP_NOKEY(U16 offSrc, U16 offDst, U16 size)
 {
-	//^44C8:0791
 	ENTER(0);
-	//^44C8:0796
-	//^44C8:0798
 	U8 *bx = glbBlitPalette16;
-	//^44C8:079B
 	U8 *di = &_4976_5e6a[offDst];
-	//^44C8:07A4
 	U16 cx = size;
-	//^44C8:07A7
 	U8 *si = _4976_5e64;
-	//^44C8:07AB
 	bool carry = (offSrc & 1) ? true : false;
 	si += (offSrc >>= 1);
-	//^44C8:07B4
 	if (carry) {
-		//^44C8:07B6
 		U8 al = lodsb(si);
 		stosb(di, bx[al & 15]);
 		cx--;
-		//^44C8:07BD
 		if (cx == 0) goto _080a;
 	}
 
 	{
-		//^44C8:07BF
 		bool carry = (cx & 1) ? true : false;
 		cx >>= 1;
-		//^44C8:07C1
 		if (cx != 0) {
-			//^44C8:07C3
 			bool carry = (cx & 1) ? true : false;
 			cx >>= 1;
-			//^44C8:07C6
 			if (cx != 0) {
-				//^44C8:07C8
 				U16 bp = 0x0f0f;
 				do {
-					//^44C8:07CD
 					U16 ax = lodsw(si);
 					U16 dx = ax >> 4;
 					dx &= bp;
 					ax &= bp;
-					//^44C8:07D7
 					stosb(di, bx[U8(ax >> 8)]);
 					stosb(di, bx[U8(dx >> 8)]);
 					stosb(di, bx[U8(ax &255)]);
 					stosb(di, bx[U8(dx &255)]);
-					//^44C8:07E9
 				} while (--cx != 0);
 			}
-			//^44C8:07ED
 			if (carry) {
-				//^44C8:07EF
 				U8 al = lodsb(si);
 				stosb(di, bx[al >> 4     ]);
 				stosb(di, bx[al      &255]);
 			}
 		}
-		//^44C8:0801
 		if (carry) {
-			//^44C8:0803
 			U8 al = lodsb(si);
 			stosb(di, bx[al >> 4]);
 		}
 	}
-	//^44C8:080A
 _080a:
-	//^44C8:080D
 	return;
 }
 
@@ -573,162 +474,105 @@ _080a:
 // Todo : teleporter gfx ???
 void SkWinCore::_44c8_1e43(U8 *src, U8 *dst, U8 *zz, SRECT *prc, U16 ss, U16 tt, U16 aa, U16 bb, U16 hazeWidth, U16 dstWidth, i16 colorkey, U8 *localpal)
 {
-	//^44C8:1E43
 	ENTER(16);
-	//^44C8:1E49
 	FIRE_UPDATE_BLIT_PALETTE(localpal);
-	//^44C8:1E55
 	hazeWidth = (hazeWidth +1) & 0xfffe;
-	//^44C8:1E5F
 	i16 bp08 = prc->cx;
 	i16 bp06 = prc->cy;
 	i16 bp02 = (prc->y * dstWidth) +prc->x;
 	i16 bp04 = (bb * hazeWidth) +aa;
-	//^44C8:1E89
 	U16 di = tt;
 	U16 si = ss -tt;
-	//^44C8:1E94
 	_4976_5e64 = src;
 	_4976_5e6a = dst;
-	//^44C8:1EAE
 	if (zz == NULL) {
-		//^44C8:1EB9
 		for (U16 bp0a = 0; bp0a < bp06; bp02 += dstWidth, bp0a++) {
-			//^44C8:1EC1
 			i16 bp0e = bp08;
-			//^44C8:1EC7
 			U16 bp0c;
 			for (bp0c = 0; bp0e >= si; bp0e -= si, bp0c += si, si = ss, di = 0) {
-				//^44C8:1ECE
 				if (colorkey < 0) {
-					//^44C8:1ED4
 					FIRE_BLIT_TO_MEMORY_ROW_4TO8BPP_NOKEY(di, bp02 +bp0c, si);
-					//^44C8:1EE4
 					continue;
 				}
-				//^44C8:1EE6
 				FIRE_BLIT_TO_MEMORY_ROW_4TO8BPP(di, bp02 +bp0c, si, U8(colorkey));
-				//^44C8:1EFA
 			}
-			//^44C8:1F0A
 			if (bp0e > 0) {
-				//^44C8:1F10
 				if (colorkey < 0) {
-					//^44C8:1F16
 					FIRE_BLIT_TO_MEMORY_ROW_4TO8BPP_NOKEY(di, bp02 +bp0c, bp0e);
 				}
 				else {
-					//^44C8:1F2A
 					FIRE_BLIT_TO_MEMORY_ROW_4TO8BPP(di, bp02 +bp0c, bp0e, U8(colorkey));
 				}
-				//^44C8:1F40
 				si -= bp0e;
 				di += bp0e;
 			}
-			//^44C8:1F46
 			if ((bp08 & 1) != 0) {
-				//^44C8:1F4D
 				if (--si != 0) {
-					//^44C8:1F54
 					di++;
 				}
 				else {
-					//^44C8:1F57
 					si = ss;
 					di = 0;
 				}
 			}
-			//^44C8:1F5C
 		}
-		//^44C8:1F70
 		return;
 	}
-	//^44C8:1F73
 	for (U16 bp0a = 0; bp0a < bp06; bp0a++) {
-		//^44C8:1F7B
 		for (U16 bp10 = bp08; bp10 > 0; ) {
-			//^44C8:1F84
 			U16 bp0c;
 			for (bp0c = 0; bp10 > 0 && _44c8_1e1a(zz, bp04 +bp0c) == 0; ) {
-				//^44C8:1F8B
 				--bp10;
 				++bp0c;
 				++di;
 				--si;
-				//^44C8:1F93
 				if (si == 0) {
-					//^44C8:1F99
 					di = 0;
 					si = ss;
 				}
-				//^44C8:1F9E
 			}
-			//^44C8:1FBC
 			U16 bp0e;
 			for (bp0e = 0; bp10 > 0 && _44c8_1e1a(zz, bp04 +bp0c) != 0; ) {
-				//^44C8:1FC3
 				++bp0e;
 				--bp10;
-				//^44C8:1FC9
 			}
-			//^44C8:1FE7
 			if (bp0e > 0) {
-				//^44C8:1FED
 				while (bp0e >= si) {
-					//^44C8:1FEF
 					if (colorkey < 0) {
-						//^44C8:1FF5
 						FIRE_BLIT_TO_MEMORY_ROW_4TO8BPP_NOKEY(di, bp02 +bp0c, si);
 					}
 					else {
-						//^44C8:2007
 						FIRE_BLIT_TO_MEMORY_ROW_4TO8BPP(di, bp02 +bp0c, si, U8(colorkey));
 					}
-					//^44C8:201B
 					bp0e -= si;
 					bp0c += si;
-					//^44C8:2021
 					si = ss;
 					di = 0;
-					//^44C8:2026
 				}
-				//^44C8:202B
 				if (bp0e > 0) {
-					//^44C8:2031
 					if (colorkey < 0) {
-						//^44C8:2037
 						FIRE_BLIT_TO_MEMORY_ROW_4TO8BPP_NOKEY(di, bp02 +bp0c, bp0e);
 					}
 					else {
-						//^44C8:204B
 						FIRE_BLIT_TO_MEMORY_ROW_4TO8BPP(di, bp02 +bp0c, bp0e, U8(colorkey));
 					}
-					//^44C8:2061
 					si -= bp0e;
 					di += bp0e;
 				}
 			}
-			//^44C8:2067
 			if ((bp08 & 1) != 0) {
-				//^44C8:206E
 				if (--si != 0) {
-					//^44C8:2075
 					++di;
 				}
 				else {
-					//^44C8:2078
 					si = ss;
 					di = 0;
 				}
 			}
-			//^44C8:207D
 			bp04 += hazeWidth;
 			bp02 += dstWidth;
-			//^44C8:2089
 		}
-		//^44C8:2092
 	}
-	//^44C8:20A0
 	return;
 }
 
@@ -805,109 +649,77 @@ void SkWinCore::QUERY_CREATURE_PICST(U16 xx, i16 iDistToPlayer, Creature *xCreat
 			iImageID = tblCreatureFrameInfo14[iFrameID][4];
 		}
 	}
-	//^32CB:29FA
 	else if (false
 		|| (iMirrorFlag & 1) != 0
 		|| ((bp06 & 64) != 0 && (bp06 & 2) != 0 && (bp06 & 1) == 0)
 	) {
-		//^32CB:2A16
 		iVFlip = 1;
 	}
-	//^32CB:2A19
 	if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x0F_CREATURES, iCreatureType, dtImage, iImageID) == 0) {
-		//^32CB:2A31
 		iImageID = iFaceDirImg - 6; // Standard iFaceDirImg = 2; then -6 goes to 0xFA, to fetch the "shadow" image
-		//^32CB:2A39
 		if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x0F_CREATURES, iCreatureType, dtImage, iImageID) == 0) { // try to get 0xFC ?
-			//^32CB:2A4E
 			if (true
 				&& iImageID == 0xFB
 				&& QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x0F_CREATURES, iCreatureType, dtImage, iImageID + 2) != 0
 			) {
-				//^32CB:2A6E
 				iVFlip = 1;
-				//^32CB:2A71
 				iImageID = iImageID + 2;
 			}
 			else {
-				//^32CB:2A7B
 				iVFlip = 0;
-				//^32CB:2A7D
 				iImageID = 0xFC;
 			}
 		}
 	}
-	//^32CB:2A81
 	i16 iImageScaleFromDist = tlbDistanceStretch[RCJ(5,iDistToPlayer)]; // bp10
 	i16 iImageScale = iImageScaleFromDist;
-	//^32CB:2A8D
 	i16 iFrameID2 = (xInfo != NULL && xInfo->Command == ccm13_Destroy) ? xInfo->w14 : iFrameID;	// bp14
-	//^32CB:2AAB
 	U16 iOffsetPosition = tblCreatureFrameInfo14[iFrameID2][0]; // bp12	-- Standard is 0x0C = 12 = centered
 	if (SkCodeParam::bDM2V5Mode)
 		iOffsetPosition = CREATURE_GET_ANIMATION_OFFSET_POS_V5(iCreatureType, iFrameID2);
-	//^32CB:2AC1
 	if (xx == 3 && glbTryMoveObjectOrTable != 0) {
-		//^32CB:2ACE
 		iOffsetPosition = _4976_41d0[RCJ(7,glbTargetTypeMoveObject)];
 		iImageScale = _4976_41d7[RCJ(7,glbTargetTypeMoveObject)];
 		iFaceDirImg = 0;
 	}
 	else {
-		//^32CB:2AE9
 		i16 iLocalScale = tblCreatureFrameInfo14[iFrameID][iFaceDirImg + 6]; // V4
 		if (SkCodeParam::bDM2V5Mode)
 			iLocalScale = 0x40;
 		iImageScale = CALC_STRETCHED_SIZE(iLocalScale, iImageScaleFromDist);	// table read from item 653 containing sequence/frame size/scale info
 	}
-	//^32CB:2B0D
 	U16 bp0e = QUERY_CREATURE_BLIT_RECTI(xx, iOffsetPosition, iFaceDirImg) | 0x8000;
-	//^32CB:2B24
 	i16 bp18 = 0;
 	i16 bp16 = 0;
 	bp18 = bp16 = i8(tblCreatureFrameInfo14[iFrameID2][1]);
-	//^32CB:2B3D
 	if (bp16 != 0) {
-		//^32CB:2B44
 		i16 bp1c;
 		i16 bp1a;
 		switch (iFaceDirImg) {
 		case 0:	// back
-			//^32CB:2B50
 			bp1c = -7;
-			//^32CB:2B55
-			//^32CB:2B5C
 			bp1a = 0;
-			//^32CB:2B61
 			break;
 
 		case 2: // front
-			//^32CB:2B57
 			bp1c = 7;
-			//^32CB:2B5C
 			bp1a = 0;
-			//^32CB:2B61
 			break;
 
 		case 1: // left
 		case 3: // right
-			//^32CB:2B63
 			bp1a = -64;
 			bp1c = 0;
 
 			break;
 		}
-		//^32CB:2B6D
 		bp1a = CALC_STRETCHED_SIZE(bp1a, bp16);
-		//^32CB:2B7D
 		bp18 = CALC_STRETCHED_SIZE(bp1c, bp18);
 	}
 
-	//^32CB:2B8D
 	bp18 += 16;
 	QUERY_TEMP_PICST(iVFlip, iImageScale, iImageScale, _4976_41de[RCJ(8,bp06 & 7)] +bp16, _4976_41de[RCJ(8,(bp06 >> 3) & 7)] +bp18, iDistToPlayer,
 		bp0e, -1, CREATURE_GET_COLORKEY(iCreatureType), -1, 0x0f, iCreatureType, iImageID);
-	//^32CB:2BDA
 	return;
 }
 
@@ -1021,531 +833,335 @@ SRECT *SkWinCore::QUERY_BLIT_RECT(Bit8u *buff, SRECT *rect, U16 rectno, i16 *you
 	if (iRectnoFlag != 0) {
 		rectno &= 0x7fff;
 	}
-	//^098D:05C6
 	spRectMain = QUERY_RECT(glbRectNoTable.pb0, rectno);
 	if (spRectMain == NULL) {
-		//^098D:05AA
 		return NULL;
 	}
-	//^098D:05E4
 	SET_SRECT(&spRect1, -10000, -10000, 20000, 20000);
-	//^098D:05FC
 	SRECT bp22;
 	U16 bp0e;
 	if (ww == -1) {
-		//^098D:0602
 		bp0e = spRectMain->x;
 	}
 	else {
-		//^098D:060D
 		COPY_MEMORY(spRectMain, &bp22, sizeof(SRECT));
-		//^098D:0624
 		bp22.x = bp0e = ww;
-		//^098D:062D
 		spRectMain = &bp22;
 	}
-	//^098D:0636
 	if (bp0e <= 8) {
-		//^098D:063C
 		bp0a = spRectMain->cx;
 		bp0c = spRectMain->cy;
 	}
 	else {
-		//^098D:064F
 		if (bp0e == 9) {
-			//^098D:05AA
 			return NULL;
 		}
-		//^098D:0658
 		bp0e -= 10;
 		bp0a = 0;
 		bp0c = 0;
 	}
-	//^098D:0666
 	if (iRectnoFlag != 0) {
-		//^098D:066A
 		bp0a += *yourcx;
 		bp0c += *yourcy;
 		*yourcx = 0;
 		*yourcy = 0;
 	}
-	//^098D:068C
 	if (buff == NULL && (*yourcx <= 0 || *yourcy <= 0)) {
-		//^098D:06A6
-		//^098D:05AA
 		return NULL;
 	}
-	//^098D:06A9
 	bp10 = 0;
-	//^098D:06AE
 	for (; spRectMain->y != 0; ) {
-		//^098D:06B1
 		if (spRectMain->x >= 10 && spRectMain->x <= 18) {
-			//^098D:06C6
 			spRect2 = QUERY_RECT(glbRectNoTable.pb0, spRectMain->y);
-			//^098D:06DF
 			if (spRect2 == NULL)
 				break;
-			//^098D:06E6
 			si = spRect2->cx;
 			di = spRect2->cy;
 			bp12 = spRect2->x;
 			bp24 = spRect2->y;
-			//^098D:06FE
 			spRect2 = QUERY_RECT(glbRectNoTable.pb0, spRect2->y);
-			//^098D:0717
 			if (spRect2 == NULL)
 				break;
-			//^098D:071E
 			switch (bp12) {
 				default:
-					//^098D:072D
-					//^098D:05AA
 					return NULL;
 
 				case 0:
-					//^098D:0730
 					di -= (spRect2->cy +1) >> 1;
-					//^098D:073C
 					si -= (spRect2->cx +1) >> 1;
-					//^098D:0748
 					break;
 
 				case 5:
-					//^098D:073C
 					si -= (spRect2->cx +1) >> 1;
-					//^098D:0748
 					break;
 
 				case 3:
-					//^098D:074A
 					di -= spRect2->cy -1;
-					//^098D:0754
 					si -= spRect2->cx -1;
-					//^098D:075C
-					//^098D:0746
 					break;
 
 				case 2:
-					//^098D:0754
 					si -= spRect2->cx -1;
-					//^098D:075C
-					//^098D:0746
 					break;
 
 				case 6:
-					//^098D:075E
 					si -= spRect2->cx -1;
-					//^098D:0768
 					di -= (spRect2->cy +1) >> 1;
-					//^098D:0772
 					break;
 
 				case 8:
-					//^098D:0768
 					di -= (spRect2->cy +1) >> 1;
-					//^098D:0772
 					break;
 
 				case 7:
-					//^098D:0774
 					si -= (spRect2->cx +1) >> 1;
-					//^098D:0780
 					di -= spRect2->cy -1;
-					//^098D:0788
 					break;
 
 				case 4:
-					//^098D:0780
 					di -= spRect2->cy -1;
-					//^098D:0788
 					break;
 
 				case 1:
-					//^098D:078A
 					break;
 			}
 
-			//^098D:078A
 			spRect1.x += si;
-			//^098D:078D
 			if (spRect1.x < si) {
 				spRect1.x = si;
 			}
-			//^098D:0797
 			if (spRect2->cx + si <= spRect1.x + spRect1.cx -1) {
-				//^098D:07AB
 				spRect1.cx = spRect2->cx - spRect1.x + si;
 			}
-			//^098D:07B7
 			spRect1.y += di;
 			if (spRect1.y < di) {
 				spRect1.y = di;
 			}
-			//^098D:07C4
 			if (spRect2->cy + di <= spRect1.y + spRect1.cy -1) {
-				//^098D:07D8
 				spRect1.cy = spRect2->cy - spRect1.y + di;
 			}
-			//^098D:07E4
 			switch (spRectMain->x) {
 				default:
-					//^098D:07F9
-					//^098D:05AA
 					return NULL;
 
 				case 10:
-					//^098D:07FC
 					di += (spRect2->cy +1) >> 1;
-					//^098D:0808
 					si += (spRect2->cx +1) >> 1;
-					//^098D:0814
 					break;
 
 				case 15:
-					//^098D:0808
 					si += (spRect2->cx +1) >> 1;
-					//^098D:0814
 					break;
 
 				case 13:
-					//^098D:0816
 					di += spRect2->cy -1;
-					//^098D:0820
 					si += spRect2->cx -1;
-					//^098D:0814
 					break;
 
 				case 12:
-					//^098D:0820
 					si += spRect2->cx -1;
-					//^098D:0814
 					break;
 
 				case 16:
-					//^098D:082A
 					si += spRect2->cx -1;
-					//^098D:0834
 					di += (spRect2->cy +1) >> 1;
-					//^098D:083E
 					break;
 
 				case 18:
-					//^098D:0834
 					di += (spRect2->cy +1) >> 1;
-					//^098D:083E
 					break;
 
 				case 17:
-					//^098D:0840
 					si += (spRect2->cx +1) >> 1;
-					//^098D:084C
 					di += spRect2->cy -1;
 
 					break;
 
 				case 14:
-					//^098D:084C
 					di += spRect2->cy -1;
 
 					break;
 
 				case 11:
-					//^098D:0856
 					break;
 			}
-			//^098D:0856
 			bp0a += si + spRectMain->cx;
-			//^098D:0862
 			bp0c += di + spRectMain->cy;
-			//^098D:086B
 		}
 		else {
-			//^098D:086E
 			spRect2 = QUERY_RECT(glbRectNoTable.pb0, spRectMain->y);
-			//^098D:088A
 			if (spRect2 == NULL)
 				break;
-			//^098D:0891
 			bp24 = spRectMain->y;
 			si = spRect2->cx;
 			di = spRect2->cy;
-			//^098D:08A6
 			if (spRect2->x == 1) {
-				//^098D:08AC
 				bp0a += si;
 				bp0c += di;
 				spRect1.x += si;
 				spRect1.y += di;
 			}
-			//^098D:08BB
 			else if (spRect2->x == 9) {
-				//^098D:08C7
 				switch (spRectMain->x) {
 					case 0:
-						//^098D:08DC
 						si = spRectMain->cx - ((si +1) >> 1);
-						//^098D:08EC
-						//^098D:0960
 						di = spRectMain->cy - ((di +1) >> 1);
 						break;
 
 					case 1:
-						//^098D:08EE
 						si = spRectMain->cx;
-						//^098D:08F5
 						di = spRectMain->cy;
 						break;
 
 					case 2:
-						//^098D:08FE
 						si = spRectMain->cx - (si -1);
-						//^098D:0908
-						//^098D:0939
-						//^098D:08F5
 						di = spRectMain->cy;
 						break;
 
 					case 3:
-						//^098D:090A
 						si = spRectMain->cx - (si -1);
-						//^098D:0918
 						di = spRectMain->cy - (di -1);
-						//^098D:0922
-						//^098D:096C
 						break;
 
 					case 4:
-						//^098D:0924
 						si = spRectMain->cx;
-						//^098D:092B
-						//^098D:0918
 						di = spRectMain->cy - (di -1);
-						//^098D:0922
-						//^098D:096C
 						break;
 
 					case 5:
-						//^098D:092D
 						si = spRectMain->cx - ((si +1) >> 1);
-						//^098D:0939
-						//^098D:093D
-						//^098D:08F5
 						di = spRectMain->cy;
 						break;
 
 					case 6:
-						//^098D:093F
 						si = spRectMain->cx - (si -1);
-						//^098D:0949
-						//^098D:08E8
 						break;
 
 					case 7:
-						//^098D:094B
 						si = spRectMain->cx - ((si +1) >> 1);
-						//^098D:0957
-						//^098D:0914
-						//^098D:0918
 						di = spRectMain->cy - (di -1);
-						//^098D:0922
-						//^098D:096C
 						break;
 
 					case 8:
-						//^098D:0959
 						si = spRectMain->cx;
-						//^098D:0960
 						di = spRectMain->cy - ((di +1) >> 1);
 						break;
 				}
-				//^098D:0970
 				if (bp10 != 0) {
-					//^098D:0976
 					bp10 = 0;
 					bp0a += si;
 					bp0c += di;
 					spRect1.x += si;
 					spRect1.y += di;
 				}
-				//^098D:0987
 				if (spRect1.x < si) {
 					spRect1.x = si;
 				}
-				//^098D:098F
 				if (spRect2->cx + si <= spRect1.x + spRect1.cx -1) {
 					spRect1.cx = spRect2->cx - spRect1.x + si;
 				}
-				//^098D:09AF
 				if (spRect1.y < di) {
-					//^098D:09B4
 					spRect1.y = di;
 				}
-				//^098D:09B7
 				if (spRect2->cy + di <= spRect1.y + spRect1.cy -1) {
-					//^098D:09CB
 					spRect1.cy = spRect2->cy - spRect1.y + di;
 				}
 			}
 			else {
-				//^098D:09D9
 				if (spRect2->x <= 8) {
-					//^098D:09E2
 					bp10 = 1;
 				}
 			}
 		}
-		//^098D:09E7
 		spRectMain = spRect2;
-		//^098D:09F3
 	}
-	//^098D:0A00
 	si = *yourcx;
-	//^098D:0A08
 	if (si == 0) {
-		//^098D:0A0C
-		si = READ_UI16(buff,-4);
+		si = READ_IMGBUFF_WIDTH(buff);	// READ_UI16(buff,-4);
 	}
-	//^098D:0A13
 	di = *yourcy;
-	//^098D:0A1B
 	if (di == 0) {
-		//^098D:0A1F
-		di = READ_UI16(buff,-2);
+		di = READ_IMGBUFF_HEIGHT(buff);	// READ_UI16(buff,-2);
 	}
-	//^098D:0A26
 	switch (bp0e) {
 		default:
-			//^098D:0A35
-			//^098D:05AA
 			return NULL;
 
 		case 0:
-			//^098D:0A38
 			rect->x = bp0a -((si +1) >> 1);
-			//^098D:0A48
-			//^098D:0AB1
 			rect->y = bp0c -((di +1) >> 1);
 			break;
 
 		case 1:
-			//^098D:0A4A
 			rect->x = bp0a;
-			//^098D:0A53
 			rect->y = bp0c;
 			break;
 
 		case 2:
-			//^098D:0A5F
 			rect->x = bp0a - (si -1);
-			//^098D:0A53
 			rect->y = bp0c;
 			break;
 
 		case 3:
-			//^098D:0A64
 			rect->x = bp0a - (si -1);
-			//^098D:0A72
 			rect->y = bp0c - (di -1);
-			//^098D:0A7D
-			//^098D:0ABE
 			break;
 
 		case 4:
-			//^098D:0A7F
 			rect->x = bp0a;
-			//^098D:0A88
-			//^098D:0A72
 			rect->y = bp0c - (di -1);
-			//^098D:0A7D
-			//^098D:0ABE
 			break;
 
 		case 5:
-			//^098D:0A8A
 			rect->x = bp0a - ((si +1) >> 1);
-			//^098D:0A9A
-			//^098D:0A53
 			rect->y = bp0c;
 			break;
 
 		case 6:
-			//^098D:0A9C
 			rect->x = bp0a - (si -1);
-			//^098D:0A9F
-			//^098D:0A3D
-			//^098D:0A48
-			//^098D:0AB1
 			rect->y = bp0c - ((di +1) >> 1);
 			break;
 
 		case 7:
-			//^098D:0AA1
 			rect->x = bp0a - ((si +1) >> 1);
-			//^098D:0A72
 			rect->y = bp0c - (di -1);
-			//^098D:0A7D
-			//^098D:0ABE
 			break;
 
 		case 8:
-			//^098D:0AA8
 			rect->x = bp0a;
-			//^098D:0AB1
 			rect->y = bp0c - ((di +1) >> 1);
 			break;
 	}
-	//^098D:0AC2
 	if (glb_4976_4bca_Rect.cx != 0) {
-		//^098D:0AC9
 		COPY_MEMORY(&glb_4976_4bca_Rect, &spRect1, sizeof(SRECT));
 	}
-	//^098D:0ADE
 	if (_4976_4bc8 != 0 && cd.pi.glbIsPlayerMoving != 0 && bp24 == 3) {
-		//^098D:0AF2
 		if (UNION_RECT(&spRect1, &_4976_00fe, yourcx, yourcy) == NULL) {
-			//^098D:05AA
 			return NULL;
 		}
 	}
-	//^098D:0B15
 	bp0a = spRect1.x - rect->x;
-	//^098D:0B21
 	if (bp0a <= 0) {
-		//^098D:0B25
 		*yourcx = 0;
-		//^098D:0B33
 		rect->cx = min_value(si, spRect1.cx + bp0a);
 	}
 	else {
-		//^098D:0B37
 		*yourcx = bp0a;
-		//^098D:0B40
 		rect->x = spRect1.x;
-		//^098D:0B49
 		rect->cx = min_value(si - bp0a, spRect1.cx);
 	}
-	//^098D:0B60
 	bp0c = spRect1.y - rect->y;
-	//^098D:0B6D
 	if (bp0c <= 0) {
-		//^098D:0B71
 		*yourcy = 0;
-		//^098D:0B79
 		rect->cy = min_value(di, spRect1.cy + bp0c);
 	}
 	else {
-		//^098D:0B83
 		*yourcy = bp0c;
-		//^098D:0B8C
 		rect->y = spRect1.y;
-		//^098D:0B96
 		rect->cy = min_value(di - bp0c, spRect1.cy);
 	}
-	//^098D:0BAD
 	if (rect->cx <= 0 || rect->cy <= 0)
 		return NULL;
-	//^098D:0BC1
 
 	SkD((DLV_RCT, "RCT: <- QUERY_BLIT_RECT(%p,%p(%6d,%6d,%6d,%6d),%4d,%3d,%3d,%3d)\n"
 		, buff, rect, (Bitu)rect->x, (Bitu)rect->y, (Bitu)rect->cx, (Bitu)rect->cy
@@ -1564,42 +1180,31 @@ void SkWinCore::MOVE_MEMORY(const void *buffSrc, void *buffDst, U16 size)
 //^00EB:01EB
 void SkWinCore::MOVE_MEMORY_WITH_DELTA(U16 offSrc, U16 offDst, U16 size) //#DS=04BF
 {
-	//^00EB:01EB
-	//^00EB:01EE
 	MOVE_MEMORY(
 		glbBlitBufferSource + offSrc,
 		_04bf_0e34 + offDst,
 		size
 		);
-	//^00EB:021F
 	return;
 }
 
 //^00EB:0221
 void SkWinCore::COPY_MEMORY_WITH_DELTA_AND_TRANSPARENT(U16 offSrc, U16 offDst, U16 size, Bit8u colorkey) //#DS=04BF
 {
-	//^00EB:0221
-	//^00EB:0224
 	Bit8u dh = colorkey;
 	Bit8u *di = _04bf_0e34 + offDst;
 	U16 cx = size;
 	Bit8u *si = glbBlitBufferSource + offSrc;
 
 	do {
-		//^00EB:0242
 		Bit8u al = *(si++);
-		//^00EB:0243
 		if (al != colorkey) {
-			//^00EB:0247;
 			*(di++) = al;
 		}
 		else {
-			//^00EB:024C
 			di++;
 		}
-		//^00EB:024D
 	} while (--cx != 0);
-	//^00EB:024F
 	return;
 }
 
@@ -1608,8 +1213,6 @@ void SkWinCore::MOVE_MEMORY_STRETCH_13TO16(U16 offSrc, U16 offDst)
 {
 	// compose 0.5 stepping viewport. (123% larger)
 
-	//^00EB:0812
-	//^00EB:0817
 	Bit8u *di = _04bf_0e34 + offDst;
 	Bit8u *si = glbBlitBufferSource + offSrc;
 	U16 cx = 14;
@@ -1624,7 +1227,6 @@ void SkWinCore::MOVE_MEMORY_STRETCH_13TO16(U16 offSrc, U16 offDst)
 	// [ES:DI] out A000:3480  00 01 02 02 03 04 05 06 07 07 08 09 0A 0B 0B 0C
 
 	do {
-		//^00EB:082C
 		*di = *si; di++; si++;
 		*di = *si; di++; si++;
 		*di = *si; di++; 
@@ -1641,9 +1243,7 @@ void SkWinCore::MOVE_MEMORY_STRETCH_13TO16(U16 offSrc, U16 offDst)
 		*di = *si; di++; si++;
 		*di = *si; di++; 
 		*di = *si; di++; si++;
-		//^00EB:083E
 	} while (--cx != 0);
-	//^00EB:0840
 	return;
 }
 
@@ -1653,54 +1253,35 @@ SRECT *SkWinCore::SCALE_RECT(U16 rectno, SRECT *rc, U16 horzResolution, U16 vert
 {
 	// horzResolution, vertResolution: 10,000 is fair. 5,000 is half. 20,000 is double.
 
-	//^098D:0D3F
-	//^098D:0D45
 	U16 di = horzResolution;
 	U16 si = vertResolution;
-	//^098D:0D4B
 	SRECT *bp04 = QUERY_RECT(&glbRectNoTable, rectno);
-	//^098D:0D63
 	if (bp04 != NULL) {
-		//^098D:0D6A
 		if (bp04->y != 0) {
-			//^098D:0D77
 			bp04 = QUERY_RECT(&glbRectNoTable, bp04->y);
-			//^098D:0D93
 			if (bp04 != NULL) {
-				//^098D:0D9A
 				if (bp04->x == 9) {
-					//^098D:0DA6
 					i16 bp06 = (di == 10000) ? (bp04->cx) : (i16)((i32(bp04->cx) * di) / 10000);
-					//^098D:0DD6
 					i16 bp08 = (si == 10000) ? (bp04->cy) : (i16)((i32(bp04->cy) * si) / 10000);
-					//^098D:0E09
 					if (bp06 == 0 && di != 0) {
-						//^098D:0E13
 						bp06 = 1;
 					}
-					//^098D:0E18
 					if (bp08 == 0 && si != 0) {
-						//^098D:0E22
 						bp08 = 1;
 					}
-					//^098D:0E27
 					if (bp06 > 0 && bp08 > 0) {
-						//^098D:0E33
 						return QUERY_BLIT_RECT(NULL, rc, rectno, &bp06, &bp08, -1);
 					}
 				}
 			}
 		}
 	}
-	//^098D:0E55
 	return NULL;
 }
 
 //^098D:0E5D
 SRECT *SkWinCore::QUERY_EXPANDED_RECT(U16 rectno, SRECT *rc)
 {
-	//^098D:0E5D
-	//^098D:0E60
 	return SCALE_RECT(rectno, rc, 10000, 10000);
 }
 
@@ -1720,7 +1301,6 @@ void SkWinCore::DRAW_DIALOGUE_PICT(Bit8u *srcImage, Bit8u *dstImage, SRECT *rect
 	// draw the:
 	// a) pre rendered dialogue to screen
 
-	//^0B36:1599
 	FIRE_BLIT_PICTURE(
 		srcImage,
 		dstImage,
