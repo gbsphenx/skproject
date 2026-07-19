@@ -7033,7 +7033,7 @@ void SkWinCore::MessageLoop(bool bBalanceWait, bool bShortWait) {
 		}
 	}
 
-	if (_04bf_0e7a != 0) // if block hardware interruption
+	if (glbMouseEventLock != 0) // if block hardware interruption
 		return;
 	//printf("MESSAGE LOOP %05d: before Sleep\n", iInternalMLCount);
 #if !defined(__DJGPP__)
@@ -18205,7 +18205,7 @@ SkWinCore::SkWinCore()
 	_4976_4bc8 = 0;
 	glbRectX_0106 = 16; // cx
 	glbRectY_0108 = 16; // cy
-	_04bf_0e7a = 0; //?
+	//glbMouseEventLock = 0; //? already below
 	_04bf_17a4 = 0; //?
 	_04bf_09e0.x = 0; _04bf_09e0.y = 0; _04bf_09e0.cx = 0xc; _04bf_09e0.cy = 0x10;
 	_04bf_09e8.x = 0; _04bf_09e8.y = 0; _04bf_09e8.cx = 0xc; _04bf_09e8.cy = 0x10;
@@ -18220,7 +18220,7 @@ SkWinCore::SkWinCore()
 	glbScreenHeight = 200;	// Screen height
 	_4976_4964 = NULL;
 	glbMouseVisibility = 1;	// (_4976_4860)
-	_04bf_0e7a = 0;
+	glbMouseEventLock = 0;
 	cd.mk.glbMouseXPos = 0;
 	cd.mk.glbMouseYPos = 0;
 	zeroMem(&_04bf_1852, sizeof(_04bf_1852));

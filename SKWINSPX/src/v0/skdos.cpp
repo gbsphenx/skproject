@@ -252,7 +252,3 @@ UINT SkRendererDOS::AudioPlaySound(const U8 *xSoundBuffer, U32 iBufferSize, i8 i
 {
 	return 0;
 }
-
-
-
-//------------------------------------------------------------------------------

@@ -86,6 +86,48 @@ int getdrive() { return 3; }
 
 #endif // __MINGW__ / __LINUX__
 
+
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+// Some DOS functions for retrocompatibility
+
+
+// SPX Renamed inportb to SKDOS_IMPORTB to avoid confusion with real DOS inportb
+U8 SkWinCore::SKDOS_IMPORTB(U16 port) {
+#ifdef __DJGPP__
+	return inportb(port)
+#else
+	switch (port) {
+		case 0x60: // key in
+		{
+			CSkKinput *p = skWinApp->DequeueKinput();
+			if (p != NULL)
+				return p->raw;
+			return 0;
+		}
+		case 0x64: // keyboard status: 2=still buffered
+			return (skWinApp->cntKeybIn != 0) ? 2 : 0;
+	}
+	return 0;
+#endif
+}
+
+// SPX Implemented fake SKDOS_OUTPORTB to get rid of real DOS outportb
+void SkWinCore::SKDOS_OUTPORTB(U16 port, U8 value)
+{
+#ifdef __DJGPP__
+    outportb(port, value);
+#else
+    (void)port;
+    (void)value;
+#endif
+}
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
 //------------------------------------------------------------------------------
 // FIRE - LEVEL
 
@@ -107,8 +149,8 @@ int SkWinCore::FIRE_BOOTSTRAP() //#DS=089C
 X16 SkWinCore::_069a_035b(X16 xx)
 {
 	ENTER(0);
-	if (xx == 0xffff)
-		return 0xffff;
+	if (xx == 0xFFFF)
+		return 0xFFFF;
 	if ((_4976_00e3[RCJ(5, U8(xx))] & 8) != 0)
 		return U8(xx) - 32;
 	return U8(xx);
@@ -489,7 +531,7 @@ void SkWinCore::IBMIO_CHECK_KEYBOARD_INPUT()
 {
 	ENTER(6);
 	do {
-		U16 bp06 = SK_UI_IMPORTB(0x60);	// get "v" keyboard value
+		U16 bp06 = SKDOS_IMPORTB(0x60);	// get "v" keyboard value
 		if (bp06 == 0xE0) {
 			_04bf_0e7e |= 0x1000;
 			continue;
@@ -636,7 +678,7 @@ void SkWinCore::IBMIO_CHECK_KEYBOARD_INPUT()
 			_04bf_185c &= 0xffef;
 		}
 		_04bf_0e7e &= 0xefff;
-	} while ((SK_UI_IMPORTB(0x64) & 2) != 0);
+	} while ((SKDOS_IMPORTB(0x64) & 2) != 0);
 	return;
 }
 
@@ -675,9 +717,9 @@ void SkWinCore::_01b0_20ff()
 U16 SkWinCore::_01b0_0e2c()
 {
 	ENTER(0);
-	outportb(0x43,0x80);
-	U8 al = SK_UI_IMPORTB(0x42);	// always return 0 ?
-	U8 ah = SK_UI_IMPORTB(0x42);	// always return 0 ?
+	SKDOS_OUTPORTB(0x43,0x80);
+	U8 al = SKDOS_IMPORTB(0x42);	// always return 0 ?
+	U8 ah = SKDOS_IMPORTB(0x42);	// always return 0 ?
 	return (ah<<8)|al;
 }
 
@@ -685,18 +727,18 @@ U16 SkWinCore::_01b0_0e2c()
 X16 SkWinCore::_01b0_0e27(X16 xx) 
 {
 	ENTER(0);
-	while ((SK_UI_IMPORTB(0x0201) & 3) != 0) {
+	while ((SKDOS_IMPORTB(0x0201) & 3) != 0) {
 	}
 	U16 tmp0 = _01b0_0e2c();
-	outportb(0x0201, U8(tmp0));
+	SKDOS_OUTPORTB(0x0201, U8(tmp0));
 	U8 al;
 	U8 bl = U8(xx);
-	while ((bl & (al = SK_UI_IMPORTB(0x0201))) != 0) {
+	while ((bl & (al = SKDOS_IMPORTB(0x0201))) != 0) {
 	}
 	if (bl >= al) {
 		U16 tmp1 = _01b0_0e2c();
 		if (tmp0 < tmp1) {
-			return 0xffff -tmp1 +tmp0;
+			return 0xFFFF -tmp1 +tmp0;
 		}
 		else {
 			return tmp1 -tmp0;
@@ -713,7 +755,7 @@ void SkWinCore::_01b0_0fa3()
 	ENTER(0);
 	if (glbPType == 1 && sysMousePositionCaptured == 0 && sysSomeSemaphore == 0) {
 		sysSomeSemaphore = 1;
-		outportb(0x20,0x20);
+		SKDOS_OUTPORTB(0x20,0x20);
 		if ((_04bf_0e4c++ & 1) != 0) {
 			_04bf_1798 = (_01b0_0e27(1) -100) / _04bf_0298;
 		}
@@ -733,14 +775,14 @@ void SkWinCore::_01b0_0fa3()
 				_04bf_03ca = 0;
 			}
 		}
-		_04bf_03d0 = SK_UI_IMPORTB(0x201);
+		_04bf_03d0 = SKDOS_IMPORTB(0x201);
 		_04bf_03d0 = ((_04bf_03d0 >> 4) ^ 3)&3;
 		sysSomeSemaphore = 0;
 	}
 	else {
 		if (glbPType != 2 && glbPType != 3)
 			return;
-		_04bf_179a = (cd.sc.glbSoundBlasterBasePort != 0 && glbPType == 2) ? (SK_UI_IMPORTB(_01b0_3378 +1)) : 0x78;
+		_04bf_179a = (cd.sc.glbSoundBlasterBasePort != 0 && glbPType == 2) ? (SKDOS_IMPORTB(_01b0_3378 +1)) : 0x78;
 		if (_04bf_03d2 == 1) {
 			if ((_04bf_179a & 0x80) == 0) {
 				_04bf_03d2 = 0;
@@ -809,7 +851,7 @@ void SkWinCore::_01b0_0fa3()
 	X16 cx = _04bf_03c8;
 	X16 dx = _04bf_03ca;
 	X16 bx = _04bf_03d0;
-	if (_04bf_0e7a == 0) {
+	if (glbMouseEventLock == 0) {
 		IBMIO_MOUSE_EVENT_RECEIVER(cx, dx, bx);
 		return;
 	}
@@ -918,16 +960,12 @@ void SkWinCore::IBMIO_UNINIT_TIMER()
 		sndLockSoundBuffer = 0;
 #endif
 	}
-	outportb(0x43,0x36);
-	outportb(0x40,0);
-	outportb(0x40,0);
+	SKDOS_OUTPORTB(0x43,0x36);
+	SKDOS_OUTPORTB(0x40,0);
+	SKDOS_OUTPORTB(0x40,0);
 	_sys_setvect(0x08, _01b0_13be);
 	_01b0_13ca = 0;
-#ifdef __DJGPP__
-	outportb(0x61,inportb(0x61) & 0xfc);
-#else
-	outportb(0x61,inport(0x61) & 0xfc);
-#endif	
+	SKDOS_OUTPORTB(0x61,SKDOS_IMPORTB(0x61) & 0xFC);	// that would apparently turn off the speaker
 	return;
 }
 //^01B0:0A39
@@ -1028,7 +1066,7 @@ i16 SkWinCore::IBMIO_MAIN(i16 argc, const char **argv, char **env) //#DS=04BF
 					if (bp06 >= '1' && bp06 <= '3') {
 						cd.sc.glbSoundBlasterBasePort = _04bf_05f9[RCJ(18,bp06)];
 					}
-					outportb(cd.sc.glbSoundBlasterBasePort +2, inportb(cd.sc.glbSoundBlasterBasePort +2));
+					SKDOS_OUTPORTB(cd.sc.glbSoundBlasterBasePort +2, SKDOS_IMPORTB(cd.sc.glbSoundBlasterBasePort +2));
 					break;
 				case 'B'://^2D67
 					cd.sc.glbSoundBlasterBasePort = IBMIO_DETECT_SBLASTER();
@@ -1153,7 +1191,7 @@ _2e85:
 		}
 		_01b0_18d3_AUDIO(0);
 		if (cd.sc.glbSoundCardType == 5) {
-			outportb(cd.sc.glbSoundBlasterBasePort +2, inportb(cd.sc.glbSoundBlasterBasePort +2) | 8);
+			SKDOS_OUTPORTB(cd.sc.glbSoundBlasterBasePort +2, SKDOS_IMPORTB(cd.sc.glbSoundBlasterBasePort +2) | 8);
 		}
 		IBMIO_UNINIT_TIMER();
 		if (glbPType == 4 && bp08 != 0)
@@ -1406,15 +1444,11 @@ void SkWinCore::FIRE_BLIT_TO_MEMORY_8TO8BPP(
 //^00EB:03D5
 void SkWinCore::IBMIO_WAIT_VSYNC()
 {
-#ifndef __DJGPP__
-
-#if UseAltic
-	skWinApp->skwin_Sleep(1000 / 50);
+#ifdef __DJGPP__
+	while ((SKDOS_IMPORTB(0x03DA) & 0x08) != 0);
+	while ((SKDOS_IMPORTB(0x03DA) & 0x08) == 0);
 #else
-	while ((inportb(0x03DA) & 0x08) != 0);
-	while ((inportb(0x03DA) & 0x08) == 0);
-#endif
-
+	skWinApp->skwin_Sleep(1000 / 50);
 #endif // __DJGPP__
 }
 
@@ -1422,7 +1456,7 @@ void SkWinCore::IBMIO_WAIT_VSYNC()
 void SkWinCore::IBMIO_UPDATE_PALETTE_SET()
 {
 	IBMIO_WAIT_VSYNC();
-	outportb(0x03C8, 0);
+	SKDOS_OUTPORTB(0x03C8, 0);
 	U16 iColIdx = 0;	// si
 	for (iColIdx = 0; iColIdx < 256; iColIdx++) {
 		U8 iCol1R = glbPaletteRGB[iColIdx][0];	// bp01
@@ -1430,9 +1464,9 @@ void SkWinCore::IBMIO_UPDATE_PALETTE_SET()
 		U8 iCol3B = glbPaletteRGB[iColIdx][2];	// bp03
 		//bp01 = bp02 = bp03 = ((si%16)+1) << 4;
 		//outportb(0x03c8, si);
-		outportb(0x03C9, iCol1R);
-		outportb(0x03C9, iCol2G);
-		outportb(0x03C9, iCol3B);
+		SKDOS_OUTPORTB(0x03C9, iCol1R);
+		SKDOS_OUTPORTB(0x03C9, iCol2G);
+		SKDOS_OUTPORTB(0x03C9, iCol3B);
 	}
 	skWinApp->setRGB6Palette((X8*) glbPaletteRGB);
 	return;

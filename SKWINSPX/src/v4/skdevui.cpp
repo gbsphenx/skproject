@@ -184,7 +184,7 @@ void SkWinCore::IBMIO_BLIT_MOUSE_CURSOR(Bit8u *buff, SRECT *rc, Bit16u srcx, Bit
 void SkWinCore::LOCK_MOUSE_EVENT() //#DS=04BF
 {
 	//LOADDS(0x3083)
-	_04bf_0e7a++;
+	glbMouseEventLock++;
 }
 
 
@@ -416,7 +416,7 @@ void SkWinCore::UNLOCK_MOUSE_EVENT() //#DS=04BF
 		Bit16u di = _04bf_17ac[_04bf_179c].w4;
 		IBMIO_MOUSE_EVENT_RECEIVER(bp02, di, si);
 	}
-	_04bf_0e7a--;
+	glbMouseEventLock--;
 }
 
 //^01B0:0AA8
@@ -452,7 +452,7 @@ void SkWinCore::IBMIO_01b0_08d8()
 	cd.mk.glbMouseCurVis2 = 0;
 	_04bf_1850 = 0;
 	sysMousePositionCaptured = 0;
-	_04bf_0e7a = 0;
+	glbMouseEventLock = 0;
 	_04bf_179c = _04bf_0e50 = 0;
 	_04bf_17a4 = 0;
 	_04bf_1934 = 0;
@@ -493,7 +493,7 @@ void SkWinCore::IBMIO_MOUSE_HANDLER()	// serves as MOUSE CALLBACK from _int33_mo
 			cx = cd.mk.glbMouseXPos;
 			dx = cd.mk.glbMouseYPos;
 		}
-		if (_04bf_0e7a == 0) {
+		if (glbMouseEventLock == 0) {
 			IBMIO_MOUSE_EVENT_RECEIVER(cx, dx, bx);
 		}
 		else if (_04bf_17a4 < 10) {
@@ -544,7 +544,7 @@ void SkWinCore::_01b0_08b6_SET_RECEIVER(U16 (SkWinCore::*pfn)(U16 xx, U16 yy, i1
 
 //^01B0:0D39
 // _01b0_0d39 renamed MOUSE_STATE_01b0_0d39
-void SkWinCore::MOUSE_STATE_01b0_0d39(i16 *xx, i16 *yy, i16 *zz, Bit16u ww) //#DS=04BF
+void SkWinCore::MOUSE_STATE_01b0_0d39(i16 *xx, i16 *yy, i16 *zz, U16 ww) //#DS=04BF
 {
 	ENTER(0);
 	LOADDS(0x3083);
@@ -562,26 +562,10 @@ void SkWinCore::MOUSE_STATE_01b0_0d39(i16 *xx, i16 *yy, i16 *zz, Bit16u ww) //#D
 }
 
 
-// SPX Renamed inportb to SK_UI_IMPORTB to avoid confusion with DOS inportb
-U8 SkWinCore::SK_UI_IMPORTB(U16 port) {
-	switch (port) {
-		case 0x60: // key in
-		{
-			CSkKinput *p = skWinApp->DequeueKinput();
-			if (p != NULL)
-				return p->raw;
-			return 0;
-		}
-		case 0x64: // keyboard status: 2=still buffered
-			return (skWinApp->cntKeybIn != 0) ? 2 : 0;
-	}
-	return 0;
-}
-
 
 
 //^1031:0781
-void SkWinCore::_1031_0781(Bit16u xx) 
+void SkWinCore::_1031_0781(U16 xx) 
 {
 	ENTER(12);
 	sk0d9e *bp04 = _1031_06b3(&_4976_1891[_4976_19ad], xx);

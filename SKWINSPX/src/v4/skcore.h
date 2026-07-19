@@ -185,8 +185,8 @@ protected:
 	X16		_04bf_0e50;
 	U16		sysMousePositionCaptured;		// (_04bf_0e52) 1=mouse position is captured
 	X16	_04bf_0e64;
-	U16	_04bf_0e7a;		// mouse event lock: 1=locked, 0=unlocked
-	i16	_04bf_0e7c;		// mouse push state (delta)
+	U16	glbMouseEventLock;		// _04bf_0e7a	mouse event lock: 1=locked, 0=unlocked
+	i16	_04bf_0e7c;		// _04bf_0e7c	mouse push state (delta)
 	X16 _04bf_0e7e;
 
 	X16	_04bf_1798;
@@ -1049,7 +1049,8 @@ protected:
 
 	//--- UI : MOUSE + KEYBOARD ------------------------------------------------
 
-	U8 SK_UI_IMPORTB(U16 port);	// importb
+	U8 SKDOS_IMPORTB(U16 port);	// importb
+	void SKDOS_OUTPORTB(U16 port, U8 value);	// outportb
 
 	//--- IBMIO ----------------------------------------------------------------
 	
