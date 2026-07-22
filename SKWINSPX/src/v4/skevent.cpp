@@ -110,17 +110,17 @@ void SkWinCore::PROCEED_GLOBAL_EFFECT_TIMERS()
 						if ((si & (1 << bp06)) == 0)
 							continue;
 						//^2066:2BE4
-						if (glbChampionSquad[bp06].curHP() == 0)
+						if (tblChampionSquad[bp06].curHP() == 0)
 							continue;
 						//^2066:2BF5
-						glbChampionSquad[bp06].enchantmentPower += bp04->value;
+						tblChampionSquad[bp06].enchantmentPower += bp04->value;
 						//^2066:2C0C
 					}
 					break;
 				}
 			case C75_tty_PoisonChampion:	// x4B
 				{
-					glbChampionSquad[si].PoisonValue++;
+					tblChampionSquad[si].PoisonValue++;
 					break;
 				}
 		}
@@ -285,12 +285,12 @@ void SkWinCore::PROCEED_ENCHANTMENT_SELF(U16 mask, U16 yy, U16 zz, U16 tick)
 		X16 di = 1 << bp06;
 		if ((mask & di) != 0) {
 			//^2C1D:002E
-			if (glbChampionSquad[bp06].curHP() == 0) {
+			if (tblChampionSquad[bp06].curHP() == 0) {
 				//^2C1D:003F
 				mask &= ~di;
 			}
-			if (glbChampionSquad[bp06].enchantmentAura != U8(yy) || glbChampionSquad[bp06].curHP() == 0) {
-				glbChampionSquad[bp06].enchantmentPower = 0;
+			if (tblChampionSquad[bp06].enchantmentAura != U8(yy) || tblChampionSquad[bp06].curHP() == 0) {
+				tblChampionSquad[bp06].enchantmentPower = 0;
 				i16 si = 0;
 				Timer *bp04 = glbTimersTable;
 				for (; si < glbTimersActiveCount; bp04++, si++) {
@@ -310,7 +310,7 @@ void SkWinCore::PROCEED_ENCHANTMENT_SELF(U16 mask, U16 yy, U16 zz, U16 tick)
 			}
 		}
 		//^2C1D:00D5
-		if (glbChampionSquad[bp06].enchantmentPower > 0x32)
+		if (tblChampionSquad[bp06].enchantmentPower > 0x32)
 			bp08 = 1;
 		//^2C1D:00EB
 	}
@@ -321,8 +321,8 @@ void SkWinCore::PROCEED_ENCHANTMENT_SELF(U16 mask, U16 yy, U16 zz, U16 tick)
 	for (bp06 = 0; bp06 < cd.pi.glbChampionsCount; bp06++) {
 		//^2C1D:0108
 		if ((mask & (1 << bp06)) != 0) {
-			glbChampionSquad[bp06].enchantmentAura = U8(yy);
-			glbChampionSquad[bp06].enchantmentPower += zz;
+			tblChampionSquad[bp06].enchantmentAura = U8(yy);
+			tblChampionSquad[bp06].enchantmentPower += zz;
 		}
 		//^2C1D:0137
 	}
@@ -2097,7 +2097,7 @@ void SkWinCore::ACTUATE_FLOOR_MECHA(Timer *ref)
 			//^3A15:181A
 			U8 bp00dc[206];
 			QUERY_MESSAGE_TEXT(bp00dc, si, 1);
-			DISPLAY_HINT_TEXT(COLOR_WHITE, bp00dc);
+			DISPLAY_HINT_TEXT(C15_COLOR_WHITE, bp00dc);
 			continue;
 		}
 		//^3A15:183E
@@ -2314,7 +2314,7 @@ void SkWinCore::ACTUATE_DOOR(Timer *ref)
 
 #ifdef XDMX_EXTENDED_FEATURES
 	if (xDoorInfo->locked == 1) {
-		DISPLAY_HINT_TEXT(COLOR_LIGHT_GREEN, (const U8*) "THE DOOR IS LOCKED\n");
+		DISPLAY_HINT_TEXT(C07_COLOR_LIGHT_GREEN, (const U8*) "THE DOOR IS LOCKED\n");
 		return;
 	}
 #endif // XDMX_EXTENDED_FEATURES
@@ -2410,7 +2410,7 @@ void SkWinCore::STEP_DOOR(Timer *ref)
 							continue;
 						//^3A15:0901
 						// SPX: Bump sound when door closing on champions
-						QUEUE_NOISE_GEN2(GDAT_CATEGORY_x16_CHAMPIONS, glbChampionSquad[bp16].HeroType(), SOUND_CHAMPION_BUMP, 0xfe, di, si, 1, 0x64, 0xc8);
+						QUEUE_NOISE_GEN2(GDAT_CATEGORY_x16_CHAMPIONS, tblChampionSquad[bp16].HeroType(), SOUND_CHAMPION_BUMP, 0xfe, di, si, 1, 0x64, 0xc8);
 						//^3A15:0929
 					}
 				}
@@ -2620,7 +2620,7 @@ void SkWinCore::PROCESS_TIMER_0C(U8 player)
 	//^3A15:303F
 	ENTER(4);
 	//^3A15:3043
-	Champion *champion = &glbChampionSquad[player];
+	Champion *champion = &tblChampionSquad[player];
 	champion->timerIndex = TIMER_NONE;
 	if (champion->curHP() != 0)
 		champion->heroFlag |= CHAMPION_FLAG_0800;	// 0x800
@@ -3082,11 +3082,11 @@ void SkWinCore::PROCEED_TIMERS()
 				break;
 			case ttyEnchantment://^3C31		(0x48 / 72)
 				for (iChampionIndex = 0; iChampionIndex < cd.pi.glbChampionsCount; iChampionIndex++) {
-					if (((1 << iChampionIndex) & timer.actor) != 0 && glbChampionSquad[iChampionIndex].curHP() != 0) {
-						glbChampionSquad[iChampionIndex].enchantmentPower -= xCurrentTimer->value; 
+					if (((1 << iChampionIndex) & timer.actor) != 0 && tblChampionSquad[iChampionIndex].curHP() != 0) {
+						tblChampionSquad[iChampionIndex].enchantmentPower -= xCurrentTimer->value; 
 					}
-					if (glbChampionSquad[iChampionIndex].enchantmentPower < 0) {
-						glbChampionSquad[iChampionIndex].enchantmentPower = 0;
+					if (tblChampionSquad[iChampionIndex].enchantmentPower < 0) {
+						tblChampionSquad[iChampionIndex].enchantmentPower = 0;
 					}
 				}
 				break;
@@ -3096,12 +3096,12 @@ void SkWinCore::PROCEED_TIMERS()
 				break;
 #endif
 			case C75_tty_PoisonChampion://^3CA1	(0x4B / 75)
-				glbChampionSquad[iEventActor = timer.actor].PoisonValue--;
+				tblChampionSquad[iEventActor = timer.actor].PoisonValue--;
 				PROCESS_POISON(iEventActor, timer.value);
 				break;
 #if XDMX_FEATURE_PLAGUE == 1
 			case ttyPlague:
-				glbChampionSquad[iEventActor = timer.actor].PlagueValue--;
+				tblChampionSquad[iEventActor = timer.actor].PlagueValue--;
 				PROCESS_PLAGUE(iEventActor, timer.value);
 				break;
 #endif

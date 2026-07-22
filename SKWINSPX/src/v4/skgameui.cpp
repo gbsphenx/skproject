@@ -238,8 +238,8 @@ _1201:
 						&bp48, 
 						xRect.x, 
 						xRect.y + xRect.cy - 1, 
-						glbPaletteT16[COLOR_BLACK], 
-						glbPaletteT16[COLOR_CYAN], 
+						glbPaletteT16[C00_COLOR_BLACK], 
+						glbPaletteT16[C04_COLOR_CYAN], 
 						_4976_4df6
 						);
 					break;

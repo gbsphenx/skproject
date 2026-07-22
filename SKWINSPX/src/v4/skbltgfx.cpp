@@ -82,7 +82,7 @@ void SkWinCore::ANIM_SETPIXEL_SEQ_4BPP(U16 offDst, i8 clr)
 void SkWinCore::ANIM_BLIT_TO_MEMORY_ROW_4TO4BPP(U16 offSrc, U16 offDst, U16 width)
 {
 #if UseAltic
-	_4976_5e6a = _089c_0354;
+	glbBlit2MemDest = _089c_0354;
 	_4976_5e64 = _089c_0348;
 
 	FIRE_BLIT_TO_MEMORY_ROW_4TO4BPP(offSrc, offDst, width);
@@ -328,7 +328,7 @@ void SkWinCore::FIRE_BLIT_TO_MEMORY_ROW_4TO8BPP_NOKEY(U16 offSrc, U16 offDst, U1
 {
 	ENTER(0);
 	U8 *bx = glbBlitPalette16;
-	U8 *di = &_4976_5e6a[offDst];
+	U8 *di = &glbBlit2MemDest[offDst];
 	U16 cx = size;
 	U8 *si = _4976_5e64;
 	bool carry = (offSrc & 1) ? true : false;
@@ -484,7 +484,7 @@ void SkWinCore::_44c8_1e43(U8 *src, U8 *dst, U8 *zz, SRECT *prc, U16 ss, U16 tt,
 	U16 di = tt;
 	U16 si = ss -tt;
 	_4976_5e64 = src;
-	_4976_5e6a = dst;
+	glbBlit2MemDest = dst;
 	if (zz == NULL) {
 		for (U16 bp0a = 0; bp0a < bp06; bp02 += dstWidth, bp0a++) {
 			i16 bp0e = bp08;
@@ -824,20 +824,20 @@ SRECT *SkWinCore::QUERY_BLIT_RECT(Bit8u *buff, SRECT *rect, U16 rectno, i16 *you
 	SRECT *spRect2 = NULL; // bp08
 	SRECT *spRectMain = NULL;	// bp04
 
-	if (rectno == 0xffff) {
+	if (rectno == 0xFFFF) {
 		return NULL;
 	}
 
 	U16 si = 0;
 	U16 iRectnoFlag = rectno & 0x8000;	// si
 	if (iRectnoFlag != 0) {
-		rectno &= 0x7fff;
+		rectno &= 0x7FFF;
 	}
-	spRectMain = QUERY_RECT(glbRectNoTable.pb0, rectno);
+	spRectMain = QUERY_RECT(glbRectNoTable.pNextTable, rectno);
 	if (spRectMain == NULL) {
 		return NULL;
 	}
-	SET_SRECT(&spRect1, -10000, -10000, 20000, 20000);
+	SET_SRECT(&spRect1, -C10000_RECTZONE_SCALE_FULL, -C10000_RECTZONE_SCALE_FULL, C20000_RECTZONE_SCALE_DOUBLE, C20000_RECTZONE_SCALE_DOUBLE);
 	SRECT bp22;
 	U16 bp0e;
 	if (ww == -1) {
@@ -872,14 +872,14 @@ SRECT *SkWinCore::QUERY_BLIT_RECT(Bit8u *buff, SRECT *rect, U16 rectno, i16 *you
 	bp10 = 0;
 	for (; spRectMain->y != 0; ) {
 		if (spRectMain->x >= 10 && spRectMain->x <= 18) {
-			spRect2 = QUERY_RECT(glbRectNoTable.pb0, spRectMain->y);
+			spRect2 = QUERY_RECT(glbRectNoTable.pNextTable, spRectMain->y);
 			if (spRect2 == NULL)
 				break;
 			si = spRect2->cx;
 			di = spRect2->cy;
 			bp12 = spRect2->x;
 			bp24 = spRect2->y;
-			spRect2 = QUERY_RECT(glbRectNoTable.pb0, spRect2->y);
+			spRect2 = QUERY_RECT(glbRectNoTable.pNextTable, spRect2->y);
 			if (spRect2 == NULL)
 				break;
 			switch (bp12) {
@@ -989,7 +989,7 @@ SRECT *SkWinCore::QUERY_BLIT_RECT(Bit8u *buff, SRECT *rect, U16 rectno, i16 *you
 			bp0c += di + spRectMain->cy;
 		}
 		else {
-			spRect2 = QUERY_RECT(glbRectNoTable.pb0, spRectMain->y);
+			spRect2 = QUERY_RECT(glbRectNoTable.pNextTable, spRectMain->y);
 			if (spRect2 == NULL)
 				break;
 			bp24 = spRectMain->y;
@@ -1261,8 +1261,8 @@ SRECT *SkWinCore::SCALE_RECT(U16 rectno, SRECT *rc, U16 horzResolution, U16 vert
 			bp04 = QUERY_RECT(&glbRectNoTable, bp04->y);
 			if (bp04 != NULL) {
 				if (bp04->x == 9) {
-					i16 bp06 = (di == 10000) ? (bp04->cx) : (i16)((i32(bp04->cx) * di) / 10000);
-					i16 bp08 = (si == 10000) ? (bp04->cy) : (i16)((i32(bp04->cy) * si) / 10000);
+					i16 bp06 = (di == C10000_RECTZONE_SCALE_FULL) ? (bp04->cx) : (i16)((i32(bp04->cx) * di) / C10000_RECTZONE_SCALE_FULL);
+					i16 bp08 = (si == C10000_RECTZONE_SCALE_FULL) ? (bp04->cy) : (i16)((i32(bp04->cy) * si) / C10000_RECTZONE_SCALE_FULL);
 					if (bp06 == 0 && di != 0) {
 						bp06 = 1;
 					}
@@ -1282,7 +1282,7 @@ SRECT *SkWinCore::SCALE_RECT(U16 rectno, SRECT *rc, U16 horzResolution, U16 vert
 //^098D:0E5D
 SRECT *SkWinCore::QUERY_EXPANDED_RECT(U16 rectno, SRECT *rc)
 {
-	return SCALE_RECT(rectno, rc, 10000, 10000);
+	return SCALE_RECT(rectno, rc, C10000_RECTZONE_SCALE_FULL, C10000_RECTZONE_SCALE_FULL);
 }
 
 
@@ -1623,7 +1623,7 @@ void SkWinCore::_44c8_2307(X16 xx, X16 yy, X16 zz, X16 ww)
 	U16 cx = ww + yy;
 	U16 si = yy;
 	do {
-		_4976_5e6a[si] = bp04[di >> 7];
+		glbBlit2MemDest[si] = bp04[di >> 7];
 		di += zz;
 		si++;
 	} while (si < cx);
@@ -1637,7 +1637,7 @@ void SkWinCore::_44c8_2351(Bit8u *xx, Bit8u *yy, U16 ss, U16 tt, U16 uu, U16 vv)
 	ENTER(10);
 	U16 di = uu;
 	_4976_5e64 = xx;
-	_4976_5e6a = yy;
+	glbBlit2MemDest = yy;
 	U16 bp04 = (i32(ss) << 7) / di;
 	U16 bp06 = (i32(tt) << 7) / vv;
 	U16 bp02 = bp06 >> 1;
@@ -1662,8 +1662,8 @@ void SkWinCore::_44c8_2351(Bit8u *xx, Bit8u *yy, U16 ss, U16 tt, U16 uu, U16 vv)
 void SkWinCore::FIRE_BLIT_TO_MEMORY_ROW_4TO4BPP(U16 offSrc, U16 offDst, U16 width)
 {
 	ENTER(0);
-	Bit8u *di = _4976_5e6a;
-	Bit8u *si = _4976_5e64;
+	U8* di = glbBlit2MemDest;
+	U8* si = _4976_5e64;
 	U16 cx = width;
 
 	bool carry1 = (offSrc & 1) ? true : false;
@@ -1797,10 +1797,10 @@ void SkWinCore::_44c8_20e5(U16 srcOff, U16 dstOff, U16 srcWidth, U16 dstWidth)
 	ATLASSERT(srcWidth != 0);
 
 	ENTER(0);
-    Bit8u *di = _4976_5e6a + (dstOff >> 1);
+    U8* di = glbBlit2MemDest + (dstOff >> 1);
 	U16 cx = srcWidth >> 1;
 	U16 dx = (dstWidth +1) >> 1;
-	Bit8u *si = _4976_5e64 + (srcOff >> 1);
+	U8* si = _4976_5e64 + (srcOff >> 1);
 	Bit8u bh = 0;
 	do {
 		Bit8u ah = si[cx >> 8];
@@ -1858,7 +1858,7 @@ void SkWinCore::_44c8_2143(U16 xx, U16 yy, U16 ss, U16 tt)
 			al >>= 4;
 		}
 		al = cl | _4976_5dbe[al];
-		_4976_5e6a[di] = al;
+		glbBlit2MemDest[di] = al;
 		di++;
 	}
 	return;
@@ -1874,7 +1874,7 @@ void SkWinCore::FIRE_STRETCH_BLIT_TO_MEMORY_4TO4BPP(Bit8u *src, Bit8u *dst, U16 
 		return;
 	ENTER(12);
 	_4976_5e64 = src;
-	_4976_5e6a = dst;
+	glbBlit2MemDest = dst;
 	_4976_5dbe = aa;
 	U16 bp08 = (dstWidth +1) & 0xFFFE;
 	U16 bp0a = (srcWidth +1) & 0xFFFE;

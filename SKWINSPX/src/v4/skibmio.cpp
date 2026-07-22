@@ -1380,7 +1380,7 @@ void SkWinCore::FIRE_BLIT_TO_MEMORY_8TO8BPP(
 #else
 	ENTER(6);
 	_4976_5e64 = reinterpret_cast<U8 *>(const_cast<void *>(src));
-	_4976_5e6a = reinterpret_cast<U8 *>(dst);
+	glbBlit2MemDest = reinterpret_cast<U8 *>(dst);
 	U16 bp04 = rc->cx;
 	U16 bp02 = rc->cy;
 	if (bp04 <= 0 && bp02 <= 0)
@@ -1533,7 +1533,7 @@ void SkWinCore::FIRE_FILL_4BPP_PICT_LINE(U16 offDst, U16 fill, U16 size)
 {
 	ATLASSERT(size != 0);
 
-	Bit8u *di = _4976_5e6a;
+	U8* di = glbBlit2MemDest;
 	U16 bx = offDst;
 	U16 cx = size;
 	U8 ah = Bit8u(fill);
@@ -1583,7 +1583,7 @@ void SkWinCore::FIRE_FILL_4BPP_PICT_LINE(U16 offDst, U16 fill, U16 size)
 //^44C8:1A1E
 void SkWinCore::FIRE_FILL_RECT_4BPP_PICT(Bit8u *buff, SRECT *rc, U16 fill, U16 width)
 {
-	_4976_5e6a = buff;
+	glbBlit2MemDest = buff;
 	width = (width + 1) & 0xfffe;
 	U16 di = rc->y * width + rc->x;
 	U16 si = 0;
@@ -1596,9 +1596,9 @@ void SkWinCore::FIRE_FILL_RECT_4BPP_PICT(Bit8u *buff, SRECT *rc, U16 fill, U16 w
 //^44C8:127E
 void SkWinCore::FIRE_FILL_8BPP_PICT_LINE(U16 offDst, U16 fill, U16 size)
 {
-	Bit8u *di = _4976_5e6a + offDst;
+	U8* di = glbBlit2MemDest + offDst;
 	U16 cx = size;
-	Bit8u al = Bit8u(fill);
+	U8 al = Bit8u(fill);
 	U16 dx = cx;
 	dx &= 1;
 	if (dx != 0) {
@@ -1624,7 +1624,7 @@ void SkWinCore::FIRE_FILL_8BPP_PICT_LINE(U16 offDst, U16 fill, U16 size)
 //^44C8:19D5
 void SkWinCore::FIRE_FILL_RECT_8BPP_PICT(Bit8u *buff, SRECT *rc, U16 fill, U16 width)
 {
-	_4976_5e6a = buff;
+	glbBlit2MemDest = buff;
 	U16 di = rc->y * width + rc->x;
 	U16 si = 0;
 	for (; rc->cy > si; di += width, si++) {

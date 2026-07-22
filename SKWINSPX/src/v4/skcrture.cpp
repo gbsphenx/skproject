@@ -764,7 +764,7 @@ _1811:
 			}
 			//^19F0:184C
 			else if (aa == 7) {
-				bp1a = !_19f0_000a(xx3, yy2);
+				bp1a = !IS_TILE_BLOCKING_VISION(xx3, yy2);
 			}
 			//^19F0:1864
 			if (bp1a == 0)
@@ -1825,7 +1825,7 @@ void SkWinCore::_12b4_0d75_CREATURE(i16 xx, i16 yy, i16 ss, i16 tt)
 		return;
 	//^12B4:0F07
 	i16 di = 0;
-	Champion *bp04 = glbChampionSquad;
+	Champion *bp04 = tblChampionSquad;
 	si = 0;
 	i16 bp0e;
 	for (bp0e = 0; bp0e < 4; bp04++, bp0e++) {
@@ -2605,14 +2605,14 @@ _1470:
 				bp10 = GET_PLAYER_AT_POSITION(si);
 				if (bp10 == -1)
 					continue;
-				di = glbChampionSquad[bp10].Possess(1);
+				di = tblChampionSquad[bp10].Possess(1);
 				if (di != OBJECT_NULL) {
 					//^14CD:14C6
 					if (CREATURE_CAN_HANDLE_IT(di, 0xb) != 0)
 						goto _1470;
 				}
 				//^14CD:14D4
-				di = glbChampionSquad[bp10].Possess(0);
+				di = tblChampionSquad[bp10].Possess(0);
 				if (di != OBJECT_NULL) {
 					//^14CD:14E9
 					if (CREATURE_CAN_HANDLE_IT(di, 0xb) != 0)
@@ -4784,7 +4784,7 @@ i16 SkWinCore::CREATURE_ATTACKS_PLAYER(Creature *ref, U16 player)
 {
 	ENTER(16);
 	Champion *champion;	//*bp04
-    if (player >= cd.pi.glbChampionsCount || (champion = &glbChampionSquad[player])->curHP() == 0)
+    if (player >= cd.pi.glbChampionsCount || (champion = &tblChampionSquad[player])->curHP() == 0)
 		return 0;
 	i16 si = 0;	// si
 	X16 iLocalDifficultyModifier = dunMapLocalHeader->Difficulty() << 1;			// bp0e
@@ -4959,7 +4959,7 @@ X16 SkWinCore::CREATURE_ATTACKS_PARTY()
 		i8 bp26[4];
 		for (; bp1c < cd.pi.glbChampionsCount; bp1c++) {
 			//^1887:0706
-			if (glbChampionSquad[bp1c].curHP() != 0) {
+			if (tblChampionSquad[bp1c].curHP() != 0) {
 				bp26[di++] = U8(bp1c);
 			}
 			//^1887:071E
@@ -4983,7 +4983,7 @@ X16 SkWinCore::CREATURE_ATTACKS_PARTY()
 			si = _2c1d_028c(glbCreatureTimerGetX, glbCreatureTimerGetY, 0xff);
 			if (si != -1) {
 				//^1887:0794
-				bp08->b28 = glbChampionSquad[si].playerPos();
+				bp08->b28 = tblChampionSquad[si].playerPos();
 			}
 		}
 		//^1887:07A6
@@ -5028,7 +5028,7 @@ X16 SkWinCore::CREATURE_ATTACKS_PARTY()
 			//^1887:087C
 			bp22 = 1;
 			i16 bp0e = CREATURE_ATTACKS_PLAYER(glbCurrentThinkingCreatureRec, si) +1;
-			Champion *champion = &glbChampionSquad[si];
+			Champion *champion = &tblChampionSquad[si];
 			if (champion->herob41 < bp0e) {
 				//^1887:08B4
 				champion->herob41 = U8(bp0e);
@@ -5164,7 +5164,7 @@ X16 SkWinCore::CREATURE_STEAL_FROM_CHAMPION()
 		return 1;
 	}
 	//^1887:0B5B
-	Champion *champion = &glbChampionSquad[bp08];
+	Champion *champion = &tblChampionSquad[bp08];
 	//^1887:0B6C
 	i16 di = 0; // defaulting to 0
 	if (true
@@ -7287,3 +7287,382 @@ void SkWinCore::_14cd_0457()
 	//^14CD:054C
 	return;
 }
+
+//^19F0:2813
+// _19f0_2813 renamed CREATURE_19f0_2813
+U16 SkWinCore::CREATURE_19f0_2813(U16 ww, i16 xx, i16 yy, i16 ss, i16 tt, i16 aa, U16 bb)
+{
+	//^19F0:2813
+	ENTER(10);
+	//^19F0:2819
+	i16 di = ss;
+	X16 bp06 = ww & 0x80;
+	if (bp06 != 0)
+		ww &= ~(0x80);
+	//^19F0:282E
+	if ((_4976_4ef4 & 1) != 0) {
+		//^19F0:2839
+		if (di == -1) {
+			di = xx + glbXAxisDelta[aa];
+			tt = yy + glbYAxisDelta[aa];
+			goto _286d;
+		}
+		//^19F0:285D
+		else if (xx != di || yy != tt) {
+			//^19F0:286D
+_286d:
+			if (di >= 0 && di < glbCurrentMapWidth && tt >= 0 && tt < glbCurrentMapHeight) {
+				//^19F0:2892
+				if ((xx -di) == 0 && (yy -tt) == 0) {
+					//^19F0:28A4
+					if (aa == -1) {
+						aa = CALC_VECTOR_DIR(xx, yy, di, tt);
+					}
+					//^19F0:28BF
+					_19f0_045a(di, tt);
+					if ((_4976_521c & 0x10) != 0) {
+						//^19F0:28D7
+						if (glbCreatureSomeFirstObjectOnTile == OBJECT_NULL) {
+							glbCreatureSomeFirstObjectOnTile = GET_TILE_RECORD_LINK(glbCreatureSomeX, glbCreatureSomeY);
+						}
+						//^19F0:28F0
+						ObjectID si = glbCreatureSomeFirstObjectOnTile;
+						X16 bp0a = 0;
+						//^19F0:28F9
+						Actuator *bp04;
+						for (; si != OBJECT_END_MARKER; si = GET_NEXT_RECORD_LINK(si)) {
+							//^19F0:28FB
+							X16 bp08 = si.DBType();
+							if (bp08 > dbActuator)
+								break;
+							if (bp08 != dbActuator)
+								continue;
+							//^19F0:2911
+							if (si.Dir() != ((aa +2)&3))
+								continue;
+							bp04 = GET_ADDRESS_OF_RECORD(si)->castToActuator();
+							bp0a = (bp04->ActuatorType() == ACTUATOR_TYPE_SWITCH_SIGN_FOR_CREATURE) // 0x26 -> 'Switch sign for creature' or 'Activator, missile explosion'
+								? 1
+								: 0;
+							if (bp0a != 0)
+								break;
+							//^19F0:294D
+						}
+						//^19F0:295B
+						if (bp0a != 0) {
+							if (bp04->ActuatorData() == glbCurrentThinkingCreatureRec->CreatureType()) {
+								if (bp04->OnceOnlyActuator() != 0) {
+									si = _19f0_266c(glbCreatureSomeFirstObjectOnTile, (aa+2)&3, ww, bb);
+									if (si != OBJECT_NULL) {
+										//^19F0:29BA
+										if (_19f0_2723(si, ww, bb, bp04->ActionType()) != 0) {
+											//^19F0:29DD
+											if (bp06 != 0 && _19f0_0559(aa) == 0) {
+												//^19F0:29F5
+												glbCurrentThinkingCreatureData->w24.SetX(di);
+												glbCurrentThinkingCreatureData->w24.SetY(tt);
+												glbCurrentThinkingCreatureData->w24.SetMap(glbCurrentMapIndex);
+												glbCurrentThinkingCreatureData->b29 = 
+												glbCurrentThinkingCreatureData->b27 = (X8)aa;
+												glbCurrentThinkingCreatureData->ItemToThrow = (X8)bb;
+												glbCurrentThinkingCreatureData->b32 = (X8)ww;
+												if (ww == 0) {
+													glbCurrentThinkingCreatureData->Command = ccm2F_ActivateWallSwitch;
+												}
+												else if (ww == 1) {
+													glbCurrentThinkingCreatureData->Command = ccm30_ActivateWallSwitch;
+												}
+												else {
+													glbCurrentThinkingCreatureData->Command = ccm31_ActivateWallSwitch;
+												}
+												//^19F0:2A6C
+												_4976_4ee5 = (ww == 0 && bp04->ActionType() < 2)
+													? xactrAgain
+													: xactrYes;
+											}
+											//^19F0:2A90
+											return 1;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	//^19F0:2A95
+	if (bp06 != 0)
+		_4976_4ee5 = xactrNo;
+	//^19F0:2AA0
+	return 0;
+}
+
+//^19F0:0D10
+U16 SkWinCore::_19f0_0d10(U16 ww,i16 xx,i16 yy,i16 ss,i16 tt,i16 aa)
+{
+	//^19F0:0D10
+	ENTER(32);
+	//^19F0:0D16
+	ObjectID bp18;
+	i16 di = ss;
+	X16 bp06 = 0;
+	U16 bp0e = ww & 0x80;
+	if (bp0e != 0)
+		ww &= 0xff7f;
+	X16 si = ((ww == 0) ? 0x6f : 0x73) & _4976_4ef0;
+	//^19F0:0D46
+	if (si == 0)
+		goto _123a;
+    //^19F0:0D4F
+	if (di == -1) {
+		//^19F0:0D54
+		di = xx + glbXAxisDelta[aa];
+		tt = yy + glbYAxisDelta[aa];
+	}
+	//^19F0:0D73
+	else if (aa == -1) {
+		//^19F0:0D79
+		aa = CALC_VECTOR_DIR(xx, yy, di, tt);
+	}
+	//^19F0:0D90
+	else if (xx == di && yy == tt) {
+		goto _123a;
+	}
+	//^19F0:0DA0
+	if (di < 0 || di >= glbCurrentMapWidth || tt < 0 || tt >= glbCurrentMapHeight)
+		goto _123a;
+	//^19F0:0DC5
+	if ((xx -di) != 0 && (yy -tt) != 0)
+		goto _123a;
+	//^19F0:0DD7
+	X16 bp0a;
+	_19f0_045a(di, tt);
+	if ((_4976_521c >> 5) != 4)
+		goto _123a;
+	bp0a = (_4976_521c & 7);
+	//^19F0:0DF8
+	Door *door;	//*bp04
+	if (ww == 0) {
+		if (bp0a == 0) {
+_0e04:
+			bp06 = 1;
+			goto _108f;
+		}
+	}
+	//^19F0:0E0C
+	else if (bp0a == 5) {
+		goto _123a;
+	}
+	//^19F0:0E15
+	else if (bp0a == 4) {
+		goto _0e04;
+	}
+	if (glbCreatureSomeFirstObjectOnTile == OBJECT_NULL) {
+		glbCreatureSomeFirstObjectOnTile = GET_TILE_RECORD_LINK(di, tt);
+	}
+	//^19F0:0E32
+	door = GET_ADDRESS_OF_RECORD0(glbCreatureSomeFirstObjectOnTile);
+	if (ww == 2 && door->DoorBit12() == 0)
+		goto _123a;
+	//^19F0:0E5C
+	i16 bp10;
+	i16 bp12;
+	i16 bp14;
+	U16 bp16;
+	i16 bp08;
+	if (door->DoorBit10() != 0) {
+		//^19F0:0E6D
+		if (door->DoorBit09() != 0) {
+			if (ww == 0)
+				goto _104f;
+		}
+		//^19F0:0E83
+		else if (ww != 0) {
+			goto _104f;
+		}
+		//^19F0:0E8C
+		else if ((si &= 0xfff3) == 0) {
+			goto _123a;
+		}
+	}
+	//^19F0:0E99
+	bp08 = CALC_SQUARE_DISTANCE(xx, yy, di, tt);
+	if (bp08 == 1) {
+		//^19F0:0EB3
+		if ((si & 3) != 0) {
+			//^19F0:0EB9
+			if (door->Button() != 0)
+				goto _0f9d;
+			//^19F0:0ECD
+			if (door->DoorBit13() != 0)
+				goto _0f9d;
+		}
+		//^19F0:0EDE
+		if (ww == 0) {
+			//^19F0:0EE4
+			if ((si & 4) != 0 && door->DestroyablebyFireball() != 0)
+				goto _0f9d;
+			//^19F0:0EFE
+			if ((si & 8) != 0 && door->BashablebyChopping() != 0)
+				goto _0f9d;
+		}
+		//^19F0:0F15
+		if ((si & 0x40) != 0)
+			goto _0f9d;
+		goto _123a;
+	}
+	//^19F0:0F21
+	if (glbAIDef->w20_c_f() < bp08)
+		goto _123a;
+	//^19F0:0F34
+	if ((si & 1) != 0) {
+		if (door->Button() != 0 || door->DoorBit13() != 0)
+			goto _0f7f;
+	}
+	//^19F0:0F59
+	if (ww != 0 || (si & 4) == 0)
+		goto _123a;
+	//^19F0:0F6B
+	if (door->DestroyablebyFireball() == 0)
+		goto _123a;
+	//^19F0:0F7F
+_0f7f:
+	if (_19f0_0207(xx, yy, di, tt, &SkWinCore::_19f0_00b8) == 0)
+		goto _123a;
+	//^19F0:0F9D
+_0f9d:
+	if ((si & 1) != 0) {
+		//^19F0:0FA6
+		bp10 = xx;
+		bp12 = yy;
+		bp14 = bp08;
+		for (; bp14 >= 0; ) {
+			//^19F0:0FBB
+			for (bp18 = GET_WALL_TILE_ANYITEM_RECORD(bp10, bp12); bp18 != OBJECT_END_MARKER; bp18 = GET_NEXT_RECORD_LINK(bp18)) {
+				//^19F0:0FCB
+				Cloud *bp20;
+				bp16 = bp18.DBType();
+				if (bp16 == dbMissile) {
+					//^19F0:0FDC
+					Missile *bp1c = GET_ADDRESS_OF_RECORDE(bp18);
+					//^19F0:0FEB
+					if (bp1c->GetMissileObject() != OBJECT_EFFECT_ZO_2 && bp1c->GetMissileObject() != OBJECT_EFFECT_ZO_SPELL) // != oFF8D && != oFF84
+						continue;
+					//^19F0:0FFC
+					if (glbTimersTable[bp1c->TimerIndex()].Direction() != aa)
+						continue;
+					goto _104f;
+				}
+				//^19F0:101F
+				else if (bp16 == dbCloud) {
+					//^19F0:1025
+					bp20 = GET_ADDRESS_OF_RECORDF(bp18);
+					if (bp20->CloudType() != 13 && bp20->CloudType() != 4)
+						continue;
+					//^19F0:104F
+_104f:
+					bp06 = 2;
+					goto _108f;
+				}
+				//^19F0:1056
+			}
+			//^19F0:106B
+			bp10 += glbXAxisDelta[aa];
+			bp12 += glbYAxisDelta[aa];
+			bp14--;
+			//^19F0:1086
+		}
+	}
+	//^19F0:108F
+_108f:
+	if (bp06 != 0 && ww == 2)
+		goto _123a;
+	if (bp0e == 0)
+		goto _1235;
+	//^19F0:10A7
+	if (aa == -1) {
+		aa = CALC_VECTOR_DIR(xx, yy, di, tt);
+	}
+	//^19F0:10C2
+	if (bp06 == 1) {
+		//^19F0:10C8
+		_4976_4ee5 = xactrYes;
+		goto _1235;
+	}
+	if (bp06 == 2) {
+		glbCurrentThinkingCreatureData->Command = ccm00_Neutral;
+		goto _1230;
+	}
+	//^19F0:10E2
+	if (_19f0_0559(aa) != 0)
+		goto _1235;
+	//^19F0:10F1
+	if ((si & 0x20) != 0) {
+		si &= 0xffdf;
+		if (ww == 0) {
+			//^19F0:1101
+			door->DoorBit12(1);
+		}
+	}
+	//^19F0:1109
+	if (bp08 > 1)
+		si &= 5;
+	//^19F0:1113
+	if ((si & 0x42) != 0) {
+		if ((si & 0xffbd) == 0 || RAND02() == 0) {
+			//^19F0:1128
+			glbCurrentThinkingCreatureData->Command = ccm0B;
+			goto _11d2;
+		}
+	}
+	//^19F0:1134
+	U16 bp0c;
+	if ((si & 1) != 0) {
+		//^19F0:113A
+		if ((si & 0xffbc) == 0 || RAND02() == 0) {
+			glbCurrentThinkingCreatureData->Command = (RAND01() != 0) ? ccm28_CastSpell2 : ccm27_CastSpell1;
+			// SPX: 8D (unknow zo2?) replaced with 84 (open door zo1)
+			glbCurrentThinkingCreatureData->ItemToThrow = (ww == 0) ? 0x8D : 0x84;	// zo spell 2 or zo spell 1
+			goto _11d2;
+		}
+	}
+	//^19F0:1176
+	bp0c = glbAIAttacksSpells;
+	if ((si & 8) != 0 && (bp0c & 1) != 0 && ((si & 0xffb4) == 0 || RAND01() != 0)) {
+		//^19F0:1198
+		glbAIAttacksSpells &= 1;
+		goto _11af;
+	}
+	//^19F0:11A0
+	if ((si & 4) == 0)
+		goto _123a;
+	//^19F0:11A9
+	glbAIAttacksSpells &= 0x50;
+	//^19F0:11AF
+_11af:
+	si = _19f0_0891(0x84, xx, yy, di, tt, aa);
+	glbAIAttacksSpells = bp0c;
+	//^19F0:11CE
+	return si;
+_11d2:
+	glbCurrentThinkingCreatureData->w24.SetX(di);
+	glbCurrentThinkingCreatureData->w24.SetY(tt);
+	glbCurrentThinkingCreatureData->w24.SetMap(glbCurrentMapIndex);
+    glbCurrentThinkingCreatureData->b29 = glbCurrentThinkingCreatureData->b27 = U8(aa);
+	glbCurrentThinkingCreatureData->b28 = (U8(RAND01()) + U8(aa)) & 3;
+	glbCurrentThinkingCreatureData->b32 = U8(ww);
+	//^19F0:1230
+_1230:
+	_4976_4ee5 = xactrAgain;
+	//^19F0:1235
+_1235:
+	return 1;
+_123a:
+	if (bp0e != 0)
+		_4976_4ee5 = xactrNo;
+	return 0;
+}
+
+

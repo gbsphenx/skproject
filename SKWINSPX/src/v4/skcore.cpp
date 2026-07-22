@@ -1543,18 +1543,12 @@ void SkWinCore::FILL_RECT_SUMMARY(sk3f6c *ref, SRECT *rc, U8 fill)
 // SPX: _29ee_00a3 renamed SOMETHING_RIGHT_PANEL_29ee_00a3
 void SkWinCore::SOMETHING_RIGHT_PANEL_29ee_00a3(U16 xx)
 {
-	//^29EE:00A3
-	//^29EE:00A6
 	if (_4976_3f6c.w0 == 0xFFFF) {
-		//^29EE:00AD
 		SOME_RECT_PICT_0b36_0c52(&_4976_3f6c, 11, xx);
-		//^29EE:00BE
 		if (xx != 0) {
-			//^29EE:00C4
-			FILL_RECT_SUMMARY(&_4976_3f6c, &_4976_3f6c.rc2, glbPaletteT16[COLOR_BLACK]);
+			FILL_RECT_SUMMARY(&_4976_3f6c, &_4976_3f6c.rc2, glbPaletteT16[C00_COLOR_BLACK]);
 		}
 	}
-	//^29EE:00DE
 	return;
 }
 
@@ -1564,15 +1558,13 @@ U16 SkWinCore::IS_MISSILE_VALID_TO_LAUNCHER(U16 player, i16 hand, ObjectID rlWha
 	// return 0 if you cannot launch the missile with launcher. (not applicable projectile)
 	// return 1 if you can launch the missile with launcher.
 
-	//^2759:0E30
 	ENTER(2);
-	//^2759:0E36
 	ObjectID bp02;
 	U16 di;
 	U16 si;
 	return (true
 		&& hand != -1
-		&& (bp02 = glbChampionSquad[player].Possess(hand)) != OBJECT_NULL // any objects in hand?
+		&& (bp02 = tblChampionSquad[player].Possess(hand)) != OBJECT_NULL // any objects in hand?
 		&& ((di = QUERY_GDAT_DBSPEC_WORD_VALUE(bp02, 0x05)) & 0x8000) != 0 // is it launcher?
 		&& ((si = QUERY_GDAT_DBSPEC_WORD_VALUE(rlWhatYouLaunch, 0x05)) & 0x8000) == 0 // is it projectile?
 		&& ((si & di) & 0x7fff) != 0 // is valid combination? between launcher and projectile
@@ -2165,7 +2157,7 @@ void SkWinCore::_29ee_1946(ObjectID recordLink, i16 xx, i16 yy, i16 zz, i16 dir,
 	//^29EE:19AF
 	SOMETHING_RIGHT_PANEL_29ee_00a3(0);
 	//^29EE:19B6
-	FILL_RECT_SUMMARY(&_4976_3f6c, QUERY_EXPANDED_RECT(99, &_4976_53a6), glbPaletteT16[COLOR_BLACK]);
+	FILL_RECT_SUMMARY(&_4976_3f6c, QUERY_EXPANDED_RECT(99, &_4976_53a6), glbPaletteT16[C00_COLOR_BLACK]);
 	//^29EE:19DC
 	INFLATE_RECT(&_4976_53a6, - glbMagicMapInterlineX, - glbMagicMapInterlineY);
 	//^29EE:19F4
@@ -2376,7 +2368,6 @@ void SkWinCore::UPDATE_RIGHT_PANEL(U16 xx)
 	U16 bp12 = 0;
 	SkDP("URP\n");
 	if (cd.pi.glbNextChampionNumber == 0) {
-		SkDP("URP-1\n");
 		if (cd.pi.glbChampionsCount == 0) {
 			if (_4976_531c != 0 || glbSomeChampionPanelFlag != 0) {
 				glbSomeChampionPanelFlag = 0;
@@ -2386,15 +2377,14 @@ void SkWinCore::UPDATE_RIGHT_PANEL(U16 xx)
 			glbRightPanelType = RIGHT_PANEL_UNDEFINED;
 			goto _0e03;
 		}
-		SkDP("URP-2\n");
 		if (xx != 0) {
-			for (U16 bp06=0; bp06 < cd.pi.glbChampionsCount; bp06++) {
+			for (U16 iChampionIdx = 0; iChampionIdx < cd.pi.glbChampionsCount; iChampionIdx++) {	// bp06
 				// SPX: ??BUG?? The b42 is table of 2 elements only; shouldn't it be si < 2 ??
-				for (U16 si=0; si < 2; si++) {	// (U16 si=0; si <= 2; si++)
-					if (glbChampionSquad[bp06].handCooldown[si] != 0) {
-						glbChampionSquad[bp06].handCooldown[si] = glbChampionSquad[bp06].handCooldown[si] -1;
-						if (glbChampionSquad[bp06].handCooldown[si] == 0) {
-							LOAD_PROJECTILE_TO_HAND(bp06, si);
+				for (U16 iHandIdx = 0; iHandIdx < 2; iHandIdx++) {	// (U16 si=0; si <= 2; si++)
+					if (tblChampionSquad[iChampionIdx].handCooldown[iHandIdx] != 0) {
+						tblChampionSquad[iChampionIdx].handCooldown[iHandIdx] = tblChampionSquad[iChampionIdx].handCooldown[iHandIdx] -1;
+						if (tblChampionSquad[iChampionIdx].handCooldown[iHandIdx] == 0) {
+							LOAD_PROJECTILE_TO_HAND(iChampionIdx, iHandIdx);
 						}
 					}
 				}
@@ -2421,7 +2411,6 @@ void SkWinCore::UPDATE_RIGHT_PANEL(U16 xx)
 				}
 			}
 		}
-		SkDP("URP-3\n");
 		if (glbChampionAttackDamage != 0) {
 			SHOW_ATTACK_RESULT(glbChampionAttackDamage);
 			_4976_531c = 1;
@@ -2429,44 +2418,41 @@ void SkWinCore::UPDATE_RIGHT_PANEL(U16 xx)
 			glbRightPanelType = RIGHT_PANEL_ATTACK_RESULT;	// 6
 			goto _0e03;
 		}
-		SkDP("URP-4\n");
 		if (cd.pi.glbChampionIndex > 0) {
 			i16 bp06 = cd.pi.glbChampionIndex -1;
 			if (bp06 >= 0 && glbSelectedHandAction != 2) {
-				if (_4976_3de6[RCJ(4,bp06)][RCJ(2,glbSelectedHandAction)] != glbChampionSquad[bp06].Possess(glbSelectedHandAction)) {
+				if (_4976_3de6[RCJ(4,bp06)][RCJ(2,glbSelectedHandAction)] != tblChampionSquad[bp06].Possess(glbSelectedHandAction)) {
 					DISPLAY_RIGHT_PANEL_SQUAD_HANDS();
 				}
 			}
 		}
 		U8 bp1c[4];
-		SkDP("URP-5\n");
 		if (cd.pi.glbChampionIndex >= 0) {
-			U16 bp06;
-			for (bp06=0; bp06 < cd.pi.glbChampionsCount; bp06++) {
-				Champion *bp04 = &glbChampionSquad[bp06];
-				bp1c[bp06] = 0;
-				U8 bp07 = (bp04->playerDir() +4 - cd.pi.glbPlayerDir) & 3;
-				i8 bp08 = (bp04->playerPos() +4 - cd.pi.glbPlayerDir) & 3;
-				if (bp04->curHP() != 0 && bp08 +1 == _4976_5dbc) {
+			U16 iChampionIdx;	// bp06
+			for (iChampionIdx = 0; iChampionIdx < cd.pi.glbChampionsCount; iChampionIdx++) {
+				Champion* xChampion = &tblChampionSquad[iChampionIdx];	// bp04
+				bp1c[iChampionIdx] = 0;
+				U8 bp07 = (xChampion->playerDir() +4 - cd.pi.glbPlayerDir) & 3;
+				i8 bp08 = (xChampion->playerPos() +4 - cd.pi.glbPlayerDir) & 3;
+				if (xChampion->curHP() != 0 && bp08 +1 == _4976_5dbc) {
 					bp08 = -1;
 				}
-				if (READ_UI8(_4976_3de2, bp06) != bp08 || _4976_3dde[RCJ(4,bp06)] != bp07) {
+				if (READ_UI8(_4976_3de2, iChampionIdx) != bp08 || _4976_3dde[RCJ(4,iChampionIdx)] != bp07) {
 					bp0c = 1;
 					bp12 = 1;
 					if (bp08 != -1) {
 						_4976_531c = 1;
 					}
-					WRITE_UI8(_4976_3de2, bp06, bp08);
-					_4976_3dde[RCJ(4,bp06)] = bp07;
+					WRITE_UI8(_4976_3de2, iChampionIdx, bp08);	// write current champion id for its squad position
+					_4976_3dde[RCJ(4,iChampionIdx)] = bp07;
 				}
 			}
-			if (glbSquadInterfaceMapGfxSet != glbMapGraphicsSet || glbGlobalSpellEffects.AuraOfSpeed != 0 || (!_4976_532c) != (!glbGlobalSpellEffects.Invisibility)) {
+			if (glbSquadInterfaceMapGfxSet != glbMapGraphicsSet || glbGlobalSpellEffects.AuraOfSpeed != 0 || (!glbPartyHasInvisibility) != (!glbGlobalSpellEffects.Invisibility)) {
 				bp0c = 1;
 				glbSquadInterfaceMapGfxSet = glbMapGraphicsSet;
-				_4976_532c = (glbGlobalSpellEffects.Invisibility != 0) ? 1: 0;
+				glbPartyHasInvisibility = (glbGlobalSpellEffects.Invisibility != 0) ? 1: 0;
 			}
 		}
-		SkDP("URP-6\n");
 		if (_4976_531c != 0) {
 			if (glbSomeChampionPanelFlag > 1) {
 				glbSomeChampionPanelFlag--;
@@ -2476,89 +2462,81 @@ void SkWinCore::UPDATE_RIGHT_PANEL(U16 xx)
 			_4976_531c = 0;
 			bp0a = 1;
 		}
-		SkDP("URP-7\n");
 		if (cd.pi.glbChampionIndex == 0) {
 			glbRightPanelType = 0;
 			if (bp0a == 0 && bp12 != 0) {
 				glbPreviousRightPanelType = 0xffff;
 			}
-			SkDP("URP-71\n");
-			for (U16 bp06=0; bp06 < cd.pi.glbChampionsCount; bp06++) {
-				Champion *champion = &glbChampionSquad[bp06];
+			for (U16 iChampionIdx = 0; iChampionIdx < cd.pi.glbChampionsCount; iChampionIdx++) {	// bp06
+				Champion *champion = &tblChampionSquad[iChampionIdx];
 				if (champion->curHP() == 0 && GET_PLAYER_AT_POSITION(champion->playerPos()) >= 0) {
 					continue;
 				}
-				SkDP("URP-72\n");
-				bp0e = bp1c[bp06];
-				if (glbChampionAlive[bp06] != ((champion->curHP() > 0) ? 1 : 0)) {
-					glbChampionAlive[bp06] = ((champion->curHP() > 0) ? 1 : 0);
+				bp0e = bp1c[iChampionIdx];
+				if (glbChampionAlive[iChampionIdx] != ((champion->curHP() > 0) ? 1 : 0)) {
+					glbChampionAlive[iChampionIdx] = ((champion->curHP() > 0) ? 1 : 0);
 					bp0e = 1;
-					glbPreviousRightPanelType = 0xffff;
+					glbPreviousRightPanelType = 0xFFFF;
 				}
-				SkDP("URP-73\n");
-				U16 bp16 = ((ABS16(glbSomeChampionIndex) -1 == bp06) ? 1 : 0);
+				U16 bp16 = ((ABS16(glbActivatedChampionIndex) -1 == iChampionIdx) ? 1 : 0);	// bp16
 				//SPX: 0 to 1 = hands
-				for (U16 si=0; si <= 1; si++) {
-					U16 bp14 = 0;
+				for (U16 iHandIdx = 0; iHandIdx < 2; iHandIdx++) {	// si
+					U16 iSelectedActiveHand = 0;	// bp14
 					U16 bp10 = 0;
-					if (bp16 != 0 && glbSelectedHand_2 == si) {
-						if (glbSomeChampionIndex > 0) {
-							bp14 = 1;
+					if (bp16 != 0 && glbSelectedHand_2 == iHandIdx) {
+						if (glbActivatedChampionIndex > 0) {
+							iSelectedActiveHand = 1;
 						}
 						bp10 = 1;
 					}
-					SkDP("URP-74\n");
-					U8 bp17 = (champion->handCooldown[si] != 0) ? 1 : 0;
-					if (glbChampionHandCoolingDown[bp06][si] != bp17) {
-						glbChampionHandCoolingDown[bp06][si] = bp17;
+					U8 bp17 = (champion->handCooldown[iHandIdx] != 0) ? 1 : 0;
+					if (glbChampionHandCoolingDown[iChampionIdx][iHandIdx] != bp17) {
+						glbChampionHandCoolingDown[iChampionIdx][iHandIdx] = bp17;
 						bp10 = 1;
 					}
-					if (_4976_3de6[RCJ(4,bp06)][RCJ(2,si)] != champion->Possess(si) || bp0a != 0 || bp0e != 0) {
-						_4976_3de6[RCJ(4,bp06)][RCJ(2,si)] = champion->Possess(si);
+					if (_4976_3de6[RCJ(4,iChampionIdx)][RCJ(2,iHandIdx)] != champion->Possess(iHandIdx) || bp0a != 0 || bp0e != 0) {
+						_4976_3de6[RCJ(4,iChampionIdx)][RCJ(2,iHandIdx)] = champion->Possess(iHandIdx);
 						bp10 = 1;
 					}
-					SkDP("URP-75\n");
 					if (bp0a != 0 || bp0e != 0 || bp10 != 0) {
-						SkD((SkCodeParam::bDebugPrint, "URP-75 - %d %d %d\n", bp06, si, bp14));
-						DRAW_HAND_ACTION_ICONS(bp06, si, bp14);
+						DRAW_HAND_ACTION_ICONS(iChampionIdx, iHandIdx, iSelectedActiveHand);
 					}
 				}
 				SkDP("URP-76\n");
 				U16 bp14 = 0;
 				// SPX: == 2 => spell selected instead of hand
-				if (bp16 != 0 && glbSelectedHand_2 == 2) {
-					if (glbSomeChampionIndex > 0) {
+				if (bp16 != 0 && glbSelectedHand_2 == C2_HAND_SELECTED_SPELL) {
+					if (glbActivatedChampionIndex > 0) {
 						bp14 = 1;
 					}
 					bp0e = 1;
 				}
 				SkDP("URP-77\n");
 				U8 bp17 = (champion->herob44 != 0) ? 1 : 0;
-				if (glbChampionHandCoolingDown[bp06][2] != bp17) {
-					glbChampionHandCoolingDown[bp06][2] = bp17;
+				if (glbChampionHandCoolingDown[iChampionIdx][2] != bp17) {
+					glbChampionHandCoolingDown[iChampionIdx][2] = bp17;
 					bp0e = 1;
 				}
 				SkDP("URP-78\n");
-				if (bp0a != 0 || bp0e != 0 || (_4976_3df7 != glbChampionLeader && (_4976_3df7 == bp06 || glbChampionLeader == bp06))) {
-					DRAW_SQUAD_SPELL_AND_LEADER_ICON(bp06, bp14);
+				if (bp0a != 0 || bp0e != 0 || (_4976_3df7 != glbChampionLeader && (_4976_3df7 == iChampionIdx || glbChampionLeader == iChampionIdx))) {
+					DRAW_SQUAD_SPELL_AND_LEADER_ICON(iChampionIdx, bp14);
 				}
 				SkDP("URP-79\n");
-				if (glbChampionSquad[bp06].enchantmentPower != 0 || _4976_3f68 != 0) {
+				if (tblChampionSquad[iChampionIdx].enchantmentPower != 0 || _4976_3f68 != 0) {
 					bp0c = 1;
 				}
-				if (glbChampionSquad[bp06].enchantmentPower != 0) {
-					_4976_3f68 |= 1 << bp06;
+				if (tblChampionSquad[iChampionIdx].enchantmentPower != 0) {
+					_4976_3f68 |= 1 << iChampionIdx;
 				}
 				else {
-					_4976_3f68 &= ~(1 << bp06);
+					_4976_3f68 &= ~(1 << iChampionIdx);
 				}
 			}
 			
-			if (glbSomeChampionIndex < 0) {
-				glbSomeChampionIndex = 0;
+			if (glbActivatedChampionIndex < 0) {
+				glbActivatedChampionIndex = 0;
 			}
-			SkDP("URP-79\n");
-			glbSomeChampionIndex = -glbSomeChampionIndex;
+			glbActivatedChampionIndex = -glbActivatedChampionIndex;
 			if (bp0a != 0 || bp0c != 0) {
 				DRAW_SQUAD_POS_INTERFACE();
 			}
@@ -2584,7 +2562,7 @@ void SkWinCore::UPDATE_RIGHT_PANEL(U16 xx)
 			}
 			else {
 				U16 bp06 = cd.pi.glbChampionIndex -1;
-				Champion *champion = &glbChampionSquad[bp06];	//*bp04
+				Champion *champion = &tblChampionSquad[bp06];	//*bp04
 				ObjectID di = champion->Possess(glbSelectedHandAction);
 				if (IS_CONTAINER_MAP(di) != 0 && glbMagicalMapFlags == 0) {
 					glbMagicMapManaDivisor = 1;
@@ -3276,9 +3254,9 @@ void SkWinCore::SCROLLBOX_MESSAGE()
 		glbScreenWidth,
 		-1,
 		0,
-		8,
-		8,
-		NULL
+		IMG_8_BPP,
+		IMG_8_BPP,
+		NULL	// no palette
 		);
 	FIRE_SHOW_MOUSE_CURSOR();
 	return;
@@ -3311,7 +3289,7 @@ void SkWinCore::INIT_BACKBUFF()
 {
 	ENTER(0);
 	if (_4976_5be6 != 0) {
-		FIRE_FILL_BACKBUFF_RECT(&_4976_5938, glbPaletteT16[COLOR_BLACK]);
+		FIRE_FILL_BACKBUFF_RECT(&_4976_5938, glbPaletteT16[C00_COLOR_BLACK]);
 	}
 //	WRITE_UI16(_4976_4c16,-4,_4976_00f6); // width
 //	WRITE_UI16(_4976_4c16,-2,_4976_00f8); // height
@@ -3431,7 +3409,7 @@ _0b01:
 		U16 bp02;
 		for (bp02 = 0; bp02 < cd.pi.glbChampionsCount; bp02++) {
 			//^12B4:0B59
-			if (glbChampionSquad[bp02].curHP() != 0) {
+			if (tblChampionSquad[bp02].curHP() != 0) {
 				//^12B4:0B6D
 				if (bp02 == glbChampionLeader || RAND02() == 0) {
 					//^12B4:0B7C
@@ -4292,12 +4270,12 @@ void SkWinCore::DRAW_WAKE_UP_TEXT()
 {
 	ENTER(40);
 	// This fills the main viewport in black
-	FILL_ENTIRE_PICT(glbBackBuffViewport, glbPaletteT16[COLOR_BLACK]);
+	FILL_ENTIRE_PICT(glbBackBuffViewport, glbPaletteT16[C00_COLOR_BLACK]);
 	U8 bp28[40];
 	// SPX: drawing the "Wake up" string
 	DRAW_VP_RC_STR(
 		6, 
-		glbPaletteT16[COLOR_CYAN], 
+		glbPaletteT16[C04_COLOR_CYAN], 
 		QUERY_GDAT_TEXT(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x00_BASE_DATA, 0x11, bp28)
 		);
 	return;
@@ -4956,7 +4934,7 @@ U16 SkWinCore::_19f0_0891(i16 zz, X16 xx, X16 yy, i16 ss, X16 tt, X16 ww)
 										bp06 = _2c1d_028c(xx, yy, 0x00ff);
 										if (bp06 != 0xffff) {
 											//^19F0:0B31
-											bp06 = glbChampionSquad[bp06].playerPos();
+											bp06 = tblChampionSquad[bp06].playerPos();
 											goto _0bae;
 										}
 									}
@@ -5288,464 +5266,69 @@ ObjectID SkWinCore::_19f0_266c(ObjectID rl, U16 dir, U16 ww, U16 bb)
 //^19F0:2723
 X16 SkWinCore::_19f0_2723(ObjectID rl, U16 ww, U16 bb, X16 cc)
 {
-	//^19F0:2723
 	ENTER(6);
-	//^19F0:2729
 	X16 si = ww;
 	X16 di = 0;
 	if (rl != OBJECT_END_MARKER && rl != OBJECT_NULL) {
-		//^19F0:2740
 		ATLASSERT(rl.DBType() == dbActuator);
 		Actuator *bp04 = GET_ADDRESS_OF_RECORD(rl)->castToActuator();
 		U16 bp06 = bp04->ActuatorType();
 		switch (bp06) {
 			case ACTUATOR_FLOOR_TYPE__EVERYTHING://^2775 // 0x01: -
 			case ACTUATOR_TYPE_WALL_SWITCH://^2775 // 0x18: Activator, push button wall switch
-				//^19F0:2775
 				if (si == 0)
-					//^19F0:2779
 					di = 1;
 				break;
 			case ACTUATOR_TYPE_X02://^277E // 0x02: -
-				//^19F0:277E
 				if (si == 0 && bb != 0xffff)
-					//^19F0:2779
 					di = 1;
 				break;
 			case ACTUATOR_FLOOR_TYPE__PARTY://^278A // 0x03: Activator, trap floor
-				//^19F0:278A
 				if (si == 0)
 					goto _27e2;
 				break;
 			case ACTUATOR_TYPE_2_STATE_WALL_SWITCH://^2790 // 0x17: Activator, 2 state wall switch
-				//^19F0:2790
 				if (si == 0) {
 					if ((!bp04->OnceOnlyActuator()) != cc)
-						//^19F0:2779
 						di = 1;
 				}
 				break;
 			case ACTUATOR_TYPE_X1B://^27AD // 0x1B: -
-				//^19F0:27AD
 				if (si == 1) {
 					if (bp04->ActuatorData() != 0)
-						//^19F0:27C3
 						goto _27e2;
 				}
 				break;
 			case ACTUATOR_TYPE_KEY_HOLE://^27C5 // 0x1A: Activator, key hole
-				//^19F0:27C5
 				if ((bp04->OnceOnlyActuator() != 0) ? (si == 2) : (si == 1)) {
-					//^19F0:27E2
 _27e2:
 					di = CREATURE_CAN_HANDLE_IT(rl, bb);
 				}
 				break;
 		}
 	}
-	//^19F0:27F1
 	return di;
-}
-
-//^19F0:2813
-// _19f0_2813 renamed CREATURE_19f0_2813
-U16 SkWinCore::CREATURE_19f0_2813(U16 ww, i16 xx, i16 yy, i16 ss, i16 tt, i16 aa, U16 bb)
-{
-	//^19F0:2813
-	ENTER(10);
-	//^19F0:2819
-	i16 di = ss;
-	X16 bp06 = ww & 0x80;
-	if (bp06 != 0)
-		ww &= ~(0x80);
-	//^19F0:282E
-	if ((_4976_4ef4 & 1) != 0) {
-		//^19F0:2839
-		if (di == -1) {
-			di = xx + glbXAxisDelta[aa];
-			tt = yy + glbYAxisDelta[aa];
-			goto _286d;
-		}
-		//^19F0:285D
-		else if (xx != di || yy != tt) {
-			//^19F0:286D
-_286d:
-			if (di >= 0 && di < glbCurrentMapWidth && tt >= 0 && tt < glbCurrentMapHeight) {
-				//^19F0:2892
-				if ((xx -di) == 0 && (yy -tt) == 0) {
-					//^19F0:28A4
-					if (aa == -1) {
-						aa = CALC_VECTOR_DIR(xx, yy, di, tt);
-					}
-					//^19F0:28BF
-					_19f0_045a(di, tt);
-					if ((_4976_521c & 0x10) != 0) {
-						//^19F0:28D7
-						if (glbCreatureSomeFirstObjectOnTile == OBJECT_NULL) {
-							glbCreatureSomeFirstObjectOnTile = GET_TILE_RECORD_LINK(glbCreatureSomeX, glbCreatureSomeY);
-						}
-						//^19F0:28F0
-						ObjectID si = glbCreatureSomeFirstObjectOnTile;
-						X16 bp0a = 0;
-						//^19F0:28F9
-						Actuator *bp04;
-						for (; si != OBJECT_END_MARKER; si = GET_NEXT_RECORD_LINK(si)) {
-							//^19F0:28FB
-							X16 bp08 = si.DBType();
-							if (bp08 > dbActuator)
-								break;
-							if (bp08 != dbActuator)
-								continue;
-							//^19F0:2911
-							if (si.Dir() != ((aa +2)&3))
-								continue;
-							bp04 = GET_ADDRESS_OF_RECORD(si)->castToActuator();
-							bp0a = (bp04->ActuatorType() == ACTUATOR_TYPE_SWITCH_SIGN_FOR_CREATURE) // 0x26 -> 'Switch sign for creature' or 'Activator, missile explosion'
-								? 1
-								: 0;
-							if (bp0a != 0)
-								break;
-							//^19F0:294D
-						}
-						//^19F0:295B
-						if (bp0a != 0) {
-							if (bp04->ActuatorData() == glbCurrentThinkingCreatureRec->CreatureType()) {
-								if (bp04->OnceOnlyActuator() != 0) {
-									si = _19f0_266c(glbCreatureSomeFirstObjectOnTile, (aa+2)&3, ww, bb);
-									if (si != OBJECT_NULL) {
-										//^19F0:29BA
-										if (_19f0_2723(si, ww, bb, bp04->ActionType()) != 0) {
-											//^19F0:29DD
-											if (bp06 != 0 && _19f0_0559(aa) == 0) {
-												//^19F0:29F5
-												glbCurrentThinkingCreatureData->w24.SetX(di);
-												glbCurrentThinkingCreatureData->w24.SetY(tt);
-												glbCurrentThinkingCreatureData->w24.SetMap(glbCurrentMapIndex);
-												glbCurrentThinkingCreatureData->b29 = 
-												glbCurrentThinkingCreatureData->b27 = (X8)aa;
-												glbCurrentThinkingCreatureData->ItemToThrow = (X8)bb;
-												glbCurrentThinkingCreatureData->b32 = (X8)ww;
-												if (ww == 0) {
-													glbCurrentThinkingCreatureData->Command = ccm2F_ActivateWallSwitch;
-												}
-												else if (ww == 1) {
-													glbCurrentThinkingCreatureData->Command = ccm30_ActivateWallSwitch;
-												}
-												else {
-													glbCurrentThinkingCreatureData->Command = ccm31_ActivateWallSwitch;
-												}
-												//^19F0:2A6C
-												_4976_4ee5 = (ww == 0 && bp04->ActionType() < 2)
-													? xactrAgain
-													: xactrYes;
-											}
-											//^19F0:2A90
-											return 1;
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	//^19F0:2A95
-	if (bp06 != 0)
-		_4976_4ee5 = xactrNo;
-	//^19F0:2AA0
-	return 0;
-}
-
-//^19F0:0D10
-U16 SkWinCore::_19f0_0d10(U16 ww,i16 xx,i16 yy,i16 ss,i16 tt,i16 aa)
-{
-	//^19F0:0D10
-	ENTER(32);
-	//^19F0:0D16
-	ObjectID bp18;
-	i16 di = ss;
-	X16 bp06 = 0;
-	U16 bp0e = ww & 0x80;
-	if (bp0e != 0)
-		ww &= 0xff7f;
-	X16 si = ((ww == 0) ? 0x6f : 0x73) & _4976_4ef0;
-	//^19F0:0D46
-	if (si == 0)
-		goto _123a;
-    //^19F0:0D4F
-	if (di == -1) {
-		//^19F0:0D54
-		di = xx + glbXAxisDelta[aa];
-		tt = yy + glbYAxisDelta[aa];
-	}
-	//^19F0:0D73
-	else if (aa == -1) {
-		//^19F0:0D79
-		aa = CALC_VECTOR_DIR(xx, yy, di, tt);
-	}
-	//^19F0:0D90
-	else if (xx == di && yy == tt) {
-		goto _123a;
-	}
-	//^19F0:0DA0
-	if (di < 0 || di >= glbCurrentMapWidth || tt < 0 || tt >= glbCurrentMapHeight)
-		goto _123a;
-	//^19F0:0DC5
-	if ((xx -di) != 0 && (yy -tt) != 0)
-		goto _123a;
-	//^19F0:0DD7
-	X16 bp0a;
-	_19f0_045a(di, tt);
-	if ((_4976_521c >> 5) != 4)
-		goto _123a;
-	bp0a = (_4976_521c & 7);
-	//^19F0:0DF8
-	Door *door;	//*bp04
-	if (ww == 0) {
-		if (bp0a == 0) {
-_0e04:
-			bp06 = 1;
-			goto _108f;
-		}
-	}
-	//^19F0:0E0C
-	else if (bp0a == 5) {
-		goto _123a;
-	}
-	//^19F0:0E15
-	else if (bp0a == 4) {
-		goto _0e04;
-	}
-	if (glbCreatureSomeFirstObjectOnTile == OBJECT_NULL) {
-		glbCreatureSomeFirstObjectOnTile = GET_TILE_RECORD_LINK(di, tt);
-	}
-	//^19F0:0E32
-	door = GET_ADDRESS_OF_RECORD0(glbCreatureSomeFirstObjectOnTile);
-	if (ww == 2 && door->DoorBit12() == 0)
-		goto _123a;
-	//^19F0:0E5C
-	i16 bp10;
-	i16 bp12;
-	i16 bp14;
-	U16 bp16;
-	i16 bp08;
-	if (door->DoorBit10() != 0) {
-		//^19F0:0E6D
-		if (door->DoorBit09() != 0) {
-			if (ww == 0)
-				goto _104f;
-		}
-		//^19F0:0E83
-		else if (ww != 0) {
-			goto _104f;
-		}
-		//^19F0:0E8C
-		else if ((si &= 0xfff3) == 0) {
-			goto _123a;
-		}
-	}
-	//^19F0:0E99
-	bp08 = CALC_SQUARE_DISTANCE(xx, yy, di, tt);
-	if (bp08 == 1) {
-		//^19F0:0EB3
-		if ((si & 3) != 0) {
-			//^19F0:0EB9
-			if (door->Button() != 0)
-				goto _0f9d;
-			//^19F0:0ECD
-			if (door->DoorBit13() != 0)
-				goto _0f9d;
-		}
-		//^19F0:0EDE
-		if (ww == 0) {
-			//^19F0:0EE4
-			if ((si & 4) != 0 && door->DestroyablebyFireball() != 0)
-				goto _0f9d;
-			//^19F0:0EFE
-			if ((si & 8) != 0 && door->BashablebyChopping() != 0)
-				goto _0f9d;
-		}
-		//^19F0:0F15
-		if ((si & 0x40) != 0)
-			goto _0f9d;
-		goto _123a;
-	}
-	//^19F0:0F21
-	if (glbAIDef->w20_c_f() < bp08)
-		goto _123a;
-	//^19F0:0F34
-	if ((si & 1) != 0) {
-		if (door->Button() != 0 || door->DoorBit13() != 0)
-			goto _0f7f;
-	}
-	//^19F0:0F59
-	if (ww != 0 || (si & 4) == 0)
-		goto _123a;
-	//^19F0:0F6B
-	if (door->DestroyablebyFireball() == 0)
-		goto _123a;
-	//^19F0:0F7F
-_0f7f:
-	if (_19f0_0207(xx, yy, di, tt, &SkWinCore::_19f0_00b8) == 0)
-		goto _123a;
-	//^19F0:0F9D
-_0f9d:
-	if ((si & 1) != 0) {
-		//^19F0:0FA6
-		bp10 = xx;
-		bp12 = yy;
-		bp14 = bp08;
-		for (; bp14 >= 0; ) {
-			//^19F0:0FBB
-			for (bp18 = GET_WALL_TILE_ANYITEM_RECORD(bp10, bp12); bp18 != OBJECT_END_MARKER; bp18 = GET_NEXT_RECORD_LINK(bp18)) {
-				//^19F0:0FCB
-				Cloud *bp20;
-				bp16 = bp18.DBType();
-				if (bp16 == dbMissile) {
-					//^19F0:0FDC
-					Missile *bp1c = GET_ADDRESS_OF_RECORDE(bp18);
-					//^19F0:0FEB
-					if (bp1c->GetMissileObject() != OBJECT_EFFECT_ZO_2 && bp1c->GetMissileObject() != OBJECT_EFFECT_ZO_SPELL) // != oFF8D && != oFF84
-						continue;
-					//^19F0:0FFC
-					if (glbTimersTable[bp1c->TimerIndex()].Direction() != aa)
-						continue;
-					goto _104f;
-				}
-				//^19F0:101F
-				else if (bp16 == dbCloud) {
-					//^19F0:1025
-					bp20 = GET_ADDRESS_OF_RECORDF(bp18);
-					if (bp20->CloudType() != 13 && bp20->CloudType() != 4)
-						continue;
-					//^19F0:104F
-_104f:
-					bp06 = 2;
-					goto _108f;
-				}
-				//^19F0:1056
-			}
-			//^19F0:106B
-			bp10 += glbXAxisDelta[aa];
-			bp12 += glbYAxisDelta[aa];
-			bp14--;
-			//^19F0:1086
-		}
-	}
-	//^19F0:108F
-_108f:
-	if (bp06 != 0 && ww == 2)
-		goto _123a;
-	if (bp0e == 0)
-		goto _1235;
-	//^19F0:10A7
-	if (aa == -1) {
-		aa = CALC_VECTOR_DIR(xx, yy, di, tt);
-	}
-	//^19F0:10C2
-	if (bp06 == 1) {
-		//^19F0:10C8
-		_4976_4ee5 = xactrYes;
-		goto _1235;
-	}
-	if (bp06 == 2) {
-		glbCurrentThinkingCreatureData->Command = ccm00_Neutral;
-		goto _1230;
-	}
-	//^19F0:10E2
-	if (_19f0_0559(aa) != 0)
-		goto _1235;
-	//^19F0:10F1
-	if ((si & 0x20) != 0) {
-		si &= 0xffdf;
-		if (ww == 0) {
-			//^19F0:1101
-			door->DoorBit12(1);
-		}
-	}
-	//^19F0:1109
-	if (bp08 > 1)
-		si &= 5;
-	//^19F0:1113
-	if ((si & 0x42) != 0) {
-		if ((si & 0xffbd) == 0 || RAND02() == 0) {
-			//^19F0:1128
-			glbCurrentThinkingCreatureData->Command = ccm0B;
-			goto _11d2;
-		}
-	}
-	//^19F0:1134
-	U16 bp0c;
-	if ((si & 1) != 0) {
-		//^19F0:113A
-		if ((si & 0xffbc) == 0 || RAND02() == 0) {
-			glbCurrentThinkingCreatureData->Command = (RAND01() != 0) ? ccm28_CastSpell2 : ccm27_CastSpell1;
-			// SPX: 8D (unknow zo2?) replaced with 84 (open door zo1)
-			glbCurrentThinkingCreatureData->ItemToThrow = (ww == 0) ? 0x8D : 0x84;	// zo spell 2 or zo spell 1
-			goto _11d2;
-		}
-	}
-	//^19F0:1176
-	bp0c = glbAIAttacksSpells;
-	if ((si & 8) != 0 && (bp0c & 1) != 0 && ((si & 0xffb4) == 0 || RAND01() != 0)) {
-		//^19F0:1198
-		glbAIAttacksSpells &= 1;
-		goto _11af;
-	}
-	//^19F0:11A0
-	if ((si & 4) == 0)
-		goto _123a;
-	//^19F0:11A9
-	glbAIAttacksSpells &= 0x50;
-	//^19F0:11AF
-_11af:
-	si = _19f0_0891(0x84, xx, yy, di, tt, aa);
-	glbAIAttacksSpells = bp0c;
-	//^19F0:11CE
-	return si;
-_11d2:
-	glbCurrentThinkingCreatureData->w24.SetX(di);
-	glbCurrentThinkingCreatureData->w24.SetY(tt);
-	glbCurrentThinkingCreatureData->w24.SetMap(glbCurrentMapIndex);
-    glbCurrentThinkingCreatureData->b29 = glbCurrentThinkingCreatureData->b27 = U8(aa);
-	glbCurrentThinkingCreatureData->b28 = (U8(RAND01()) + U8(aa)) & 3;
-	glbCurrentThinkingCreatureData->b32 = U8(ww);
-	//^19F0:1230
-_1230:
-	_4976_4ee5 = xactrAgain;
-	//^19F0:1235
-_1235:
-	return 1;
-_123a:
-	if (bp0e != 0)
-		_4976_4ee5 = xactrNo;
-	return 0;
 }
 
 
 
 //^19F0:000A
-U16 SkWinCore::_19f0_000a(i16 xx, i16 yy)
+// SPX: _19f0_000a renamed IS_TILE_BLOCKING_VISION
+U16 SkWinCore::IS_TILE_BLOCKING_VISION(i16 iTileX, i16 iTileY)
 {
-	//^19F0:000A
 	ENTER(6);
-	//^19F0:000F
-	U16 bp06 = GET_TILE_VALUE(xx, yy);
-	U16 si = bp06 >> 5;
-	if (si == ttDoor) {
-		Door *bp04 = GET_ADDRESS_OF_TILE_RECORD(U8(xx), U8(yy))->castToDoor();
-		if ((bp06 & 7) == 4 && GET_DOOR_STAT_0D(GET_GRAPHICS_FOR_DOOR(bp04)) == 0)
+	U16 iTileValue = GET_TILE_VALUE(iTileX, iTileY);	// bp06
+	U16 iTileType = iTileValue >> 5;	// si
+	if (iTileType == ttDoor) {
+		Door *pDoor = GET_ADDRESS_OF_TILE_RECORD(U8(iTileX), U8(iTileY))->castToDoor();	// bp04
+		if ((iTileValue & 7) == 4 && GET_DOOR_STAT_0D(GET_GRAPHICS_FOR_DOOR(pDoor)) == 0)	// == 4 => closed door
 			return 1;
-		//^19F0:0066
 		return 0;
 	}
-	//^19F0:006A
-	if (si != ttWall) {
-		if (si != ttTrickWall)
+	if (iTileType != ttWall) {
+		if (iTileType != ttTrickWall)
 			return 0;
-		if ((bp06 & 4) != 0)
+		if ((iTileValue & 4) != 0)	// trickwall & 4 => wall opened
 			return 0;
 	}
 	return 1;
@@ -6319,7 +5902,7 @@ _1f19:
 								case 2:
 									if (CALC_VECTOR_DIR(glbCreaturePosX, glbCreaturePosY, bp12, bp14) != glbCreatureDir)
 										break;
-									bp3c = _19f0_0207(glbCreaturePosX, glbCreaturePosY, bp12, bp14, &SkWinCore::_19f0_000a);
+									bp3c = _19f0_0207(glbCreaturePosX, glbCreaturePosY, bp12, bp14, &SkWinCore::IS_TILE_BLOCKING_VISION);
 									if (bp3c <= 0)
 										break;
 									if (bp0c->w10 < bp3c)
@@ -6939,8 +6522,8 @@ _1045:
 	DEBUG_HELP_WRITER("Ingame Global Words", glbIngameGlobVarWords, 2, 64);
 	if (SUPPRESS_WRITER(glbIngameGlobVarWords, _4976_3956, 2, 64) != 0)
 		goto _14fa;
-	DEBUG_HELP_WRITER("Champion Squad", glbChampionSquad, 261, cd.pi.glbChampionsCount);
-	if (SUPPRESS_WRITER(glbChampionSquad, _4976_3992, 261, cd.pi.glbChampionsCount) != 0)
+	DEBUG_HELP_WRITER("Champion Squad", tblChampionSquad, 261, cd.pi.glbChampionsCount);
+	if (SUPPRESS_WRITER(tblChampionSquad, _4976_3992, 261, cd.pi.glbChampionsCount) != 0)
 		goto _14fa;
 	DEBUG_HELP_WRITER("Global Spell Effects", &glbGlobalSpellEffects, 6, 1);
 	if (SUPPRESS_WRITER(&glbGlobalSpellEffects, _4976_3a97, 6, 1) != 0)
@@ -6954,7 +6537,7 @@ _1045:
 	glbMinionsAssocCount = _4976_3952 = _4976_3950 = 0;
 	_4976_5258 = 0;
 	for (bp0e = 0; bp0e < cd.pi.glbChampionsCount; bp0e++) {
-		ObjectID *bp04 = glbChampionSquad[bp0e].inventory;
+		ObjectID *bp04 = tblChampionSquad[bp0e].inventory;
 		for (i16 bp12 = 0; bp12 < 30; bp12++) {
 			if (WRITE_RECORD_CHECKCODE(*(bp04++), 0, 0) != 0)
 				goto _14fa;
@@ -7087,7 +6670,7 @@ i16 SkWinCore::CALC_PLAYER_WALK_DELAY(U16 player)
 	ENTER(6);
 	if (glbGlobalSpellEffects.AuraOfSpeed != 0)
 		return 1;
-	Champion *champion = &glbChampionSquad[player];
+	Champion *champion = &tblChampionSquad[player];
 	U16 maxLoad = MAX_LOAD(champion);			// bp06
 	U16 currentLoad = GET_PLAYER_WEIGHT(player);		// di
 	U16 walkDelay = 0;		
@@ -7215,7 +6798,7 @@ U16 SkWinCore::_12b4_023f_WOUND_RUNNING_INTO_CREATURE(i16 xx, i16 yy, i16 *ss, i
 		if (bp02 >= 0) {
 			if (WOUND_PLAYER(bp02, 1, 0x18, 2) != 0) {
 				di = 1;
-				QUEUE_NOISE_GEN2(GDAT_CATEGORY_x16_CHAMPIONS, glbChampionSquad[bp02].HeroType(), SOUND_CHAMPION_BUMP, 0xFE, xx, yy, 1, 0x64, 0xC8);
+				QUEUE_NOISE_GEN2(GDAT_CATEGORY_x16_CHAMPIONS, tblChampionSquad[bp02].HeroType(), SOUND_CHAMPION_BUMP, 0xFE, xx, yy, 1, 0x64, 0xC8);
 			}
 		}
 	}
@@ -7234,7 +6817,7 @@ X16 SkWinCore::_12b4_099e(ObjectID rl)
 	U16 si;
 	for (si = 0; si < cd.pi.glbChampionsCount; si++) {
 		//^12B4:09C3
-		Champion *bp04 = &glbChampionSquad[si];
+		Champion *bp04 = &tblChampionSquad[si];
 		if (bp04->curHP() != 0) {
 			i16 di = GET_PLAYER_ABILITY(bp04, abStr, 0);
 			if (si == glbChampionLeader) {
@@ -7259,9 +6842,9 @@ X16 SkWinCore::_12b4_099e(ObjectID rl)
 	//^12B4:0A40
 	for (si = 0; si < cd.pi.glbChampionsCount; si++) {
 		//^12B4:0A44
-		if (glbChampionSquad[si].curHP() != 0) {
+		if (tblChampionSquad[si].curHP() != 0) {
 			//^12B4:0A54
-			if (glbChampionSquad[si].curStamina() > glbChampionSquad[si].maxStamina()) {
+			if (tblChampionSquad[si].curStamina() > tblChampionSquad[si].maxStamina()) {
 				ADJUST_STAMINA(
 					si,
 					(bp08 != 0) ? max_value(5, bp06 >> 2) : 5
@@ -7688,7 +7271,7 @@ void SkWinCore::_3a15_020f()
 	U16 si;
 	for (si = 0; si < MAX_CHAMPIONS; si++) {
 		//^3A15:0222
-		glbChampionSquad[si].timerIndex = TIMER_NONE;
+		tblChampionSquad[si].timerIndex = TIMER_NONE;
 		//^3A15:0231
 	}
 	//^3A15:0237
@@ -7701,7 +7284,7 @@ void SkWinCore::_3a15_020f()
 		switch (timer->TimerType()) {
 			case tty0C:
 				//^3A15:0262
-				glbChampionSquad[timer->actor].timerIndex = si;
+				tblChampionSquad[timer->actor].timerIndex = si;
 				break;
 			case tty1D:
 			case tty1E:
@@ -7821,15 +7404,13 @@ U16 SkWinCore::CALC_SIZE_OF_COMPRESSED_RECT(U16 xx)
 }
 
 //^098D:1208
-void SkWinCore::_098d_1208() //#DS=4976?
+// SPX: _098d_1208 renamed INIT_LOAD_RECTS_ZONES
+void SkWinCore::INIT_LOAD_RECTS_ZONES() //#DS=4976?
 {
 	// TODO: 本ズレ函数
-	//^098D:1208
-	//^098D:120B
-	LOAD_RECTS_AND_COMPRESS(1, 0, 0);
-	//^098D:1218
-	_4976_4ba4 = 1;
-	//^098D:121E
+	// SPX: Gdat item 01-00-00 contains the rectangle zones.
+	LOAD_RECTS_AND_COMPRESS(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x00_BASE_DATA, 0);	// (1, 0, 0)
+	glbRectZonesLoaded = 1;
 	return;
 }
 
@@ -7837,15 +7418,10 @@ void SkWinCore::_098d_1208() //#DS=4976?
 void SkWinCore::DEALLOC_LOWER_MEMORY(Bit32u size) //#DS=4976?
 {
 	// TODO: 本ズレ函数
-	//^3E74:0A51
-	//^3E74:0A54
 	if ((size & 1) != 0) {
-		//^3E74:0A5F
 		size++;
 	}
-	//^3E74:0A67
 	glbFreeRAMMemPool += size;
-	//^3E74:0A75
 	SkD((DLV_MEM, "MEM: DEALLOC_LOWER_MEMORY(%10d)\n", (Bitu)size));
 #if defined(_USE_MFC80) || defined(_USE_MFC60) || defined(_USE_SDL)
 	ATLVERIFY(vecLowerAlloc.size() != 0);
@@ -7867,14 +7443,14 @@ U16 SkWinCore::QUERY_GDAT_ENTRY_DATA_LENGTH(U8 cls1, U8 cls2, U8 cls3, U8 cls4)
 }
 
 //^098D:1185
-void SkWinCore::LOAD_RECTS_AND_COMPRESS(U8 cls1, U8 cls2, U8 cls4) //#DS=4976?
+void SkWinCore::LOAD_RECTS_AND_COMPRESS(U8 iGDatCls1Category, U8 iGDatCls2MainItemId, U8 iGDatCls4EntryId) //#DS=4976?
 {
 	// TODO: 本ズレ函数
-	U32 bp08 = QUERY_GDAT_ENTRY_DATA_LENGTH(cls1, cls2, dt04, cls4);
-	U8 *bp04 = ALLOC_MEMORY_RAM(bp08, afUseLower, 1024);
-	LOAD_GDAT_ENTRY_DATA_TO(cls1, cls2, dt04, cls4, bp04);
-	COMPRESS_RECTS((i16 *)bp04, bp08, &glbRectNoTable, &SkWinCore::ALLOC_UPPER_MEMORY);
-	DEALLOC_LOWER_MEMORY(bp08);
+	U32 iDataLength = QUERY_GDAT_ENTRY_DATA_LENGTH(iGDatCls1Category, iGDatCls2MainItemId, fmtRect, iGDatCls4EntryId);	// bp08
+	U8* xDataBuffer = ALLOC_MEMORY_RAM(iDataLength, afUseLower, 1024);	// bp04
+	LOAD_GDAT_ENTRY_DATA_TO(iGDatCls1Category, iGDatCls2MainItemId, fmtRect, iGDatCls4EntryId, xDataBuffer);
+	COMPRESS_RECTS((i16 *)xDataBuffer, iDataLength, &glbRectNoTable, &SkWinCore::ALLOC_UPPER_MEMORY);
+	DEALLOC_LOWER_MEMORY(iDataLength);
 }
 
 //^3E74:51E4
@@ -7897,186 +7473,116 @@ U8 *SkWinCore::ALLOC_UPPER_MEMORY(U32 size)
 }
 
 //^098D:0E78
-void SkWinCore::COMPRESS_RECTS(i16 *data, Bit32u size, RectTable *zz, U8 *(SkWinCore::*allocFunc)(Bit32u size))
+void SkWinCore::COMPRESS_RECTS(i16 *data, Bit32u size, RectTable* pRectTable, U8 *(SkWinCore::*allocFunc)(Bit32u size))
 {
 #define	PTR_ADVANCE(PTR,DELTA) *((U8 **)&(PTR)) += (DELTA);
 #define	WRITE_BYTE(PTR,VAL) **(U8 **)&(PTR) = (VAL);
 #define	WRITE_WORD(PTR,VAL) **(U16 **)&(PTR) = (VAL);
 
 	// TODO: 本ズレ函数
-	//^098D:0E78
-	//^098D:0E7E
-	if (*(data++) != (i16)0xfc0d)
+	if (*(data++) != (i16)0xFC0D)	// looks like a magic number for the RectZone raw data item, it's the same through the different GDAT versions.
 		return;
-	//^098D:0E8F
 	i16 bp0e = *(data++);
-	//^098D:0E9C
 	i16 *bp08 = data;
-	//^098D:0EA8
 	data += bp0e << 1;
-	//^098D:0EB2
-	while (zz->pb0 != NULL) {
-		//^098D:0EB4
-		zz = zz->pb0;
+	while (pRectTable->pNextTable != NULL) {
+		pRectTable = pRectTable->pNextTable;
 	}
-	//^098D:0ED0
 	for (; --bp0e >= 0; ) {
-		//^098D:0ED3
 		U16 bp0a = *bp08; bp08++;
-		//^098D:0EE0
 		U16 bp0c = *bp08; bp08++;
-		//^098D:0EED
 		i16 si = bp0c - bp0a +1;
-		//^098D:0EF3
 		i16 *bp16 = data;
-		//^098D:0EFF
 		U8 bp17 = 0x1f;
-		//^098D:0F03
 		U16 bp1a = data[0];
-		//^098D:0F0C
 		U16 bp1c = data[1];
 
 		do {
-			//^098D:0F13
 			if (*(data++) != (i16)bp1a) {
-				//^098D:0F22
 				bp17 &= ~2;
 			}
-			//^098D:0F2A
 			if (*(data) != (i16)bp1c) {
-				//^098D:0F35
 				bp17 &= ~1;
 			}
-			//^098D:0F3D
 			if (*(data++) > 255) {
-				//^098D:0F4B
 				bp17 &= ~4;
 			}
-			//^098D:0F53
 			U16 bp1e = 2;
 
 			do {
-				//^098D:0F58
 				i16 di = *(data++);
-				//^098D:0F64
 				if (di < 0 || di > 255) {
-					//^098D:0F6E
 					bp17 &= ~16;
 				}
-				//^098D:0F76
 				if (di < -128 || di > 127) {
-					//^098D:0F80
 					bp17 &= ~8;
 				}
-				//^098D:0F88
 			} while (--bp1e != 0);
 
-			//^098D:0F8D
 		} while (--si > 0);
 
-		//^098D:0F90
 		if ((bp17 & 3) != 0) {
-			//^098D:0F96
 			bp17 &= ~4;
 		}
 		si = bp0c - bp0a +1;
 		//Bit32u bp12 = CALC_SIZE_OF_COMPRESSED_RECT(bp17) * si + 10; //win32
 		// zel: Use sizeof(RectTable) instead of 10 for 64 bits compatibility ! (hard to find bug !)
-		Bit32u bp12 = CALC_SIZE_OF_COMPRESSED_RECT(bp17) * si + sizeof(RectTable);
+		U32 bp12 = CALC_SIZE_OF_COMPRESSED_RECT(bp17) * si + sizeof(RectTable);
 
-		//^098D:0FC3
 		if ((bp17 & 1) != 0) {
-			//^098D:0FC9
 			bp12 += 2;
 		}
-		//^098D:0FD1
-		RectTable *bp04 = reinterpret_cast<RectTable *>((this->*allocFunc)(bp12));
-		//^098D:0FE2
-		zz = (zz->pb0 = bp04);
-		//^098D:0FF8
-		bp04->pb0 = NULL;
-		//^098D:1006
-		bp04->w4 = bp0a;
-		//^098D:100D
-		bp04->w6 = bp0c;
-		//^098D:1014
-		bp04->b8 = (U8)bp17;
-		//^098D:101B
-		bp04->b9 = (U8)bp1a;
+		RectTable* pNewRectTable = reinterpret_cast<RectTable *>((this->*allocFunc)(bp12));	// bp04
+		pRectTable = (pRectTable->pNextTable = pNewRectTable);
+		pNewRectTable->pNextTable = NULL;
+		pNewRectTable->iRectNoMin = bp0a;
+		pNewRectTable->iRectNoMax = bp0c;
+		pNewRectTable->b8 = (U8)bp17;
+		pNewRectTable->b9 = (U8)bp1a;
 		SkD((DLV_RCT, "RCT: COMPRESS_RECTS (%p,(%d,%d,%d,%d))\n"
-			, (RectTable*)bp04->pb0, (U16)bp04->w4, (U16)bp04->w6, (U8)bp04->b8, (U8)bp04->b9));
-		//^098D:1022
-		bp04++;
-		//^098D:1026
+			, (RectTable*)pNewRectTable->pNextTable, (U16)pNewRectTable->iRectNoMin, (U16)pNewRectTable->iRectNoMax, (U8)pNewRectTable->b8, (U8)pNewRectTable->b9));
+		pNewRectTable++;
 		if ((bp17 & 1) != 0) {
-			//^098D:102C
-			WRITE_WORD(bp04,bp1c);
-			//^098D:1035
-			PTR_ADVANCE(bp04,+2);
+			WRITE_WORD(pNewRectTable,bp1c);
+			PTR_ADVANCE(pNewRectTable,+2);
 		}
-		//^098D:1043
 		data = bp16;
 
 		do {
-			//^098D:104F
 			if ((bp17 & 4) != 0) {
-				//^098D:1055
-				WRITE_BYTE(bp04,(U8)*data); data++;
-				//^098D:1065
-				PTR_ADVANCE(bp04,+1);
-				//^098D:1072
-				WRITE_BYTE(bp04,(U8)*data); data++;
-				//^098D:1082
-				PTR_ADVANCE(bp04,+1);
+				WRITE_BYTE(pNewRectTable,(U8)*data); data++;
+				PTR_ADVANCE(pNewRectTable,+1);
+				WRITE_BYTE(pNewRectTable,(U8)*data); data++;
+				PTR_ADVANCE(pNewRectTable,+1);
 			}
 			else {
-				//^098D:1091
 				if ((bp17 & 2) == 0) {
-					//^098D:109C
-					WRITE_WORD(bp04,*data);
-					//^098D:10A8
-					PTR_ADVANCE(bp04,+2);
+					WRITE_WORD(pNewRectTable,*data);
+					PTR_ADVANCE(pNewRectTable,+2);
 				}
-				//^098D:10B6
 				data++;
-				//^098D:10BA
 				if ((bp17 & 1) == 0) {
-					//^098D:10C5
-					WRITE_WORD(bp04,*data);
-					//^098D:10D1
-					PTR_ADVANCE(bp04,+2);
+					WRITE_WORD(pNewRectTable,*data);
+					PTR_ADVANCE(pNewRectTable,+2);
 				}
-				//^098D:10DF
 				data++;
 			}
-			//^098D:10E3
 			if ((bp17 & 24) != 0) {
-				//^098D:10E9
-				WRITE_BYTE(bp04,(U8)*data); data++;
-				//^098D:10F9
-				PTR_ADVANCE(bp04,+1);
-				//^098D:1106
-				WRITE_BYTE(bp04,(U8)*data); data++;
-				//^098D:1116
-				PTR_ADVANCE(bp04,+1);
+				WRITE_BYTE(pNewRectTable,(U8)*data); data++;
+				PTR_ADVANCE(pNewRectTable,+1);
+				WRITE_BYTE(pNewRectTable,(U8)*data); data++;
+				PTR_ADVANCE(pNewRectTable,+1);
 			}
 			else {
-				//^098D:111F
-				WRITE_WORD(bp04,*data); data++;
-				//^098D:112F
-				PTR_ADVANCE(bp04,+2);
-				//^098D:113D
-				WRITE_WORD(bp04,*data); data++;
-				//^098D:114D
-				PTR_ADVANCE(bp04,+2);
+				WRITE_WORD(pNewRectTable,*data); data++;
+				PTR_ADVANCE(pNewRectTable,+2);
+				WRITE_WORD(pNewRectTable,*data); data++;
+				PTR_ADVANCE(pNewRectTable,+2);
 			}
 
-			//^098D:115B
 		} while (--si > 0);
 
-		//^098D:1161
 	}
-	//^098D:1169
 	return;
 
 #undef	PTR_ADVANCE
@@ -8085,7 +7591,7 @@ void SkWinCore::COMPRESS_RECTS(i16 *data, Bit32u size, RectTable *zz, U8 *(SkWin
 }
 
 //^098D:030F
-SRECT *SkWinCore::QUERY_RECT(RectTable *entry, U16 rectno) //#DS=4976?
+SRECT *SkWinCore::QUERY_RECT(RectTable* entry, U16 iRectNo) //#DS=4976?
 {
 #define	PTR_ADVANCE(PTR,DELTA) *((U8 **)&(PTR)) += (DELTA);
 #define	READ_BYTE(PTR) **((U8 **)&(PTR))
@@ -8093,110 +7599,67 @@ SRECT *SkWinCore::QUERY_RECT(RectTable *entry, U16 rectno) //#DS=4976?
 #define	READ_WORD(PTR) **((U16 **)&(PTR))
 
 	// TODO: 単体動作確認済 13:59 2006/05/07
-	//^098D:030F
-	//^098D:0315
-	U16 iRequestedRectNo = rectno;	// U16 si
-	//^098D:0318
+	U16 iRequestedRectNo = iRectNo;	// U16 si
 	if (iRequestedRectNo == 0)
 		return NULL;
-	//^098D:031F
-	for (; entry != NULL; entry = entry->pb0) {
-		//^098D:0322
-		if (entry->w4 > iRequestedRectNo || entry->w6 < iRequestedRectNo)
+	for (; entry != NULL; entry = entry->pNextTable) {
+		if (entry->iRectNoMin > iRequestedRectNo || entry->iRectNoMax < iRequestedRectNo)
 			continue;
-		//^098D:0337
-		iRequestedRectNo -= entry->w4;
-		//^098D:033B
-		_4976_0198++;
-		//^098D:033F
-		if (_4976_0198 >= 4) {
-			//^098D:
-			_4976_0198 = 0;
+		iRequestedRectNo -= entry->iRectNoMin;
+		glbRectRingBufferIndex++;
+		if (glbRectRingBufferIndex >= 4) {
+			glbRectRingBufferIndex = 0;
 		}
-		//^098D:034D
-		sk4b84 *bp04 = &_4976_4b84[_4976_0198];
-		//^098D:035C
+		sk4b84 *bp04 = &tblRectRingBuffer[glbRectRingBufferIndex];	// bp04
 		U8 bp05 = entry->b8;
 
 		// bp05 combinations:
 		// 0x00		@prefix @entry (x=RW, y=RW)
 		// 0x01		@prefix (y=w10) @entry
 
-		//^098D:0366
 		if ((bp05 & 2) != 0) {
-			//^098D:036A
 			bp04->w0 = entry->b9;
 		}
-		//^098D:0376
 		entry++;
-		//^098D:037A
 		if ((bp05 & 1) != 0) {
-			//^098D:0380
 			bp04->w2 = READ_WORD(entry);
-			//^098D:038F
 			PTR_ADVANCE(entry,+2);
 		}
-		//^098D:039D
 		PTR_ADVANCE(entry,+(CALC_SIZE_OF_COMPRESSED_RECT(bp05) * iRequestedRectNo));
-		//^098D:03B8
 		if ((bp05 & 4) != 0) {
-			//^098D:03BE
 			bp04->w0 = READ_BYTE(entry);
-			//^098D:03CC
 			PTR_ADVANCE(entry,+1);
-			//^098D:03D9
 			bp04->w2 = READ_BYTE(entry);
-			//^098D:03E7
 			PTR_ADVANCE(entry,+1);
-			//^098D:03EE
 		}
 		else {
-			//^098D:03F0
 			if ((bp05 & 2) == 0) {
-				//^098D:03FB
 				bp04->w0 = READ_WORD(entry);
-				//^098D:0407
 				PTR_ADVANCE(entry,+2);
 			}
-			//^098D:0415
 			if ((bp05 & 1) == 0) {
-				//^098D:0420
 				bp04->w2 = READ_WORD(entry);
-				//^098D:042F
 				PTR_ADVANCE(entry,+2);
 			}
 		}
-		//^098D:043D
 		if ((bp05 & 8) != 0) {
-			//^098D:0443
 			bp04->w4 = READ_SBYTE(entry); PTR_ADVANCE(entry,+1);
-			//^098D:0453
 			bp04->w6 = READ_SBYTE(entry);
-			//^098D:045B
 		}
-		//^098D:045D
 		else if ((bp05 & 16) != 0) {
-			//^098D:0463
 			bp04->w4 = READ_BYTE(entry); PTR_ADVANCE(entry,+1);
-			//^098D:0474
 			bp04->w6 = READ_BYTE(entry);
-			//^098D:047D
 		}
 		else {
-			//^098D:047F
 			bp04->w4 = READ_WORD(entry); PTR_ADVANCE(entry,+2);
-			//^098D:048E
 			bp04->w6 = READ_WORD(entry);
 		}
 
-		SkD((DLV_RCT, "RCT: QUERY_RECT(%4d,(%3d,%3d,%3d,%3d))\n", (Bitu)rectno, (Bitu)bp04->w0, (Bitu)bp04->w2, (Bitu)bp04->w4, (Bitu)bp04->w6));
+		SkD((DLV_RCT, "RCT: QUERY_RECT(%4d,(%3d,%3d,%3d,%3d))\n", (Bitu)iRectNo, (Bitu)bp04->w0, (Bitu)bp04->w2, (Bitu)bp04->w4, (Bitu)bp04->w6));
 
-		//^098D:0495
 		return (SRECT *)bp04;
 
-		//^098D:04A4
 	}
-	//^098D:04BF
 	return NULL;
 
 #undef	PTR_ADVANCE
@@ -8686,7 +8149,7 @@ void SkWinCore::RECT_0aaf_01db(U16 iRectNo, U16 yy)
 		FREE_PICT_ENTRY(xImageBuffer);
 	}
 	else {
-		U8 si = (yy != 0) ? (glbPaletteT16[COLOR_BLACK]) : (glbPaletteT16[COLOR_DARK_GRAY]);
+		U8 si = (yy != 0) ? (glbPaletteT16[C00_COLOR_BLACK]) : (glbPaletteT16[C01_COLOR_DARK_GRAY]);
 		SRECT bp10;
 		FIRE_FILL_BACKBUFF_RECT(QUERY_EXPANDED_RECT(iRectNo, &bp10), si);
 	}
@@ -8748,7 +8211,7 @@ void SkWinCore::FILE_RENAME(const U8 *curf, const U8 *newf)
 void SkWinCore::_44c8_0b8d(U16 src, U16 dst, U16 pitch)
 {
 	ENTER(0);
-	U8 *esdi = _4976_5e6a;
+	U8 *esdi = glbBlit2MemDest;
 	esdi += dst;
 	U16 cx = pitch;
 	const U8 *dssi = _4976_5e64;
@@ -8946,7 +8409,7 @@ tiamat SkWinCore::ALLOC_MEMORY_(U32 size, U16 flags, U16 poolno)
 	{
 		U8 message[32];
 		sprintf((char*)message, "FREE MEM = %06d , ALLOC SIZE = %05d \n", glbFreeRAMMemPool, size);
-		DISPLAY_HINT_TEXT(COLOR_YELLOW, message);
+		DISPLAY_HINT_TEXT(C11_COLOR_YELLOW, message);
 	}
 	*/
 
@@ -9180,8 +8643,8 @@ void __DECLSPEC_NORETURN_ SkWinCore::RAISE_SYSERR(U16 syserr)
 	skWinApp->skwin_ShowMessage(reinterpret_cast<const char *>(bp80));
 	_exit(1);
 #else
-	if (_4976_4750 != 0) {
-		if (_4976_4ba4 != 0) {
+	if (glbFontLoaded != 0) {
+		if (glbRectZonesLoaded != 0) {
 			PRINT_SYSERR_TEXT(0, 16, 15, 0, bp80);
 		}
 		else {
@@ -9191,7 +8654,7 @@ void __DECLSPEC_NORETURN_ SkWinCore::RAISE_SYSERR(U16 syserr)
 			SPECIAL_UI_KEY_TRANSFORMATION();
 		}
 		else {
-			SLEEP_SEVERAL_TIME(0x012C);
+			SLEEP_SEVERAL_TIME(0x012C);	// 0x012C = 300
 		}
 		SK_PREPARE_EXIT();
 	}
@@ -9226,7 +8689,6 @@ void SkWinCore::GRAPHICS_DATA_READ(U32 location, U32 size, X8 *buff)
 		if (bp10[si] != 0) {	// check size
 			do {
 				if (FILE_SEEK(bp14[si], bp08[si]) != 0) {
-					//^3E74:0F8A
 					if (FILE_READ(bp14[si], bp10[si], buff) != 0)
 						break;
 				}
@@ -9430,7 +8892,7 @@ U16 SkWinCore::READ_IMG3_DURATION()
 void SkWinCore::SPILL_IMG3_PIXELS(X16 offDst, X16 offSrc, X16 size)
 {
 	ENTER(0);
-	U8 *di = _4976_5e6a;
+	U8 *di = glbBlit2MemDest;
 	U8 *si = di;
 	X16 bx = offDst;
 	X16 dx = offSrc;
@@ -9470,8 +8932,8 @@ void SkWinCore::SPILL_IMG3_PIXELS(X16 offDst, X16 offSrc, X16 size)
 void SkWinCore::TRANSPARENT_IMG3_PIXELS(X16 offSrcDst, X16 size)
 {
 	ENTER(0);
-	U8 *di = _4976_5e6a;	// dst
-	U8 *si = _4976_5e6e;	// underlay
+	U8* di = glbBlit2MemDest;	// dst
+	U8* si = _4976_5e6e;	// underlay
 	X16 bx = offSrcDst;
 	X16 cx = size;
 	{
@@ -9510,7 +8972,7 @@ void SkWinCore::TRANSPARENT_IMG3_PIXELS(X16 offSrcDst, X16 size)
 void SkWinCore::_44c8_1202(X16 offDst, X8 pixel)
 {
 	ENTER(0);
-	U8 *di = _4976_5e6a;
+	U8* di = glbBlit2MemDest;
 	X16 bx = offDst;
 	{
 		bool carry = (bx & 1) ? true : false;
@@ -9616,7 +9078,7 @@ U8* SkWinCore::QUERY_GDAT_IMAGE_ENTRY_BUFF(U8 iGDatCategory, U8 iGDatItemId, U8 
 //^2E62:0004
 U8 *SkWinCore::QUERY_GDAT_SQUAD_ICON(U8 *dstImage, U8 colorno, U8 localpal[16])
 {
-	U16 si = (((glbChampionSquad[colorno].playerDir() + 4 - cd.pi.glbPlayerDir) & 3) + ((glbGlobalSpellEffects.Invisibility != 0) ? 4 : 0)) * _4976_0118;
+	U16 si = (((tblChampionSquad[colorno].playerDir() + 4 - cd.pi.glbPlayerDir) & 3) + ((glbGlobalSpellEffects.Invisibility != 0) ? 4 : 0)) * _4976_0118;
 	COPY_MEMORY(
 		QUERY_GDAT_IMAGE_LOCALPAL(1, 6, colorno),
 		localpal,
@@ -9700,13 +9162,13 @@ void SkWinCore::CHANGE_PLAYER_POS(U16 squadPos)
 		_4976_5dbc = 0;
 		U16 bp04 = GET_PLAYER_AT_POSITION((bp02 + cd.pi.glbPlayerDir) & 0x0003);
 		if (di != 0) {
-			glbChampionSquad[bp04].playerDir((U8)cd.pi.glbPlayerDir);
+			tblChampionSquad[bp04].playerDir((U8)cd.pi.glbPlayerDir);
 		}
 		if (bp02 != squadPos) {
 			if (si >= 0) {
-				glbChampionSquad[si].playerPos((U8)bp02);
+				tblChampionSquad[si].playerPos((U8)bp02);
 			}
-			glbChampionSquad[bp04].playerPos((U8)(squadPos + cd.pi.glbPlayerDir));
+			tblChampionSquad[bp04].playerPos((U8)(squadPos + cd.pi.glbPlayerDir));
 		}
 	}
 	_443c_040e_MOUSE();
@@ -9857,7 +9319,7 @@ U8 *SkWinCore::FORMAT_SKSTR(const U8 *format, U8 *output)
 					{
 						if (glbChampionBonesIndex == 0xFFFF)
 							break;
-						bp0c = (U8 *)&glbChampionSquad[glbChampionBonesIndex];
+						bp0c = (U8 *)&tblChampionSquad[glbChampionBonesIndex];
 						break;
 					}
 				case 0x0008:	// .Z008
@@ -10756,7 +10218,7 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 	SkD((DLV_DBG_GAME_LOAD, "Reset champions inventory ... \n"));
 	U16 iChampionIndex;	// si
 	for (iChampionIndex = 0; iChampionIndex < cd.pi.glbChampionsCount; iChampionIndex++) {
-		ObjectID* xInvObject = &glbChampionSquad[iChampionIndex].inventory[0];	// bp08
+		ObjectID* xInvObject = &tblChampionSquad[iChampionIndex].inventory[0];	// bp08
 		for (U16 iInvSlot = 0; iInvSlot < 30; iInvSlot++) {
 			*xInvObject = OBJECT_END_MARKER; xInvObject++;
 			//*xInvObject = OBJECT_NULL; xInvObject++;	// SPX: changed default to NULL else Yuks are drawn if the rest of savegame is not properly read (i.e. DM1)
@@ -10825,7 +10287,7 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 	if (!SkCodeParam::bDM1Mode)
 	
 	for (iChampionIndex = 0; iChampionIndex < cd.pi.glbChampionsCount; iChampionIndex++) {
-		ObjectID* xInvObject = &glbChampionSquad[iChampionIndex].inventory[0]; // bp08
+		ObjectID* xInvObject = &tblChampionSquad[iChampionIndex].inventory[0]; // bp08
 		for (U16 iInvSlot = 0; iInvSlot < 30; iInvSlot++) {	// di
 			if (READ_RECORD_CHECKCODE(-1, 0, xInvObject++, 0, 0) != 0) {
 				goto _1e7e;
@@ -10838,7 +10300,7 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 	}
 	//^2066:1BA6
 	for (iChampionIndex = 0; iChampionIndex < cd.pi.glbChampionsCount; iChampionIndex++) {
-		ObjectID* xInvObject = &glbChampionSquad[iChampionIndex].inventory[0];	// bp08
+		ObjectID* xInvObject = &tblChampionSquad[iChampionIndex].inventory[0];	// bp08
 		for (U16 iInvSlot = 0; iInvSlot < 30; iInvSlot++, xInvObject++) {	// di
 			if (*xInvObject == OBJECT_END_MARKER) {
 				*xInvObject = OBJECT_NULL;
@@ -11178,7 +10640,7 @@ _2e5b:
 				break;
 			if (SUPPRESS_READER(glbIngameGlobVarWords, _4976_3956, 2, 64, 1) != 0)
 				break;
-			if (SUPPRESS_READER(glbChampionSquad, _4976_3992, 261, cd.pi.glbChampionsCount, 1) != 0) // player ents
+			if (SUPPRESS_READER(tblChampionSquad, _4976_3992, 261, cd.pi.glbChampionsCount, 1) != 0) // player ents
 				break;
 			if (SUPPRESS_READER(&glbGlobalSpellEffects, _4976_3a97, 6, 1, 1) != 0)
 				break;
@@ -11288,7 +10750,7 @@ _31b8:		// we jump there from loading a dungeon from new game
 			// Init champions
 			for (iChampionIndex = 0; iChampionIndex < 4; iChampionIndex++)
 			{
-				Champion *xChampion = &glbChampionSquad[iChampionIndex];
+				Champion *xChampion = &tblChampionSquad[iChampionIndex];
 				INIT_CHAMPION(xChampion);
 			}
 
@@ -12571,9 +12033,9 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 	U16 bp02;
 	if (_4976_5bee[0] == 0) {
 		for (bp02 = 0; bp02 < cd.pi.glbChampionsCount; bp02++) {
-			MARK_DYN_LOAD(0x16000100 + (glbChampionSquad[bp02].HeroType() << 16)); // Mark: Champions, xxx, image, 0x00(wake)
-			MARK_DYN_LOAD(0x160002ff + (glbChampionSquad[bp02].HeroType() << 16)); // Mark: Champions, xxx, snd, all
-			MARK_DYN_EXCLUDE_RANGE(0x16000508 + (glbChampionSquad[bp02].HeroType() << 16), 0xb); // Mark: Champions, xx, text, 0x08 to 0x0B
+			MARK_DYN_LOAD(0x16000100 + (tblChampionSquad[bp02].HeroType() << 16)); // Mark: Champions, xxx, image, 0x00(wake)
+			MARK_DYN_LOAD(0x160002ff + (tblChampionSquad[bp02].HeroType() << 16)); // Mark: Champions, xxx, snd, all
+			MARK_DYN_EXCLUDE_RANGE(0x16000508 + (tblChampionSquad[bp02].HeroType() << 16), 0xb); // Mark: Champions, xx, text, 0x08 to 0x0B
 			tblSkEntries[glbSkEntriesCount -1].MarkIncluded();
 		}
 	}
@@ -13308,7 +12770,7 @@ U16 SkWinCore::_2fcf_16ff(ObjectID rl)
 	//^2FCF:1705
 	X16 bp0c = 0;
 	X16 bp0a = 0;
-	Champion *champion = glbChampionSquad;	//*bp04
+	Champion *champion = tblChampionSquad;	//*bp04
 	ObjectID di;
 	U16 si = 0; // uninited val
 	ObjectID *bp08;
@@ -13946,7 +13408,7 @@ void SkWinCore::ROTATE_SQUAD(U16 dir)
 			//^2C1D:01F8
 			dx += 4;
 		//^2C1D:01FB
-		Champion *bp04 = glbChampionSquad;
+		Champion *bp04 = tblChampionSquad;
 		//^2C1D:0203
 		for (U16 si=0; si < cd.pi.glbChampionsCount; bp04++, si++) {
 			//^2C1D:0207
@@ -14195,7 +13657,7 @@ U16 SkWinCore::SOMETHING_TELEPORT_OR_PITS(ObjectID recordLink, i16 xpos, i16 ypo
 						//^2FCF:0926
 						bp26 = (_4976_5bee[0] != 0 && glbChampionInventory == 0 && cd.pi.glbIsPlayerSleeping == 0) ? 1 : 0;
 						//^2FCF:0945
-						bp08 = glbChampionSquad;
+						bp08 = tblChampionSquad;
 						//^2FCF:094D
 						for (bp18=0; bp18 < cd.pi.glbChampionsCount; bp08++, bp18++) {
 							//^2FCF:0954
@@ -14211,7 +13673,7 @@ U16 SkWinCore::SOMETHING_TELEPORT_OR_PITS(ObjectID recordLink, i16 xpos, i16 ypo
 					}
 					else {
 						//^2FCF:09A1
-						bp08 = glbChampionSquad;
+						bp08 = tblChampionSquad;
 						//^2FCF:09A9
 						for (bp18 = 0; (bp18 < cd.pi.glbChampionsCount); bp08++, bp18++) {
 							//^2FCF:09B0
@@ -14819,7 +14281,7 @@ U16 SkWinCore::MISSILE_HIT_075f_0af9(i16 u16tileType, i16 xpos, i16 ypos, U16 di
 				//^075F:0DAE
 				if (bp16 != 0) {
 					//^075F:0DB2
-					if ((((glbChampionSquad[bp12].playerDir() == (glbTimersTable[bp08->TimerIndex()].Direction() +2)) ? 1 : 0) & 3) != 0) {
+					if ((((tblChampionSquad[bp12].playerDir() == (glbTimersTable[bp08->TimerIndex()].Direction() +2)) ? 1 : 0) & 3) != 0) {
 						//^075F:0DF2
 						glbProjectileAttackType |= 0x8000;
 					}
@@ -17108,7 +16570,7 @@ UINT SkWinCore::SKLIB_INIT()
 	DEALLOC_LOWER_MEMORY(0x400);
 	LOAD_GDAT_INTERFACE_00_02();
 	glbPaletteT16 = QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x00_BASE_DATA, dtPalette16, 0xFE);
-	_098d_1208();
+	INIT_LOAD_RECTS_ZONES();
 
 	// SPX: Added extended load here (requires the GDAT to be initialized, but must be before dungeon loading)
 	EXTENDED_LOAD_AI_DEFINITION();
@@ -17219,7 +16681,7 @@ UINT SkWinCore::INIT()
 	LOAD_GDAT_INTERFACE_00_02();
 	//glbPaletteT16 = QUERY_GDAT_ENTRY_DATA_PTR(0x1, 0x0, dt0d, 0xfe);
 	glbPaletteT16 = QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x00_BASE_DATA, dtPalette16, 0xFE);
-	_098d_1208();
+	INIT_LOAD_RECTS_ZONES();
 
 	// SPX: Added extended load here (requires the GDAT to be initialized, but must be before dungeon loading)
 	EXTENDED_LOAD_AI_DEFINITION();
@@ -17647,7 +17109,7 @@ void SkWinCore::DRAW_MESSAGE_HINT_TEXTS()
 		X16 bp0a = iYPos +(iMessageNo * _4976_013a) + _4976_5c12;
 		X16 bp06 = _4976_0130;
 		FIRE_HIDE_MOUSE_CURSOR();
-		FILL_RECT_ANY(&sRect, glbPaletteT16[COLOR_BLACK]);	// SPX: Fill low text panel with BLACK
+		FILL_RECT_ANY(&sRect, glbPaletteT16[C00_COLOR_BLACK]);	// SPX: Fill low text panel with BLACK
 		FIRE_SHOW_MOUSE_CURSOR();
 		//tlbTimerTickRemoveHintMessage[iMessageNo] = 0xffffffff;
 		tblTimerTickRemoveHintMessage[iMessageNo] = -1;
@@ -17679,7 +17141,7 @@ void SkWinCore::_2759_12e6()
 			if (bp04->w0 == 0)
 				continue;
 			//^2759:1323
-			Champion *bp08 = &glbChampionSquad[si];
+			Champion *bp08 = &tblChampionSquad[si];
 			if (bp08->curHP() == 0 || bp04->id4 != bp08->Possess(di)) {
 				//^2759:1354
 				bp04->w0 = 0;
@@ -17706,7 +17168,7 @@ void SkWinCore::_2759_12e6()
 	if (si != 0 && bp0a >= 0 && bp0a <= 1) {
 		//^2759:13CF
 		si--;
-		IS_ITEM_HAND_ACTIVABLE(si, glbChampionSquad[si].Possess(glbSelectedHandAction), glbSelectedHandAction);
+		IS_ITEM_HAND_ACTIVABLE(si, tblChampionSquad[si].Possess(glbSelectedHandAction), glbSelectedHandAction);
 	}
 	//^2759:13F1
 	return;
@@ -17726,7 +17188,7 @@ void SkWinCore::GAME_LOOP()
 			strcpy(sExtraInfo, " V5-GFX");
 //		sprintf((char*)sMessage, "RAM = %08d / EMS = %08d\n", glbFreeRAMMemPool, glbFreeEMSMemPool);
 		sprintf((char*)sMessage, "%s (%s) [%s] <%s>%s\n", __SKWIN_PROGNAME__, strVersionNumber, __SKWIN_RELEASE_DATE__, __SKWIN_SYSTEM__, sExtraInfo);
-		DISPLAY_HINT_TEXT(COLOR_YELLOW, sMessage);
+		DISPLAY_HINT_TEXT(C11_COLOR_YELLOW, sMessage);
 		CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_YELLOW, BLACK);
 		SkD((SkCodeParam::bEngineNoDisplay||DLV_DBG_INIT, "%s\n", sMessage));
 		CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
@@ -17748,7 +17210,7 @@ void SkWinCore::GAME_LOOP()
 
 		SkD((SkCodeParam::bDebugPrint, "GAME LOOP %08d> SET TICK BALANCE\n", iLoopCount));
 
-		//DISPLAY_HINT_TEXT(COLOR_YELLOW, message);
+		//DISPLAY_HINT_TEXT(C11_COLOR_YELLOW, message);
 		// SPX get speed from window menu 
 		//stdTickBalance = skWinApp->spfact*4;
 #if defined (__DJGPP__)
@@ -17820,7 +17282,7 @@ _00a4:
 		if ((X16(glbGameTick) & ((cd.pi.glbIsPlayerSleeping != 0) ? 15 : 0x3F)) == 0)
 			UPDATE_CHAMPIONS_STATS();
 		GLOBAL_UPDATE_UNKNOW1();
-		//UPDATE_GENERAL_CHAMPIONS_STAT_DISP(1);
+		UPDATE_GENERAL_CHAMPIONS_STAT_DISP(1);
 		if (cd.pi.glbPlayerDefeated != 0)
 			return;
 		glbGameTick++;
@@ -17907,7 +17369,7 @@ UINT SkWinCore::SKLIB_GAME_STEP()
 		if (SkCodeParam::bDM2V5Mode)
 			strcpy(sExtraInfo, " V5-GFX");
 		sprintf((char*)sMessage, "%s (%s) [%s] <%s>%s\n", __SKWIN_PROGNAME__, strVersionNumber, __SKWIN_RELEASE_DATE__, __SKWIN_SYSTEM__, sExtraInfo);
-		DISPLAY_HINT_TEXT(COLOR_YELLOW, sMessage);
+		DISPLAY_HINT_TEXT(C11_COLOR_YELLOW, sMessage);
 		CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_YELLOW, BLACK);
 		printf("%s\n", sMessage);
 		CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
@@ -18193,14 +17655,14 @@ SkWinCore::SkWinCore()
 	_4976_5d58 = 0;
 	_4976_5cae = 0;
 	zeroMem(&glbRectNoTable, sizeof(glbRectNoTable));
-	_4976_4ba4	 = 0;
+	glbRectZonesLoaded	 = 0;
 	_4976_4968 = 1; // EMS is always avail.
 	_4976_00f6 = 224;
 	_4976_00f8 = 136;
 	_4976_0126 = 6;
 	_4976_013e = 320;
 	_4976_0140 = 15;
-	_4976_0198 = 0; // temp index always 0 (_4976_4b84)
+	glbRectRingBufferIndex = 0; // temp index always 0 (tblRectRingBuffer)
 	zeroMem(&glb_4976_4bca_Rect, sizeof(glb_4976_4bca_Rect));
 	_4976_4bc8 = 0;
 	glbRectX_0106 = 16; // cx
@@ -18313,7 +17775,7 @@ SkWinCore::SkWinCore()
 	zeroMem(tblViewportClickableRectangles, sizeof(tblViewportClickableRectangles));
 	glbSquadInterfaceMapGfxSet = -1;
 	glbMapGraphicsSet = -1;
-	_4976_532c = 0;
+	glbPartyHasInvisibility = 0;
 	zeroMem(&_4976_495c, sizeof(_4976_495c));
 	zeroMem(_4976_4df6, sizeof(_4976_4df6));
 	zeroMem(&cd.pi.glbLeaderHandPossession, sizeof(cd.pi.glbLeaderHandPossession));
@@ -18327,10 +17789,10 @@ SkWinCore::SkWinCore()
 	_4976_00fe.x = 21; _4976_00fe.y = 8; _4976_00fe.cx = 182; _4976_00fe.cy = 110;
 
 	// SPX : Default champion colors are : 7 (green), 11 (yellow), 8 (red), 14 (blue)
-	glbChampionColor[0] = COLOR_LIGHT_GREEN;
-	glbChampionColor[1] = COLOR_YELLOW;
-	glbChampionColor[2] = COLOR_RED;
-	glbChampionColor[3] = COLOR_BLUE;
+	glbChampionColor[0] = C07_COLOR_LIGHT_GREEN;
+	glbChampionColor[1] = C11_COLOR_YELLOW;
+	glbChampionColor[2] = C08_COLOR_RED;
+	glbChampionColor[3] = C14_COLOR_BLUE;
 
 	cd.mk.mice_x = cd.mk.mice_y = cd.mk.mice_btn = 0;
 	_01b0_3378 = 0;

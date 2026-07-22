@@ -208,23 +208,41 @@ enum dtIndex
 #define AI_DEF_ARMOR_MAX		0xFF
 
 
+
+#define C2048_WATER_MAX			2048
+#define C2048_FOOD_MAX			2048
+#define M1024_WATER_MIN			-1024
+#define M1024_FOOD_MIN			-1024
+#define M0512_WATER_WARNING		-512
+#define M0512_FOOD_WARNING		-512
+
+#define C1500_START_BASE_FOOD		1500
+#define C1500_START_BASE_WATER		1500
+
+#define C0800_WATER_DEFAULT_ITEM_VALUE	800
+#define C1600_WATER_FLASK_VALUE			1600
+
+
+#define C20_POTION_EMPTY_FLASK		20
+
+
 // The standard 16 colors palette
-#define COLOR_BLACK				0
-#define COLOR_DARK_GRAY			1
-#define COLOR_GRAY				2
-#define COLOR_DARK_BROWN		3
-#define COLOR_CYAN				4
-#define COLOR_BROWN				5
-#define COLOR_GREEN				6
-#define COLOR_LIGHT_GREEN		7
-#define COLOR_RED				8
-#define COLOR_ORANGE			9
-#define COLOR_FLESH				10
-#define COLOR_YELLOW			11
-#define COLOR_DARKEST_GRAY		12
-#define COLOR_LIGHTER_GRAY		13
-#define COLOR_BLUE				14
-#define COLOR_WHITE				15
+#define C00_COLOR_BLACK				0
+#define C01_COLOR_DARK_GRAY			1
+#define C02_COLOR_GRAY				2
+#define C03_COLOR_DARK_BROWN		3
+#define C04_COLOR_CYAN				4
+#define C05_COLOR_BROWN				5
+#define C06_COLOR_GREEN				6
+#define C07_COLOR_LIGHT_GREEN		7
+#define C08_COLOR_RED				8
+#define C09_COLOR_ORANGE			9
+#define C10_COLOR_FLESH				10
+#define C11_COLOR_YELLOW			11
+#define C12_COLOR_DARKEST_GRAY		12
+#define C13_COLOR_LIGHTER_GRAY		13
+#define C14_COLOR_BLUE				14
+#define C15_COLOR_WHITE				15
 
 // Right panels
 #define RIGHT_PANEL_UNDEFINED		0xFFFF
@@ -1615,6 +1633,8 @@ typedef enum
 //	SPECIFIC ITEM ACTION COMMAND VALUE
 //------------------------------------------------------------------------------
 
+#define C15_CHARGES_MAX_15						15
+
 #define C16_CHARGES_CONSUME_ALL_AT_ONCE			16
 #define C17_CHARGES_REQUIRED_NO_DECREASE		17
 #define C18_CHARGES_AVAILABLE_WHEN_NONE			18
@@ -1662,6 +1682,9 @@ typedef enum
 //	INTERFACE RECTANGLES
 //------------------------------------------------------------------------------
 
+#define C10000_RECTZONE_SCALE_FULL					10000	/// is 100%
+#define C20000_RECTZONE_SCALE_DOUBLE				20000	/// is 200%
+
 
 #define RECT_009_PANEL_ARROW__ZONE					9
 
@@ -1676,10 +1699,22 @@ typedef enum
 #define RECT_045_PANEL_ARROW__LEFT					45	// 0x2D
 	#define RECT_046_PANEL_ARROW__AFTER_LAST		(RECT_045_PANEL_ARROW__LEFT+1)
 
-#define RECT_161_CHAMPION_SLAB_AREA					161
-#define RECT_162_CHAMPION_SLAB_AREA					162
-#define RECT_163_CHAMPION_SLAB_AREA					163
-#define RECT_164_CHAMPION_SLAB_AREA					164
+#define RECTZONE_047_RIGHT_PANEL_CHAMPION__FULL_ZONE		47
+
+
+#define RECTZONE_070_RIGHT_PANEL_CHAMPION_1_HAND_1		0x46
+#define RECTZONE_071_RIGHT_PANEL_CHAMPION_2_HAND_1		0x47
+#define RECTZONE_072_RIGHT_PANEL_CHAMPION_3_HAND_1		0x48
+#define RECTZONE_073_RIGHT_PANEL_CHAMPION_4_HAND_1		0x49
+#define RECTZONE_074_RIGHT_PANEL_CHAMPION_1_HAND_0		0x4A
+#define RECTZONE_075_RIGHT_PANEL_CHAMPION_2_HAND_0		0x4B
+#define RECTZONE_076_RIGHT_PANEL_CHAMPION_3_HAND_0		0x4C
+#define RECTZONE_077_RIGHT_PANEL_CHAMPION_4_HAND_0		0x4D
+
+#define RECT_161_CHAMPION_SLAB_AREA_1				161
+#define RECT_162_CHAMPION_SLAB_AREA_2				162
+#define RECT_163_CHAMPION_SLAB_AREA_3				163
+#define RECT_164_CHAMPION_SLAB_AREA_4				164
 
 #define RECT_165_CHAMPION_FIRSTNAME_1				165
 #define RECT_166_CHAMPION_FIRSTNAME_2				166
@@ -1696,6 +1731,9 @@ typedef enum
 #define RECT_178_CHAMPION_NAME_BOX_2				178
 #define RECT_179_CHAMPION_NAME_BOX_3				179
 #define RECT_180_CHAMPION_NAME_BOX_4				180
+
+#define RECTZONE_261_SPELL_RUNE_1					261
+
 
 #define RECT_453									0x01C5
 #define RECT_494_INVENTORY_FOOD_WATER_SCROLL_CHEST	0x01EE
@@ -1778,6 +1816,13 @@ typedef enum
 #define C000_GDAT_PALETTE_SIZE_ZERO				0
 #define C016_GDAT_PALETTE_SIZE_16				16
 #define C256_GDAT_PALETTE_SIZE_256				256
+
+//------------------------------------------------------------------------------
+
+#define C0_HAND_SELECTED_0						0
+#define C1_HAND_SELECTED_1						1
+#define C2_HAND_SELECTED_SPELL					2
+
 
 //------------------------------------------------------------------------------
 

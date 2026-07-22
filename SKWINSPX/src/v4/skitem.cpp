@@ -352,14 +352,14 @@ void SkWinCore::MONEY_BOX_SURVEY(ObjectID recordLink)
 			totalAmount += moneyTable[di] * glbMoneyItemsValueTable[di];
 			DRAW_VP_RC_STR(
 				bp02++,
-				glbPaletteT16[COLOR_LIGHTER_GRAY],
+				glbPaletteT16[C13_COLOR_LIGHTER_GRAY],
 				SK_LTOA10(moneyTable[di], bp10)
 				);
 		}
 	}
 	DRAW_VP_RC_STR(
 		569,
-		glbPaletteT16[COLOR_LIGHTER_GRAY],
+		glbPaletteT16[C13_COLOR_LIGHTER_GRAY],
 		SK_LTOA10(totalAmount, bp10)
 		);
 	return;

@@ -21,7 +21,6 @@
 // SPX: _1031_156f renamed ADJUST_UI_EVENT
 void SkWinCore::ADJUST_UI_EVENT(MousePosition *ref)
 {
-	//^1031:156F
 	ENTER(6);
 	//^1031:1575
 	Bit16u si = ref->event;
@@ -38,8 +37,8 @@ void SkWinCore::ADJUST_UI_EVENT(MousePosition *ref)
 		//^1031:15AD
 		if (false
 			|| di < 0 
-			|| glbChampionSquad[di + bp06].handCooldown[0] != 0 
-			|| IS_ITEM_HAND_ACTIVABLE(di, glbChampionSquad[di].Possess(bp06), bp06) == 0
+			|| tblChampionSquad[di + bp06].handCooldown[0] != 0 
+			|| IS_ITEM_HAND_ACTIVABLE(di, tblChampionSquad[di].Possess(bp06), bp06) == 0
 		) {
 			//^1031:15E6
 			si = 0;
@@ -88,7 +87,7 @@ void SkWinCore::ADJUST_UI_EVENT(MousePosition *ref)
 				si -= 0x4f;
 			}
 			//^1031:1683
-			else if (glbChampionSquad[di].herob44 != 0) {
+			else if (tblChampionSquad[di].herob44 != 0) {
 				//^1031:1693
 				si = 0;
 			}
@@ -308,7 +307,7 @@ void SkWinCore::CLICK_ITEM_SLOT(Bit16u xx)
 			return;
 		if (di +1 == glbChampionInventory)
 			return;
-		if (glbChampionSquad[di].curHP() == 0)
+		if (tblChampionSquad[di].curHP() == 0)
 			return;
 		si = xx & 1;
 	}
@@ -318,7 +317,7 @@ void SkWinCore::CLICK_ITEM_SLOT(Bit16u xx)
 		di = ((si >= C30_INVENTORY_MAX_SLOT) ? cd.pi.glbChampionIndex : glbChampionInventory) -1;
 	}
 	ObjectID bp02 = cd.pi.glbLeaderHandPossession.object;
-	ObjectID bp04 = (si >= C30_INVENTORY_MAX_SLOT) ? glbCurrentContainerItems[si - C30_INVENTORY_MAX_SLOT] : glbChampionSquad[di].Possess(si);
+	ObjectID bp04 = (si >= C30_INVENTORY_MAX_SLOT) ? glbCurrentContainerItems[si - C30_INVENTORY_MAX_SLOT] : tblChampionSquad[di].Possess(si);
 	if (bp04 == OBJECT_NULL && bp02 == OBJECT_NULL)
 		return;
 	if (bp02 != OBJECT_NULL) {
@@ -363,7 +362,7 @@ void SkWinCore::CLICK_MONEYBOX(Bit16u xx)
 	if (glbRightPanelType != RIGHT_PANEL_MONEY_BOX)	// 4
 		return;
 	X16 bp02 = cd.pi.glbChampionIndex -1;
-	ObjectID si = glbChampionSquad[bp02].Possess(glbSelectedHandAction);
+	ObjectID si = tblChampionSquad[bp02].Possess(glbSelectedHandAction);
 	ObjectID di;
 	if (cd.pi.glbLeaderHandPossession.object != OBJECT_NULL) {
 		if (ADD_COIN_TO_WALLET(si, cd.pi.glbLeaderHandPossession.object) != 0) {
@@ -581,10 +580,10 @@ void SkWinCore::CLICK_VWPT(i16 xx, i16 yy)
 							if (iKeyFound) {
 								UNLOCK_INTERWALL_DOOR(cd.pi.glbPlayerMap, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerDir);
 								iSwitchResult = TRY_SWITCH_INTERWALL_DOOR_STATUS(cd.pi.glbPlayerMap, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerDir);
-								DISPLAY_HINT_TEXT(COLOR_LIGHT_GREEN, (const U8*) "DOOR UNLOCKED.\n");
+								DISPLAY_HINT_TEXT(C07_COLOR_LIGHT_GREEN, (const U8*) "DOOR UNLOCKED.\n");
 							}
 							else	// If no key, tells it's locked
-								DISPLAY_HINT_TEXT(COLOR_LIGHT_GREEN, (const U8*) "THE DOOR IS LOCKED\n");
+								DISPLAY_HINT_TEXT(C07_COLOR_LIGHT_GREEN, (const U8*) "THE DOOR IS LOCKED\n");
 						}
 						if (iSwitchResult == 0)
 							QUEUE_NOISE_GEN1(GDAT_CATEGORY_x03_MESSAGES, 0x00, SOUND_STD_INTERWALL_DOOR, 0x8C, 0x80, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1);
@@ -803,10 +802,10 @@ _19b1:
 			U8 message[64];
 			U8 player = si - UI_EVENTCODE_xEA_CLICK_STATS_BAR_1;
 			sprintf((char*)message, "%s: HP %d / %d |STA %d / %d |MANA %d / %d\n",
-				glbChampionSquad[player].firstName,
-				glbChampionSquad[player].curHP(), glbChampionSquad[player].maxHP(),
-				glbChampionSquad[player].curStamina()/10, glbChampionSquad[player].maxStamina()/10,
-				glbChampionSquad[player].curMP(), glbChampionSquad[player].maxMP());
+				tblChampionSquad[player].firstName,
+				tblChampionSquad[player].curHP(), tblChampionSquad[player].maxHP(),
+				tblChampionSquad[player].curStamina()/10, tblChampionSquad[player].maxStamina()/10,
+				tblChampionSquad[player].curMP(), tblChampionSquad[player].maxMP());
 			DISPLAY_HINT_TEXT(glbChampionColor[player], message);
 		}
 	}
@@ -898,12 +897,12 @@ _1ab8:
 	else if (si == UI_EVENTCODE_x93_PAUSE) {	// 0x93
 		_4976_4c02 = 0;
 		_38c8_0002();
-		FILL_ENTIRE_PICT(glbBackBuffViewport, glbPaletteT16[COLOR_BLACK]);
+		FILL_ENTIRE_PICT(glbBackBuffViewport, glbPaletteT16[C00_COLOR_BLACK]);
 		Bit8u bp2e[40];
 		// SPX: text = GAME PAUSED
 		DRAW_VP_RC_STR(
 			6,
-			glbPaletteT16[COLOR_CYAN],
+			glbPaletteT16[C04_COLOR_CYAN],
 			QUERY_GDAT_TEXT(0x01, 0x00, 0x12, bp2e)
 			);
 		CHANGE_VIEWPORT_TO_INVENTORY(0);

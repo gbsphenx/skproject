@@ -308,7 +308,7 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 		for (si=0; si < cd.pi.glbChampionsCount; si++) {
 			for (U16 bp04=0; bp04 <= 1; bp04++) {
 				U16 bp08;
-				if ((QUERY_GDAT_DBSPEC_WORD_VALUE(bp08 = glbChampionSquad[si].Possess(bp04), GDAT_ITEM_STATS_GEN_FLAGS) & ITEM_FLAG_PRODUCE_LIGHT) != 0) {
+				if ((QUERY_GDAT_DBSPEC_WORD_VALUE(bp08 = tblChampionSquad[si].Possess(bp04), GDAT_ITEM_STATS_GEN_FLAGS) & ITEM_FLAG_PRODUCE_LIGHT) != 0) {
 					itemLightBonus[bonusIndex] = ADD_ITEM_CHARGE(bp08, 0);
 					bonusIndex++;
 				}
@@ -629,7 +629,7 @@ U16 SkWinCore::TRY_CAST_SPELL()
 {
 	ENTER(10);
 	U16 iChampionIndex = cd.pi.glbChampionIndex - 1;	// bp0a
-	Champion* xChampion = &glbChampionSquad[iChampionIndex];	// bp04
+	Champion* xChampion = &tblChampionSquad[iChampionIndex];	// bp04
 	SpellDefinition* xSpellDef = FIND_SPELL_BY_RUNES(xChampion->GetRunes()); // bp08
 	// SPX: then si = 32 means a "meaningless spell", not existing spell
 	U16 si = (xSpellDef == NULL) 
@@ -696,7 +696,7 @@ void SkWinCore::ADD_RUNE_TO_TAIL(U16 symbol_0to5)
 U16 SkWinCore::COMPUTE_PLAYER_ATTACK_OR_THROW_STRENGTH(U16 xx, U16 yy, i16 zz)
 {
 	ENTER(8);
-	Champion *bp04 = &glbChampionSquad[xx];
+	Champion *bp04 = &tblChampionSquad[xx];
 	i16 si = (RAND() & 15) + GET_PLAYER_ABILITY(bp04, abStr, 0);
 	ObjectID bp08 = bp04->Possess(yy);
 	U16 bp06 = QUERY_ITEM_WEIGHT(bp08);
@@ -858,7 +858,7 @@ U16 SkWinCore::ENGAGE_COMMAND(U16 player, i16 cmdSlot)
 	glbItemGDATEntry = glbItemSelected[cmdSlot].entry;
 	U16 bp34 = glbSelectedHandAction;
 	U16 bp3a = bp34 ^ 1;
-	Champion *champion = &glbChampionSquad[di];	//*bp04
+	Champion *champion = &tblChampionSquad[di];	//*bp04
 	if (champion->curHP() == 0)
 		return 0;
 	U16 bp1c = QUERY_CUR_CMDSTR_ENTRY(CnCM_Command);		// Command
@@ -1307,7 +1307,7 @@ U16 SkWinCore::PROCEED_COMMAND_SLOT(i16 cmdSlot)
 	U16 iEngageResult = 0;	// bp06
 	if (cd.pi.glbChampionIndex != 0) {
 		U16 iChampionIndex = cd.pi.glbChampionIndex - 1;	// di
-		Champion *champion = &glbChampionSquad[iChampionIndex];	//*bp04
+		Champion *champion = &tblChampionSquad[iChampionIndex];	//*bp04
 		if (cmdSlot == -1) {
 			glbMagicalMapFlags = 0;
 		}
@@ -1347,13 +1347,13 @@ void SkWinCore::ACTIVATE_ACTION_HAND(U16 iChampionNo, U16 iHandNo)
 	ENTER(4);
 	U16 iChampionIndex = iChampionNo;	// si / champion no
 	U16 iHandIndex = iHandNo;	// di / hand
-	Champion* xChampion = &glbChampionSquad[iChampionIndex];	//*bp04
+	Champion* xChampion = &tblChampionSquad[iChampionIndex];	//*bp04
 	if (xChampion->curHP() == 0)
 		return;
 	if (IS_ITEM_HAND_ACTIVABLE(iChampionIndex, xChampion->Possess(iHandIndex), iHandIndex) == 0)
 		return;
 	glbSelectedHandAction = glbSelectedHand_2 = iHandIndex;
-	cd.pi.glbChampionIndex = glbSomeChampionIndex = iChampionIndex + 1;
+	cd.pi.glbChampionIndex = glbActivatedChampionIndex = iChampionIndex + 1;
 	glbSomeChampionPanelFlag = 1;
 	glbMagicalMapFlags = 0;
 	CHAMPION_SQUAD_RECOMPUTE_POSITION();
@@ -1368,10 +1368,10 @@ void SkWinCore::ACTIVATE_ACTION_HAND(U16 iChampionNo, U16 iHandNo)
 void SkWinCore::SET_SPELLING_CHAMPION(U16 iChampionNo)	// U16 xx
 {
 	ENTER(0);
-	if (glbChampionSquad[iChampionNo].curHP() == 0)
+	if (tblChampionSquad[iChampionNo].curHP() == 0)
 		return;
-	glbSelectedHandAction = glbSelectedHand_2 = 2;
-	cd.pi.glbChampionIndex = glbSomeChampionIndex = iChampionNo + 1;
+	glbSelectedHandAction = glbSelectedHand_2 = C2_HAND_SELECTED_SPELL;
+	cd.pi.glbChampionIndex = glbActivatedChampionIndex = iChampionNo + 1;
 	glbSomeChampionPanelFlag = 1;
 	glbMagicalMapFlags = 0;
 	CHAMPION_SQUAD_RECOMPUTE_POSITION();
@@ -1476,16 +1476,16 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 				if (glbChampionLeader == -1)
 					break;
 				for (i16 championIndex = 0; championIndex < MAX_CHAMPIONS; championIndex++) {
-					if (glbChampionSquad[championIndex].curHP() != 0) {
-						glbChampionSquad[championIndex].curWater(WATER_MAX);
+					if (tblChampionSquad[championIndex].curHP() != 0) {
+						tblChampionSquad[championIndex].curWater(C2048_WATER_MAX);
 					}
 				}
 				// SPX: Sound when drinking from wall
-				QUEUE_NOISE_GEN2(GDAT_CATEGORY_x16_CHAMPIONS, glbChampionSquad[glbChampionLeader].HeroType(), SOUND_CHAMPION_EAT_DRINK, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 0, 0x96, 0x80);
+				QUEUE_NOISE_GEN2(GDAT_CATEGORY_x16_CHAMPIONS, tblChampionSquad[glbChampionLeader].HeroType(), SOUND_CHAMPION_EAT_DRINK, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 0, 0x96, 0x80);
 				break;
 			}
 			if ((QUERY_GDAT_DBSPEC_WORD_VALUE(si, 0) & 1) != 0) {
-				ADD_ITEM_CHARGE(si, 15);
+				ADD_ITEM_CHARGE(si, C15_CHARGES_MAX_15);
 				bp2a = 1;
 				bp34 = si;
 				break;
@@ -1493,7 +1493,7 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 			if (!SkCodeParam::bDM1Mode) {
 			if (GET_DISTINCTIVE_ITEMTYPE(si) != 0x0194) // SPX: not sure ? creature fountain ? (or tree ?)
 				break;
-			SET_ITEMTYPE(si, 15);
+			SET_ITEMTYPE(si, C15_CHARGES_MAX_15);
 			bp2a = 1;
 			bp34 = si;
 			break;
@@ -2285,7 +2285,7 @@ void SkWinCore::END_GAME(U16 xx)
 	ENTER(2);
 	FIRE_HIDE_MOUSE_CURSOR();
 	if (xx != 0 && _4976_4c26 == 0) {
-		U8 bp01 = (cd.pi.glbChampionsCount > 0) ? glbChampionSquad[0].HeroType() : 0xFE;
+		U8 bp01 = (cd.pi.glbChampionsCount > 0) ? tblChampionSquad[0].HeroType() : 0xFE;
 		// SPX: Sound when dying
 		QUEUE_NOISE_GEN2(GDAT_CATEGORY_x16_CHAMPIONS, bp01, SOUND_CHAMPION_SCREAM, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 0, 255, 255);
 		SLEEP_SEVERAL_TIME(240);
@@ -2337,7 +2337,7 @@ U16 SkWinCore::PERFORM_MOVE(X16 xx)
 	U16 iCurrentTile = GET_TILE_VALUE(glbSomePosX_4c2e, glbSomePosY_4c30); // bp06
 	X16 iIsStairs = ((iCurrentTile >> 5) == ttStairs) ? 1 : 0; // bp08
 	i16 bp26 = 1;
-	Champion *xChampion = glbChampionSquad;
+	Champion *xChampion = tblChampionSquad;
 	int iFinalInterwallValue = 0;	// SPX: new
 	U16 iChampionIndex = 0;	/// si
 	SkD((DLV_MOVE, "------------------------------------------------\n"));
@@ -2418,7 +2418,7 @@ U16 SkWinCore::PERFORM_MOVE(X16 xx)
 	CALC_VECTOR_W_DIR(bp0e, _4976_19b2[RCJ(4,di)], _4976_19b6[RCJ(4,di)], &playerDestPosX, &playerDestPosY);
 	iDestTile = GET_TILE_VALUE(playerDestPosX, playerDestPosY);	// bp0a
 	cd.gg.glbRefreshViewport = 1;
-	xChampion = glbChampionSquad;
+	xChampion = tblChampionSquad;
 	for (iChampionIndex = 0; iChampionIndex < cd.pi.glbChampionsCount; xChampion++, iChampionIndex++) {
 		if (xChampion->curHP() != 0) {
 			ADJUST_STAMINA(iChampionIndex, ((GET_PLAYER_WEIGHT(iChampionIndex) * 3) / MAX_LOAD(xChampion)) +1);
@@ -2521,11 +2521,11 @@ _0768:
 			break;
 		bp0c = 0;
 		if (bp16 != 0xFFFF) {
-			xChampion = &glbChampionSquad[bp16];
+			xChampion = &tblChampionSquad[bp16];
 			bp0c += STAMINA_ADJUSTED_ATTR(xChampion, GET_PLAYER_ABILITY(xChampion, abStr, 0) + (RAND() & 15));
 		}
 		if (bp18 != bp16 && bp18 != 0xFFFF) {
-			xChampion = &glbChampionSquad[bp18];
+			xChampion = &tblChampionSquad[bp18];
 			bp0c += STAMINA_ADJUSTED_ATTR(xChampion, GET_PLAYER_ABILITY(xChampion, abStr, 0) + (RAND() & 15));
 		}
 		ATTACK_DOOR(playerDestPosX, playerDestPosY, bp0c, 0, 0);
@@ -2866,7 +2866,7 @@ _23de:
 //^2C1D:0250
 i16 SkWinCore::GET_PLAYER_AT_POSITION(U16 position)
 {
-	Champion* xChampion = glbChampionSquad; // bp04
+	Champion* xChampion = tblChampionSquad; // bp04
 	for (U16 iChampionIndex = 0; iChampionIndex < cd.pi.glbChampionsCount; iChampionIndex++, xChampion++) {
 		if (xChampion->playerPos() == position && xChampion->curHP() != 0) {
 			return iChampionIndex;

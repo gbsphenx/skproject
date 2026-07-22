@@ -37,7 +37,7 @@
 #define DLV_DBM 0
 #define DLV_DYN 0
 #define DLV_SYS 0
-#define DLV_RCT 0
+#define DLV_RCT 1
 #define DLV_FIL 0	// Track file open (useful for custom GDAT)
 #define DLV_DBC 0
 #define DLV_TWEET 0

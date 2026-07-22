@@ -109,7 +109,7 @@ protected:
 	i32	_089c_0344;
 
 	X16	_01b0_3378;
-	X16	_4976_532c;
+	X16	glbPartyHasInvisibility;	// _4976_532c
 	MouseState tlbMouseStateRing[11];	// _4976_4e02
 	sk0e80 _04bf_0e80[4];
 	U8	_4976_5e72[18];
@@ -248,8 +248,8 @@ protected:
 	i16		_4976_0112;
 	i16		_4976_0114;
 	i16		_4976_0116;
-	U16	_4976_0118;
-	U16	_4976_011a;
+	U16	_4976_0118;		// _4976_0118	for ALLOC_PICT_BUFF x
+	U16	_4976_011a;		// _4976_011a	for ALLOC_PICT_BUFF y
 	U16	_4976_011e;
 	i16	_4976_0120;
 	U16	_4976_0124;		// us's text cy?
@@ -271,7 +271,7 @@ protected:
 	i16		glbMagicMapInterlineX;		// =1 pixels between two tiles
 	U16	glbMagicMapInterlineY;		// =1
 	RectTable	glbRectNoTable;	// (_4976_0194) starting mem for rectno info
-	U16	_4976_0198;		// current ring buffer index
+	U16		glbRectRingBufferIndex;		// (_4976_0198) current ring buffer index
 	//U16	glbGameHasEnded;		// (_4976_01ba)
 	U16	_4976_022c;		// 1 if modal dialog working
 	X16		glbTickStepReached;		// (_4976_022e) 1 if system interval timer reached
@@ -333,7 +333,7 @@ protected:
 	U16	_4976_474a;
 	U16	_4976_474c;
 	X16		_4976_474e;
-	U16	_4976_4750;
+	U16		glbFontLoaded;					// (_4976_4750)
 	U16		_4976_475c;
 	Bit8u	_4976_475e;
 	i16	glbTimer_4976_4762;				// (_4976_4762) timer related ?
@@ -369,9 +369,9 @@ protected:
 	U16	glbPoisonAttackDamage;		// (_4976_4b7c) poisonous attack value
 	U16		_4976_4b7e;
 	Bit32u	glbGameTick_4b80;		// (_4976_4b80) something about game tick
-	sk4b84	_4976_4b84[4];	// size=4? temporary ring rect buffer
-	U16	_4976_4ba4;		// 1=rect is present
-	U16	_4976_4ba6;		// index of next avail temporary rects
+	sk4b84	tblRectRingBuffer[4];	// (_4976_4b84) size=4? temporary ring rect buffer
+	U16		glbRectZonesLoaded;		// (_4976_4ba4)	1=rect is present // set after loading rectangle zones
+	U16		_4976_4ba6;		// index of next avail temporary rects
 	SRECT	_4976_4ba8[4];	// temporary 4 rects
 	U16	_4976_4bc8;
 	SRECT	glb_4976_4bca_Rect;		// _4976_4bca
@@ -614,7 +614,7 @@ protected:
 	i16	_4976_5318; // a map?
 	U16	glbMagicMapManaDivisor;	// _4976_531a
 	U16	_4976_531c;	// _4976_531c
-	i16	glbSomeChampionIndex;	// SPX: somewhat a champion index (leader ??)
+	i16	glbActivatedChampionIndex;	// SPX: champion index when activating hand or spell ?
 	i16	_4976_5320;	// a x2?
 	i16	_4976_5322; // a y2?
 	U16	glbSelectedHand_2;	// (_4976_5324)
@@ -839,8 +839,8 @@ protected:
 	X16		_4976_5dc2;
 	Bit8u	*_4976_5e64;	// blit2mem src
 	U16	glbPaletteIRGBLoaded;	// (_4976_5e68) tells if the global IRGB palette has been loaded/set
-	Bit8u	*_4976_5e6a;	// blit2mem dst
-	U8		*_4976_5e6e;	// blit2mem underlay
+	U8*		glbBlit2MemDest;	// (_4976_5e6a)	blit2mem dst
+	U8*		_4976_5e6e;	// (_4976_5e6e)	blit2mem underlay
 	X32		_4976_5e88;		// ptr int 0xff
 	X32		_4976_5e8c;		// ptr int 0xff
 	X32		_4976_5e90;		// ptr int 0xfe
@@ -1451,7 +1451,7 @@ protected:
 	void DRAW_STRONG_TEXT(Bit8u *buff, U16 ww, U16 cx, U16 xx, U16 yy, U16 clr1, U16 fill, Bit8u *str);
 	void DRAW_NAME_STR(sk3f6c *ref, U16 rectno, U16 clr1, U16 fill, Bit8u *str);
 	void DRAW_PLAYER_NAME_AT_CMDSLOT();
-	i16 SK_STRLEN(const U8 *ref);
+	i16 SK_STRLEN(const U8 *pszString);
 	void DRAW_SPELL_TO_BE_CAST(U16 xx);
 	void DRAW_SPELL_PANEL();
 	Bit8u *SK_STRSTR(const Bit8u *xx, const Bit8u *yy);
@@ -1790,7 +1790,7 @@ protected:
 	ObjectID _19f0_266c(ObjectID rl, U16 dir, U16 ww, U16 bb);
 	X16 _19f0_2723(ObjectID rl, U16 ww, U16 bb, X16 cc);
 	U16 _19f0_0d10(U16 ww,i16 xx,i16 yy,i16 ss,i16 tt,i16 aa);
-	U16 _19f0_000a(i16 xx, i16 yy);
+	U16 IS_TILE_BLOCKING_VISION(i16 iTileX, i16 iTileY);	// _19f0_000a
 	U16 _1c9a_1bae(i16 xx, i16 yy);
 	U16 FIND_WALK_PATH(i16 xx, i16 yy, U16 aa, U16 bb, i16 cc, skxxx9 *ss, WalkPath *wp);	// One very big func
 	void CHANGE_GLOBAL_CREATURE_POS(U16 iMapNo);	// _1c9a_0648
@@ -1865,14 +1865,14 @@ protected:
 	U16 RAND02();
 	U16 _RAND02();
 	U16 CALC_SIZE_OF_COMPRESSED_RECT(U16 xx);
-	void _098d_1208();
+	void INIT_LOAD_RECTS_ZONES();	// _098d_1208
 	void DEALLOC_LOWER_MEMORY(Bit32u size);
 	U16 QUERY_GDAT_ENTRY_DATA_LENGTH(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4);
-	void LOAD_RECTS_AND_COMPRESS(Bit8u cls1, Bit8u cls2, Bit8u cls4);
+	void LOAD_RECTS_AND_COMPRESS(U8 iGDatCls1Category, U8 iGDatCls2MainItemId, U8 iGDatCls4EntryId);
 	void LOAD_GDAT_ENTRY_DATA_TO(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4, Bit8u *where);
 	Bit8u *ALLOC_UPPER_MEMORY(Bit32u size);
 	void COMPRESS_RECTS(i16 *data, Bit32u size, RectTable *zz, Bit8u *(SkWinCore::*allocFunc)(Bit32u size));
-	SRECT *QUERY_RECT(RectTable *entry, U16 rectno);
+	SRECT *QUERY_RECT(RectTable *entry, U16 iRectNo);
 	SRECT *SET_SRECT(SRECT *prc, U16 x, U16 y, U16 cx, U16 cy);
 	SRECT *UNION_RECT(SRECT *rc1, const SRECT *rc2, i16 *offx, i16 *offy);
 	SRECT *QUERY_BLIT_RECT(Bit8u *buff, SRECT *rect, U16 rectno, i16 *yourcx, i16 *yourcy, i16 ww);

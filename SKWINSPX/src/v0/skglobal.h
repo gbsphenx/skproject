@@ -607,7 +607,7 @@ extern bool	bUsePowerDebug;
 	#define BUFF_SIZE_MAX	60000	// Original value = 60000
 #endif
 
-
+/*
 #define WATER_MAX		2048
 #define FOOD_MAX		2048
 #define WATER_MIN		-1024
@@ -620,7 +620,7 @@ extern bool	bUsePowerDebug;
 
 #define WATER_DEFAULT_ITEM_VALUE	800
 #define WATER_FLASK_VALUE			1600
-
+*/
 
 #if DM2_EXTENDED_MODE == 1
 	#define MAXHP 9999		// Max HP		= 9999

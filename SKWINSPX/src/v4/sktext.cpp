@@ -18,7 +18,7 @@ void SkWinCore::_3929_0826()
 {
 	ENTER(0);
 	FIRE_HIDE_MOUSE_CURSOR();
-	FIRE_FILL_SCREEN_RECT(RECT_015_BOTTOM_MESSAGE_3_LINES, glbPaletteT16[COLOR_BLACK]);
+	FIRE_FILL_SCREEN_RECT(RECT_015_BOTTOM_MESSAGE_3_LINES, glbPaletteT16[C00_COLOR_BLACK]);
 	FIRE_SHOW_MOUSE_CURSOR();
 	_3929_07e1(0, 0);
 	for (U16 si = 0; si < 1; si++) {
@@ -89,7 +89,7 @@ void SkWinCore::DRAW_HINT_TEXT(U16 clr1, U8 *str)
 			_4976_475c,
 			_4976_0140 -2 -((QUERY_MBCS_PRESENCE(str) != 0) ? _4976_0136 : _4976_0124),
 			clr1,
-			glbPaletteT16[COLOR_BLACK],
+			glbPaletteT16[C00_COLOR_BLACK],
 			str,
 			8
 			);
@@ -100,7 +100,7 @@ void SkWinCore::DRAW_HINT_TEXT(U16 clr1, U8 *str)
 			bp08.x + _4976_475c,
 			glbTimerTickRemoveHintMessageIndex * _4976_013a +bp08.y + _4976_0130 - _4976_0136 + _4976_5c12 -1,
 			clr1,
-            glbPaletteT16[COLOR_BLACK],
+            glbPaletteT16[C00_COLOR_BLACK],
 			str
 			);
 		FIRE_SHOW_MOUSE_CURSOR();
@@ -118,7 +118,7 @@ void SkWinCore::DISPLAY_HINT_TEXT(Bit16u color, const U8 *str) //#DS=4976
 	U16 absoluteColor = 255;	// white from 256 palette
 	if (_4976_5c06 != 0) {	// roll message ?
 		SCROLLBOX_MESSAGE();
-		FILL_ENTIRE_PICT(_4976_5c08, glbPaletteT16[COLOR_BLACK]);
+		FILL_ENTIRE_PICT(_4976_5c08, glbPaletteT16[C00_COLOR_BLACK]);
 		_4976_5c06 = 0;
 	}
 	absoluteColor = glbPaletteT16[color];
@@ -143,7 +143,7 @@ void SkWinCore::DISPLAY_HINT_TEXT(Bit16u color, const U8 *str) //#DS=4976
 	}
 	if (_4976_5c06 != 0) {
 		SCROLLBOX_MESSAGE();
-		FILL_ENTIRE_PICT(_4976_5c08, glbPaletteT16[COLOR_BLACK]);
+		FILL_ENTIRE_PICT(_4976_5c08, glbPaletteT16[C00_COLOR_BLACK]);
 	}
 	return;
 }
@@ -153,7 +153,7 @@ void SkWinCore::DISPLAY_HINT_TEXT(Bit16u color, const U8 *str) //#DS=4976
 void SkWinCore::DISPLAY_HINT_NEW_LINE()
 {
 	ENTER(0);
-	DISPLAY_HINT_TEXT(COLOR_BLACK, const_cast<U8 *>(strEndLine));
+	DISPLAY_HINT_TEXT(C00_COLOR_BLACK, const_cast<U8 *>(strEndLine));
 	return;
 }
 
@@ -163,7 +163,7 @@ void SkWinCore::DISPLAY_TAKEN_ITEM_NAME(ObjectID rl)
 {
 	ENTER(0);
 	DISPLAY_HINT_NEW_LINE();
-	DISPLAY_HINT_TEXT(COLOR_LIGHTER_GRAY, GET_ITEM_NAME(rl));
+	DISPLAY_HINT_TEXT(C13_COLOR_LIGHTER_GRAY, GET_ITEM_NAME(rl));
 	return;
 }
 
@@ -208,13 +208,13 @@ void SkWinCore::COPY_STRING_2066_33c4(U8 *str, U16 yy)
 //^2066:398A
 void SkWinCore::_2066_398a(i16 xx)
 {
-	int iColorText = COLOR_ORANGE;
-	int iColorTextHighlighted = COLOR_YELLOW;
+	int iColorText = C09_COLOR_ORANGE;
+	int iColorTextHighlighted = C11_COLOR_YELLOW;
 	ENTER(10);
 
 	if (SkCodeParam::bDM2V5Mode) {
-		iColorText = COLOR_YELLOW;
-		iColorTextHighlighted = COLOR_WHITE;
+		iColorText = C11_COLOR_YELLOW;
+		iColorTextHighlighted = C15_COLOR_WHITE;
 	}
 
 	SRECT bp0a;
@@ -236,12 +236,12 @@ void SkWinCore::DIALOG_2066_3820(U8 *xx, U16 yy)
 	QUERY_EXPANDED_RECT(RECT_453, &bp08);
 	DRAW_DIALOGUE_PICT(QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x1A_DIALOG_BOXES, 0x81, 0x00), glbBackBuffViewport, &bp08, 
 		bp08.x, bp08.y, -1, QUERY_GDAT_IMAGE_LOCALPAL(GDAT_CATEGORY_x1A_DIALOG_BOXES, 0x81, 0x00));
-	DRAW_VP_STR(bp08.x, bp08.y +4, glbPaletteT16[COLOR_YELLOW], xx);
+	DRAW_VP_STR(bp08.x, bp08.y +4, glbPaletteT16[C11_COLOR_YELLOW], xx);
 	if (yy != 0) {
 		bp08.x += SK_STRLEN(xx) * _4976_0126;
 		bp08.cx = _4976_0126;
 		bp08.cy -= 4;
-		FIRE_FILL_BACKBUFF_RECT(&bp08, glbPaletteT16[COLOR_ORANGE]);
+		FIRE_FILL_BACKBUFF_RECT(&bp08, glbPaletteT16[C09_COLOR_ORANGE]);
 	}
 	_0aaf_002f();
 	return;
@@ -257,9 +257,9 @@ void SkWinCore::_3e74_5b7c_KEYBOARD(U16 xx)
 		if (_4976_484f[RCJ(4,_4976_484d)] != 0)
 			return;
 		const U8 *bp04 = _4976_4853;
-		DISPLAY_HINT_TEXT(COLOR_WHITE, bp04);
+		DISPLAY_HINT_TEXT(C15_COLOR_WHITE, bp04);
 		U8 bp14[16];
-		DISPLAY_HINT_TEXT(COLOR_WHITE, SK_LTOA10(2, bp14));
+		DISPLAY_HINT_TEXT(C15_COLOR_WHITE, SK_LTOA10(2, bp14));
 		_3929_0b01(15, 46);
 		_3929_0b20(15, 8);
 		_3929_0b20(15, glbCRAMSize);
@@ -273,7 +273,7 @@ void SkWinCore::_3e74_5b7c_KEYBOARD(U16 xx)
 			bp14[1] = 0x53;
 		if (_4976_5bee[2] != 0)
 			bp14[2] = 0x45;
-		DISPLAY_HINT_TEXT(COLOR_WHITE, bp14);
+		DISPLAY_HINT_TEXT(C15_COLOR_WHITE, bp14);
 	}
 	_4976_484d = 0;
 	return;
@@ -613,7 +613,7 @@ void SkWinCore::DRAW_VP_STR(Bit16u dstx, Bit16u dsty, Bit16u clr1, const Bit8u *
 		dstx,
 		dsty,
 		clr1,
-		glbPaletteT16[COLOR_DARKEST_GRAY] | 0x4000,
+		glbPaletteT16[C12_COLOR_DARKEST_GRAY] | 0x4000,
 		str,
 		8
 		);

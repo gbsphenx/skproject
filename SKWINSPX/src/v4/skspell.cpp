@@ -144,7 +144,7 @@ U16 SkWinCore::CAST_SPELL_PLAYER(U16 player, SpellDefinition *ref, U16 power)
 	// not 0 if fails
 
 	ENTER(30);
-	Champion *champion = &glbChampionSquad[player];	//*bp04
+	Champion *champion = &tblChampionSquad[player];	//*bp04
 	U16 bp0e = (ref->w6_a_f() * (power +18)) / 24;
 	U16 bp08 = ref->difficulty +power; // global difficulty of the spell
 	U16 bp0c = 0
@@ -336,7 +336,7 @@ _25e8:
 					{
 						Champion*	ch;
 						for (int championIndex = 0; championIndex < glbChampionsCount; championIndex++) {
-							ch = &glbChampionSquad[championIndex];
+							ch = &tblChampionSquad[championIndex];
 							if (ch->curHP() == 0)
 								continue;
 							ch->curHP(ch->maxHP());

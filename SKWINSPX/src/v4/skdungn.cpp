@@ -2050,7 +2050,7 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(i16 xpos, i16 ypos, ObjectID reco
 				Bit8u bp0106[200];
 				QUERY_MESSAGE_TEXT(bp0106, si, 1);
 				//^2FCF:2603
-				DISPLAY_HINT_TEXT(COLOR_WHITE, bp0106);
+				DISPLAY_HINT_TEXT(C15_COLOR_WHITE, bp0106);
 				//^2FCF:2613
 				continue;
 			}
@@ -2487,7 +2487,7 @@ _29a8:
 			{
 				Bit8u bp0106[200];
 				QUERY_MESSAGE_TEXT(bp0106, si, 1);
-				DISPLAY_HINT_TEXT(COLOR_YELLOW, bp0106);
+				DISPLAY_HINT_TEXT(C11_COLOR_YELLOW, bp0106);
 			}
 			//^2FCF:2A81
 			if (bp1e == 0xffff) {
@@ -2515,9 +2515,9 @@ _29a8:
 						//^2FCF:2B81
 						for (; bp30 < cd.pi.glbChampionsCount; bp30++) {
 							//^2FCF:2B83
-							if (glbChampionSquad[bp30].curHP() != 0) {
+							if (tblChampionSquad[bp30].curHP() != 0) {
 								//^2FCF:2B94
-								bp32 = bp32 + GET_PLAYER_WEIGHT(bp30) / MAX_LOAD(&glbChampionSquad[bp30]);
+								bp32 = bp32 + GET_PLAYER_WEIGHT(bp30) / MAX_LOAD(&tblChampionSquad[bp30]);
 							}
 							//^2FCF:2BC3
 						}
@@ -2542,14 +2542,14 @@ _29a8:
 							//^2FCF:2C7C
 							bp30 = RAND02();
 							//^2FCF:2C84
-							if (glbChampionSquad[bp30].curHP() == 0) {
+							if (tblChampionSquad[bp30].curHP() == 0) {
 								//^2FCF:2C92
 								bp30 = glbChampionLeader;
 							}
 							//^2FCF:2C98
 							QUEUE_NOISE_GEN2(
 								GDAT_CATEGORY_x16_CHAMPIONS,
-								glbChampionSquad[bp30].HeroType(),
+								tblChampionSquad[bp30].HeroType(),
 								SOUND_CHAMPION_GETHIT,
 								0xfe,
 								cd.pi.glbPlayerPosX,

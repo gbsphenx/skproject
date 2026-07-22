@@ -1077,6 +1077,7 @@ namespace DMEncyclopaedia {
 	};
 	// 
 	// SPX: moved to defines.h in order to keep a single code along skwindos which shares defines.h
+	// SPX: but actually overlaps with fmt* enum
 	/*
 	enum dtIndex {
 		dtImage = 1,
@@ -1915,20 +1916,23 @@ namespace DM2Internal {
 		U8 b8;
 	};
 	// 
-	struct RectTable { // 10 bytes (or more)
-		RectTable *pb0;
-		U16 w4;
-		U16 w6;
-		U8 b8;
-		U8 b9;
+	struct RectTable { // 10 bytes (32-bits) or 14 bytes (64-bits)
+		RectTable *pNextTable;	// bp0
+		U16 iRectNoMin;		// w4
+		U16 iRectNoMax;		// w6
+		U8 b8;		// b8
+		U8 b9;		// b9
 	};
-	//
+	// related to RectTable ?
 	struct sk4b84 { // 8 bytes
 		i16 w0;
 		i16 w2;
 		i16 w4;
 		i16 w6;
 	};
+	// this would look like x,y,cx,cy, but in some case, the y is reused as a new iRectNo (as if the previous with an indirect rectno)
+
+
 	// 
 	struct sk00fe { // 8 bytes
 		U16 w0;

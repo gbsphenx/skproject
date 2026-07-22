@@ -56,7 +56,7 @@ void SkWinCore::DECODE_IMG3_OVERLAY(U8 *blitUnderlay, IMG3 *blitSrc, U8 *blitDst
 
 	ENTER(24);
 	_4976_5e64 = reinterpret_cast<U8 *>(blitSrc);
-	_4976_5e6a = blitDst;
+	glbBlit2MemDest = blitDst;
 	_4976_5e6e = blitUnderlay;
 	X16 bp02 = blitSrc->Width();
 	X16 bp04 = blitSrc->Height();
@@ -247,7 +247,7 @@ void SkWinCore::DECODE_IMG3_UNDERLAY(IMG3 *xx, U8 *yy)
 {
 	ENTER(24);
 	_4976_5e64 = reinterpret_cast<U8 *>(xx);
-	_4976_5e6a = yy;
+	glbBlit2MemDest = yy;
 	X16 bp02 = xx->Width();
 	X16 bp04 = xx->Height();
 	X16 bp06 = (bp02 +1)&0xfffe;
@@ -618,9 +618,9 @@ void SkWinCore::_3929_0e16_FONT_LOAD()
 	}
 	SRECT bp08;
 	QUERY_EXPANDED_RECT(RECT_015_BOTTOM_MESSAGE_3_LINES, &bp08); // 00 00|B4 00|40 01|14 00 (0,180,320,20)
-	_4976_5c12 = (bp08.cy - (_4976_013a - _4976_0134)) >> 1;
+	_4976_5c12 = (bp08.cy - (_4976_013a - _4976_0134)) >> 1;	// (20 - (14 - 1)) / 2 = 3
 	KANJI_FONT_LOAD(1);
 	FONT_LOAD_NOTHING();
-	_4976_4750 = 1;
+	glbFontLoaded = 1;
 	return;
 }

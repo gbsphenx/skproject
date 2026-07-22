@@ -30,7 +30,7 @@ void SkWinCore::CALC_PLAYER_WEIGHT(U16 player)
 
 	//for (; si < 30; si++) {
 	for (iInvSlot = 0; iInvSlot < C30_INVENTORY_MAX_SLOT; iInvSlot++) {
-		iTotalWeight += QUERY_ITEM_WEIGHT(glbChampionSquad[player].inventory[iInvSlot]);
+		iTotalWeight += QUERY_ITEM_WEIGHT(tblChampionSquad[player].inventory[iInvSlot]);
 	}
 	if (_4976_5336 - 1 == player && glbSelectedHandAction < 2) {
 		if (IS_CONTAINER_CHEST(_4976_3de6[RCJ(4,player)][RCJ(2,glbSelectedHandAction)]) != 0) {
@@ -39,8 +39,8 @@ void SkWinCore::CALC_PLAYER_WEIGHT(U16 player)
 			}
 		}
 	}
-	glbChampionSquad[player].curWeight(iTotalWeight);
-	glbChampionSquad[player].heroFlag |= CHAMPION_FLAG_1000;	// 0x1000
+	tblChampionSquad[player].curWeight(iTotalWeight);
+	tblChampionSquad[player].heroFlag |= CHAMPION_FLAG_1000;	// 0x1000
 }
 
 
@@ -83,7 +83,7 @@ void SkWinCore::PROCESS_ITEM_BONUS(i16 player, ObjectID recordLink, i16 inventor
 			RECALC_LIGHT_LEVEL();
 		}
 		if ((bp06 & ITEM_FLAG_2000) == 0) {
-			Champion *champion = &glbChampionSquad[player]; //*bp04 
+			Champion *champion = &tblChampionSquad[player]; //*bp04 
 			U16 bp0a = IS_ITEM_FIT_FOR_EQUIP(di, inventorySlot, 1);
 			U16 bp0c = 0;
 			if (si != 0 && si != 3 && si != -2) {
@@ -176,7 +176,7 @@ ObjectID SkWinCore::REMOVE_POSSESSION(U16 iChampionIdx, U16 possess)
 
 	ENTER(4);
 	U16 iInvSlot = possess;	// si
-	Champion* xChampion = &glbChampionSquad[iChampionIdx];	// bp04
+	Champion* xChampion = &tblChampionSquad[iChampionIdx];	// bp04
 	ObjectID di;	// di
 	if (iInvSlot >= C30_INVENTORY_MAX_SLOT) {	// (si >= 30)
 		di = glbCurrentContainerItems[iInvSlot - C30_INVENTORY_MAX_SLOT];
@@ -207,7 +207,7 @@ void SkWinCore::EQUIP_ITEM_TO_INVENTORY(U16 iChampionID, ObjectID rl, U16 invent
 	ObjectID oObject = rl;	// si
 	U16 iInvSlot = inventorySlot;	// di
 	if (oObject != OBJECT_NULL) {
-		Champion* xChampion = &glbChampionSquad[iChampionID];
+		Champion* xChampion = &tblChampionSquad[iChampionID];
 		oObject.ClearDir();
 		if (iInvSlot >= C30_INVENTORY_MAX_SLOT) {	// (di >= 30)
 			glbCurrentContainerItems[iInvSlot - C30_INVENTORY_MAX_SLOT] = oObject;
@@ -242,7 +242,7 @@ U16 SkWinCore::CHECK_SOME_HAND_READY(U16 iChampIdx, ObjectID rl, i16 hand)
 		if (iLocalChampIdx != 0) {
 			if (glbSelectedHandAction == 0 || glbSelectedHandAction == 1) {
 				iLocalChampIdx--;
-				IS_ITEM_HAND_ACTIVABLE(iLocalChampIdx, glbChampionSquad[iLocalChampIdx].Possess(glbSelectedHandAction), glbSelectedHandAction);
+				IS_ITEM_HAND_ACTIVABLE(iLocalChampIdx, tblChampionSquad[iLocalChampIdx].Possess(glbSelectedHandAction), glbSelectedHandAction);
 			}
 		}
 	}
@@ -253,7 +253,7 @@ U16 SkWinCore::CHECK_SOME_HAND_READY(U16 iChampIdx, ObjectID rl, i16 hand)
 void SkWinCore::LOAD_PROJECTILE_TO_HAND(U16 iChampionIdx, i16 hand)
 {
 	ENTER(14);
-	Champion* xChampion = &glbChampionSquad[iChampionIdx];	//*bp04
+	Champion* xChampion = &tblChampionSquad[iChampionIdx];	//*bp04
     xChampion->handCooldown[hand] = 0;
 	if (xChampion->curHP() == 0 || hand >= 2)
 		return;
@@ -387,21 +387,21 @@ i16 SkWinCore::FIND_POUCH_OR_SCABBARD_POSSESSION_POS(i16 iChampionIdx, i16 iIsSc
 	ENTER(0);
 	i16 iLChampIdx = iChampionIdx;	// di
 	if (iIsScabbardOrPouch == 1) {	// SCABBARD
-		if (glbChampionSquad[iLChampIdx].Possess(C12_INVENTORY_SCABBARD_1) != OBJECT_NULL) {	// Possess(12)
+		if (tblChampionSquad[iLChampIdx].Possess(C12_INVENTORY_SCABBARD_1) != OBJECT_NULL) {	// Possess(12)
 			return C12_INVENTORY_SCABBARD_1;	// 12
 		}
 		//for (i16 si = 7; si <= 9; si++) {
 		for (i16 iInvSlot = C07_INVENTORY_SCABBARD_2; iInvSlot <= C09_INVENTORY_SCABBARD_4; iInvSlot++) {	// si
-			if (glbChampionSquad[iLChampIdx].Possess(iInvSlot) != OBJECT_NULL) {
+			if (tblChampionSquad[iLChampIdx].Possess(iInvSlot) != OBJECT_NULL) {
 				return iInvSlot;
 			}
 		}
 	}
 	else if (iIsScabbardOrPouch == 0) {	// POUCH
-		if (glbChampionSquad[iLChampIdx].Possess(C11_INVENTORY_POUCH_1) != OBJECT_NULL) {	// Possess(11)
+		if (tblChampionSquad[iLChampIdx].Possess(C11_INVENTORY_POUCH_1) != OBJECT_NULL) {	// Possess(11)
 			return C11_INVENTORY_POUCH_1;	// 11
 		}
-		if (glbChampionSquad[iLChampIdx].Possess(C06_INVENTORY_POUCH_2) != OBJECT_NULL) {	// Possess(6)
+		if (tblChampionSquad[iLChampIdx].Possess(C06_INVENTORY_POUCH_2) != OBJECT_NULL) {	// Possess(6)
 			return C06_INVENTORY_POUCH_2;	// 6
 		}
 	}
@@ -420,7 +420,7 @@ U16 SkWinCore::QUERY_PLAYER_SKILL_LV(i16 player, U16 skill, U16 yy)
 	if (cd.pi.glbIsPlayerSleeping != 0) {
 		return 1;
 	}
-	Champion* xChampion = &glbChampionSquad[player]; //*bp04
+	Champion* xChampion = &tblChampionSquad[player]; //*bp04
 	U32 iXPAmount = xChampion->skills[iReqSkill];	// bp08 / Amount of current xp for that skill
 	if (iReqSkill > 3) {	// A subskill is requested
 		iXPAmount += (xChampion->skills[(iReqSkill - 4) >> 2]) * ((yy != 0) ? (i16(xChampion->skillBonus[(iReqSkill - 4) >> 2]) +1) : 1);
@@ -447,7 +447,7 @@ U16 SkWinCore::IS_ITEM_HAND_ACTIVABLE(U16 player, ObjectID recordLink, i16 yy)
 	Bit8u iItemIndex;	// bp02
 	if (recordLink == OBJECT_NULL) {
 		iCategory = GDAT_CATEGORY_x16_CHAMPIONS;	// 0x16
-        iItemIndex = glbChampionSquad[player].HeroType();
+        iItemIndex = tblChampionSquad[player].HeroType();
 	}
 	else {
 		if (IS_CONTAINER_MONEYBOX(si) != 0 || IS_CONTAINER_CHEST(si) != 0)
@@ -518,7 +518,7 @@ _0425:
 U16 SkWinCore::_1031_007b_PFN12_04(sk1891 *ref)
 {
 	ENTER(0);
-	return (glbChampionSquad[ref->b1].curHP() != 0) ? 1 : 0;
+	return (tblChampionSquad[ref->b1].curHP() != 0) ? 1 : 0;
 }
 
 //^1031:009E
@@ -597,10 +597,10 @@ void SkWinCore::PUT_ITEM_TO_PLAYER(U16 championIndex)
 
 	ENTER(0);
 	if (cd.pi.glbLeaderHandPossession.object != OBJECT_NULL) {
-		if (glbChampionSquad[championIndex].curHP() != 0) {
+		if (tblChampionSquad[championIndex].curHP() != 0) {
 			X16 iInvSlotIdx;	// si
 			for (iInvSlotIdx = C13_INVENTORY_BACKPACK_1; iInvSlotIdx <= C29_INVENTORY_BACKPACK_LAST; iInvSlotIdx++) {	// (si=13; si<30; si++)
-				if (glbChampionSquad[championIndex].Possess(iInvSlotIdx) == OBJECT_NULL)
+				if (tblChampionSquad[championIndex].Possess(iInvSlotIdx) == OBJECT_NULL)
 					break;
 			}
 			if (iInvSlotIdx != (C29_INVENTORY_BACKPACK_LAST+1)) {	// (si != 30)
@@ -623,17 +623,17 @@ void SkWinCore::SELECT_CHAMPION_LEADER(U16 xx)
 	U16 si = xx;
 	if (si == glbChampionLeader)
 		return;
-	if (si != 0xffff && glbChampionSquad[si].curHP() == 0)
+	if (si != 0xffff && tblChampionSquad[si].curHP() == 0)
 		return;
 	if (glbChampionLeader != -1) {
-		glbChampionSquad[glbChampionLeader].heroFlag |= CHAMPION_FLAG_1400;	// 0x1400
+		tblChampionSquad[glbChampionLeader].heroFlag |= CHAMPION_FLAG_1400;	// 0x1400
 	}
 	glbChampionLeader = si;
 	if (si == 0xffff)
 		return;
 	if (si + 1 == cd.pi.glbNextChampionNumber)
 		return;
-	glbChampionSquad[si].heroFlag |= CHAMPION_FLAG_1400;	// 0x1400
+	tblChampionSquad[si].heroFlag |= CHAMPION_FLAG_1400;	// 0x1400
 	return;
 }
 
@@ -647,7 +647,7 @@ void SkWinCore::ADD_ITEM_TO_PLAYER(U16 player, ObjectID rl)
 		U16 di = _4976_404d[si][0];
 		for (; _4976_404d[si][1] >= di; di++) {
 			if (true
-				&& glbChampionSquad[player].Possess(di) == OBJECT_NULL
+				&& tblChampionSquad[player].Possess(di) == OBJECT_NULL
 				&& IS_ITEM_FIT_FOR_EQUIP(rl, di, 0) != 0
 				&& (false
 					|| _4976_404d[si][2] == 0xffff
@@ -668,7 +668,7 @@ void SkWinCore::REVIVE_CHAMPION(U16 xx, U16 yy, U16 dir, U16 zz, U16 iEventCode)
 {
 	ENTER(142);
 	U16 iChampionNumber = cd.pi.glbNextChampionNumber - 1;	// si
-	Champion* xChampion = &glbChampionSquad[iChampionNumber];	// bp04
+	Champion* xChampion = &tblChampionSquad[iChampionNumber];	// bp04
 	U16 iCurrentMapIndex = glbCurrentMapIndex;	// bp0c
 	CHANGE_CURRENT_MAP_TO(zz);
 	ObjectID tObjectHand = REMOVE_OBJECT_FROM_HAND();	// bp0e
@@ -689,7 +689,7 @@ void SkWinCore::REVIVE_CHAMPION(U16 xx, U16 yy, U16 dir, U16 zz, U16 iEventCode)
 		glbChampionHandCoolingDown[iChampionNumber][0] = 0;
 		_4976_3de6[RCJ(4,iChampionNumber)][0] = 0xFFFF;
 		glbChampionHandCoolingDown[iChampionNumber][2] = 0;
-		FIRE_FILL_SCREEN_RECT(iChampionNumber + RECT_161_CHAMPION_SLAB_AREA, glbPaletteT16[COLOR_BLACK]);
+		FIRE_FILL_SCREEN_RECT(iChampionNumber + RECT_161_CHAMPION_SLAB_AREA_1, glbPaletteT16[C00_COLOR_BLACK]);
 		SLEEP_SCREEN_38c8_0060();
 		FIRE_SHOW_MOUSE_CURSOR();
 	}
@@ -760,7 +760,7 @@ void SkWinCore::INTERFACE_CHAMPION(U16 iChampionIndex)
 	U16 bp06 = 0;
 	glbInventorySubpanel = 0;
 	_4976_3d30 = OBJECT_NULL;
-	if (iChampIdx < 4 && glbChampionSquad[iChampIdx].curHP() == 0)
+	if (iChampIdx < 4 && tblChampionSquad[iChampIdx].curHP() == 0)
 		return;
 	if (_4976_4c3e != 0 || glbTryPushPullObject != 0 || _4976_4bfe != 0 || glbShowItemStats != 0)
 		return;
@@ -774,7 +774,7 @@ void SkWinCore::INTERFACE_CHAMPION(U16 iChampionIndex)
 	}
 	if (si != 0) {
 		glbChampionInventory = 0;
-		Champion* xChampion = &glbChampionSquad[si -1];	// bp04
+		Champion* xChampion = &tblChampionSquad[si -1];	// bp04
 		if (xChampion->curHP() != 0 && cd.pi.glbNextChampionNumber == 0) {
 			xChampion->heroFlag |= CHAMPION_FLAG_4000;	// 0x4000
 			REFRESH_PLAYER_STAT_DISP(si -1);
@@ -802,7 +802,7 @@ void SkWinCore::INTERFACE_CHAMPION(U16 iChampionIndex)
 	if (si == 0)
 		FIRE_FILL_HALFTONE_RECTI(9, 0);
 	ZERO_MEMORY(_4976_52c0, 4);
-	glbChampionSquad[iChampIdx].heroFlag |= CHAMPION_FLAG_FC00;	// 0xFC00
+	tblChampionSquad[iChampIdx].heroFlag |= CHAMPION_FLAG_FC00;	// 0xFC00
 	_4976_581a = 0;
 	REFRESH_PLAYER_STAT_DISP(iChampIdx);
 	if (bp06 != 0)
@@ -870,7 +870,7 @@ void SkWinCore::ADJUST_SKILLS(U16 player, U16 yy, U16 zz)
 		zz = zz * bp06;
 	}
 	afterMapXP = zz;
-	Champion *champion = &glbChampionSquad[player]; //*bp04
+	Champion *champion = &tblChampionSquad[player]; //*bp04
 	U16 si = (di >= 4) ? ((di -4) >>2) : di;
 	U16 mainSkill = si;
 	bp06 = QUERY_PLAYER_SKILL_LV(player, si, 0);	// Current skill level
@@ -1019,7 +1019,7 @@ U16 SkWinCore::CAST_CHAMPION_MISSILE_SPELL(U16 xx, ObjectID rl, i16 zz, U16 ww)
 {
 	ENTER(4);
 	U16 di = zz;
-	Champion *champion = &glbChampionSquad[xx];	// *bp04
+	Champion *champion = &tblChampionSquad[xx];	// *bp04
 	if (champion->curMP() < ww)
 		return 0;
 	champion->curMP(champion->curMP() -ww);
@@ -1066,7 +1066,7 @@ void SkWinCore::ADJUST_HAND_COOLDOWN(U16 player, U16 yy, U16 zz)
 	ENTER(6);
 	U16 di = yy;
 	U16 si = zz;
-	Champion *champion = &glbChampionSquad[player];
+	Champion *champion = &tblChampionSquad[player];
 	U16 bp06;
 	(si == 0xffff) ? (bp06 = 3, si = 0) : (bp06 = 1);
 	if (glbGlobalSpellEffects.AuraOfSpeed != 0)
@@ -1175,7 +1175,7 @@ U16 SkWinCore::WIELD_WEAPON(U16 iChampionIdx, U16 valPa, U16 xx, U16 yy, U16 val
 	// returns 0 if no target, 1 if hits a creature.
 
 	ENTER(4);
-	Champion* xChampion = &glbChampionSquad[iChampionIdx];	//*bp04
+	Champion* xChampion = &tblChampionSquad[iChampionIdx];	//*bp04
 	if (glbObjectID_4976_534c == OBJECT_NULL)
 		return 0;
 	if (GET_CREATURE_AT(xx, yy) == OBJECT_NULL)
@@ -1235,7 +1235,7 @@ U16 SkWinCore::_2c1d_1de2_CHAMPION_SHOOT(U16 xx, i16 yy, U16 zz)
 {
 	ENTER(16);
 	U16 di = xx;
-	Champion *bp04 = &glbChampionSquad[di];
+	Champion *bp04 = &tblChampionSquad[di];
 	U16 bp0e = 0;
 	ObjectID bp0c ;
 	ObjectID si ;
@@ -1312,7 +1312,7 @@ void SkWinCore::CURE_POISON(U16 iChampIdx)
 				}
 			}
 		}
-		glbChampionSquad[iLocalChampIdx].PoisonValue = 0;
+		tblChampionSquad[iLocalChampIdx].PoisonValue = 0;
 	}
 	return;
 }
@@ -1324,7 +1324,7 @@ void SkWinCore::PLAYER_CONSUME_OBJECT(U16 player, ObjectID rlConsume, i16 posses
 {
 	// SPX: Default values
 	U16 PotionType = 0;
-	U16 WaterValue = WATER_DEFAULT_ITEM_VALUE;	// 800
+	U16 WaterValue = C0800_WATER_DEFAULT_ITEM_VALUE;	// 800
 
 
 	ENTER(18);
@@ -1355,7 +1355,7 @@ void SkWinCore::PLAYER_CONSUME_OBJECT(U16 player, ObjectID rlConsume, i16 posses
 	if (cd.pi.glbNextChampionNumber != 0)
 		return;
 
-	Champion *champion = &glbChampionSquad[player];
+	Champion *champion = &tblChampionSquad[player];
 	U16 iFoodValue = QUERY_GDAT_FOOD_VALUE_FROM_RECORD(tObjectConsumed);	// bp10
 	U16 iMouthAnimCounter;	// bp0c
 	U16 si;
@@ -1372,7 +1372,7 @@ void SkWinCore::PLAYER_CONSUME_OBJECT(U16 player, ObjectID rlConsume, i16 posses
 			FIRE_SHOW_MOUSE_CURSOR();
 		}
 		//SPX: Eating food item
-		champion->curFood(min_value(champion->curFood() + iFoodValue, FOOD_MAX));
+		champion->curFood(min_value(champion->curFood() + iFoodValue, C2048_FOOD_MAX));
 		PROCESS_ITEM_BONUS(player, tObjectConsumed, possess, 2);
 		DEALLOC_RECORD(tObjectConsumed);
 		if (possess != -1) {
@@ -1383,13 +1383,13 @@ void SkWinCore::PLAYER_CONSUME_OBJECT(U16 player, ObjectID rlConsume, i16 posses
 	U16 bp0a;
 	if (IS_MISCITEM_DRINK_WATER(tObjectConsumed) != 0) {
 		// SPX: This assume that any misc item gives 800 water per drink
-		WaterValue = WATER_DEFAULT_ITEM_VALUE;
+		WaterValue = C0800_WATER_DEFAULT_ITEM_VALUE;
 
 		// SPX: Custom Water value, override it if any
 		if (SkCodeParam::bUseDM2ExtendedMode)
 			WaterValue = QUERY_GDAT_WATER_VALUE_FROM_RECORD(tObjectConsumed);
 
-		champion->curWater(min_value(champion->curWater() + WaterValue, WATER_MAX));
+		champion->curWater(min_value(champion->curWater() + WaterValue, C2048_WATER_MAX));
 		if (possess != -1) {
 			champion->Possess(possess, tObjectConsumed);
 		}
@@ -1469,12 +1469,12 @@ void SkWinCore::PLAYER_CONSUME_OBJECT(U16 player, ObjectID rlConsume, i16 posses
 				break;
 
 			case 15:			// WATER FLASK
-				WaterValue = WATER_FLASK_VALUE;	// Default value 1600
+				WaterValue = C1600_WATER_FLASK_VALUE;	// Default value 1600
 
 				if (SkCodeParam::bUseDM2ExtendedMode)
 					WaterValue = QUERY_GDAT_WATER_VALUE_FROM_RECORD(tObjectConsumed);
 				
-				champion->curWater(min_value(champion->curWater() +WaterValue, WATER_MAX));
+				champion->curWater(min_value(champion->curWater() +WaterValue, C2048_WATER_MAX));
 
 				break;
 		}
@@ -1484,7 +1484,7 @@ void SkWinCore::PLAYER_CONSUME_OBJECT(U16 player, ObjectID rlConsume, i16 posses
 		tObjectConsumed = ALLOC_NEW_RECORD(dbPotion);
 		if (tObjectConsumed == OBJECT_NULL)
 			return;
-		SET_ITEMTYPE(tObjectConsumed, 0x14);
+		SET_ITEMTYPE(tObjectConsumed, C20_POTION_EMPTY_FLASK);	// 0x14 = EMPTY FLASK
 		if (possess == -1) {
 			TAKE_OBJECT(tObjectConsumed, 0);
 		}
@@ -1537,7 +1537,7 @@ void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 {
 	//CSBWin similarities : Character.cpp:TAG0139be/AddCharacter
 	ENTER(148);
-	Champion* xChampion = &glbChampionSquad[player = cd.pi.glbChampionsCount];	//*bp04
+	Champion* xChampion = &tblChampionSquad[player = cd.pi.glbChampionsCount];	//*bp04
 	xChampion->HeroType(U8(heroType));
 	xChampion->handCommand[1] = xChampion->handCommand[0] = 0xff;
 	xChampion->timerIndex = TIMER_NONE;
@@ -1599,8 +1599,8 @@ void SkWinCore::REVIVE_PLAYER(X16 heroType, X16 player, X16 dir)
 		}
 		xChampion->skills[iSkillAttributeIndex] = iSkillExperience;
 	}
-	xChampion->curFood((RAND() & 255) + START_BASE_FOOD);
-	xChampion->curWater((RAND() & 255) + START_BASE_WATER);
+	xChampion->curFood((RAND() & 255) + C1500_START_BASE_FOOD);
+	xChampion->curWater((RAND() & 255) + C1500_START_BASE_WATER);
 
 	// SPX: DM1 Compatibility code -- check TEXT at player position which should contain CHAMPION stats
 	if (SkCodeParam::bDM1Mode) // maybe this could be extendable for DM2 anyway
@@ -1817,7 +1817,7 @@ void SkWinCore::SET_PARTY_HERO_FLAG(U16 flagvalue)
 {
 	ENTER(0);
 	for (U16 si = 0; si < cd.pi.glbChampionsCount; si++) {
-		glbChampionSquad[si].heroFlag |= flagvalue;
+		tblChampionSquad[si].heroFlag |= flagvalue;
 	}
 	return;
 }
@@ -1839,7 +1839,7 @@ void SkWinCore::SEARCH_STARTER_CHAMPION() // _2f3f_0789
 			TAKE_OBJECT(di, 1);
 			glbChampionLeader = si;
 		}
-		Champion *champion = glbChampionSquad;	//*bp04
+		Champion *champion = tblChampionSquad;	//*bp04
 		U16 si;
 		for (si = 0; si < cd.pi.glbChampionsCount; si++, champion++) {
 			champion->heroFlag &= 1023;	// 0x3FF
@@ -1876,8 +1876,8 @@ void SkWinCore::SEARCH_STARTER_CHAMPION() // _2f3f_0789
 				SELECT_CHAMPION(0, 1, DIR_NORTH, cd.pi.glbPlayerMap);	// player is imaginarily at 0,1 facing north
 				REVIVE_CHAMPION(0, 1, DIR_NORTH, cd.pi.glbPlayerMap, UI_EVENTCODE_xA0_REVIVE_CHAMPION);
 				glbChampionShowResurrect = 0;
-				glbChampionSquad[0].playerDir(U8(cd.pi.glbPlayerDir));
-				glbChampionSquad[0].playerPos(U8(cd.pi.glbPlayerDir));
+				tblChampionSquad[0].playerDir(U8(cd.pi.glbPlayerDir));
+				tblChampionSquad[0].playerPos(U8(cd.pi.glbPlayerDir));
 				SET_PARTY_HERO_FLAG(0x4000);
 				SELECT_CHAMPION_LEADER(0);
 				return;
@@ -1895,8 +1895,8 @@ void SkWinCore::SEARCH_STARTER_CHAMPION() // _2f3f_0789
 					SELECT_CHAMPION(0, 0, DIR_EAST, cd.pi.glbPlayerMap);	// player is really at 0,0 facing east
 					REVIVE_CHAMPION(0, 0, DIR_EAST, cd.pi.glbPlayerMap, UI_EVENTCODE_xA0_REVIVE_CHAMPION);
 					glbChampionShowResurrect = 0;
-					glbChampionSquad[0].playerDir(U8(cd.pi.glbPlayerDir));
-					glbChampionSquad[0].playerPos(U8(cd.pi.glbPlayerDir));
+					tblChampionSquad[0].playerDir(U8(cd.pi.glbPlayerDir));
+					tblChampionSquad[0].playerPos(U8(cd.pi.glbPlayerDir));
 					SET_PARTY_HERO_FLAG(0x4000);
 					SELECT_CHAMPION_LEADER(0);
 					return;
@@ -1927,9 +1927,9 @@ X16 SkWinCore::GET_CHAMPION_SPECIAL_FORCE(U16 iChampionIdx)
 {
 	ENTER(0);
 	U16 iLocalChampIdx = iChampionIdx;	// si
-	if (glbChampionSquad[iLocalChampIdx].curHP() == 0)
+	if (tblChampionSquad[iLocalChampIdx].curHP() == 0)
 		return 0;
-	if (((GET_PLAYER_WEIGHT(iLocalChampIdx) / 10) + (glbChampionSquad[iLocalChampIdx].heroFlag & CHAMPION_FLAG_0010_MALE)) != 0)	// 0x10
+	if (((GET_PLAYER_WEIGHT(iLocalChampIdx) / 10) + (tblChampionSquad[iLocalChampIdx].heroFlag & CHAMPION_FLAG_0010_MALE)) != 0)	// 0x10
 		return 50;
 	return 40;
 }
@@ -1966,7 +1966,7 @@ void SkWinCore::PROCESS_POISON(i16 iChampIdx, U16 iPoisonValue) {
 	if (iChampIdx + 1 == cd.pi.glbNextChampionNumber)
 		return;
 
-	Champion* xChampion = &glbChampionSquad[iChampIdx];	// bp04
+	Champion* xChampion = &tblChampionSquad[iChampIdx];	// bp04
 	WOUND_PLAYER(iChampIdx, max_value(1, iLocalPoisonValue >> 6), 0, 0);
 	xChampion->heroFlag |= CHAMPION_FLAG_0800;	// 0x800
 	xChampion->heroFlag |= CHAMPION_FLAG_2000;	// 0x2000
@@ -1993,7 +1993,7 @@ void SkWinCore::PROCESS_POISON(i16 iChampIdx, U16 iPoisonValue) {
 X16 SkWinCore::CHAMPION_COMPUTE_SOME_SHIELD(i16 play, U16 ww)
 {
 	ENTER(8);
-	Champion* xChampion = &glbChampionSquad[play];	//*bp04
+	Champion* xChampion = &tblChampionSquad[play];	//*bp04
 	U16 bp06 = ww & 0x8000;
 	if (bp06 != 0)
 		ww &= 0x7fff;
@@ -2010,8 +2010,8 @@ X16 SkWinCore::CHAMPION_COMPUTE_SOME_SHIELD(i16 play, U16 ww)
 	si = RAND16((GET_PLAYER_ABILITY(xChampion, abVit, 0) >> 3) +1);
 	if (bp06 != 0)
 		si >>= 1;
-	if (glbChampionSquad[play].enchantmentAura == C02_ENCHANTMENT_PARTY_SHIELD) {	// == 2
-		si += glbChampionSquad[play].enchantmentPower;
+	if (tblChampionSquad[play].enchantmentAura == C02_ENCHANTMENT_PARTY_SHIELD) {	// == 2
+		si += tblChampionSquad[play].enchantmentPower;
 	}
 	si += xChampion->handDefenseClass[0] + xChampion->handDefenseClass[1] + bp08;
 	if (ww > 1) {
@@ -2045,7 +2045,7 @@ U16 SkWinCore::WOUND_PLAYER(i16 iCharIdx, i16 iSourceAttackDamage, U16 iMask, U1
 	if (iLocalAttackDamage <= 0)
 		return 0;
 
-	Champion* xChampion = &glbChampionSquad[iCharIdx];
+	Champion* xChampion = &tblChampionSquad[iCharIdx];
 	if (xChampion->curHP() == 0)
 		return 0;
 
@@ -2140,7 +2140,7 @@ void SkWinCore::ADJUST_STAMINA(U16 iCharIdx, i16 iStaminaDecrement)
 	X16 iLocalChampIndex = iCharIdx;
 	if (iLocalChampIndex == 0xffff)
 		return;
-	Champion* xChampion = &glbChampionSquad[iLocalChampIndex];	//*bp04
+	Champion* xChampion = &tblChampionSquad[iLocalChampIndex];	//*bp04
 	xChampion->curStamina(xChampion->curStamina() - iStaminaDecrement);
 	i16 iChampStamina = xChampion->curStamina();	// si
 	if (iChampStamina <= 0) {
@@ -2164,9 +2164,9 @@ U16 SkWinCore::GET_PLAYER_WEIGHT(U16 iCharIdx)
 	ENTER(0);
 	X16 iChampWeight = 0; // si
 	X16 iLocalChampIndex = iCharIdx;
-	if (glbChampionSquad[iLocalChampIndex].curHP() == 0)
+	if (tblChampionSquad[iLocalChampIndex].curHP() == 0)
 		return 0;
-	iChampWeight = glbChampionSquad[iLocalChampIndex].curWeight();
+	iChampWeight = tblChampionSquad[iLocalChampIndex].curWeight();
 	if (iLocalChampIndex == glbChampionLeader) {
 		iChampWeight += glbLeaderItemWeight;
 	}
@@ -2193,7 +2193,7 @@ U16 SkWinCore::MAX_LOAD(Champion* xChampion)
 void SkWinCore::_2c1d_153f(X16 xx)
 {
 	ENTER(6);
-	Champion* xChampion = &glbChampionSquad[xx]; // bp04
+	Champion* xChampion = &tblChampionSquad[xx]; // bp04
 	i16 iChampHP = xChampion->curHP();	// si
 	U16 bp06 = 0;
 	xChampion->curHP(0);
@@ -2216,7 +2216,7 @@ _15a9:
 void SkWinCore::BRING_CHAMPION_TO_LIFE(X16 xx) { // TODO: Unr
 //	if (!SkCodeParam::bUseFixedMode) {
 		ENTER(4);
-		Champion *bp04 = &glbChampionSquad[xx];
+		Champion *bp04 = &tblChampionSquad[xx];
 		_2c1d_153f(xx);
 		bp04->curWeight(0);
 		U16 si;
@@ -2243,7 +2243,7 @@ void SkWinCore::BRING_CHAMPION_TO_LIFE(X16 xx) { // TODO: Unr
 //	  //CHARDESC *pcA3;
 //		Champion *champion;
 //	  //pcA3 = &d.CH16482[chIdx];
-//		champion = &glbChampionSquad[player];
+//		champion = &tblChampionSquad[player];
 //	  //D0L = CharacterAtPosition(pcA3->charPosition);
 //	  //if (D0L != -1)
 //	  //{ //Find a position to put the character.
@@ -2279,7 +2279,7 @@ void SkWinCore::BRING_CHAMPION_TO_LIFE(X16 xx) { // TODO: Unr
 void SkWinCore::DROP_PLAYER_ITEMS(U16 iChampionIdx)
 {
 	ENTER(2);
-	X16 iQuarterPos = glbChampionSquad[iChampionIdx].playerPos();	// di
+	X16 iQuarterPos = tblChampionSquad[iChampionIdx].playerPos();	// di
 	X16 iInvSlot;	// si
 	for (iInvSlot = 0; iInvSlot < C30_INVENTORY_MAX_SLOT; iInvSlot++) {
 		ObjectID oChampItem = REMOVE_POSSESSION(iChampionIdx, tblDropChampionInventory[iInvSlot]);	// bp02
@@ -2298,7 +2298,7 @@ void SkWinCore::CHAMPION_DEFEATED(X16 player)
 
 	ENTER(12);
 	X16 di;
-	Champion *champion = &glbChampionSquad[di = player];
+	Champion *champion = &tblChampionSquad[di = player];
 
 #if (DM2_EXTENDED_MODE == 1)
 	if (SkCodeParam::bUseExtendedSound == true) {	// SPX: Play the champion own scream sound if dead
@@ -2358,7 +2358,7 @@ void SkWinCore::CHAMPION_DEFEATED(X16 player)
 		CURE_PLAGUE(di);
 #endif
 	X16 si;
-	for (si = 0; si < cd.pi.glbChampionsCount && glbChampionSquad[si].curHP() == 0; si++);
+	for (si = 0; si < cd.pi.glbChampionsCount && tblChampionSquad[si].curHP() == 0; si++);
 	if (si == cd.pi.glbChampionsCount) {
 		cd.pi.glbPlayerDefeated = 1;
 		_1031_098e();
@@ -2380,7 +2380,7 @@ void SkWinCore::PROCESS_PLAYERS_DAMAGE()
 	if (SkCodeParam::bChampionImmune)
 		return;
 
-	Champion* champion = glbChampionSquad;
+	Champion* champion = tblChampionSquad;
 	for (U16 championIndex = 0; championIndex < cd.pi.glbChampionsCount; championIndex++, champion++) {
 		champion->bodyFlag = glbChampionsBodyFlags[championIndex];
 		glbChampionsBodyFlags[championIndex] = 0;
@@ -2428,7 +2428,7 @@ void SkWinCore::UPDATE_CHAMPIONS_STATS()
 	if (glbChampionTable[0].enchantmentPower > 0x80U)
 		glbChampionTable[0].enchantmentPower -= 0x80;
 	U16 bp0e = 0;	
-	Champion *champion = glbChampionSquad;
+	Champion *champion = tblChampionSquad;
 	X16 bp0c;
 	U16 bp0a;
 	for (; bp0e < cd.pi.glbChampionsCount; bp0e++, champion++) {
@@ -2464,7 +2464,7 @@ void SkWinCore::UPDATE_CHAMPIONS_STATS()
 			di <<= 1;
 		do {
 			bp0a = (bp0c <= 4) ? 1 : 0;
-			if (champion->curFood() < FOOD_WARNING) {
+			if (champion->curFood() < M0512_FOOD_WARNING) {
 				if (bp0a != 0) {
 					si += di;
 					champion->curFood(champion->curFood() -2);
@@ -2475,7 +2475,7 @@ void SkWinCore::UPDATE_CHAMPIONS_STATS()
 					si -= di;
 				champion->curFood(champion->curFood() -((bp0a != 0) ? 2 : (bp0c >> 1)));
 			}
-			if (champion->curWater() < WATER_WARNING) {
+			if (champion->curWater() < M0512_WATER_WARNING) {
 				if (bp0a != 0) {
 					si += di;
 					champion->curWater(champion->curWater() -1);
@@ -2489,10 +2489,10 @@ void SkWinCore::UPDATE_CHAMPIONS_STATS()
 		} while (--bp0c != 0 && champion->curStamina() < champion->maxStamina());
 
 		ADJUST_STAMINA(bp0e, si);
-		if (champion->curFood() < FOOD_MIN)
-			champion->curFood(FOOD_MIN);
-		if (champion->curWater() < WATER_MIN)
-			champion->curWater(WATER_MIN);
+		if (champion->curFood() < M1024_FOOD_MIN)
+			champion->curFood(M1024_FOOD_MIN);
+		if (champion->curWater() < M1024_WATER_MIN)
+			champion->curWater(M1024_WATER_MIN);
 		if (champion->curHP() < champion->maxHP() && champion->curStamina() >= (champion->maxStamina() >> 2) && GET_PLAYER_ABILITY(champion, abVit, 0) > glbChampionTable[0].enchantmentPower) {
 			di = (champion->maxHP() >> 7) +1;
 			if (cd.pi.glbIsPlayerSleeping != 0)
@@ -2543,7 +2543,7 @@ void SkWinCore::BURN_PLAYER_LIGHTING_ITEMS()
 	X16 iLocalChampionCount = cd.pi.glbChampionsCount;
 	if (cd.pi.glbNextChampionNumber != 0)
 		--iLocalChampionCount;
-	Champion *xChampion = glbChampionSquad;	//*bp04
+	Champion *xChampion = tblChampionSquad;	//*bp04
 	for (; iLocalChampionCount-- != 0; xChampion++) {
 		X16 iInventorySlot = 2;
 		for (; iInventorySlot-- != 0; ) { // go from inventory position 2 to 0 (hands)
@@ -2569,7 +2569,7 @@ void SkWinCore::RESET_SQUAD_DIR()
 {
 	ENTER(0);
 	for (U16 si = 0; si < cd.pi.glbChampionsCount; si++) {
-		glbChampionSquad[si].playerDir(U8(cd.pi.glbPlayerDir));
+		tblChampionSquad[si].playerDir(U8(cd.pi.glbPlayerDir));
 	}
 	return;
 }
@@ -2610,7 +2610,7 @@ U16 SkWinCore::_2c1d_09d9()
 	for (di = 0; di < cd.pi.glbChampionsCount; di++) {
 		U16 si;
 		for (si = 0; si < SKILL_MAJOR_COUNT; si++) {	// (si = 0; si <= 3; si++) 
-			bp04 += glbChampionSquad[di].skills[si];
+			bp04 += tblChampionSquad[di].skills[si];
 		}
 	}
 	X16 si;
@@ -2676,7 +2676,7 @@ U16 SkWinCore::USE_LUCK_ATTRIBUTE(Champion* xChampion, U16 xx)
 U16 SkWinCore::USE_DEXTERITY_ATTRIBUTE(U16 iHeroIndex)
 {
 	ENTER(4);
-	Champion* xChampion = &glbChampionSquad[iHeroIndex];
+	Champion* xChampion = &tblChampionSquad[iHeroIndex];
 	i16 iDexterityVal = (RAND() & 7) + GET_PLAYER_ABILITY(xChampion, abDex, 0); // si
 	iDexterityVal -= (GET_PLAYER_WEIGHT(iHeroIndex) * i32(iDexterityVal >> 1)) / MAX_LOAD(xChampion);
 	iDexterityVal = max_value(2, iDexterityVal);
