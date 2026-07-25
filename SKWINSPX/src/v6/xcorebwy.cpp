@@ -526,10 +526,10 @@ int SkWinCore::READ_DUNGEON_STRUCTURE_BW(X16 isNewGame)
 	INIT_RANDOM();
 
 	//-- Adjust players colors for BW classes
-	glbPaletteT16[COLOR_LIGHT_GREEN] = 0x7E;	// serpent
-	glbPaletteT16[COLOR_YELLOW] = 0x8E;	// chaos
-	glbPaletteT16[COLOR_RED] = 0xBF; //0x49; //0xAE;	// dragon
-	glbPaletteT16[COLOR_BLUE] = 0x3A;	// moon
+	glbPaletteT16[C07_COLOR_LIGHT_GREEN] = 0x7E;	// serpent
+	glbPaletteT16[C11_COLOR_YELLOW] = 0x8E;	// chaos
+	glbPaletteT16[C08_COLOR_RED] = 0xBF; //0x49; //0xAE;	// dragon
+	glbPaletteT16[C14_COLOR_BLUE] = 0x3A;	// moon
 
 	///--- Whatever file was opened (a dungeon.dat ?), we close and open directly to the main BW file
 	// Before reading the main dungeon data, we read triggers definitions.

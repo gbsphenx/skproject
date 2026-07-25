@@ -1498,7 +1498,7 @@ sk3f6c *SkWinCore::SOME_RECT_PICT_0b36_0c52(sk3f6c *ref, U16 iRectNo, U16 ww)
 	if (iRectNo != 0xFFFF) {
 		QUERY_EXPANDED_RECT(iRectNo, &ref->rc2);
 	}
-	ALLOC_NEW_PICT(ref->iCacheIndex = ALLOC_TEMP_CACHE_INDEX(), ref->rc2.cx, ref->rc2.cy, 8);
+	ALLOC_NEW_PICT(ref->iCacheIndex0 = ALLOC_TEMP_CACHE_INDEX(), ref->rc2.cx, ref->rc2.cy, 8);
 	ref->iCacheIndex = 0;
 	if (ww != 0) {
 		SOME_RECT_0b36_0d67(ref, &ref->rc2);
@@ -1526,7 +1526,7 @@ void SkWinCore::FILL_RECT_SUMMARY(sk3f6c *ref, SRECT *rc, U8 fill)
 		//^0B36:100A
 		SRECT bp08;
 		FIRE_FILL_RECT_ANY(
-			reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(ref->w0)),
+			reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(ref->iCacheIndex0)),
 			OFFSET_RECT(ref, rc, &bp08),
 			fill,
 			ref->rc2.cx,
@@ -1543,10 +1543,10 @@ void SkWinCore::FILL_RECT_SUMMARY(sk3f6c *ref, SRECT *rc, U8 fill)
 // SPX: _29ee_00a3 renamed SOMETHING_RIGHT_PANEL_29ee_00a3
 void SkWinCore::SOMETHING_RIGHT_PANEL_29ee_00a3(U16 xx)
 {
-	if (_4976_3f6c.w0 == 0xFFFF) {
-		SOME_RECT_PICT_0b36_0c52(&_4976_3f6c, 11, xx);
+	if (glbScreenBufferRightPanel.iCacheIndex0 == 0xFFFF) {
+		SOME_RECT_PICT_0b36_0c52(&glbScreenBufferRightPanel, 11, xx);
 		if (xx != 0) {
-			FILL_RECT_SUMMARY(&_4976_3f6c, &_4976_3f6c.rc2, glbPaletteT16[C00_COLOR_BLACK]);
+			FILL_RECT_SUMMARY(&glbScreenBufferRightPanel, &glbScreenBufferRightPanel.rc2, glbPaletteT16[C00_COLOR_BLACK]);
 		}
 	}
 	return;
@@ -2141,7 +2141,7 @@ void SkWinCore::_29ee_1946(ObjectID recordLink, i16 xx, i16 yy, i16 zz, i16 dir,
 	//^29EE:19AF
 	SOMETHING_RIGHT_PANEL_29ee_00a3(0);
 	//^29EE:19B6
-	FILL_RECT_SUMMARY(&_4976_3f6c, QUERY_EXPANDED_RECT(99, &_4976_53a6), glbPaletteT16[C00_COLOR_BLACK]);
+	FILL_RECT_SUMMARY(&glbScreenBufferRightPanel, QUERY_EXPANDED_RECT(99, &_4976_53a6), glbPaletteT16[C00_COLOR_BLACK]);
 	//^29EE:19DC
 	INFLATE_RECT(&_4976_53a6, - glbMagicMapInterlineX, - glbMagicMapInterlineY);
 	//^29EE:19F4
@@ -2577,7 +2577,7 @@ U16 SkWinCore::_1031_03f2(sk1891 *ref, U16 xx)
 void SkWinCore::SOME_COPY_RECT_1031_10c8(sk3f6c *ref, SRECT* xRect, U16 cx, U16 cy)
 {
 	ENTER(0);
-	if (ref->w0 == 0xFFFF) {
+	if (ref->iCacheIndex0 == 0xFFFF) {
 		COPY_MEMORY(&glbMousePosition.rc6, &ref->rc2, 8);
 		SOME_RECT_PICT_0b36_0c52(ref, -1, 0);
 	}
@@ -8693,19 +8693,20 @@ U8* SkWinCore::QUERY_GDAT_IMAGE_ENTRY_BUFF(U8 iGDatCategory, U8 iGDatItemId, U8 
 
 
 //^2E62:0004
-U8 *SkWinCore::QUERY_GDAT_SQUAD_ICON(U8 *dstImage, U8 colorno, U8 localpal[16])
+U8 *SkWinCore::QUERY_GDAT_SQUAD_ICON(U8 *dstImage, U8 iChampionIdx, U8 tiLocalPal[16])
 {
-	U16 si = (((tblChampionSquad[colorno].playerDir() + 4 - cd.pi.glbPlayerDir) & 3) + ((glbGlobalSpellEffects.Invisibility != 0) ? 4 : 0)) * _4976_0118;
+	// The image contains 8 champion colored figures, 4 normal, then 4 "invisible" greyed
+	U16 iSquadFigureIdx = (((tblChampionSquad[iChampionIdx].playerDir() + 4 - cd.pi.glbPlayerDir) & 3) + ((glbGlobalSpellEffects.Invisibility != 0) ? 4 : 0)) * glbPictIconBufferX;	// si
 	COPY_MEMORY(
-		QUERY_GDAT_IMAGE_LOCALPAL(1, 6, colorno),
-		localpal,
+		QUERY_GDAT_IMAGE_LOCALPAL(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x06_CHAMPION_FACING, iChampionIdx),
+		tiLocalPal,
 		16
 		);
 	DRAW_DIALOGUE_PICT(
-		QUERY_GDAT_IMAGE_ENTRY_BUFF(1, 6, colorno),
+		QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x06_CHAMPION_FACING, iChampionIdx),
 		dstImage,
-		ALLOC_TEMP_ORIGIN_RECT(_4976_0118, _4976_011a),
-		si,
+		ALLOC_TEMP_ORIGIN_RECT(glbPictIconBufferX, glbPictIconBufferY),
+		iSquadFigureIdx,
 		0,
 		2,
 		NULL
@@ -8740,36 +8741,36 @@ void SkWinCore::CHANGE_PLAYER_POS(U16 squadPos)
 		di = 0;
 		squadPos &= 3;
 	}
-	i16 si = GET_PLAYER_AT_POSITION((squadPos + cd.pi.glbPlayerDir) & 3);
+	i16 iChampionIdx = GET_PLAYER_AT_POSITION((squadPos + cd.pi.glbPlayerDir) & 3);	// si
 	if (_4976_5dbc == 0) {
-		if (si < 0)
+		if (iChampionIdx < 0)
 			return;
-		_4976_495c.cx = _4976_0118;
-		_4976_495c.cy = _4976_011a;
-		U8 *bp08 = ALLOC_PICT_BUFF(_4976_0118, _4976_011a, afDefault, 4);
-		U8 *bp0c = ALLOC_PICT_BUFF(_4976_0118, _4976_011a, afDefault, 8);
-		U8 bp1c[16];
-		QUERY_GDAT_SQUAD_ICON(bp08, (U8)si, bp1c);
-		FILL_ENTIRE_PICT(bp0c, 0x000c);
+		_4976_495c.cx = glbPictIconBufferX;
+		_4976_495c.cy = glbPictIconBufferY;
+		U8 *pPictBuffSquad = ALLOC_PICT_BUFF(glbPictIconBufferX, glbPictIconBufferY, afDefault, IMG_4_BPP);	// bp08
+		U8 *pPictBuffDest = ALLOC_PICT_BUFF(glbPictIconBufferX, glbPictIconBufferY, afDefault, IMG_8_BPP);	// bp0c
+		U8 iLocalPal[16];	// bp1c
+		QUERY_GDAT_SQUAD_ICON(pPictBuffSquad, (U8)iChampionIdx, iLocalPal);
+		FILL_ENTIRE_PICT(pPictBuffDest, 0x0C);	// fill with brown/orange ?
 		FIRE_BLIT_PICTURE(
-			bp08,
-			bp0c,
+			pPictBuffSquad,	// src
+			pPictBuffDest,	// dst
 			&_4976_495c,
 			0,
 			0,
-			_4976_0118,
-			_4976_0118,
+			glbPictIconBufferX,
+			glbPictIconBufferY,	// would be Y?
 			4,
 			0,
-			4,
-			8,
-			bp1c
+			IMG_4_BPP,
+			IMG_8_BPP,
+			iLocalPal
 			);
 		FIRE_HIDE_MOUSE_CURSOR();
-		IBMIO_SET_CURSOR_PATTERN(3, bp0c, 8, 6, _4976_0118, _4976_011a, 8, NULL, bp1c[12]) CALL_IBMIO;
+		IBMIO_SET_CURSOR_PATTERN(3, pPictBuffDest, 8, 6, glbPictIconBufferX, glbPictIconBufferY, 8, NULL, iLocalPal[12]) CALL_IBMIO;
 		_01b0_0c70_MOUSE(3) CALL_IBMIO;
-		FREE_PICT_BUFF(bp0c);
-		FREE_PICT_BUFF(bp08);
+		FREE_PICT_BUFF(pPictBuffDest);
+		FREE_PICT_BUFF(pPictBuffSquad);
 		_4976_5dba = squadPos;
 		_4976_5dbc = squadPos +1;
 		FIRE_SHOW_MOUSE_CURSOR();
@@ -8777,15 +8778,15 @@ void SkWinCore::CHANGE_PLAYER_POS(U16 squadPos)
 	else {
 		U16 bp02 = _4976_5dbc -1;
 		_4976_5dbc = 0;
-		U16 bp04 = GET_PLAYER_AT_POSITION((bp02 + cd.pi.glbPlayerDir) & 0x0003);
+		U16 iChampionIdx2 = GET_PLAYER_AT_POSITION((bp02 + cd.pi.glbPlayerDir) & 0x0003);	// bp04
 		if (di != 0) {
-			tblChampionSquad[bp04].playerDir((U8)cd.pi.glbPlayerDir);
+			tblChampionSquad[iChampionIdx2].playerDir((U8)cd.pi.glbPlayerDir);
 		}
 		if (bp02 != squadPos) {
-			if (si >= 0) {
-				tblChampionSquad[si].playerPos((U8)bp02);
+			if (iChampionIdx >= 0) {
+				tblChampionSquad[iChampionIdx].playerPos((U8)bp02);
 			}
-			tblChampionSquad[bp04].playerPos((U8)(squadPos + cd.pi.glbPlayerDir));
+			tblChampionSquad[iChampionIdx2].playerPos((U8)(squadPos + cd.pi.glbPlayerDir));
 		}
 	}
 	_443c_040e_MOUSE();
@@ -15726,7 +15727,7 @@ void SkWinCore::_38c8_00c8_ALLOC_PICT()
 	ENTER(0);
 	glbBackBuffViewport = MEM_PREPARE_VIEWPORT();
 	if (glbBackBuffViewport == NULL) {
-		glbBackBuffViewport = ALLOC_PICT_BUFF(_4976_00f6, _4976_00f8, afUseUpper, 8);
+		glbBackBuffViewport = ALLOC_PICT_BUFF(_4976_00f6, _4976_00f8, afUseUpper, IMG_8_BPP);
 	}
 	_4976_5ca0 = 0xB798;
 	return;
@@ -15738,7 +15739,7 @@ void SkWinCore::_38c8_00c8_ALLOC_PICT()
 void SkWinCore::_2405_0009_ALLOC_ITEM_HAND_PICT()
 {
 	ENTER(0);
-	cd.pi.glbLeaderHandPossession.pb2 = ALLOC_PICT_BUFF(glbRectX_0106, glbRectY_0108, afUseUpper, 4);
+	cd.pi.glbLeaderHandPossession.pb2 = ALLOC_PICT_BUFF(glbRectX_0106, glbRectY_0108, afUseUpper, IMG_4_BPP);
 	return;
 }
 
@@ -16827,8 +16828,8 @@ void SkWinCore::GAME_LOOP()
 
 		SkD((SkCodeParam::bDebugPrint, "GAME LOOP %08d> SET TICK BALANCE\n", iLoopCount));
 
-		SKDEBUG_MINI_LOOP();
-		continue;
+//		SKDEBUG_MINI_LOOP();
+//		continue;
 
 		//DISPLAY_HINT_TEXT(C11_COLOR_YELLOW, message);
 		// SPX get speed from window menu 
@@ -17397,8 +17398,8 @@ SkWinCore::SkWinCore()
 	glbSomePosY_4976_4c1e = 0;
 //	glbMap_4976_4c12 = 0;
 	glbDir_4976_4c10 = 0;
-	_4976_0118 = 0x11;
-	_4976_011a = 0x11;
+	glbPictIconBufferX = 0x11;
+	glbPictIconBufferY = 0x11;
 	cd.pi.glbChampionsCount = 0;
 	_4976_0124 = 1;
 	_4976_00f4 = 0x7700;
@@ -17417,12 +17418,12 @@ SkWinCore::SkWinCore()
 	zeroMem(&_4976_5d7e, sizeof(_4976_5d7e));
 	zeroMem(&_4976_5bee, sizeof(_4976_5bee));
 	zeroMem(glbMapDoorType, sizeof(glbMapDoorType));
-	zeroMem(&_4976_3f6c, sizeof(_4976_3f6c)); _4976_3f6c.w0 = -1;
+	zeroMem(&glbScreenBufferRightPanel, sizeof(glbScreenBufferRightPanel)); glbScreenBufferRightPanel.iCacheIndex0 = -1;
 	_04bf_1938 = 0;
 	zeroMem(glbChampionTable, sizeof(glbChampionTable));
 	zeroMem(&glbMousePosition, sizeof(glbMousePosition));
 	zeroMem(&glbTempPicture, sizeof(glbTempPicture));
-	zeroMem(&_4976_3ff0, sizeof(_4976_3ff0)); _4976_3ff0.w0 = -1;
+	zeroMem(&_4976_3ff0, sizeof(_4976_3ff0)); _4976_3ff0.iCacheIndex0 = -1;
 	zeroMem(_04bf_0e80, sizeof(_04bf_0e80));
 	_04bf_17a2 = 0;
 	_4976_5da4 = NULL;

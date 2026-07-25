@@ -104,7 +104,7 @@ void SkWinCore::HANDLE_UI_EVENT_1031_111e(U16 xx)
 	if (_4976_4e62 != 0 || _4976_4e48 != 0 || _4976_4e64 != 0 || glbPtrTransmittedUIEvent == NULL)
 		return;
 	sk3f6c bp48;
-	bp48.w0 = 0xFFFF;
+	bp48.iCacheIndex0 = 0xFFFF;
 	U8 iRawUIEvent;	// bp05
 	do {
 		iRawUIEvent = *(glbPtrTransmittedUIEvent++);	// bp05
@@ -194,7 +194,7 @@ _1201:
 					if (si < 0)
 						break;
 					DRAW_SQUAD_SPELL_AND_LEADER_ICON(si, 1);
-					_0b36_0cbe(&_4976_3f6c, 1);
+					_0b36_0cbe(&glbScreenBufferRightPanel, 1);
 					break;
 				}
 			case 9:	// 9 : champion hand action
@@ -253,7 +253,7 @@ _1201:
 				{
 					DRAW_CMD_SLOT(*(glbPtrTransmittedUIEvent++), 1);
 _148a:
-					_0b36_0cbe(&_4976_3f6c, 1);
+					_0b36_0cbe(&glbScreenBufferRightPanel, 1);
 					break;
 				}
 			case 13:	// 13: return to viewport
@@ -278,7 +278,7 @@ _148a:
 					glbGDATItemCls2MainItemId = *glbPtrTransmittedUIEvent; glbPtrTransmittedUIEvent++;
 					glbGDATItemCls4EntryId = *glbPtrTransmittedUIEvent; glbPtrTransmittedUIEvent++;
 					RECT_0aaf_01db(_4976_4df8, 1);
-					bp48.w0 = 0xffff;
+					bp48.iCacheIndex0 = 0xffff;
 					_0aaf_002f();
 
 					break;
@@ -291,7 +291,7 @@ _148a:
 	} while ((iRawUIEvent & 0x40) != 0);
 
 _1534:
-	if (bp48.w0 != 0xffff) {
+	if (bp48.iCacheIndex0 != 0xffff) {
 		_0b36_0cbe(&bp48, 1);
 	}
 	return;

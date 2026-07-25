@@ -1296,7 +1296,8 @@ void SkWinCore::FIRE_BLIT_PICTURE(
 	const U8 *localPal
 	)
 {
-	SkD((DLV_GUI||SkCodeParam::bDebugPrint, "FIRE_BLIT_PICT: xTox (%p,%p,(%3d,%3d,%3d,%3d),%3d,%3d,%3d,%3d,%2d,%d,%d,%d,%p)\n", src, dst
+	SkD((DLV_GUI||SkCodeParam::bDebugPrint, 
+		"FIRE_BLIT_PICT: xTox (%p -> %p RZ(%3d,%3d,%3d,%3d) SRC:(%3d,%3d) Pitch(%3d -> %3d) CK:%2d Flip:%d BPP (%d -> %d) PAL:%p)\n", src, dst
 		, (Bitu)rc->x, (Bitu)rc->y, (Bitu)rc->cx, (Bitu)rc->cy, (Bitu)srcx, (Bitu)srcy
 		, (Bitu)srcPitch, (Bitu)dstPitch, (Bitu)colorkey, (Bitu)mirrorFlip, (Bitu)srcBpp, (Bitu)dstBpp, localPal));
 	LOGX(("FIRE_BLIT_PICT: xTox (%p,%p,(%3d,%3d,%3d,%3d),%3d,%3d,%3d,%3d,%2d,%d,%d,%d,%p)", src, dst
@@ -2622,7 +2623,7 @@ void SkWinCore::_0b36_0cbe(sk3f6c *ref, U16 yy)
 
 		do {
 			FIRE_BLIT_PICTURE(
-				QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(ref->w0),
+				QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(ref->iCacheIndex0),
 				_4976_4964,
 				bp04,
 				bp04->x - ref->rc2.x,
@@ -2640,8 +2641,8 @@ void SkWinCore::_0b36_0cbe(sk3f6c *ref, U16 yy)
 		FIRE_SHOW_MOUSE_CURSOR();
 	}
 	if (yy != 0) {
-		FREE_TEMP_CACHE_INDEX(ref->w0);
-		ref->w0 = 0xFFFF;
+		FREE_TEMP_CACHE_INDEX(ref->iCacheIndex0);
+		ref->iCacheIndex0 = 0xFFFF;
 	}
 	return;
 }

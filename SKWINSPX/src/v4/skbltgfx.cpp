@@ -1294,13 +1294,15 @@ void SkWinCore::DRAW_DIALOGUE_PICT(Bit8u *srcImage, Bit8u *dstImage, SRECT *rect
 		if (!CheckSafePointer(srcImage) || !CheckSafePointer(dstImage))
 			return;
 		// 2nd pass, check for valid bpp for each image pointer (if not, the pointer may be messed, then it will crash)
-		if ( ( ((U16 *)srcImage)[-3] != 4 && ((U16 *)srcImage)[-3] != 8) ||
-			( ((U16 *)dstImage)[-3] != 4 && ((U16 *)dstImage)[-3] != 8) )
+//		if ( ( ((U16 *)srcImage)[-3] != 4 && ((U16 *)srcImage)[-3] != 8) ||
+//			( ((U16 *)dstImage)[-3] != 4 && ((U16 *)dstImage)[-3] != 8) )
+		if ( ( READ_IMGBUFF_BPP(srcImage) != IMG_4_BPP && READ_IMGBUFF_BPP(srcImage) != IMG_8_BPP) ||
+			( READ_IMGBUFF_BPP(dstImage) != IMG_4_BPP && READ_IMGBUFF_BPP(dstImage) != IMG_8_BPP) )
 			return;
 	}
 	// draw the:
 	// a) pre rendered dialogue to screen
-
+/*
 	FIRE_BLIT_PICTURE(
 		srcImage,
 		dstImage,
@@ -1313,6 +1315,20 @@ void SkWinCore::DRAW_DIALOGUE_PICT(Bit8u *srcImage, Bit8u *dstImage, SRECT *rect
 		0,
 		((U16 *)srcImage)[-3], // src-bpp
 		((U16 *)dstImage)[-3], // dst-bpp
+		localpal
+		);*/
+	FIRE_BLIT_PICTURE(
+		srcImage,
+		dstImage,
+		rect,
+		srcx,
+		srcy,
+		READ_IMGBUFF_WIDTH(srcImage), // src-pitch
+		READ_IMGBUFF_WIDTH(dstImage), // dst-pitch
+		colorkey,
+		0,
+		READ_IMGBUFF_BPP(srcImage), // src-bpp
+		READ_IMGBUFF_BPP(dstImage), // dst-bpp
 		localpal
 		);
 }

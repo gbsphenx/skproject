@@ -248,8 +248,8 @@ protected:
 	i16		_4976_0112;
 	i16		_4976_0114;
 	i16		_4976_0116;
-	U16	_4976_0118;		// _4976_0118	for ALLOC_PICT_BUFF x
-	U16	_4976_011a;		// _4976_011a	for ALLOC_PICT_BUFF y
+	U16		glbPictIconBufferX;		// _4976_0118	for ALLOC_PICT_BUFF x
+	U16		glbPictIconBufferY;		// _4976_011a	for ALLOC_PICT_BUFF y
 	U16	_4976_011e;
 	i16	_4976_0120;
 	U16	_4976_0124;		// us's text cy?
@@ -313,7 +313,7 @@ protected:
 	U16	_4976_3df7;
 	U16	_4976_3f68;
 	U16	glbPreviousRightPanelType;	// (_4976_3f6a)
-	sk3f6c	_4976_3f6c;		// screen buffer of right part chest
+	sk3f6c	glbScreenBufferRightPanel;		// (_4976_3f6c)	screen buffer of right part chest
 	i16		glbChampionLeader;		// (_4976_3fc6) selected player? (leader)
 	U8		glbChampionColor[MAX_CHAMPIONS];	// (_4976_3fec) player health bar color
 	sk3f6c	_4976_3ff0;
@@ -834,7 +834,7 @@ protected:
 	U16		_4976_5dac;	// 1=holding item
 	skxxx7	_4976_5dae;
 	U16	_4976_5dba;
-	U16	_4976_5dbc;		// 0=no drag, 1,2,3,4=dragging player icon
+	U16		_4976_5dbc;		// (_4976_5dbc) 0=no drag, 1,2,3,4=dragging player icon
 	U8		*_4976_5dbe;	// palette?
 	X16		_4976_5dc2;
 	Bit8u	*_4976_5e64;	// blit2mem src
@@ -916,6 +916,9 @@ public:
 
 	void DEBUG_HELP_WRITER(const char* sinfo, const void* xdata, unsigned int blocksize, unsigned int repeat);
 	void DEBUG_HELP_DISPLAY_STACK(i16 iMapX, i16 iMapY, i16 iMapLevel);
+	void DEBUG_SHOW_RECT_INFO(SRECT xRectZone);
+	void DEBUG_SHOW_MULTIRECT_INFO(sk3f6c xMultiRects);
+	void DEBUG_SHOW_ICON_PICT_BUFF(const U8 *buff, 	sk3f6c *tt, 	SRECT *rc,	i16 srcx, 	i16 srcy, 	i16 colorkey, 	i16 flipmirror,	U8 *localpal);
 
 	void LOG_FULL_DUNGEON_INFO();
 	void LOG_DUNGEON_INFO_GROUND_STACKS();
@@ -1982,7 +1985,7 @@ protected:
 	void DUMP_5CA4();
 	Bit8u *QUERY_GDAT_IMAGE_ENTRY_BUFF(Bit8u cls1, Bit8u cls2, Bit8u cls4);
 	void DRAW_DIALOGUE_PICT(Bit8u *srcImage, Bit8u *dstImage, SRECT *rect, U16 srcx, U16 srcy, U16 colorkey, Bit8u localpal[16]);
-	Bit8u *QUERY_GDAT_SQUAD_ICON(Bit8u *dstImage, Bit8u colorno, Bit8u localpal[16]);
+	Bit8u *QUERY_GDAT_SQUAD_ICON(U8 *dstImage, U8 iChampionIdx, U8 localpal[16]);
 	void DEALLOC_UPPER_MEMORY(Bit32u size);
 	void FREE_PICT_BUFF(U8* xImageBuffer);
 	void LOCK_MOUSE_EVENT();

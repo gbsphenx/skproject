@@ -90,7 +90,7 @@ int SkWinCore::HANDLE_KEY_ON_DOOR_BUTTON(Door* xDoor, ObjectID rlHandObject, U16
 				if (iKeyFound)
 					iCanUnlock = 1;
 				//else {
-				//	DISPLAY_HINT_TEXT(COLOR_LIGHT_GREEN, (const U8*) "NO KEY IN HAND\n");
+				//	DISPLAY_HINT_TEXT(C07_COLOR_LIGHT_GREEN, (const U8*) "NO KEY IN HAND\n");
 				//	return 0;
 				//}
 			}
@@ -117,7 +117,7 @@ int SkWinCore::HANDLE_KEY_ON_DOOR_BUTTON(Door* xDoor, ObjectID rlHandObject, U16
 			DEALLOC_RECORD(REMOVE_OBJECT_FROM_HAND());
 	}
 	else if (iKeyFound) // there is a key, but not the expected one
-		DISPLAY_HINT_TEXT(COLOR_LIGHT_GREEN, (const U8*) "IT DOES NOT FIT\n");
+		DISPLAY_HINT_TEXT(C07_COLOR_LIGHT_GREEN, (const U8*) "IT DOES NOT FIT\n");
 	// else, no key => don't display message here
 
 	return 1;
@@ -133,7 +133,7 @@ int SkWinCore::HANDLE_KEY_ON_DOOR_BUTTON(Door* xDoor, ObjectID rlHandObject, U16
 // This disables all hands and magic for some time; that allows some new type of attacks from creatures
 void SkWinCore::STUN_CHAMPION(U16 player, U16 stunvalue)
 {
-	Champion *champion = &glbChampionSquad[player];
+	Champion *champion = &tblChampionSquad[player];
 	U16 cooldown = 0;
 	U8 hand = 0;
 
@@ -165,7 +165,7 @@ void SkWinCore::CURE_PLAGUE(U16 player)
 				}
 			}
 		}
-		glbChampionSquad[di].PlagueValue = 0;
+		tblChampionSquad[di].PlagueValue = 0;
 	}
 	return;
 }
@@ -187,12 +187,12 @@ void SkWinCore::PROCESS_PLAGUE(i16 player, Bit16u counters)
 		return;
 	if (player +1 == cd.pi.glbNextChampionNumber)
 		return;
-	Champion *champion = &glbChampionSquad[player];
+	Champion *champion = &tblChampionSquad[player];
 	WOUND_PLAYER(player, 1, 0, 0);
 	ADJUST_STAMINA(player, max_value(1, si << 4));
 	champion->curWater(champion->curWater() -100);
-	if (champion->curWater() < WATER_MIN)
-		champion->curWater(WATER_MIN);
+	if (champion->curWater() < M1024_WATER_MIN)
+		champion->curWater(M1024_WATER_MIN);
 
 
 	champion->heroFlag |= CHAMPION_FLAG_0800;	// 0x800
@@ -429,14 +429,14 @@ i16 SkWinCore::CONSUME_ANY_FROM_HAND(i16 iDBItem, i16 iItemID)
 
 	for (iPlayer = 0; iPlayer < 4; iPlayer++) {
 		for (iHand = 0; iHand < 2; iHand++) {
-			rlItem = glbChampionSquad[iPlayer].Possess(C00_INVENTORY_HAND_RIGHT + iHand);
+			rlItem = tblChampionSquad[iPlayer].Possess(C00_INVENTORY_HAND_RIGHT + iHand);
 			if (rlItem != OBJECT_NULL) {
 				if (rlItem.orif.db == iDBItem) {
 					if (iDBItem == DB_CATEGORY_MISC_ITEM) {
 						xMisc = GET_ADDRESS_OF_RECORDA(rlItem);
 						if (xMisc->ItemType() == iItemID) {
 							iFoundAndConsumed = 1;
-							glbChampionSquad[iPlayer].Possess(C00_INVENTORY_HAND_RIGHT + iHand, OBJECT_NULL);
+							tblChampionSquad[iPlayer].Possess(C00_INVENTORY_HAND_RIGHT + iHand, OBJECT_NULL);
 							DEALLOC_RECORD(rlItem);
 							return iFoundAndConsumed;
 						}

@@ -189,6 +189,11 @@ enum dtIndex
 #define DIR_SOUTH	2
 #define DIR_WEST	3
 
+#define C0_DIR_ROTATION_NONE		0
+#define C1_DIR_ROTATION_RIGHT_90	1
+#define C2_DIR_ROTATION_UTURN_180	2
+#define C3_DIR_ROTATION_LEFT_270	3
+
 // Playback 0x157C = 5500 Hz
 #define PLAYBACK_FREQUENCY			5500
 #define SOUND_FREQUENCY_5500		5500
@@ -600,6 +605,13 @@ enum SkillLevel {
 #define C68_GDAT_IMG_SPELL_EXPLOSION_INSIDE_STRONG			0x44
 
 
+
+#define M01_GDAT_IMG_FLYING_METHOD_NONE				0xFFFF
+#define C00_GDAT_IMG_FLYING_METHOD_WHIRLING			0x00
+#define C01_GDAT_IMG_FLYING_METHOD_BACK				0x01
+#define C02_GDAT_IMG_FLYING_METHOD_ONLY_FRONT		0x02
+#define C03_GDAT_IMG_FLYING_METHOD_SIDE				0x03
+
 //------------------------------------------------------------------------------
 //	INTERFACE / GRAPHICS
 //------------------------------------------------------------------------------
@@ -710,16 +722,16 @@ enum SkillLevel {
 
 #define GDAT_GFXSET_PIT_DOWN_D1_L1					0x72
 
-#define GDAT_GFXSET_x06_DOOR_FRAME_SIDE_D0_L		0xD3
-#define GDAT_GFXSET_x06_DOOR_FRAME_SIDE_D0_R		0xD4
+#define GDAT_GFXSET_xD3_DOOR_FRAME_SIDE_D0_L		0xD3
+#define GDAT_GFXSET_xD4_DOOR_FRAME_SIDE_D0_R		0xD4
 
 
-#define GDAT_GFXSET_SEE_THRU						0xF1	// CUSTOM, for SEE THRU WALLS
+#define GDAT_GFXSET_xF1_SEE_THRU					0xF1	// CUSTOM, for SEE THRU WALLS
 
-#define GDAT_GFXSET_SQUAD_4X						0xF5
-#define GDAT_GFXSET_SQUAD_SINGLE					0xF6
+#define GDAT_GFXSET_xF5_SQUAD_4X					0xF5
+#define GDAT_GFXSET_xF6_SQUAD_SINGLE				0xF6
 
-#define GDAT_GFXSET_DATA_FD							0xFD
+#define GDAT_GFXSET_xFD_DATA_FD						0xFD
 
 #define GDAT_GFXSET_xFC_TEXTPANEL_FRONT				0xFC	// front text panel
 #define GDAT_GFXSET_xFD_TEXTPANEL_LSIDE				0xFD	// L-side text panel
@@ -1731,6 +1743,10 @@ typedef enum
 #define RECT_178_CHAMPION_NAME_BOX_2				178
 #define RECT_179_CHAMPION_NAME_BOX_3				179
 #define RECT_180_CHAMPION_NAME_BOX_4				180
+
+#define RECTZONE_185_CHAMPION_1_STATBARS			185
+#define RECTZONE_193_CHAMPION_1_STATBAR_1			193
+
 
 #define RECTZONE_261_SPELL_RUNE_1					261
 

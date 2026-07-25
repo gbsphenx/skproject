@@ -875,8 +875,8 @@ void SkWinCore::LOG_FULL_DUNGEON_INFO()
 		RectTable* pRectTable = &glbRectNoTable;
 
 		while (pRectTable != NULL) {
-			printf("RECT %03d [%p] => [%p] %04d %04d . %03d %03d\n", iRectTableIndex, pRectTable, pRectTable->pb0, pRectTable->w4, pRectTable->w6, pRectTable->b8, pRectTable->b9);
-			pRectTable = pRectTable->pb0;
+			printf("RECT %03d [%p] => [%p] %04d %04d . %03d %03d\n", iRectTableIndex, pRectTable, pRectTable->pNextTable, pRectTable->iRectNoMin, pRectTable->iRectNoMax, pRectTable->b8, pRectTable->b9);
+			pRectTable = pRectTable->pNextTable;
 			iRectTableIndex++;
 		}
 	}
@@ -981,4 +981,49 @@ void SkWinCore::DEBUG_HELP_DISPLAY_STACK(i16 iMapX, i16 iMapY, i16 iMapLevel)
 	printf("--------------------------------------------\n");
 #endif
 
+}
+
+
+void SkWinCore::DEBUG_SHOW_RECT_INFO(SRECT xRectZone)
+{
+	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_YELLOW, BLACK);
+	printf("RECTZONE INFO: pos = %d,%d size = %d,%d\n", xRectZone.x, xRectZone.y, xRectZone.cx, xRectZone.cy);
+	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
+}
+
+void SkWinCore::DEBUG_SHOW_MULTIRECT_INFO(sk3f6c xMultiRects)
+{
+	CHANGE_CONSOLE_COLOR(BRIGHT, WHITE, BLACK);
+	printf("MULTIRECTZONE INFO: cache main %d -- cache %d\n", xMultiRects.iCacheIndex0, xMultiRects.iCacheIndex);
+	DEBUG_SHOW_RECT_INFO(xMultiRects.rc2);
+	for (int i = 0; i < 5; i++)
+		DEBUG_SHOW_RECT_INFO(xMultiRects.w12[i]);
+	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
+}
+
+void SkWinCore::DEBUG_SHOW_ICON_PICT_BUFF(
+	const U8 *buff, 
+	sk3f6c *tt, 
+	SRECT *rc, 
+	i16 srcx, 
+	i16 srcy, 
+	i16 colorkey, 
+	i16 flipmirror, 
+	U8 *localpal)
+{
+	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_RED, BLACK);
+	printf("ICON PICT BUFF: %p SIZE = (%d,%d) @%d\n", buff, READ_IMGBUFF_WIDTH(buff), READ_IMGBUFF_HEIGHT(buff), READ_IMGBUFF_BPP(buff));
+	printf(">> Local Palette: %p ");
+	if (localpal != NULL) {
+		for (int iPalIdx = 0; iPalIdx < 16; iPalIdx++)
+			printf("%02X ", localpal[iPalIdx]);
+	}
+	printf("\n");
+	DEBUG_SHOW_RECT_INFO(*rc);
+	DEBUG_SHOW_MULTIRECT_INFO(*tt);
+	
+
+	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_RED, BLACK);
+	printf("ICON PICT BUFF - END\n");
+	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
 }

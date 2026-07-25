@@ -2062,7 +2062,7 @@ namespace DM2Internal {
 
 	// 
 	struct sk3f6c { // 32 bytes
-		U16 w0;	// index. use with _4976_5d08[w0]
+		U16 iCacheIndex0;	// w0	index. use with _4976_5d08[w0]
 		SRECT rc2;	// rc2 (w2 w4 w6 w8)
 		//  w2 = w2.x
 		//  w4 = w2.y

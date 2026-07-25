@@ -774,9 +774,9 @@ void SkWinCore::INTERFACE_CHAMPION(U16 iChampionIndex)
 	}
 	if (si != 0) {
 		glbChampionInventory = 0;
-		Champion* xChampion = &tblChampionSquad[si -1];	// bp04
-		if (xChampion->curHP() != 0 && cd.pi.glbNextChampionNumber == 0) {
-			xChampion->heroFlag |= CHAMPION_FLAG_4000;	// 0x4000
+		Champion *pChampion = &tblChampionSquad[si -1];	// bp04
+		if (pChampion->curHP() != 0 && cd.pi.glbNextChampionNumber == 0) {
+			pChampion->heroFlag |= CHAMPION_FLAG_4000;	// 0x4000
 			REFRESH_PLAYER_STAT_DISP(si -1);
 		}
 		for (i16 bp08 = 0; bp08 < 4; bp08++) {

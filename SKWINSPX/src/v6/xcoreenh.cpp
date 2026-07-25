@@ -637,8 +637,8 @@ void SkWinCore::ADD_PARTY_CHAMPION(int iChampionID)
 	SELECT_CHAMPION_FROM_GDAT(iChampionID);
 	REVIVE_CHAMPION(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerDir, cd.pi.glbPlayerMap, UI_EVENTCODE_xA0_REVIVE_CHAMPION);
 	glbChampionShowResurrect = 0;
-	glbChampionSquad[0].playerDir(U8(cd.pi.glbPlayerDir));
-	glbChampionSquad[0].playerPos(U8(cd.pi.glbPlayerDir));
+	tblChampionSquad[0].playerDir(U8(cd.pi.glbPlayerDir));
+	tblChampionSquad[0].playerPos(U8(cd.pi.glbPlayerDir));
 	SET_PARTY_HERO_FLAG(0x4000);
 	SELECT_CHAMPION_LEADER(0);
 }
@@ -668,8 +668,8 @@ void SkWinCore::INIT_CHAMPIONS_CUSTOM_MODES()
 			SELECT_CHAMPION_FROM_GDAT(iChampionID);
 			REVIVE_CHAMPION(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerDir, cd.pi.glbPlayerMap, UI_EVENTCODE_xA0_REVIVE_CHAMPION);
 			glbChampionShowResurrect = 0;
-			glbChampionSquad[0].playerDir(U8(cd.pi.glbPlayerDir));
-			glbChampionSquad[0].playerPos(U8(cd.pi.glbPlayerDir));
+			tblChampionSquad[0].playerDir(U8(cd.pi.glbPlayerDir));
+			tblChampionSquad[0].playerPos(U8(cd.pi.glbPlayerDir));
 			SET_PARTY_HERO_FLAG(0x4000);
 			SELECT_CHAMPION_LEADER(0);
 
@@ -1162,7 +1162,7 @@ U16 SkWinCore::EXT_PROCEED_DCS_GENERIC_COMMAND(const char* sCommandName, const c
 	{
 		char* sMessage = (char*) sSubCommand;
 		if (sMessage != NULL)
-			DISPLAY_HINT_TEXT(COLOR_YELLOW, (U8*)sMessage);
+			DISPLAY_HINT_TEXT(C11_COLOR_YELLOW, (U8*)sMessage);
 	}
 	//==== END MESSAGES
 
@@ -1172,7 +1172,7 @@ U16 SkWinCore::EXT_PROCEED_DCS_GENERIC_COMMAND(const char* sCommandName, const c
 		char* sMessage = (char*) sSubCommand;
 		if (sMessage != NULL)
 		{
-			DISPLAY_HINT_TEXT(COLOR_YELLOW, (U8*)sMessage);
+			DISPLAY_HINT_TEXT(C11_COLOR_YELLOW, (U8*)sMessage);
 			CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_YELLOW, BLACK);
 			printf("%s\n", sMessage);
 			CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);		}
@@ -1316,8 +1316,8 @@ void SkWinCore::INIT_CHAMPION(Champion *xChampion)
 		}
 		xChampion->skills[iAttributeIndex] = bp14;
 	}
-	xChampion->curFood((RAND() & 255) + START_BASE_FOOD);
-	xChampion->curWater((RAND() & 255) + START_BASE_WATER);
+	xChampion->curFood((RAND() & 255) + C1500_START_BASE_FOOD);
+	xChampion->curWater((RAND() & 255) + C1500_START_BASE_WATER);
 
 }
 
