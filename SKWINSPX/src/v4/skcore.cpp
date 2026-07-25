@@ -1573,21 +1573,16 @@ U16 SkWinCore::IS_MISSILE_VALID_TO_LAUNCHER(U16 player, i16 hand, ObjectID rlWha
 }
 
 //^0CD5:00B2
-i16 SkWinCore::BETWEEN_VALUE(i16 minv, i16 newv, i16 maxv)
+i16 SkWinCore::BETWEEN_VALUE(i16 iMinVal, i16 iCheckedVal, i16 iMaxVal)
 {
-	//^0CD5:00B2
-	i16 si = newv;
-	if (si >= minv) {
-		//^0CD5:00C3
-		if (si <= maxv) {
-			//^0CD5:00CD
-			return si;
+	i16 iAdjustedValue = iCheckedVal;	// si
+	if (iAdjustedValue >= iMinVal) {
+		if (iAdjustedValue <= iMaxVal) {
+			return iAdjustedValue;
 		}
-		//^0CD5:00C8
-		return maxv;
+		return iMaxVal;
 	}
-	//^0CD5:00BE
-	return minv;
+	return iMinVal;
 }
 
 
@@ -2091,36 +2086,25 @@ U16 SkWinCore::QUERY_ORNATE_ANIM_FRAME(U8 cls1, U8 cls2, Bit32u tick, Bit32u del
 
 
 //^48AE:011A
-U16 SkWinCore::_48ae_011a(ObjectID recordLink)
+// SPX: _48ae_011a renamed GET_MISSILE_FLYING_IMAGE_METHOD
+U16 SkWinCore::GET_MISSILE_FLYING_IMAGE_METHOD(ObjectID recordLink)
 {
-	//^48AE:011A
 	ENTER(2);
-	//^48AE:011F
-	U8 bp01 = QUERY_CLS1_FROM_RECORD(recordLink);
-	//^48AE:012B
-	U8 bp02 = QUERY_CLS2_FROM_RECORD(recordLink);
-	//^48AE:0137
-	if (QUERY_GDAT_ENTRY_IF_LOADABLE(bp01, bp02, dtImage, 0x08) != 0) {
-		//^48AE:014C
-		if (QUERY_GDAT_ENTRY_IF_LOADABLE(bp01, bp02, dtImage, 0x0c) == 0) {
-			//^48AE:0164
-			return 3;
+	U8 iItemCls1Category = QUERY_CLS1_FROM_RECORD(recordLink);	// bp01
+	U8 iItemCls2MainItemId = QUERY_CLS2_FROM_RECORD(recordLink);	// bp02
+	if (QUERY_GDAT_ENTRY_IF_LOADABLE(iItemCls1Category, iItemCls2MainItemId, dtImage, 0x08) != 0) {	// coming front
+		if (QUERY_GDAT_ENTRY_IF_LOADABLE(iItemCls1Category, iItemCls2MainItemId, dtImage, 0x0C) == 0) {	// flying side (towards left)
+			return C03_GDAT_IMG_FLYING_METHOD_SIDE;	// does not have SIDE image
 		}
-		//^48AE:0169
-		if (QUERY_GDAT_ENTRY_IF_LOADABLE(bp01, bp02, dtImage, 0x0a) != 0) {
-			//^48AE:0181
-			return 1;
+		if (QUERY_GDAT_ENTRY_IF_LOADABLE(iItemCls1Category, iItemCls2MainItemId, dtImage, 0x0A) != 0) {	// parting ahead
+			return C01_GDAT_IMG_FLYING_METHOD_BACK;	// does have BACK image
 		}
-		//^48AE:0186
-		if (QUERY_GDAT_ENTRY_IF_LOADABLE(bp01, bp02, dtImage, 0x09) != 0) {
-			//^48AE:019E
-			return 0;
+		if (QUERY_GDAT_ENTRY_IF_LOADABLE(iItemCls1Category, iItemCls2MainItemId, dtImage, 0x09) != 0) {	// whirling front/back
+			return C00_GDAT_IMG_FLYING_METHOD_WHIRLING;	// does have WHIRLING image
 		}
-		//^48AE:01A2
-		return 2;
+		return C02_GDAT_IMG_FLYING_METHOD_ONLY_FRONT;	// only FRONT image
 	}
-	//^48AE:01A7
-	return 0xffff;
+	return M01_GDAT_IMG_FLYING_METHOD_NONE;	// 0xFFFF
 }
 
 
@@ -2322,339 +2306,10 @@ _1c6d:
 }
 
 
-//^0B36:0CBE
-void SkWinCore::_0b36_0cbe(sk3f6c *ref, U16 yy)
-{
-	ENTER(4);
-	if (ref->iCacheIndex != 0) {
-		SRECT *bp04 = ref->w12;
-		FIRE_HIDE_MOUSE_CURSOR();
-
-		do {
-			FIRE_BLIT_PICTURE(
-				QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(ref->w0),
-				_4976_4964,
-				bp04,
-				bp04->x - ref->rc2.x,
-				bp04->y - ref->rc2.y,
-				ref->rc2.cx,
-				glbScreenWidth,
-				-1,
-				0,
-				IMG_8_BPP,
-				IMG_8_BPP,
-				NULL
-				);
-			bp04++;
-		} while (--ref->iCacheIndex != 0);
-		FIRE_SHOW_MOUSE_CURSOR();
-	}
-	if (yy != 0) {
-		FREE_TEMP_CACHE_INDEX(ref->w0);
-		ref->w0 = 0xFFFF;
-	}
-	return;
-}
 
 
 
-//^2759:0644
-//SPX: _2759_0644 renamed UPDATE_RIGHT_PANEL
-void SkWinCore::UPDATE_RIGHT_PANEL(U16 xx)
-{
-	U16 bp0a = 0;
-	U16 bp0c = 0;
-	U16 bp0e = 0;
-	U16 bp12 = 0;
-	SkDP("URP\n");
-	if (cd.pi.glbNextChampionNumber == 0) {
-		if (cd.pi.glbChampionsCount == 0) {
-			if (_4976_531c != 0 || glbSomeChampionPanelFlag != 0) {
-				glbSomeChampionPanelFlag = 0;
-				_4976_531c = 0;
-				SOMETHING_RIGHT_PANEL_29ee_00a3(1);
-			}
-			glbRightPanelType = RIGHT_PANEL_UNDEFINED;
-			goto _0e03;
-		}
-		if (xx != 0) {
-			for (U16 iChampionIdx = 0; iChampionIdx < cd.pi.glbChampionsCount; iChampionIdx++) {	// bp06
-				// SPX: ??BUG?? The b42 is table of 2 elements only; shouldn't it be si < 2 ??
-				for (U16 iHandIdx = 0; iHandIdx < 2; iHandIdx++) {	// (U16 si=0; si <= 2; si++)
-					if (tblChampionSquad[iChampionIdx].handCooldown[iHandIdx] != 0) {
-						tblChampionSquad[iChampionIdx].handCooldown[iHandIdx] = tblChampionSquad[iChampionIdx].handCooldown[iHandIdx] -1;
-						if (tblChampionSquad[iChampionIdx].handCooldown[iHandIdx] == 0) {
-							LOAD_PROJECTILE_TO_HAND(iChampionIdx, iHandIdx);
-						}
-					}
-				}
-			}
-			if (glbRightPanelType == RIGHT_PANEL_MAGIC_MAP) {	// 3
-				ATLASSERT(cd.pi.glbChampionIndex < cd.pi.glbChampionsCount + 1);
-				Champion *champion = &glbChampionTable[cd.pi.glbChampionIndex];	//*bp04
-				if ((glbMagicalMapFlags & 0x0200) != 0) {
-					if (--glbMagicMapManaCounter == 0) {
-						if (champion->manaCurrent != 0) {
-							champion->manaCurrent--;
-							champion->heroFlag |= CHAMPION_FLAG_0800;
-							glbMagicMapManaCounter = 25 / glbMagicMapManaDivisor;
-						}
-						else {
-							glbSomeChampionPanelFlag = 1;
-							glbMagicalMapFlags = 0;
-						}
-					}
-				}
-				else if (champion->manaCurrent != 0) {
-					glbSomeChampionPanelFlag = 1;
-					glbMagicalMapFlags = 0;
-				}
-			}
-		}
-		if (glbChampionAttackDamage != 0) {
-			SHOW_ATTACK_RESULT(glbChampionAttackDamage);
-			_4976_531c = 1;
-			glbChampionAttackDamage = 0;
-			glbRightPanelType = RIGHT_PANEL_ATTACK_RESULT;	// 6
-			goto _0e03;
-		}
-		if (cd.pi.glbChampionIndex > 0) {
-			i16 bp06 = cd.pi.glbChampionIndex -1;
-			if (bp06 >= 0 && glbSelectedHandAction != 2) {
-				if (_4976_3de6[RCJ(4,bp06)][RCJ(2,glbSelectedHandAction)] != tblChampionSquad[bp06].Possess(glbSelectedHandAction)) {
-					DISPLAY_RIGHT_PANEL_SQUAD_HANDS();
-				}
-			}
-		}
-		U8 bp1c[4];
-		if (cd.pi.glbChampionIndex >= 0) {
-			U16 iChampionIdx;	// bp06
-			for (iChampionIdx = 0; iChampionIdx < cd.pi.glbChampionsCount; iChampionIdx++) {
-				Champion* xChampion = &tblChampionSquad[iChampionIdx];	// bp04
-				bp1c[iChampionIdx] = 0;
-				U8 bp07 = (xChampion->playerDir() +4 - cd.pi.glbPlayerDir) & 3;
-				i8 bp08 = (xChampion->playerPos() +4 - cd.pi.glbPlayerDir) & 3;
-				if (xChampion->curHP() != 0 && bp08 +1 == _4976_5dbc) {
-					bp08 = -1;
-				}
-				if (READ_UI8(_4976_3de2, iChampionIdx) != bp08 || _4976_3dde[RCJ(4,iChampionIdx)] != bp07) {
-					bp0c = 1;
-					bp12 = 1;
-					if (bp08 != -1) {
-						_4976_531c = 1;
-					}
-					WRITE_UI8(_4976_3de2, iChampionIdx, bp08);	// write current champion id for its squad position
-					_4976_3dde[RCJ(4,iChampionIdx)] = bp07;
-				}
-			}
-			if (glbSquadInterfaceMapGfxSet != glbMapGraphicsSet || glbGlobalSpellEffects.AuraOfSpeed != 0 || (!glbPartyHasInvisibility) != (!glbGlobalSpellEffects.Invisibility)) {
-				bp0c = 1;
-				glbSquadInterfaceMapGfxSet = glbMapGraphicsSet;
-				glbPartyHasInvisibility = (glbGlobalSpellEffects.Invisibility != 0) ? 1: 0;
-			}
-		}
-		if (_4976_531c != 0) {
-			if (glbSomeChampionPanelFlag > 1) {
-				glbSomeChampionPanelFlag--;
-				goto _0e03;
-			}
-			SOMETHING_RIGHT_PANEL_29ee_00a3(1);
-			_4976_531c = 0;
-			bp0a = 1;
-		}
-		if (cd.pi.glbChampionIndex == 0) {
-			glbRightPanelType = 0;
-			if (bp0a == 0 && bp12 != 0) {
-				glbPreviousRightPanelType = 0xffff;
-			}
-			for (U16 iChampionIdx = 0; iChampionIdx < cd.pi.glbChampionsCount; iChampionIdx++) {	// bp06
-				Champion *champion = &tblChampionSquad[iChampionIdx];
-				if (champion->curHP() == 0 && GET_PLAYER_AT_POSITION(champion->playerPos()) >= 0) {
-					continue;
-				}
-				bp0e = bp1c[iChampionIdx];
-				if (glbChampionAlive[iChampionIdx] != ((champion->curHP() > 0) ? 1 : 0)) {
-					glbChampionAlive[iChampionIdx] = ((champion->curHP() > 0) ? 1 : 0);
-					bp0e = 1;
-					glbPreviousRightPanelType = 0xFFFF;
-				}
-				U16 bp16 = ((ABS16(glbActivatedChampionIndex) -1 == iChampionIdx) ? 1 : 0);	// bp16
-				//SPX: 0 to 1 = hands
-				for (U16 iHandIdx = 0; iHandIdx < 2; iHandIdx++) {	// si
-					U16 iSelectedActiveHand = 0;	// bp14
-					U16 bp10 = 0;
-					if (bp16 != 0 && glbSelectedHand_2 == iHandIdx) {
-						if (glbActivatedChampionIndex > 0) {
-							iSelectedActiveHand = 1;
-						}
-						bp10 = 1;
-					}
-					U8 bp17 = (champion->handCooldown[iHandIdx] != 0) ? 1 : 0;
-					if (glbChampionHandCoolingDown[iChampionIdx][iHandIdx] != bp17) {
-						glbChampionHandCoolingDown[iChampionIdx][iHandIdx] = bp17;
-						bp10 = 1;
-					}
-					if (_4976_3de6[RCJ(4,iChampionIdx)][RCJ(2,iHandIdx)] != champion->Possess(iHandIdx) || bp0a != 0 || bp0e != 0) {
-						_4976_3de6[RCJ(4,iChampionIdx)][RCJ(2,iHandIdx)] = champion->Possess(iHandIdx);
-						bp10 = 1;
-					}
-					if (bp0a != 0 || bp0e != 0 || bp10 != 0) {
-						DRAW_HAND_ACTION_ICONS(iChampionIdx, iHandIdx, iSelectedActiveHand);
-					}
-				}
-				SkDP("URP-76\n");
-				U16 bp14 = 0;
-				// SPX: == 2 => spell selected instead of hand
-				if (bp16 != 0 && glbSelectedHand_2 == C2_HAND_SELECTED_SPELL) {
-					if (glbActivatedChampionIndex > 0) {
-						bp14 = 1;
-					}
-					bp0e = 1;
-				}
-				SkDP("URP-77\n");
-				U8 bp17 = (champion->herob44 != 0) ? 1 : 0;
-				if (glbChampionHandCoolingDown[iChampionIdx][2] != bp17) {
-					glbChampionHandCoolingDown[iChampionIdx][2] = bp17;
-					bp0e = 1;
-				}
-				SkDP("URP-78\n");
-				if (bp0a != 0 || bp0e != 0 || (_4976_3df7 != glbChampionLeader && (_4976_3df7 == iChampionIdx || glbChampionLeader == iChampionIdx))) {
-					DRAW_SQUAD_SPELL_AND_LEADER_ICON(iChampionIdx, bp14);
-				}
-				SkDP("URP-79\n");
-				if (tblChampionSquad[iChampionIdx].enchantmentPower != 0 || _4976_3f68 != 0) {
-					bp0c = 1;
-				}
-				if (tblChampionSquad[iChampionIdx].enchantmentPower != 0) {
-					_4976_3f68 |= 1 << iChampionIdx;
-				}
-				else {
-					_4976_3f68 &= ~(1 << iChampionIdx);
-				}
-			}
-			
-			if (glbActivatedChampionIndex < 0) {
-				glbActivatedChampionIndex = 0;
-			}
-			glbActivatedChampionIndex = -glbActivatedChampionIndex;
-			if (bp0a != 0 || bp0c != 0) {
-				DRAW_SQUAD_POS_INTERFACE();
-			}
-		}
-		SkDP("URP-8\n");
-		_4976_3df7 = glbChampionLeader;
-		if (cd.pi.glbChampionIndex > 0 && (glbSomeChampionPanelFlag != 0 || bp0a != 0 || bp0c != 0 || (glbRightPanelType == RIGHT_PANEL_MAGIC_MAP && xx != 0))) {
-			if (glbSomeChampionPanelFlag > 1) {
-				glbSomeChampionPanelFlag--;
-				goto _0e03;
-			}
-			if (glbMagicalMapFlags != 0 && glbSomeChampionPanelFlag == 0 && bp0a == 0) {
-				SOMETHING_RIGHT_PANEL_29ee_00a3(0);
-			}
-			else {
-				SOMETHING_RIGHT_PANEL_29ee_00a3(1);
-				DRAW_PLAYER_NAME_AT_CMDSLOT();
-				glbMagicalMapFlags &= 0xfbff;
-			}
-			if (glbSelectedHandAction == 2) {
-				glbRightPanelType = RIGHT_PANEL_SPELL;
-				DRAW_SPELL_PANEL();
-			}
-			else {
-				U16 bp06 = cd.pi.glbChampionIndex -1;
-				Champion *champion = &tblChampionSquad[bp06];	//*bp04
-				ObjectID di = champion->Possess(glbSelectedHandAction);
-				if (IS_CONTAINER_MAP(di) != 0 && glbMagicalMapFlags == 0) {
-					glbMagicMapManaDivisor = 1;
-					glbMagicMapManaCounter = 25;
-					if (champion->curMP() != 0) {
-						champion->manaCurrent--;
-						champion->heroFlag |= CHAMPION_FLAG_0800;	// 0x0800
-						glbMagicalMapFlags = 0x8200;	// 0x8200
-					}
-					else {
-						glbMagicalMapFlags = 0x8000;	// 0x8000
-					}
-					glbRightPanelType = RIGHT_PANEL_MAGIC_MAP;	// 3
-				}
-				else if (IS_CONTAINER_MONEYBOX(di) != 0) {
-					glbRightPanelType = RIGHT_PANEL_MONEY_BOX;	// 4
-				}
-				else if (IS_CONTAINER_CHEST(di) != 0 && glbRightPanelType != RIGHT_PANEL_CONTAINER) {	// != 5
-					__CHECK_ROOM_FOR_CONTAINER(di, GET_ADDRESS_OF_RECORD9(di));
-					glbRightPanelType = RIGHT_PANEL_CONTAINER;	// 5
-				}
 
-				if (glbRightPanelType == RIGHT_PANEL_MONEY_BOX) {	// 4
-					DRAW_MONEYBOX(di);
-				}
-				else if (glbRightPanelType == RIGHT_PANEL_CONTAINER) {	// 5
-					DRAW_CONTAINER_PANEL(di, 1);
-				}
-				else if (IS_ITEM_HAND_ACTIVABLE(bp06, di, glbSelectedHandAction) != 0 && glbRightPanelType != RIGHT_PANEL_MAGIC_MAP) {
-					glbRightPanelType = RIGHT_PANEL_HAND_ACTIONS;
-					if (glbRightPanelType != glbPreviousRightPanelType) {
-						_1031_0667();
-						glbPreviousRightPanelType = glbRightPanelType;
-					}
-					DRAW_SEVERAL_CMD_SLOTS();
-				}
-				else if (glbRightPanelType == RIGHT_PANEL_MAGIC_MAP) {	// 3
-					if ((glbMagicalMapFlags & 0x0400) == 0) {
-						glbPreviousRightPanelType = 0xFFFF;
-					}
-					DRAW_MAJIC_MAP(di);
-				}
-				else {
-					cd.pi.glbChampionIndex = 0;
-					glbRightPanelType = RIGHT_PANEL_SQUAD_HANDS;
-				}
-			}
-
-			glbSomeChampionPanelFlag = 0;
-		}
-		else {
-			if (cd.pi.glbChampionIndex > 0 && glbRightPanelType == RIGHT_PANEL_CONTAINER && xx != 0) {
-				SOMETHING_RIGHT_PANEL_29ee_00a3(0);
-				DRAW_CONTAINER_PANEL(glbChampionTable[cd.pi.glbChampionIndex].Possess(glbSelectedHandAction), 0);
-			}
-		}
-		SkDP("URP-9\n");
-		if (cd.pi.glbChampionIndex > 0 && _4976_3df9[RCJ(7,glbRightPanelType)] != 0 && (glbChampionTable[cd.pi.glbChampionIndex].enchantmentPower != 0 || _4976_3f68 != 0)) {
-			DRAW_PLAYER_ATTACK_DIR();
-			if (glbChampionTable[cd.pi.glbChampionIndex].enchantmentPower != 0) {
-				_4976_3f68 |=   1 << (i8(cd.pi.glbChampionIndex) -1);
-			}
-			else {
-				_4976_3f68 &= ~(1 << (i8(cd.pi.glbChampionIndex) -1));
-			}	
-		}
-
-_0e03:
-		SkDP("URP-10\n");
-		if (_4976_3f6c.w0 != 0xFFFF) {
-			_0b36_0cbe(&_4976_3f6c, 1);
-		}
-		if (glbRightPanelType != glbPreviousRightPanelType) {
-			_1031_0667();
-			glbPreviousRightPanelType = glbRightPanelType;
-		}
-	}
-	//SkD((DLV_TWEET, "Tweet: Right panel %d\n", glbRightPanelType));
-	return;
-}
-
-//^1031:04F5
-// _1031_04f5 renamed CLEAR_TRY_PUSH_PULL_OBJECT
-void SkWinCore::CLEAR_TRY_PUSH_PULL_OBJECT()
-{
-	ENTER(0);
-	if (glbTryPushPullObject != 0) {
-		glbTryPushPullObject = 0;
-		DRAW_ARROW_PANEL();
-	}
-	return;
-}
 
 
 
@@ -3721,123 +3376,87 @@ U16 SkWinCore::_48ae_0767_MONEY_VALUE(i16 xx, i16 yy, U8 *zz, i16 *vv, i16 ww)
 //^32CB:35C1
 U16 SkWinCore::_32cb_35c1(i16 *xx, i16 *yy, i16 zz, i16 ww)
 {
-	//^32CB:35C1
 	ENTER(2);
-	//^32CB:35C7
 	U16 cx = zz;
 	i16 di = *xx;
 	i16 si = *yy;
-	//^32CB:35D6
 	if (ww != 0) {
-		//^32CB:35DC
 		if ((si -= ww * 5) < 0) {
-			//^32CB:35E8
 			si += 20;
-			//^32CB:35EB
-			//^32CB:3607
 			di = _4976_408c[RCJ(21,di)][2];
 		}
-		//^32CB:35F6
 		else if (si > 24) {
-			//^32CB:35FB
 			si -= 20;
-			//^32CB:35FE
 			di = _4976_408c[RCJ(21,di)][3];
 		}
-		//^32CB:360A
 		if (di < 0)
-			//^32CB:360E
 			return 0;
 	}
-	//^32CB:3612
 	if (cx != 0) {
-		//^32CB:3616
 		i16 bp02 = (si % 5) + cx;
-		//^32CB:3623
 		if (bp02 > 4) {
-			//^32CB:362A
 			si += cx -4;
-			//^32CB:3631
 			di = _4976_408c[RCJ(21,di)][1];
 		}
-		//^32CB:363F
 		else if (bp02 < 0) {
-			//^32CB:3645
 			si += cx +4;
-			//^32CB:364C
 			di = _4976_408c[RCJ(21,di)][0];
 		}
 		else {
-			//^32CB:3657
 			si += cx;
 		}
-		//^32CB:3659
 		if (di < 0)
-			//^32CB:365D
-			//^32CB:360E
 			return 0;
 	}
-	//^32CB:365F
 	*xx = di;
 	*yy = si;
-	//^32CB:366B
 	return 1;
 }
 
 //^098D:0C50
-i16 SkWinCore::ROTATE_5x5_POS(i16 _5x5, U16 dir)
+i16 SkWinCore::ROTATE_5x5_POS(i16 iCurrentPos_5x5, U16 iDirRotation)
 {
 	ENTER(0);
-	i16 di = (_5x5 % 5) -2;
-	i16 si = (_5x5 / 5) -2;
-	i16 cx;
-	switch (dir) {
-		case 2:
-			di = -di;
-			si = -si;
-
+	i16 iGridXOffset = (iCurrentPos_5x5 % 5) - 2;	// di	(-2 to 2)
+	i16 iGridYOffset = (iCurrentPos_5x5 / 5) - 2;	// si	(-2 to 2)
+	i16 iTempOffset;	// cx
+	switch (iDirRotation) {
+		case C2_DIR_ROTATION_UTURN_180:
+			iGridXOffset = -iGridXOffset;
+			iGridYOffset = -iGridYOffset;
 			break;
 
-		case 3:
-			cx = di;
-			di = -si;
-			si = cx;
+		case C3_DIR_ROTATION_LEFT_270:
+			iTempOffset = iGridXOffset;
+			iGridXOffset = -iGridYOffset;
+			iGridYOffset = iTempOffset;
 			break;
 
-		case 1:
-			cx = di;
-			di = si;
-			si = -cx;
+		case C1_DIR_ROTATION_RIGHT_90:
+			iTempOffset = iGridXOffset;
+			iGridXOffset = iGridYOffset;
+			iGridYOffset = -iTempOffset;
 
 	}
-	return di +((si +2) * 5) +2;
+	return iGridXOffset +((iGridYOffset + 2) * 5) + 2;
 }
 
 //^48AE:07FD
 i16 SkWinCore::QUERY_OBJECT_5x5_POS(ObjectID rl, U16 reldir)
 {
-	//^48AE:07FD
 	ENTER(4);
-	//^48AE:0803
 	ObjectID di = rl;
-	//^48AE:0806
 	U16 si = 12;
-	//^48AE:0809
 	switch (di.DBType()) {
 		case dbCreature:
 			{
-				//^48AE:0821
 				Creature *bp04 = GET_ADDRESS_OF_RECORD4(di);
-				//^48AE:082E
 				return QUERY_CREATURE_5x5_POS(bp04, (reldir -bp04->b15_0_1()) & 3);
 			}
 		case dbCloud:
 			{
-				//^48AE:0852
 				if (GET_ADDRESS_OF_RECORDF(di)->b2_7_7() != 0)
-					//^48AE:0869
 					break;
-				//^48AE:086B
 				si = _4976_4a04[di.Dir()];
 
 				break;
@@ -3851,7 +3470,6 @@ i16 SkWinCore::QUERY_OBJECT_5x5_POS(ObjectID rl, U16 reldir)
 		case dbMiscellaneous_item:
 		case dbMissile:
 			{
-				//^48AE:086B
 				si = _4976_4a04[di.Dir()];
 
 				break;
@@ -3863,7 +3481,6 @@ i16 SkWinCore::QUERY_OBJECT_5x5_POS(ObjectID rl, U16 reldir)
 
 			break;
 	}
-	//^48AE:0878
 	return ROTATE_5x5_POS(si, reldir);
 }
 
@@ -10750,8 +10367,8 @@ _31b8:		// we jump there from loading a dungeon from new game
 			// Init champions
 			for (iChampionIndex = 0; iChampionIndex < 4; iChampionIndex++)
 			{
-				Champion *xChampion = &tblChampionSquad[iChampionIndex];
-				INIT_CHAMPION(xChampion);
+				Champion *pChampion = &tblChampionSquad[iChampionIndex];
+				INIT_CHAMPION(pChampion);
 			}
 
 
@@ -17210,6 +16827,9 @@ void SkWinCore::GAME_LOOP()
 
 		SkD((SkCodeParam::bDebugPrint, "GAME LOOP %08d> SET TICK BALANCE\n", iLoopCount));
 
+		SKDEBUG_MINI_LOOP();
+		continue;
+
 		//DISPLAY_HINT_TEXT(C11_COLOR_YELLOW, message);
 		// SPX get speed from window menu 
 		//stdTickBalance = skWinApp->spfact*4;
@@ -17281,7 +16901,7 @@ _00a4:
 		/// SPX: glbGameTick is a general tick counter : each 16 or 64 then do update
 		if ((X16(glbGameTick) & ((cd.pi.glbIsPlayerSleeping != 0) ? 15 : 0x3F)) == 0)
 			UPDATE_CHAMPIONS_STATS();
-		GLOBAL_UPDATE_UNKNOW1();
+		UPDATE_ANIMATED_ITEM_CURSOR();
 		UPDATE_GENERAL_CHAMPIONS_STAT_DISP(1);
 		if (cd.pi.glbPlayerDefeated != 0)
 			return;
@@ -17356,6 +16976,41 @@ _01f7:
 	return;
 }
 
+
+UINT SkWinCore::SKDEBUG_MINI_LOOP()
+{
+	{
+		stdTickBalance = SkCodeParam::iTickSpeedFactor*4;
+		glbTickSpeed = stdTickBalance;
+		CHOOSE_HIGHLIGHT_ARROW_PANEL();
+
+		if ((X16(glbGameTick) & ((cd.pi.glbIsPlayerSleeping != 0) ? 15 : 0x3F)) == 0)
+			UPDATE_CHAMPIONS_STATS();
+		UPDATE_ANIMATED_ITEM_CURSOR();
+		UPDATE_GENERAL_CHAMPIONS_STAT_DISP(1);
+
+		glbGameTick++;
+		ATLASSERT(ValidateMements(false));
+		PROCESS_QUEUED_DEALLOC_RECORD();
+
+		if (false) {
+_01f7:
+			_1031_0d36_KEYBOARD(0x20, SPECIAL_UI_KEY_TRANSFORMATION());
+		}
+
+		MessageLoop(true); // in game
+		do {
+			if (IS_THERE_KEY_INPUT_2() != 0) {
+				goto _01f7;
+			}
+			MAIN_LOOP();
+			MessageLoop(false); // in game
+
+		} while (glbTickStepReached == 0 || _4976_4c02 == 0);
+	}
+
+	return 0;
+}
 
 
 //^13AE:005C
@@ -17444,7 +17099,7 @@ _00a4_proceed_timers:
 
 		if ((X16(glbGameTick) & ((cd.pi.glbIsPlayerSleeping != 0) ? 15 : 0x3F)) == 0)
 			UPDATE_CHAMPIONS_STATS();
-		GLOBAL_UPDATE_UNKNOW1();
+		UPDATE_ANIMATED_ITEM_CURSOR();
 		UPDATE_GENERAL_CHAMPIONS_STAT_DISP(1);
 		if (cd.pi.glbPlayerDefeated != 0)
 			return -1;

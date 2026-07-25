@@ -2609,3 +2609,39 @@ void SkWinCore::FIRE_1031_050c()
 	}
 	return;
 }
+
+
+
+//^0B36:0CBE
+void SkWinCore::_0b36_0cbe(sk3f6c *ref, U16 yy)
+{
+	ENTER(4);
+	if (ref->iCacheIndex != 0) {
+		SRECT *bp04 = ref->w12;
+		FIRE_HIDE_MOUSE_CURSOR();
+
+		do {
+			FIRE_BLIT_PICTURE(
+				QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(ref->w0),
+				_4976_4964,
+				bp04,
+				bp04->x - ref->rc2.x,
+				bp04->y - ref->rc2.y,
+				ref->rc2.cx,
+				glbScreenWidth,
+				-1,
+				0,
+				IMG_8_BPP,
+				IMG_8_BPP,
+				NULL
+				);
+			bp04++;
+		} while (--ref->iCacheIndex != 0);
+		FIRE_SHOW_MOUSE_CURSOR();
+	}
+	if (yy != 0) {
+		FREE_TEMP_CACHE_INDEX(ref->w0);
+		ref->w0 = 0xFFFF;
+	}
+	return;
+}

@@ -1093,6 +1093,8 @@ public:
 	UINT SKLIB_GAMELOOP(); // Call from lib
 	UINT SKLIB_GAME_STEP(); // Call from lib
 	UINT SKLIB_HANDLE_UI_EVENT(MousePosition *ref); // Call from lib
+
+	UINT SKDEBUG_MINI_LOOP();
 protected:
 	//--------------------------------------------------------------------------
 
@@ -1489,7 +1491,7 @@ protected:
 	void SUMMARIZE_STONE_ROOM(ExtendedTileInfo *ref, U16 dir, U16 xx, U16 yy);
 	i16 QUERY_DUNGEON_MAP_CHIP_PICT(Bit8u cls1, Bit8u cls2, Bit8u **ppBuff, Bit8u *localpal);
 	void DRAW_CHIP_OF_MAGIC_MAP(const Bit8u *buff, U16 aa, U16 xx, U16 yy, U16 flipMirror, Bit8u *localpal);
-	U16 _48ae_011a(ObjectID recordLink);
+	U16 GET_MISSILE_FLYING_IMAGE_METHOD(ObjectID recordLink);	// _48ae_011a
 	void DRAW_MAP_CHIP(ObjectID recordLink, i16 ss, i16 tt, i16 ww, U16 xx, U16 yy, Bit8u cc, U16 flags);
 	void _29ee_1946(ObjectID recordLink, i16 xx, i16 yy, i16 zz, i16 dir, i16 ss, i16 tt, U16 flags);
 	void DRAW_MAJIC_MAP(ObjectID recordLink);
@@ -1719,7 +1721,7 @@ protected:
 	U16 _32cb_0287_DRAW_W_ORNATE(U16 xx, U16 yy, U16 zz); // _32cb_0287
 	void CLICK_WALL(U16 iClickSide); // _121e_0003
 	U16 _32cb_35c1(i16 *xx, i16 *yy, i16 zz, i16 ww);
-	i16 ROTATE_5x5_POS(i16 _5x5, U16 dir);
+	i16 ROTATE_5x5_POS(i16 iCurrentPos_5x5, U16 iDirRotation);
 	i16 QUERY_OBJECT_5x5_POS(ObjectID rl, U16 reldir);
 	ObjectID _32cb_03a6(U16 xx, U16 yy, U16 zz, U16 ww, U16 vv, ObjectID ss, U16 tt, U16 uu);
 	void _121e_013a(U16 xx, U16 yy, U16 zz);
@@ -2394,7 +2396,7 @@ protected:
 	void TIMER_3a15_05f7(X16 xx);	// _3a15_05f7
 	void PROCESS_PLAYERS_DAMAGE();
 	void UPDATE_CHAMPIONS_STATS();
-	void GLOBAL_UPDATE_UNKNOW1();
+	void UPDATE_ANIMATED_ITEM_CURSOR();
 	void BURN_PLAYER_LIGHTING_ITEMS();
 	void FILL_RECT_ANY(SRECT* pRectZone, U8 colorkey); // _44c8_1dfc
 	void DRAW_MESSAGE_HINT_TEXTS();	// _3929_086f

@@ -1228,20 +1228,14 @@ _059e:
 //^19F0:045A
 void SkWinCore::_19f0_045a(i16 xx, i16 yy)
 {
-	//^19F0:045A
 	ENTER(0);
-	//^19F0:045D
 	if (xx == glbCreatureSomeX && yy == glbCreatureSomeY && glbCurrentMapIndex == glbCreatureSomeZMap)
-		//^19F0:0476
 		return;
-	//^19F0:0478
 	glbCreatureSomeZMap = glbCurrentMapIndex;
 	_4976_521c = GET_TILE_VALUE(glbCreatureSomeX = xx, glbCreatureSomeY = yy);
-	//^19F0:0498
 	_4976_5222 = glbCreatureSomeObjectFromTile = glbCreatureSomeFirstObjectOnTile = ((_4976_521c & 0x10) != 0) ? OBJECT_NULL : OBJECT_END_MARKER;
 	_4976_5224 = _4976_5225 = 0;
 	_4976_522c = 0xff;
-	//^19F0:04BD
 	return;
 }
 
@@ -2031,9 +2025,7 @@ U16 SkWinCore::QUERY_CREATURE_5x5_POS(Creature *ref, U16 dir)
 	// 4 |20|21|22|23|24|
 	// V y
 
-	//^32CB:0054
 	ENTER(4);
-	//^32CB:0058
 	if (ref->InternalID() == 0xFF)
 		return 12;
 	sk1c9a02c3* xAnimInfo = GET_CREATURE_INFO_DATA(ref, QUERY_CREATURE_AI_SPEC_FROM_TYPE(ref->CreatureType()));	// bp04

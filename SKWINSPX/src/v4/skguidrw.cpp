@@ -1420,7 +1420,7 @@ _1554:
 						//^29EE:166B
 						bp0a = 3;
 						//^29EE:1670
-						switch (_48ae_011a(si) +1) {
+						switch (GET_MISSILE_FLYING_IMAGE_METHOD(si) +1) {
 							case 0:
 								//^29EE:1686
 								//^29EE:16B0
@@ -2143,47 +2143,36 @@ void SkWinCore::DRAW_CHAMPION_PICTURE(U16 iChampionIndex)
 }
 
 //^2E62:011B
-void SkWinCore::DRAW_PLAYER_3STAT_HEALTH_BAR(U16 player)
+void SkWinCore::DRAW_PLAYER_3STAT_HEALTH_BAR(U16 iChampionIndex)
 {
-	//^2E62:011B
 	ENTER(32);
-	//^2E62:0121
 	SRECT bp0c;
 	SOME_RECT_0b36_0d67(
 		&_4976_3ff0,
-		QUERY_EXPANDED_RECT(player +185, &bp0c)
+		QUERY_EXPANDED_RECT(iChampionIndex + RECTZONE_185_CHAMPION_1_STATBARS, &bp0c)
 		);
-	//^2E62:0143
-	Champion *bp04 = &tblChampionSquad[player];
-	//^2E62:0154
-	i16 bp20[3][2];
-	bp20[0][0] = bp04->curHP();
-	bp20[0][1] = bp04->maxHP();
-	bp20[1][0] = bp04->curStamina();
-	bp20[1][1] = bp04->maxStamina();
-	bp20[2][0] = bp04->curMP();
-	bp20[2][1] = max_value(bp04->maxMP(), bp04->curMP());	// SPX Max because of MANA modifier
-	//^2E62:018C
-	U16 di = player +193;
-	//^2E62:0194
-	for (i16 si = 0; si < 3; si++, di += 4) {
-		//^2E62:0199
-		if (bp20[si][1] != 0) {
-			//^	
+	Champion *pChampion = &tblChampionSquad[iChampionIndex];	// bp04
+	i16 iStatBarVal[3][2];	// bp20
+	iStatBarVal[0][0] = pChampion->curHP();
+	iStatBarVal[0][1] = pChampion->maxHP();
+	iStatBarVal[1][0] = pChampion->curStamina();
+	iStatBarVal[1][1] = pChampion->maxStamina();
+	iStatBarVal[2][0] = pChampion->curMP();
+	iStatBarVal[2][1] = max_value(pChampion->maxMP(), pChampion->curMP());	// SPX Max because of MANA modifier
+	U16 iBarRectNo = iChampionIndex + RECTZONE_193_CHAMPION_1_STATBAR_1;	// di
+	for (i16 iBarIdx = 0; iBarIdx < 3; iBarIdx++, iBarRectNo += 4) {	// si
+		if (iStatBarVal[iBarIdx][1] != 0) {
 			if (SCALE_RECT(
-				di,
+				iBarRectNo,
 				&bp0c,
-				10000,
-				(bp20[si][0] * i32(10000)) / bp20[si][1]
+				C10000_RECTZONE_SCALE_FULL,
+				(iStatBarVal[iBarIdx][0] * i32(C10000_RECTZONE_SCALE_FULL)) / iStatBarVal[iBarIdx][1]
 				) != NULL
 			){
-				//^2E62:01F2
 				SRECT bp14;
 				COPY_MEMORY(&bp0c, &bp14, 8);
-				//^2E62:0208
 				bp14.x += _4976_0114;
 				bp14.y += _4976_0116;
-				//^2E62:0214
 				FILL_RECT_SUMMARY(
 					&_4976_3ff0,
 					&bp14,
@@ -2193,21 +2182,18 @@ void SkWinCore::DRAW_PLAYER_3STAT_HEALTH_BAR(U16 player)
 				FILL_RECT_SUMMARY(
 					&_4976_3ff0,
 					&bp0c,
-					QUERY_3STAT_BAR_COLOR(player, glbPaletteT16[glbChampionColor[player]])
+					QUERY_3STAT_BAR_COLOR(iChampionIndex, glbPaletteT16[glbChampionColor[iChampionIndex]])
 					);
 #else
-				//^2E62:022F
 				FILL_RECT_SUMMARY(
 					&_4976_3ff0,
 					&bp0c,
-					glbPaletteT16[glbChampionColor[player]]
+					glbPaletteT16[glbChampionColor[iChampionIndex]]
 					);
 #endif
 			}
 		}
-		//^2E62:0255
 	}
-	//^2E62:0261
 	return;
 }
 
@@ -2327,71 +2313,58 @@ void SkWinCore::DRAW_CRYOCELL_LEVER(U16 leverIsOn)
 }
 
 //^24A5:0E82
-void SkWinCore::DRAW_POWER_STAT_BAR(i16 curval, U16 rectno, U16 color, i16 vv, U16 ww)
+void SkWinCore::DRAW_POWER_STAT_BAR(i16 curval, U16 iRectNo, U16 color, i16 vv, U16 ww)
 {
 	// color
 	//   0 to  15: glbPaletteT16[color]
 	// 256 to 511: pure 256
 
 	ENTER(24);
-	i16 di = curval;
+	i16 di = curval;	// di
 	//i16 si = (di < -512) ? 8 : ((di < 0) ? 11 : zz);
 #if DM2_EXTENDED_MODE == 1	// custom: fetch color within GDAT
-	i16 si = (di < M0512_FOOD_WARNING) ? QUERY_FOOD_WATER_BAR_COLOR(0x0A, C08_COLOR_RED) : ((di < 0) ? QUERY_FOOD_WATER_BAR_COLOR(0x09, C11_COLOR_YELLOW) : color);
+	i16 iBarColor = (di < M0512_FOOD_WARNING) ? QUERY_FOOD_WATER_BAR_COLOR(0x0A, C08_COLOR_RED) : ((di < 0) ? QUERY_FOOD_WATER_BAR_COLOR(0x09, C11_COLOR_YELLOW) : color);
 #else
-	i16 si = (di < M0512_FOOD_WARNING) ? C08_COLOR_RED : ((di < 0) ? C11_COLOR_YELLOW : color);
+	i16 iBarColor = (di < M0512_FOOD_WARNING) ? C08_COLOR_RED : ((di < 0) ? C11_COLOR_YELLOW : color);	// si
 #endif
 	di -= vv;
 	SRECT bp08;
 	if (SCALE_RECT(
-		rectno,
+		iRectNo,
 		&bp08,
 		//(i32(10000) * di) / (2048 - vv),
-		(i32(10000) * di) / (C2048_FOOD_MAX - vv),
-		10000
+		(i32(C10000_RECTZONE_SCALE_FULL) * di) / (C2048_FOOD_MAX - vv),
+		C10000_RECTZONE_SCALE_FULL
 		) != NULL
 	) {
 		SRECT bp18;
 		SRECT bp10;
 		if (ww != 0) {
-			//^24A5:0EE7
-			QUERY_EXPANDED_RECT(rectno, &bp10);
-			//^24A5:0EF7
+			QUERY_EXPANDED_RECT(iRectNo, &bp10);
 			COPY_MEMORY(&bp10, &bp18, 8);
-			//^24A5:0F0D
 			if ((bp08.x +bp08.cx -1) == (bp10.x +bp10.cx -1)) {
-				//^24A5:0F1F
 				ww = 0;
 			}
 			else {
-				//^24A5:0F26
 				bp10.cx = (bp10.x +bp10.cx -1) -(bp08.x +bp08.cx -1);
-				//^24A5:0F39
 				bp10.x = bp08.x +bp08.cx +0;
 			}
 		}
 		else {
-			//^24A5:0F47
 			COPY_MEMORY(&bp08, &bp18, 8);
 		}
-		//^24A5:0F5D
 		bp18.x += _4976_0142;
 		bp18.y += _4976_0142;
-		//^24A5:0F66
 		FIRE_FILL_BACKBUFF_RECT(&bp18, glbPaletteT16[C00_COLOR_BLACK]);
-		//^24A5:0F7D
 #if DM2_EXTENDED_MODE == 1
-		FIRE_FILL_BACKBUFF_RECT(&bp08, ((si & 0x0100) == 0x0000) ? glbPaletteT16[si] : (si & 0x00FF));
+		FIRE_FILL_BACKBUFF_RECT(&bp08, ((iBarColor & 0x0100) == 0x0000) ? glbPaletteT16[iBarColor] : (iBarColor & 0x00FF));
 #else
-		FIRE_FILL_BACKBUFF_RECT(&bp08, glbPaletteT16[si]);
+		FIRE_FILL_BACKBUFF_RECT(&bp08, glbPaletteT16[iBarColor]);
 #endif
-		//^24A5:0F94
 		if (ww != 0) {
-			//^24A5:0F9A
 			FIRE_FILL_BACKBUFF_RECT(&bp10, glbPaletteT16[ww]);
 		}
 	}
-	//^24A5:0FB4
 	return;
 }
 
@@ -2528,43 +2501,31 @@ void SkWinCore::DRAW_GUIDED_STR(const U8 *ref)
 // _24a5_0732 renamed DRAW_STUFF_STRINGS
 void SkWinCore::DRAW_STUFF_STRINGS(i16 xx, i16 yy, U8 *str)
 {
-	//^24A5:0732
 	ENTER(208);
-	//^24A5:0737
 	U16 bp04 = 0;
 	U16 bp02;
 	if (QUERY_STR_METRICS_U16(str, &bp02, &bp04) == 0)
 		return;
-	//^24A5:075B
 	U8 bp00d0[200];
 	if (QUERY_MBCS_PRESENCE(str) == 0) {
-		//^24A5:076C
 		X16 si = 0;
 		bp00d0[0] = 2;
 		bp00d0[1] = 0x20;
 		U8 bp05;
 		while ((bp05 = str[si]) != 0) {
-			//^24A5:077A
 			if (bp05 >= 0x41 && bp05 <= 0x5a) {
-				//^24A5:0786
 				bp05 = bp05 -0x40;
 			}
 			else if (bp05 >= 0x7b) {
-				//^24A5:0793
 				bp05 = bp05 -0x60;
 			}
-			//^24A5:079B
 			bp00d0[si +2] = bp05;
 			si++;
-			//^24A5:07AC
 		}
-		//^24A5:07B9
 		bp00d0[si +2] = 0;
 		str = bp00d0;
 	}
-	//^24A5:07CD
 	DRAW_VP_STR(xx -(bp02 >> 1), yy, glbPaletteT16[C00_COLOR_BLACK], str);
-	//^24A5:07F3
 	return;
 }
 
@@ -3300,8 +3261,8 @@ void SkWinCore::REFRESH_PLAYER_STAT_DISP(i16 iChampIdx)
 	U16 bp18 = 0;
 	U16 bp1a = 0;
 	U16 bp1c = 0;
-	Champion* champion = &tblChampionSquad[iChampIdx];	//*bp04
-	U16 si = champion->heroFlag;
+	Champion *pChampion = &tblChampionSquad[iChampIdx];	//*bp04
+	U16 si = pChampion->heroFlag;
 	U16 bp08 = (iChampIdx + 1 == glbChampionInventory) ? 1 : 0; // 1=draw entire inventory panel
 	if (bp08 != 0 && _4976_022c != 0)
 		si |= 0x8000;
@@ -3343,7 +3304,7 @@ void SkWinCore::REFRESH_PLAYER_STAT_DISP(i16 iChampIdx)
 	if ((si & 0x4000) != 0) {
 		DRAW_PLAYER_3STAT_PANE(iChampIdx, 1);
 		bp1a = 1;
-		if (champion->curHP() != 0) {
+		if (pChampion->curHP() != 0) {
 			if (bp08 != 0) {
 				DRAW_CHAMPION_PICTURE(iChampIdx);
 				si |= 0x0800;
@@ -3359,16 +3320,16 @@ void SkWinCore::REFRESH_PLAYER_STAT_DISP(i16 iChampIdx)
 				iChampIdx + 165,
 				glbPaletteT16[C15_COLOR_WHITE],
 				glbPaletteT16[C01_COLOR_DARK_GRAY] |0x4000,
-				champion->firstName
+				pChampion->firstName
 				);
 		}
 	}
-	if (champion->curHP() != 0) {
+	if (pChampion->curHP() != 0) {
 		if ((si & 0x0800) != 0) {	// Refresh stats bar
 			DRAW_PLAYER_3STAT_PANE(iChampIdx, 0);
 			bp1a = 1;
 			DRAW_PLAYER_3STAT_HEALTH_BAR(iChampIdx);
-			if (champion->timerIndex != TIMER_NONE) {
+			if (pChampion->timerIndex != TIMER_NONE) {
 				DRAW_PLAYER_DAMAGE(iChampIdx);
 			}
 			if (bp08 != 0) {
@@ -3383,13 +3344,13 @@ void SkWinCore::REFRESH_PLAYER_STAT_DISP(i16 iChampIdx)
 					-1,
 					QUERY_GDAT_IMAGE_LOCALPAL(0x07, 0x00, 0x00)
 					);
-				DRAW_PLAYER_3STAT_TEXT(champion);
+				DRAW_PLAYER_3STAT_TEXT(pChampion);
 				// SPX: bp0d holds the grey slab/red frame around the mouth or eye.
 				U8 iSlabGfxID; //bp0d;
 #if (XDMX_EXTENDED_FEATURES == 0) // original
-				if (champion->curFood() < 0 || champion->curWater() < 0 || champion->PoisonValue != 0) {
+				if (pChampion->curFood() < 0 || pChampion->curWater() < 0 || pChampion->PoisonValue != 0) {
 #elif (XDMX_EXTENDED_FEATURES == 1)
-				if (champion->curFood() < 0 || champion->curWater() < 0 || champion->PoisonValue != 0 || champion->PlagueValue != 0) {
+				if (pChampion->curFood() < 0 || pChampion->curWater() < 0 || pChampion->PoisonValue != 0 || pChampion->PlagueValue != 0) {
 #endif
 					iSlabGfxID = GDAT_x05_CHAR_ICON_SLAB_RED_FRAME; // i am hungry! or poisoned!
 				}
@@ -3401,7 +3362,7 @@ void SkWinCore::REFRESH_PLAYER_STAT_DISP(i16 iChampIdx)
 				iSlabGfxID = GDAT_x04_CHAR_ICON_SLAB_GREY;
 				// SPX: review skills from STR to AM
 				for (i16 iSkillIdx = ATTRIBUTE_STRENGTH; iSkillIdx <= ATTRIBUTE_LAST; iSkillIdx++) {	// for (i16 di = 1; di <= 6; di++)
-					if (champion->attributes[iSkillIdx][ATTRIBUTE_CURRENT] < champion->attributes[iSkillIdx][ATTRIBUTE_MAX]) {
+					if (pChampion->attributes[iSkillIdx][ATTRIBUTE_CURRENT] < pChampion->attributes[iSkillIdx][ATTRIBUTE_MAX]) {
 						iSlabGfxID = GDAT_x05_CHAR_ICON_SLAB_RED_FRAME; // level gained! stats have changed !
 						break;
 					}
@@ -3420,7 +3381,7 @@ void SkWinCore::REFRESH_PLAYER_STAT_DISP(i16 iChampIdx)
 				bp12 = OBJECT_NULL;
 			}
 			else {
-				bp12 = champion->Possess(C01_INVENTORY_HAND_LEFT);
+				bp12 = pChampion->Possess(C01_INVENTORY_HAND_LEFT);
 			}
 			if (false
 				|| _4976_3d30 != bp12 
@@ -3434,7 +3395,7 @@ void SkWinCore::REFRESH_PLAYER_STAT_DISP(i16 iChampIdx)
 
 				if (SkCodeParam::bBWMode) {
 					SRECT xSymbolRect = {36, 15, 12, 12 }; // allow for positionning any rectangle even not defined in the rectangle DB
-					U16 iChampionID = champion->heroType;
+					U16 iChampionID = pChampion->heroType;
 					// SPX TEST
 					//DRAW_STATIC_PIC(GDAT_CATEGORY_x07_INTERFACE_CHARSHEET, 0x00, 0x50, 545, -1);	// Champion symbol over Mouth rectangle (for now)
 					DRAW_STATIC_PIC_X_SRECT(xSymbolRect, GDAT_CATEGORY_x16_CHAMPIONS, iChampionID, 0x50, 545, -1);	// Champion symbol over Mouth rectangle (for now)
@@ -3492,18 +3453,18 @@ _0a25:
 			if (SkCodeParam::bDM1Mode)
 				iTextColorPalIdx = glbPaletteT16[(iChampIdx == glbChampionLeader && cd.pi.glbNextChampionNumber == 0) ? C11_COLOR_YELLOW : C09_COLOR_ORANGE];
 			if (bp08 != 0) {	// in inventory sheet
-				SK_STRCPY(sTextBuffer, &champion->firstName[0]);
-				U8 cLastNameFirstChar = champion->lastName[0]; // bp09
+				SK_STRCPY(sTextBuffer, &pChampion->firstName[0]);
+				U8 cLastNameFirstChar = pChampion->lastName[0]; // bp09
 				if (cLastNameFirstChar != '.' && cLastNameFirstChar != ';' && cLastNameFirstChar != '-') {
 					SK_STRCAT(sTextBuffer, glbConstCharTxtSpace);
 				}
-				SK_STRCAT(sTextBuffer, &champion->firstName[8]);
+				SK_STRCAT(sTextBuffer, &pChampion->firstName[8]);
 				DRAW_LOCAL_TEXT(RECT_553_CHAMPION_TITLE_NAMES, iTextColorPalIdx, (cd.pi.glbNextChampionNumber != 0) ? glbPaletteT16[C01_COLOR_DARK_GRAY] : 0x4000, sTextBuffer);
 			}
 			else {
 				DRAW_PLAYER_3STAT_PANE(iChampIdx, 0);
 				bp1a = 1;
-				DRAW_NAME_STR(&_4976_3ff0, iChampIdx + RECT_165_CHAMPION_FIRSTNAME_1, iTextColorPalIdx, glbPaletteT16[C01_COLOR_DARK_GRAY] | 0x4000, champion->firstName);
+				DRAW_NAME_STR(&_4976_3ff0, iChampIdx + RECT_165_CHAMPION_FIRSTNAME_1, iTextColorPalIdx, glbPaletteT16[C01_COLOR_DARK_GRAY] | 0x4000, pChampion->firstName);
 			}
 		}
 		if (bp08 != 0 && (si & 0x1000) != 0) {
@@ -3520,7 +3481,7 @@ _0a25:
 				QUERY_GDAT_IMAGE_LOCALPAL(GDAT_CATEGORY_x07_INTERFACE_CHARSHEET, 0x00, 0x00)
 				);
 			U16 iChampWeightLoad = GET_PLAYER_WEIGHT(iChampIdx);	// bp10
-			U16 iChampMaxLoad = MAX_LOAD(champion);	// di
+			U16 iChampMaxLoad = MAX_LOAD(pChampion);	// di
 			U16 iChampCurrentLoadDisplay = 0;	// di
 			U16 iLoadTextColor = 0;	// bp06
 			if (iChampMaxLoad < iChampWeightLoad) {	// overloaded
@@ -3531,7 +3492,7 @@ _0a25:
 			}
 			glbChampWeightLoadDisplay = iChampCurrentLoadDisplay = iChampWeightLoad / 10;
 			glbChampWeightLoadTenthDisplay = iChampWeightLoad - (iChampCurrentLoadDisplay * 10); // this gets the unit of current load (or tenth of weight load)
-			glbChampMaxLoadDisplay = MAX_LOAD(champion) / 10;
+			glbChampMaxLoadDisplay = MAX_LOAD(pChampion) / 10;
             QUERY_GDAT_TEXT(GDAT_CATEGORY_x07_INTERFACE_CHARSHEET, 0x00, 0x2A, sTextBuffer);		// 0x2A = text template XX / XX KG
 			DRAW_LOCAL_TEXT(RECT_555_CHAMPION_SHEET_LOAD_STRING, glbPaletteT16[iLoadTextColor], glbPaletteT16[C01_COLOR_DARK_GRAY] | 0x4000, sTextBuffer);
 			bp18 = 1;
@@ -3544,7 +3505,7 @@ _0a25:
 		_4976_022c = 0;
  		CHANGE_VIEWPORT_TO_INVENTORY(0);
 	}
-	champion->heroFlag &= 0x03FF;	// 0x03FF
+	pChampion->heroFlag &= 0x03FF;	// 0x03FF
 	return;
 }
 
@@ -3664,77 +3625,47 @@ void SkWinCore::DRAW_TRANSPARENT_STATIC_PIC(U8 cls1, U8 cls2, U8 cls4, U16 rectn
 // _32cb_0f82 renamed _32cb_0f82_SHOP_GLASS
 void SkWinCore::_32cb_0f82_SHOP_GLASS(Actuator *ref, U8 cls4, i16 bb, i16 cellPos, U16 horzStretch, U16 vertStretch, U16 rectno, U16 gg, U16 colorkey1)
 {
-	//^32CB:0F82
 	ENTER(58);
-	//^32CB:0F88
 	Actuator *bp0c = NULL;
-	//^32CB:0F92
 	U16 bp26;
 	for (ObjectID di = GET_TILE_RECORD_LINK(ref->Xcoord(), ref->Ycoord()); di != OBJECT_END_MARKER && (bp26 = di.DBType()) <= dbActuator; di = GET_NEXT_RECORD_LINK(di)) {
-		//^32CB:0FB4
 		if (bp26 == dbActuator) {
-			//^32CB:0FBA
 			bp0c = GET_ADDRESS_OF_ACTU(di);
-			//^32CB:0FC7
 			if (bp0c->ActuatorType() == ACTUATOR_FLOOR_TYPE__SHOP) // 0x30 -> 'Shop exhibition'
-				//^32CB:0FD4
 				break;
 		}
-		//^32CB:0FD6
 	}
-	//^32CB:0FF4
 	i16 si = bp0c->ActuatorData();
 	U16 bp24 = si;
-	//^32CB:1006
 	U8 bp11 = U8(ref->ActuatorData());
-	//^32CB:1016
 	if (ref->ActiveStatus() == 0 || ref->OnceOnlyActuator() != 0) {
-		//^32CB:1032
 		U16 bp14 = (ref->Delay() * 3) +16;
-		//^32CB:104A
 		U8 *bp04 = ALLOC_MEMORY_RAM(64, afDefault, 1024);
-		//^32CB:1061
 		if (QUERY_CREATURES_ITEM_MASK(bp11, U8(bp14), bp04, 0) != 0) {
-			//^32CB:107F
 			U16 *bp10 = reinterpret_cast<U16 *>(QUERY_GDAT_ENTRY_DATA_BUFF(GDAT_CATEGORY_x09_WALL_GFX, cls4, dt08, GDAT_WALL_ORNATE__DATA_13));
-			//^32CB:1097
 			i16 bp28;
 			if (bp10 != NULL) {
-				//^32CB:109B
 				bp28 = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_x09_WALL_GFX, cls4, dt08, GDAT_WALL_ORNATE__DATA_13) >> 1;
-				//^32CB:10B2
 				for (si = 0; si < bp28; si++) {
-					//^32CB:10B6
 					if ((bp10[si] & 511) == bp24)
-						//^32CB:10C8
 						break;
 				}
 			}
 			do {
-				//^32CB:10D0
 				si += (ref->OnceOnlyActuator() != 0 || _4976_5a96 < 0) ? 1 : -1;
-				//^32CB:10F2
 				if (bp10 != NULL) {
-					//^32CB:10FA
 					if (si < 0) {
-						//^32CB:10FE
 						si = bp28 -1;
 					}
-					//^32CB:1106
 					else if (si >= bp28) {
-						//^32CB:110B
 						si = 0;
 					}
-					//^32CB:110D
 					bp24 = bp10[si] & 511;
 				}
 				else {
-					//^32CB:111E
 					si &= 511;
 					bp24 = si;
 				}
-				//^32CB:1124
-				//^32CB:1127
 			} while (false
 				|| (bp04[bp24 >> 3] & (1 << (bp24 & 7))) == 0
 				|| (true
@@ -3744,130 +3675,79 @@ void SkWinCore::_32cb_0f82_SHOP_GLASS(Actuator *ref, U8 cls4, i16 bb, i16 cellPo
 					&& _2fcf_16ff(bp24) == 0
 					)
 				);
-			//^32CB:11A2
 			ref->OnceOnlyActuator(0);
 		}
-		//^32CB:11AA
 		ref->ActiveStatus(1);
-		//^32CB:11B2
 		bp0c->ActiveStatus(1);
-		//^32CB:11BA
 		bp0c->ActuatorData(bp24);
-		//^32CB:11CD
 		DEALLOC_UPPER_MEMORY(64);
 	}
-	//^32CB:11D8
 	U16 bp18 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x09_WALL_GFX, cls4, dtImageOffset, GDAT_WALL_ORNATE__ITEM_INSIDE_DISPLACEMENT);	// 0xFD
-	//^32CB:11EE
 	QUERY_TEMP_PICST(0, horzStretch, vertStretch, i8(bp18 >> 8), i8(bp18), bb, rectno, gg, colorkey1, -1, QUERY_ITEMDB_FROM_DISTINCTIVE_ITEMTYPE(bp24),
 		GET_ITEMTYPE_OF_ITEMSPEC_ACTUATOR(bp24), 0x00);
-	//^32CB:122E
 	DRAW_TEMP_PICST();
-	//^32CB:1232
 	if (true
 		&& IS_DISTINCTIVE_ITEM_ON_ACTUATOR(ref, bp24, 1) == 0
 		&& IS_DISTINCTIVE_ITEM_ON_ACTUATOR(bp0c, bp24, 0) == 0
 	) {
-		//^32CB:1264
 		U16 *bp10 = reinterpret_cast<U16 *>(QUERY_GDAT_ENTRY_DATA_BUFF(GDAT_CATEGORY_x09_WALL_GFX, cls4, dt08, GDAT_WALL_ORNATE__DATA_13));
-		//^32CB:127C
 		if (bp10 != NULL) {
-			//^32CB:1280
 			i16 bp28 = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_x09_WALL_GFX, cls4, dt08, GDAT_WALL_ORNATE__DATA_13) >> 1;
-			//^32CB:1297
 			for (si = 0; si < bp28; si++) {
-				//^32CB:129B
 				if ((bp10[si] & 511) == bp24)
-					//^32CB:12AD
 					break;
 			}
-			//^32CB:12B5
 			ObjectID di;
 			if ((bp10[si] & 0x8000) != 0 && (di = ALLOC_NEW_DBITEM_DEEPLY(bp24)) != OBJECT_NULL) {
-				//^32CB:12D5
 				APPEND_RECORD_TO(di, NULL, ref->Xcoord(), ref->Ycoord());
 			}
 		}
 		else {
-			//^32CB:12FD
 			QUERY_TEMP_PICST(0, horzStretch, vertStretch, i8(bp18 >> 8), i8(bp18), bb, rectno, gg, colorkey1, -1, 9, cls4, 0x11); // sold out icon
-			//^32CB:132F
 			DRAW_TEMP_PICST();
 		}
 	}
-	//^32CB:1333
 	QUERY_TEMP_PICST(0, horzStretch, vertStretch, 0, 0, bb, rectno, gg, colorkey1, -1, 9, cls4, 0x0f); // shop panel nav board
-	//^32CB:135C
 	DRAW_TEMP_PICST();
-	//^32CB:1360
 	if (cellPos == 3) {
-		//^32CB:1366
 		i16 bp2a;
 		i16 bp2c;
 		QUERY_TOPLEFT_OF_RECT(rectno, &bp2a, &bp2c);
-		//^32CB:137B
 		U16 bp18 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x09_WALL_GFX, cls4, dtImageOffset, 0xf2);
-		//^32CB:1391
 		bp2a += i8(bp18 >> 8);
 		bp2c += i8(bp18);
-		//^32CB:139F
 		DRAW_TEXT_TO_BACKBUFF(bp2a, bp2c, QUERY_GDAT_ITEM_NAME(QUERY_ITEMDB_FROM_DISTINCTIVE_ITEMTYPE(bp24), GET_ITEMTYPE_OF_ITEMSPEC_ACTUATOR(bp24)));
 	}
-	//^32CB:13C9
 	if (cellPos == 3) {
-		//^32CB:13D2
 		U16 bp22 = _48ae_05ae_CREATURE(bp24, bp11, ref->ShopItemPoolNo(), 1, 1, -1); // price for buy?
-		//^32CB:13F8
 		U16 bp20 = _48ae_05ae_CREATURE(bp24, bp11, ref->ShopItemPoolNo(), 0, 1, -1); // price for sell?
-		//^32CB:141E
 		for (i16 bp16 = 0; bp16 < 2; bp16++) {
-			//^32CB:1426
 			U16 bp18 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x09_WALL_GFX, cls4, dtImageOffset, (bp16 != 0) ? GDAT_WALL_ORNATE__DATA_F0 : GDAT_WALL_ORNATE__DATA_F1);
-			//^32CB:1446
 			i16 bp2a = i8(bp18 >> 8);
 			i16 bp2c = i8(bp18);
-			//^32CB:1454
 			U16 bp1a = (bp16 != 0) ? bp22 : bp20;
-			//^32CB:1465
 			if (bp1a <= 0)
-				//^32CB:1469
 				continue;
-			//^32CB:146C
 			U8 bp3a[16];
 			i16 bp1e;
 			_48ae_0767_MONEY_VALUE(bp1a, 6, bp3a, &bp1e, bp16);
-			//^32CB:1486
 			if (bp1e <= 0)
-				//^32CB:148C
 				continue;
-			//^32CB:148F
 			U16 bp1c = ALLOC_TEMP_CACHE_INDEX();
-			//^32CB:1497
 			ALLOC_NEW_PICT(bp1c, bp1e << 3, 7, 4);
-			//^32CB:14AD
 			QUERY_TEMP_PICST(0, 64, 64, 0, 0, bb, -1, gg, -1, -1, 0x09, cls4, 0x10);
-			//^32CB:14D2
 			U8 *bp08 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp1c));
-			//^32CB:14E1
 			SRECT bp34;
 			SET_ORIGIN_RECT(&bp34, 8, 7);
-			//^32CB:14F2
 			for (si = 0; si < bp1e; si++) {
-				//^32CB:14F6
 				DRAW_DIALOGUE_PICT(glbTempPicture.pb0, bp08, &bp34, bp3a[si] << 3, 0, -1, NULL);
-				//^32CB:1522
 				bp34.x += 8;
-				//^32CB:1526
 			}
-			//^32CB:152C
 			DRAW_DIALOGUE_PICT(bp08, glbBackBuffViewport, QUERY_BLIT_RECT(bp08, &bp34, rectno|0x8000, &bp2a, &bp2c, gg), 
 				0, 0, colorkey1, glbTempPicture.iPal256);
-			//^32CB:1576
 			FREE_TEMP_CACHE_INDEX(bp1c);
-			//^32CB:157F
 		}
 	}
-	//^32CB:158B
 	return;
 }
 
@@ -5647,70 +5527,52 @@ void SkWinCore::DRAW_PIT_TILE(i16 xx)
 // SPX: _32cb_1f3e renamed DRAW_EXTERNAL_TILE
 X16 SkWinCore::DRAW_EXTERNAL_TILE(i16 xx)
 {
-	//^32CB:1F3E
 	ENTER(356);
-	//^32CB:1F44
 	i16 si = xx;
 	X8 bp14 = _4976_4230[RCJ(23,si)];
 	if (bp14 == 0xff)
 		return 0;
-	//^32CB:1F55
 	i16 bp06 = tblCellTilesRoom[si].posx;
 	i16 bp08 = tblCellTilesRoom[si].posy;
 	i16 bp18 = glbTabYAxisDistance[RCJ(23,si)];
-	//^32CB:1F86
 	TELE_inf bp2a; // bp2a-bp26
 	if (bp18 > 3 && GET_TELEPORTER_DETAIL(&bp2a, U8(bp06), U8(bp08)) == 0)
 		return 0;
-	//^32CB:1FA6
 	U16 bp02 = tblCellTilesRoom[si].xsrd.tfoi[2];
 	X16 bp16 = bp02 >> 8;
 	bp14 += X8(bp16);
 	X8 iFloorOrnateID = X8(bp02);	// bp13
 	if (iFloorOrnateID == 0xFF || iFloorOrnateID == 0)
 		return 0;
-	//^32CB:1FDF
 	X16 bp04 = 0;
 	if (glbTabXAxisDistance[RCJ(23,si)] == 0) {
-		//^32CB:1FEB
 		if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0A_FLOOR_GFX, iFloorOrnateID, dtWordValue, GDAT_FLOOR_ORNATE__DO_NOT_FLIP) == 0) {
-			//^32CB:2001
 			bp04 = glbGeneralFlipGraphics;
 			if ((bp18 & 1) == 0) {
-				//^32CB:200E
 				bp04 ^= 1;
 			}
 		}
 	}
-	//^32CB:2015
 	else if (glbTabXAxisDistance[RCJ(23,si)] >= 1) {
-		//^32CB:201C
 		bp04 = 1;
 	}
-	//^32CB:2021
 	X16 bp0e = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0A_FLOOR_GFX, iFloorOrnateID, dtWordValue, GDAT_IMG_COLORKEY_1); // 4
 	if (bp0e == 0) {
-		//^32CB:203A
 		bp0e = glbSceneColorKey;
 	}
-	//^32CB:2040
 	X16 bp0a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0A_FLOOR_GFX, iFloorOrnateID, dtWordValue, GDAT_FLOOR_ORNATE__POSITION); // 5
 	X16 bp12;
 	if (bp0a == 0) {
-		//^32CB:2059
 		bp0a = ORNATE_POS__VCENTERED_HCENTERED; // bp0a = 12;
 		bp12 = 0;
 	}
 	else {
-		//^32CB:2065
 		bp12 = bp0a >> 8;
 		bp0a = (bp0a & 0xff) -1;
 	}
-	//^32CB:2078
 	X16 bp0c = QUERY_CREATURE_BLIT_RECTI(si, bp0a, 0);
 	X16 bp10 = 0x40; // bp10
 	if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x0A_FLOOR_GFX, iFloorOrnateID, dtImage, bp14) == 0) {
-		//^32CB:20A6
 		bp14 = _4976_4247[RCJ(23,si)] +X8(bp16);
 		bp10 = tlbDistanceStretch[RCJ(5,bp18)];
 		// SPX: if drawing player tile and there is a floor image at front D0, we try to get it
@@ -5723,7 +5585,6 @@ X16 SkWinCore::DRAW_EXTERNAL_TILE(i16 xx)
 			}
 		}
 	}
-	//^32CB:20BC
 	X16 bp1a;
 	X16 bp22;
 	X16 bp24;
@@ -5732,14 +5593,11 @@ X16 SkWinCore::DRAW_EXTERNAL_TILE(i16 xx)
 	ExtendedPicture bp0164;
 	X16 bp1c;
 	if (glbTabXAxisDistance[RCJ(23,si)] == 0 && bp18 != 0) {
-		//^32CB:20CF
 		X16 bp1e = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0A_FLOOR_GFX, iFloorOrnateID, dtWordValue, GDAT_FLOOR_ORNATE__X63);
 		if ((bp1c = GET_TELEPORTER_DETAIL(&bp2a, U8(bp06), U8(bp08))) != 0 || bp1e != 0) {
-			//^32CB:2107
 			QUERY_TEMP_PICST(bp04, bp10, bp10, 0, 0, bp18, bp0c, bp12, -3, -3, GDAT_CATEGORY_x0A_FLOOR_GFX, iFloorOrnateID, bp14);
 			QUERY_TEMP_PICST(bp04, bp10, bp10, glbTempPicture.iXOffset, glbTempPicture.iYOffset, bp18, bp0c, bp12, bp0e, -1, GDAT_CATEGORY_x0A_FLOOR_GFX, iFloorOrnateID, bp14 +0xc8);
 			DRAW_TEMP_PICST();
-			//^32CB:2168
 			bp06 = bp2a.b2;
 			bp08 = bp2a.b3;
 			bp1a = _4976_5aa0;
@@ -5749,19 +5607,12 @@ X16 SkWinCore::DRAW_EXTERNAL_TILE(i16 xx)
 			_4976_4212 = 1;
 			bp24 = glbTabYAxisDistance[RCJ(23,si)];
 			CALC_VECTOR_W_DIR(_4976_5aa0, -bp24, 0, &bp06, &bp08);
-			//^32CB:21C4
 			for (di = 4; di >= bp24; di--) {
-				//^32CB:21C9
 				_32cb_4185_TILE_ROOM(bp06, bp08, _4976_422b[RCJ(5,di)], _4976_5aa0);
-				//^32CB:21E1
 			}
-			//^32CB:21E7
 			for (di = 4; di > bp24; di--) {
-				//^32CB:21EC
 				DRAW_STATIC_OBJECT(_4976_422b[RCJ(5,di)], 0x01ffffff, 1);
-				//^32CB:2201
 			}
-			//^32CB:2207
 			CHANGE_CURRENT_MAP_TO(bp22);
 			_4976_4212 = 0;
 			_4976_5aa0 = bp1a;
@@ -5771,14 +5622,11 @@ X16 SkWinCore::DRAW_EXTERNAL_TILE(i16 xx)
 				QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0A_FLOOR_GFX, iFloorOrnateID, dtWordValue, GDAT_IMG_FLOOR_COLORKEY_2)	// 0xa
 				);
 			if (bp1e != 0) {
-				//^32CB:226E
 				DRAW_RAIN_32cb_0c7d(&bp0164, bp20, bp0e);
 			}
 			else {
-				//^32CB:2283
 				FILL_ENTIRE_PICT(reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp20)), bp0164.iPal256[bp0e]);
 			}
-			//^32CB:22A5
 			bp0164.pb44 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp20));
 			DRAW_PICST(&bp0164);
 			FREE_PICT_MEMENT(&bp0164);
@@ -5793,25 +5641,20 @@ X16 SkWinCore::DRAW_EXTERNAL_TILE(i16 xx)
 			return bp1c;
 		}
 	}
-	//^32CB:2331
 	QUERY_TEMP_PICST(bp04, bp10, bp10, 0, 0, bp18, bp0c, bp12, bp0e, -1, GDAT_CATEGORY_x0A_FLOOR_GFX, iFloorOrnateID, bp14);
 	DRAW_TEMP_PICST();
-	//^32CB:2361
 	return 0;
 }
 //^32CB:2367
 // SPX: _32cb_2367 renamed DRAW_PIT_ROOF
 void SkWinCore::DRAW_PIT_ROOF(i16 xx)
 {
-	//^32CB:2367
 	ENTER(10);
-	//^32CB:236D
 	i16 si = xx;
 	X8 gfxset = glbMapGraphicsSet;	//bp07
 	X16 bp0a = glbSceneColorKey;
 	if (si > 8 || (glbSceneFlags & 1) == 0)
 		return;
-	//^32CB:238F
 	i16 bp04 = tblCellTilesRoom[si].posx;
 	i16 bp06 = tblCellTilesRoom[si].posy;
 	i16 bp02 = LOCATE_OTHER_LEVEL(glbCurrentMapIndex, -1, &bp04, &bp06, NULL);
@@ -5819,19 +5662,14 @@ void SkWinCore::DRAW_PIT_ROOF(i16 xx)
 		return;	// SPX: Why ? because LOCATE currently moves +2 as player takes stairs, which is wrong for locating just some tile; then coords will be off and tile value will crash
 	if (bp02 < 0)
 		return;
-	//^32CB:23DB
 	bp02 = glbMapTileValue[bp02][bp04][bp06];
 	if ((bp02 >> 5) != 2 || (bp02 & 8) == 0)
 		return;
-	//^32CB:240B
 	X16 di = _4976_4279[RCJ(9,si)];
 	if (si == 0) {
-		//^32CB:2417
 		di = (SET_GRAPHICS_FLIP_FROM_POSITION(0x20, _4976_5aa0, _4976_5a9c, _4976_5a9e) != 0) ? 1 : 0;
 	}
-	//^32CB:2438
 	DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_x08_GRAPHICSSET, gfxset, tlbGraphicsPitRoof[RCJ(9,si)], _4976_425e[RCJ(9,si)], bp0a, di);
-	//^32CB:2456
 	return;
 }
 
@@ -5839,160 +5677,116 @@ void SkWinCore::DRAW_PIT_ROOF(i16 xx)
 // SPX: _32cb_3143 renamed DRAW_FLYING_ITEM
 void SkWinCore::DRAW_FLYING_ITEM(ObjectID rl, i16 cellPos, X16 _5x5)
 {
-	//^32CB:3143
 	ENTER(32);
-	//^32CB:3149
 	if (rl == OBJECT_END_MARKER)
 		return;
-	//^32CB:3152
 	i16 di = DIR_FROM_5x5_POS(_5x5);
 	if (di == -1)
 		return;
-	//^32CB:3165
 	X16 bp1a = glbTabYAxisDistance[RCJ(23,cellPos)];
 	if (bp1a == 0 && di >= 2)
 		return;
-	//^32CB:317E
 	i16 bp1c = glbTabXAxisDistance[RCJ(23,cellPos)];
 	if (_4976_415b[RCJ(23,cellPos)] < 0)
 		return;
-	//^32CB:3193
 	X16 bp1e = tblCellTilesRoom[cellPos].posx;
 	X16 bp20 = tblCellTilesRoom[cellPos].posy;
 	X16 si;
 	do {
-		//^32CB:31BE
 		if (QUERY_OBJECT_5x5_POS(rl, _4976_5aa0) != _5x5)
 			continue;
-		//^32CB:31D4
 		if (rl.DBType() != dbMissile)
 			continue;
-        //^32CB:31E5
 		i16 bp08 = QUERY_CREATURE_BLIT_RECTI(cellPos, _5x5, 0);
-        X16 bp0c = _48ae_011a(rl);
-		if (bp0c == 0xffff) {
-			//^32CB:320A
+        X16 iFlyingImageMethod = GET_MISSILE_FLYING_IMAGE_METHOD(rl);	// bp0c
+		if (iFlyingImageMethod == 0xFFFF) {
 			ObjectID bp18 = ObjectID(GET_ADDRESS_OF_RECORDE(rl)->GetMissileObject(), rl.Dir());
-			DRAW_ITEM(bp18, cellPos, 0, 0xffa4, -1, NULL, 1, 0, 0);
+			DRAW_ITEM(bp18, cellPos, 0, 0xFFA4, -1, NULL, 1, 0, 0);
 			continue;
 		}
-		//^32CB:324D
-		Missile *bp04 = GET_ADDRESS_OF_RECORDE(rl);
-		U8 bp12 = QUERY_CLS1_FROM_RECORD(rl);
-		U8 bp11 = QUERY_CLS2_FROM_RECORD(rl);
-		X16 bp0e = (bp12 == 0xd) ? 1 : 0;
+		Missile *pMissile = GET_ADDRESS_OF_RECORDE(rl);	// bp04
+		U8 iMissileCls1Category = QUERY_CLS1_FROM_RECORD(rl);	// bp12
+		U8 iMissileCls2MainItemId = QUERY_CLS2_FROM_RECORD(rl);	// bp11
+		X16 bIsSpellMissile = (iMissileCls1Category == GDAT_CATEGORY_x0D_SPELL_MISSILES) ? 1 : 0;	// bp0e
 		X16 bp10;
 		i16 bp16;
-		//^32CB:3284
-		if ((bp0e == 0 || bp04->EnergyRemaining() == 0xff) && bp1a == 0) {
-			//^32CB:3298
+		if ((bIsSpellMissile == 0 || pMissile->EnergyRemaining() == 0xFF) && bp1a == 0) {
 			bp10 = bp16 = 0x40;
 		}
 		else {
-			//^32CB:32A3
 			bp16 = (bp1a << 1) -(di >> 1);
 			if (bp16 < 0)
 				continue;
-			//^32CB:32B8
 			bp10 = bp16 = _4976_41a9[RCJ(7,bp16)];
-			if (bp0e != 0) {
-				//^32CB:32CD
-				bp10 = max_value(8, CALC_STRETCHED_SIZE((((bp04->EnergyRemaining() << 7) / 255) +1) >> 1, bp10));
+			if (bIsSpellMissile != 0) {
+				bp10 = max_value(8, CALC_STRETCHED_SIZE((((pMissile->EnergyRemaining() << 7) / 255) +1) >> 1, bp10));
 			}
 		}
-		//^32CB:32FB
 		si = 0;
 		X8 bp13;
-		if (bp0c == 3) {
-			//^32CB:3303
+		if (iFlyingImageMethod == C03_GDAT_IMG_FLYING_METHOD_SIDE) {
 			bp13 = 8;
 		}
 		else {
-			//^32CB:330A
-			X16 bp0a = glbTimersTable[bp04->TimerIndex()].Direction();
+			X16 bp0a = glbTimersTable[pMissile->TimerIndex()].Direction();
 			if ((bp0a & 1) != (_4976_5aa0 & 1)) {
-				//^32CB:3338
 				bp13 = 0xc;
-				if (bp0c == 0) {
+				if (iFlyingImageMethod == 0) {
 					if (di == 0 || di == 3) {
-						//^32CB:334B
 						si |= 1;
 					}
-					//^32CB:334F
 					if (((bp1e +bp20) & 1) == 0) {
 						si ^= 1;
 					}
 				}
-				//^32CB:3364
 				else if (((_4976_5aa0 +1) & 3) == bp0a) {
 					si |= 1;
 				}
 			}
-			//^32CB:3376
 			else {
-				if (bp0c == 0) {
+				if (iFlyingImageMethod == C00_GDAT_IMG_FLYING_METHOD_WHIRLING) {
 					if (((bp1e +bp20) & 1) != 0) {
-						//^32CB:3387
 						si |= 2;
 						if (di < 2) {
-							//^32CB:3390
 							bp13 = 8;
 						}
 						else {
-							//^32CB:3396
 							bp13 = 9;
 						}
 					}
-					//^32CB:339C
 					else if (di >= 2) {
-						//^32CB:33A1
-						//^32CB:3390
 						bp13 = 8;
 					}
 					else {
-						//^32CB:33A3
 						bp13 = 9;
 					}
 				}
-				//^32CB:33A9
-				else if (bp0c == 2 || (bp0c == 1 && bp0a != _4976_5aa0)) {
-					//^32CB:33BE
-					//^32CB:3390
+				else if (iFlyingImageMethod == C02_GDAT_IMG_FLYING_METHOD_ONLY_FRONT || (iFlyingImageMethod == C01_GDAT_IMG_FLYING_METHOD_BACK && bp0a != _4976_5aa0)) {
 					bp13 = 8;
 				}
 				else {
-					//^32CB:33C0
 					bp13 = 10;
 				}
-				//^32CB:33C4
 				if (bp1c < 1 && (bp1c != 0 || (di != 1 && di != 2))) {
-					//^32CB:33DA
 					si |= 1;
 				}
-				//^32CB:33DE
-				if ((di & 1) != 0 && bp12 == 0xd) {
-					//^32CB:33EA
+				if ((di & 1) != 0 && iMissileCls1Category == GDAT_CATEGORY_x0D_SPELL_MISSILES) {
 					si |= 2;
 				}
 			}
 		}
-		//^32CB:33EE
-		X16 bp06;
-		if (bp12 == 0xd) {
-			//^32CB:33F4
-			bp06 = QUERY_GDAT_ENTRY_DATA_INDEX(0xd, bp11, dtWordValue, 0x01);
+		X16 iMissileWord01;	// bp06
+		if (iMissileCls1Category == GDAT_CATEGORY_x0D_SPELL_MISSILES) {
+			iMissileWord01 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0D_SPELL_MISSILES, iMissileCls2MainItemId, dtWordValue, 0x01);
 		}
 		else {
-			bp06 = 3;
+			iMissileWord01 = 3;
 		}
-		//^32CB:3410
-		QUERY_TEMP_PICST(si & bp06, bp10, bp10, 0, 0, bp1a, bp08 | 0x8000, 0, 10, -1, bp12, bp11, bp13);
+		QUERY_TEMP_PICST(si & iMissileWord01, bp10, bp10, 0, 0, bp1a, bp08 | 0x8000, 0, 10, -1, iMissileCls1Category, iMissileCls2MainItemId, bp13);
 		glbTempPicture.w32 += CALC_STRETCHED_SIZE(0, bp16);
 		glbTempPicture.w34 = CALC_STRETCHED_SIZE(-92, bp16);
 		DRAW_TEMP_PICST();
-		//^32CB:3467
 	} while ((rl = GET_NEXT_RECORD_LINK(rl)) != OBJECT_END_MARKER);
-	//^32CB:347B
 	return;
 }
 
@@ -7151,5 +6945,295 @@ void SkWinCore::FILL_RECT_ANY(SRECT* pRectZone, U8 colorkey)
 {
 	ENTER(0);
 	FIRE_FILL_RECT_ANY(NULL, pRectZone, colorkey, 320, IMG_8_BPP);
+	return;
+}
+
+//^2759:0644
+//SPX: _2759_0644 renamed UPDATE_RIGHT_PANEL
+void SkWinCore::UPDATE_RIGHT_PANEL(U16 xx)
+{
+	U16 bp0a = 0;
+	U16 bp0c = 0;
+	U16 bp0e = 0;
+	U16 bp12 = 0;
+	if (cd.pi.glbNextChampionNumber == 0) {
+		if (cd.pi.glbChampionsCount == 0) {
+			if (_4976_531c != 0 || glbSomeChampionPanelFlag != 0) {
+				glbSomeChampionPanelFlag = 0;
+				_4976_531c = 0;
+				SOMETHING_RIGHT_PANEL_29ee_00a3(1);
+			}
+			glbRightPanelType = RIGHT_PANEL_UNDEFINED;
+			goto _0e03;
+		}
+		if (xx != 0) {
+			for (U16 iChampionIdx = 0; iChampionIdx < cd.pi.glbChampionsCount; iChampionIdx++) {	// bp06
+				// SPX: ??BUG?? The b42 is table of 2 elements only; shouldn't it be si < 2 ??
+				for (U16 iHandIdx = 0; iHandIdx < 2; iHandIdx++) {	// (U16 si=0; si <= 2; si++)
+					if (tblChampionSquad[iChampionIdx].handCooldown[iHandIdx] != 0) {
+						tblChampionSquad[iChampionIdx].handCooldown[iHandIdx] = tblChampionSquad[iChampionIdx].handCooldown[iHandIdx] -1;
+						if (tblChampionSquad[iChampionIdx].handCooldown[iHandIdx] == 0) {
+							LOAD_PROJECTILE_TO_HAND(iChampionIdx, iHandIdx);
+						}
+					}
+				}
+			}
+			if (glbRightPanelType == RIGHT_PANEL_MAGIC_MAP) {	// 3
+				ATLASSERT(cd.pi.glbChampionIndex < cd.pi.glbChampionsCount + 1);
+				Champion *pChampion = &glbChampionTable[cd.pi.glbChampionIndex];	//*bp04
+				if ((glbMagicalMapFlags & 0x0200) != 0) {
+					if (--glbMagicMapManaCounter == 0) {
+						if (pChampion->manaCurrent != 0) {
+							pChampion->manaCurrent--;
+							pChampion->heroFlag |= CHAMPION_FLAG_0800;
+							glbMagicMapManaCounter = 25 / glbMagicMapManaDivisor;
+						}
+						else {
+							glbSomeChampionPanelFlag = 1;
+							glbMagicalMapFlags = 0;
+						}
+					}
+				}
+				else if (pChampion->manaCurrent != 0) {
+					glbSomeChampionPanelFlag = 1;
+					glbMagicalMapFlags = 0;
+				}
+			}
+		}
+		if (glbChampionAttackDamage != 0) {
+			SHOW_ATTACK_RESULT(glbChampionAttackDamage);
+			_4976_531c = 1;
+			glbChampionAttackDamage = 0;
+			glbRightPanelType = RIGHT_PANEL_ATTACK_RESULT;	// 6
+			goto _0e03;
+		}
+		if (cd.pi.glbChampionIndex > 0) {
+			i16 bp06 = cd.pi.glbChampionIndex -1;
+			if (bp06 >= 0 && glbSelectedHandAction != 2) {
+				if (_4976_3de6[RCJ(4,bp06)][RCJ(2,glbSelectedHandAction)] != tblChampionSquad[bp06].Possess(glbSelectedHandAction)) {
+					DISPLAY_RIGHT_PANEL_SQUAD_HANDS();
+				}
+			}
+		}
+		U8 bp1c[4];
+		if (cd.pi.glbChampionIndex >= 0) {
+			U16 iChampionIdx;	// bp06
+			for (iChampionIdx = 0; iChampionIdx < cd.pi.glbChampionsCount; iChampionIdx++) {
+				Champion *pChampion = &tblChampionSquad[iChampionIdx];	// bp04
+				bp1c[iChampionIdx] = 0;
+				U8 bp07 = (pChampion->playerDir() +4 - cd.pi.glbPlayerDir) & 3;
+				i8 bp08 = (pChampion->playerPos() +4 - cd.pi.glbPlayerDir) & 3;
+				if (pChampion->curHP() != 0 && bp08 +1 == _4976_5dbc) {
+					bp08 = -1;
+				}
+				if (READ_UI8(_4976_3de2, iChampionIdx) != bp08 || _4976_3dde[RCJ(4,iChampionIdx)] != bp07) {
+					bp0c = 1;
+					bp12 = 1;
+					if (bp08 != -1) {
+						_4976_531c = 1;
+					}
+					WRITE_UI8(_4976_3de2, iChampionIdx, bp08);	// write current champion id for its squad position
+					_4976_3dde[RCJ(4,iChampionIdx)] = bp07;
+				}
+			}
+			if (glbSquadInterfaceMapGfxSet != glbMapGraphicsSet || glbGlobalSpellEffects.AuraOfSpeed != 0 || (!glbPartyHasInvisibility) != (!glbGlobalSpellEffects.Invisibility)) {
+				bp0c = 1;
+				glbSquadInterfaceMapGfxSet = glbMapGraphicsSet;
+				glbPartyHasInvisibility = (glbGlobalSpellEffects.Invisibility != 0) ? 1: 0;
+			}
+		}
+		if (_4976_531c != 0) {
+			if (glbSomeChampionPanelFlag > 1) {
+				glbSomeChampionPanelFlag--;
+				goto _0e03;
+			}
+			SOMETHING_RIGHT_PANEL_29ee_00a3(1);
+			_4976_531c = 0;
+			bp0a = 1;
+		}
+		if (cd.pi.glbChampionIndex == 0) {
+			glbRightPanelType = 0;
+			if (bp0a == 0 && bp12 != 0) {
+				glbPreviousRightPanelType = 0xffff;
+			}
+			for (U16 iChampionIdx = 0; iChampionIdx < cd.pi.glbChampionsCount; iChampionIdx++) {	// bp06
+				Champion *pChampion = &tblChampionSquad[iChampionIdx];
+				if (pChampion->curHP() == 0 && GET_PLAYER_AT_POSITION(pChampion->playerPos()) >= 0) {
+					continue;
+				}
+				bp0e = bp1c[iChampionIdx];
+				if (glbChampionAlive[iChampionIdx] != ((pChampion->curHP() > 0) ? 1 : 0)) {
+					glbChampionAlive[iChampionIdx] = ((pChampion->curHP() > 0) ? 1 : 0);
+					bp0e = 1;
+					glbPreviousRightPanelType = 0xFFFF;
+				}
+				U16 bp16 = ((ABS16(glbActivatedChampionIndex) -1 == iChampionIdx) ? 1 : 0);	// bp16
+				//SPX: 0 to 1 = hands
+				for (U16 iHandIdx = 0; iHandIdx < 2; iHandIdx++) {	// si
+					U16 iSelectedActiveHand = 0;	// bp14
+					U16 bp10 = 0;
+					if (bp16 != 0 && glbSelectedHand_2 == iHandIdx) {
+						if (glbActivatedChampionIndex > 0) {
+							iSelectedActiveHand = 1;
+						}
+						bp10 = 1;
+					}
+					U8 bp17 = (pChampion->handCooldown[iHandIdx] != 0) ? 1 : 0;
+					if (glbChampionHandCoolingDown[iChampionIdx][iHandIdx] != bp17) {
+						glbChampionHandCoolingDown[iChampionIdx][iHandIdx] = bp17;
+						bp10 = 1;
+					}
+					if (_4976_3de6[RCJ(4,iChampionIdx)][RCJ(2,iHandIdx)] != pChampion->Possess(iHandIdx) || bp0a != 0 || bp0e != 0) {
+						_4976_3de6[RCJ(4,iChampionIdx)][RCJ(2,iHandIdx)] = pChampion->Possess(iHandIdx);
+						bp10 = 1;
+					}
+					if (bp0a != 0 || bp0e != 0 || bp10 != 0) {
+						DRAW_HAND_ACTION_ICONS(iChampionIdx, iHandIdx, iSelectedActiveHand);
+					}
+				}
+				U16 bp14 = 0;
+				// SPX: == 2 => spell selected instead of hand
+				if (bp16 != 0 && glbSelectedHand_2 == C2_HAND_SELECTED_SPELL) {
+					if (glbActivatedChampionIndex > 0) {
+						bp14 = 1;
+					}
+					bp0e = 1;
+				}
+				U8 bp17 = (pChampion->herob44 != 0) ? 1 : 0;
+				if (glbChampionHandCoolingDown[iChampionIdx][2] != bp17) {
+					glbChampionHandCoolingDown[iChampionIdx][2] = bp17;
+					bp0e = 1;
+				}
+				if (bp0a != 0 || bp0e != 0 || (_4976_3df7 != glbChampionLeader && (_4976_3df7 == iChampionIdx || glbChampionLeader == iChampionIdx))) {
+					DRAW_SQUAD_SPELL_AND_LEADER_ICON(iChampionIdx, bp14);
+				}
+				if (tblChampionSquad[iChampionIdx].enchantmentPower != 0 || _4976_3f68 != 0) {
+					bp0c = 1;
+				}
+				if (tblChampionSquad[iChampionIdx].enchantmentPower != 0) {
+					_4976_3f68 |= 1 << iChampionIdx;
+				}
+				else {
+					_4976_3f68 &= ~(1 << iChampionIdx);
+				}
+			}
+			
+			if (glbActivatedChampionIndex < 0) {
+				glbActivatedChampionIndex = 0;
+			}
+			glbActivatedChampionIndex = -glbActivatedChampionIndex;
+			if (bp0a != 0 || bp0c != 0) {
+				DRAW_SQUAD_POS_INTERFACE();
+			}
+		}
+		_4976_3df7 = glbChampionLeader;
+		if (cd.pi.glbChampionIndex > 0 && (glbSomeChampionPanelFlag != 0 || bp0a != 0 || bp0c != 0 || (glbRightPanelType == RIGHT_PANEL_MAGIC_MAP && xx != 0))) {
+			if (glbSomeChampionPanelFlag > 1) {
+				glbSomeChampionPanelFlag--;
+				goto _0e03;
+			}
+			if (glbMagicalMapFlags != 0 && glbSomeChampionPanelFlag == 0 && bp0a == 0) {
+				SOMETHING_RIGHT_PANEL_29ee_00a3(0);
+			}
+			else {
+				SOMETHING_RIGHT_PANEL_29ee_00a3(1);
+				DRAW_PLAYER_NAME_AT_CMDSLOT();
+				glbMagicalMapFlags &= 0xfbff;
+			}
+			if (glbSelectedHandAction == 2) {
+				glbRightPanelType = RIGHT_PANEL_SPELL;
+				DRAW_SPELL_PANEL();
+			}
+			else {
+				U16 bp06 = cd.pi.glbChampionIndex -1;
+				Champion *champion = &tblChampionSquad[bp06];	//*bp04
+				ObjectID di = champion->Possess(glbSelectedHandAction);
+				if (IS_CONTAINER_MAP(di) != 0 && glbMagicalMapFlags == 0) {
+					glbMagicMapManaDivisor = 1;
+					glbMagicMapManaCounter = 25;
+					if (champion->curMP() != 0) {
+						champion->manaCurrent--;
+						champion->heroFlag |= CHAMPION_FLAG_0800;	// 0x0800
+						glbMagicalMapFlags = 0x8200;	// 0x8200
+					}
+					else {
+						glbMagicalMapFlags = 0x8000;	// 0x8000
+					}
+					glbRightPanelType = RIGHT_PANEL_MAGIC_MAP;	// 3
+				}
+				else if (IS_CONTAINER_MONEYBOX(di) != 0) {
+					glbRightPanelType = RIGHT_PANEL_MONEY_BOX;	// 4
+				}
+				else if (IS_CONTAINER_CHEST(di) != 0 && glbRightPanelType != RIGHT_PANEL_CONTAINER) {	// != 5
+					__CHECK_ROOM_FOR_CONTAINER(di, GET_ADDRESS_OF_RECORD9(di));
+					glbRightPanelType = RIGHT_PANEL_CONTAINER;	// 5
+				}
+
+				if (glbRightPanelType == RIGHT_PANEL_MONEY_BOX) {	// 4
+					DRAW_MONEYBOX(di);
+				}
+				else if (glbRightPanelType == RIGHT_PANEL_CONTAINER) {	// 5
+					DRAW_CONTAINER_PANEL(di, 1);
+				}
+				else if (IS_ITEM_HAND_ACTIVABLE(bp06, di, glbSelectedHandAction) != 0 && glbRightPanelType != RIGHT_PANEL_MAGIC_MAP) {
+					glbRightPanelType = RIGHT_PANEL_HAND_ACTIONS;
+					if (glbRightPanelType != glbPreviousRightPanelType) {
+						_1031_0667();
+						glbPreviousRightPanelType = glbRightPanelType;
+					}
+					DRAW_SEVERAL_CMD_SLOTS();
+				}
+				else if (glbRightPanelType == RIGHT_PANEL_MAGIC_MAP) {	// 3
+					if ((glbMagicalMapFlags & 0x0400) == 0) {
+						glbPreviousRightPanelType = 0xFFFF;
+					}
+					DRAW_MAJIC_MAP(di);
+				}
+				else {
+					cd.pi.glbChampionIndex = 0;
+					glbRightPanelType = RIGHT_PANEL_SQUAD_HANDS;
+				}
+			}
+
+			glbSomeChampionPanelFlag = 0;
+		}
+		else {
+			if (cd.pi.glbChampionIndex > 0 && glbRightPanelType == RIGHT_PANEL_CONTAINER && xx != 0) {
+				SOMETHING_RIGHT_PANEL_29ee_00a3(0);
+				DRAW_CONTAINER_PANEL(glbChampionTable[cd.pi.glbChampionIndex].Possess(glbSelectedHandAction), 0);
+			}
+		}
+		if (cd.pi.glbChampionIndex > 0 && _4976_3df9[RCJ(7,glbRightPanelType)] != 0 && (glbChampionTable[cd.pi.glbChampionIndex].enchantmentPower != 0 || _4976_3f68 != 0)) {
+			DRAW_PLAYER_ATTACK_DIR();
+			if (glbChampionTable[cd.pi.glbChampionIndex].enchantmentPower != 0) {
+				_4976_3f68 |=   1 << (i8(cd.pi.glbChampionIndex) -1);
+			}
+			else {
+				_4976_3f68 &= ~(1 << (i8(cd.pi.glbChampionIndex) -1));
+			}	
+		}
+
+_0e03:
+		if (_4976_3f6c.w0 != 0xFFFF) {
+			_0b36_0cbe(&_4976_3f6c, 1);
+		}
+		if (glbRightPanelType != glbPreviousRightPanelType) {
+			_1031_0667();
+			glbPreviousRightPanelType = glbRightPanelType;
+		}
+	}
+	//SkD((DLV_TWEET, "Tweet: Right panel %d\n", glbRightPanelType));
+	return;
+}
+
+//^1031:04F5
+// _1031_04f5 renamed CLEAR_TRY_PUSH_PULL_OBJECT
+void SkWinCore::CLEAR_TRY_PUSH_PULL_OBJECT()
+{
+	ENTER(0);
+	if (glbTryPushPullObject != 0) {
+		glbTryPushPullObject = 0;
+		DRAW_ARROW_PANEL();
+	}
 	return;
 }
