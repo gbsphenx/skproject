@@ -11,6 +11,7 @@
 
 #include <string.h>
 
+#include <skcnsole.h>
 
 //^3E74:48C9
 // _3e74_48c9 renamed GET_MEMENT_FROM_MEMENTINDEX
@@ -279,22 +280,42 @@ _0d71:
 	return;
 }
 
+// SPX: Adjusted 32bits mement size -- only for debug and comparison between 32-bits and 64-bits versions
+int AJ32(int iSizeVal)
+{
+#ifdef __LINUX__
+	return (iSizeVal - 8);
+#else
+	return iSizeVal;
+#endif 
+}
+
 bool SkWinCore::ValidateMements(bool display = false) {
 	bool ok = true;
 	X16 i = 0;
-	for (U16 x = 0; x < glbNumberOfMements; x++) {
-		mement* xMement = tblMementsPointers[x];	// p
-		if (xMement != NULL) {
-			if (display) SkD((DLV_CPX, "M#%03d %p ", x, xMement));
-			int v0 = -xMement->getNegativeTotalBufferSize();
-			int v1 = -READ_I32(xMement,-xMement->getNegativeTotalBufferSize() - sizeof(i32));	// -4
+	
+	if (display) 
+		printf("VALMEM: #Mements = %d\n", glbNumberOfMements);
+
+	for (U16 iMementIdx = 0; iMementIdx < glbNumberOfMements; iMementIdx++) {	// x
+		mement *pMement = tblMementsPointers[iMementIdx];	// p
+		if (display)
+			printf("M#%03d %p >>", iMementIdx, pMement);
+		if (pMement != NULL) {
+			if (display) SkD((DLV_CPX, "M#%03d %p ", iMementIdx, pMement));
+			int v0 = -pMement->getNegativeTotalBufferSize();
+			int v1 = -READ_I32(pMement,-pMement->getNegativeTotalBufferSize() - sizeof(i32));	// -4
 			if (v0 != v1) 
 				ok = false;
-			if (display) SkD((DLV_CPX, "%11d %11d %c ", v0, v1, (v0==v1)?'|':'#'));
+			if (display) {
+				printf("(32b:%9d) %11d %11d %c \n", AJ32(v0), v0, v1, (v0==v1)?'|':'#');
+				DEBUG_SHOW_MEMENT(pMement, ok);
+			}
+			if (display) SkD((DLV_CPX, "%11d %11d %c \n", v0, v1, (v0==v1)?'|':'#'));
 			if (display) {
 				int ref1 = -1;
 				for (i = 0; i < glbGDatNumberOfData; i++) {
-					if (tblRawDataToMement[i] == x) {
+					if (tblRawDataToMement[i] == iMementIdx) {
 						ref1 = i;
 						break;
 					}
@@ -302,7 +323,7 @@ bool SkWinCore::ValidateMements(bool display = false) {
 				SkD((DLV_CPX, "%4d ", ref1));
 				int ref2 = 0;
 				for (i = 0; i < glbCacheRecyclerMax; i++) {
-					if (tblCacheToMement[i] == x) {
+					if (tblCacheToMement[i] == iMementIdx) {
 						ref2 = _4976_5c86_cache_hash[i];
 						break;
 					}
@@ -311,7 +332,15 @@ bool SkWinCore::ValidateMements(bool display = false) {
 			}
 			if (display) SkD((DLV_CPX, "\n"));
 		}
+		else if (display)
+			printf("\n");
 	}
+	if (display == true && ok == false) {
+		DEBUG_SHOW_GDAT_ENTRIES_MEM();
+		exit(1);
+	}
+	if (ok == false)
+		ValidateMements(true);
 	return ok;
 }
 
@@ -658,10 +687,10 @@ mement *SkWinCore::ALLOC_LOWER_CPXHEAP(i32 iBufferSize)
 	ATLASSERT(iBufferSize > 0 && iBufferSize < BUFF_SIZE_MAX);
 
 	GUARANTEE_FREE_CPXHEAP_SIZE(iBufferSize);
-	mement* xMemEnt;	// bp04
+	mement *pMemEnt;	// bp04
 	if (PTR_PSBP(glbCpxHeapLimitPtr,glbCpxHeapCurrentMementPtr) >= iBufferSize) { // allocate on main memory
 _2cfb:
-		xMemEnt = glbCpxHeapCurrentMementPtr;
+		pMemEnt = glbCpxHeapCurrentMementPtr;
 		PTR_PADA(glbCpxHeapCurrentMementPtr,iBufferSize);
 	}
 	else if (glbMement1->getNegativeTotalBufferSize() < iBufferSize) {
@@ -669,62 +698,63 @@ _2cfb:
 		goto _2cfb;
 	}
 	else {
-		xMemEnt = glbMement1;
+		pMemEnt = glbMement1;
 		U16 si = 0;
-		mement* xMemEnt2;	// bp08
+		mement* pMemEnt2;	// bp08
 
 		do {
-			if (xMemEnt->getNegativeTotalBufferSize() == iBufferSize) {
+			if (pMemEnt->getNegativeTotalBufferSize() == iBufferSize) {
 _2d5b:
 				si = 1;
 				continue;
 			}
-			if (xMemEnt->getNegativeTotalBufferSize() >= iBufferSize) {
-				xMemEnt2 = xMemEnt->getMement2();
-				if (xMemEnt2 != NULL)
+			if (pMemEnt->getNegativeTotalBufferSize() >= iBufferSize) {
+				pMemEnt2 = pMemEnt->getMement2();
+				if (pMemEnt2 != NULL)
 					goto _2da5;
 			}
-			xMemEnt = glbMement1;
+			pMemEnt = glbMement1;
 			goto _2d5b;
 _2da5:
-			xMemEnt = xMemEnt2;
+			pMemEnt = pMemEnt2;
 		} while (si == 0);
 
-		MEMENT_3e74_0c8c(xMemEnt);
-		i32 iDeltaBuffSize = xMemEnt->getNegativeTotalBufferSize() - iBufferSize;	// bp0c
+		MEMENT_3e74_0c8c(pMemEnt);
+		i32 iDeltaBuffSize = pMemEnt->getNegativeTotalBufferSize() - iBufferSize;	// bp0c
 		if (iDeltaBuffSize >= 30) {
-			xMemEnt2 = reinterpret_cast<mement *>(PTR_PADD(xMemEnt,iBufferSize));
-			WRITE_I32(xMemEnt2,iDeltaBuffSize - sizeof(i32),iDeltaBuffSize);	// WRITE_I32(xMemEnt2,bp0c -4,bp0c);
-			LOGX(("WRITE MEMENT(2) @pX]%p - %08X | size = %08X abs(%8X/%d) (written @pX]%p", xMemEnt2, iDeltaBuffSize - sizeof(i32), iDeltaBuffSize, abs(iDeltaBuffSize), abs(iDeltaBuffSize), ((X8*)(xMemEnt2)+(iDeltaBuffSize - sizeof(i32))) ));
-			xMemEnt2->setNegativeTotalBufferSize(iDeltaBuffSize);
-			MEMENT_3e74_0d32(xMemEnt2);
-			LOGX(("pX]%p S=%06X RS=%08X [(-4)%08X (0)%08X]", xMemEnt2, iDeltaBuffSize - sizeof(i32), READ_I32(xMemEnt2,-sizeof(i32)), *(((U32*)xMemEnt2)-1), *((U32*)xMemEnt2) ));
+			pMemEnt2 = reinterpret_cast<mement *>(PTR_PADD(pMemEnt,iBufferSize));
+			WRITE_I32(pMemEnt2,iDeltaBuffSize - sizeof(i32),iDeltaBuffSize);	// WRITE_I32(pMemEnt2,bp0c -4,bp0c);
+			LOGX(("WRITE MEMENT(2) @pX]%p - %08X | size = %08X abs(%8X/%d) (written @pX]%p", pMemEnt2, iDeltaBuffSize - sizeof(i32), iDeltaBuffSize, abs(iDeltaBuffSize), abs(iDeltaBuffSize), ((X8*)(pMemEnt2)+(iDeltaBuffSize - sizeof(i32))) ));
+			pMemEnt2->setNegativeTotalBufferSize(iDeltaBuffSize);
+			MEMENT_3e74_0d32(pMemEnt2);
+			LOGX(("pX]%p S=%06X RS=%08X [(-4)%08X (0)%08X]", pMemEnt2, iDeltaBuffSize - sizeof(i32), READ_I32(pMemEnt2,-sizeof(i32)), *(((U32*)pMemEnt2)-1), *((U32*)pMemEnt2) ));
 		}
 		else {
-			iBufferSize = xMemEnt->getNegativeTotalBufferSize();
+			iBufferSize = pMemEnt->getNegativeTotalBufferSize();
 		}
 	}
 	glbFreeCPXMemory -= iBufferSize;
-	xMemEnt->setNegativeTotalBufferSize(-iBufferSize);
-	WRITE_I32(xMemEnt,+iBufferSize -sizeof(i32),-iBufferSize);
-	LOGX(("WRITE MEMENT(1) @pX]%p - %08X | size = %08X abs(%8X/%d) (written @pX]%p", xMemEnt, iBufferSize -sizeof(i32), -iBufferSize, iBufferSize, iBufferSize, ((X8*)(xMemEnt)+(iBufferSize -sizeof(i32))) ));
-	LOGX(("pX]%p S=%06X RS=%08X [(-4)%08X (0)%08X]", xMemEnt, iBufferSize -sizeof(i32), READ_I32(xMemEnt,-sizeof(i32)), *(((U32*)xMemEnt)-1), *((U32*)xMemEnt) ));
-	reinterpret_cast<mement *>(xMemEnt)->setMark8(MEMENT_MARK_M1_FFFF);
-	reinterpret_cast<mement *>(xMemEnt)->setMark6(MEMENT_MARK_M1_FFFF);
-	reinterpret_cast<mement *>(xMemEnt)->setMark4(MEMENT_MARK_M1_FFFF);
+	pMemEnt->setNegativeTotalBufferSize(-iBufferSize);
+	WRITE_I32(pMemEnt,+iBufferSize -sizeof(i32),-iBufferSize);
+	LOGX(("WRITE MEMENT(1) @pX]%p - %08X | size = %08X abs(%8X/%d) (written @pX]%p", pMemEnt, iBufferSize -sizeof(i32), -iBufferSize, iBufferSize, iBufferSize, ((X8*)(pMemEnt)+(iBufferSize -sizeof(i32))) ));
+	LOGX(("pX]%p S=%06X RS=%08X [(-4)%08X (0)%08X]", pMemEnt, iBufferSize -sizeof(i32), READ_I32(pMemEnt,-sizeof(i32)), *(((U32*)pMemEnt)-1), *((U32*)pMemEnt) ));
+	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_YELLOW, BLACK); printf("pX]%p S=%06X RS=%08X [(-4)%08X (0)%08X]\n", pMemEnt, iBufferSize -sizeof(i32), READ_I32(pMemEnt,-sizeof(i32)), *(((U32*)pMemEnt)-1), *((U32*)pMemEnt) );CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
+	reinterpret_cast<mement *>(pMemEnt)->setMark8(MEMENT_MARK_M1_FFFF);
+	reinterpret_cast<mement *>(pMemEnt)->setMark6(MEMENT_MARK_M1_FFFF);
+	reinterpret_cast<mement *>(pMemEnt)->setMark4(MEMENT_MARK_M1_FFFF);
 #if UseAltic
 	{
 		// dw0 contains the negative total buffsize, then -dw0 is going forward to the end of mement+data. 
 		// -sizeof(i32) goes to fetch the -buffsize which is also at the end of that memory part
 		// the last -READ then gets back this buffsize positive which then must be the same (just wrote a few lines before with WRITE_I32 ...)
-		i32 iEndMemMarkerBufferSize = -READ_I32(xMemEnt,-xMemEnt->getNegativeTotalBufferSize() -sizeof(i32));	// size / -4
+		i32 iEndMemMarkerBufferSize = -READ_I32(pMemEnt,-pMemEnt->getNegativeTotalBufferSize() -sizeof(i32));	// size / -4
 		ATLASSERT(iBufferSize == iEndMemMarkerBufferSize);
 
 		// SkD((DLV_CPX, "CPX: ALLOC_LOWER_CPXHEAP(%6u) = %p\n", (Bitu)iBufferSize, bp04));
-		memset(&xMemEnt[1], 0xCC, iBufferSize -sizeof(mement) -sizeof(i32));
+		memset(&pMemEnt[1], 0xCC, iBufferSize -sizeof(mement) -sizeof(i32));
 	}
 #endif
-	return reinterpret_cast<mement *>(xMemEnt);
+	return reinterpret_cast<mement *>(pMemEnt);
 }
 
 //^3E74:5708
@@ -1296,9 +1326,9 @@ U8 *SkWinCore::MEMENT_3e74_0245(X16 iRawDatIdx, X16 iRecycle)
 	ENTER(20);
 	X16 iRawDatIndex = iRawDatIdx;	// si / xx
 	shelf_memory xShelfMem = glbShelfMemoryTable[iRawDatIndex];	// bp0c
-	U8* pMemPtr = REALIZE_GRAPHICS_DATA_MEMORY(xShelfMem);	// bp04
+	U8 *pMemPtr = REALIZE_GRAPHICS_DATA_MEMORY(xShelfMem);	// bp04
 	i32 bp10 = CONVERT_PHYS_TO_SHELF_FORM(pMemPtr).val - glbShelfMemTopEMS.val;
-	pMemPtr += 4;
+	pMemPtr += 4;	// +size(i32)
 	if (bp10 >= 0 && bp10 <= 65535) {
 		i32 bp14 = QUERY_GDAT_RAW_DATA_LENGTH(iRawDatIndex);
 		if (iRecycle != 0)
@@ -1309,6 +1339,7 @@ U8 *SkWinCore::MEMENT_3e74_0245(X16 iRawDatIdx, X16 iRecycle)
 			if (_4976_4809 != 0xFFFF)
 				FREE_INDEXED_MEMENT(_4976_4809);
 			_4976_4809 = iRawDatIndex;
+			printf(">>MEMENT_3e74_0245: #DAT %d => Size = %d - 4 => %d + 16 => %d\n", bp14+4, bp14, bp14+16);
 			mement* xMemEnt = ALLOC_LOWER_CPXHEAP(bp14 + 16);	// +16 ?	bp08
 			X16 iMemEntryIndex = FIND_FREE_MEMENTI();	// di
 			tblRawDataToMement[iRawDatIndex] = iMemEntryIndex;
@@ -1316,7 +1347,7 @@ U8 *SkWinCore::MEMENT_3e74_0245(X16 iRawDatIdx, X16 iRecycle)
 			tblMementsPointers[iMemEntryIndex] = xMemEnt;
 			TEST_MEMENT(xMemEnt);
 			xMemEnt->setCacheIndex(iRawDatIndex);
-			PTR_PADA(xMemEnt,+12);	// what is this +12 ?
+			PTR_PADA(xMemEnt,+12);	// what is this +12 ? (3 * UI32 ?)
 			pMemPtr = reinterpret_cast<U8 *>(xMemEnt);
 			do {
 				COPY_MEMORY(REALIZE_GRAPHICS_DATA_MEMORY(xShelfMem), xMemEnt, (bp14 > 0x4000) ? 0x4000 : bp14);

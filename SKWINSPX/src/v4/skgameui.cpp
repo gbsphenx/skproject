@@ -61,10 +61,19 @@ Bit16u SkWinCore::SPECIAL_UI_KEY_TRANSFORMATION()
 				iKeyVal = 0x51; break;	// move right
 */
 	// Use X as left click
-			case 0x002D:	// x
+			case 0x002D:	// 45 'x'
 				//iKeyVal = 0x51; break;	// move right
 				cd.mk.mice_btn = 1; // left button
 				(this->*_int33_mouse_callback)();
+				break;
+	// Debug: use V to show validate mements
+			case 0x002F:	// 47 'v'
+				ValidateMements(true);
+				break;
+	// Debug: use G to show gdat entries + data
+			case 0x0022:	// 34 'g'
+				DEBUG_SHOW_GDAT_ENTRIES_MEM();
+				break;
 		}
 	}
 // SPX

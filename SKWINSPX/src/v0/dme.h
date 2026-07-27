@@ -1128,6 +1128,8 @@ namespace DM2Internal {
 		U8 cls1, cls2, cls3, cls4, cls5, cls6;
 		U16 data;
 	};
+
+
 	// 
 /* -- replace this by sksave_header_asc
 	struct sksave_header { // 42 bytes
@@ -3191,6 +3193,19 @@ namespace DM2Internal {
 		fmtPalIndex = 13, // fmt0D
 		fmt0E = 14, // raw data
 		fmtInvalid = 0xFF,
+	};
+
+	// SPX: debug help structure
+	struct SpxGDatEntryShelfMement {	//-> #nb ENT1 entries
+		U16					iEntryId;
+		GraphicFileEntry	sEntryData;
+	};
+	struct SpxGDatShelf {	// -> #nb GDat Raw Data
+		U16					iGDatRawId;
+		shelf_memory		xShelfMem;
+		X8					*pDataMem;
+		U16					iMemEntIdx;
+		mement				*pMemEntry;	// points to tblRawDataToMement[x]
 	};
 };
 

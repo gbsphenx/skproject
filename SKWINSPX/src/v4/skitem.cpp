@@ -92,14 +92,14 @@ void SkWinCore::PUT_OBJECT_INTO_CONTAINER()
 	ENTER(4);
 	if (glbObjectForContainer == OBJECT_NULL)
 		return;
-	GenericContainerRecord *bp04 = GET_ADDRESS_OF_GENERIC_CONTAINER_RECORD(glbObjectForContainer);
+	GenericContainerRecord *pContainer = GET_ADDRESS_OF_GENERIC_CONTAINER_RECORD(glbObjectForContainer);	// bp04
 	glbObjectForContainer = OBJECT_NULL;
-	i16 si;
-	for (si = 0; si < 8; si++) {
-		ObjectID di = glbCurrentContainerItems[si];
-		if (di != OBJECT_NULL) {
-			glbCurrentContainerItems[si] = OBJECT_NULL;
-			APPEND_RECORD_TO(di, &bp04->possession, -1, 0);
+	i16 iItemIdx;	// si
+	for (iItemIdx = 0; iItemIdx < 8; iItemIdx++) {
+		ObjectID oItem = glbCurrentContainerItems[iItemIdx];	// di
+		if (oItem != OBJECT_NULL) {
+			glbCurrentContainerItems[iItemIdx] = OBJECT_NULL;
+			APPEND_RECORD_TO(oItem, &pContainer->possession, -1, 0);
 		}
 	}
 	return;

@@ -8327,7 +8327,7 @@ void SkWinCore::LOAD_GDAT_RAW_DATA(U16 index, shelf_memory ps)
 	i32 bp04; // file len
 	U32 bp0c; // file pos
 	if (di == 0) {
-		bp04 = _4976_5d7a;
+		bp04 = glbGDat1stEntRawDatSize;
 		bp0c = glbGDatCursorDataCumulatedLength - bp04;
 	}
 	else{
@@ -10609,14 +10609,11 @@ tiamat SkWinCore::TIAMAT_ZERO(U8 *xx, i32 size) { // TODO: Unr
 //^2C1D:132C
 X16 SkWinCore::_2c1d_132c(i16 ss, U16 tt)
 {
-	//^2C1D:132C
 	ENTER(0);
-	//^2C1D:1330
 	X16 si = ss & 0xff;
 	if (tt != 0) {
 		si = GET_SCALED_PRODUCT(si, 3, ((ss & 0x700) >> 8) +4);
 	}
-	//^2C1D:1358
 	return si;
 }
 
@@ -14997,7 +14994,16 @@ void SkWinCore::LOAD_GDAT_ENTRIES()
 	X16 iEntryIndex;	// di
 	//LOGX(("LOAD_GDAT_ENTRIES #%d (%s)", glbGDatNumberOfRawEntries, skWinApp->sCustomGraphicsDatFilename));
 	//LOGX(("-------------------------"));
-	for (iEntryIndex = 0; iEntryIndex < glbGDatNumberOfRawEntries; iEntryIndex++) {
+	SpxGDatEntryShelfMement* pDebugEntryData = tblDebugGdatEntryShelfMement;	// SPX debug
+	//for (iEntryIndex = 0; iEntryIndex < glbGDatNumberOfRawEntries; iEntryIndex++) {
+	for (iEntryIndex = 0; iEntryIndex < glbGDatNumberOfRawEntries; iEntryIndex++, pDebugEntryData++) {
+		/*printf("Entry %05d / %05d [%02X-%02X-%02X T%02d L%02X A%02X]\n", iEntryIndex, glbGDatNumberOfRawEntries,
+			QUERY_GDAT_ENTRY_VALUE(iEntryIndex, EPcls1),	// category
+			QUERY_GDAT_ENTRY_VALUE(iEntryIndex, EPcls2),	// main id
+			QUERY_GDAT_ENTRY_VALUE(iEntryIndex, EPcls4),	// subentry
+			QUERY_GDAT_ENTRY_VALUE(iEntryIndex, EPcls3),	// data type
+			QUERY_GDAT_ENTRY_VALUE(iEntryIndex, EPcls5),	// lang & alt
+			QUERY_GDAT_ENTRY_VALUE(iEntryIndex, EPcls6));*/
 		/*LOGX(("Entry %05d / %05d [%02X-%02X-%02X T%02d L%02X A%02X]", iEntryIndex, glbGDatNumberOfRawEntries,
 			QUERY_GDAT_ENTRY_VALUE(iEntryIndex, EPcls1),	// category
 			QUERY_GDAT_ENTRY_VALUE(iEntryIndex, EPcls2),	// main id
@@ -15005,6 +15011,17 @@ void SkWinCore::LOAD_GDAT_ENTRIES()
 			QUERY_GDAT_ENTRY_VALUE(iEntryIndex, EPcls3),	// data type
 			QUERY_GDAT_ENTRY_VALUE(iEntryIndex, EPcls5),	// lang & alt
 			QUERY_GDAT_ENTRY_VALUE(iEntryIndex, EPcls6)));*/
+		// SPX:debug
+			pDebugEntryData->iEntryId = iEntryIndex;
+			pDebugEntryData->sEntryData.cls1 = QUERY_GDAT_ENTRY_VALUE(iEntryIndex, EPcls1);
+			pDebugEntryData->sEntryData.cls2 = QUERY_GDAT_ENTRY_VALUE(iEntryIndex, EPcls2);
+			pDebugEntryData->sEntryData.cls4 = QUERY_GDAT_ENTRY_VALUE(iEntryIndex, EPcls4);
+			pDebugEntryData->sEntryData.cls3 = QUERY_GDAT_ENTRY_VALUE(iEntryIndex, EPcls3);
+			pDebugEntryData->sEntryData.cls5 = QUERY_GDAT_ENTRY_VALUE(iEntryIndex, EPcls5);
+			pDebugEntryData->sEntryData.cls6 = QUERY_GDAT_ENTRY_VALUE(iEntryIndex, EPcls6);
+			pDebugEntryData->sEntryData.data = QUERY_GDAT_ENTRY_VALUE(iEntryIndex, EPdata);
+			// SPX:debug
+
 		if (QUERY_GDAT_ENTRY_VALUE(iEntryIndex, EPcls6) != 0xFF)	// then only dialog boxes are loaded here
 			continue;
 		U8 iRawDatType = QUERY_GDAT_ENTRY_VALUE(iEntryIndex, EPcls3);	// bp05
@@ -15028,14 +15045,14 @@ void SkWinCore::LOAD_GDAT_ENTRIES()
 		}
 		else {	// cls1 == GDAT_CATEGORY_x01_INTERFACE_GENERAL
 			//U8* bp04 = ALLOC_MEMORY_RAM((iDatSize = QUERY_GDAT_RAW_DATA_LENGTH(iRawDatIdx)) +2, afUseUpper, 0x400);	// bp04
-			U8* xMemData = ALLOC_MEMORY_RAM((iDatSize = QUERY_GDAT_RAW_DATA_LENGTH(iRawDatIdx)) + sizeof(i16), afUseUpper, 0x400);	// bp04
-			WRITE_UI16(xMemData,+0,iDatSize);	// WRITE_UI16(xMemData,+0,iDatSize);
+			U8* pMemData = ALLOC_MEMORY_RAM((iDatSize = QUERY_GDAT_RAW_DATA_LENGTH(iRawDatIdx)) + sizeof(i16), afUseUpper, 0x400);	// bp04
+			WRITE_UI16(pMemData,+0,iDatSize);	// WRITE_UI16(xMemData,+0,iDatSize);
 			//LOGX(("LOAD_GDAT_RAW_DATA call from LOAD_GDAT_ENTRIES (2)"));
-			LOAD_GDAT_RAW_DATA(iRawDatIdx, glbShelfMemoryTable[iRawDatIdx] = CONVERT_PHYS_TO_SHELF_FORM(xMemData + sizeof(i16)));	// +2
+			LOAD_GDAT_RAW_DATA(iRawDatIdx, glbShelfMemoryTable[iRawDatIdx] = CONVERT_PHYS_TO_SHELF_FORM(pMemData + sizeof(i16)));	// +2
 
 			//LOGX(("C1) Shelf %016X => pX]%p S=%06X (%d) [(-2)%4X (0)%4X]", glbShelfMemoryTable[iRawDatIdx].val, xMemData, iDatSize, iDatSize, *((U16*)xMemData), *(((U16*)xMemData)+1) ));
 
-			SkD((DLV_GLD, "GLD: Load Raw#%4d at RAM(%08X)\n", (Bitu)iRawDatIdx, xMemData));
+			SkD((DLV_GLD, "GLD: Load Raw#%4d at RAM(%08X)\n", (Bitu)iRawDatIdx, pMemData));
 		}
 		//LOGX(("......................."));
 	}
@@ -15221,7 +15238,7 @@ void SkWinCore::BUILD_GDAT_ENTRY_DATA(GDATEntries *ref, X16 (SkWinCore::*pfnIfLo
 void SkWinCore::LOAD_ENT1()
 {
 	ENTER(8);
-	U32 bp08 = _4976_5d7a;
+	U32 bp08 = glbGDat1stEntRawDatSize;
 	tblGDatEntries = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(bp08, afUseLower, 0x400));
 //LOGX(("LOAD_GDAT_RAW_DATA call from LOAD_ENT1"));
 	LOAD_GDAT_RAW_DATA(0, CONVERT_PHYS_TO_SHELF_FORM(reinterpret_cast<U8 *>(tblGDatEntries)));
@@ -15230,11 +15247,17 @@ void SkWinCore::LOAD_ENT1()
 		RAISE_SYSERR(SYSTEM_ERROR__INVALID_ENT1);
 	}
 	glbGDatNumberOfRawEntries = tblGDatEntries[1];
+
+
 	_4976_5d40 = tblGDatEntries[2];
 	if (si != 0x8001) {
 		glbGDatNumberOfRawEntries = SWAPW(glbGDatNumberOfRawEntries);
 		_4976_5d40 = SWAPW(_4976_5d40);
 	}
+
+		// SPX:Debug
+		tblDebugGdatEntryShelfMement = (SpxGDatEntryShelfMement*) calloc(glbGDatNumberOfRawEntries+1, sizeof(SpxGDatEntryShelfMement));
+
 	U8 (*bp04)[2] = (U8 (*)[2])PTR_PADD(tblGDatEntries,+6);
 	FILL_U16(tblGDatEntryPosOrder, 7, -1, 2);
 	glbGDatEntrySize = 0;	// interesting to see that the size of entry data is somehow computed, however is it really 8 within the GDAT
@@ -15477,6 +15500,7 @@ void SkWinCore::READ_GRAPHICS_STRUCTURE()
 		goto _read_graphics_structure__raise_error;
 
 	glbShelfMemoryTable = reinterpret_cast<shelf_memory *>(ALLOC_MEMORY_RAM(sizeof(shelf_memory) * U32(glbGDatNumberOfData), afUseUpper, 0x400));
+		tblDebugGdatShelf = (SpxGDatShelf*)calloc(glbGDatNumberOfData,sizeof(SpxGDatShelf)); // SPX:debug
 	tblRawDataToMement = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(U32(glbGDatNumberOfData) << 1, afUseUpper, 0x400));
 	FILL_U16(reinterpret_cast<i16 *>(tblRawDataToMement), glbGDatNumberOfData, -1, 2);
 	bp08 = U32(glbGDatNumberOfData) << 1;	// nb items * 2 = nb of bytes for all item sizes
@@ -15486,13 +15510,13 @@ void SkWinCore::READ_GRAPHICS_STRUCTURE()
 		if (READ_FILE(glbFileHandleGraphics1, bp08, bp04) == 0)
 			goto _read_graphics_structure__raise_error;
 
-		_4976_5d7a = *bp04;
-		glbGDatCursorDataCumulatedLength += _4976_5d7a;
+		glbGDat1stEntRawDatSize = *bp04;
+		glbGDatCursorDataCumulatedLength += glbGDat1stEntRawDatSize;
 	}
 	else {
-		if (READ_FILE(glbFileHandleGraphics1, 4, &_4976_5d7a) == 0)	// Read the next 4 bytes of GDAT which hold the size for the first item entry which must be the ENT1 item
+		if (READ_FILE(glbFileHandleGraphics1, 4, &glbGDat1stEntRawDatSize) == 0)	// Read the next 4 bytes of GDAT which hold the size for the first item entry which must be the ENT1 item
 			goto _read_graphics_structure__raise_error;
-		glbGDatCursorDataCumulatedLength += _4976_5d7a + 2;	// there _4976_5d6a gets the offset of the second item after ENT1 item
+		glbGDatCursorDataCumulatedLength += glbGDat1stEntRawDatSize + 2;	// there _4976_5d6a gets the offset of the second item after ENT1 item
 		if (READ_FILE(glbFileHandleGraphics1, bp08 -2, &bp04[1]) == 0)	// here read the size table before the ENT1 item (except the first item already read, which is exceptionnally on 4 bytes; all others are on 2 bytes max)
 			goto _read_graphics_structure__raise_error;
 	}
@@ -15511,7 +15535,7 @@ void SkWinCore::READ_GRAPHICS_STRUCTURE()
 	}
 	DEALLOC_UPPER_MEMORY(bp08);
 	LOAD_ENT1();
-	if (glbGDATVersion >= 2 && glbGDATVersion != 4 && QUERY_GDAT_ENTRY_DATA_INDEX(0x0, 0x0, dt08, 0x0) != 0xffff) {
+	if (glbGDATVersion >= 2 && glbGDATVersion != 4 && QUERY_GDAT_ENTRY_DATA_INDEX(0x0, 0x0, dt08, 0x0) != 0xFFFF) {
         _4976_5d0c = reinterpret_cast<sk5d0c *>(ALLOC_MEMORY_RAM(
 			_4976_5d78 = QUERY_GDAT_ENTRY_DATA_LENGTH(0x0, 0x0, dt08, 0x0),
 			afUseUpper, 0x400));

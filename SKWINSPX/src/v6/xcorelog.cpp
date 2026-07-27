@@ -1027,3 +1027,136 @@ void SkWinCore::DEBUG_SHOW_ICON_PICT_BUFF(
 	printf("ICON PICT BUFF - END\n");
 	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
 }
+
+void SkWinCore::DEBUG_SHOW_MEMENT(mement* pMement, bool bPrintOK)
+{
+	if (!CheckSafePointer(pMement)) {
+		CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_YELLOW, BLACK);
+		printf("INVALID POINTER! %p\n", pMement);
+		return;
+	}
+	if (bPrintOK)
+		CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GREEN, BLACK);
+	else
+		CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_RED, BLACK);
+	if (pMement->iNegBuffSize != *(((U32*)pMement)-1))
+		CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_RED, BLACK);
+
+	printf("MEMENT %p (IMG: (%3d,%3d)@%d bpp | cache %5d | w %04X-%04X-%04X | negsize = %6d [-4]=> %6d || p1 %p - p2 %p\n", pMement,
+		pMement->_w14, pMement->_w16, pMement->_w12, pMement->iMemEntCacheIndex, pMement->_w4, pMement->_w6, pMement->_w8, 
+		pMement->iNegBuffSize, *(((U32*)pMement)-1), pMement->xMementRef1, pMement->xMementRef2);
+	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
+}
+
+void SkWinCore::DEBUG_SHOW_GDAT_ENTRIES_MEM()
+{
+	static char tsType[16][16] = { "0", "Image", "Sound", "Music", "Rect", "Text", "Raw6", "Raw7", "Raw8", "PalIRGB", "10", "Word", "PictOff", "PalIdx", "14", "15" };
+	U16 iEntryIndex = 0;
+	U16 iRawDatIndex = 0;
+	U8 iCls1Category = 0;
+	static int iDebugTabColor[16];
+	static int iDebugTabData[16] = {1, 1, 1, 1,		1, 1, 1, 1,		1, 1, 0, 0,		0, 1, 1, 1};
+	static char sDatType[2][5] = { "....", "DATA" };
+	static int iDebugTabPresentShelf[2] = {GRAY, LIGHT_GREEN};
+	static char sPresent[2][8] = { "absent", "present" };
+	U8 iDataType = 0;
+	X8 *pDataMem = NULL;
+	SpxGDatEntryShelfMement *pDebugEntryData = tblDebugGdatEntryShelfMement;
+	SpxGDatShelf *pDebugDataShelf = tblDebugGdatShelf;
+
+	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GREEN, BLACK);
+	printf("DEBUG_SHOW_GDAT_ENTRIES_MEM\n");
+	// 1st pass, go through the ENT1 item to link Cls1-2-4 to a RawDatID
+	printf("GDAT: #Data     = %d\n", glbGDatNumberOfData);
+	printf("GDAT: #Entries  = %d\n", glbGDatNumberOfRawEntries);
+	printf("GDAT: EntrySize = %d\n", glbGDatEntrySize);
+	printf("Debug Entry Table = %p\n", tblDebugGdatEntryShelfMement);
+	
+	iDebugTabColor[0] = LIGHT_GRAY;
+	iDebugTabColor[fmtImage] = LIGHT_GREEN;
+	iDebugTabColor[fmtSound] = AQUA;
+	iDebugTabColor[fmtHMP] = BLUE;
+
+	iDebugTabColor[fmtRect] = LIGHT_YELLOW;
+	iDebugTabColor[fmtText] = LIGHT_RED;
+	iDebugTabColor[fmt06] = LIGHT_PURPLE;
+	iDebugTabColor[fmt07] = LIGHT_PURPLE;
+
+	iDebugTabColor[fmt08] = LIGHT_PURPLE;
+	iDebugTabColor[fmtPalIRGB] = LIGHT_YELLOW;
+	iDebugTabColor[10] = CYAN;	// word
+	iDebugTabColor[fmtWordVal] = CYAN;
+
+	iDebugTabColor[fmtPicOff] = GREEN;
+	iDebugTabColor[fmtPalIndex] = LIGHT_YELLOW;
+	iDebugTabColor[fmt0E] = WHITE;
+	iDebugTabColor[15] = LIGHT_GRAY;
+
+	// go through the shelf mem table
+	for (iRawDatIndex = 0; iRawDatIndex < glbGDatNumberOfData; iRawDatIndex++) {
+		tblDebugGdatShelf[iRawDatIndex].iGDatRawId = iRawDatIndex;
+		tblDebugGdatShelf[iRawDatIndex].xShelfMem = glbShelfMemoryTable[iRawDatIndex];
+		tblDebugGdatShelf[iRawDatIndex].pDataMem = NULL;
+	}
+	// go through the mement cache table
+	for (iRawDatIndex = 0; iRawDatIndex < glbGDatNumberOfData; iRawDatIndex++) {
+		mement* pMemEnt = NULL;
+		U16 iMemEntIdx = tblRawDataToMement[iRawDatIndex];
+		//printf("MEMENTIDX %05d = %04X\n", iRawDatIndex, iMemEntIdx);
+		tblDebugGdatShelf[iRawDatIndex].iMemEntIdx = iMemEntIdx;	// get the MemEntry Index for that RawData index
+		if (iMemEntIdx != 0xFFFF) {
+			pMemEnt = tblMementsPointers[iMemEntIdx];	// out of glbNumberOfMements, get the real mement pointer
+		}
+		tblDebugGdatShelf[iRawDatIndex].pMemEntry = pMemEnt;
+	}
+
+	for (iEntryIndex = 0; iEntryIndex < glbGDatNumberOfRawEntries; iEntryIndex++, pDebugEntryData++) {
+		bool bNoLf = false;
+		iRawDatIndex = pDebugEntryData->sEntryData.data;
+		iDataType = pDebugEntryData->sEntryData.cls3;
+		//iCls1Category = QUERY_GDAT_ENTRY_VALUE(iEntryIndex, EPcls1);
+		//iRawDatIdx = QUERY_GDAT_ENTRY_VALUE(iEntryIndex, EPdata);
+		CHANGE_CONSOLE_COLOR(BRIGHT, iDebugTabColor[iDataType], BLACK);
+		printf("#Entry %5d / %5d = [%02X-%02X-%02X] [%2d](%8s) [%4s]=%5d (%04X) ", iEntryIndex, glbGDatNumberOfRawEntries, 
+			pDebugEntryData->sEntryData.cls1, pDebugEntryData->sEntryData.cls2, pDebugEntryData->sEntryData.cls4,
+			iDataType, tsType[iDataType], sDatType[iDebugTabData[iDataType]], pDebugEntryData->sEntryData.data, pDebugEntryData->sEntryData.data);
+		if (iDebugTabData[iDataType]) {
+			bool bPresent = false;
+			CHANGE_CONSOLE_COLOR(BRIGHT, CYAN, BLACK);
+			printf("Shelf=%08X", tblDebugGdatShelf[iRawDatIndex].xShelfMem.val);
+			bPresent = tblDebugGdatShelf[iRawDatIndex].xShelfMem.Present();
+			CHANGE_CONSOLE_COLOR(BRIGHT, iDebugTabPresentShelf[(int)bPresent], BLACK);
+			printf(" <%7s> ", sPresent[(int)bPresent]);
+			if (iDataType == fmtImage && bPresent)
+					pDataMem = tblDebugGdatShelf[iRawDatIndex].pDataMem = (X8*) REALIZE_GRAPHICS_DATA_MEMORY(tblDebugGdatShelf[iRawDatIndex].xShelfMem);
+			CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GREEN, BLACK);
+			if (pDataMem == 0)
+				CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
+			if (bPresent)
+				printf("MEM:%p ", pDataMem);
+			// Get extra info if image and pmem are ok
+			if (iDataType == fmtImage && bPresent && pDataMem != 0) {
+				U32 iGDatItemSize = QUERY_GDAT_RAW_DATA_LENGTH(iRawDatIndex);
+				U32 iMemItemSize = READ_UI16(pDataMem, -2);	// should be the same, since it is what QUERY_GDAT_RAW_DATA_LENGTH does.
+				CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_YELLOW, BLACK);
+				printf("DSIZE = L:%05d M:%05d ", iGDatItemSize, iMemItemSize);	/// "L"ogical & direct read from "M"emory
+
+				// mement
+				CHANGE_CONSOLE_COLOR(BRIGHT, CYAN, BLACK);
+				if (tblDebugGdatShelf[iRawDatIndex].iMemEntIdx == 0xFFFF)
+					CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
+				printf("ME# %04X (%p) ", tblDebugGdatShelf[iRawDatIndex].iMemEntIdx, tblDebugGdatShelf[iRawDatIndex].pMemEntry); 
+				if (tblDebugGdatShelf[iRawDatIndex].iMemEntIdx != 0xFFFF) {
+					CHANGE_CONSOLE_COLOR(BRIGHT, WHITE, BLACK);
+					printf("--------\n>>");
+					DEBUG_SHOW_MEMENT(tblDebugGdatShelf[iRawDatIndex].pMemEntry, true);
+//					bNoLf = true;
+				}
+			}
+		}
+//		if (!bNoLf)
+			printf("\n");
+	}
+
+	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
+}

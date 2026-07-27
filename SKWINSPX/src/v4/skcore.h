@@ -758,11 +758,11 @@ protected:
 	U16		glbNextFreeMementIndex;		// (_4976_5c78) next index of free entry mement
 	X16		_4976_5c7a;
 	U16		glbMemRAMAudioStuff;	// (_4976_5c7c)
-	U16	*_4976_5c7e_cache_ici;	// ici-to-cacheindex. to supply quick sort for searching hash value from _4976_5c86
-	U16*	tblRawDataToMement;	// (_4976_5c82) raw data index to mementi. (usually 3491 word values). 0xffff for unused mark.
+	U16		*_4976_5c7e_cache_ici;	// ici-to-cacheindex. to supply quick sort for searching hash value from _4976_5c86
+	U16		*tblRawDataToMement;	// (_4976_5c82) raw data index to mementi. (usually 3491 word values). 0xffff for unused mark.
 	Bit32u	*_4976_5c86_cache_hash;	// (_4976_5c86) cacheindex-to-hashval:  0xFFFFxxxx for pict?  0x2000xxxx for creature thing?  (13:dbidx,7:horzScale,5:vertScale) for stretched pict?
 	U16		glbNewMap_4976_5c8a;		// _4976_5c8a
-	mement*	glbMement3;	// (_4976_5c8c) mement#3
+	mement	*glbMement3;	// (_4976_5c8c) mement#3
 	//U16	_4976_5c90; // (_4976_5c90)
 	//U16	_4976_5c92_cache;		// (_4976_5c92) cnt used entries of _4976_5c7e?
 	i16	glbFileHandleGraphics1;		// (_4976_5c94)	filehandle of GRAPH1.DAT or GRAPHICS.DAT
@@ -790,7 +790,7 @@ protected:
 	U8		*_4976_5d04;	// temp buffer. size=1024
 	U16*	tblCacheToMement;	// (_4976_5d08) cacheindex-to-mementi. use with tblMementsPointers[_4976_5d08[xxx]]
 	sk5d0c	*_4976_5d0c;	// image chain table
-	U16	glbGDatOpenCloseFlag;		// (_4976_5d10) some open/close? flag related to Graphics.dat file
+	U16		glbGDatOpenCloseFlag;		// (_4976_5d10) some open/close? flag related to Graphics.dat file
 	sk5d12	_4976_5d12;
 	shelf_memory glbShelfMemTopEMS;		// (_4976_5d20) top of EMS
 	U16		glbCacheRecyclerMax;	// _4976_5d24 / cache relaed ? / value =128?
@@ -814,10 +814,10 @@ protected:
 	U32		glbGDatCursorDataCumulatedLength;		// (_4976_5d6a) GRAPHICS.DAT absolute file position of 2nd raw data
 	U16	_4976_5d6e;		// poolflag of EMS memory pool
 	mement*	glbMement4;	// (_4976_5d70) mement#4
-	U16	glbNumberOfMements;		// (_4976_5d74) cnt tblMementsPointers
-	U16	_4976_5d76;		// (_4976_5d76) complex memory pool availability: 0=disabled, 1=enabled
-	U16	_4976_5d78;		// (_4976_5d78) image chain map (entry cnt)
-	Bit32u	_4976_5d7a;		// size of 1st direntry rawdata
+	U16		glbNumberOfMements;		// (_4976_5d74) cnt tblMementsPointers
+	U16		_4976_5d76;		// (_4976_5d76) complex memory pool availability: 0=disabled, 1=enabled
+	U16		_4976_5d78;		// (_4976_5d78) image chain map (entry cnt)
+	U32		glbGDat1stEntRawDatSize;		// (_4976_5d7a) size of 1st direntry rawdata
 	sk5d12	_4976_5d7e;
 	i32	glbFreeEMSMemPool;		// for allocmem. avail size of memory pool (#2). 540 byes avail when dosbox runs
 	mement*	glbMement2;	// (_4976_5d90) mement#2
@@ -873,7 +873,10 @@ protected:
 	CreatureAnimationFrame	*tlbCreaturesAnimationSequences; // [0..517] // (_4976_5fde)	Item 01-00-00 part 1 animations sequences
 	U16		*tlbCreaturesActionsGroupOffsets; // [0..41]  // (_4976_5fe2) Item 01-00-00 part 3 groups beginning offsets
 
+	// SPX: additions
 	DM1ItemConv	glbDM1ItemConv[200];	// SPX: table for DM1 activator item conversion list
+	SpxGDatEntryShelfMement		*tblDebugGdatEntryShelfMement;
+	SpxGDatShelf				*tblDebugGdatShelf;
 	
 	//}}SKSAVE_DESORTED_VARS
 
@@ -919,6 +922,8 @@ public:
 	void DEBUG_SHOW_RECT_INFO(SRECT xRectZone);
 	void DEBUG_SHOW_MULTIRECT_INFO(sk3f6c xMultiRects);
 	void DEBUG_SHOW_ICON_PICT_BUFF(const U8 *buff, 	sk3f6c *tt, 	SRECT *rc,	i16 srcx, 	i16 srcy, 	i16 colorkey, 	i16 flipmirror,	U8 *localpal);
+	void DEBUG_SHOW_MEMENT(mement* pMement, bool bPrintOK);
+	void DEBUG_SHOW_GDAT_ENTRIES_MEM();
 
 	void LOG_FULL_DUNGEON_INFO();
 	void LOG_DUNGEON_INFO_GROUND_STACKS();
