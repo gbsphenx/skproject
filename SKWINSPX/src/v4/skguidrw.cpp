@@ -4271,25 +4271,25 @@ void SkWinCore::__OPEN_DIALOG_PANEL(U8 cls2, U16 yy)
 	ENTER(104);
 
 	// SPX
-	if (SkCodeParam::bDM2V5Mode) {
+	if (SkCodeParam::bDM2V5Mode) {	// V5
 		iTextButtonColor = C11_COLOR_YELLOW;
 		iTextVersionColor = C11_COLOR_YELLOW; //PC-DOS is dark grey, but it feels like it does not match
 	}
 
-	_4976_5250 = reinterpret_cast<sksave_header_asc *>(ALLOC_MEMORY_RAM(420, afDefault, 1024));
+	tblSaveGamesInfo = reinterpret_cast<sksave_header_asc *>(ALLOC_MEMORY_RAM((sizeof(sksave_header_asc)*10), afDefault, 1024));	//420 = 42 * 10 savegames
 	U8 bp6a[40];
 	// SPX: Get dialog box button 1 text
-	U8 *bp18 = QUERY_GDAT_TEXT(0x1a, cls2, 0x00, bp6a); // LOAD
+	U8 *bp18 = QUERY_GDAT_TEXT(GDAT_CATEGORY_x1A_DIALOG_BOXES, cls2, 0x00, bp6a); // LOAD
 	U8 bp40[40];
 	// SPX: get dialog box button 2 text
-	U8 *bp14 = QUERY_GDAT_TEXT(0x1a, cls2, 0x01, bp40); // CANCEL
-	U8 *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(0x1a, cls2, 0x00);
+	U8 *bp14 = QUERY_GDAT_TEXT(GDAT_CATEGORY_x1A_DIALOG_BOXES, cls2, 0x01, bp40); // CANCEL
+	U8 *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x1A_DIALOG_BOXES, cls2, 0x00);
 	U8 *bp08;
 	if (_4976_5d76 != 0) {
-		bp08 = QUERY_GDAT_IMAGE_LOCALPAL(0x1a, cls2, 0x00);
+		bp08 = QUERY_GDAT_IMAGE_LOCALPAL(GDAT_CATEGORY_x1A_DIALOG_BOXES, cls2, 0x00);
 	}
 	else {
-		bp08 = bp04 +CALC_IMAGE_BYTE_LENGTH(bp04);
+		bp08 = bp04 + CALC_IMAGE_BYTE_LENGTH(bp04);
 	}
 	SRECT bp10;
 	DRAW_DIALOGUE_PARTS_PICT(bp04, QUERY_EXPANDED_RECT(4, &bp10), -1, bp08);
@@ -4619,7 +4619,7 @@ _0641:
 			}
 		}
 	}
-	_0aaf_002f();
+	DRAW_FORCE_REDRAW_0aaf_002f();
 	FIRE_FADE_SCREEN(0);
 	_4976_022c = 1;
 	return iDialogBoxID;
@@ -4750,7 +4750,8 @@ void SkWinCore::CHANGE_VIEWPORT_TO_INVENTORY(U16 xx) //#DS=4976
 
 
 //^0AAF:002F
-void SkWinCore::_0aaf_002f()
+// SPX: _0aaf_002f renamed DRAW_FORCE_REDRAW_0aaf_002f
+void SkWinCore::DRAW_FORCE_REDRAW_0aaf_002f()
 {
 	if (cd.gg.glbGameHasEnded != 0) {
 		FIRE_HIDE_MOUSE_CURSOR();
@@ -4764,22 +4765,39 @@ void SkWinCore::_0aaf_002f()
 
 
 //^0AAF:081B
-void SkWinCore::DRAW_DIALOGUE_PROGRESS(X32 xx)
+void SkWinCore::DRAW_DIALOGUE_PROGRESS(X32 iPermilleValue)
 {
 	ENTER(8);
 	
-	SkD((DLV_DBG_INIT, "DRAW_DIALOGUE_PROGRESS (%d)\n", xx));
+	SkD((DLV_DBG_INIT, "DRAW_DIALOGUE_PROGRESS (%d)\n", iPermilleValue));
 
 	if (_4976_4bd8 == 0)
 		return;
 
 	SRECT xRectProgressBar; // bp08
 	QUERY_EXPANDED_RECT(RECTZONE_474_LOAD_BAR, &xRectProgressBar);
-	xRectProgressBar.cx = i16((xRectProgressBar.cx * xx) / C1000_LOAD_BAR_MAX);
+	xRectProgressBar.cx = i16((xRectProgressBar.cx * iPermilleValue) / C1000_LOAD_BAR_MAX);
 	if (xRectProgressBar.cx <= 0)
 		return;
 	FIRE_FILL_BACKBUFF_RECT(&xRectProgressBar, glbPaletteT16[C09_COLOR_ORANGE]);
-	_0aaf_002f();
+	// SPX: draw some text on it
+	if (SkCodeParam::bUseDM2ExtendedMode) {
+		char sPctText[10];
+		sprintf(sPctText, "%d%%", (iPermilleValue/10)); 
+			DRAW_STRONG_TEXT(
+				glbBackBuffViewport,
+				-1,
+				glbViewportWidth,
+				90,
+				118,
+				glbPaletteT16[C15_COLOR_WHITE],
+				glbPaletteT16[C00_COLOR_BLACK] | 0x4000,
+				(U8*) sPctText
+				);
+		printf("%s\n", sPctText);
+	}
+
+	DRAW_FORCE_REDRAW_0aaf_002f();	// This somehow force redraw + some delay (if not called, the "load" screen will be instantly done)
 	return;
 }
 

@@ -287,8 +287,8 @@ _148a:
 					glbGDATItemCls2MainItemId = *glbPtrTransmittedUIEvent; glbPtrTransmittedUIEvent++;
 					glbGDATItemCls4EntryId = *glbPtrTransmittedUIEvent; glbPtrTransmittedUIEvent++;
 					RECT_0aaf_01db(_4976_4df8, 1);
-					bp48.iCacheIndex0 = 0xffff;
-					_0aaf_002f();
+					bp48.iCacheIndex0 = 0xFFFF;
+					DRAW_FORCE_REDRAW_0aaf_002f();
 
 					break;
 				}

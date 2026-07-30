@@ -1792,7 +1792,7 @@ typedef enum
 
 #define RECTZONE_261_SPELL_RUNE_1					261
 
-
+#define RECTZONE_451_PANEL_SELECT_SAVEGAMES			451
 #define RECT_453									0x01C5
 
 #define RECTZONE_474_LOAD_BAR						0x01DA	// 474

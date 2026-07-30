@@ -3930,31 +3930,31 @@ void SkWinCore::DIALOG_2066_37f2()
 }
 
 //^2066:33E7
-// SPX: _2066_33e7 renamed _2066_33e7
-i16 SkWinCore::DIALOG_2066_33e7()
+// SPX: _2066_33e7 renamed DIALOG_SELECT_SAVEGAMES
+i16 SkWinCore::DIALOG_SELECT_SAVEGAMES()
 {
 	//^2066:33E7
 	ENTER(22);
 	//^2066:33ED
 	__OPEN_DIALOG_PANEL(0x81, 6);
 	//^2066:33F9
-	i16 si;
+	i16 iSavegameIdx;	// si
 	if (_4976_5bf6 != 0) {
 		//^2066:3400
-		si = glbSKSaveNum;
+		iSavegameIdx = glbSKSaveNum;
 		//^2066:3404
-		COPY_MEMORY(&_4976_5250[si], &_4976_5266, 42);
+		COPY_MEMORY(&tblSaveGamesInfo[iSavegameIdx], &_4976_5266, 42);
 	}
 	else {
 		//^2066:3428
-		for (si = 0; si < 10; si++) {
+		for (iSavegameIdx = 0; iSavegameIdx < 10; iSavegameIdx++) {
 			//^2066:342C
 			if (true
-				&& _4976_5250[si].w40 == 0xDEAD
-				&& _4976_5250[si].w38 == 0xBEEF
+				&& tblSaveGamesInfo[iSavegameIdx].wDEAD == 0xDEAD
+				&& tblSaveGamesInfo[iSavegameIdx].wBEEF == 0xBEEF
 			) {
 				//^2066:3449
-				COPY_STRING_2066_33c4(_4976_5268, si);
+				COPY_STRING_2066_33c4(_4976_5268, iSavegameIdx);
 				//^2066:3455
 				break;
 			}
@@ -3962,17 +3962,17 @@ i16 SkWinCore::DIALOG_2066_33e7()
 		}
 	}
 	//^2066:345D
-	_2066_398a(si);
+	DIALOG_SAVEGAMES_NAMES(iSavegameIdx);
 	//^2066:3464
 	U8 *bp04 = _4976_5268;
 	//^2066:346C
-	if (si != 10) {
+	if (iSavegameIdx != 10) {
 		//^2066:3471
 		DIALOG_2066_3820(bp04, 0);
 	}
 	else {
 		//^2066:3483
-		_0aaf_002f();
+		DRAW_FORCE_REDRAW_0aaf_002f();
 	}
 	//^2066:3488
 	U16 bp0c = 0;
@@ -3990,7 +3990,7 @@ i16 SkWinCore::DIALOG_2066_33e7()
 		switch (_4976_4dfc) {
 			case 1:
 				//^2066:34C0
-				si = -1;
+				iSavegameIdx = -1;
 				//^2066:34C3
 				_4976_4c0a = 0;
 				//^2066:34C9
@@ -4002,13 +4002,13 @@ i16 SkWinCore::DIALOG_2066_33e7()
 				//^2066:34D1
 				_4976_4c0a = 0;
 				//^2066:34D7
-				if (si == 10)
+				if (iSavegameIdx == 10)
 					//^2066:34DC
 					break;
 				//^2066:34DF
 				if (*bp04 == 0) {
 					//^2066:34E8
-					COPY_STRING_2066_33c4(bp04, si);
+					COPY_STRING_2066_33c4(bp04, iSavegameIdx);
 				}
 				//^2066:34F6
 				DIALOG_2066_3820(bp04, 0);
@@ -4029,21 +4029,21 @@ i16 SkWinCore::DIALOG_2066_33e7()
 				//^2066:3541
 				bp0a -= bp14.y +bp08;
 				//^2066:354A
-				si = min_value(bp0a / glbPanelStatsYDelta, 10);
+				iSavegameIdx = min_value(bp0a / glbPanelStatsYDelta, 10);
 				//^2066:355E
 				if (true
-					&& _4976_5250[si].w40 == 0xDEAD
-					&& _4976_5250[si].w38 == 0xBEEF
+					&& tblSaveGamesInfo[iSavegameIdx].wDEAD == 0xDEAD
+					&& tblSaveGamesInfo[iSavegameIdx].wBEEF == 0xBEEF
 				) {
 					//^2066:3579
-					COPY_STRING_2066_33c4(_4976_5268, si);
+					COPY_STRING_2066_33c4(_4976_5268, iSavegameIdx);
 				}
 				else {
 					//^2066:3587
-					SK_STRCPY(_4976_5268, _4976_5250[si].sSavegameName);
+					SK_STRCPY(_4976_5268, tblSaveGamesInfo[iSavegameIdx].sSavegameName);
 				}
 				//^2066:35A7
-				_2066_398a(si);
+				DIALOG_SAVEGAMES_NAMES(iSavegameIdx);
 				//^2066:35AE
 				DIALOG_2066_3820(bp04, 0);
 				//^2066:35BE
@@ -4051,7 +4051,7 @@ i16 SkWinCore::DIALOG_2066_33e7()
 
 			case 4:
 				//^2066:35C0
-				if (si != 10 && _4976_4c0a == 0) {
+				if (iSavegameIdx != 10 && _4976_4c0a == 0) {
 					//^2066:35CC
 					_4976_4c0a = 1;
 					//^2066:35D2
@@ -4105,7 +4105,7 @@ i16 SkWinCore::DIALOG_2066_33e7()
 	//^2066:3684
 	DIALOG_2066_37f2();
 	//^2066:3689
-	return si;
+	return iSavegameIdx;
 }
 
 
@@ -6046,7 +6046,7 @@ _100f:
 		goto _0d50;
 	}
 _1045:
-	bp0e = DIALOG_2066_33e7();
+	bp0e = DIALOG_SELECT_SAVEGAMES();
 	if (bp0e < 0)
 		goto _0d50;
 	glbSKSaveNum = bp0e;
@@ -6067,7 +6067,7 @@ _1045:
 		CLOSE_FILE(bp10);
 	}
 	else {
-		bp4c.w38 = 0;
+		bp4c.wBEEF = 0;
 	}
 	bp4c.wTimerFlag = 1;
 	SK_STRCPY(bp4c.sSavegameName, _4976_5268);

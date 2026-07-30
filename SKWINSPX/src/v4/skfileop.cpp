@@ -498,27 +498,27 @@ void SkWinCore::READ_SAVEGAMES_FILENAMES()
 		glbSKSaveDigitAlpha = iFileIndex + 0x30;
 		i16 iFileHandle = OPEN_FILE(FORMAT_SKSTR(ptrSKSave_dat, NULL));	// si
 		if (iFileHandle >= 0) {
-			READ_FILE(iFileHandle, 42, &_4976_5250[iFileIndex]);	// read first 42 to get savegame name
+			READ_FILE(iFileHandle, 42, &tblSaveGamesInfo[iFileIndex]);	// read first 42 to get savegame name
 
 			// SPX : We also check for DM1 native savegames, which don't have the same format
-			if (_4976_5250[iFileIndex].wTimerFlag != 1)	// not a DM2 savegame
+			if (tblSaveGamesInfo[iFileIndex].wTimerFlag != 1)	// not a DM2 savegame
 			{
 				X8 xDungeonDatBeginning[16];
 				// Check if PC DM savegame, we would find x6300 at 0x2C00
 				SEEK_FILE(iFileHandle, 0x2C00);
 				READ_FILE(iFileHandle, 16, &xDungeonDatBeginning);
 				if ((*(U16*)(&xDungeonDatBeginning)) == 0x0063)
-					sprintf((char*)_4976_5250[iFileIndex].sSavegameName, "SKSAVE%d.DAT (DM1 SAVEGAME)", iFileIndex);
+					sprintf((char*)tblSaveGamesInfo[iFileIndex].sSavegameName, "SKSAVE%d.DAT (DM1 SAVEGAME)", iFileIndex);
 				else
-					sprintf((char*)_4976_5250[iFileIndex].sSavegameName, "SKSAVE%d.DAT (NOT DM2 SAVEGAME)", iFileIndex);
+					sprintf((char*)tblSaveGamesInfo[iFileIndex].sSavegameName, "SKSAVE%d.DAT (NOT DM2 SAVEGAME)", iFileIndex);
 			}
 			CLOSE_FILE(iFileHandle);
 		}
 		else {
 			_4976_3b5f[0] = glbSKSaveDigitAlpha;
-			SK_STRCPY(_4976_5250[iFileIndex].sSavegameName, _4976_3b5f);
-			_4976_5250[iFileIndex].w38 = 0xBEEF;
-			_4976_5250[iFileIndex].w40 = 0xDEAD;
+			SK_STRCPY(tblSaveGamesInfo[iFileIndex].sSavegameName, _4976_3b5f);
+			tblSaveGamesInfo[iFileIndex].wBEEF = 0xBEEF;
+			tblSaveGamesInfo[iFileIndex].wDEAD = 0xDEAD;
 		}
 	}
 	return;

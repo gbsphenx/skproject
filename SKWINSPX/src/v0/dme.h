@@ -1159,8 +1159,8 @@ namespace DM2Internal {
 		U16 wTimerFlag;		// w0
 		U8  sSavegameName[34];	// b2
 		U16 w36;		// w36
-		U16 w38;		// w38
-		U16 w40;		// w40
+		U16 wBEEF;		// w38
+		U16 wDEAD;		// w40
 		// note : 40/38 can get DEADBEEF, are they a 32bits pointer ??
 	};
 	// structure of data used in savegame.dat

@@ -206,7 +206,8 @@ void SkWinCore::COPY_STRING_2066_33c4(U8 *str, U16 yy)
 }
 
 //^2066:398A
-void SkWinCore::_2066_398a(i16 xx)
+// SPX: _2066_398a renamed DIALOG_SAVEGAMES_NAMES
+void SkWinCore::DIALOG_SAVEGAMES_NAMES(i16 iSelectedSavegame)
 {
 	int iColorText = C09_COLOR_ORANGE;
 	int iColorTextHighlighted = C11_COLOR_YELLOW;
@@ -217,13 +218,13 @@ void SkWinCore::_2066_398a(i16 xx)
 		iColorTextHighlighted = C15_COLOR_WHITE;
 	}
 
-	SRECT bp0a;
-	QUERY_EXPANDED_RECT(451, &bp0a);
-	i16 di = bp0a.y +4;
-	for (i16 si = 0; si < 10; si++) {
-		U16 bp02 = (si == xx) ? glbPaletteT16[iColorTextHighlighted] : glbPaletteT16[iColorText];
-		DRAW_VP_STR(bp0a.x, di, bp02, _4976_5250[si].sSavegameName);
-		di += glbPanelStatsYDelta;
+	SRECT xRectText;	// bp0a
+	QUERY_EXPANDED_RECT(RECTZONE_451_PANEL_SELECT_SAVEGAMES, &xRectText);
+	i16 iTextYPos = xRectText.y + 4;	// di
+	for (i16 iSavegameIdx = 0; iSavegameIdx < 10; iSavegameIdx++) {	// si
+		U16 iColorTextDisplay = (iSavegameIdx == iSelectedSavegame) ? glbPaletteT16[iColorTextHighlighted] : glbPaletteT16[iColorText];	// bp02
+		DRAW_VP_STR(xRectText.x, iTextYPos, iColorTextDisplay, tblSaveGamesInfo[iSavegameIdx].sSavegameName);
+		iTextYPos += glbPanelStatsYDelta;
 	}
 	return;
 }
@@ -243,7 +244,7 @@ void SkWinCore::DIALOG_2066_3820(U8 *xx, U16 yy)
 		bp08.cy -= 4;
 		FIRE_FILL_BACKBUFF_RECT(&bp08, glbPaletteT16[C09_COLOR_ORANGE]);
 	}
-	_0aaf_002f();
+	DRAW_FORCE_REDRAW_0aaf_002f();
 	return;
 }
 

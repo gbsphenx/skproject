@@ -2585,14 +2585,12 @@ U16 SkWinCore::LOAD_NEW_DUNGEON()
 {
 	ENTER(6);
 	X8 bp05 = 0;
-	U8 *bp04 = ALLOC_MEMORY_RAM(0x400, afDefault, 0x80);
+	U8 *bp04 = ALLOC_MEMORY_RAM(0x400, afDefault, 0x80);	// bp04
 
-	Bit8u* sDungeonFilename = NULL;
+	U8 *sDungeonFilename = NULL;
 
 	if (false) {
-		//^2066:2CCB
 		/// ???
-		//^2066:2D0C
 	}
 	DEALLOC_UPPER_MEMORY(0x400);
 	if (_4976_5bea == 0 || (glbDataFileHandle = OPEN_FILE(FORMAT_SKSTR(ptrDungenB, NULL))) < 0)
@@ -2611,14 +2609,11 @@ U16 SkWinCore::LOAD_NEW_DUNGEON()
 		glbDataFileHandle = OPEN_FILE(FORMAT_SKSTR(sDungeonFilename, NULL));
 		//printf("Open file = %s\n ", sDungeonFilename);
 		//printf("glbHandle = %d\n", glbDataFileHandle);
-		//getch();
 	}
 	if (glbDataFileHandle < 0) 
 	{
-		//^2066:2D6C
 		RAISE_SYSERR(SYSTEM_ERROR__MISSING_DUNGEON);
 	}
-	//^2066:2D74
 	_4976_5bf6 = 0;
 	cd.pi.glbChampionsCount = 0;
 	cd.pi.glbLeaderHandPossession.object = OBJECT_NULL;
@@ -2630,26 +2625,19 @@ U16 SkWinCore::LOAD_NEW_DUNGEON()
 // SPX: original LOAD_NEW_DUNGEON
 U16 SkWinCore::ORIGINAL__LOAD_NEW_DUNGEON() 
 {
-	//^2066:2CA8
 	ENTER(6);
-	//^2066:2CAD
 	X8 bp05 = 0;
 	U8 *bp04 = ALLOC_MEMORY_RAM(0x400, afDefault, 0x80);
 	if (false) {
-		//^2066:2CCB
 		/// ???
-		//^2066:2D0C
 	}
 	DEALLOC_UPPER_MEMORY(0x400);
 	if (_4976_5bea == 0 || (glbDataFileHandle = OPEN_FILE(FORMAT_SKSTR(ptrDungenB, NULL))) < 0) {
-		//^2066:2D45
 		glbDataFileHandle = OPEN_FILE(FORMAT_SKSTR(ptrDungeonFilename, NULL));
 	}
 	if (glbDataFileHandle < 0) {
-		//^2066:2D6C
 		RAISE_SYSERR(SYSTEM_ERROR__MISSING_DUNGEON);
 	}
-	//^2066:2D74
 	_4976_5bf6 = 0;
 	cd.pi.glbChampionsCount = 0;
 	cd.pi.glbLeaderHandPossession.object = OBJECT_NULL;
@@ -2664,11 +2652,11 @@ i16 SkWinCore::SELECT_LOAD_GAME()
 	if (_4976_5bf2 != 0)
 		return glbSKSaveNum;
 	__OPEN_DIALOG_PANEL(0x80, 5);
-	_2066_398a(-1);
-	_0aaf_002f();
+	DIALOG_SAVEGAMES_NAMES(-1);
+	DRAW_FORCE_REDRAW_0aaf_002f();
 	FIRE_FADE_SCREEN(0);
 	U16 bp06 = 0;
-	i16 si = -1;
+	i16 iSelectedSavegame = -1;	// si
 	_4976_4dfc = 255;
 	do {
 		MessageLoop(true); // game load
@@ -2683,7 +2671,7 @@ i16 SkWinCore::SELECT_LOAD_GAME()
 		U16 di;
 		switch (_4976_4dfc) {
 			case 1://^_3330
-				si = -1;
+				iSelectedSavegame = -1;
 				goto _3333;
 			case 2://^_3333
 _3333:
@@ -2694,18 +2682,18 @@ _3333:
 				QUERY_TOPLEFT_OF_RECT(_4976_4e44, &bp02, &bp04);
 				di = _4976_4e68;
 				di -= bp0e.y +bp04;
-				si = min_value(di / glbPanelStatsYDelta, 10);
-				if (_4976_5250[si].w40 == 0xDEAD && _4976_5250[si].w38 == 0xBEEF)
-					si = -1;
-				_2066_398a(si);
-				_0aaf_002f();
+				iSelectedSavegame = min_value(di / glbPanelStatsYDelta, 10);
+				if (tblSaveGamesInfo[iSelectedSavegame].wDEAD == 0xDEAD && tblSaveGamesInfo[iSelectedSavegame].wBEEF == 0xBEEF)
+					iSelectedSavegame = -1;
+				DIALOG_SAVEGAMES_NAMES(iSelectedSavegame);
+				DRAW_FORCE_REDRAW_0aaf_002f();
 			default://^_33aa
 				break;
 		}
-		_4976_4dfc = 0xffff;
+		_4976_4dfc = 0xFFFF;
 	} while (bp06 == 0);
 	DIALOG_2066_37f2();
-	return si;
+	return iSelectedSavegame;
 }
 
 

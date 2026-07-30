@@ -574,12 +574,12 @@ protected:
 	U16		*_4976_5240;	// certain table for containers
 	U16		glbTimerFlag;		//_4976_5244
 	U16		*_4976_5246;	// certain table for creatures
-	Bit32u	_4976_524a;				// DUNGEON.dat file position while gameload
-	Bit8u	_4976_524e;				// by suppress writer (current bit position)
-	sksave_header_asc	*_4976_5250;	// 10 pieces of sksave header while gameload
-	Bit8u	_4976_5254;				// by suppress writer (queued nibble)
-	Bit32u	_4976_5258;				// total amount of processed bits by suppression writer
-	U16	glbSKSaveNum;				// (_4976_525c) SKSave num when selected from resume screen
+	U32		_4976_524a;				// DUNGEON.dat file position while gameload
+	U8		_4976_524e;				// by suppress writer (current bit position)
+	sksave_header_asc	*tblSaveGamesInfo;	// (_4976_5250) 10 pieces of sksave header while gameload
+	U8		_4976_5254;				// by suppress writer (queued nibble)
+	U32		_4976_5258;				// total amount of processed bits by suppression writer
+	U16		glbSKSaveNum;				// (_4976_525c) SKSave num when selected from resume screen
 	ObjectID	*glbMinionsObjectIDTable;	// (_4976_525e) minion assoc
 	sksave_header_asc	_4976_5266;
 	U8		_4976_5290[30];	// maybe status text.
@@ -598,7 +598,7 @@ protected:
 	U16	glbItemWeightDg;		// weight   x part of ???.x
 	U16	glbTextEntryEncoded;	// (_4976_52de)
 	U16	glbChampWeightLoadDisplay;	// _4976_52e0
-	Bit8u	glbSKSaveDigitAlpha;		// (_4976_52e2) holds the SKSave num number as alpha (for building SKSAVEX.DAT name)
+	U8	glbSKSaveDigitAlpha;		// (_4976_52e2) holds the SKSave num number as alpha (for building SKSAVEX.DAT name)
 	U16	_4976_52e4;		// 0=fighter, 1=ninja, 2=priest, 3=wizard
 	U16	glbChampionBonesIndex;		// (_4976_52e6) who's bone? (0 to 3)
 	U16	glbItemWeightKg;		// (_4976_52e8) weight xxx part of xxx.?
@@ -1762,7 +1762,7 @@ protected:
 	void READ_SAVEGAMES_FILENAMES(); // _2066_38d9
 	void __OPEN_DIALOG_PANEL(U8 cls2, U16 yy);
 	void COPY_STRING_2066_33c4(U8 *str, U16 yy);	// _2066_33c4
-	void _2066_398a(i16 xx);
+	void DIALOG_SAVEGAMES_NAMES(i16 iSelectedSavegame);	// _2066_398a
 	void DIALOG_2066_3820(U8 *xx, U16 yy);	// _2066_3820
 
 	void _3929_0b01(U16 xx, U16 yy); // TODO: Unr
@@ -1773,7 +1773,7 @@ protected:
 	U8 _01b0_054a_KEYBOARD(U16 xx);
 	U8 _476d_05b6_KEYBOARD(U16 xx);
 	void DIALOG_2066_37f2();	// _2066_37f2
-	i16 DIALOG_2066_33e7();	// _2066_33e7
+	i16 DIALOG_SELECT_SAVEGAMES();	// _2066_33e7
 	void SET_PARTY_HERO_FLAG(U16 flagvalue);
 	void SEARCH_STARTER_CHAMPION(); // _2f3f_0789
 	void FILL_U16(i16 *buff, X16 cnt, i16 val, i16 delta);
@@ -1896,7 +1896,7 @@ protected:
 	SRECT *SCALE_RECT(U16 rectno, SRECT *rc, U16 horzResolution, U16 vertResolution);
 	SRECT *QUERY_EXPANDED_RECT(U16 rectno, SRECT *rc);
 	void CHANGE_VIEWPORT_TO_INVENTORY(U16 xx);
-	void _0aaf_002f();
+	void DRAW_FORCE_REDRAW_0aaf_002f();	// _0aaf_002f
 	U16 max_value(i16 v1, i16 v2);
 	U16 min_value(i16 v1, i16 v2);
 	void FIRE_WAIT_VSYNC();
@@ -2087,7 +2087,7 @@ protected:
 	tiamat _3e74_32fb(sk5d12 *ss, U8 *tt, i32 ww); // TODO: Unr
 
 
-	void DRAW_DIALOGUE_PROGRESS(X32 xx);
+	void DRAW_DIALOGUE_PROGRESS(X32 iPermilleValue);
 	shelf_memory GET_SHELFMEM_FROM_GDAT_INDEX(U8 iGDatCls1Category, U8 iGDatCls2MainItemId, U8 iGDatCls3DataType, U8 iGDatCls4EntryId);	// _3e74_5133
 	void _47eb_00a4(sk5f0a *ref);
 	void  AUDIO_482b_0684();	// _482b_0684
