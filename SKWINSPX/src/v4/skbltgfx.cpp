@@ -1361,7 +1361,7 @@ void SkWinCore::FREE_PICT_BUFF(U8* xImageBuffer)
 void SkWinCore::TRIM_BLIT_RECT(i16 xx, i16 yy, i16 ss, i16 tt)
 {
 	ENTER(0);
-	SET_SRECT(&glb_4976_4bca_Rect, xx, yy, _4976_00f6 -ss -xx, _4976_00f8 -tt -yy);
+	SET_SRECT(&glb_4976_4bca_Rect, xx, yy, glbViewportWidth -ss -xx, glbViewportHeight -tt -yy);
 	return;
 }
 

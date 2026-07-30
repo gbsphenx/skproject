@@ -1107,11 +1107,11 @@ U8 *SkWinCore::MEM_PREPARE_VIEWPORT()
 	if (_4976_4968 != 0) {
 		U8* xImageBuffer = EMS_MAP_BANK_TO_MEMORY(_4976_5eac + (sizeof(ImageExtraHeader)), 1);	// bp04 ; size +6
 		//WRITE_UI16(xImageBuffer,-6,8);
-		//WRITE_UI16(xImageBuffer,-4,_4976_00f6);
-		//WRITE_UI16(xImageBuffer,-2,_4976_00f8);
+		//WRITE_UI16(xImageBuffer,-4,glbViewportWidth);
+		//WRITE_UI16(xImageBuffer,-2,glbViewportHeight);
 		WRITE_IMGBUFF_BPP(xImageBuffer,IMG_8_BPP);
-		WRITE_IMGBUFF_WIDTH(xImageBuffer,_4976_00f6);
-		WRITE_IMGBUFF_HEIGHT(xImageBuffer,_4976_00f8);
+		WRITE_IMGBUFF_WIDTH(xImageBuffer,glbViewportWidth);
+		WRITE_IMGBUFF_HEIGHT(xImageBuffer,glbViewportHeight);
 		return xImageBuffer;
 	}
 	return NULL;
@@ -1200,10 +1200,10 @@ X32 SkWinCore::_3e74_0017(sk5d12 *ref)
 	X32 bp04 = 0;
 	if (ref->t0.IsntZero()) {
 		if (ref->Is4EMS()) {
-			bp04 = tiamat::Size(ref->t0, ref->t4);
+			bp04 = tiamat::Size(ref->t0, ref->memRefLower);
 		}
 		else {
-			bp04 = tiamat::Size(ref->t0, ref->t4);
+			bp04 = tiamat::Size(ref->t0, ref->memRefLower);
 		}
 	}
 	//^3E74:0079
@@ -1243,11 +1243,12 @@ void SkWinCore::_47eb_00a4(sk5f0a *ref)
 
 
 //^3E74:32A2
-tiamat SkWinCore::_3e74_32a2(sk5d12 *ref, i32 xx)
+// SPX: _3e74_32a2 renamed MEM_3e74_32a2
+tiamat SkWinCore::MEM_3e74_32a2(sk5d12 *ref, i32 xx)
 {
 	ENTER(0);
-	X16 si = (ref->Is4EMS() != 0) ? 1 : 0;
-	if (si != 0) {
+	X16 iForEMS = (ref->Is4EMS() != 0) ? 1 : 0;	// si
+	if (iForEMS != 0) {
 		ref->t8 -= xx;
 	}
 	else {
@@ -1259,45 +1260,52 @@ tiamat SkWinCore::_3e74_32a2(sk5d12 *ref, i32 xx)
 
 
 //^3E74:00ED
-X16 SkWinCore::_3e74_00ed(sk5d12 *ref, shelf_memory ps)
+// SPX: _3e74_00ed renamed CHECK_SHELF_IN_BOUNDS_3e74_00ed
+X16 SkWinCore::CHECK_SHELF_IN_BOUNDS_3e74_00ed(sk5d12 *ref, shelf_memory vShelfMem)	// ref, ps
 {
 	ENTER(4);
-	X16 si = 0;
+	X16 iRetCode = 0;	//
 	if (ref == NULL)
-		return si;
-	if (ps.AtEMS()) {
-		if (ref->Is4EMS() && ref->t4 <= tiamat(ps) && ref->t0 >= tiamat(ps)) {
+		return iRetCode;	// 0
+	if (vShelfMem.AtEMS()) {
+		if (ref->Is4EMS() && ref->memRefLower <= tiamat(vShelfMem) && ref->t0 >= tiamat(vShelfMem)) {
 			return 1;
 		}
 		return 0;
 	}
-	U8 *bp04 = REALIZE_GRAPHICS_DATA_MEMORY(ps);
-	if (t2ptr(ref->t4) <= bp04 && t2ptr(ref->t0) >= bp04)
+	U8 *pDataMem = REALIZE_GRAPHICS_DATA_MEMORY(vShelfMem);	// bp04
+	if (t2ptr(ref->memRefLower) <= pDataMem && t2ptr(ref->t0) >= pDataMem)
 		return 1;
 	return 0;
 }
 
+// shelf to tiamat
 tiamat SkWinCore::s2t(shelf_memory s) {
 	return tiamat(s);
 }
+// tiamat to shelf
 shelf_memory SkWinCore::t2s(tiamat t) {
 	switch (t.Area()) {
 		case 0:
 			return shelf_memory::From_cram(t.val);
 		case 1:
-			return shelf_memory::From_cems(t.val -0x200000);
+			return shelf_memory::From_cems(t.val - X00200000_START_CEMS);
 	}
 	ATLASSERT(false);
 	return shelf_memory();
 }
+
+// tiamat to pointer
 U8 *SkWinCore::t2ptr(tiamat t) {
 	switch (t.Area()) {
 		case 0: return &xCRAM[t.val];
-		case 1: return &xCEMS[t.val -0x200000];
+		case 1: return &xCEMS[t.val - X00200000_START_CEMS];
 	}
 	ATLASSERT(false);
 	return NULL;
 }
+
+// pointer to tiamat
 tiamat SkWinCore::ptr2t(U8 *pb) {
 	U32ptr val;
 	val = pb - xCRAM;
@@ -1307,7 +1315,7 @@ tiamat SkWinCore::ptr2t(U8 *pb) {
 	}
 	val = pb - xCEMS;
 	if (val < shelf_memory::SizeOf_cems()) {	// replaced sizeof(cems)
-		tiamat v; v.val = (U32)val +0x200000; return v;
+		tiamat v; v.val = (U32)val + X00200000_START_CEMS; return v;
 	}
 	ATLASSERT(false);
 	return tiamat::zero();
@@ -1396,16 +1404,237 @@ void SkWinCore::INIT_CPXHEAP(sk5d12 *ref, tiamat poolBuff, U32 poolSize, U16 poo
 {
 	ENTER(0);
 	ref->t0 = (poolBuff);
-	ref->t4 = (poolBuff);
+	ref->memRefLower = (poolBuff);
 	ref->t8 = (poolBuff);
 	if (poolBuff.IsntZero()) {
 		if ((poolflag & 0x800) != 0) {
-			ref->t4 = (poolBuff -poolSize); // integer subtraction.
+			ref->memRefLower = (poolBuff -poolSize); // integer subtraction.
 		}
 		else {
-			ref->t4  = (poolBuff -poolSize); // pointer subtraction.
+			ref->memRefLower  = (poolBuff -poolSize); // pointer subtraction.
 		}
 	}
 	ref->w12 = poolflag;
 	return;
+}
+
+
+
+
+
+//^4726:0107
+void SkWinCore::EMS_MAP_BANK_TO_MEMORY() { // TODO: Unr
+#if UseAltic
+	;
+#else
+	Unr();
+#endif
+}
+
+//^4726:0107
+U8 *SkWinCore::EMS_MAP_BANK_TO_MEMORY(shelf_memory info, U16 physPage0to3) { // TODO: Unr
+#if UseAltic
+	return REALIZE_GRAPHICS_DATA_MEMORY(info);
+#else
+	return Unr(), NULL;
+#endif
+}
+
+//^3E74:0683
+U8 *SkWinCore::FIND_FREE_POOL(U32 size, U16 poolno)
+{
+	U16 si = poolno;
+	EMS_MAP_BANK_TO_MEMORY();
+	sk5d00 *bp04 = _4976_5d00;
+	U8 *bp08 = 0;
+	i32 bp10 = 0x7fffffff;
+	while (bp04 != NULL) {
+		i32 bp0c;
+		if (true
+			&& (bp04->w18 == 0)
+			&& (bp04->w16 & si) == si 
+			&& (bp04->w16 & 0x0800) == (si & 0x0800) 
+			&& (bp0c = bp04->dw12 -size) >= 0
+			&& (bp0c < bp10)
+		) {
+			bp10 = bp0c;
+			bp08 = (U8 *)bp04;
+		}
+		bp04 = bp04->pv0;
+	}
+	return bp08;
+}
+
+U8* SkWinCore::ALLOC_MEMORY_RAM(U32 size, U16 flags, U16 poolno) {
+	ATLASSERT((poolno & 0x800) == 0);
+	U8 *pb = t2ptr(ALLOC_MEMORY_(size, flags, poolno));
+	SkD((DLV_MEM, "MEM: ALLOC_MEMORY_RAM(%10d,%04X,%04X) = %08X  (free:%7u)\n", (Bitu)size, (Bitu)flags, (Bitu)poolno, pb, (Bitu)glbFreeRAMMemPool));
+	return pb;
+}
+shelf_memory SkWinCore::ALLOC_MEMORY_EMS(U32 size, U16 flags, U16 poolno) {
+	ATLASSERT((poolno & 0x800) != 0);
+	shelf_memory ps = t2s(ALLOC_MEMORY_(size, flags, poolno));
+	SkD((DLV_MEM, "MEM: ALLOC_MEMORY_EMS(%10d,%04X,%04X) = %08X  (free:%7u)\n", (Bitu)size, (Bitu)flags, (Bitu)poolno, (Bitu)ps.val, (Bitu)glbFreeEMSMemPool));
+	return ps;
+}
+
+//^3E74:088E
+tiamat SkWinCore::ALLOC_MEMORY_(U32 size, U16 flags, U16 poolno)
+{
+	// if (flags & 0x7FFF)==1, try to allocate memory from upper free area (for temporary use?)
+	// if (flags & 0x7FFF)==2, try to allocate memory from lower free area (for permanent use?)
+	// if (flags & 0x8000)!=0, clear memory with 0
+
+	// if (poolno & 0x0c00)==0x0c00, it forces engine to allocate ibmio free memory. if no avail, SYSTEM ERROR 39
+	// if (poolno & 0x0800)!=0x0000, it forces engine to allocate external free memory. if no avail, SYSTEM ERROR 39
+
+	// if out of memory, always SYSTEM ERROR 40
+
+	//ATLASSERT(0x200000 <= U32(_4976_5d5a) && U32(_4976_5d5a) <= 0x200000 +sizeof(cems));
+	//ATLASSERT(cram <= _4976_5cf4 && _4976_5cf4 <= cram + shelf_memory::SizeOf_cems()); // replaced sizeof(cram)
+	SkD((DLV_MEM, "MEM: ALLOC_MEMORY_: CRAM / _4976_5cf4 / CRAM+S(CEMS) = 1)%08X / 2)%08X / 2-1) %08X (%05d) / 3)%08X / 3-1) %08X (%06d)\n",
+		xCRAM, _4976_5cf4, _4976_5cf4-xCRAM, _4976_5cf4-xCRAM, (xCRAM + shelf_memory::SizeOf_cems()), shelf_memory::SizeOf_cems(), shelf_memory::SizeOf_cems() ));
+	ATLASSERT(xCRAM <= _4976_5cf4 && _4976_5cf4 <= xCRAM + shelf_memory::SizeOf_cems()); // replaced sizeof(cram)
+	ATLASSERT(0 <= glbFreeRAMMemPool);
+
+	U16 si = flags;
+	U16 di = poolno;
+	U16 bp0a = si & 0x8000;
+	tiamat bp04;
+	si &= 0x7FFF;
+	if ((size & 1) != 0)
+		size++;
+	if (si == 1) {
+		U8 *bp08 = FIND_FREE_POOL(size, di);
+		if (bp08 != NULL) {
+			bp04 = TIAMAT_ZERO(bp08, size);
+
+			goto _09f7;
+		}
+	}
+	if (si == 1) { // alloc upper mem
+		if ((di & _4976_5d6e) == di) {
+			if (size <= glbFreeEMSMemPool) {
+				if ((_4976_5d6e & 0x0800) == (di & 0x0800)) {
+					glbFreeEMSMemPool -= size;
+					/* ZEL commented
+					if ((_4976_5d6e & 0x0800) != 0) {
+						_4976_5d5a -= size;
+						bp04 = _4976_5d5a;
+						goto _09f7;
+					}
+					else {
+						_4976_5d5a -= size;
+						bp04 = _4976_5d5a;
+						goto _09f7;
+					}*/
+					// ZEL
+					{
+						_4976_5d5a -= size;
+						bp04 = _4976_5d5a;
+						goto _09f7;
+					}
+					// ZEL
+				}
+			}
+		}
+	}
+
+	/*
+	if (SkCodeParam::bUseIngameDebug && glbTickSpeed > 0)
+	{
+		U8 message[32];
+		sprintf((char*)message, "FREE MEM = %06d , ALLOC SIZE = %05d \n", glbFreeRAMMemPool, size);
+		DISPLAY_HINT_TEXT(C11_COLOR_YELLOW, message);
+	}
+	*/
+
+
+	if ((di & 0x0800) != 0) { // syserr39 if run out of EMS memory!
+		RAISE_SYSERR(SYSTEM_ERROR__OUT_OF_EMS_MEM);
+	}
+	if (size > glbFreeRAMMemPool) { // syserr40 if run out of main memory!
+		RAISE_SYSERR(SYSTEM_ERROR__OUT_OF_MAIN_MEM);
+	}
+	if (si == 2) { // from lower pool
+		bp04 = ptr2t(_4976_5cf4 - glbFreeRAMMemPool);
+
+//#if defined(_USE_MFC80) || defined(_USE_MFC60) || defined(_USE_SDL) || defined(__DJGPP__) || defined(__MINGW__) || defined(__LINUX__)
+		vecLowerAlloc.push(size);
+//#endif // defined(_USE_MFC80) || defined(_USE_MFC60) || defined(_USE_SDL)
+	}
+	else { // from upper pool
+		_4976_5cf4 -= size;
+		bp04 = ptr2t(_4976_5cf4);
+
+//#if defined(_USE_MFC80) || defined(_USE_MFC60) || defined(_USE_SDL) || defined(__DJGPP__) || defined(__MINGW__) || defined(__LINUX__)
+		vecUpperAlloc.push(size);
+//#endif // defined(_USE_MFC80) || defined(_USE_MFC60) || defined(_USE_SDL)
+	}
+	SkD((DLV_MEM, "MEM: %d - %d => %d\n", glbFreeRAMMemPool, size, (glbFreeRAMMemPool - size)));
+	glbFreeRAMMemPool -= size;
+_09f7:
+#if UseAltic
+	if ((poolno & 0x800) == 0) {
+		memset(t2ptr(bp04), 0xcc, size); // for DEBUG purpose
+	}
+#endif
+	if (bp0a != 0) {
+		ATLASSERT((poolno & 0x800) == 0); // clear cannot be ran if you request shelf_memory address!
+		ZERO_MEMORY(t2ptr(bp04), size);
+	}
+	return bp04;
+}
+
+//U8 *SkWinCore::ALLOC_PICT_BUFF(U16 srccx, U16 srccy, U16 flags, U16 bpp)
+U8 *SkWinCore::ALLOC_PICT_BUFF(U16 iImageWidth, U16 iImageHeight, U16 flags, U16 bpp)
+{
+	U16 iLocalWidth = iImageWidth;	// si
+	U8* xPictBuff = ALLOC_MEMORY_RAM((((bpp == 4) ? (((iLocalWidth +1) & 0xFFFE) >> 1) : (iLocalWidth & 0xFFFF)) * iImageHeight) +6, flags, 8) + 6;	// bp04
+	//xPictBuff = xPictBuff;	// ???
+	//WRITE_UI16(xPictBuff, -6, bpp);	// bpp
+	//WRITE_UI16(xPictBuff, -4, iLocalWidth);		// image width
+	//WRITE_UI16(xPictBuff, -2, iImageHeight);	// image height
+	WRITE_IMGBUFF_BPP(xPictBuff, bpp);
+	WRITE_IMGBUFF_WIDTH(xPictBuff, iLocalWidth);
+	WRITE_IMGBUFF_HEIGHT(xPictBuff, iImageHeight);
+
+	return xPictBuff;
+}
+
+//^47E1:0008
+void SkWinCore::COPY_MEMORY(const void *buffSrc, void *buffDst, Bit32u buffSize) {
+	if (!CheckSafePointer((void*)buffDst) || !CheckSafePointer((void*)buffSrc))
+		return;
+	memcpy(buffDst, buffSrc, buffSize);
+}
+
+
+//^3E74:01A5
+U8 *SkWinCore::REALIZE_GRAPHICS_DATA_MEMORY(shelf_memory info) {
+	U32 iMemAddress = info.val;
+	// Original code would just take full value, which can be 0x80****** and break the limit.
+	// the 0x80 part must be some flag info then not to be taken for memory check.
+	// Note: it happens when loading original BETA GDAT.
+
+#if UseAltic
+	if (iMemAddress >= X00200000_START_CEMS + shelf_memory::SizeOf_cems()) { // replaced sizeof(cems)
+		ATLASSERT(false);
+		return NULL;
+	}
+	if (iMemAddress >= X00200000_START_CEMS) {
+		return &xCEMS[iMemAddress - X00200000_START_CEMS];
+	}
+	//else if (iMemVal >= sizeof(xCRAM)) {
+	else if (iMemAddress >= skWinApp->iSizeCRAM) {
+		ATLASSERT(false);
+		return NULL;
+	}
+	else {
+		return &xCRAM[iMemAddress];
+	}
+#else
+	ATLASSERT(false);
+	return Unr(), NULL;
+#endif
 }

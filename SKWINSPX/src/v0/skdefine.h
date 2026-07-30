@@ -29,6 +29,34 @@
 #define MEMENT_MARK_M2_FFFE				0xFFFE
 #define MEMENT_MARK_M3_FFFD				0xFFFD
 
+#define C400_MAX_DYN_ENTRIES					400
+
+#define RAWDAT_DYN_MARK_x06				0x06
+#define RAWDAT_DYN_MARK_x08				0x08
+#define RAWDAT_DYN_MARK_x09				0x09
+#define RAWDAT_DYN_MARK_x0A				0x0A
+#define RAWDAT_DYN_MARK_x0C				0x0C
+#define RAWDAT_DYN_MARK_x10				0x10
+#define RAWDAT_DYN_MARK_x11				0x11
+#define RAWDAT_DYN_MARK_x12				0x12
+#define RAWDAT_DYN_MARK_x18				0x18
+#define RAWDAT_DYN_MARK_x20				0x20
+#define RAWDAT_DYN_MARK_x21				0x21
+#define RAWDAT_DYN_MARK_x14				0x14
+#define RAWDAT_DYN_MARK_x1F				0x1F
+#define RAWDAT_DYN_MARK_x40				0x40
+#define RAWDAT_DYN_MARK_x48				0x48
+#define RAWDAT_DYN_MARK_x80				0x80
+#define RAWDAT_DYN_MARK_x90				0x90
+#define RAWDAT_DYN_MARK_x94				0x94
+#define RAWDAT_DYN_MARK_xE0				0xE0
+#define RAWDAT_DYN_MARK_xE1				0xE1
+#define RAWDAT_DYN_MARK_xF7				0xF7
+
+#define C224_VIEWPORT_WIDTH				0xE0
+#define C136_VIEWPORT_HEIGHT			0x88
+
+
 //------------------------------------------------------------------------------
 //	DATABASE / CATEGORIES
 //------------------------------------------------------------------------------
@@ -1761,6 +1789,8 @@ typedef enum
 #define RECT_554_CHAMPION_SHEET_IMAGE				554
 #define RECT_555_CHAMPION_SHEET_LOAD_STRING			555
 
+#define RECTZONE_702_VIEWPORT_BASE					0x2BE	// 702
+// then followings one are for each "cell" position?
 
 //------------------------------------------------------------------------------
 //	DIALOG BOXES

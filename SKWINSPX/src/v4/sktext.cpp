@@ -189,7 +189,7 @@ void SkWinCore::DRAW_TEXT_TO_BACKBUFF(i16 xx, i16 yy, U8 *str)
 		U8 bp18[16];
 		COPY_MEMORY(glbPaletteT16, bp18, 16);
 		PALETTE_SOMETHING_0b36_037e(bp18, U8(_4976_5a88), -1, -1, 16);
-		DRAW_STRONG_TEXT(glbBackBuffViewport, -1, _4976_00f6, xx -(bp06 >> 1), yy, bp18[15], bp18[0]|0x4000, str);
+		DRAW_STRONG_TEXT(glbBackBuffViewport, -1, glbViewportWidth, xx -(bp06 >> 1), yy, bp18[15], bp18[0]|0x4000, str);
 	}
 	return;
 }
@@ -609,7 +609,7 @@ void SkWinCore::DRAW_VP_STR(Bit16u dstx, Bit16u dsty, Bit16u clr1, const Bit8u *
 	DRAW_STRING(
 		glbBackBuffViewport,
 		-1,
-		_4976_00f6,
+		glbViewportWidth,
 		dstx,
 		dsty,
 		clr1,

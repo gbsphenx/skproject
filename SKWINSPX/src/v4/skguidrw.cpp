@@ -2687,7 +2687,7 @@ void SkWinCore::DRAW_ITEM_STATS_BAR(U16 rectno, i16 curVal, i16 maxVal, U8 chr, 
 	DRAW_STRONG_TEXT(
 		glbBackBuffViewport,
 		-1,
-		_4976_00f6,
+		glbViewportWidth,
 		bp08.x -9,
 		bp08.y +bp08.cy,
 		glbPaletteT16[color],
@@ -2700,7 +2700,7 @@ void SkWinCore::DRAW_ITEM_STATS_BAR(U16 rectno, i16 curVal, i16 maxVal, U8 chr, 
 	DRAW_STRONG_TEXT(
 		glbBackBuffViewport,
 		-1,
-		_4976_00f6,
+		glbViewportWidth,
 		bp08.x +3,
 		bp08.y +bp08.cy -1,
         glbPaletteT16[C15_COLOR_WHITE],
@@ -2713,7 +2713,7 @@ void SkWinCore::DRAW_ITEM_STATS_BAR(U16 rectno, i16 curVal, i16 maxVal, U8 chr, 
 	DRAW_STRONG_TEXT(
 		glbBackBuffViewport,
 		-1,
-		_4976_00f6,
+		glbViewportWidth,
 		bp08.x +bp08.cx -1 - _4976_011e -1,
 		bp08.y +bp08.cy -1,
 		glbPaletteT16[C15_COLOR_WHITE],
@@ -2815,7 +2815,7 @@ U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, U16 xx)
 				Potion *bp04 = _bp04->castToPotion();
 				rune = RUNE_NETA;
 				value = bp04->PotionPower();
-				max = 0x00ff;
+				max = 0x00FF;
 				break;
 			}
 		case dbWeapon: // 5
@@ -2836,7 +2836,7 @@ U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, U16 xx)
 				if (SkCodeParam::bUseDM2ExtendedMode)
 					rune = RUNE_YA;
 				value = QUERY_GDAT_DBSPEC_WORD_VALUE(si, GDAT_ITEM_STATS_ARMOR_CLASS) & 0xff;	//SPX: 0x0B Armor value
-				max = 0x00c8;
+				max = 0x00C8;
 				break;	// SPX: fixed here this missing break
 			}
 		default:
@@ -2917,7 +2917,7 @@ U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, U16 xx)
 			DRAW_STRONG_TEXT(
 				glbBackBuffViewport,
 				-1,
-				_4976_00f6,
+				glbViewportWidth,
 				100,
 				yy,
 				glbPaletteT16[C15_COLOR_WHITE],
@@ -2949,7 +2949,7 @@ U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, U16 xx)
 				DRAW_STRONG_TEXT(
 					glbBackBuffViewport,
 					-1,
-					_4976_00f6,
+					glbViewportWidth,
 					100,
 					yy,
 					glbPaletteT16[C15_COLOR_WHITE],
@@ -3050,7 +3050,7 @@ void SkWinCore::DRAW_LOCAL_TEXT(U16 rectno, U16 clr1, U16 clr2, U8 *str)
 			DRAW_STRONG_TEXT(
 				glbBackBuffViewport,
 				-1,
-				_4976_00f6,
+				glbViewportWidth,
 				bp0c.x,
 				bp0c.y + bp0c.cy,
 				clr1,
@@ -4377,7 +4377,7 @@ void SkWinCore::DRAW_DIALOGUE_PARTS_PICT(U8 *buffsrc, SRECT *rc, i16 colorkey, U
 		0,
 		0,
 		READ_IMGBUFF_WIDTH(buffsrc),	// READ_UI16(buffsrc,-4)
-		_4976_00f6,
+		glbViewportWidth,
 		colorkey,
 		0,
 		READ_IMGBUFF_BPP(buffsrc),	// READ_UI16(buffsrc,-6)
@@ -4537,7 +4537,7 @@ U8 SkWinCore::_0aaf_02f8_DIALOG_BOX(U8 iDialogBoxID, U8 yy) //#DS=4976
 		FREE_PICT_ENTRY(bp04);
 	}
 	else {
-		FIRE_FILL_BACKBUFF_RECT(SET_ORIGIN_RECT(&bp20, _4976_00f6, _4976_00f8), glbPaletteT16[C01_COLOR_DARK_GRAY]);
+		FIRE_FILL_BACKBUFF_RECT(SET_ORIGIN_RECT(&bp20, glbViewportWidth, glbViewportHeight), glbPaletteT16[C01_COLOR_DARK_GRAY]);
 		FIRE_FILL_BACKBUFF_RECT(INFLATE_RECT(&bp20, -10, -10), glbPaletteT16[C05_COLOR_BROWN]);
 		if (bp0c == 0x0003) {
 			bp10 = 1;
@@ -4631,7 +4631,7 @@ _0641:
 			if (bp24->pb0 != NULL) {
 				for (bp0e=0; bp24->pb0[bp0e] != 0; ) {
 					bp0a = _3929_04e2_DRAW_TEXT_STRINGS(bp24->pb0, bp64, &bp0e, bp24->w4);
-					DRAW_VP_STR((_4976_00f6 -bp0a) >> 1, di, iButtonColors[bp16], bp64);
+					DRAW_VP_STR((glbViewportWidth -bp0a) >> 1, di, iButtonColors[bp16], bp64);
 					di += _4976_013a + _4976_0134;
 					if (bp24->pb0[bp0e] == vbLf) {
 						bp0e++;
@@ -5882,7 +5882,7 @@ void SkWinCore::DRAW_TELEPORTER_TILE(i16 iViewportCell, X16 iGDatCls1Category, X
 		&bp22, 
 		(bp04[0] +RAND01()) << 4, 
 		RAND() & 255,
-		_4976_00f6, 
+		glbViewportWidth, 
 		bp10, 
 		_32cb_0649(U8(iGDatCls1Category), U8(iGDatCls2MainItemId), 0x14, bp10)
 		);
@@ -6020,20 +6020,20 @@ void SkWinCore::DRAW_WALL(i16 iViewportCell)	// i16 xx
 			QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(iPicture, &xExtPicWall);
 			COPY_MEMORY(&xExtPicWall, &glbTempPicture, sizeof(ExtendedPicture));
 			glbTempPicture.pb44 = glbBackBuffViewport;
-			glbTempPicture.rectNo = 3 + 0x2BE;
+			glbTempPicture.rectNo = 3 + RECTZONE_702_VIEWPORT_BASE;	// SPX ? ..
 			DRAW_TEMP_PICST();
 			if (iPicture >= 0)
 				FREE_TEMP_CACHE_INDEX(iPicture);
 		}
 		else
 		{
-			QUERY_TEMP_PICST(bFlip, 0x40, 0x40, 0, 0, (cd.pi.glbIsPlayerMoving != 0) ? -iYDist : 0, iViewportCell +0x2be, 0xffff, iColorkey1, -1, GDAT_CATEGORY_x08_GRAPHICSSET, iMapGfx, bp01);
+			QUERY_TEMP_PICST(bFlip, 0x40, 0x40, 0, 0, (cd.pi.glbIsPlayerMoving != 0) ? -iYDist : 0, iViewportCell + RECTZONE_702_VIEWPORT_BASE, 0xFFFF, iColorkey1, -1, GDAT_CATEGORY_x08_GRAPHICSSET, iMapGfx, bp01);
 			DRAW_TEMP_PICST(); // draw wall
 		}
 
 	}
 #else // end XDM1_EXTENDED_SEETHRUWALLS
-	QUERY_TEMP_PICST(bFlip, 0x40, 0x40, 0, 0, (cd.pi.glbIsPlayerMoving != 0) ? -iYDist : 0, iViewportCell +0x2be, 0xffff, iColorkey1, -1, GDAT_CATEGORY_x08_GRAPHICSSET, iMapGfx, bp01);
+	QUERY_TEMP_PICST(bFlip, 0x40, 0x40, 0, 0, (cd.pi.glbIsPlayerMoving != 0) ? -iYDist : 0, iViewportCell + RECTZONE_702_VIEWPORT_BASE, 0xFFFF, iColorkey1, -1, GDAT_CATEGORY_x08_GRAPHICSSET, iMapGfx, bp01);
 	DRAW_TEMP_PICST(); // draw wall
 #endif
 	DRAW_RESET_SOME_RECTANGLE();
@@ -6242,18 +6242,14 @@ void SkWinCore::DRAW_MIRRORED_PIC(const U8 *blitSrc, U8 *blitDst)
 // SPX: _32cb_0b11 renamed DRAW_RAIN
 void SkWinCore::DRAW_RAIN()
 {
-	//^32CB:0B11
 	ENTER(20);
-	//^32CB:0B16
 	if (glbRainStrength == 0 || tlbRainScene[RCJ(5,glbRainSceneType)][2] == 0)
 		return;
-	//^32CB:0B31
-	i16 bp0a = _4976_00f6;
-	i16 bp0c = _4976_00f8;
+	i16 iViewportWidth = glbViewportWidth;	// bp0a
+	i16 iViewportHeight = glbViewportHeight;	// bp0c
 	SRECT bp14;
-	if (QUERY_BLIT_RECT(NULL, &bp14, 0x2be, &bp0a, &bp0c, -1) == NULL)
+	if (QUERY_BLIT_RECT(NULL, &bp14, RECTZONE_702_VIEWPORT_BASE, &iViewportWidth, &iViewportHeight, -1) == NULL)
 		return;
-	//^32CB:0B64
 	U8 bp07 = 0;
 	U16 bp06 = 0;
 	QUERY_RAINFALL_PARAM(&bp07, &bp06);
@@ -6261,24 +6257,21 @@ void SkWinCore::DRAW_RAIN()
 	ALLOC_IMAGE_MEMENT(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, bp07);
 	X16 si = 0;
 	if (bp06 == 1) {
-		//^32CB:0BA5
 		si = ALLOC_TEMP_CACHE_INDEX();
-		ALLOC_NEW_PICT(si, READ_UI16(bp04,-4), READ_UI16(bp04,-2), 4);
+		//ALLOC_NEW_PICT(si, READ_UI16(bp04,-4), READ_UI16(bp04,-2), 4);
+		ALLOC_NEW_PICT(si, READ_IMGBUFF_WIDTH(bp04), READ_IMGBUFF_HEIGHT(bp04), IMG_4_BPP);
 		bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(0x17, glbMapGraphicsSet, bp07);
 		DRAW_MIRRORED_PIC(bp04, reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(si)));
 		bp04 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(si));
 	}
-	//^32CB:0BFD
-	_44c8_20a4(bp04, glbBackBuffViewport, NULL, &bp14, READ_UI16(bp04,-4) * READ_UI16(bp04,-2) -40 -(RAND() & 0x1f), RAND() & 255, _4976_00f6, 0,
+	//_44c8_20a4(bp04, glbBackBuffViewport, NULL, &bp14, READ_UI16(bp04,-4) * READ_UI16(bp04,-2) -40 -(RAND() & 0x1f), RAND() & 255, glbViewportWidth, 0,
+	_44c8_20a4(bp04, glbBackBuffViewport, NULL, &bp14, READ_IMGBUFF_WIDTH(bp04) * READ_IMGBUFF_HEIGHT(bp04) -40 -(RAND() & 0x1F), RAND() & 255, glbViewportWidth, 0,
 		_32cb_0649(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, bp07, 0)
 		);
 	if (bp06 == 1) {
-		//^32CB:0C61
 		FREE_TEMP_CACHE_INDEX(si);
 	}
-	//^32CB:0C68
 	FREE_IMAGE_MEMENT(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, bp07);
-	//^32CB:0C7A
 	return;
 }
 

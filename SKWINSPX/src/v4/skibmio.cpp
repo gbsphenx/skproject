@@ -1680,7 +1680,7 @@ void SkWinCore::FIRE_FILL_BACKBUFF_RECT(SRECT* xRect, U8 fill)
 		glbBackBuffViewport,
 		xRect,
 		fill,
-		_4976_00f6,
+		glbViewportWidth,
 		IMG_8_BPP
 		);
 	return;

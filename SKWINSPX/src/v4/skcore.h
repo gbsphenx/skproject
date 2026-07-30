@@ -233,27 +233,27 @@ protected:
 	i16		_4976_00e8;		// screen to viewport x (=0)
 	i16		_4976_00ea;		// screen to viewport y (=40)
 	X16		_4976_00ec;		// =9576 // avail heap size while game running
-	U16	glbScreenWidth;		// screen width =320
-	U16	glbScreenHeight;		// screen height =200
-	U16	_4976_00f4;		// SPX: Something to do with mempool
-	U16	_4976_00f6;		// off-screen viewport width? (=224)
-	U16	_4976_00f8;		// off-screen viewport height? (=136)
+	U16		glbScreenWidth;		// screen width =320
+	U16		glbScreenHeight;		// screen height =200
+	U16		_4976_00f4;		// SPX: Something to do with mempool
+	U16		glbViewportWidth;		// (_4976_00f6) off-screen viewport width? (=224)
+	U16		glbViewportHeight;		// (_4976_00f8) off-screen viewport height? (=136)
 	i16		_4976_00fa;
 	i16		_4976_00fc;
 	SRECT	_4976_00fe;
-	U16	glbRectX_0106;	// _4976_0106
-	U16	glbRectY_0108;	// _4976_0108
-	U16	_4976_010e;
-	U16	_4976_0110;
+	U16		glbRectX_0106;	// _4976_0106
+	U16		glbRectY_0108;	// _4976_0108
+	U16		_4976_010e;
+	U16		_4976_0110;
 	i16		_4976_0112;
 	i16		_4976_0114;
 	i16		_4976_0116;
 	U16		glbPictIconBufferX;		// _4976_0118	for ALLOC_PICT_BUFF x
 	U16		glbPictIconBufferY;		// _4976_011a	for ALLOC_PICT_BUFF y
-	U16	_4976_011e;
-	i16	_4976_0120;
-	U16	_4976_0124;		// us's text cy?
-	U16	_4976_0126;		// us's text cx?
+	U16		_4976_011e;
+	i16		_4976_0120;
+	U16		_4976_0124;		// us's text cy?
+	U16		_4976_0126;		// us's text cx?
 	i16		glbPanelStatsYDelta;		// (_4976_0128) = 7 (default) SPX: space between skill/attribute text in stats panel
 	U16		_4976_012a;
 	U16		_4976_012c;
@@ -607,7 +607,7 @@ protected:
 	U16	glbChampMaxLoadDisplay;	// _4976_52f6
 	U16	glbZStringIdx_4976_52f8;	// _4976_52f8
 	U16	glbChampWeightLoadTenthDisplay;	// _4976_52fa
-	SkLoadEnt*	tblSkEntries;	// _4976_52fc
+	SkLoadEnt	*tblSkEntries;	// _4976_52fc
 	X16		glbSkEntriesCount;		// (_4976_5300) count of used _4976_52fc entries
 	Bit8u	glbStrBufferActionName[20]; // (_4976_5302[20])
 	U16	glbMagicMapManaCounter;	// _4976_5316
@@ -791,7 +791,7 @@ protected:
 	U16*	tblCacheToMement;	// (_4976_5d08) cacheindex-to-mementi. use with tblMementsPointers[_4976_5d08[xxx]]
 	sk5d0c	*_4976_5d0c;	// image chain table
 	U16		glbGDatOpenCloseFlag;		// (_4976_5d10) some open/close? flag related to Graphics.dat file
-	sk5d12	_4976_5d12;
+	sk5d12	_4976_5d12;		// (_4976_5d12)
 	shelf_memory glbShelfMemTopEMS;		// (_4976_5d20) top of EMS
 	U16		glbCacheRecyclerMax;	// _4976_5d24 / cache relaed ? / value =128?
 	i32		_4976_5d26; // 9E AA 01 00 -> 0001AA9E
@@ -2056,7 +2056,7 @@ protected:
 	U16 WOUND_PLAYER(i16 iCharIdx, i16 iSourceAttackDamage, U16 iMask, U16 iAttackType);
 	void _075f_0182(ObjectID rl, X16 xx, X16 yy);
 	void CREATE_CLOUD(ObjectID rl, U16 ww, U16 xx, U16 yy, U16 ss);
-	void _098d_000f(i16 xx, i16 yy, U16 ww, U16 *x2, U16 *y2);
+	void BUILD_5x5_POS(i16 xx, i16 yy, U16 ww, U16 *x2, U16 *y2);	// _098d_000f
 	void DRAW_ARROW_PANEL(); // _29ee_000f renamed DRAW_ARROW_PANEL
 	U16 IS_OBJECT_FLOATING(ObjectID rl);
 	void MARK_DYN_LOAD(U32 aa);
@@ -2071,7 +2071,7 @@ protected:
 	SkEnt4 MAKE_ENT4(U8 iGDatCls1Category, U8 iGDatCls2MainItemId, U8 iGDatCls3DataType, U8 iGDatCls4EntryId);
 	void SOUND_ENTRY(U8 iGDatCls1Category, U8 iGDatCls2MainItemId, U8 iGDatCls4EntryId);	// _482b_0624
 	U16 TRACK_UNDERLAY(U16 ww);
-	X16 _3e74_00ed(sk5d12 *ref, shelf_memory ps);
+	X16 CHECK_SHELF_IN_BOUNDS_3e74_00ed(sk5d12 *ref, shelf_memory ps);	// _3e74_00ed
 	tiamat s2t(shelf_memory s);
 	shelf_memory t2s(tiamat t);
 	U8 *t2ptr(tiamat t);
@@ -2091,8 +2091,8 @@ protected:
 	shelf_memory GET_SHELFMEM_FROM_GDAT_INDEX(U8 iGDatCls1Category, U8 iGDatCls2MainItemId, U8 iGDatCls3DataType, U8 iGDatCls4EntryId);	// _3e74_5133
 	void _47eb_00a4(sk5f0a *ref);
 	void  AUDIO_482b_0684();	// _482b_0684
-	tiamat _3e74_32a2(sk5d12 *ref, i32 xx);
-	void LOAD_DYN4(SkLoadEnt *ref, i16 aa);	// big func
+	tiamat MEM_3e74_32a2(sk5d12 *ref, i32 xx);	// _3e74_32a2
+	void LOAD_DYN4(SkLoadEnt *ref, i16 iLoadEntCount);	// big func
 	void LOAD_MISCITEM();
 	void SET_TIMER_WEATHER(U32 tickDelta);
 	void INIT_WEATHER_RAIN(X16 ww);	// _3df7_0037

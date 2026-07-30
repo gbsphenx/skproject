@@ -59,7 +59,7 @@ bool SkCodeParam::bUseFixedMode = true;
 bool SkCodeParam::bUseIngameDebug = false;
 bool SkCodeParam::bDebugInfoMapInit = false;
 
-bool SkCodeParam::bUseSuperInfoEye = false;
+bool SkCodeParam::bUseSuperInfoEye = true;
 bool SkCodeParam::bShowLuck = false;
 
 bool SkCodeParam::bDisplayNoMouse = false;

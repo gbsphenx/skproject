@@ -75,7 +75,20 @@ typedef X32 X32ptr;
 
 #define MAX_CRAM (1024U*640)		// Conventional memory: 640KiB
 #define MAX_CEMS (1024U*1024*MEM_EMS_MB)	// EMS memory space: 6MiB or more
-#define MAX_VRAM (1024U*64)		// VRAM memory space: 64 KiB
+#define MAX_VRAM (1024U*64)				// VRAM memory space: 64 KiB = 65536 > 64000 = 320 x 200 (screen size)
+
+#define X000A0000_MAX_CRAM				(1024U*640)		// Conventional memory: 640KiB
+#define X00200000_START_CEMS			0x200000
+#define X01000000_MAX_CEMS				(1024U*1024*MEM_EMS_MB)	// original was 16 MiB = 0x01000000 / MAX_CEMS is the size of CEMS, not the END address of CEMS.
+
+// SPX: some helper
+enum MemoryArea
+{
+    C0_CRAM	= 0,
+    C1_CEMS = 1,
+    C2_Invalid = 2,
+    C3_Unknown = 3
+};
 
 namespace DM2Internal {
 	// 
@@ -1268,11 +1281,17 @@ namespace DM2Internal {
 		X16 iHeight;
 	};
 
-	// SPX: this mement clearly breaks in 64-bits compilation
+	// SPX: this mement was clearly breaking in 64-bits compilation
 	// w4+w6 is a mement address
 	// w8+w10 is a mement address
 	// then i would remove direct access to these and manage with real pointers
 	// although, w4, w6 and w8 alone seem to be used as markers
+	// another note about size of data allocated:
+	//	for example, a 16*16@4bpp icon would take 16*16/2=128 bytes
+	//	128 + 35 (size of mement 64bits) = 163 bytes
+	//  163 + 4 (size of i32 to store this negative size) = 167
+	// hence the value -167 is stored as the negative size.
+
 	struct mement {		// 18 bytes	// new test structure : 18 + 1 (dummy) + 4*2 (32 bits) or 8*2 (64 bits) = 27 bytes or 35 bytes
 		i32 iNegBuffSize;		// @0 // _dw0 / length. negative if it directs from lower to upper. it contains this header size.
 		X16 _w4;		// @4 // w4 + w6 builds a 32-bits pointer for mement1
@@ -2618,11 +2637,11 @@ namespace DM2Internal {
 	// 
 	struct SkLoadEnt { // 6 bytes
 		X16 w0_;	// @0
-		SkEnt4 x2;
+		SkEnt4 xEnt4;	// x2
 
 		void w0_f_f(U16 val) {
 			val &= 1;
-			w0_ &= 0x7fff;
+			w0_ &= 0x7FFF;
 			w0_ |= val << 15;
 		}
 		void w0(U16 val) {
@@ -2649,7 +2668,7 @@ namespace DM2Internal {
 //		U8 b1() const { return U8(w0 >> 8); }
 //	};
 	// 
-	struct SkEntIter {	// ? bytes
+	struct SkEntIter {	// 12+6+6+4/8 bytes = 28 bytes or 32 bytes (64bits)
 		X16 w0;		// @0 // enum init flag: 1=first num(need init), 0=second or later enum, 0x8000=ranged
 		SkLoadEnt x2;	// @2 bp5a // single, or from
 		SkLoadEnt x8;	// @8 bp54 // to
@@ -2698,7 +2717,7 @@ namespace DM2Internal {
 		X16 w8;	// @8 // cell height // y2
 	};
 	// 
-	struct tiamat {
+	struct tiamat {	// MemoryRef
 		// tiamat is a representation of memory address pointer.
 		// often tiamat is used in the source code instead of U8*
 		// because DM2 MS-DOS version often allocates an offset to EMS memory to U8* variables.
@@ -2737,14 +2756,14 @@ namespace DM2Internal {
 		}
 
 		U8 Area() const {
-			if (val < MAX_CRAM) // SPX: should be evaluated against skWinApp
-				return 0;
-			if (val - 0x200000 < MAX_CEMS)
-				return 1;
+			if (val < X000A0000_MAX_CRAM) // SPX: should be evaluated against skWinApp
+				return C0_CRAM;	// resides in Conventional RAM
+			if (val - X00200000_START_CEMS < X01000000_MAX_CEMS)
+				return C1_CEMS;
 			if (val == (U32)-1)
-				return 2;
+				return C2_Invalid;
 
-			return 3;
+			return C3_Unknown;
 		}
 
 		static U32 Size(const tiamat &x, const tiamat &y) {
@@ -2815,8 +2834,8 @@ namespace DM2Internal {
 	};
 	// 
 	struct sk5d12 {	// 14 bytes?
-		tiamat t0;	// @0 // ptr to pool
-		tiamat t4;	// @4 // (poolBuff -poolSize)
+		tiamat t0;	// @0 // ptr to pool			// some kind of upper bound ? checked in _3e74_00ed
+		tiamat memRefLower;	// @4 // (poolBuff -poolSize)	// some kind of lower bound ?
 		tiamat t8;	// @8 // ?
 		X16 w12;	// @12 // poolflags
 

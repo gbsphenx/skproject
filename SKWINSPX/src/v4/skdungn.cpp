@@ -1757,7 +1757,7 @@ void SkWinCore::_32cb_4185_TILE_ROOM(i16 xx, i16 yy, i16 cellPos, i16 dir)
 		//^32CB:4430
 		U16 bp0c;
 		U16 bp0e;
-		_098d_000f(xx, yy, _4976_44c1[RCJ(4,dir)], &bp0c, &bp0e);
+		BUILD_5x5_POS(xx, yy, _4976_44c1[RCJ(4,dir)], &bp0c, &bp0e);
 		do {
 			//^32CB:4451
 			i16 bp1a = bp18.DBType();
@@ -1776,7 +1776,7 @@ void SkWinCore::_32cb_4185_TILE_ROOM(i16 xx, i16 yy, i16 cellPos, i16 dir)
 				//^32CB:44A1
 				U16 bp10;
 				U16 bp12;
-				_098d_000f(bp06, bp08, bp16, &bp10, &bp12);
+				BUILD_5x5_POS(bp06, bp08, bp16, &bp10, &bp12);
 				Creature *bp04 = GET_ADDRESS_OF_RECORD4(bp18);
 				if (cellPos != 0) {
 					//^32CB:44D1

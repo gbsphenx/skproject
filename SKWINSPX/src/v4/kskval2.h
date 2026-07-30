@@ -100,8 +100,8 @@ _4976_00ec = 0x2568;
 glbScreenWidth = 0x140;	//	0x140 = 320
 glbScreenHeight = 0xC8;	//	0xC8 = 200
 _4976_00f4 = 0x7700;
-_4976_00f6 = 0xE0;
-_4976_00f8 = 0x88;
+glbViewportWidth = C224_VIEWPORT_WIDTH;
+glbViewportHeight = C136_VIEWPORT_HEIGHT;
 _4976_00fa = -2;
 _4976_00fc = 0x3;
 glbRectX_0106 = 0x10;
