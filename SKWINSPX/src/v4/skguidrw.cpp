@@ -394,7 +394,7 @@ void SkWinCore::DRAW_SQUAD_SPELL_AND_LEADER_ICON(U16 player, U16 yy)
 	SRECT bp0a;
 	FILL_RECT_SUMMARY(
 		&glbScreenBufferRightPanel,
-		QUERY_EXPANDED_RECT(si + 0x4f, &bp0a),
+		QUERY_EXPANDED_RECT(si + RECTZONE_079, &bp0a),
 		glbPaletteT16[C00_COLOR_BLACK]
 		);
 	if (tblChampionSquad[player].curHP() != 0) {
@@ -505,48 +505,38 @@ void SkWinCore::DRAW_MONEYBOX(ObjectID rl)
 void SkWinCore::DRAW_CONTAINER_PANEL(ObjectID rl, U16 xx)
 {
 // xx = 1 : right panel / xx = 0 : inventory
-	//^29EE:21D8
 	ENTER(24);
-	//^29EE:21DE
 	X8 bp05 = QUERY_CLS2_FROM_RECORD(rl);
 	if (xx != 0) {
-		//^29EE:21F0
-		DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x14_CONTAINERS, bp05, GDAT_CONTAINER_STAT_10, &glbScreenBufferRightPanel, 0x5c, -1);
-		DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x14_CONTAINERS, bp05, GDAT_CONTAINER_STAT_12, &glbScreenBufferRightPanel, 0xe3, 10);
+		DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x14_CONTAINERS, bp05, GDAT_CONTAINER_STAT_10, &glbScreenBufferRightPanel, 0x5C, -1);
+		DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x14_CONTAINERS, bp05, GDAT_CONTAINER_STAT_12, &glbScreenBufferRightPanel, 0xE3, 10);
 	}
 	SRECT bp18;
 	if (xx == 0) {
-		//^29EE:2224
-		QUERY_EXPANDED_RECT(0x5c, &bp18);
+		QUERY_EXPANDED_RECT(RECTZONE_092, &bp18);
 	}
-	//^29EE:2233
-	X16 si;
-	for (si = 0; si < CONTAINER_MAX_SLOT; si++) {	// < 8
-		//^29EE:2238
-		ObjectID di = glbCurrentContainerItems[si];
+	X16 iSlotIdx;	// si
+	for (iSlotIdx = 0; iSlotIdx < CONTAINER_MAX_SLOT; iSlotIdx++) {	// < 8
+		ObjectID di = glbCurrentContainerItems[iSlotIdx];
 		if (di != OBJECT_NULL) {
-			X16 bp08 = si +0xe5;
+			X16 iRectNoSlot = iSlotIdx + RECTZONE_225_CONTAINER_SLOT_1;	// bp08
 			if (xx == 0) {
-				//^29EE:2258
 				SRECT bp10;
-				QUERY_EXPANDED_RECT(bp08, &bp10);
+				QUERY_EXPANDED_RECT(iRectNoSlot, &bp10);
 				U8 *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x14_CONTAINERS, bp05, GDAT_CONTAINER_STAT_10);	// 0x14	.. 0x10
 				DRAW_ICON_PICT_BUFF(
 					bp04, &glbScreenBufferRightPanel, &bp10, bp10.x -bp18.x, bp10.y -bp18.y,
 					-1, 0, QUERY_GDAT_IMAGE_LOCALPAL(GDAT_CATEGORY_x14_CONTAINERS, bp05, GDAT_CONTAINER_STAT_10)	// 0x14	.. 0x10
 					);
 			}
-			//^29EE:22B9
 			DRAW_ICON_PICT_ENTRY(
 				QUERY_CLS1_FROM_RECORD(di),
 				QUERY_CLS2_FROM_RECORD(di),
-				GET_ITEM_ICON_ANIM_FRAME(di, si +0x1e, 1),
-				&glbScreenBufferRightPanel, bp08, 12
+				GET_ITEM_ICON_ANIM_FRAME(di, iSlotIdx + 0x1E, 1),
+				&glbScreenBufferRightPanel, iRectNoSlot, 12
 				);
 		}
-		//^29EE:22EC
 	}
-	//^29EE:22F5
 	return;
 }
 
@@ -1631,7 +1621,7 @@ void SkWinCore::DRAW_MAJIC_MAP(ObjectID recordLink)
 	if ((glbMagicalMapFlags & 0x0100) != 0 || (glbMagicalMapFlags & 0x0200) == 0) {
 		//^29EE:2025
 		SRECT bp1e;
-		DRAW_GRAY_OVERLAY(&glbScreenBufferRightPanel, QUERY_EXPANDED_RECT(99, &bp1e), 0);
+		DRAW_GRAY_OVERLAY(&glbScreenBufferRightPanel, QUERY_EXPANDED_RECT(RECTZONE_099, &bp1e), 0);
 	}
 	//^29EE:2044
 	return;
@@ -2383,7 +2373,7 @@ void SkWinCore::DRAW_GUIDED_STR(const U8 *ref)
 		//^24A5:001D
 		ref++;
 		//^24A5:0020
-		QUERY_TOPLEFT_OF_RECT(556, &_4976_52d8, &_4976_52da);
+		QUERY_TOPLEFT_OF_RECT(RECTZONE_556, &_4976_52d8, &_4976_52da);
 	}
 	//^24A5:0033
 	if (*ref == 0)
@@ -2476,6 +2466,19 @@ void SkWinCore::DRAW_STUFF_STRINGS(i16 xx, i16 yy, U8 *str)
 	return;
 }
 
+
+//^098D:0CFE
+void SkWinCore::QUERY_TOPLEFT_OF_RECT(U16 iRectNo, i16 *xpos, i16 *ypos)
+{
+	i16 bp02 = 1;
+	i16 bp04 = 1;
+	SRECT bp0c;
+	ATLVERIFY(QUERY_BLIT_RECT(NULL, &bp0c, iRectNo, &bp02, &bp04, -1) != NULL);
+	*xpos = bp0c.x;
+	*ypos = bp0c.y;
+	return;
+}
+
 //^24A5:07F6
 void SkWinCore::DRAW_SCROLL_TEXT(ObjectID rl)
 {
@@ -2502,9 +2505,9 @@ void SkWinCore::DRAW_SCROLL_TEXT(ObjectID rl)
 	}
 	i16 bp08;
 	i16 bp0a;
-	QUERY_TOPLEFT_OF_RECT(0x230, &bp08, &bp0a);
+	QUERY_TOPLEFT_OF_RECT(RECTZONE_560, &bp08, &bp0a);
 	SRECT bp12;
-	QUERY_EXPANDED_RECT(0x1ee, &bp12);
+	QUERY_EXPANDED_RECT(RECT_494_INVENTORY_FOOD_WATER_SCROLL_CHEST, &bp12);
 	X16 di;
 	if (QUERY_MBCS_PRESENCE(bp00da) == 0) {
 		di = glbPanelStatsYDelta;
@@ -2546,11 +2549,11 @@ void SkWinCore::DRAW_ITEM_ICON(ObjectID recordLink, i16 xx, U16 yy, U16 zz, U16 
 			? GET_ITEM_ICON_ANIM_FRAME(recordLink, iInventorySlotID & 1, 1)
 			: GET_ITEM_ICON_ANIM_FRAME(recordLink, iInventorySlotID - 8, 1);
 	}
-	U16 di = _4976_3b74[iInventorySlotID].w0;
+	U16 iRectNo = _4976_3b74[iInventorySlotID].w0;	// di
 	if (iInventorySlotID < C38_INVENTORY_MAX_OVER) {	// si < 0x26
 		SRECT xRect;	// bp14
-		QUERY_EXPANDED_RECT(di, &xRect);
-		U8* xImageBuffer;	// bp04
+		QUERY_EXPANDED_RECT(iRectNo, &xRect);
+		U8 *xImageBuffer;	// bp04
 		if (iInventorySlotID < 8) {
 			xImageBuffer = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 0x02, 0x00);
 			DRAW_ICON_PICT_BUFF(
@@ -2579,7 +2582,7 @@ void SkWinCore::DRAW_ITEM_ICON(ObjectID recordLink, i16 xx, U16 yy, U16 zz, U16 
 	}
 	if (ww != 0 && iInventorySlotID < 14) {
 		SRECT xRect;	// bp14
-		_2405_011f_RECT(di, &xRect);
+		_2405_011f_RECT(iRectNo, &xRect);
 		U8 iIconSlabGfxId = (zz != 0)	// bp0a
 			? GDAT_x06_CHAR_ICON_SLAB_BLUE_READY	// blue frame ready
 			: (yy != 0)
@@ -2614,7 +2617,7 @@ void SkWinCore::DRAW_ITEM_ICON(ObjectID recordLink, i16 xx, U16 yy, U16 zz, U16 
 			iCls2ItemId,
 			bp09,
 			&_4976_3ff0,
-			di,
+			iRectNo,
 			12
 			);
 	}
@@ -2623,7 +2626,7 @@ void SkWinCore::DRAW_ITEM_ICON(ObjectID recordLink, i16 xx, U16 yy, U16 zz, U16 
 			iCls1ItemCat,
 			iCls2ItemId,
 			bp09,
-			di,
+			iRectNo,
 			12
 			);
 	}
@@ -2634,22 +2637,13 @@ void SkWinCore::DRAW_ITEM_ICON(ObjectID recordLink, i16 xx, U16 yy, U16 zz, U16 
 // SPX: _24a5_0ad2 renamed DRAW_CONTAINER_SURVEY
 void SkWinCore::DRAW_CONTAINER_SURVEY(Container *ref)
 {
-	//^24A5:0AD2
 	ENTER(0);
-	//^24A5:0AD7
-	U16 si = 0;
-	//^24A5:0AD9
-	//^24A5:0AE0
-	for (ObjectID di = ref->GetContainedObject(); di != OBJECT_END_MARKER; di = GET_NEXT_RECORD_LINK(di), si++) {
-		//^24A5:0AE2
-		if (si >= 8)	// 8 = MAX items in container (CHEST / BAG / QUIVER)
-			//^24A5:0AE5
+	U16 iContainerSlotIdx = 0;	// si
+	for (ObjectID di = ref->GetContainedObject(); di != OBJECT_END_MARKER; di = GET_NEXT_RECORD_LINK(di), iContainerSlotIdx++) {
+		if (iContainerSlotIdx >= 8)	// 8 = MAX items in container (CHEST / BAG / QUIVER)
 			break;
-		//^24A5:0AE7
-		DRAW_ITEM_ICON(di, si +47, 0, 0, 0);
-		//^24A5:0AFC
+		DRAW_ITEM_ICON(di, iContainerSlotIdx + 47, 0, 0, 0);
 	}
-	//^24A5:0B0B
 	return;
 }
 
@@ -2657,33 +2651,23 @@ void SkWinCore::DRAW_CONTAINER_SURVEY(Container *ref)
 
 //^24A5:0B0F
 // SPX: _24a5_0b0f renamed DRAW_ITEM_STATS_BAR
-void SkWinCore::DRAW_ITEM_STATS_BAR(U16 rectno, i16 curVal, i16 maxVal, U8 chr, U16 color)
+void SkWinCore::DRAW_ITEM_STATS_BAR(U16 iRectNo, i16 curVal, i16 maxVal, U8 chr, U16 color)
 {
-	//^24A5:0B0F
 	ENTER(10);
-	//^24A5:0B14
 	i16 si = curVal;
-	//^24A5:0B17
 	SRECT bp08;
 	// bp08: x
 	// bp06: y
 	// bp04: cx
 	// bp02: cy
-	if (QUERY_EXPANDED_RECT(rectno, &bp08) == 0)
-		//^24A5:0B2B
-		//^24A5:0C32
+	if (QUERY_EXPANDED_RECT(iRectNo, &bp08) == 0)
 		return;
-	//^24A5:0B2E
 	si = (i32(si) << 11) / maxVal;
-	//^24A5:0B47
-	DRAW_POWER_STAT_BAR(si, rectno, color, 0, 1);
-	//^24A5:0B5A
+	DRAW_POWER_STAT_BAR(si, iRectNo, color, 0, 1);
 	U8 bp0a[2];
 	bp0a[1] = 0;
 	bp0a[0] = chr;	// Will be the rune associated with the power bar, i.e. KU for weapon
-	//^24A5:0B64
 	bp08.cy -= 2;
-	//^24A5:0B68
 	DRAW_STRONG_TEXT(
 		glbBackBuffViewport,
 		-1,
@@ -2694,9 +2678,7 @@ void SkWinCore::DRAW_ITEM_STATS_BAR(U16 rectno, i16 curVal, i16 maxVal, U8 chr, 
 		glbPaletteT16[C00_COLOR_BLACK] | 0x4000,
 		bp0a
 		);
-	//^24A5:0BA8
 	bp0a[0] = RUNE_LO;	// 0x60
-	//^24A5:0BAC
 	DRAW_STRONG_TEXT(
 		glbBackBuffViewport,
 		-1,
@@ -2707,9 +2689,7 @@ void SkWinCore::DRAW_ITEM_STATS_BAR(U16 rectno, i16 curVal, i16 maxVal, U8 chr, 
 		glbPaletteT16[C00_COLOR_BLACK] | 0x4000,
 		bp0a
 		);
-	//^24A5:0BEA
 	bp0a[0] = RUNE_MON;	// 0x65
-	//^24A5:0BEE
 	DRAW_STRONG_TEXT(
 		glbBackBuffViewport,
 		-1,
@@ -2720,7 +2700,6 @@ void SkWinCore::DRAW_ITEM_STATS_BAR(U16 rectno, i16 curVal, i16 maxVal, U8 chr, 
 		glbPaletteT16[C00_COLOR_BLACK] | 0x4000,
 		bp0a
 		);
-	//^24A5:0C32
 	return;
 }
 
@@ -2759,7 +2738,7 @@ U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, U16 xx)
 	}
 	DRAW_STATIC_PIC(GDAT_CATEGORY_x07_INTERFACE_CHARSHEET, 0x00, 0x05, 0x01f8, 12);
 	DRAW_VP_RC_STR(0x1fa, glbPaletteT16[C13_COLOR_LIGHTER_GRAY], GET_ITEM_NAME(si));
-	DRAW_ITEM_ICON(si, 0x2e, 0, 0, 0);
+	DRAW_ITEM_ICON(si, 0x2E, 0, 0, 0);
 	U16 bp06 = QUERY_ITEM_WEIGHT(si);
 	glbItemWeightKg = bp06 / 10;
 	glbItemWeightDg = bp06 % 10;
@@ -3136,7 +3115,7 @@ void SkWinCore::DRAW_SKILL_PANEL()
 	DRAW_STATIC_PIC(GDAT_CATEGORY_x07_INTERFACE_CHARSHEET, 0x00, 0x01, 494, -1);	// blank stone panel
 	i16 bp0c;
 	i16 bp10;
-	QUERY_TOPLEFT_OF_RECT(557, &bp0c, &bp10);
+	QUERY_TOPLEFT_OF_RECT(RECTZONE_557, &bp0c, &bp10);
 	U8 bp0090[128];
 	U16 bp06;
 
@@ -3158,7 +3137,7 @@ void SkWinCore::DRAW_SKILL_PANEL()
 	}
 
 	i16 bp0e;
-	QUERY_TOPLEFT_OF_RECT(559, &bp0e, &bp10);
+	QUERY_TOPLEFT_OF_RECT(RECTZONE_559, &bp0e, &bp10);
 	// SPX: Display attributes (STR, DEX, WIS, VIT, AF, AM)
 	// SPX: The first is luck; the GDAT2 resource 07-00 20-00-00 (TXT) must be defined as "LUCK".
 	U16 attributeStart = ATTRIBUTE_FIRST+1;	// Start at 1=STR
@@ -4676,32 +4655,27 @@ void SkWinCore::DRAW_VP_RC_STR(U16 rectno, U16 clr1, const U8 *str)
 
 
 //^0B36:16E4
-void SkWinCore::DRAW_GAMELOAD_DIALOGUE_TO_SCREEN(U8 *buffsrc, U16 rectno, i16 colorkey, U8 localpal[16])
+void SkWinCore::DRAW_GAMELOAD_DIALOGUE_TO_SCREEN(U8 *buffsrc, U16 iRectNo, i16 colorkey, U8 localpal[16])
 {
-	//^0B36:16E4
-	//^0B36:16E8
 	i16 bp02 = 0;
 	i16 bp04 = 0;
 	SRECT bp0c;
-	//^0B36:16F2
-	if (QUERY_BLIT_RECT(buffsrc, &bp0c, rectno, &bp02, &bp04, -1) != NULL) {
-		//^0B36:1718
+	if (QUERY_BLIT_RECT(buffsrc, &bp0c, iRectNo, &bp02, &bp04, -1) != NULL) {
 		FIRE_BLIT_PICTURE(
 			buffsrc,
 			_4976_4964,
 			&bp0c,
 			bp02,
 			bp04,
-			*(U16 *)&buffsrc[-4],
+			*(U16 *)&buffsrc[-4],	//*(U16 *)&buffsrc[-4]
 			glbScreenWidth,
 			colorkey,
 			0,
-			*(U16 *)&buffsrc[-6],
+			*(U16 *)&buffsrc[-6],	//*(U16 *)&buffsrc[-6]
 			8,
 			localpal
 			);
 	}
-	//^0B36:1755
 	return;
 }
 
@@ -4740,6 +4714,55 @@ void SkWinCore::DRAW_ARROW_PANEL()
 }
 
 
+//^44C8:1BE8
+// SPX: _44c8_1be8 renamed CHANGE_VIEWPORT_TO_INVENTORY
+void SkWinCore::CHANGE_VIEWPORT_TO_INVENTORY(U16 xx) //#DS=4976
+{
+	// U16 xx input is not used ?
+	U16 iIsPlayerMoving = cd.pi.glbIsPlayerMoving;	// di
+	cd.pi.glbIsPlayerMoving = 0;	// what's the point ?
+	SRECT xRect;	// bp0e
+	// SPX: add value init for rect
+	xRect.x = 0;
+	xRect.y = 0;
+	xRect.cx = 0;
+	xRect.cy = 0;
+	QUERY_EXPANDED_RECT(RECTZONE_007, &xRect);
+	cd.pi.glbIsPlayerMoving = iIsPlayerMoving;
+	U16 iHideMouseCursor;	// si
+	if (glbPaletteIRGBLoaded == 0) {
+		i16 bp02, bp04, bp06;
+		MOUSE_STATE_01b0_0d39(&bp02, &bp04, &bp06, 1) CALL_IBMIO;
+		if (xRect.x + xRect.cx -1 < bp02 || xRect.y + xRect.cy -1 < bp04 || bp04 + bp06 < xRect.y) {
+			iHideMouseCursor = 0;
+		}
+		else {
+			FIRE_HIDE_MOUSE_CURSOR();
+			iHideMouseCursor = 1;
+		}
+	}
+	BLIT_IMAGE_00eb_0845(glbBackBuffViewport, &xRect, (cd.pi.glbIsPlayerMoving != 0) ? 0x8008 : 0x0008) CALL_IBMIO;
+	if (glbPaletteIRGBLoaded == 0 && iHideMouseCursor != 0) {
+		FIRE_SHOW_MOUSE_CURSOR();
+	}
+	return;
+}
+
+
+//^0AAF:002F
+void SkWinCore::_0aaf_002f()
+{
+	if (cd.gg.glbGameHasEnded != 0) {
+		FIRE_HIDE_MOUSE_CURSOR();
+		DRAW_GAMELOAD_DIALOGUE_TO_SCREEN(glbBackBuffViewport, 5, -1, NULL);
+		FIRE_SHOW_MOUSE_CURSOR();
+	}
+	else {
+		CHANGE_VIEWPORT_TO_INVENTORY(0);
+	}
+}
+
+
 //^0AAF:081B
 void SkWinCore::DRAW_DIALOGUE_PROGRESS(X32 xx)
 {
@@ -4751,8 +4774,8 @@ void SkWinCore::DRAW_DIALOGUE_PROGRESS(X32 xx)
 		return;
 
 	SRECT xRectProgressBar; // bp08
-	QUERY_EXPANDED_RECT(0x1DA, &xRectProgressBar);
-	xRectProgressBar.cx = i16((xRectProgressBar.cx * xx) / 1000);
+	QUERY_EXPANDED_RECT(RECTZONE_474_LOAD_BAR, &xRectProgressBar);
+	xRectProgressBar.cx = i16((xRectProgressBar.cx * xx) / C1000_LOAD_BAR_MAX);
 	if (xRectProgressBar.cx <= 0)
 		return;
 	FIRE_FILL_BACKBUFF_RECT(&xRectProgressBar, glbPaletteT16[C09_COLOR_ORANGE]);

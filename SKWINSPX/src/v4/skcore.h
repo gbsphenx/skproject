@@ -1922,7 +1922,7 @@ protected:
 	SRECT *SET_ORIGIN_RECT(SRECT* xRect, i16 width, i16 height);
 	SRECT *INFLATE_RECT(SRECT* xRect, i16 halfWidth, i16 halfHeight);
 	SRECT *CALC_CENTERED_RECT_IN_RECT(SRECT *rcNew, const SRECT *rcBBox, U16 newWidth, U16 newHeight);
-	void QUERY_TOPLEFT_OF_RECT(U16 rectno, i16 *xpos, i16 *ypos);
+	void QUERY_TOPLEFT_OF_RECT(U16 iRectNo, i16 *xpos, i16 *ypos);
 	void SLEEP_SEVERAL_TIME(U16 count);
 	void RECT_0aaf_01db(U16 iRectNo, U16 yy);	// _0aaf_01db
 	void GRAPHICS_DATA_CLOSE();

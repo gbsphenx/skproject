@@ -2141,7 +2141,7 @@ void SkWinCore::_29ee_1946(ObjectID recordLink, i16 xx, i16 yy, i16 zz, i16 dir,
 	//^29EE:19AF
 	SOMETHING_RIGHT_PANEL_29ee_00a3(0);
 	//^29EE:19B6
-	FILL_RECT_SUMMARY(&glbScreenBufferRightPanel, QUERY_EXPANDED_RECT(99, &_4976_53a6), glbPaletteT16[C00_COLOR_BLACK]);
+	FILL_RECT_SUMMARY(&glbScreenBufferRightPanel, QUERY_EXPANDED_RECT(RECTZONE_099, &_4976_53a6), glbPaletteT16[C00_COLOR_BLACK]);
 	//^29EE:19DC
 	INFLATE_RECT(&_4976_53a6, - glbMagicMapInterlineX, - glbMagicMapInterlineY);
 	//^29EE:19F4
@@ -7530,52 +7530,9 @@ void SkWinCore::BLIT_IMAGE_00eb_0845(U8 *buff, SRECT *rc, U16 ww) //#DS=04BF
 	return;
 }
 
-//^44C8:1BE8
-// SPX: _44c8_1be8 renamed CHANGE_VIEWPORT_TO_INVENTORY
-void SkWinCore::CHANGE_VIEWPORT_TO_INVENTORY(U16 xx) //#DS=4976
-{
-	// U16 xx input is not used ?
-	U16 iIsPlayerMoving = cd.pi.glbIsPlayerMoving;	// di
-	cd.pi.glbIsPlayerMoving = 0;	// what's the point ?
-	SRECT xRect;	// bp0e
-	// SPX: add value init for rect
-	xRect.x = 0;
-	xRect.y = 0;
-	xRect.cx = 0;
-	xRect.cy = 0;
-	QUERY_EXPANDED_RECT(7, &xRect);
-	cd.pi.glbIsPlayerMoving = iIsPlayerMoving;
-	U16 iHideMouseCursor;	// si
-	if (glbPaletteIRGBLoaded == 0) {
-		i16 bp02, bp04, bp06;
-		MOUSE_STATE_01b0_0d39(&bp02, &bp04, &bp06, 1) CALL_IBMIO;
-		if (xRect.x + xRect.cx -1 < bp02 || xRect.y + xRect.cy -1 < bp04 || bp04 + bp06 < xRect.y) {
-			iHideMouseCursor = 0;
-		}
-		else {
-			FIRE_HIDE_MOUSE_CURSOR();
-			iHideMouseCursor = 1;
-		}
-	}
-	BLIT_IMAGE_00eb_0845(glbBackBuffViewport, &xRect, (cd.pi.glbIsPlayerMoving != 0) ? 0x8008 : 0x0008) CALL_IBMIO;
-	if (glbPaletteIRGBLoaded == 0 && iHideMouseCursor != 0) {
-		FIRE_SHOW_MOUSE_CURSOR();
-	}
-	return;
-}
 
-//^0AAF:002F
-void SkWinCore::_0aaf_002f()
-{
-	if (cd.gg.glbGameHasEnded != 0) {
-		FIRE_HIDE_MOUSE_CURSOR();
-		DRAW_GAMELOAD_DIALOGUE_TO_SCREEN(glbBackBuffViewport, 5, -1, NULL);
-		FIRE_SHOW_MOUSE_CURSOR();
-	}
-	else {
-		CHANGE_VIEWPORT_TO_INVENTORY(0);
-	}
-}
+
+
 
 //^0CD5:00A0
 U16 SkWinCore::max_value(i16 v1, i16 v2) {
@@ -7716,17 +7673,7 @@ SRECT *SkWinCore::CALC_CENTERED_RECT_IN_RECT(SRECT *rcNew, const SRECT *rcBBox, 
 	return rcNew;
 }
 
-//^098D:0CFE
-void SkWinCore::QUERY_TOPLEFT_OF_RECT(U16 rectno, i16 *xpos, i16 *ypos)
-{
-	i16 bp02 = 1;
-	i16 bp04 = 1;
-	SRECT bp0c;
-	ATLVERIFY(QUERY_BLIT_RECT(NULL, &bp0c, rectno, &bp02, &bp04, -1) != NULL);
-	*xpos = bp0c.x;
-	*ypos = bp0c.y;
-	return;
-}
+
 
 //^0CD5:0063
 void SkWinCore::SLEEP_SEVERAL_TIME(U16 count)
@@ -11062,16 +11009,18 @@ _4173:
 		}
 		X16 bp34 = 0;
 		for (iCurIndex = 0; iCurIndex < glbGDatNumberOfData; iCurIndex++) {
-			if (_4976_4bd8 != 0 && (iCurIndex & 0x3f) == 0) { // display loading progression bar
+			//if (_4976_4bd8 != 0 && (iCurIndex & 0xFF) == 0) { // display loading progression bar
+			//if (_4976_4bd8 != 0 && (iCurIndex & 0x3F) == 0) { // display loading progression bar
+			if (_4976_4bd8 != 0 && (iCurIndex & 0x0F) == 0) { // display loading progression bar
 				//DRAW_DIALOGUE_PROGRESS((((si +1) * 500) / glbGDatNumberOfData) + 500); // original, but it start right away half of the bar
-				DRAW_DIALOGUE_PROGRESS((((iCurIndex +1) * 1000) / glbGDatNumberOfData)); // this one is more logical
+				DRAW_DIALOGUE_PROGRESS((((iCurIndex +1) * C1000_LOAD_BAR_MAX) / glbGDatNumberOfData)); // this one is more logical
 			}
 			bp12 = pTabGDatRawDat[iCurIndex] & 0xFFDF;
-			if (bp12 == 0 || (bp12 & 6) != 0)
+			if (bp12 == 0 || (bp12 & RAWDAT_DYN_MARK_x06) != 0)
 				continue;
 			X16 bp30;
 			iRequiredMemSize = (((bp30 = QUERY_GDAT_RAW_DATA_LENGTH(iCurIndex)) +1) & 0xFFFE) +4;
-			sk5d12 *bp0c = ((bp12 & 8) != 0) ? &_4976_5d12 : &_4976_5d7e;
+			sk5d12 *bp0c = ((bp12 & RAWDAT_DYN_MARK_x08) != 0) ? &_4976_5d12 : &_4976_5d7e;
 			tiamat bp08 = MEM_3e74_32a2(bp0c, iRequiredMemSize);	// moves pointer backward - iRequiredMemSize
 			if (bp0c->Is4EMS() != 0) {
 				WRITE_UI16(REALIZE_GRAPHICS_DATA_MEMORY(t2s(bp08) + (iRequiredMemSize) - (2)),+0,iCurIndex);
@@ -11097,7 +11046,7 @@ _4173:
 		glbCpxHeapLimitPtr = t2ptr(_4976_5d12.memRefLower);
 		AUDIO_482b_0684();
 		if (_4976_4bd8 != 0) {
-			DRAW_DIALOGUE_PROGRESS(1000);
+			DRAW_DIALOGUE_PROGRESS(C1000_LOAD_BAR_MAX);	// 1000 = full bar
 		}
 	}
 	DEALLOC_UPPER_MEMORY(glbGDatNumberOfData);
@@ -11876,7 +11825,7 @@ _2eda:
 							bp04,
 							glbBackBuffViewport,
 							NULL,
-							QUERY_EXPANDED_RECT(4, &bp2e),
+							QUERY_EXPANDED_RECT(RECTZONE_004, &bp2e),
 							(RAND() & 0x1f) + (bp24 - 0x28),
 							RAND16(bp24 -0x28),
 							glbViewportWidth,

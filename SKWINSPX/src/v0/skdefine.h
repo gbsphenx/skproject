@@ -241,6 +241,7 @@ enum dtIndex
 #define AI_DEF_ARMOR_MAX		0xFF
 
 
+#define C1000_LOAD_BAR_MAX		1000
 
 #define C2048_WATER_MAX			2048
 #define C2048_FOOD_MAX			2048
@@ -1726,6 +1727,11 @@ typedef enum
 #define C20000_RECTZONE_SCALE_DOUBLE				20000	/// is 200%
 
 
+#define RECTZONE_004								4
+#define RECTZONE_005								5
+
+#define RECTZONE_007								7
+
 #define RECT_009_PANEL_ARROW__ZONE					9
 
 #define RECT_015_BOTTOM_MESSAGE_3_LINES				15
@@ -1750,6 +1756,12 @@ typedef enum
 #define RECTZONE_075_RIGHT_PANEL_CHAMPION_2_HAND_0		0x4B
 #define RECTZONE_076_RIGHT_PANEL_CHAMPION_3_HAND_0		0x4C
 #define RECTZONE_077_RIGHT_PANEL_CHAMPION_4_HAND_0		0x4D
+
+#define RECTZONE_079									0x4F
+
+#define RECTZONE_092									0x5C
+
+#define RECTZONE_099								99
 
 #define RECT_161_CHAMPION_SLAB_AREA_1				161
 #define RECT_162_CHAMPION_SLAB_AREA_2				162
@@ -1776,10 +1788,15 @@ typedef enum
 #define RECTZONE_193_CHAMPION_1_STATBAR_1			193
 
 
+#define RECTZONE_225_CONTAINER_SLOT_1				0xE5
+
 #define RECTZONE_261_SPELL_RUNE_1					261
 
 
 #define RECT_453									0x01C5
+
+#define RECTZONE_474_LOAD_BAR						0x01DA	// 474
+
 #define RECT_494_INVENTORY_FOOD_WATER_SCROLL_CHEST	0x01EE
 
 #define RECT_545_INVENTORY_MOUTH_COLOR_FRAME		545
@@ -1788,6 +1805,14 @@ typedef enum
 #define RECT_553_CHAMPION_TITLE_NAMES				553
 #define RECT_554_CHAMPION_SHEET_IMAGE				554
 #define RECT_555_CHAMPION_SHEET_LOAD_STRING			555
+
+#define RECTZONE_556								556
+#define RECTZONE_557								557
+#define RECTZONE_559								559
+
+#define RECTZONE_560			0x230	// 560
+
+
 
 #define RECTZONE_702_VIEWPORT_BASE					0x2BE	// 702
 // then followings one are for each "cell" position?
