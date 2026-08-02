@@ -91,8 +91,8 @@ void SkWinCore::ENVIRONMENT_DRAW_DISTANT_ELEMENT(DistantEnvironment *ref, X16 di
 		, iElementRecto
 		));
 	QUERY_TEMP_PICST(bp02, bp04, bp06, 0, 0, 0, iElementRecto, -1, glbSceneColorKey, -1, GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, ref->envImg);
-	glbTempPicture.w32 += di;
-	glbTempPicture.w34 += si;
+	glbTempPicture.iXDisp += di;
+	glbTempPicture.iYDisp += si;
 	DRAW_TEMP_PICST();        
 	return;
 }

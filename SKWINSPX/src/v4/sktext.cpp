@@ -188,7 +188,7 @@ void SkWinCore::DRAW_TEXT_TO_BACKBUFF(i16 xx, i16 yy, U8 *str)
 	if (QUERY_STR_METRICS(str, &bp06, &bp08) != 0) {
 		U8 bp18[16];
 		COPY_MEMORY(glbPaletteT16, bp18, 16);
-		PALETTE_SOMETHING_0b36_037e(bp18, U8(_4976_5a88), -1, -1, 16);
+		PALETTE_TRANSLATE_WITH_LIGHTING(bp18, U8(glbViewportLightScale), -1, -1, 16);
 		DRAW_STRONG_TEXT(glbBackBuffViewport, -1, glbViewportWidth, xx -(bp06 >> 1), yy, bp18[15], bp18[0]|0x4000, str);
 	}
 	return;

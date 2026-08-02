@@ -495,10 +495,10 @@ void SkWinCore::READ_SAVEGAMES_FILENAMES()
 	ENTER(2);
 	U16 iFileIndex = 0;
 	for (iFileIndex = 0; iFileIndex < 10; iFileIndex++) {	// bp02
-		glbSKSaveDigitAlpha = iFileIndex + 0x30;
+		glbSKSaveDigitAlpha = iFileIndex + 0x30;	// transform into '0' to '9'
 		i16 iFileHandle = OPEN_FILE(FORMAT_SKSTR(ptrSKSave_dat, NULL));	// si
 		if (iFileHandle >= 0) {
-			READ_FILE(iFileHandle, 42, &tblSaveGamesInfo[iFileIndex]);	// read first 42 to get savegame name
+			READ_FILE(iFileHandle, sizeof(sksave_header_asc), &tblSaveGamesInfo[iFileIndex]);	// read first 42 to get savegame name
 
 			// SPX : We also check for DM1 native savegames, which don't have the same format
 			if (tblSaveGamesInfo[iFileIndex].wTimerFlag != 1)	// not a DM2 savegame
@@ -526,20 +526,20 @@ void SkWinCore::READ_SAVEGAMES_FILENAMES()
 
 
 //^2066:033C
-// _2066_033c renamed 
-U16 SkWinCore::FILE_READ_FROM_CURRENT_FILE(void *buff, int size)
+// _2066_033c renamed FILE_READ_FROM_CURRENT_FILE
+U16 SkWinCore::FILE_READ_FROM_CURRENT_FILE(void *pDataBuffer, int iSizeToRead)
 {
-	Bit32u bp04 = size;
-	if (bp04 == 0)
-		return 1;
-	return FILE_READ(glbDataFileHandle, bp04, buff);
+	U32 iBufferSize = iSizeToRead;	// bp04
+	if (iBufferSize == 0)
+		return 1;	// failed
+	return FILE_READ(glbDataFileHandle, iBufferSize, pDataBuffer);
 }
 
 //^2066:03A0
-int SkWinCore::SKLOAD_READ(void *buff, int size)
+int SkWinCore::SKLOAD_READ(void *pDataBuffer, int iSizeToRead)
 {
-	if (FILE_READ_FROM_CURRENT_FILE(buff, size) == 0)
+	if (FILE_READ_FROM_CURRENT_FILE(pDataBuffer, iSizeToRead) == 0)
 		return 0;
-	return 1;
+	return 1;	// failed
 }
 

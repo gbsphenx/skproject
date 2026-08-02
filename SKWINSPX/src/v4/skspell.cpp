@@ -53,7 +53,7 @@ U8 *SkWinCore::_32cb_0649(U8 cls1, U8 cls2, U8 cls4, i16 colorkey)
 	U8 *bp04 = QUERY_GDAT_IMAGE_LOCALPAL(cls1, cls2, cls4);
 	i16 bp06;
 	if (bp04 == NULL) {
-		if (_4976_5a88 == 63)
+		if (glbViewportLightScale == 63)
 			return NULL;
 		for (bp06 = 0; bp06 < 256; bp06++) {
 			_4976_582a[bp06] = U8(bp06);
@@ -64,7 +64,7 @@ U8 *SkWinCore::_32cb_0649(U8 cls1, U8 cls2, U8 cls4, i16 colorkey)
 		COPY_MEMORY(bp04, _4976_582a, 16);
 		bp06 = 16;
 	}
-	return PALETTE_SOMETHING_0b36_037e(_4976_582a, U8(_4976_5a88), colorkey, -1, bp06);
+	return PALETTE_TRANSLATE_WITH_LIGHTING(_4976_582a, U8(glbViewportLightScale), colorkey, -1, bp06);
 }
 
 

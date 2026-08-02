@@ -577,7 +577,8 @@ enum SkillLevel {
 #define GDAT_INTERFACE_CLASS_CHAMPION_AURAS			0x07
 
 
-#define GDAT_IMG_CREDITS_TOMBSTONE					0x01
+#define GDAT_IMG_x01_CREDITS_TOMBSTONE				0x01
+#define GDAT_IMG_x04_MAIN_MENU_SCREEN				0x04
 
 
 //// Charsheet other elements / buttons
@@ -805,6 +806,53 @@ enum SkillLevel {
 #define GFX_ENVIRONMENT_IMG_WET_GROUND			0x6A	// 3
 #define GFX_ENVIRONMENT_IMG_RAIN_SLANTED		0x6D	// 4
 #define GFX_ENVIRONMENT_IMG_RAIN_STRAIGHT		0x71	// 4
+
+//------------------------------------------------------------------------------
+//	VIEWPORT CELLS DISPLAY
+//------------------------------------------------------------------------------
+
+
+// +--+--+--+--+--+--+--+
+// |21|19|17|16|18|20|22|	<- Distance = 4
+// +--+--+--+--+--+--+--+
+//    |14|12|11|13|15|		<- Distance = 3
+//    +--+--+--+--+--+
+//    |09|07|06|08|10|		<- Distance = 2
+//    +--+--+--+--+--+
+//       |04|03|05|			<- Distance = 1
+//       +--+--+--+   
+//       |01|00|02|			<- Distance = 0 => cell 0 is tile where player is
+//       +--+--+--+   
+
+#define C00_CELL_VIEWPORT_D0_CENTER		0
+#define C01_CELL_VIEWPORT_D0_LEFT		1
+#define C02_CELL_VIEWPORT_D0_RIGHT		2
+
+#define C03_CELL_VIEWPORT_D1_CENTER		3
+#define C04_CELL_VIEWPORT_D1_LEFT		4
+#define C05_CELL_VIEWPORT_D1_RIGHT		5
+
+#define C06_CELL_VIEWPORT_D2_CENTER			6
+#define C07_CELL_VIEWPORT_D2_LEFT			7
+#define C08_CELL_VIEWPORT_D2_RIGHT			8
+#define C09_CELL_VIEWPORT_D2_LEFT_FAR		9
+#define C10_CELL_VIEWPORT_D2_RIGHT_FAR		10
+
+#define C11_CELL_VIEWPORT_D3_CENTER			11
+#define C12_CELL_VIEWPORT_D3_LEFT			12
+#define C13_CELL_VIEWPORT_D3_RIGHT			13
+#define C14_CELL_VIEWPORT_D3_LEFT_FAR		14
+#define C15_CELL_VIEWPORT_D3_RIGHT_FAR		15
+
+#define C16_CELL_VIEWPORT_D4_CENTER				16
+#define C17_CELL_VIEWPORT_D4_LEFT				17
+#define C18_CELL_VIEWPORT_D4_RIGHT				18
+#define C19_CELL_VIEWPORT_D4_LEFT_FAR			19
+#define C20_CELL_VIEWPORT_D4_RIGHT_FAR			20
+#define C21_CELL_VIEWPORT_D4_LEFT_FARTHEST		21
+#define C22_CELL_VIEWPORT_D4_RIGHT_FARTHEST		22
+
+#define C23_CELLS_VIEWPORT_COUNT				23
 
 //------------------------------------------------------------------------------
 //	WALL ORNATE ATTRIBUTES or GRAPHICS
@@ -1727,6 +1775,8 @@ typedef enum
 #define C20000_RECTZONE_SCALE_DOUBLE				20000	/// is 200%
 
 
+#define RECTZONE_002_TITLE_SCREEN_FULL_SCREEN		2
+
 #define RECTZONE_004								4
 #define RECTZONE_005								5
 
@@ -1816,6 +1866,13 @@ typedef enum
 
 #define RECTZONE_702_VIEWPORT_BASE					0x2BE	// 702
 // then followings one are for each "cell" position?
+
+
+#define RECTZONE_700_VIEWPORT_CEILING				700	// 0x2bc
+#define RECTZONE_701_VIEWPORT_FLOOR					701	// 0x2bd
+
+#define RECTZONE_754_VIEWPORT_ROOF_DOOR_SLIT_D1		754
+#define RECTZONE_751_VIEWPORT_ROOF_DOOR_SLIT_D2		751
 
 //------------------------------------------------------------------------------
 //	DIALOG BOXES

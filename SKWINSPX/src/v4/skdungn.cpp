@@ -2934,7 +2934,7 @@ Bit16u SkWinCore::MOVE_RECORD_TO(ObjectID rlWhatYouMove, i16 xposFrom, i16 yposF
 			//^2FCF:1040
 			CHANGE_CURRENT_MAP_TO(di);
 			//^2FCF:1047
-			_2fcf_0b8b(xposTo, yposTo, di); // SPX: check teleporter information on tile
+			TELEPORTER_2fcf_0b8b(xposTo, yposTo, di); // SPX: check teleporter information on tile
 			//^2FCF:1055
 			si = GET_CREATURE_AT(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
 			//^2FCF:1066

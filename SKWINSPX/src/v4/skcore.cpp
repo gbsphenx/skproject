@@ -827,7 +827,8 @@ void SkWinCore::IBMIO_BLIT_0759_0310(U16 offset, U16 size)
 	return;
 }
 //^0759:02C6
-void SkWinCore::_0759_02c6(U16 xx, U16 yy, U16 zz)
+// _0759_02c6 renamed ANIM_SOMETHING_0759_02c6
+void SkWinCore::ANIM_SOMETHING_0759_02c6(U16 xx, U16 yy, U16 zz)
 {
 	//^0759:02C6
 	ENTER(0);
@@ -2398,6 +2399,10 @@ void SkWinCore::_1031_027e(sk1891 *ref)
 U16 SkWinCore::PT_IN_RECT(SRECT *rc, i16 xx, i16 yy)
 {
 	ENTER(0);
+	
+	if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(rc))
+		return 0;
+
 	return (true
 			&& rc->x <= xx 
 			&& rc->x + rc->cx -1 >= xx 
@@ -2407,31 +2412,33 @@ U16 SkWinCore::PT_IN_RECT(SRECT *rc, i16 xx, i16 yy)
 }
 
 //^1031:01D5
-SRECT *SkWinCore::_1031_01d5(U16 rectno, SRECT *rc)
+// SPX: _1031_01d5 renamed GET_SPECIAL_RECT_1031_01d5
+SRECT *SkWinCore::GET_SPECIAL_RECT_1031_01d5(U16 iRectNo, SRECT *pRectZone)
 {
 	ENTER(4);
-	U16 si = rectno;
-	rc = QUERY_EXPANDED_RECT(si & 0x3fff, rc);
-	if (rc != NULL) {
-		if ((si & 0x8000) != 0) {
-			si = 7;
+	U16 iLocRectNo = iRectNo;	// si
+	pRectZone = QUERY_EXPANDED_RECT(iLocRectNo & 0x3FFF, pRectZone);
+	if (pRectZone != NULL) {
+		if ((iLocRectNo & 0x8000) != 0) {
+			iLocRectNo = 7;
 			goto _020f;
 		}
-		if ((si & 0x4000) != 0) {
-			si = 18;
+		if ((iLocRectNo & 0x4000) != 0) {
+			iLocRectNo = 18;
 _020f:
 			i16 bp02;
 			i16 bp04;
-			QUERY_TOPLEFT_OF_RECT(si, &bp02, &bp04);
-			rc->x += bp02;
-			rc->y += bp04;
+			QUERY_TOPLEFT_OF_RECT(iLocRectNo, &bp02, &bp04);
+			pRectZone->x += bp02;
+			pRectZone->y += bp04;
 		}
 	}
-	return rc;
+	return pRectZone;
 }
 
 //^1031:0A88
-U16 SkWinCore::_1031_0a88(sk0d9e *ref, U16 xx, U16 yy, U16 ww)
+// SPX: _1031_0a88 renamed RECT_WITHIN_THEN_EVENT_1031_0a88
+U16 SkWinCore::RECT_WITHIN_THEN_EVENT_1031_0a88(sk0d9e *ref, U16 xx, U16 yy, U16 ww)
 {
 	ENTER(4);
 	if (ref == NULL)
@@ -2442,7 +2449,7 @@ U16 SkWinCore::_1031_0a88(sk0d9e *ref, U16 xx, U16 yy, U16 ww)
 		if (true
 			&& (ref->w4 & 0x0800) == 0 
 			&& (ww & (255 & ref->w4)) != 0 
-			&& _1031_01d5(ref->w2, &_4976_4e9e) != NULL
+			&& GET_SPECIAL_RECT_1031_01d5(ref->w2, &_4976_4e9e) != NULL
 			&& PT_IN_RECT(&_4976_4e9e, xx, yy) != 0
 		) {
 			_4976_4df8 = ref->w2;
@@ -2488,8 +2495,8 @@ U16 SkWinCore::_1031_030a(sk1891 *ref, U16 xx, U16 yy, U16 zz)
 				if (si != 0)
 					return si;
 			}
-			else if (PT_IN_RECT(_1031_01d5(_4976_16ed[bp04->w2].w0, &bp10), xx, di) != 0) {
-				if ((si = _1031_0a88(_1031_024c(bp04), xx, di, zz)) != 0)
+			else if (PT_IN_RECT(GET_SPECIAL_RECT_1031_01d5(_4976_16ed[bp04->w2].w0, &bp10), xx, di) != 0) {
+				if ((si = RECT_WITHIN_THEN_EVENT_1031_0a88(_1031_024c(bp04), xx, di, zz)) != 0)
 					return si;
 			}
 		}
@@ -2508,7 +2515,7 @@ U16 SkWinCore::_1031_0c58(U16 xx, sk0d9e *ref)
 		U16 si;
 		for (; (si = 0x07ff & ref->w0) != 0; ref++) {
 			if ((ref->w4 & 0x0800) == 0 && si == xx) {
-				_1031_01d5(ref->w2, &_4976_4e9e);
+				GET_SPECIAL_RECT_1031_01d5(ref->w2, &_4976_4e9e);
 				_4976_4df8 = ref->w2;
 				if ((_4976_4df8 & 0x8000) != 0) {
 					_4976_4e44 = 7;
@@ -3122,6 +3129,12 @@ void SkWinCore::QUERY_GDAT_IMAGE_METRICS(U8 cls1, U8 cls2, U8 cls4, i16 *pcx, i1
 {
 	ENTER(4);
 	U16 iRawDatIndex = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, dtImage, cls4);	// si
+	if (SkCodeParam::bUsePowerDebug && iRawDatIndex == 0xFFFF) { // not expected
+		printf("WARNING! can't find RawDatId for %02X-%02X-%02X !\n", cls1, cls2, cls4);
+		*pcx = 0;
+		*pcy = 0;
+		return;
+	}
 	if (glbShelfMemoryTable[iRawDatIndex].Absent()) {
 		U8* xImageBuffer = QUERY_GDAT_IMAGE_ENTRY_BUFF(cls1, cls2, cls4);	// bp04
 		*pcx = READ_IMGBUFF_WIDTH(xImageBuffer);	//	READ_I16(bp04,-4);
@@ -3923,7 +3936,7 @@ void SkWinCore::DIALOG_2066_37f2()
 	ENTER(0);
 	while (_4976_523a-- != 0)
 		FIRE_HIDE_MOUSE_CURSOR();
-	_1031_06a5();
+	SOMETHING_1031_06a5_CALL_1031_0541();
 	_4976_022c = 1;
 	DEALLOC_UPPER_MEMORY(420);
 	return;
@@ -3933,48 +3946,33 @@ void SkWinCore::DIALOG_2066_37f2()
 // SPX: _2066_33e7 renamed DIALOG_SELECT_SAVEGAMES
 i16 SkWinCore::DIALOG_SELECT_SAVEGAMES()
 {
-	//^2066:33E7
 	ENTER(22);
-	//^2066:33ED
 	__OPEN_DIALOG_PANEL(0x81, 6);
-	//^2066:33F9
 	i16 iSavegameIdx;	// si
 	if (_4976_5bf6 != 0) {
-		//^2066:3400
 		iSavegameIdx = glbSKSaveNum;
-		//^2066:3404
-		COPY_MEMORY(&tblSaveGamesInfo[iSavegameIdx], &_4976_5266, 42);
+		COPY_MEMORY(&tblSaveGamesInfo[iSavegameIdx], &glbCurrentSaveGameInfo, sizeof(sksave_header_asc));	// size = 42
+		// but glbCurrentSaveGameInfo is not used anywhere ?!
 	}
 	else {
-		//^2066:3428
 		for (iSavegameIdx = 0; iSavegameIdx < 10; iSavegameIdx++) {
-			//^2066:342C
 			if (true
 				&& tblSaveGamesInfo[iSavegameIdx].wDEAD == 0xDEAD
 				&& tblSaveGamesInfo[iSavegameIdx].wBEEF == 0xBEEF
 			) {
-				//^2066:3449
 				COPY_STRING_2066_33c4(_4976_5268, iSavegameIdx);
-				//^2066:3455
 				break;
 			}
-			//^2066:3457
 		}
 	}
-	//^2066:345D
 	DIALOG_SAVEGAMES_NAMES(iSavegameIdx);
-	//^2066:3464
 	U8 *bp04 = _4976_5268;
-	//^2066:346C
 	if (iSavegameIdx != 10) {
-		//^2066:3471
 		DIALOG_2066_3820(bp04, 0);
 	}
 	else {
-		//^2066:3483
 		DRAW_FORCE_REDRAW_0aaf_002f();
 	}
-	//^2066:3488
 	U16 bp0c = 0;
 
 	do {
@@ -3989,122 +3987,76 @@ i16 SkWinCore::DIALOG_SELECT_SAVEGAMES()
 		i16 di = SK_STRLEN(bp04); // defaulting to situational value.
 		switch (_4976_4dfc) {
 			case 1:
-				//^2066:34C0
 				iSavegameIdx = -1;
-				//^2066:34C3
 				_4976_4c0a = 0;
-				//^2066:34C9
 				bp0c = 1;
-				//^2066:34CE
 				break;
 
 			case 2:
-				//^2066:34D1
 				_4976_4c0a = 0;
-				//^2066:34D7
 				if (iSavegameIdx == 10)
-					//^2066:34DC
 					break;
-				//^2066:34DF
 				if (*bp04 == 0) {
-					//^2066:34E8
 					COPY_STRING_2066_33c4(bp04, iSavegameIdx);
 				}
-				//^2066:34F6
 				DIALOG_2066_3820(bp04, 0);
-				//^2066:3506
 				bp0c = 1;
-				//^2066:350B
 				break;
 
 			case 3:
-				//^2066:350E
 				_4976_4c0a = 0;
-				//^2066:3514
 				QUERY_EXPANDED_RECT(_4976_4df8, &bp14);
-				//^2066:3525
 				QUERY_TOPLEFT_OF_RECT(_4976_4e44, &bp06, &bp08);
-				//^2066:353B
 				bp0a = _4976_4e68;
-				//^2066:3541
 				bp0a -= bp14.y +bp08;
-				//^2066:354A
 				iSavegameIdx = min_value(bp0a / glbPanelStatsYDelta, 10);
-				//^2066:355E
 				if (true
 					&& tblSaveGamesInfo[iSavegameIdx].wDEAD == 0xDEAD
 					&& tblSaveGamesInfo[iSavegameIdx].wBEEF == 0xBEEF
 				) {
-					//^2066:3579
 					COPY_STRING_2066_33c4(_4976_5268, iSavegameIdx);
 				}
 				else {
-					//^2066:3587
 					SK_STRCPY(_4976_5268, tblSaveGamesInfo[iSavegameIdx].sSavegameName);
 				}
-				//^2066:35A7
 				DIALOG_SAVEGAMES_NAMES(iSavegameIdx);
-				//^2066:35AE
 				DIALOG_2066_3820(bp04, 0);
-				//^2066:35BE
 				break;
 
 			case 4:
-				//^2066:35C0
 				if (iSavegameIdx != 10 && _4976_4c0a == 0) {
-					//^2066:35CC
 					_4976_4c0a = 1;
-					//^2066:35D2
 					DIALOG_2066_3820(bp04, 1);
-					//^2066:35E2
 					di = SK_STRLEN(bp04);
 				}
 
 				break;
 		}
-		//^2066:35F1
 		//if (_4976_4c0a != 0 && glbUIEventCode >= 0xa5 && glbUIEventCode <= 0xd6) {
 		if (_4976_4c0a != 0 && glbUIEventCode >= UI_EVENTCODE_xA5 && glbUIEventCode <= UI_EVENTCODE_xD6) {
-			//^2066:3608
 			if (_4976_4e9c == 14) {
-				//^2066:360F
 				if (di > 0) {
-					//^2066:3613
 					di--;
-					//^2066:3614
 					bp04[di] = 0;
 				}
 			}
-			//^2066:361D
 			else if (_4976_4e9c == 28) {
-				//^2066:3624
 				_4976_4c0a = 0;
 			}
-			//^2066:362C
 			else if (di < 31) {
-				//^2066:3631
 				U8 bp15 = _476d_05b6_KEYBOARD(_4976_4e9c);
-				//^2066:363E
 				if (bp15 >= 0x61 && bp15 <= 0x7a) {
-					//^2066:364A
 					bp15 += 0xe0;
 				}
-				//^2066:364F
 				bp04[di] = bp15;
-				//^2066:3658
 				bp04[++di] = 0;
 			}
-			//^2066:365D
 			DIALOG_2066_3820(bp04, _4976_4c0a);
 		}
-		//^2066:366F
 		_4976_4dfc = 0;
 		glbUIEventCode = 0;
-		//^2066:367B
 	} while (bp0c == 0);
-	//^2066:3684
 	DIALOG_2066_37f2();
-	//^2066:3689
 	return iSavegameIdx;
 }
 
@@ -5955,7 +5907,7 @@ void SkWinCore::GAME_SAVE_MENU()
 	FIRE_HIDE_MOUSE_CURSOR();
 	REARRANGE_TIMERLIST();
 	if (_4976_49a0 == 0 && _4976_5eb0 != 0)
-		_476d_04e8(2);
+		UNIMPLEMENTED_476d_04e8(2);
 	_4976_52f4 = 2;
 
 _0d50:
@@ -5974,7 +5926,7 @@ _0d50:
 
 	do {
 		if (_4976_49a0 == 0 && bp13 != 0)
-			_476d_04e8(2);
+			UNIMPLEMENTED_476d_04e8(2);
 		U16 bp0e = DIALOG_BOX_0aaf_0067(_0aaf_02f8_DIALOG_BOX((_4976_49a0 != 0) ? DIALOGBOX_x12_SAVE_GAME : DIALOGBOX_x0B_SAVE_GAME_FLOPPY, bp13));
 		if (bp0e == 3)
 			goto _1523;
@@ -5998,7 +5950,7 @@ _0d50:
 			}
 		}
 		else if (bp0e == 0) {
-			if (_4976_49a0 != 0 || _476d_04af(0) == 1) {
+			if (_4976_49a0 != 0 || UNIMPLEMENTED_476d_04af(0) == 1) {
 				bp16 = 1;
 			}
 			else {
@@ -6477,40 +6429,31 @@ X16 SkWinCore::_12b4_099e(ObjectID rl)
 
 
 //^1031:06B3
-sk0d9e *SkWinCore::_1031_06b3(sk1891 *ref, X16 xx)
+// SPX: _1031_06b3 renamed SOMETHING_CALL_PFN12_1031_06b3
+sk0d9e *SkWinCore::SOMETHING_CALL_PFN12_1031_06b3(sk1891 *ref, X16 xx)
 {
-	//^1031:06B3
 	ENTER(12);
-	//^1031:06B8
 	U8 *bp0c = _1031_023b(ref);
-	//^1031:06CC
 	do {
 		sk1891 *bp08 = &_4976_1574[*bp0c & 0xff7f];
 		if ((this->*_4976_0cba_PFN_12[ref->b0_0_6()])(bp08) != 0) {
-			//^1031:0702
 			if (bp08->b0_7_7() == 1) {
-				//^1031:070E
-				sk0d9e *bp04 = _1031_06b3(bp08, xx);
+				sk0d9e *bp04 = SOMETHING_CALL_PFN12_1031_06b3(bp08, xx);
 				if (bp04 != 0)
 					return bp04;
 			}
 			else {
-				//^1031:0734
 				sk0d9e *bp04 = _1031_024c(bp08);
 				if (bp08 != NULL) {
 					X16 si;
 					for (; (si = (0x7ff & bp04->w0)) != 0; bp04++) {
-						//^1031:074C
 						if (xx != si)
 							return bp04;
-						//^1031:0753
 					}
 				}
 			}
 		}
-		//^1031:0766
 	} while ((*(++bp0c) & 0x80) == 0);
-	//^1031:077A
 	return NULL;
 }
 
@@ -6549,18 +6492,21 @@ void SkWinCore::TICK_STEP_CHECK()
 
 
 //^476D:04E8
-U8 SkWinCore::_476d_04e8(U16 xx) { // TODO: Unr
+// SPX: _476d_04e8 renamed UNIMPLEMENTED_476d_04e8
+U8 SkWinCore::UNIMPLEMENTED_476d_04e8(U16 xx) { // TODO: Unr
 	Unr(); return 0;
 }
 
 //^476D:04AF
-U16 SkWinCore::_476d_04af(U16 xx) { // TODO: Unr
+// SPX: _476d_04af renamed UNIMPLEMENTED_476d_04af
+U16 SkWinCore::UNIMPLEMENTED_476d_04af(U16 xx) { // TODO: Unr
 	Unr(); return 0;
 }
 
 
 //^1031:06A5
-void SkWinCore::_1031_06a5()
+// SPX: _1031_06a5 renamed SOMETHING_1031_06a5_CALL_1031_0541
+void SkWinCore::SOMETHING_1031_06a5_CALL_1031_0541()
 {
 	ENTER(0);
 	_1031_0541(_4976_4ea8);
@@ -6568,51 +6514,34 @@ void SkWinCore::_1031_06a5()
 }
 
 //^2FCF:0B8B
-void SkWinCore::_2fcf_0b8b(U16 xx, U16 yy, U16 zz)
+// SPX: _2fcf_0b8b renamed TELEPORTER_2fcf_0b8b
+void SkWinCore::TELEPORTER_2fcf_0b8b(U16 xx, U16 yy, U16 zz)
 {
-	//^2FCF:0B8B
 	ENTER(6);
-	//^2FCF:0B91
 	glbMap_4976_4c12 = 0xffff;
-	//^2FCF:0B97
 	TELE_inf bp06;
 	_4976_4c08 = GET_TELEPORTER_DETAIL(&bp06, U8(xx), U8(yy));
-	//^2FCF:0BAD
 	if (_4976_4c08 != 0) {
-		//^2FCF:0BB1
 		glbMap_4976_4c12 = bp06.target_z();
 		glbSomePosX_4976_4c04 = bp06.target_x_pos();
 		glbSomePosY_4976_4c1e = bp06.target_y_pos();
 		glbDir_4976_4c10 = (cd.pi.glbPlayerDir + (bp06.cross_scene_test_of_teleporter_target() - bp06.cross_scene_test())) & 3;
 	}
 	else {
-		//^2FCF:0BE6
 		for (U16 si = 0; si < 4; si++) {
-			//^2FCF:0BEA
 			if (GET_TELEPORTER_DETAIL(&bp06, xx + glbXAxisDelta[si], yy + glbYAxisDelta[si]) != 0) {
-				//^2FCF:0C13
 				glbMap_4976_4c12 = bp06.target_z();
-				//^2FCF:0C1B
 				U16 di = bp06.cross_scene_test_of_teleporter_target() +6 -bp06.cross_scene_test();
-				//^2FCF:0C2C
 				si = (si +di +2) & 3;
-				//^2FCF:0C37
 				glbSomePosX_4976_4c04 = bp06.target_x_pos() + glbXAxisDelta[si];
-				//^2FCF:0C47
 				glbSomePosY_4976_4c1e = bp06.target_y_pos() + glbYAxisDelta[si];
-				//^2FCF:0C57
 				glbDir_4976_4c10 = (cd.pi.glbPlayerDir + di) & 3;
-				//^2FCF:0C62
 				break;
 			}
-			//^2FCF:0C64
 		}
 	}
-	//^2FCF:0C6A
 	glbCurrentMapIndex = -1;
-	//^2FCF:0C70
 	CHANGE_CURRENT_MAP_TO(zz);
-	//^2FCF:0C79
 	return;
 }
 
@@ -7064,10 +6993,20 @@ void SkWinCore::LOAD_RECTS_AND_COMPRESS(U8 iGDatCls1Category, U8 iGDatCls2MainIt
 {
 	// TODO: –{ƒYƒŒ”Ÿ”
 	U32 iDataLength = QUERY_GDAT_ENTRY_DATA_LENGTH(iGDatCls1Category, iGDatCls2MainItemId, fmtRect, iGDatCls4EntryId);	// bp08
-	U8* xDataBuffer = ALLOC_MEMORY_RAM(iDataLength, afUseLower, 1024);	// bp04
-	LOAD_GDAT_ENTRY_DATA_TO(iGDatCls1Category, iGDatCls2MainItemId, fmtRect, iGDatCls4EntryId, xDataBuffer);
-	COMPRESS_RECTS((i16 *)xDataBuffer, iDataLength, &glbRectNoTable, &SkWinCore::ALLOC_UPPER_MEMORY);
+	U8* pDataBuffer = ALLOC_MEMORY_RAM(iDataLength, afUseLower, 1024);	// bp04
+	LOAD_GDAT_ENTRY_DATA_TO(iGDatCls1Category, iGDatCls2MainItemId, fmtRect, iGDatCls4EntryId, pDataBuffer);
+	COMPRESS_RECTS((i16 *)pDataBuffer, iDataLength, &glbRectNoTable, &SkWinCore::ALLOC_UPPER_MEMORY);
 	DEALLOC_LOWER_MEMORY(iDataLength);
+
+	// SPX: for Beta, this item does not exist. Load preextracted V4 bin instead
+	if (SkCodeParam::bDM2BetaGDATDetected && iDataLength == 0) {
+		i16 hRectTabHandle = -1;
+		hRectTabHandle = FILE_OPEN((const U8*)"bin/v4/0646rect.bin");
+		iDataLength = 17280;
+		FILE_READ(hRectTabHandle, iDataLength, pDataBuffer);
+		FILE_CLOSE(hRectTabHandle);
+		COMPRESS_RECTS((i16 *)pDataBuffer, iDataLength, &glbRectNoTable, &SkWinCore::ALLOC_UPPER_MEMORY);
+	}
 }
 
 //^3E74:51E4
@@ -7600,7 +7539,7 @@ RawEntry *SkWinCore::QUERY_GDAT_ENTRYPTR(U8 iGDatCategory, U16 iGDatItemId, U8 i
 			return NULL;
 		RawEntry* xRawEnt = &bp08[iMidIndex];	//*bp04
 		i16 iSearchDirection = xRawEnt->cls2 - iGDatItemId;	// bp0c
-		if (!(iSearchDirection != 0)) {
+		if (!(iSearchDirection != 0)) {	// == 0
 			iSearchDirection = xRawEnt->cls4 - iGDatEntryId;
 			if (!(iSearchDirection != 0)) {
 				return xRawEnt;
@@ -7637,6 +7576,8 @@ U16 SkWinCore::QUERY_GDAT_ENTRY_IF_LOADABLE(U8 iCategory, U8 iItemIndex, U8 iDat
 //^0B36:000A
 U16 SkWinCore::CALC_IMAGE_BYTE_LENGTH(U8* xImageBuffer)
 {
+	if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(xImageBuffer))
+		return 0;
 	//return ((READ_UI16(xImageBuffer,-6) == 4) ? (((READ_UI16(xImageBuffer,-4) +1) & 0xFFFE) >> 1) : READ_UI16(xImageBuffer,-4) & 0xFFFF) * READ_UI16(xImageBuffer,-2);
 	return ((READ_IMGBUFF_BPP(xImageBuffer) == IMG_4_BPP) ? (((READ_IMGBUFF_WIDTH(xImageBuffer) +1) & 0xFFFE) >> 1) : READ_IMGBUFF_WIDTH(xImageBuffer) & 0xFFFF) * READ_IMGBUFF_HEIGHT(xImageBuffer);
 }
@@ -8020,7 +7961,7 @@ void SkWinCore::GRAPHICS_DATA_READ(U32 location, U32 size, X8 *buff)
 	i32 bp10[2] = {(i32)size, 0};
 	if (glbFloppyDiskFlag != 0) {
 		bp14[1] = glbFileHandleGraphics2;
-		bp08[1] = location - _4976_5cea;
+		bp08[1] = location - glbSizeOfGDATFile;
 		if (bp08[1] >= 0) {
 			bp10[1] = size;
 		}
@@ -8073,7 +8014,7 @@ void SkWinCore::LOAD_GDAT_RAW_DATA(U16 index, shelf_memory ps)
 	while (bp04 > 0) {
 		if (si != _4976_480d || _4976_5d34 != 0) {
 			_4976_480d = si;
-			Bit32u bp18 = _4976_5caa - bp08;
+			U32 bp18 = glbSizeOfGDATFull - bp08;
 			if (bp18 > TEMP_BUFF_SIZE) {
 				bp18 = TEMP_BUFF_SIZE;
 			}
@@ -9582,38 +9523,25 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 
 
 	U16 bp18 = glbCurrentMapIndex;
-	//^2066:1A2A
 	SkD((DLV_DBG_GAME_LOAD, "Delete records ... \n"));
 	U16 bp16;
 	for (bp16=0; dunHeader->nMaps > bp16; bp16++) {
-		//^2066:1A32
 		CHANGE_CURRENT_MAP_TO(bp16);
-		//^2066:1A3B
 		for (U16 bp0e=0; bp0e < glbCurrentMapWidth; bp0e++) {
-			//^2066:1A42
 			for (U16 bp10=0; bp10 < glbCurrentMapHeight; bp10++) {
-				//^2066:1A49
 				ObjectID bp12 = GET_TILE_RECORD_LINK(bp0e, bp10);
 				while (bp12 != OBJECT_END_MARKER) {
-					//^2066:1A58
 					if (bp12.DBType() > dbActuator) {
-						//^2066:1A66
 						GET_ADDRESS_OF_RECORD(bp12)->w0 = OBJECT_END_MARKER;
-						//^2066:1A78
 						CUT_RECORD_FROM(bp12, NULL, bp0e, bp10);
 						break;
 					}
 					else {
-						//^2066:1A8F
 						bp12 = GET_NEXT_RECORD_LINK(bp12);
 					}
-					//^2066:1A9B
 				}
-				//^2066:1AA1
 			}
-			//^2066:1AAD
 		}
-		//^2066:1AB9
 	}
     CHANGE_CURRENT_MAP_TO(bp18);
 
@@ -9631,7 +9559,6 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 		}
 	}
 
-	//^2066:1B27
 	SkD((DLV_DBG_GAME_LOAD, "Realloc Minions Table ... \n"));
 	glbMinionsObjectIDTable = reinterpret_cast<ObjectID *>(ALLOC_MEMORY_RAM(200, afDefault, 1024));
 	glbMinionsAssocCount = 0;
@@ -9650,7 +9577,6 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 	if (READ_RECORD_CHECKCODE(-1, 0, &cd.pi.glbLeaderHandPossession.object, 0, 0) != 0) {
 		goto _1e7e;
 	}
-	//^2066:1BA6
 	for (iChampionIndex = 0; iChampionIndex < cd.pi.glbChampionsCount; iChampionIndex++) {
 		ObjectID* xInvObject = &tblChampionSquad[iChampionIndex].inventory[0];	// bp08
 		for (U16 iInvSlot = 0; iInvSlot < 30; iInvSlot++, xInvObject++) {	// di
@@ -9669,22 +9595,16 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 	else {
 		PROCESS_ITEM_BONUS(glbChampionLeader, cd.pi.glbLeaderHandPossession.object, -1, 0);
 	}
-	//^2066:1C14
 	if (READ_SKSAVE_TIMER_3C_3D() != 0) {
-		//^2066:1C1C
 		goto _1e7e;
 	}
-	//^2066:1C1F
 	SkD((DLV_DBG_GAME_LOAD, "Loop through all maps ... \n"));
 	bp18 = glbCurrentMapIndex;
 	for (bp16 = 0; dunHeader->nMaps > bp16; bp16++) {
-		//^2066:1C2D
 		CHANGE_CURRENT_MAP_TO(bp16);
 		U8 *bp04 = *glbCurrentTileMap;
 		for (U16 bp0e = 0; bp0e < glbCurrentMapWidth; bp0e++) {
-			//^2066:1C4F
 			for (U16 bp10 = 0; bp10 < glbCurrentMapHeight; bp10++) {
-				//^2066:1C57
 				U8 bp13 = *bp04;
 				U16 bp24 = 0;
 				U8 bp1b;
@@ -9693,28 +9613,21 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 					case ttFloor:
 					case ttStairs:
 					case ttMapExit:
-						//^2066:1C7A
 						bp1b = 0x00; break;
 					case ttPit:
-						//^2066:1C80
 						bp1b = 0x08; break;
 					case ttDoor:
-						//^2066:1C86
 						bp1b = 0x07; break;
 					case ttTeleporter:
 						{
-							//^2066:1C8C
 							TELE_inf bp2a;
 							if (GET_TELEPORTER_DETAIL(&bp2a, (U8)bp0e, (U8)bp10) != 0) {
-								//^2066:1CA3
 								bp1b = 0x00;
 								if (bp2a.target_z() < bp16) {
-									//^2066:1CB1
 									bp24 = 1;
 								}
 							}
 							else {
-								//^2066:1CB8
 								bp1b = 0x08;
 							}
 							break;
@@ -9722,34 +9635,24 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 					case ttTrickWall:
 						bp1b = 0x04; break;
 				}
-				//^2066:1CC2
 				if (bp1b != 0) {
 					if (SUPPRESS_READER(bp04, &bp1b, 1, 1, 0) != 0) {
-						//^2066:1CE6
 						goto _1e7e;
 					}
 				}
-				//^2066:1CE9
 				bp04++;
 
 				// SkD((DLV_FYI, "DBG: (%2d,%2d,%2d,%02X)\n", bp16, bp0e, bp10, 0U +bp13));
-				//^2066:1CEC
 				if (bp24 == 0) {
-					//^2066:1CF5
 					ObjectID bp12 = GET_TILE_RECORD_LINK(bp0e, bp10);
-					//^2066:1D02
 					for (; bp12 != OBJECT_END_MARKER; bp12 = GET_NEXT_RECORD_LINK(bp12)) {
-						//^2066:1D05
 						// SkD((DLV_FYI, "DBG: #%04X\n", 0U +bp12.w));
 						U16 bp22 = bp12.DBType();
 						const void *bp0c = tableMask[bp22];
-						//^2066:1D25
 						if (bp0c == NULL)
 							continue;
-						//^2066:1D2C
 						Actuator *bp08 = (Actuator *)GET_ADDRESS_OF_RECORD(bp12);
 						if (bp22 == dbActuator) {
-							//^2066:1D44
 							// SkD((DLV_FYI, "DBG: T  %02X\n", 0U +bp08->ActuatorType()));
 							switch (bp08->ActuatorType()) {
 								case ACTUATOR_FLOOR_TYPE__CROSS_SCENE: // 0x27: Cross scene
@@ -9760,36 +9663,25 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 								case ACTUATOR_TYPE_ORNATE_ANIMATOR_2: // 0x32: Activator, ornate animator
 								case ACTUATOR_FLOOR_TYPE__SHOP: // 0x30: Shop exhibition
 								case ACTUATOR_FLOOR_TYPE__FINITE_ACTIVATOR_RELAY: // 0x2D: Activator, finite activator relay
-									//^2066:1DA7
 									U16 bp1e;
 									U16 bp20 = 0x01FF;
 									if (SUPPRESS_READER(&bp1e, &bp20, 2, 1, 1) != 0) {
-										//^2066:1DC9
 										goto _1e7e;
 									}
-									//^2066:1DCC
 									bp08->ActuatorData(bp1e);
 									break;
 							}
 						}
-						//^2066:1DE1
 						if (SUPPRESS_READER(bp08, bp0c, glbItemSizePerDB[bp22], 1, 0) != 0) {
-							//^2066:1E06
 							goto _1e7e;
 						}
-						//^2066:1E08
 					}
-					//^2066:1E1D
 					if (READ_RECORD_CHECKCODE(bp0e, bp10, NULL, 1, 1) != 0) {
-						//^2066:1E34
 						goto _1e7e;
 					}
 				}
-				//^2066:1E36
 			}
-			//^2066:1E45
 		}
-		//^2066:1E54
 	}
 	CHANGE_CURRENT_MAP_TO(bp18);
 	if (RECOVER_MINION_ASSOC() == 0) {
@@ -9847,13 +9739,13 @@ _2db4:
 			goto _2e5b;
 		if (_476d_030a(2) == 1)
 			goto _2e5b;
-		_476d_04e8(2);
+		UNIMPLEMENTED_476d_04e8(2);
 	}
 
 	while (true) {
 		if (_4976_49a0 == 0) {
 			if (bp01 != 0) {
-				_476d_04e8(2);
+				UNIMPLEMENTED_476d_04e8(2);
 			}
 			U16 di = DIALOG_BOX_0aaf_0067(_0aaf_02f8_DIALOG_BOX(DIALOGBOX_x0F_LOAD_PANEL, bp01));
 			if (di == 1) {
@@ -9868,7 +9760,7 @@ _2db4:
 			}
 		}
 _2e5b:
-		if (_4976_49a0 == 0 && _476d_04af(1) != 1) {
+		if (_4976_49a0 == 0 && UNIMPLEMENTED_476d_04af(1) != 1) {
 			switch (_4976_5eb8) {
 				case 0x0000:
 					bp01 = 0x1d;
@@ -10032,7 +9924,7 @@ _31b8:		// we jump there from loading a dungeon from new game
 			_0aaf_02f8_DIALOG_BOX(DIALOGBOX_x0E_LOADING_GAME, 0x0000);
 			_4976_4bd8 = 0x0001;
 			cd.pi.glbPlayerDefeated = 0x0000;
-			_2fcf_0b8b(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerMap);
+			TELEPORTER_2fcf_0b8b(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerMap);
 			glbDoLightCheck = 0x0001;
 			return 1; // U16 di = 1; return di;
 		} while (false);
@@ -10191,7 +10083,7 @@ _31b8:		// we jump there from loading a dungeon from new game
 			_0aaf_02f8_DIALOG_BOX(DIALOGBOX_x0E_LOADING_GAME, 0x0000);
 			_4976_4bd8 = 0x0001;
 			cd.pi.glbPlayerDefeated = 0x0000;
-			_2fcf_0b8b(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerMap);
+			TELEPORTER_2fcf_0b8b(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerMap);
 			glbDoLightCheck = 0x0001;
 			//LOG_FULL_DUNGEON_INFO();
 			return 1;
@@ -10221,15 +10113,15 @@ _3262:
 //^0CEE:3035
 U8 SkWinCore::QUERY_CLS2_OF_TEXT_RECORD(ObjectID recordLink)
 {
-	Text* xText = GET_ADDRESS_OF_RECORD2(recordLink);	// bp04
-	if (xText->TextMode() == C01_ACT_SIMPLE__MODE_ACTIVE_DECORATION) {
-		U16 iExtUsage = xText->SimpleTextExtUsage();	// si
+	Text* pText = GET_ADDRESS_OF_RECORD2(recordLink);	// bp04
+	if (pText->TextMode() == C01_ACT_SIMPLE__MODE_ACTIVE_DECORATION) {
+		U16 iExtUsage = pText->SimpleTextExtUsage();	// si
 		switch (iExtUsage) {
 			case 0x0000: // 0x00 - Creature transformer	// SPX: I think creature transformer is 0x01 ??
 			case 0x0002: // 0x02 - Animate image
 			case 0x0005: // 0x05 - ?
 			case 0x000D: // 0x0d - 2-state switch
-				return U8(xText->OrnateIndex());
+				return U8(pText->OrnateIndex());
 		}
 	}
 	return -1;
@@ -10238,38 +10130,27 @@ U8 SkWinCore::QUERY_CLS2_OF_TEXT_RECORD(ObjectID recordLink)
 //^0CEE:241B
 U8 SkWinCore::QUERY_CLS2_FROM_RECORD(ObjectID recordLink)
 {
-	//^0CEE:241B
 	if (recordLink != OBJECT_NULL) {
-		//^0CEE:2428
 		GenericRecord *bp04;
 		if (recordLink < OBJECT_EFFECT_FIREBALL) {	// oFF80
-			//^0CEE:242E
 			bp04 = GET_ADDRESS_OF_RECORD(recordLink);
 		}
 		else {
-			//^0CEE:243E
 			return ((U8)recordLink.w) - 0x80;
 		}
-		//^0CEE:2446
 		switch (recordLink.DBType()) {
 			case dbText:		// 2
-				//^0CEE:24EA
 				return QUERY_CLS2_OF_TEXT_RECORD(recordLink);
 			case dbActuator:	// 3
-				//^0CEE:24D7
 				return GET_WALL_DECORATION_OF_ACTUATOR(GET_ADDRESS_OF_ACTU(recordLink));
 			case dbCreature:	// 4
-				//^0CEE:2461
 				return bp04->castToCreature()->CreatureType();
 			case dbWeapon:		// 5
-				//^0CEE:246B
 				return bp04->castToWeapon()->ItemType();
 			case dbCloth:		// 6
-				//^0CEE:2478
 				return bp04->castToCloth()->ItemType();
 			case dbScroll:		// 7
 				{
-				//^0CEE:2484
 				//return 0;
 				if (SkCodeParam::bUseScrollIDType)
 					return bp04->castToScroll()->ItemType();	// SPX: removed "return 0" to get item type instead, allowing any item within scrolls category
@@ -10277,30 +10158,24 @@ U8 SkWinCore::QUERY_CLS2_FROM_RECORD(ObjectID recordLink)
 					return 0;	// Standard scroll icon; ID is used for text number
 				}
 			case dbPotion:		// 8	
-				//^0CEE:2488
 				return bp04->castToPotion()->PotionType();
 			case dbContainer:	// 9
-				//^0CEE:2494
 				return 0
 					| (((reinterpret_cast<Container *>(bp04)->b4 >> 1) & 0x0003) << 3)
 					|  ((reinterpret_cast<Container *>(bp04)->b5 >> 5) & 0x0007)
 					;
 			case dbMiscellaneous_item:	//10
-				//^0CEE:24B2
 				return bp04->castToMisc()->ItemType();
 			case db11:			//11
 			case db12:			//12
 			case db13:			//13
 				break;
 			case dbMissile:		//14
-				//^0CEE:24BE
 				return (U8)QUERY_CLS2_FROM_RECORD(bp04->castToMissile()->GetMissileObject());
 			case dbCloud:		//15
-				//^0CEE:24CB
 				return bp04->castToCloud()->CloudType();
 		}
 	}
-	//^0CEE:24F5
 	return -1;
 }
 
@@ -10309,20 +10184,14 @@ U8 SkWinCore::QUERY_CLS2_FROM_RECORD(ObjectID recordLink)
 //^0CEE:23DE
 U8 SkWinCore::QUERY_CLS1_FROM_RECORD(ObjectID recordLink)
 {
-	//^0CEE:23DE
 	ObjectID di = recordLink;
-	//^0CEE:23E6
 	if (di != OBJECT_NULL) {
-		//^0CEE:23EB
 		U16 si = di.DBType();
 		if (si == dbMissile) {
-			//^0CEE:23FA
 			return QUERY_CLS1_FROM_RECORD(GET_ADDRESS_OF_RECORDE(di)->GetMissileObject());
 		}
-		//^0CEE:240F
 		return glbGDAT2CatPerDB[si];
 	}
-	//^0CEE:2415
 	return 0xff;
 }
 
@@ -10467,9 +10336,7 @@ X16 SkWinCore::QUERY_NEXT_GDAT_ENTRY(SkEntIter *ref)
 	// 0 if not found
 	// 1 if found
 
-	//^3E74:1953
 	ENTER(22);
-	//^3E74:1959
 	X8 bp05 = ref->x2.xEnt4.cls2(); // cls2
 	X8 bp06 = ref->x2.xEnt4.cls4(); // cls4
 	X16 bp0e = ((ref->x2.w0_0_e()) == 1) ? 1 : 0;
@@ -10482,41 +10349,32 @@ X16 SkWinCore::QUERY_NEXT_GDAT_ENTRY(SkEntIter *ref)
 	else {
 		bp07 = bp05;
 	}
-	//^3E74:199D
 	X16 bp0c = ref->w0;
 	if (bp0c != 0) {
 		ref->w0 = 0;
 		ref->cls1cur(ref->x2.xEnt4.cls1());
-		//^3E74:19B7
 		if (ref->cls1cur() == 0xff) {
 			ref->cls1cur(0x00);
-			//^3E74:19C0
 _19c0:
 			ref->cls1base(U8(glbGDatEntries.iTotalClass1));
 		}
-		//^3E74:19C8
 		else if (bp0e != 0) {
 			ref->cls1base(ref->x8.xEnt4.cls1());
-			//^3E74:19D9
 			if (ref->cls1base() == 0xff) {
 				goto _19c0;
 			}
 		}
 		else {
-			//^3E74:19DF
 			ref->cls1base(ref->x2.xEnt4.cls1());
 		}
-		//^3E74:19EA
 		if (ref->cls1cur() < 0 || ref->cls1cur() > ref->cls1base() || ref->cls1base() > glbGDatEntries.iTotalClass1)
 			goto _1cd4;
 	}
 	do {
-		//^3E74:1A13
 		X16 bp0a = glbGDatEntries.tblCls1toCls2[ref->cls1cur()];
 		U16 si;
 		U16 di;
 		if (glbGDatEntries.tblCls1toCls2[ref->cls1cur() +1] != bp0a) {
-			//^3E74:1A47
 			RawEntry *bp04;
 			if (bp0c == 0) {
 				si = ref->w24 +1;
@@ -10525,52 +10383,39 @@ _19c0:
 					goto _1c0a;
 				goto _1c82;
 			}
-			//^3E74:1A7E
 			ref->cls3cur(ref->x2.xEnt4.cls3());
 			if (ref->cls3cur() == fmtInvalid) {
-				//^3E74:1A8D
 				ref->cls3cur(0x00);
-				//^3E74:1A92
 _1a92:
 				ref->cls3base(U8(glbGDatEntries.tblCls1toCls2[ref->cls1cur() +1]) -bp0a -1);
 			}
-			//^3E74:1AAE
 			else if (bp0e != 0) {
 				ref->cls3base(ref->x8.xEnt4.cls3());
-				//^3E74:1ABF
 				if (ref->cls3base() == fmtInvalid)
 					goto _1a92;
 			}
 			else {
-				//^3E74:1AC5
 				ref->cls3base(ref->x2.xEnt4.cls3());
 			}
-			//^3E74:1AD3
 			bp0a += ref->cls3cur();
 			si = ref->w24 = glbGDatEntries.tblCls2toCls3[bp0a++];
 			ref->w22 = bp0a;
 			ref->w26 = glbGDatEntries.tblCls2toCls3[ref->w22];
 			ref->pv14 = bp04 = &glbGDatEntries.pv8[si];
 			do {
-				//^3E74:1B3E
 				if (ref->w26 > si) {
-					//^3E74:1B4A
 					if (bp05 != 0xff) {
-						//^3E74:1B5F
 						X8 bp15 = (bp06 == 0xff) ? 0 : bp06;
 						RawEntry *bp12 = &glbGDatEntries.pv8[-1];
 						di = si;
 						X16 bp14 = ref->w26 +1;
 						do {
-							//^3E74:1B8A
 							si = (di +bp14) >> 1;
 							bp04 = &bp12[si];
 							// SkD((DLV_BUGHERE,"DBG: SI=%04X,DI=%04X,bp14=%04X\n"
 							//	, 0U +si, 0U +di, 0U +bp14));
 							if (si == di) {
-								//^3E74:1BB5
 								if (ref->w26 > si) {
-									//^3E74:1BC1
 									si++;
 									bp04++;
 									if (bp04->cls2 <= bp07)
@@ -10578,47 +10423,35 @@ _1a92:
 								}
 								goto _1c82;
 							}
-							//^3E74:1BDF
 							if (bp04->cls2 == bp05) {
 								if (bp04->cls4 <= bp15)
 									break;
-								//^3E74:1BF3
 								goto _1c00;
 							}
-							//^3E74:1BF5
 							if (bp04->cls2 > bp05) {
-								//^3E74:1C00
 _1c00:
 								bp14 = si;
 							}
 							else {
-								//^3E74:1C05
 								di = si;
 							}
 						} while (true);
-						//^3E74:1C09
 						--si;
 					}
 _1c0a:
 					do {
-						//^3E74:1C0A
 						if (bp04->cls2 > bp07)
 							break;
-						//^3E74:1C15
 						if ((bp0e != 0) ? ((bp06 == 0xff || (bp04->cls4 >= bp06 && bp04->cls4 <= bp08))) : (bp06 == 0xff || bp04->cls4 == bp06)) {
-							//^3E74:1C4A
 							ref->w24 = si;
 							ref->pv14 = bp04;
 							return 1;
 						}
-						//^3E74:1C65
 						if (ref->w26 <= ++si)
 							break;
-						//^3E74:1C71
 						bp04++;
 					} while (true);
 				}
-				//^3E74:1C82
 _1c82:
 				ref->cls3cur(ref->cls3cur() +1);
 				if (ref->cls3cur() > ref->cls3base())
@@ -10627,7 +10460,6 @@ _1c82:
 				ref->w26 = glbGDatEntries.tblCls2toCls3[++ref->w22];
 			} while (true);
 		}
-		//^3E74:1CB9
 		ref->cls1cur(ref->cls1cur() +1);
 		if (ref->cls1cur() > ref->cls1base())
 			break;
@@ -10643,9 +10475,7 @@ _1cd4:
 //^3E74:18FA
 U16 SkWinCore::TRACK_UNDERLAY(U16 ww)
 {
-	//^3E74:18FA
 	ENTER(0);
-	//^3E74:18FF
 	X16 di = 0;
 	X16 cx = _4976_5d78 +1;
 	do {
@@ -10728,10 +10558,10 @@ void SkWinCore::LOAD_DYN4(SkLoadEnt *ref, i16 iLoadEntCount)	// aa
 			}
 			pTabGDatRawDat[iCurIndex] = 1;
 			X16 bp36 = _4976_481a[RCJ(15,bp2c)];
-			if ((bp36 & _4976_5d12.w12) != 0 && (bp36 & _4976_5d7e.w12) == 0) {
+			if ((bp36 & glbTiamatPoolInfo1.iMemPoolFlags) != 0 && (bp36 & glbTiamatPoolInfo2.iMemPoolFlags) == 0) {
 				pTabGDatRawDat[iCurIndex] |= RAWDAT_DYN_MARK_x40;
 			}
-			else if ((bp36 & _4976_5d7e.w12) != 0 && (bp36 & _4976_5d12.w12) == 0) {
+			else if ((bp36 & glbTiamatPoolInfo2.iMemPoolFlags) != 0 && (bp36 & glbTiamatPoolInfo1.iMemPoolFlags) == 0) {
 				pTabGDatRawDat[iCurIndex] |= RAWDAT_DYN_MARK_x80;
 			}
 		}
@@ -10808,31 +10638,31 @@ _37e9:
 		shelf_memory iShelfMem = glbShelfMemoryTable[iCurIndex];	// bp08
 		if (iShelfMem.Absent())
 			continue;
-		if (CHECK_SHELF_IN_BOUNDS_3e74_00ed(&_4976_5d12, iShelfMem) == 0 && CHECK_SHELF_IN_BOUNDS_3e74_00ed(&_4976_5d7e, iShelfMem) == 0)
+		if (CHECK_SHELF_IN_BOUNDS_3e74_00ed(&glbTiamatPoolInfo1, iShelfMem) == 0 && CHECK_SHELF_IN_BOUNDS_3e74_00ed(&glbTiamatPoolInfo2, iShelfMem) == 0)
 			continue;
 		bp12 = pTabGDatRawDat[iCurIndex];
 		bp12 &= ((bp12 & 1) != 0) ? 0xFFF9 : 0x0020;
 		pTabGDatRawDat[iCurIndex] = U8(bp12);
 		_3e74_3200(iCurIndex);
 	}
-	_3e74_30bd(&_4976_5d12);
-	_3e74_30bd(&_4976_5d7e);
-	glbFreeCPXMemory += tiamat::Size(_4976_5d12.t8, _4976_5d12.memRefLower);
-	SkD((DLV_CPX,"CPX: glbFreeCPXMemory += %u\n", (Bitu)tiamat::Size(_4976_5d12.t8, _4976_5d12.memRefLower)));
-	_4976_5d12.memRefLower = _4976_5d12.t8;
+	TIAMAT_POOL_3e74_30bd(&glbTiamatPoolInfo1);
+	TIAMAT_POOL_3e74_30bd(&glbTiamatPoolInfo2);
+	glbFreeCPXMemory += tiamat::Size(glbTiamatPoolInfo1.t8, glbTiamatPoolInfo1.memRefLower);
+	SkD((DLV_CPX,"CPX: glbFreeCPXMemory += %u\n", (Bitu)tiamat::Size(glbTiamatPoolInfo1.t8, glbTiamatPoolInfo1.memRefLower)));
+	glbTiamatPoolInfo1.memRefLower = glbTiamatPoolInfo1.t8;
 
 _38db:
 	X32 iTotalMemPool1a = 0;	// bp1a
 	X32 iTotalMemPool2 = 0;	// bp16
-	X32 bp1e = _3e74_0017(&_4976_5d7e);
-	U32 iDiffMemSize = tiamat::Size(_4976_5d12.t0, ptr2t(reinterpret_cast<U8 *>(_4976_5ce6)));	// bp22	size between 1st and 2nd
+	X32 bp1e = GET_TIAMAT_3e74_0017(&glbTiamatPoolInfo2);
+	U32 iDiffMemSize = tiamat::Size(glbTiamatPoolInfo1.t0, ptr2t(reinterpret_cast<U8 *>(_4976_5ce6)));	// bp22	size between 1st and 2nd
 	i32 iRequiredMemSize;	// bp10
 	for (iCurIndex = 0; iCurIndex < glbGDatNumberOfData; iCurIndex++) {
 		bp12 = pTabGDatRawDat[iCurIndex] = pTabGDatRawDat[iCurIndex] & RAWDAT_DYN_MARK_xE1;
 		shelf_memory iShelfMem = glbShelfMemoryTable[iCurIndex];	// bp08
 		if (iShelfMem.Present()) {
 			iRequiredMemSize = ((READ_RAW_DATA_LENGTH(REALIZE_GRAPHICS_DATA_MEMORY(iShelfMem)) +1) & 0xFFFE) +4;	// bp10 = ((READ_UI16(REALIZE_GRAPHICS_DATA_MEMORY(iShelfMem),-2) +1) & 0xfffe) +4;
-			if (CHECK_SHELF_IN_BOUNDS_3e74_00ed(&_4976_5d12, iShelfMem) != 0) {
+			if (CHECK_SHELF_IN_BOUNDS_3e74_00ed(&glbTiamatPoolInfo1, iShelfMem) != 0) {
 				pTabGDatRawDat[iCurIndex] |= RAWDAT_DYN_MARK_x0A;
 				if ((bp12 & 1) == 0) {
 					pTabGDatRawDat[iCurIndex] |= RAWDAT_DYN_MARK_x40;
@@ -10841,7 +10671,7 @@ _39ec:
 				iTotalMemPool2 += iRequiredMemSize;
 			}
 			else {
-				if (CHECK_SHELF_IN_BOUNDS_3e74_00ed(&_4976_5d7e, iShelfMem) != 0) {
+				if (CHECK_SHELF_IN_BOUNDS_3e74_00ed(&glbTiamatPoolInfo2, iShelfMem) != 0) {
 					pTabGDatRawDat[iCurIndex] |= RAWDAT_DYN_MARK_x14;
 					if ((bp12 & 1) == 0) {
 						pTabGDatRawDat[iCurIndex] |= RAWDAT_DYN_MARK_x80;
@@ -10938,7 +10768,7 @@ _3abe:
 			}
 			RAISE_SYSERR(SYSTEM_ERROR__LOAD_DYN4);
 		}
-		bp26 = tiamat::Size(_4976_5d12.t8, _4976_5d12.t0 -iTotalMemPool2);
+		bp26 = tiamat::Size(glbTiamatPoolInfo1.t8, glbTiamatPoolInfo1.t0 -iTotalMemPool2);
 		for (iCurIndex = 0; iCurIndex < glbGDatNumberOfData; iCurIndex++) {
 			bp12 = pTabGDatRawDat[iCurIndex];
 			if ((bp12 & 6) != 0 && (bp12 & 0x18) == 0) {
@@ -10954,7 +10784,7 @@ _3abe:
 		if (bp26 > 0) {
 			glbFreeCPXMemory -= bp26;
 			SkD((DLV_CPX,"CPX: glbFreeCPXMemory -= %u\n", (Bitu)bp26));
-			_4976_5d12.memRefLower = _4976_5d12.t0 -iTotalMemPool2;
+			glbTiamatPoolInfo1.memRefLower = glbTiamatPoolInfo1.t0 - iTotalMemPool2;
 		}
 		X16 bp32;
 		do {
@@ -10964,14 +10794,14 @@ _3abe:
 				tiamat tmMemRef;	// bp08
 				if ((bp12 & RAWDAT_DYN_MARK_x0C) == RAWDAT_DYN_MARK_x0C) {
 					iRequiredMemSize = ((QUERY_GDAT_RAW_DATA_LENGTH(iCurIndex) +1) & 0xFFFE) +4;
-					if (_3e74_0081(&_4976_5d12) < iRequiredMemSize) {
-						_3e74_30bd(&_4976_5d12);
-						if (_3e74_0081(&_4976_5d12) < iRequiredMemSize) {
+					if (TIAMAT_POOL_NOT_IMPLEMENTED(&glbTiamatPoolInfo1) < iRequiredMemSize) {
+						TIAMAT_POOL_3e74_30bd(&glbTiamatPoolInfo1);
+						if (TIAMAT_POOL_NOT_IMPLEMENTED(&glbTiamatPoolInfo1) < iRequiredMemSize) {
 							bp32 = 1;
 							continue;
 						}
 					}
-					tmMemRef = _3e74_32fb(&_4976_5d12, REALIZE_GRAPHICS_DATA_MEMORY(glbShelfMemoryTable[iCurIndex]), iRequiredMemSize);
+					tmMemRef = _3e74_32fb(&glbTiamatPoolInfo1, REALIZE_GRAPHICS_DATA_MEMORY(glbShelfMemoryTable[iCurIndex]), iRequiredMemSize);
 					_3e74_3200(iCurIndex);
 					goto _4173;
 				}
@@ -10980,57 +10810,56 @@ _3abe:
 				}
 				else {
 					iRequiredMemSize = ((QUERY_GDAT_RAW_DATA_LENGTH(iCurIndex) +1) & 0xFFFE) +4;
-					if (_3e74_0081(&_4976_5d7e) < iRequiredMemSize) {
-						_3e74_30bd(&_4976_5d7e);
-						if (_3e74_0081(&_4976_5d7e) < iRequiredMemSize) {
+					if (TIAMAT_POOL_NOT_IMPLEMENTED(&glbTiamatPoolInfo2) < iRequiredMemSize) {
+						TIAMAT_POOL_3e74_30bd(&glbTiamatPoolInfo2);
+						if (TIAMAT_POOL_NOT_IMPLEMENTED(&glbTiamatPoolInfo2) < iRequiredMemSize) {
 							bp32 = 1;
 							continue;
 						}
 					}
-					tmMemRef = _3e74_32fb(&_4976_5d7e, REALIZE_GRAPHICS_DATA_MEMORY(glbShelfMemoryTable[iCurIndex]), iRequiredMemSize);
+					tmMemRef = _3e74_32fb(&glbTiamatPoolInfo2, REALIZE_GRAPHICS_DATA_MEMORY(glbShelfMemoryTable[iCurIndex]), iRequiredMemSize);
 					_3e74_3200(iCurIndex);
-					if ((_4976_5d7e.w12 & 0x8000) != 0) {
-						glbShelfMemoryTable[iCurIndex] = t2s(tmMemRef);
+					if ((glbTiamatPoolInfo2.iMemPoolFlags & 0x8000) != 0) {
+						glbShelfMemoryTable[iCurIndex] = t2s(tmMemRef);	// tiamat => shelf	// is for CRAM ?
 					}
 					else {
 _4173:
-						glbShelfMemoryTable[iCurIndex] = CONVERT_PHYS_TO_SHELF_FORM(t2ptr(tmMemRef));
+						glbShelfMemoryTable[iCurIndex] = CONVERT_PHYS_TO_SHELF_FORM(t2ptr(tmMemRef));	// tiamat => pointer => shelf
 					}
 					pTabGDatRawDat[iCurIndex] ^= RAWDAT_DYN_MARK_x06;
 				}
 			}
 		} while (bp32 != 0);
-		_3e74_30bd(&_4976_5d12);
-		_3e74_30bd(&_4976_5d7e);
+		TIAMAT_POOL_3e74_30bd(&glbTiamatPoolInfo1);
+		TIAMAT_POOL_3e74_30bd(&glbTiamatPoolInfo2);
 		if (bp26 < 0) {
 			glbFreeCPXMemory -= bp26;
 			SkD((DLV_CPX,"CPX: glbFreeCPXMemory -= %u\n", (Bitu)bp26));
-			_4976_5d12.memRefLower = _4976_5d12.t0 -iTotalMemPool2;
+			glbTiamatPoolInfo1.memRefLower = glbTiamatPoolInfo1.t0 -iTotalMemPool2;
 		}
 		X16 bp34 = 0;
 		for (iCurIndex = 0; iCurIndex < glbGDatNumberOfData; iCurIndex++) {
-			//if (_4976_4bd8 != 0 && (iCurIndex & 0xFF) == 0) { // display loading progression bar
-			//if (_4976_4bd8 != 0 && (iCurIndex & 0x3F) == 0) { // display loading progression bar
-			if (_4976_4bd8 != 0 && (iCurIndex & 0x0F) == 0) { // display loading progression bar
+			if (_4976_4bd8 != 0 && (iCurIndex & 0x3F) == 0) { // display loading progression bar
 				//DRAW_DIALOGUE_PROGRESS((((si +1) * 500) / glbGDatNumberOfData) + 500); // original, but it start right away half of the bar
 				DRAW_DIALOGUE_PROGRESS((((iCurIndex +1) * C1000_LOAD_BAR_MAX) / glbGDatNumberOfData)); // this one is more logical
 			}
 			bp12 = pTabGDatRawDat[iCurIndex] & 0xFFDF;
 			if (bp12 == 0 || (bp12 & RAWDAT_DYN_MARK_x06) != 0)
 				continue;
-			X16 bp30;
-			iRequiredMemSize = (((bp30 = QUERY_GDAT_RAW_DATA_LENGTH(iCurIndex)) +1) & 0xFFFE) +4;
-			sk5d12 *bp0c = ((bp12 & RAWDAT_DYN_MARK_x08) != 0) ? &_4976_5d12 : &_4976_5d7e;
-			tiamat bp08 = MEM_3e74_32a2(bp0c, iRequiredMemSize);	// moves pointer backward - iRequiredMemSize
+			X16 iRawDatLength;	// bp30
+			iRequiredMemSize = (((iRawDatLength = QUERY_GDAT_RAW_DATA_LENGTH(iCurIndex)) +1) & 0xFFFE) +4;
+			sk5d12 *bp0c = ((bp12 & RAWDAT_DYN_MARK_x08) != 0) ? &glbTiamatPoolInfo1 : &glbTiamatPoolInfo2;	// like choosing a EMS or notEMS ?
+			tiamat memRef = MEM_3e74_32a2(bp0c, iRequiredMemSize);	// (bp08) moves pointer backward - iRequiredMemSize
 			if (bp0c->Is4EMS() != 0) {
-				WRITE_UI16(REALIZE_GRAPHICS_DATA_MEMORY(t2s(bp08) + (iRequiredMemSize) - (2)),+0,iCurIndex);
-				bp08 = ptr2t(REALIZE_GRAPHICS_DATA_MEMORY(glbShelfMemoryTable[iCurIndex] = t2s(bp08 + (2))));
+				WRITE_UI16(REALIZE_GRAPHICS_DATA_MEMORY(t2s(memRef) + (iRequiredMemSize) - (2)),+0,iCurIndex);
+				memRef = ptr2t(REALIZE_GRAPHICS_DATA_MEMORY(glbShelfMemoryTable[iCurIndex] = t2s(memRef + (2))));
 			}
 			else {
-				glbShelfMemoryTable[iCurIndex] = CONVERT_PHYS_TO_SHELF_FORM(t2ptr(bp08 +2));	// tiamat => real pointer => shelf
-				WRITE_UI16(t2ptr(bp08),+iRequiredMemSize -4,iCurIndex);	// WRITE_UI16(t2ptr(bp08),+bp10 -4,si);
+				glbShelfMemoryTable[iCurIndex] = CONVERT_PHYS_TO_SHELF_FORM(t2ptr(memRef +2));	// tiamat => real pointer => shelf
+				WRITE_UI16(t2ptr(memRef),+iRequiredMemSize -4,iCurIndex);	// WRITE_UI16(t2ptr(bp08),+bp10 -4,si);
 			}
-			WRITE_RAW_DATA_LENGTH(t2ptr(bp08),bp30);	// WRITE_UI16(t2ptr(bp08),-2,bp30);
+			// Write the real raw data len at -2
+			WRITE_RAW_DATA_LENGTH(t2ptr(memRef),iRawDatLength);	// WRITE_UI16(t2ptr(bp08),-2,bp30);
 			if (bp34 == 0) {
 				DIALOG_BOX_2066_03e0(0);
 				GRAPHICS_DATA_OPEN();
@@ -11043,7 +10872,7 @@ _4173:
 		}
 		if (bp34 != 0)
 			GRAPHICS_DATA_CLOSE();
-		glbCpxHeapLimitPtr = t2ptr(_4976_5d12.memRefLower);
+		glbCpxHeapLimitPtr = t2ptr(glbTiamatPoolInfo1.memRefLower);
 		AUDIO_482b_0684();
 		if (_4976_4bd8 != 0) {
 			DRAW_DIALOGUE_PROGRESS(C1000_LOAD_BAR_MAX);	// 1000 = full bar
@@ -11866,7 +11695,7 @@ _2eda:
 						//^32CB:30A9
 						bp0a = 0x1e;
 					//^32CB:30AE
-					glbTempPicture.w34 += (glbViewportHeight << 3) / bp0a;
+					glbTempPicture.iYDisp += (glbViewportHeight << 3) / bp0a;
 					if (bp08->b2_7_7() == 0) {
 						//^32CB:30CD
 						bp0a = (glbViewportWidth << 3) / bp0a;
@@ -11875,13 +11704,13 @@ _2eda:
 							bp0a = -bp0a;
 						}
 						//^32CB:30EC
-						glbTempPicture.w32 += bp0a;
+						glbTempPicture.iXDisp += bp0a;
 					}
 				}
 
 				//^32CB:30F3
-				glbTempPicture.w32 = CALC_STRETCHED_SIZE(glbTempPicture.w32, bp22);
-				glbTempPicture.w34 = CALC_STRETCHED_SIZE(glbTempPicture.w34, bp22);
+				glbTempPicture.iXDisp = CALC_STRETCHED_SIZE(glbTempPicture.iXDisp, bp22);
+				glbTempPicture.iYDisp = CALC_STRETCHED_SIZE(glbTempPicture.iYDisp, bp22);
 				DRAW_TEMP_PICST();
 				if (bp26 != 0) {
 					goto _2eda;
@@ -14587,7 +14416,7 @@ void SkWinCore::LOAD_GDAT_ENTRIES()
 			pDebugEntryData->sEntryData.cls6 = QUERY_GDAT_ENTRY_VALUE(iEntryIndex, EPcls6);
 			pDebugEntryData->sEntryData.data = QUERY_GDAT_ENTRY_VALUE(iEntryIndex, EPdata);
 			// SPX:debug
-
+		if (!SkCodeParam::bDM2BetaGDATDetected)
 		if (QUERY_GDAT_ENTRY_VALUE(iEntryIndex, EPcls6) != 0xFF)	// then only dialog boxes are loaded here
 			continue;
 		U8 iRawDatType = QUERY_GDAT_ENTRY_VALUE(iEntryIndex, EPcls3);	// bp05
@@ -14805,6 +14634,7 @@ void SkWinCore::LOAD_ENT1()
 {
 	ENTER(8);
 	U32 bp08 = glbGDat1stEntRawDatSize;
+
 	tblGDatEntries = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(bp08, afUseLower, 0x400));
 //LOGX(("LOAD_GDAT_RAW_DATA call from LOAD_ENT1"));
 	LOAD_GDAT_RAW_DATA(0, CONVERT_PHYS_TO_SHELF_FORM(reinterpret_cast<U8 *>(tblGDatEntries)));
@@ -14813,6 +14643,11 @@ void SkWinCore::LOAD_ENT1()
 		RAISE_SYSERR(SYSTEM_ERROR__INVALID_ENT1);
 	}
 	glbGDatNumberOfRawEntries = tblGDatEntries[1];
+
+
+	/// SPX: Special code for DM2 beta
+	if (glbGDatNumberOfRawEntries == 0x8F29 && glbGDatNumberOfData == 0xF7D)
+		SkCodeParam::bDM2BetaGDATDetected = true;
 
 
 	_4976_5d40 = tblGDatEntries[2];
@@ -15060,8 +14895,8 @@ void SkWinCore::READ_GRAPHICS_STRUCTURE()
 	glbGDATVersion = tFileHeader.iSignature & 0x7FFF;	// GDAT internal format version should be 5
 	glbGDatNumberOfData = tFileHeader.iNbItems;
 
-	U16 *bp04;
-	X32 bp08;
+	U16 *pTableDataSizes;	// bp04
+	X32 iTableDataSizesSize;	// bp08	, the size of the TableDataSizes .. 2 bytes (U16) for each raw data item
 	if (glbGDATVersion != 4 && glbGDATVersion != 5 && glbGDATVersion != 2)
 		goto _read_graphics_structure__raise_error;
 
@@ -15069,37 +14904,38 @@ void SkWinCore::READ_GRAPHICS_STRUCTURE()
 		tblDebugGdatShelf = (SpxGDatShelf*)calloc(glbGDatNumberOfData,sizeof(SpxGDatShelf)); // SPX:debug
 	tblRawDataToMement = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(U32(glbGDatNumberOfData) << 1, afUseUpper, 0x400));
 	FILL_U16(reinterpret_cast<i16 *>(tblRawDataToMement), glbGDatNumberOfData, -1, 2);
-	bp08 = U32(glbGDatNumberOfData) << 1;	// nb items * 2 = nb of bytes for all item sizes
-	bp04 = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(bp08, afDefault, 0x400));
-	glbGDatCursorDataCumulatedLength = bp08 + 4;	// nb items sizes + (magic number + nb items) = offset of first raw data which must be the ENT1 (4 bytes after the magic number + nb items)
+	iTableDataSizesSize = U32(glbGDatNumberOfData) << 1;	// nb items * 2 = nb of bytes for all item sizes
+	pTableDataSizes = reinterpret_cast<U16 *>(ALLOC_MEMORY_RAM(iTableDataSizesSize, afDefault, 0x400));
+	glbGDatCursorDataCumulatedLength = iTableDataSizesSize + 4;	// nb items sizes + (magic number + nb items) = offset of first raw data which must be the ENT1 (4 bytes after the magic number + nb items)
 	if (glbGDATVersion < 3) {
-		if (READ_FILE(glbFileHandleGraphics1, bp08, bp04) == 0)
+		if (READ_FILE(glbFileHandleGraphics1, iTableDataSizesSize, pTableDataSizes) == 0)
 			goto _read_graphics_structure__raise_error;
 
-		glbGDat1stEntRawDatSize = *bp04;
+		glbGDat1stEntRawDatSize = *pTableDataSizes;
 		glbGDatCursorDataCumulatedLength += glbGDat1stEntRawDatSize;
 	}
 	else {
 		if (READ_FILE(glbFileHandleGraphics1, 4, &glbGDat1stEntRawDatSize) == 0)	// Read the next 4 bytes of GDAT which hold the size for the first item entry which must be the ENT1 item
 			goto _read_graphics_structure__raise_error;
 		glbGDatCursorDataCumulatedLength += glbGDat1stEntRawDatSize + 2;	// there _4976_5d6a gets the offset of the second item after ENT1 item
-		if (READ_FILE(glbFileHandleGraphics1, bp08 -2, &bp04[1]) == 0)	// here read the size table before the ENT1 item (except the first item already read, which is exceptionnally on 4 bytes; all others are on 2 bytes max)
+		if (READ_FILE(glbFileHandleGraphics1, iTableDataSizesSize - 2, &pTableDataSizes[1]) == 0)	// here read the size table before the ENT1 item (except the first item already read, which is exceptionnally on 4 bytes; all others are on 2 bytes max)
 			goto _read_graphics_structure__raise_error;
 	}
-	bp04[0] = 0;
-	_4976_5caa = glbGDatCursorDataCumulatedLength;
-	U16 si;
-	for (si = 0; si < glbGDatNumberOfData; bp04++, si++) {
-		_4976_5caa += *bp04;
-		glbShelfMemoryTable[si] = shelf_memory::FromSizeOnUnloaded(*bp04);
+	pTableDataSizes[0] = 0;
+	glbSizeOfGDATFull = glbGDatCursorDataCumulatedLength;
+	U16 iShelfIndex;	// si
+	// Init the ShelfMem Table with all sizes for each raw data.
+	for (iShelfIndex = 0; iShelfIndex < glbGDatNumberOfData; pTableDataSizes++, iShelfIndex++) {
+		glbSizeOfGDATFull += *pTableDataSizes;
+		glbShelfMemoryTable[iShelfIndex] = shelf_memory::FromSizeOnUnloaded(*pTableDataSizes);
 		//printf("Shelf memory %05d: size = %06d\n", si, glbShelfMemoryTable[si].val & 0x7fff);
 	}
-	_4976_5cea = GET_FILE_SIZE(glbFileHandleGraphics1);
-	if (_4976_5cea < _4976_5caa) {
+	glbSizeOfGDATFile = GET_FILE_SIZE(glbFileHandleGraphics1);
+	if (glbSizeOfGDATFile < glbSizeOfGDATFull) {	// if size of this GDAT is < theorical size of GDAT, then we would need a second part of GDAT file
 		glbGDatFloppyFlag = 1;
 		glbFloppyDiskFlag = 1;
 	}
-	DEALLOC_UPPER_MEMORY(bp08);
+	DEALLOC_UPPER_MEMORY(iTableDataSizesSize);
 	LOAD_ENT1();
 	if (glbGDATVersion >= 2 && glbGDATVersion != 4 && QUERY_GDAT_ENTRY_DATA_INDEX(0x0, 0x0, dt08, 0x0) != 0xFFFF) {
         _4976_5d0c = reinterpret_cast<sk5d0c *>(ALLOC_MEMORY_RAM(
@@ -15163,7 +14999,6 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_0A()
 		}
 	}*/
 
-	//^32CB:0052
 	return;
 }
 //^0B36:020E
@@ -15452,28 +15287,31 @@ void SkWinCore::SHOW_MENU_SCREEN()
 
 	SkD((DLV_DBG_INIT, "SHOW_MENU_SCREEN\n"));
 
-	cd.mo.glbImageCreditScreen = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x05_TITLE, 0x0, 0x1);		// Credit screen (tombstone)
-	if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x05_TITLE, 0x0, dt07, 0x4) != 0xFFFF)	// 64000 bytes raw data for menu screen ?
+	cd.mo.glbImageCreditScreen = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x05_TITLE, 0x0, GDAT_IMG_x01_CREDITS_TOMBSTONE);		// Credit screen (tombstone)
+	// In some version, the menu screen is taken from raw7 or image
+	// 
+	if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x05_TITLE, 0x0, dt07, GDAT_IMG_x04_MAIN_MENU_SCREEN != 0xFFFF) && !SkCodeParam::bDM2BetaGDATDetected)	// 64000 bytes raw data for menu screen ?
 	{
-		_4976_3d2c = 1;
-		cd.mo.glbImageMenuScreen = QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_x05_TITLE, 0x0, dt07, 4);
+		glbMainMenuScreenImage8bpp = 1;
+		cd.mo.glbImageMenuScreen = QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_x05_TITLE, 0x0, dt07, GDAT_IMG_x04_MAIN_MENU_SCREEN);
 	}
 	else {
-		cd.mo.glbImageMenuScreen = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x05_TITLE, 0x0, 0x4);
+		cd.mo.glbImageMenuScreen = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x05_TITLE, 0x0, GDAT_IMG_x04_MAIN_MENU_SCREEN);
 /*		_4976_52ba = cd.mo.glbImageMenuScreen + (
 			(READ_UI16(cd.mo.glbImageMenuScreen,-6) == 4)
 				? (((READ_UI16(cd.mo.glbImageMenuScreen,-4) +1) & 0xFFFE) >> 1)
 				: (  READ_UI16(cd.mo.glbImageMenuScreen,-4)     & 0xFFFF)
 												) * READ_UI16(cd.mo.glbImageMenuScreen,-2);*/
-		_4976_52ba = cd.mo.glbImageMenuScreen + (
+		glbMenuScreenLocalPal16 = cd.mo.glbImageMenuScreen + (
 			(READ_IMGBUFF_BPP(cd.mo.glbImageMenuScreen) == IMG_4_BPP)
 				? (((READ_IMGBUFF_WIDTH(cd.mo.glbImageMenuScreen) +1) & 0xFFFE) >> 1)
 				: (  READ_IMGBUFF_WIDTH(cd.mo.glbImageMenuScreen)     & 0xFFFF)
 												) * READ_IMGBUFF_HEIGHT(cd.mo.glbImageMenuScreen);
+		// goes after the image data for the local palette (16 bytes)
 
 	}
-	// cd.mo.glbImageMenuScreen - 6   would be like 06 FA 00 00 | 02 00 => FA06 = 64006 | 0002 = afUseLower
-	// cd.mo.glbImageCreditScreen - 6 would be like 04 00 40 01 | C8 00 => 
+	// cd.mo.glbImageMenuScreen - 6   would be like 06 FA | 00 00 | 02 00 => FA06 = 64006 | 0002 = afUseLower
+	// cd.mo.glbImageCreditScreen - 6 would be like 04 00 | 40 01 | C8 00 => bbp = 4, x = x140 = 320, y = xC8 = 200
 
 
 	//^2481:0116
@@ -15483,12 +15321,12 @@ void SkWinCore::SHOW_MENU_SCREEN()
 		) * READ_UI16(cd.mo.glbImageCreditScreen,-2)	// 00C8 (200)
 		*/
 		; // 0xA0 * 0xC8 = 0x7D00 (160*200)
-	_4976_52b6 = cd.mo.glbImageCreditScreen +((READ_IMGBUFF_BPP(cd.mo.glbImageCreditScreen) == IMG_4_BPP) // 4bits image, meaning 2 pixel per byte
+	glbCreditScreenLocalPal16 = cd.mo.glbImageCreditScreen +((READ_IMGBUFF_BPP(cd.mo.glbImageCreditScreen) == IMG_4_BPP) // 4bits image, meaning 2 pixel per byte
 		? (((READ_IMGBUFF_WIDTH(cd.mo.glbImageCreditScreen) +1) & 0xFFFE) >> 1)	// (0x140 + 1 & 0xFFFE) = 0x140 >> 1 = 0xA0 (160)
 		: (  READ_IMGBUFF_WIDTH(cd.mo.glbImageCreditScreen)     & 0xFFFF)
 		) * READ_IMGBUFF_HEIGHT(cd.mo.glbImageCreditScreen)	// 00C8 (200)
 		;
-	// then _4976_52b6 = p(cd.mo.glbImageCreditScreen) + 0x7D00 => end of this image
+	// then glbCreditScreenLocalPal16 = p(cd.mo.glbImageCreditScreen) + 0x7D00 => end of this image
 	GRAPHICS_DATA_CLOSE();
 	_1031_0541(0);
 	do {
@@ -15525,7 +15363,7 @@ _0180:
 	//	_0aaf_02f8_DIALOG_BOX(0x0020, 0x0000); // failing
 	//} while (cd.mo.glbSpecialScreen == _MENU_SCREEN__RESUME_GAME_SELECT);
 	FIRE_HIDE_MOUSE_CURSOR();
-	if (_4976_3d2c != 0) {
+	if (glbMainMenuScreenImage8bpp != 0) {
 		DEALLOC_BIGPOOL_STRUCT_BEFORE(cd.mo.glbImageMenuScreen);
 	}
 	else {
@@ -15723,13 +15561,13 @@ void SkWinCore::ALLOC_CPX_SETUP(X8 *xx)
 		_4976_5c86_cache_hash = reinterpret_cast<U32 *>(ALLOC_MEMORY_RAM(glbCacheRecyclerMax * sizeof (U32), afZeroMem|afUseUpper, 0x400));
 		glbCpxHeapLimitPtr = _4976_5cf4 - _4976_00ec;
 		SkD((DLV_DBG_INIT, "ALLOC_CPX_SETUP:INIT_CPXHEAP\n"));
-		INIT_CPXHEAP(&_4976_5d12, ptr2t(glbCpxHeapLimitPtr), 0, _4976_5cee);
+		INIT_CPXHEAP(&glbTiamatPoolInfo1, ptr2t(glbCpxHeapLimitPtr), 0, _4976_5cee);
 		if (glbFreeEMSMemPool < 12) {
 			//^3E74:14E7
-			INIT_CPXHEAP(&_4976_5d7e, ptr2t(NULL), 0, _4976_5d6e);
+			INIT_CPXHEAP(&glbTiamatPoolInfo2, ptr2t(NULL), 0, _4976_5d6e);
 		}
 		else {
-			INIT_CPXHEAP(&_4976_5d7e, _4976_5d5a, glbFreeEMSMemPool, _4976_5d6e);
+			INIT_CPXHEAP(&glbTiamatPoolInfo2, _4976_5d5a, glbFreeEMSMemPool, _4976_5d6e);
 		}
 		SkD((DLV_DBG_INIT, "ALLOC_CPX_SETUP:bUsePowerDebug\n"));
 #ifndef __DJGPP__		
@@ -15862,12 +15700,11 @@ UINT SkWinCore::INIT()
 {
 	U16 iCompatibilityFlag = 0;
 	U16 iSpecialItem = 0;
-	//^38C8:04AA
+
 	SkD((SkCodeParam::bEngineNoDisplay||DLV_DBG_INIT, "INITIALIZATION\n"));
 	SkD((DLV_DBG_DOS, "INITIALIZATION\n"));
 	
 	ENTER(4);
-	//^38C8:04AF
 	INIT_CRAM_EMS_MEM();
 	_4976_474a = 1;
 	_4976_474c = 1;
@@ -15879,12 +15716,13 @@ UINT SkWinCore::INIT()
 
 
 	LOAD_GDAT_INTERFACE_00_0A(); // game will fail if this item is not loaded, but it does not exist in PC-DOS version
-	U8 *bp04 = ALLOC_MEMORY_RAM(0x400, afUseLower, 1024);
+	U8 *pPaletteBuffer = ALLOC_MEMORY_RAM(0x400, afUseLower, 1024);	// pb04	// 0x400 = 256 * 4
 //DEBUG_DUMP_ULP();
-	LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x00_BASE_DATA, dtPalIRGB, 0xFE, bp04);	// C01=I00=EFE=T009 palette IRGB (0x1, 0x0, dt09, 0xFE, bp04)
+	LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x00_BASE_DATA, dtPalIRGB, 0xFE, pPaletteBuffer);	// C01=I00=EFE=T009 palette IRGB (0x1, 0x0, dt09, 0xFE, bp04)
 	// SPX: Beta GDAT contains palette in raw7 data; if dtPalIRGB is not found, we should then look for raw7.
-	//LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 0x0, dtRaw7, 0xFE, bp04); // test for beta
-	SET_RGB_PALETTE_FROM_DATA(bp04);
+	if (SkCodeParam::bDM2BetaGDATDetected)
+		LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 0x0, dtRaw7, 0xFE, pPaletteBuffer);
+	SET_RGB_PALETTE_FROM_DATA(pPaletteBuffer);
 	DEALLOC_LOWER_MEMORY(0x400);
 	LOAD_GDAT_INTERFACE_00_02();
 	//glbPaletteT16 = QUERY_GDAT_ENTRY_DATA_PTR(0x1, 0x0, dt0d, 0xfe);
@@ -15926,7 +15764,7 @@ UINT SkWinCore::INIT()
 	X16 iDefaultCreaturesMaxAllocation = (cd.gg.glbCreaturesMaxCount +1) * 3;	// si
 	cd.gg.glbSomeCreatureTable = ALLOC_MEMORY_RAM(iDefaultCreaturesMaxAllocation, afUseUpper, 1024);
 	FILL_STR(cd.gg.glbSomeCreatureTable, iDefaultCreaturesMaxAllocation, 0xFF, 1);
-	//^38C8:05C1
+
 	SkD((DLV_DBG_INIT, "while (SHOW_MENU_SCREEN()/GAME_LOAD())\n"));
 //--- SHOW_MENU_SCREEN LOOP
 	while (SHOW_MENU_SCREEN(), GAME_LOAD() != 1) {
@@ -17004,8 +16842,8 @@ SkWinCore::SkWinCore()
 	zeroMem(_4976_4c42, sizeof(_4976_4c42));
 	zeroMem(glbMoneyItemsValueTable, sizeof(glbMoneyItemsValueTable));
 	zeroMem(glbMoneyItemsIDTable, sizeof(glbMoneyItemsIDTable));
-	zeroMem(&_4976_5d12, sizeof(_4976_5d12));
-	zeroMem(&_4976_5d7e, sizeof(_4976_5d7e));
+	zeroMem(&glbTiamatPoolInfo1, sizeof(glbTiamatPoolInfo1));
+	zeroMem(&glbTiamatPoolInfo2, sizeof(glbTiamatPoolInfo2));
 	zeroMem(&_4976_5bee, sizeof(_4976_5bee));
 	zeroMem(glbMapDoorType, sizeof(glbMapDoorType));
 	zeroMem(&glbScreenBufferRightPanel, sizeof(glbScreenBufferRightPanel)); glbScreenBufferRightPanel.iCacheIndex0 = -1;

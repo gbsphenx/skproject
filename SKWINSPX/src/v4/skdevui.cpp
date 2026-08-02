@@ -565,12 +565,13 @@ void SkWinCore::MOUSE_STATE_01b0_0d39(i16 *xx, i16 *yy, i16 *zz, U16 ww) //#DS=0
 
 
 //^1031:0781
-void SkWinCore::_1031_0781(U16 xx) 
+// SPX: _1031_0781 renamed RECT_GLOBAL_MOUSE_1031_0781
+void SkWinCore::RECT_GLOBAL_MOUSE_1031_0781(U16 xx) 
 {
 	ENTER(12);
-	sk0d9e *bp04 = _1031_06b3(&_4976_1891[_4976_19ad], xx);
+	sk0d9e *bp04 = SOMETHING_CALL_PFN12_1031_06b3(&_4976_1891[_4976_19ad], xx);
 	SRECT bp0c;
-	if (bp04 != NULL && _1031_01d5(bp04->w2, &bp0c) != 0) {
+	if (bp04 != NULL && GET_SPECIAL_RECT_1031_01d5(bp04->w2, &bp0c) != 0) {
 		FIRE_QUEUE_MOUSE_EVENT(bp0c.x, bp0c.y, 255 & bp04->w4);
 	}
 	return;
@@ -647,7 +648,8 @@ _0fa6:
 					_4976_19a7 = 0;
 					_1031_0b7e_MOUSE();
 					glbPtrTransmittedUIEvent = TRANSMIT_UI_EVENT(&glbMousePosition);
-					printf("TRANSMIT %x %d\n", glbPtrTransmittedUIEvent, *glbPtrTransmittedUIEvent);
+					if (glbPtrTransmittedUIEvent != NULL)
+						printf("TRANSMIT %x %d\n", glbPtrTransmittedUIEvent, *glbPtrTransmittedUIEvent);
 					iIsTickDifferent = 0;
 				}
 			}

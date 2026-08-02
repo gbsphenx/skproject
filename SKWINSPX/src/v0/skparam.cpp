@@ -33,6 +33,7 @@ bool SkCodeParam::bChampionImmune = false;
 bool SkCodeParam::bUseAudioSDL = false;
 bool SkCodeParam::bVideoSVGADisplay = false;
 
+bool SkCodeParam::bDM2BetaGDATDetected = false;
 bool SkCodeParam::bDM1Mode = false;
 bool SkCodeParam::bGFXFixModeDM1 = false;	// adjust gfx positions for DM1 mode
 bool SkCodeParam::bDM1ReadSavegame = false;

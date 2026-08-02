@@ -443,8 +443,8 @@ U16 SkWinCore::IS_ITEM_HAND_ACTIVABLE(U16 player, ObjectID recordLink, i16 yy)
 {
 	ENTER(14);
 	ObjectID si = recordLink;
-	Bit8u iCategory;	// bp01
-	Bit8u iItemIndex;	// bp02
+	U8 iCategory;	// bp01
+	U8 iItemIndex;	// bp02
 	if (recordLink == OBJECT_NULL) {
 		iCategory = GDAT_CATEGORY_x16_CHAMPIONS;	// 0x16
         iItemIndex = tblChampionSquad[player].HeroType();
@@ -457,7 +457,7 @@ U16 SkWinCore::IS_ITEM_HAND_ACTIVABLE(U16 player, ObjectID recordLink, i16 yy)
 	}
 	i16 di = 0;
 	// SPX: scans through champion basic commands : 8 = PUNCH, 9 = KICK, 10 = POUCH, 11 = SCABBARD
-	for (Bit8u iEntryNumber = 8; iEntryNumber < 12; iEntryNumber++) {	// Bit8u bp03
+	for (U8 iEntryNumber = 8; iEntryNumber < 12; iEntryNumber++) {	// Bit8u bp03
 		if (di >= 3)
 			break;
 		if (QUERY_GDAT_ENTRY_IF_LOADABLE(iCategory, iItemIndex, dtText, iEntryNumber) == 0)

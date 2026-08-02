@@ -238,8 +238,8 @@ protected:
 	U16		_4976_00f4;		// SPX: Something to do with mempool
 	U16		glbViewportWidth;		// (_4976_00f6) off-screen viewport width? (=224)
 	U16		glbViewportHeight;		// (_4976_00f8) off-screen viewport height? (=136)
-	i16		_4976_00fa;
-	i16		_4976_00fc;
+	i16		glZone700OffsetY;			// _4976_00fa
+	i16		glZone701OffsetY;			// _4976_00fc
 	SRECT	_4976_00fe;
 	U16		glbRectX_0106;	// _4976_0106
 	U16		glbRectY_0108;	// _4976_0108
@@ -300,7 +300,7 @@ protected:
 	U16	_4976_3b59;
 	U16	_4976_3b5b;
 	i16	_4976_3b5d;	// tells to alloc dungeon header
-	X16		_4976_3d2c;
+	X16		glbMainMenuScreenImage8bpp;		// _4976_3d2c
 	U16		glbInventorySubpanel;	// (_4976_3d2e)
 	ObjectID	_4976_3d30;
 	ObjectID	glbObjectForContainer;		// (_4976_3d32) object for container?
@@ -489,20 +489,20 @@ protected:
 	U8*		glbPtrTransmittedUIEvent;	// _4976_4e96
 	U16	_4976_4e9a;
 	U16	_4976_4e9c;
-	SRECT	_4976_4e9e;
-	Bit32u	_4976_4ea2;
-	i16	_4976_4ea6;
-	U16	_4976_4ea8;
+	SRECT	_4976_4e9e;	// _4976_4e9e
+	U32		_4976_4ea2;	// _4976_4ea2
+	i16		_4976_4ea6;	// _4976_4ea6
+	U16		_4976_4ea8;	// _4976_4ea8
 	U16		glbMap_4976_4eaa;	// map#?
 	U16		_4976_4eac; // map#?
 	U16		glbPosX_4976_4eae;	// x?
 	U16		glbPosY_4976_4eb0;	// y?
 	U16		_4976_4eb2;
-	U16	glbHighlightArrowPanel;	// _4976_4eb4
-	U16	_4976_4eb6;
+	U16		glbHighlightArrowPanel;	// _4976_4eb4
+	U16		_4976_4eb6;
 	U16		glbTargetPosXTest;	// (_4976_4eb8) x?
 	U16		glbTargetPosYTest; // (_4976_4eba) y?
-	U16	_4976_4ebc;
+	U16		_4976_4ebc;
 	CreatureInfoData	*glbTabCreaturesInfo;	// (_4976_4ebe) creatures in game info
 	U16	glbCreaturesCount;		// (_4976_4ec2) creature cnt
 
@@ -581,13 +581,13 @@ protected:
 	U32		_4976_5258;				// total amount of processed bits by suppression writer
 	U16		glbSKSaveNum;				// (_4976_525c) SKSave num when selected from resume screen
 	ObjectID	*glbMinionsObjectIDTable;	// (_4976_525e) minion assoc
-	sksave_header_asc	_4976_5266;
+	sksave_header_asc	glbCurrentSaveGameInfo;	// _4976_5266
 	U8		_4976_5290[30];	// maybe status text.
 	//U8		*glbImageCreditScreen;		// (_4976_52ae)
 	Champion	glbChampionTable[MAX_CHAMPIONS+1];	// (_4976_52af) SPX: oddly, the champion base starts at 1 ??
 	//U8		*glbImageMenuScreen;			// (_4976_52b2)
-	U8		*_4976_52b6;
-	U8		*_4976_52ba;
+	U8		*glbCreditScreenLocalPal16;	// (_4976_52b6)
+	U8		*glbMenuScreenLocalPal16;	// (_4976_52ba)
 	U16	glbChampionInventory;			// (_4976_52be) player index in inventory (1,2,3,4)
 	U8		_4976_52c0[4];		// champion related
 	ObjectID	glbCurrentContainerItems[CONTAINER_MAX_SLOT];	// (_4976_52c4[8]) recordlinks for chest.
@@ -698,7 +698,7 @@ protected:
 	U32		(*_4976_5a7c)[23];
 	CellTileDetail	*tblCellTilesRoom;	// _4976_5a80
 	U8		(*_4976_5a84)[17]; // (cx,cy)=(17,21). 17*21+1 = 358 bytes
-	i16		_4976_5a88;	// light level?
+	i16		glbViewportLightScale;		// (_4976_5a88) light level, range from 0 (dark) to 64 (full light)
 	U32		_4976_5a8a;
 	Creature	*_4976_5a8e;
 	U16		glbGeneralFlipGraphics;		// flips graphics depending on player step
@@ -773,16 +773,16 @@ protected:
 	X32		_4976_5ca0; // 98 B7 00 00 -> 0000B798
 	mement	**tblMementsPointers;	// (_4976_5ca4) mementi-to-mement
 	U16		glbGDatFloppyFlag;			// (_4976_5ca8)
-	Bit32u	_4976_5caa;		// copy of GRAPHICS.DAT absolute file position of 2nd raw data
+	U32		glbSizeOfGDATFull;		// (_4976_5caa) copy of GRAPHICS.DAT absolute file position of 2nd raw data
 	X16		_4976_5cae;
 	U16		glbGDatStructureRead;			// (_4976_5cb0) set at the end of READ_GRAPHICS_STRUCTURE
 	mement	*glbCpxHeapCurrentMementPtr;	// (_4976_5cb2) for complex alloc mem. most lower address of memory pool(#x1) in FIRE.exe?
 	GDATEntries	glbGDatEntries;		// (sk5cb6 _4976_5cb6) entries for loaded gdat
 	U8		*glbCpxHeapLimitPtr;	// (_4976_5ce2) for complex alloc mem. most upper address of memory pool(#x1) in FIRE.exe
 	mement	*_4976_5ce6;	// (_4976_5ce6) mement init pool
-	Bit32u	_4976_5cea;		// size of GRAPH1.DAT or GRAPHICS.DAT
-	U16		_4976_5cee;
-	U8		*_4976_5cf0;
+	U32		glbSizeOfGDATFile;		// (_4976_5cea) size of GRAPH1.DAT or GRAPHICS.DAT
+	U16		_4976_5cee;		// (_4976_5cee)
+	U8		*_4976_5cf0;	// (_4976_5cf0)
 	Bit8u	*_4976_5cf4;	// for allocmem. most upper address of free memory pool(#1) in FIRE.exe
 	i32		glbFreeCPXMemory;		// (_4976_5cf8) for complex alloc mem. avail size of memory pool(#x1)?
 	sk5cfc_root	gblLinkedImageRoot;	// _4976_5cfc
@@ -791,7 +791,8 @@ protected:
 	U16*	tblCacheToMement;	// (_4976_5d08) cacheindex-to-mementi. use with tblMementsPointers[_4976_5d08[xxx]]
 	sk5d0c	*_4976_5d0c;	// image chain table
 	U16		glbGDatOpenCloseFlag;		// (_4976_5d10) some open/close? flag related to Graphics.dat file
-	sk5d12	_4976_5d12;		// (_4976_5d12)
+	sk5d12	glbTiamatPoolInfo1;		// (_4976_5d12)
+	sk5d12	glbTiamatPoolInfo2;		// (_4976_5d7e)
 	shelf_memory glbShelfMemTopEMS;		// (_4976_5d20) top of EMS
 	U16		glbCacheRecyclerMax;	// _4976_5d24 / cache relaed ? / value =128?
 	i32		_4976_5d26; // 9E AA 01 00 -> 0001AA9E
@@ -818,7 +819,6 @@ protected:
 	U16		_4976_5d76;		// (_4976_5d76) complex memory pool availability: 0=disabled, 1=enabled
 	U16		_4976_5d78;		// (_4976_5d78) image chain map (entry cnt)
 	U32		glbGDat1stEntRawDatSize;		// (_4976_5d7a) size of 1st direntry rawdata
-	sk5d12	_4976_5d7e;
 	i32	glbFreeEMSMemPool;		// for allocmem. avail size of memory pool (#2). 540 byes avail when dosbox runs
 	mement*	glbMement2;	// (_4976_5d90) mement#2
 	mement*	glbMement1;	// (_4976_5d94) mement#1
@@ -1144,8 +1144,8 @@ protected:
 
 	void ANIM_DECODE_IMG1(U8 *xx, U8 *yy);
 	void ANIM_SELECT_PALETTE_SET(U8 iPaletteSet);	// _0759_06a1
-	void _00eb_04bc(skxxxj *xx, U16 yy);
-	void _0759_0688(skxxxj *xx, U16 yy);
+	void IBMIO_PALETTE_00eb_04bc(skxxxj *xx, U16 yy);	// _00eb_04bc
+	void SOMETHING_PALETTE_0759_0688(skxxxj *xx, U16 yy);	// _0759_0688
 	X16 ANIM_TOUPPER(X16 xx);
 	void ANIM_FILL_SEQ_4BPP(U16 offDst, i16 clr, U16 cnt);
 	void ANIM_SETPIXEL_SEQ_4BPP(U16 offDst, i8 clr);
@@ -1154,7 +1154,7 @@ protected:
 	void IBMIO_BLIT_ROW_4TO8BPP(U16 offSrc, U16 offDst, U16 size);
 	void IBMIO_BLIT_SOURCE_4TO8BPP(U8 *buffSrc, U16 offSrc, U16 offDst, U16 size);	// _00eb_070c
 	void IBMIO_BLIT_0759_0310(U16 xx, U16 yy);	// _0759_0310
-	void _0759_02c6(U16 xx, U16 yy, U16 zz);	// _0759_02c6
+	void ANIM_SOMETHING_0759_02c6(U16 xx, U16 yy, U16 zz);	// _0759_02c6
 	
 	int ANIM_MAIN(i16 argc, const char **argv, char **env);	// (_0759_08e7)
 	int ANIM_BOOTSTRAP_SWOOSH();
@@ -1474,15 +1474,15 @@ protected:
 	void FIRE_QUEUE_MOUSE_EVENT(U16 xx, U16 yy, U16 button);
 	void _1031_0b7e_MOUSE(); // _1031_0b7e
 	void _1031_098e();
-	Bit8u *_1031_023b(sk1891 *xx);
+	U8 *_1031_023b(sk1891 *xx);	// _1031_023b
 	void _443c_087c_LOCK_MOUSE(); // _443c_087c
 	void _443c_0889_UNLOCK_MOUSE(); // _443c_0889
 	void _443c_00a9_MOUSE(sk0cea *ref, i16 x, i16 cx, i16 y, i16 cy); // _443c_00a9
 	void _443c_06b4(sk0cea *ref);
 	void _443c_07d5(sk0cea *ref);
-	void _1031_0541(U16 xx);
+	void _1031_0541(U16 xx);	// _1031_0541
 	void _1031_0667();
-	Bit8u *QUERY_CMDSTR_NAME(Bit8u cls1, Bit8u cls2, Bit8u cls4);
+	U8 *QUERY_CMDSTR_NAME(Bit8u cls1, Bit8u cls2, Bit8u cls4);
 	void DRAW_CMD_SLOT(U16 cmdSlot, Bit8u ww);
 	void DRAW_SEVERAL_CMD_SLOTS();	// _29ee_0b2b
 	void DRAW_SOME_MAGICAL_MAP_STRING_29ee_1d03(U16 xx);	// _29ee_1d03
@@ -1532,8 +1532,8 @@ protected:
 	U16 _1031_01ba_PFN12_11(sk1891 *ref);	// _1031_01ba
 	void _1031_027e(sk1891 *ref); // _1031_027e
 	U16 PT_IN_RECT(SRECT *rc, i16 xx, i16 yy);
-	SRECT *_1031_01d5(U16 rectno, SRECT *rc);
-	U16 _1031_0a88(sk0d9e *ref, U16 xx, U16 yy, U16 ww);
+	SRECT	*GET_SPECIAL_RECT_1031_01d5(U16 iRectNo, SRECT *pRectZone);	// _1031_01d5
+	U16 RECT_WITHIN_THEN_EVENT_1031_0a88(sk0d9e *ref, U16 xx, U16 yy, U16 ww);	// _1031_0a88
 	sk0d9e *_1031_024c(sk1891 *ref);
 	U16 _1031_030a(sk1891 *ref, U16 xx, U16 yy, U16 zz);
 	U16 _1031_0c58(U16 xx, sk0d9e *ref);
@@ -1703,7 +1703,7 @@ protected:
 	void MAKE_BUTTON_CLICKABLE(SRECT *prc, U8 xx, U8 yy);	// _32cb_0a4c
 	void QUERY_GDAT_IMAGE_METRICS(U8 cls1, U8 cls2, U8 cls4, i16 *pcx, i16 *pcy);
 	U8 SKCHR_TO_SCRIPTCHR(U8 xx);
-	U8 *PALETTE_SOMETHING_0b36_037e(U8 *localpal, i8 xx, i16 colorkey1, i16 colorkey2, i16 palentcnt);	// _0b36_037e
+	U8 *PALETTE_TRANSLATE_WITH_LIGHTING(U8 *localpal, i8 xx, i16 colorkey1, i16 colorkey2, i16 palentcnt);	// _0b36_037e
 	void PALETTE_SOMETHING_32cb_0804(U8 *localpal, i16 cls4, U16 colorkey1, i16 colorkey2, U16 palentcnt);	// _32cb_0804
 	U16 QUERY_MULTILAYERS_PIC(ExtendedPicture *ref, U8 cls1, U8 cls2, U8 cls4, U16 horzRes, U16 vertRes, i16 zz, U16 mirrorflip, i16 colorkey1, U16 colorkey2);
 	void QUERY_RAINFALL_PARAM(U8 *iRainImageID, U16 *isMirrored);
@@ -1821,22 +1821,22 @@ protected:
 	U16 HANDLE_UI_EVENT(MousePosition *ref);	// Important func
 	void MAIN_LOOP(); // _1031_1e6a
 	U16 _476d_04ed_DOES_NOTHING(U16 xx); // _476d_04ed
-	sk0d9e *_1031_06b3(sk1891 *ref, X16 xx);
-	void _1031_0781(U16 xx);
+	sk0d9e *SOMETHING_CALL_PFN12_1031_06b3(sk1891 *ref, X16 xx);	// _1031_06b3
+	void RECT_GLOBAL_MOUSE_1031_0781(U16 xx);	// _1031_0781
 	void TICK_STEP_CHECK();	// _4726_0383
 	U16 IBMIO_IS_THERE_KEY_INPUT();	// _01b0_051a
 	U16 IS_THERE_KEY_INPUT_2(); // _476d_05a9
 
-	Bit8u _476d_04e8(U16 xx); // TODO: Unr
-	U16 _476d_04af(U16 xx); // TODO: Unr
+	U8 UNIMPLEMENTED_476d_04e8(U16 xx); // (_476d_04e8) TODO: Unr
+	U16 UNIMPLEMENTED_476d_04af(U16 xx); // (_476d_04af) TODO: Unr
 
 	X16 UI_READ_KEY_INPUT(); // _01b0_04e4
 	U16 SPECIAL_UI_KEY_TRANSFORMATION();	// _476d_050e
-	void _1031_06a5();
+	void SOMETHING_1031_06a5_CALL_1031_0541();	//	_1031_06a5
 	U16 LOAD_NEW_DUNGEON();
 	U16 ORIGINAL__LOAD_NEW_DUNGEON();
 	i16 SELECT_LOAD_GAME();
-	void _2fcf_0b8b(U16 xx, U16 yy, U16 zz);
+	void TELEPORTER_2fcf_0b8b(U16 xx, U16 yy, U16 zz);	// _2fcf_0b8b
 	void _443c_06af(sk0cea *ref);	// NOTHING
 	void _1031_096a();
 	U16 AUDIO_482b_015c(U16 iGDatRawIndex);	// _482b_015c
@@ -2007,14 +2007,14 @@ protected:
 	void CHANGE_PLAYER_POS(U16 squadPos);
 	void CHAMPION_SQUAD_RECOMPUTE_POSITION();
 	void _38c8_0002();
-	Bit8u *QUERY_GDAT_TEXT(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u *buff);
+	U8 *QUERY_GDAT_TEXT(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u *buff);
 	void SUPPRESS_INIT();
 	void REARRANGE_TIMERLIST();
 	void __SORT_TIMERS();
-	Bit8u *FORMAT_SKSTR(const Bit8u *format, Bit8u *output);	// Z00* replacement
+	U8 *FORMAT_SKSTR(const Bit8u *format, Bit8u *output);	// Z00* replacement
 
-	U16 FILE_READ_FROM_CURRENT_FILE(void *buff, int size);	// _2066_033c
-	int SKLOAD_READ(void *buff, int size);
+	U16 FILE_READ_FROM_CURRENT_FILE(void *pDataBuffer, int iSizeToRead);	// _2066_033c
+	int SKLOAD_READ(void *pDataBuffer, int iSizeToRead);
 
 	void INIT_TIMERS(); // _3a15_0002 renamed INIT_TIMERS
 	void DECIDE_DEFAULT_DUNGEON_MAP_CHIP_SET();
@@ -2079,12 +2079,14 @@ protected:
 	void _3e74_3200(X16 ww); // TODO: Unr
 	void MAP_EMS_TO_PTR(U32 xx, U32 yy, U8 **ss, U8 **tt);
 	U8* MEM_PREPARE_VIEWPORT();	// _4726_02ac
-	void _3e74_2f41(sk5d12 *ref);
-	void _3e74_30bd(sk5d12 *ref);
-	X32 _3e74_0017(sk5d12 *ref);
 
-	i32 _3e74_0081(sk5d12 *ref); // TODO: Unr
-	tiamat _3e74_32fb(sk5d12 *ss, U8 *tt, i32 ww); // TODO: Unr
+
+	void TIAMAT_COMPLEX_3e74_2f41(sk5d12 *ref);	// _3e74_2f41
+	void TIAMAT_POOL_3e74_30bd(sk5d12 *ref);	// _3e74_30bd
+	X32 GET_TIAMAT_3e74_0017(sk5d12 *ref);	// _3e74_0017
+
+	i32 TIAMAT_POOL_NOT_IMPLEMENTED(sk5d12 *ref); // (_3e74_0081) TODO: Unr
+	tiamat _3e74_32fb(sk5d12 *ss, U8 *tt, i32 ww); // (_3e74_32fb) TODO: Unr
 
 
 	void DRAW_DIALOGUE_PROGRESS(X32 iPermilleValue);

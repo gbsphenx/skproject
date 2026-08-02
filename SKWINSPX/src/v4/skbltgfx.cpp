@@ -233,9 +233,12 @@ void SkWinCore::DRAW_TEMP_PICST()
 
 //^0B36:037E
 // TODO: gfx related
-// SPX: _0b36_037e renamed PALETTE_SOMETHING_0b36_037e
-U8 *SkWinCore::PALETTE_SOMETHING_0b36_037e(U8 *localpal, i8 xx, i16 colorkey1, i16 colorkey2, i16 palentcnt)
+// SPX: _0b36_037e renamed PALETTE_TRANSLATE_WITH_LIGHTING
+U8 *SkWinCore::PALETTE_TRANSLATE_WITH_LIGHTING(U8 *localpal, i8 xx, i16 colorkey1, i16 colorkey2, i16 palentcnt)
 {
+	return localpal;
+	if (SkCodeParam::bDM2BetaGDATDetected)
+		return localpal;
 	ENTER(8);
 	if (localpal != NULL && xx != 0) {
 		xx = U8(max_value(0, 64 -xx));
@@ -274,7 +277,7 @@ void SkWinCore::PALETTE_SOMETHING_32cb_0804(U8 *localpal, i16 cls4, U16 colorkey
 	i16 si;
 	if (cd.pi.glbIsPlayerMoving != 0) {
 		if (cls4 < 0) {
-			si = max_value(-_4976_5a88, _4976_421b[RCJ(6,-cls4)]);
+			si = max_value(-glbViewportLightScale, _4976_421b[RCJ(6,-cls4)]);
 			cls4 = 1;
 		}
 		else {
@@ -288,10 +291,10 @@ void SkWinCore::PALETTE_SOMETHING_32cb_0804(U8 *localpal, i16 cls4, U16 colorkey
 	//^32CB:0854	// SPX: That part is for translating palette in case of 'fog'
 	if (!SkCodeParam::bDisableFogEffect && QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dt07, U8(cls4)) != 0) {
 		TRANSLATE_PALETTE(localpal, GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, U8(cls4), di);
-		PALETTE_SOMETHING_0b36_037e(localpal, i8(_4976_5a88), colorkey1, colorkey2, di);
+		PALETTE_TRANSLATE_WITH_LIGHTING(localpal, i8(glbViewportLightScale), colorkey1, colorkey2, di);
 	}
 	else {
-		PALETTE_SOMETHING_0b36_037e(localpal, 64 -U8(((64 -si) * (64 - _4976_5a88)) >> 6), colorkey1, colorkey2, di);
+		PALETTE_TRANSLATE_WITH_LIGHTING(localpal, 64 -U8(((64 -si) * (64 - glbViewportLightScale)) >> 6), colorkey1, colorkey2, di);
 	}
 	return;
 }
@@ -767,6 +770,8 @@ void SkWinCore::FREE_PICT_ENTRY(U8* xPictureBuffer)
 	SkD((DLV_MEM, "FREE_PICT_ENTRY: S(sk5cfc_image) = %d || BUFF = %08X\n", sizeof(sk5cfc_image), xPictureBuffer));
 	//LOG_HEXA((X8*)buff, 8);
 	//LOG_HEXA((X8*)buff-int(sizeof(sk5cfc_image)), sizeof(sk5cfc_image));
+	if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(xPictureBuffer))
+		return;
 	if (_4976_5d76 == 0) {
 		sk5cfc_image *bp04 = reinterpret_cast<sk5cfc_image *>(&gblLinkedImageRoot);
 		SkD((DLV_MEM, "FREE_PICT_ENTRY: bp04 = %08X / bp04->pNextImage = %08X / BUFF-S(sk5cfc) = %08X\n", bp04, bp04->pNextImage, PTR_PADD(xPictureBuffer,-int(sizeof(sk5cfc_image)))));
@@ -2036,8 +2041,8 @@ void SkWinCore::DRAW_SOME_CLOUD_EXPLOSION(U8 cls2, U16 scale64, U16 mirrorFlip, 
 	U16 si = scale64;
 	si = BETWEEN_VALUE(8, si & 0xFFFE, 64);
 	QUERY_GDAT_SUMMARY_IMAGE(&glbTempPicture, GDAT_CATEGORY_x0D_SPELL_MISSILES, cls2, C65_GDAT_IMG_SPELL_EXPLOSION_FRONT);	// 0x0d, cls, 0x41
-	glbTempPicture.w32 = glbTempPicture.iXOffset;
-	glbTempPicture.w34 = glbTempPicture.iYOffset;
+	glbTempPicture.iXDisp = glbTempPicture.iXOffset;
+	glbTempPicture.iYDisp = glbTempPicture.iYOffset;
 	glbTempPicture.iYOffset = glbTempPicture.iXOffset = 0;
 	glbTempPicture.w26 = 0;
 	glbTempPicture.rectNo = rectno;
@@ -2048,7 +2053,7 @@ void SkWinCore::DRAW_SOME_CLOUD_EXPLOSION(U8 cls2, U16 scale64, U16 mirrorFlip, 
 
 
 
-	PALETTE_SOMETHING_0b36_037e(glbTempPicture.iPal256, i8(_4976_5a88), 10, -1, glbTempPicture.iPaletteSize);
+	PALETTE_TRANSLATE_WITH_LIGHTING(glbTempPicture.iPal256, i8(glbViewportLightScale), 10, -1, glbTempPicture.iPaletteSize);
 	QUERY_PICST_IT(&glbTempPicture);
 
 	// SPX: it seems to be missing the displacement from GDAT, else, a cloud/explosion appears on the floor

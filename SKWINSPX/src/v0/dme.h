@@ -1161,7 +1161,7 @@ namespace DM2Internal {
 		U16 w36;		// w36
 		U16 wBEEF;		// w38
 		U16 wDEAD;		// w40
-		// note : 40/38 can get DEADBEEF, are they a 32bits pointer ??
+		// note : 40/38 gets DEADBEEF, looks like a fake 32b pointer, which should actually be 0 when read from a savegame file
 	};
 	// structure of data used in savegame.dat
 	struct skload_table_60 { // 56 bytes
@@ -2129,8 +2129,8 @@ namespace DM2Internal {
 		U16 w26;		// @26
 		i16 iXOffset;	// @28 // x-offset
 		i16 iYOffset;	// @30 // y-offset
-		i16 w32;	// @32 // x?
-		i16 w34;	// @34 // y?
+		i16 iXDisp;	// @32 w32 // x?
+		i16 iYDisp;	// @34 w34 // y?
 		SRECT rc36;		// @36
 		U8 *pb44;	// @44 // picture buffer
 		i16 colorKeyPassThrough;		// @48 // (i16 w48) color key
@@ -2254,7 +2254,7 @@ namespace DM2Internal {
 		U8 b1;		// @1	// game ended ? or used to compare with right panel
 		U16 w2;		// @2
 
-		U8 b0_0_6() const { return b0 & 0x7f; }
+		U8 b0_0_6() const { return b0 & 0x7F; }
 		U8 b0_7_7() const { return (b0 >> 7)&1; }
 	};
 	// 
@@ -2479,7 +2479,7 @@ namespace DM2Internal {
 	struct sk4be2Palette { // 2 bytes
 		U8 b0;			// @0	// b0
 		U8 b1;			// @1	// b1
-	};
+	};	// is it used for dungeon light translation ?
 	// sk4bde, loaded from 01-02-07 (raw07), result of 3 tables within this item
 	struct sk4bdePalette { // 9 bytes (32bits) or 17 bytes (64bits)
 		U8 iRowSize;			// @0	// b0
@@ -2832,14 +2832,14 @@ namespace DM2Internal {
 			return x.val >= y.val;
 		}
 	};
-	// 
+	// SPX: how to call this ? TiamatPoolInfo ?
 	struct sk5d12 {	// 14 bytes?
 		tiamat t0;	// @0 // ptr to pool			// some kind of upper bound ? checked in _3e74_00ed
 		tiamat memRefLower;	// @4 // (poolBuff -poolSize)	// some kind of lower bound ?
 		tiamat t8;	// @8 // ?
-		X16 w12;	// @12 // poolflags
+		X16 iMemPoolFlags;	// w12 @12 // poolflags
 
-		U16 Is4EMS() const { return (w12 >> 11)&1; }
+		U16 Is4EMS() const { return (iMemPoolFlags >> 11)&1; }
 	};
 	// SPX: sk5c2a renamed DistantEnvironment
 	struct DistantEnvironment { // 10 bytes

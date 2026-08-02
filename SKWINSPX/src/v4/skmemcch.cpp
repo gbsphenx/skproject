@@ -1118,31 +1118,25 @@ U8 *SkWinCore::MEM_PREPARE_VIEWPORT()
 }
 
 //^3E74:2F41
-void SkWinCore::_3e74_2f41(sk5d12 *ref)
+// SPX: _3e74_2f41 renamed TIAMAT_COMPLEX_3e74_2f41
+void SkWinCore::TIAMAT_COMPLEX_3e74_2f41(sk5d12 *ref)
 {
-	//^3E74:2F41
 	ENTER(28);
-	//^3E74:2F47
 	shelf_memory bp08 = t2s(ref->t0);
 	shelf_memory bp04 = bp08 -2;
-	//^3E74:2F63
 	while (ref->t8 < tiamat(bp04)) {
-		//^3E74:2F66
 		X16 si = READ_UI16(REALIZE_GRAPHICS_DATA_MEMORY(bp04),+0);
 		i32 bp0c = ((QUERY_GDAT_RAW_DATA_LENGTH(si & 0x7fff) +1) & 0xFFFE) + sizeof(i32);	// +4 for length ? i32?
 		bp04 -= (bp0c);
 		if ((si & 0x8000) == 0) {
-			//^3E74:2FA8
 			bp08 -= (bp0c);
 			if (bp04 + (+2) != bp08) {
-				//^3E74:2FC7
 				// SPX: I crashed here with custom dungeon/gdat, at that point, map_ems_to_ptr has no effective code.
 				if (!SkCodeParam::bUsePowerDebug)
 					ATLASSERT(false);
 				U32 bp10 = bp04.val -0x001FFFFE;
-				U32 bp14 = bp08.val -0x00200000;
+				U32 bp14 = bp08.val -0x00200000;	// - CEMS start ?
 				do {
-					//^3E74:2FEB
 					// SPX: problem here with unitialized bp18 & bp1c and no written code to map_ems_to_ptr
 					U8 *bp18 = 0;	// U8 *bp18;
 					U8 *bp1c = 0;	// U8 *bp1c;
@@ -1155,11 +1149,9 @@ void SkWinCore::_3e74_2f41(sk5d12 *ref)
 					bp10 += 0x4000;
 					bp14 += 0x4000;
 				} while (true);
-				//^3E74:3068
 				glbShelfMemoryTable[si] = bp08 + (+2);
 			}
 		}
-		//^3E74:3086
 	}
 	ref->t8 = s2t(bp08);
 	MEM_PREPARE_VIEWPORT();
@@ -1167,20 +1159,21 @@ void SkWinCore::_3e74_2f41(sk5d12 *ref)
 }
 
 //^3E74:30BD
-void SkWinCore::_3e74_30bd(sk5d12 *ref)
+// SPX: _3e74_30bd renamed TIAMAT_POOL_3e74_30bd
+void SkWinCore::TIAMAT_POOL_3e74_30bd(sk5d12 *ref)
 {
 	ENTER(12);
 	if (ref->t0.IsZero())
 		return;
 	if (ref->Is4EMS() != 0) {
-		_3e74_2f41(ref);
+		TIAMAT_COMPLEX_3e74_2f41(ref);
 		return;
 	}
-	U8* bp08 = t2ptr(ref->t0);
-	U8* bp04 = PTR_PADD(bp08,-2);
+	U8 *bp08 = t2ptr(ref->t0);	// bp08
+	U8 *bp04 = PTR_PADD(bp08,-2);	// bp04
 	for (; t2ptr(ref->t8) < bp04; ) {
 		X16 si = READ_UI16(bp04,+0);
-		X32 bp0c = ((QUERY_GDAT_RAW_DATA_LENGTH(si & 0x7fff) +1) & 0xFFFE) + sizeof(i32);	// +4 for length ? i32?
+		X32 bp0c = ((QUERY_GDAT_RAW_DATA_LENGTH(si & 0x7FFF) +1) & 0xFFFE) + sizeof(i32);	// +4 for length ? i32?
 		bp04 -= bp0c;
 		if ((si & 0x8000) == 0) {
 			bp08 -= bp0c;
@@ -1194,24 +1187,25 @@ void SkWinCore::_3e74_30bd(sk5d12 *ref)
 	return;
 }
 //^3E74:0017
-X32 SkWinCore::_3e74_0017(sk5d12 *ref)
+// SPX: _3e74_0017 renamed GET_TIAMAT_3e74_0017
+X32 SkWinCore::GET_TIAMAT_3e74_0017(sk5d12 *ref)
 {
 	ENTER(4);
-	X32 bp04 = 0;
+	X32 tiamatMemRef = 0;	// bp04
 	if (ref->t0.IsntZero()) {
 		if (ref->Is4EMS()) {
-			bp04 = tiamat::Size(ref->t0, ref->memRefLower);
+			tiamatMemRef = tiamat::Size(ref->t0, ref->memRefLower);
 		}
 		else {
-			bp04 = tiamat::Size(ref->t0, ref->memRefLower);
+			tiamatMemRef = tiamat::Size(ref->t0, ref->memRefLower);
 		}
 	}
-	//^3E74:0079
-	return bp04;
+	return tiamatMemRef;
 }
 
 //^3E74:0081
-i32 SkWinCore::_3e74_0081(sk5d12 *ref) { // TODO: Unr
+// SPX: _3e74_0081 renamed TIAMAT_POOL_NOT_IMPLEMENTED
+i32 SkWinCore::TIAMAT_POOL_NOT_IMPLEMENTED(sk5d12 *ref) { // TODO: Unr
 	Unr(); 
 	return 0;
 }
@@ -1414,7 +1408,7 @@ void SkWinCore::INIT_CPXHEAP(sk5d12 *ref, tiamat poolBuff, U32 poolSize, U16 poo
 			ref->memRefLower  = (poolBuff -poolSize); // pointer subtraction.
 		}
 	}
-	ref->w12 = poolflag;
+	ref->iMemPoolFlags = poolflag;
 	return;
 }
 
@@ -1613,9 +1607,10 @@ void SkWinCore::COPY_MEMORY(const void *buffSrc, void *buffDst, Bit32u buffSize)
 //^3E74:01A5
 U8 *SkWinCore::REALIZE_GRAPHICS_DATA_MEMORY(shelf_memory info) {
 	U32 iMemAddress = info.val;
-	// Original code would just take full value, which can be 0x80****** and break the limit.
-	// the 0x80 part must be some flag info then not to be taken for memory check.
-	// Note: it happens when loading original BETA GDAT.
+	// This should not be called if ShelfMem is not present (0x8xxxxxxx)
+
+	if (SkCodeParam::bUsePowerDebug && info.Absent())	// SPX
+		return NULL;
 
 #if UseAltic
 	if (iMemAddress >= X00200000_START_CEMS + shelf_memory::SizeOf_cems()) { // replaced sizeof(cems)

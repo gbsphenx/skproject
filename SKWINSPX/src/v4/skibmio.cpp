@@ -2112,7 +2112,7 @@ int SkWinCore::ANIM_MAIN(i16 argc, const char **argv, char **env) // #DS=089C
 					bp00d6[si >> 2].b3 = bp0c[si +11] << 4;
 				}
 				ANIM_SELECT_PALETTE_SET(0);
-				_0759_0688(bp00d6, 0);
+				SOMETHING_PALETTE_0759_0688(bp00d6, 0);
 			}
 			break;
 		case 0x4F46://^1160 // "FO"
@@ -2240,7 +2240,8 @@ void SkWinCore::ANIM_SELECT_PALETTE_SET(U8 iPaletteSet)
 }
 
 //^00EB:04BC
-void SkWinCore::_00eb_04bc(skxxxj *xx, U16 yy) //#DS=04BF
+// _00eb_04bc renamed IBMIO_PALETTE_00eb_04bc
+void SkWinCore::IBMIO_PALETTE_00eb_04bc(skxxxj *xx, U16 yy) //#DS=04BF
 {
 	ENTER(0);
 	LOADDS(0x0c48);
@@ -2263,10 +2264,11 @@ void SkWinCore::_00eb_04bc(skxxxj *xx, U16 yy) //#DS=04BF
 }
 
 //^0759:0688
-void SkWinCore::_0759_0688(skxxxj *xx, U16 yy)
+// _0759_0688 renamed SOMETHING_PALETTE_0759_0688
+void SkWinCore::SOMETHING_PALETTE_0759_0688(skxxxj *xx, U16 yy)
 {
 	ENTER(0);
-	_00eb_04bc(xx, yy) CALL_IBMIO;
+	IBMIO_PALETTE_00eb_04bc(xx, yy) CALL_IBMIO;
 	return;
 }
 
@@ -2372,7 +2374,7 @@ void SkWinCore::ANIM_DECODE_IMG1(U8 *xx, U8 *yy)
 				si = (_089c_0348[1] | (_089c_0348[0] << 8)) +1;
 				_089c_0348 += 2;
 			}
-			_0759_02c6(di, di -bp06, si);
+			ANIM_SOMETHING_0759_02c6(di, di -bp06, si);
 			di += si;
 			ANIM_SETPIXEL_SEQ_4BPP(di++, bp09&15);
 			break;
