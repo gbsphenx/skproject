@@ -6679,7 +6679,7 @@ _123d:
 			xx->iWidth += bp0a;
 			xx->iHeight += bp0c;
 			OFFSET_RECT(yy, &bp08, &xx->rc36);
-			xx->rectNo = 0xffff;
+			xx->rectNo = 0xFFFF;
 			xx->colorKeyPassThrough = colorkey2;
 			DRAW_DEF_PICT(xx);
 			SOME_RECT_0b36_0d67(yy, &bp08);

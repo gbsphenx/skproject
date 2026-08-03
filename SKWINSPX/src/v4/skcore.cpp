@@ -15308,7 +15308,9 @@ void SkWinCore::SHOW_MENU_SCREEN()
 				: (  READ_IMGBUFF_WIDTH(cd.mo.glbImageMenuScreen)     & 0xFFFF)
 												) * READ_IMGBUFF_HEIGHT(cd.mo.glbImageMenuScreen);
 		// goes after the image data for the local palette (16 bytes)
-
+		if (SkCodeParam::bDM2BetaGDATDetected) {
+			glbMenuScreenLocalPal16 = (U8*)tblBetaMainScreenPalette;
+		}
 	}
 	// cd.mo.glbImageMenuScreen - 6   would be like 06 FA | 00 00 | 02 00 => FA06 = 64006 | 0002 = afUseLower
 	// cd.mo.glbImageCreditScreen - 6 would be like 04 00 | 40 01 | C8 00 => bbp = 4, x = x140 = 320, y = xC8 = 200

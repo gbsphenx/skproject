@@ -877,7 +877,8 @@ protected:
 	DM1ItemConv	glbDM1ItemConv[200];	// SPX: table for DM1 activator item conversion list
 	SpxGDatEntryShelfMement		*tblDebugGdatEntryShelfMement;
 	SpxGDatShelf				*tblDebugGdatShelf;
-	
+	// Beta special
+	U8							tblBetaMainScreenPalette[16];
 	//}}SKSAVE_DESORTED_VARS
 
 public:
