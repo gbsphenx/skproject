@@ -35,7 +35,7 @@ void SkWinCore::SOUND_ENTRY(U8 iGDatCls1Category, U8 iGDatCls2MainItemId, U8 iGD
 {
 	ENTER(4);
 //#ifndef __DJGPP__
-	if (QUERY_SND_ENTRY_INDEX(iGDatCls1Category, iGDatCls2MainItemId, iGDatCls4EntryId) == 0 && _4976_49d4[0][0] < _4976_5d58) {
+	if (QUERY_SND_ENTRY_INDEX(iGDatCls1Category, iGDatCls2MainItemId, iGDatCls4EntryId) == 0 && _4976_49d4[0][0] < glbGDatSoundRawDatCount) {
 		SoundShortInfo* xSoundInfo = &tblSoundShortInfo[_4976_49d4[0][0]];	// bp04
 		xSoundInfo->category = iGDatCls1Category;
 		xSoundInfo->index = iGDatCls2MainItemId;

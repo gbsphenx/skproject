@@ -5970,7 +5970,7 @@ _0c47:
 		U8 *bp0e;
 		if (_3e74_5673_CACHE(0x20000000 | glbCurrentThinkingCreatureID.DBIndex(), &bp10, 1) == 0) {
 			//^13E4:0C7E
-			bp0e = ALLOC_CPXHEAP_MEM(bp10, sizeof(sk514e)); // sizeof(sk514e) == 14
+			bp0e = ALLOC_CPXHEAP_MEM(bp10, sizeof(sk514e)); // sizeof(sk514e) == 14||18
 			_3e74_585a_CACHE(bp10, 1);
 		}
 		else {
@@ -5979,10 +5979,10 @@ _0c47:
 		}
 		//^13E4:0CB0
 		if (SkCodeParam::bUsePowerDebug && CheckSafePointer(bp0e))
-			COPY_MEMORY(&_4976_514e, bp0e, sizeof(sk514e)); // sizeof(sk514e) == 14
+			COPY_MEMORY(&_4976_514e, bp0e, sizeof(sk514e)); // sizeof(sk514e) == 14||18
 	}
 	//^13E4:0CC6
-	if (glbCurrentThinkingCreatureData->TimerIndex() != 0xffff) {
+	if (glbCurrentThinkingCreatureData->TimerIndex() != 0xFFFF) {
 		RELEASE_CREATURE_TIMER(glbCurrentThinkingCreatureID);
 	}
 	//^13E4:0CDB

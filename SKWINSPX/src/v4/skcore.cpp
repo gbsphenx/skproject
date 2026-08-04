@@ -7533,6 +7533,17 @@ RawEntry *SkWinCore::QUERY_GDAT_ENTRYPTR(U8 iGDatCategory, U16 iGDatItemId, U8 i
 	U16 iUpperBound = 0;
 	iUpperBound = glbGDatEntries.tblCls2toCls3[si + 1] - di + 1;
 	iLowerBound = 0;
+	// SPX: BETA does not have sorted sub-entries the same way (sorted by RawDat index), instead use a straightforward search
+	if (SkCodeParam::bDM2BetaGDATDetected) {
+		U16 iCurrentSearchIndex = 0;
+		RawEntry* xRawEnt = NULL;
+		for (iCurrentSearchIndex = iLowerBound; iCurrentSearchIndex < iUpperBound; iCurrentSearchIndex++) {
+			xRawEnt = &bp08[iCurrentSearchIndex];
+			if (xRawEnt->cls2 == iGDatItemId && xRawEnt->cls4 == iGDatEntryId)
+				return xRawEnt;
+		}
+	}
+
 	while (true) {
 		U16 iMidIndex = (iLowerBound + iUpperBound) / 2;	// bp0a
 		if (!(iMidIndex != iLowerBound))
@@ -7552,6 +7563,9 @@ RawEntry *SkWinCore::QUERY_GDAT_ENTRYPTR(U8 iGDatCategory, U16 iGDatItemId, U8 i
 			iLowerBound = iMidIndex;
 		}
 	}
+
+	// SPX: added default (but we should never get there)
+	return NULL;
 }
 
 //^3E74:1CF3
@@ -8352,6 +8366,9 @@ U8* SkWinCore::QUERY_GDAT_IMAGE_ENTRY_BUFF(U8 iGDatCategory, U8 iGDatItemId, U8 
 	if (iGDATItemID != 0xFFFF) {
 		if (glbShelfMemoryTable[iGDATItemID].Present() || (iCriticalLoad != 0)) {
 			xImageBuffer = EXTRACT_GDAT_IMAGE(iGDATItemID, 0);
+			if (SkCodeParam::bDM2BetaGDATDetected) {
+				memcpy(xImageBuffer + (READ_IMGBUFF_HEIGHT(xImageBuffer)*READ_IMGBUFF_WIDTH(xImageBuffer)/2), tblBetaClassicPalette, 16);
+			}
 			return xImageBuffer;
 		}
 	}
@@ -10337,9 +10354,9 @@ X16 SkWinCore::QUERY_NEXT_GDAT_ENTRY(SkEntIter *ref)
 	// 1 if found
 
 	ENTER(22);
-	X8 bp05 = ref->x2.xEnt4.cls2(); // cls2
-	X8 bp06 = ref->x2.xEnt4.cls4(); // cls4
-	X16 bp0e = ((ref->x2.w0_0_e()) == 1) ? 1 : 0;
+	X8 iSearchCls2 = ref->xEntrySearchFrom.xEnt4.cls2(); // bp05	cls2
+	X8 bp06 = ref->xEntrySearchFrom.xEnt4.cls4(); // bp06	cls4
+	X16 bp0e = ((ref->xEntrySearchFrom.w0_0_e()) == 1) ? 1 : 0;
 	X8 bp07;
 	X8 bp08;
 	if (bp0e != 0) {
@@ -10347,12 +10364,12 @@ X16 SkWinCore::QUERY_NEXT_GDAT_ENTRY(SkEntIter *ref)
 		bp08 = ref->x8.xEnt4.cls4();
 	}
 	else {
-		bp07 = bp05;
+		bp07 = iSearchCls2;
 	}
 	X16 bp0c = ref->w0;
 	if (bp0c != 0) {
 		ref->w0 = 0;
-		ref->cls1cur(ref->x2.xEnt4.cls1());
+		ref->cls1cur(ref->xEntrySearchFrom.xEnt4.cls1());
 		if (ref->cls1cur() == 0xff) {
 			ref->cls1cur(0x00);
 _19c0:
@@ -10365,7 +10382,7 @@ _19c0:
 			}
 		}
 		else {
-			ref->cls1base(ref->x2.xEnt4.cls1());
+			ref->cls1base(ref->xEntrySearchFrom.xEnt4.cls1());
 		}
 		if (ref->cls1cur() < 0 || ref->cls1cur() > ref->cls1base() || ref->cls1base() > glbGDatEntries.iTotalClass1)
 			goto _1cd4;
@@ -10378,12 +10395,12 @@ _19c0:
 			RawEntry *bp04;
 			if (bp0c == 0) {
 				si = ref->w24 +1;
-				bp04 = ref->pv14 +1;
+				bp04 = ref->pRawEntryFound +1;
 				if (ref->w26 > si)
 					goto _1c0a;
 				goto _1c82;
 			}
-			ref->cls3cur(ref->x2.xEnt4.cls3());
+			ref->cls3cur(ref->xEntrySearchFrom.xEnt4.cls3());
 			if (ref->cls3cur() == fmtInvalid) {
 				ref->cls3cur(0x00);
 _1a92:
@@ -10395,17 +10412,17 @@ _1a92:
 					goto _1a92;
 			}
 			else {
-				ref->cls3base(ref->x2.xEnt4.cls3());
+				ref->cls3base(ref->xEntrySearchFrom.xEnt4.cls3());
 			}
 			bp0a += ref->cls3cur();
 			si = ref->w24 = glbGDatEntries.tblCls2toCls3[bp0a++];
 			ref->w22 = bp0a;
 			ref->w26 = glbGDatEntries.tblCls2toCls3[ref->w22];
-			ref->pv14 = bp04 = &glbGDatEntries.pv8[si];
+			ref->pRawEntryFound = bp04 = &glbGDatEntries.pv8[si];
 			do {
 				if (ref->w26 > si) {
-					if (bp05 != 0xff) {
-						X8 bp15 = (bp06 == 0xff) ? 0 : bp06;
+					if (iSearchCls2 != 0xFF) {
+						X8 bp15 = (bp06 == 0xFF) ? 0 : bp06;
 						RawEntry *bp12 = &glbGDatEntries.pv8[-1];
 						di = si;
 						X16 bp14 = ref->w26 +1;
@@ -10423,12 +10440,12 @@ _1a92:
 								}
 								goto _1c82;
 							}
-							if (bp04->cls2 == bp05) {
+							if (bp04->cls2 == iSearchCls2) {
 								if (bp04->cls4 <= bp15)
 									break;
 								goto _1c00;
 							}
-							if (bp04->cls2 > bp05) {
+							if (bp04->cls2 > iSearchCls2) {
 _1c00:
 								bp14 = si;
 							}
@@ -10444,7 +10461,7 @@ _1c0a:
 							break;
 						if ((bp0e != 0) ? ((bp06 == 0xff || (bp04->cls4 >= bp06 && bp04->cls4 <= bp08))) : (bp06 == 0xff || bp04->cls4 == bp06)) {
 							ref->w24 = si;
-							ref->pv14 = bp04;
+							ref->pRawEntryFound = bp04;
 							return 1;
 						}
 						if (ref->w26 <= ++si)
@@ -10466,9 +10483,9 @@ _1c82:
 		bp0c = 1;
 	} while (true);
 _1cd4:
-	ref->pv14 = NULL;
-	ref->cls1cur(0xff);
-	ref->cls1base(0xff);
+	ref->pRawEntryFound = NULL;
+	ref->cls1cur(0xFF);
+	ref->cls1base(0xFF);
 	return 0;
 }
 
@@ -10520,8 +10537,8 @@ void SkWinCore::LOAD_DYN4(SkLoadEnt *ref, i16 iLoadEntCount)	// aa
 	SkLoadEnt bp40; // @28 bp40 // smily :P
 	for (; iLoadEntIndex < iLoadEntCount; iLoadEntIndex++) {
 		bp5c.w0 = 1;
-		bp5c.x2 = *pLoadEntMarks;
-		bp2e = bp5c.x2.w0();
+		bp5c.xEntrySearchFrom = *pLoadEntMarks;
+		bp2e = bp5c.xEntrySearchFrom.w0();
 		if ((bp2e & 0x7FFF) == 1) {
 			bp5c.x8 = pLoadEntMarks[1]; pLoadEntMarks++; iLoadEntIndex++;
 		}
@@ -10534,10 +10551,10 @@ void SkWinCore::LOAD_DYN4(SkLoadEnt *ref, i16 iLoadEntCount)	// aa
 		// ATLASSERT(!(pLoadEntMarks->b2 == 7 && pLoadEntMarks->b3 == 0 && pLoadEntMarks->b4 == 255 && pLoadEntMarks->b5 == 255));
 		while (QUERY_NEXT_GDAT_ENTRY(&bp5c) != 0) {
 			X8 bp2c = bp5c.cls3cur();
-			if (bp2c == 0x0B || bp2c == 0x0C || ((iCurIndex = bp5c.pv14->data) & 0x8000) != 0)	// 0x0B and 0x0C like fmtWordVal and fmtPicOff ?
+			if (bp2c == 0x0B || bp2c == 0x0C || ((iCurIndex = bp5c.pRawEntryFound->data) & 0x8000) != 0)	// 0x0B and 0x0C like fmtWordVal and fmtPicOff ?
 				continue;
 			SkD((DLV_DYN, "Dyn: Match(%02X,%02X,%02X,%02X,%5u)\n"
-				, 0U +bp5c.cls1cur(), 0U +bp5c.pv14->cls2, 0U +bp5c.cls3cur(), 0U +bp5c.pv14->cls4, 0U +bp5c.pv14->data));
+				, 0U +bp5c.cls1cur(), 0U +bp5c.pRawEntryFound->cls2, 0U +bp5c.cls3cur(), 0U +bp5c.pRawEntryFound->cls4, 0U +bp5c.pRawEntryFound->data));
 			U8 bp2b = pTabGDatRawDat[iCurIndex];
 			if ((bp2e & 0x8000) != 0) {
 				bp2b &= RAWDAT_DYN_MARK_x1F;
@@ -10589,28 +10606,28 @@ void SkWinCore::LOAD_DYN4(SkLoadEnt *ref, i16 iLoadEntCount)	// aa
 	iLoadEntIndex = 0;
 	for (; iLoadEntIndex < iLoadEntCount; pLoadEntMarks++, iLoadEntIndex++) {
 		bp5c.w0 = 1;
-		bp5c.x2 = *pLoadEntMarks;
-		bp2e = bp5c.x2.w0();
+		bp5c.xEntrySearchFrom = *pLoadEntMarks;
+		bp2e = bp5c.xEntrySearchFrom.w0();
 		if ((bp2e & 0x7FFF) == 1) {
 			pLoadEntMarks++; bp12++;
 			bp5c.x8 = *pLoadEntMarks;
-			if (bp5c.x2.xEnt4.cls3() != fmtInvalid && (bp5c.x2.xEnt4.cls3() > fmtSound || bp5c.x2.xEnt4.cls3() < fmtSound))
+			if (bp5c.xEntrySearchFrom.xEnt4.cls3() != fmtInvalid && (bp5c.xEntrySearchFrom.xEnt4.cls3() > fmtSound || bp5c.xEntrySearchFrom.xEnt4.cls3() < fmtSound))
 				continue;
 			bp5c.x8.xEnt4.cls3(fmtSound);
-			bp5c.x2.xEnt4.cls3(fmtSound);
+			bp5c.xEntrySearchFrom.xEnt4.cls3(fmtSound);
 		}
 		if ((bp2e & 0x8000) != 0)
 			continue;
-		if (bp5c.x2.xEnt4.cls3() != fmtInvalid && bp5c.x2.xEnt4.cls3() != fmtSound)
+		if (bp5c.xEntrySearchFrom.xEnt4.cls3() != fmtInvalid && bp5c.xEntrySearchFrom.xEnt4.cls3() != fmtSound)
 			continue;
-		bp5c.x2.xEnt4.cls3(fmtSound);
+		bp5c.xEntrySearchFrom.xEnt4.cls3(fmtSound);
 		while (QUERY_NEXT_GDAT_ENTRY(&bp5c) != 0) {
-			iCurIndex = bp5c.pv14->data & 0x7FFF;
+			iCurIndex = bp5c.pRawEntryFound->data & 0x7FFF;
 			if ((pTabGDatRawDat[iCurIndex] & 1) == 0) {
 				if (AUDIO_482b_015c(iCurIndex) == 0)
 					continue;
 			}
-			SOUND_ENTRY(bp5c.cls1cur(), bp5c.pv14->cls2, bp5c.pv14->cls4);
+			SOUND_ENTRY(bp5c.cls1cur(), bp5c.pRawEntryFound->cls2, bp5c.pRawEntryFound->cls4);
 		}
 	}
 	if (_4976_5d78 != 0) {
@@ -14589,9 +14606,12 @@ void SkWinCore::BUILD_GDAT_ENTRY_DATA(GDATEntries *ref, X16 (SkWinCore::*pfnIfLo
 			ref->w20++;
 		}
 	}
-	ref->tblCls1toCls2 = reinterpret_cast<X16 *>(ALLOC_MEMORY_RAM((ref->iTotalClass1 +2) << 1, afUseUpper, 0x400));
-	ref->tblCls2toCls3 = reinterpret_cast<X16 *>(ALLOC_MEMORY_RAM((ref->w14 +1) << 1, afUseUpper, 0x400));
-	ref->pv8 = reinterpret_cast<RawEntry *>(ALLOC_MEMORY_RAM(U32(ref->w16) << 2, afUseUpper, 0x400));
+//	ref->tblCls1toCls2 = reinterpret_cast<X16 *>(ALLOC_MEMORY_RAM((ref->iTotalClass1 +2) << 1, afUseUpper, 0x400));
+//	ref->tblCls2toCls3 = reinterpret_cast<X16 *>(ALLOC_MEMORY_RAM((ref->w14 +1) << 1, afUseUpper, 0x400));
+//	ref->pv8 = reinterpret_cast<RawEntry *>(ALLOC_MEMORY_RAM(U32(ref->w16) << 2, afUseUpper, 0x400));
+	ref->tblCls1toCls2 = reinterpret_cast<X16 *>(ALLOC_MEMORY_RAM((ref->iTotalClass1 +2) * sizeof(X16), afUseUpper, 0x400));
+	ref->tblCls2toCls3 = reinterpret_cast<X16 *>(ALLOC_MEMORY_RAM((ref->w14 +1) * sizeof(X16), afUseUpper, 0x400));
+	ref->pv8 = reinterpret_cast<RawEntry *>(ALLOC_MEMORY_RAM(U32(ref->w16) * sizeof(U32), afUseUpper, 0x400));
 	bp0c = 0;
 	iRawEntIdx = 0;
 	U8 bp09;
@@ -14687,61 +14707,53 @@ void SkWinCore::LOAD_ENT1()
 	return;
 }
 //^3E74:24B8
-// SPX: _3e74_24b8 renamed GDAT_3e74_24b8
-void SkWinCore::GDAT_3e74_24b8()
+// SPX: _3e74_24b8 renamed LOAD_GLOBAL_TABLE_RAWDAT_SOUNDS
+void SkWinCore::LOAD_GLOBAL_TABLE_RAWDAT_SOUNDS()
 {
 	ENTER(38);
-	U16 si;
-	for (si = 0; si < 2; si++) {
-		if (si > 0 && _4976_5d58 == 0)
+	U16 iPhaseStep;	// si 0 = step1, scan? / 1 = step2, load table
+	for (iPhaseStep = 0; iPhaseStep < 2; iPhaseStep++) {
+		if (iPhaseStep > 0 && glbGDatSoundRawDatCount == 0)
 			break;
-		SkEntIter bp26;
-		bp26.w0 = 1;
-		bp26.w22 = 0;
-		bp26.x2.xEnt4.cls1(0xFF);
-		bp26.x2.xEnt4.cls2(0xFF);
-		bp26.x2.xEnt4.cls3(fmtSound);
-		bp26.x2.xEnt4.cls4(0xFF);
-		X16 di;
-		X16 *bp04;
-		if (si > 0) {
-			//^3E74:24EF
-			bp04 = reinterpret_cast<X16 *>(ALLOC_MEMORY_RAM(_4976_5d58 << 1, afDefault, 0x400));
-			di = 0;
+		SkEntIter xEntIterator;	// bp26
+		xEntIterator.w0 = 1;
+		xEntIterator.w22 = 0;
+		xEntIterator.xEntrySearchFrom.xEnt4.cls1(0xFF);
+		xEntIterator.xEntrySearchFrom.xEnt4.cls2(0xFF);
+		xEntIterator.xEntrySearchFrom.xEnt4.cls3(fmtSound);
+		xEntIterator.xEntrySearchFrom.xEnt4.cls4(0xFF);
+		X16 iTableLastIndex;	// di
+		X16 *pAudioRawDatTable;	// bp04
+		if (iPhaseStep > 0) {
+			//bp04 = reinterpret_cast<X16 *>(ALLOC_MEMORY_RAM(glbGDatSoundRawDatCount << 1, afDefault, 0x400));
+			pAudioRawDatTable = reinterpret_cast<X16 *>(ALLOC_MEMORY_RAM(glbGDatSoundRawDatCount * sizeof(X16), afDefault, 0x400));
+			iTableLastIndex = 0;
 		}
-		while (QUERY_NEXT_GDAT_ENTRY(&bp26)) {
-			U16 bp08 = bp26.pv14->data;
-			if (si == 0) {
-				_4976_5d58++;
-				U16 iDataLength = QUERY_GDAT_RAW_DATA_LENGTH(bp08);	// bp06
+		while (QUERY_NEXT_GDAT_ENTRY(&xEntIterator)) {
+			U16 iRawDatSoundIdx = xEntIterator.pRawEntryFound->data;	// bp08
+			if (iPhaseStep == 0) {
+				glbGDatSoundRawDatCount++;
+				U16 iDataLength = QUERY_GDAT_RAW_DATA_LENGTH(iRawDatSoundIdx);	// bp06
 				if (iDataLength > glbMemRAMAudioStuff)
 					glbMemRAMAudioStuff = iDataLength;
 				continue;
 			}
-			//^3E74:2535
-			X16 bp0a;
-			for (bp0a = 0; bp0a < di; bp0a++) {
-				//^3E74:253C
-				if (bp04[bp0a] == bp08)
-					goto _256a;
-				//^3E74:254E
+			X16 iTableIndex;	// bp0a
+			for (iTableIndex = 0; iTableIndex < iTableLastIndex; iTableIndex++) {
+				if (pAudioRawDatTable[iTableIndex] == iRawDatSoundIdx)	// if that sound rawdat already in table, go next
+					//goto _256a;
+					continue;	// replaced goto
 			}
-			//^3E74:2556
-			bp04[di] = bp08;
-			//^3E74:2565
-			di++;
+			pAudioRawDatTable[iTableLastIndex] = iRawDatSoundIdx;
+			iTableLastIndex++;
 			_4976_5cae++;
-			//^3E74:256A
-_256a:
+//_256a:
 			continue;
 		}
-		//^3E74:2579
-		if (si > 0) {
-			DEALLOC_UPPER_MEMORY(_4976_5d58 << 1);
+		if (iPhaseStep > 0) {
+			DEALLOC_UPPER_MEMORY(glbGDatSoundRawDatCount * sizeof(X16));	// glbGDatSoundRawDatCount << 1
 		}
-		//^3E74:258B
 	}
-	//^3E74:2594
 	return;
 }
 
@@ -14865,8 +14877,8 @@ const char* SkWinCore::DEBUG_SKGDATENT(SkEntIter* xSkGDATEnt)
 	memset(xStaticDebugGDATEnt, 0, 128);
 
 	iValue32 = xSkGDATEnt->w0;
-	xRawPointer = (unsigned char*) xSkGDATEnt->pv14;
-	sprintf(sLoadEntFrom, "%s", DEBUG_SKLOADENT((U8*)&xSkGDATEnt->x2));
+	xRawPointer = (unsigned char*) xSkGDATEnt->pRawEntryFound;
+	sprintf(sLoadEntFrom, "%s", DEBUG_SKLOADENT((U8*)&xSkGDATEnt->xEntrySearchFrom));
 	sprintf(sLoadEntTo, "%s", DEBUG_SKLOADENT((U8*)&xSkGDATEnt->x8));
 
 	sprintf(xStaticDebugGDATEnt, "%s to %s -=- x32 = %08x / pRaw = %08x", sLoadEntFrom, sLoadEntTo, iValue32, xRawPointer);
@@ -14948,7 +14960,7 @@ void SkWinCore::READ_GRAPHICS_STRUCTURE()
 //DEBUG_DISPLAY_GDAT_MAIN_INFO();
 
 	glbGDatStructureRead = 1;
-	GDAT_3e74_24b8();
+	LOAD_GLOBAL_TABLE_RAWDAT_SOUNDS();
 	return;
 
 _read_graphics_structure__raise_error:
@@ -16738,7 +16750,7 @@ SkWinCore::SkWinCore()
 	zeroMem(&glbGDatEntries, sizeof(glbGDatEntries));
 	_4976_480d = 0;
 	_4976_5d34 = 0;
-	_4976_5d58 = 0;
+	glbGDatSoundRawDatCount = 0;
 	_4976_5cae = 0;
 	zeroMem(&glbRectNoTable, sizeof(glbRectNoTable));
 	glbRectZonesLoaded	 = 0;

@@ -807,7 +807,7 @@ protected:
 	X16		_4976_5d40;		// (_4976_5d40) w4 of 2nd raw
 	i16		tblGDatEntryPosOrder[7];	// (_4976_5d42[7])
 	U8		tblGDatEntryPosSize[7];	// (_4976_5d50[7])	// size of each GDat Entry value (Cls1, cls2, etc ...) (=> each are 1 byte except the data value which is 2 bytes)
-	U16		_4976_5d58;		// (_4976_5d58)
+	U16		glbGDatSoundRawDatCount;		// (_4976_5d58)
 	tiamat	_4976_5d5a;	// for allocmem. most upper address of largest memory pool (#2) in ibmio?
 	mement*	glbMement5;	// (_4976_5d5e) mement#5
 	i32		_4976_5d62; // C6 6C D0 00 -> 00D06CC6
@@ -879,6 +879,8 @@ protected:
 	SpxGDatShelf				*tblDebugGdatShelf;
 	// Beta special
 	U8							tblBetaMainScreenPalette[16];
+	U8							tblClassicPalette[16];
+	U8							tblBetaClassicPalette[16];
 	//}}SKSAVE_DESORTED_VARS
 
 public:
@@ -2251,7 +2253,7 @@ protected:
 	X16 LANG_FILTER(U16 entryIndex);
 	void BUILD_GDAT_ENTRY_DATA(GDATEntries *ref, X16 (SkWinCore::*pfnIfLoad)(U16 xx), U8 *zz);
 	void LOAD_ENT1();
-	void GDAT_3e74_24b8();	// _3e74_24b8
+	void LOAD_GLOBAL_TABLE_RAWDAT_SOUNDS();	// _3e74_24b8
 	void READ_GRAPHICS_STRUCTURE();
 	X16 IS_SCARD_PRESENT();
 	X16 _RELOAD_SOUND_BUFFER(U8 *buff, X16 buffSize, X16 playbackRate);

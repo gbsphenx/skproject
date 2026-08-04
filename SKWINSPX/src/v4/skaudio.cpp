@@ -67,8 +67,8 @@ void SkWinCore::_47eb_0003()
 void SkWinCore::ALLOC_AUDIO_TABLES()
 {
 	ENTER(4);
-	_4976_5f0a = reinterpret_cast<sk5f0a *>(ALLOC_MEMORY_RAM(_4976_5cae << 4, afUseUpper, 0x400));
-	tblSoundShortInfo = reinterpret_cast<SoundShortInfo *>(ALLOC_MEMORY_RAM(_4976_5d58 * (sizeof(SoundShortInfo)), afUseUpper, 0x400));	// *7 = size of SoundShortInfo
+	_4976_5f0a = reinterpret_cast<sk5f0a *>(ALLOC_MEMORY_RAM(_4976_5cae << 4, afUseUpper, 0x400));	// << 4 (=*16)
+	tblSoundShortInfo = reinterpret_cast<SoundShortInfo *>(ALLOC_MEMORY_RAM(glbGDatSoundRawDatCount * (sizeof(SoundShortInfo)), afUseUpper, 0x400));	// *7 = size of SoundShortInfo
 	_4976_5f02 = reinterpret_cast<SoundStructure *>(ALLOC_MEMORY_RAM(0xF0, afUseUpper, 0x400));
 	U32 iMemInitVal = 0; // bp04
 	glbSoundList = reinterpret_cast<SoundEntryInfo *>(ALLOC_MEMORY_RAM(iMemInitVal = 0x60, afUseUpper, 0x400));

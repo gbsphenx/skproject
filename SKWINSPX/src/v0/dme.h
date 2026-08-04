@@ -2670,16 +2670,16 @@ namespace DM2Internal {
 	// 
 	struct SkEntIter {	// 12+6+6+4/8 bytes = 28 bytes or 32 bytes (64bits)
 		X16 w0;		// @0 // enum init flag: 1=first num(need init), 0=second or later enum, 0x8000=ranged
-		SkLoadEnt x2;	// @2 bp5a // single, or from
-		SkLoadEnt x8;	// @8 bp54 // to
-		RawEntry *pv14;	// @14 bp4e // found raw ent
-		U8 b18_;	// @18 // cls1 current
-		U8 b19_;	// @19 // cls1 base
-		U8 b20_;	// @20 // cls3(type) current
-		U8 b21_;	// @21 // cls3 base
-		X16 w22;	// @22 // cls2 table index
-		X16 w24;	// @24 // found raw entry index (pv14)
-		U16 w26;	// @26 // cls3 table index
+		SkLoadEnt xEntrySearchFrom;	// @2 bp5a x2 // single, or from
+		SkLoadEnt x8;	// @8 bp54 x8 // to
+		RawEntry *pRawEntryFound;	// @14 bp4e pv14 // found raw ent
+		U8 b18_;	// @18 b18_ // cls1 current
+		U8 b19_;	// @19 b19_ // cls1 base
+		U8 b20_;	// @20 b20_ // cls3(type) current
+		U8 b21_;	// @21 b21_ // cls3 base
+		X16 w22;	// @22 w22 // cls2 table index
+		X16 w24;	// @24 w24 // found raw entry index (pv14)
+		U16 w26;	// @26 w26 // cls3 table index
 
 		void cls1cur(U8 val) {
 			b18_ = val;
@@ -2864,7 +2864,7 @@ namespace DM2Internal {
 	};
 	// 
 	// SPX: sk5cb6 renamed 
-	struct GDATEntries { // ? bytes (max 44 bytes)
+	struct GDATEntries { // 41 bytes (32-bits) or 53 bytes (64-bits)
 		X16* tblCls1toCls2;		// pw0	cls1-to-cls2
 		X16* tblCls2toCls3;		// pw4	cls2-to-cls3?
 		RawEntry* pv8;
@@ -2877,7 +2877,7 @@ namespace DM2Internal {
 		X8 b36[5];
 	};
 	// 
-	struct sk514e { // 14 bytes // 514e-515b
+	struct sk514e { // 14 bytes / 18 bytes // 514e-515b
 		U8 b0;			// @0 // _4976_514e // max len
 		U8 b1;			// @1 // _4976_514f // cur pos: _4976_515c[b0 - b1]
 		X8 b2;			// @2 // _4976_5150
