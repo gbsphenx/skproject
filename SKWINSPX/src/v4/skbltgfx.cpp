@@ -1458,43 +1458,44 @@ void SkWinCore::FREE_PICT6(SkImage *ref)
 i16 SkWinCore::QUERY_GDAT_PICT_OFFSET(Bit8u cls1, Bit8u cls2, Bit8u cls4)
 {
 	ENTER(8);
-	U16 di = 0;
-	RawEntry* bp04 = QUERY_GDAT_ENTRYPTR(cls1, cls2, dtImage, cls4);
-	if (bp04 == NULL) {
+	U16 iImageNotInShelf = 0;	// di
+	RawEntry* pRawEntry = QUERY_GDAT_ENTRYPTR(cls1, cls2, dtImage, cls4);	// bp04
+	if (pRawEntry == NULL) {
 		return 0;
 	}
 	else {
-		U16 si = bp04->data;
-		SkImage *bp04;
-		if (glbShelfMemoryTable[si].Absent()) {
-			di = 1;
-			bp04 = reinterpret_cast<SkImage *>(QUERY_GDAT_ENTRY_DATA_PTR(cls1, cls2, dtImage, cls4));
+		U16 iRawDatIdx = pRawEntry->data;	// si
+		U16 iOffsetValue;	// si // SPX: added this for clarity
+		SkImage *pImage;	// bp04
+		if (glbShelfMemoryTable[iRawDatIdx].Absent()) {
+			iImageNotInShelf = 1;
+			pImage = reinterpret_cast<SkImage *>(QUERY_GDAT_ENTRY_DATA_PTR(cls1, cls2, dtImage, cls4));
 		}
 		else {
-			bp04 = reinterpret_cast<SkImage *>(REALIZE_GRAPHICS_DATA_MEMORY(glbShelfMemoryTable[si]));
+			pImage = reinterpret_cast<SkImage *>(REALIZE_GRAPHICS_DATA_MEMORY(glbShelfMemoryTable[iRawDatIdx]));
 		}
-		i16 bp06 = bp04->Xoffset();
-		i16 bp08;
-		if (bp06 == -32) {
-			si = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, dtImageOffset, cls4);
+		i16 iXOffset = pImage->Xoffset();	// bp06
+		i16 iYOffset;	// bp08
+		if (iXOffset == -32) {
+			iOffsetValue = QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, dtImageOffset, cls4);
 		}
 		else {
-			bp08 = bp04->Yoffset();
+			iYOffset = pImage->Yoffset();
 #if DM2_EXTENDED_MODE == 1
-			if (bp08 == -32 || bp08 == 31) {
-				bp08 = 0;
+			if (iYOffset == -32 || iYOffset == 31) {
+				iYOffset = 0;
 			}
 #else
-			if (bp08 == -32) {
-				bp08 = 0;
+			if (iYOffset == -32) {
+				iYOffset = 0;
 			}
 #endif
-			si = (bp06 << 8) | Bit8u(bp08);
+			iOffsetValue = (iXOffset << 8) | U8(iYOffset);
 		}
-		if (di != 0) {
-			FREE_PICT6(bp04);
+		if (iImageNotInShelf != 0) {
+			FREE_PICT6(pImage);
 		}
-		return si;
+		return iOffsetValue;
 	}
 }
 

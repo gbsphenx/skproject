@@ -714,27 +714,27 @@ protected:
 	U32		(*_4976_5be2)[23];
 	U16		_4976_5be6;
 	X16		_4976_5be8;
-	U16	_4976_5bea;
-	U16	_4976_5bec;
+	U16		_4976_5bea;
+	U16		_4976_5bec;
 	U8		_4976_5bee[4]; // [0] 1 if MUCH memory avail.
-	i16	_4976_5bf2;
+	i16		_4976_5bf2;
 	X16		_4976_5bf4;
-	U16	_4976_5bf6;
-	Bit8u	_4976_5bf8[2];	// cnt kanji entries in each cls2
-	skxxxf	*_4976_5bfa[2];	// skxxxf *
+	U16		_4976_5bf6;
+	U8		_4976_5bf8[2];	// cnt kanji entries in each cls2
+	SkTextFont	*_4976_5bfa[2];	// skxxxf *
 	U32		tblTimerTickRemoveHintMessage[1];	// (_4976_5c02)
 	U16		_4976_5c06;
 	U8		*_4976_5c08;
 	U16		glbTimerTickRemoveHintMessageIndex;		// index for _4976_5c02 (tblTimerTickRemoveHintMessage), but must be always 0, since the table has only 1 slot
 	Bit8u	*_4976_5c0e;	// font-bitmap at 01-00-07-00-00-00
 	U16		_4976_5c12;
-	U16	glbTimersActiveCount;				// (_4976_5c14) active timer count
-	U16	glbTimersMaximumCount;				// (_4976_5c16) maximum timer count
-	U16	glbTimerIndexNextAvailable;				// (_4976_5c18) next avail timer index
-	U16	*glbTimerNextEntries;			// (_4976_5c1a) next timer entries to be proceeded
-	U16	glbTimersCount;				// (_4976_5c1e) timer count?
+	U16		glbTimersActiveCount;				// (_4976_5c14) active timer count
+	U16		glbTimersMaximumCount;				// (_4976_5c16) maximum timer count
+	U16		glbTimerIndexNextAvailable;				// (_4976_5c18) next avail timer index
+	U16		*glbTimerNextEntries;			// (_4976_5c1a) next timer entries to be proceeded
+	U16		glbTimersCount;				// (_4976_5c1e) timer count?
 	Timer	*glbTimersTable;	// (_4976_5c20) timer entities?
-	Bit32u	_4976_5c24;
+	U32		_4976_5c24;
 	X16		_4976_5c28;
 	DistantEnvironment	_4976_5c2a[5];
 	U8		glbRainHasThunderImage;	// (_4976_5c5c)
@@ -1779,7 +1779,7 @@ protected:
 	i16 DIALOG_SELECT_SAVEGAMES();	// _2066_33e7
 	void SET_PARTY_HERO_FLAG(U16 flagvalue);
 	void SEARCH_STARTER_CHAMPION(); // _2f3f_0789
-	void FILL_U16(i16 *buff, X16 cnt, i16 val, i16 delta);
+	void FILL_U16(i16 *pDataBuffer, X16 iSizeCount, i16 iFillValue, i16 iDeltaStep);
 	void _19f0_045a(i16 xx, i16 yy);
 	i16 _19f0_0207(i16 xx, i16 yy, i16 ss, i16 tt, U16 (SkWinCore::*hazardTest)(i16 xx, i16 yy));
 	U16 _19f0_00b8(i16 xx, i16 yy);
@@ -1859,7 +1859,7 @@ protected:
 	void FREE_PICT_ENTRY(U8* xPictureBuffer);
 	void DRAW_VP_RC_STR(U16 rectno, U16 clr1, const U8 *str);
 	U16 QUERY_MBCS_PRESENCE(const Bit8u *str);
-	skxxxf *QUERY_CHAR_METRICS(U8 cls2, U8 yy, U8 chr, U8 *tableIdxOut);
+	SkTextFont *QUERY_CHAR_METRICS(U8 cls2, U8 yy, U8 chr, U8 *tableIdxOut);
 
 	U16 QUERY_STR_METRICS(const Bit8u *buff, i16 *xx, i16 *yy);
 	//inline U16 QUERY_STR_METRICS(Bit8u *buff, U16 *xx, U16 *yy);	// INLINE
@@ -2263,7 +2263,7 @@ protected:
 	void LOAD_GDAT_INTERFACE_00_02();
 	void LOAD_GDAT_INTERFACE_00_00();
 	void _38c8_00c8_ALLOC_PICT();
-	void KANJI_FONT_LOAD(X8 cls2);
+	void KANJI_FONT_LOAD(X8 iGDatCls2MainItemId);
 
 	void FONT_LOAD_NOTHING();	// _470a_0003 NOTHING??
 	void _3929_0e16_FONT_LOAD();	// _3929_0e16

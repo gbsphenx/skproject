@@ -546,31 +546,31 @@ U8* SkWinCore::EXTRACT_GDAT_IMAGE(U16 iGDatIndex, i16 allocUpper)
 }
 
 //^3929:0CA8
-void SkWinCore::KANJI_FONT_LOAD(X8 cls2)
+void SkWinCore::KANJI_FONT_LOAD(X8 iGDatCls2MainItemId)
 {
 	ENTER(660);
 	X16 bp0e = 0;
 	X16 bp10 = 0x20;
-	X16 si = 0xef;
-	skxxxf bp0294[64];
-	skxxxf *bp08 = bp0294;
-	U8 bp0b;
-	U8 *bp04;
-	for (bp0b = 0; (bp04 = QUERY_GDAT_ENTRY_DATA_BUFF(GDAT_CATEGORY_x1C_JAPANESE_FONT, cls2, dtImage, bp0b)) != NULL; ) {
-		X16 bp0a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x1C_JAPANESE_FONT, cls2, dtWordValue, bp0b);
+	X16 si = 0xEF;
+	SkTextFont bp0294[64];
+	SkTextFont *bp08 = bp0294;
+	U8 iFontEntryIdx;	// bp0b
+	U8 *pDataBuffer;	// bp04
+	for (iFontEntryIdx = 0; (pDataBuffer = QUERY_GDAT_ENTRY_DATA_BUFF(GDAT_CATEGORY_x1C_JAPANESE_FONT, iGDatCls2MainItemId, dtImage, iFontEntryIdx)) != NULL; ) {
+		X16 bp0a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x1C_JAPANESE_FONT, iGDatCls2MainItemId, dtWordValue, iFontEntryIdx);
 		if (bp0a != 0) {
 			bp0e = bp0a >> 8;
 			bp10 = U8(bp0a);
 		}
-		bp0a = QUERY_GDAT_PICT_OFFSET(GDAT_CATEGORY_x1C_JAPANESE_FONT, cls2, bp0b);
+		bp0a = QUERY_GDAT_PICT_OFFSET(GDAT_CATEGORY_x1C_JAPANESE_FONT, iGDatCls2MainItemId, iFontEntryIdx);
 		bp08->b0 = X8(bp0e);
 		bp08->b1 = X8(bp10);
 		bp08->w6 = i8(bp0a >> 8);
-		bp08->w2 = i16(READ_UI16(bp04,+0) & 0x3FF) / bp08->w6;
+		bp08->w2 = i16(READ_UI16(pDataBuffer,+0) & 0x3FF) / bp08->w6;
 		bp08->w8 = i8(bp0a);
-		bp08->w4 = i16(READ_UI16(bp04,+2) & 0x3FF) / bp08->w8;
-		bp0b++;
-		if (bp0b >= 0x40)
+		bp08->w4 = i16(READ_UI16(pDataBuffer,+2) & 0x3FF) / bp08->w8;
+		iFontEntryIdx++;
+		if (iFontEntryIdx >= 0x40)	// no more than 0x40 font images, although there are just up to 0x0C in gdat.
 			continue;
 		bp10 += bp08->w2 * bp08->w4;
 		if (bp10 > si) {
@@ -583,11 +583,11 @@ void SkWinCore::KANJI_FONT_LOAD(X8 cls2)
 		}
 		bp08++;
 	}
-	_4976_5bf8[cls2] = bp0b;
-	U32 bp14 = bp0b * 10;
+	_4976_5bf8[iGDatCls2MainItemId] = iFontEntryIdx;
+	U32 bp14 = iFontEntryIdx * 10;
 	COPY_MEMORY(
 		bp0294, 
-		_4976_5bfa[cls2] = reinterpret_cast<skxxxf *>(ALLOC_MEMORY_RAM(bp14, afUseUpper, 0x400)),
+		_4976_5bfa[iGDatCls2MainItemId] = reinterpret_cast<SkTextFont *>(ALLOC_MEMORY_RAM(bp14, afUseUpper, 0x400)),
 		bp14
 		);
 	return;

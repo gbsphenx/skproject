@@ -292,7 +292,7 @@ Bit16u SkWinCore::_3929_04e2_DRAW_TEXT_STRINGS(const Bit8u *strIn, Bit8u *strOut
     Bit16u bp06 = 0;
 	Bit16u bp08 = 0;
 	Bit8u bp0d;
-	skxxxf *bp0c;
+	SkTextFont *bp0c;
 	if (QUERY_MBCS_PRESENCE(strIn) != 0 || _4976_475e != 0xff) {
 		if (_4976_475e == 0xff) {
 			_4976_475e = 1;
@@ -420,10 +420,10 @@ const Bit8u *SkWinCore::DRAW_MBCS_STR(
 		bp0b = 0;
 	}
 	Bit8u bp0d;
-	skxxxf *bp04 = QUERY_CHAR_METRICS(*ww, bp0b, bp0c, &bp0d);
+	SkTextFont *bp04 = QUERY_CHAR_METRICS(*ww, bp0b, bp0c, &bp0d);
 	if (bp04 == NULL)
 		return str;
-	Bit16u bp18 = glbGDatFloppyFlag;
+	U16 bp18 = glbGDatFloppyFlag;
 	glbGDatFloppyFlag = -_4976_5d76;
 	// SPX: add protection here : if the graphics.dat does not contain japanese font, replacing the missing font with default image (yukman) will lead into a crash
 	// Therefore, we check if the font exist; if not, just leave for now.
@@ -432,12 +432,12 @@ const Bit8u *SkWinCore::DRAW_MBCS_STR(
 	//	return (const Bit8u*) "?";	// this will lead to an infinite loop when displaying HIT damage
 		return str;
 
-	Bit8u *bp08 = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x01_INTERFACE_GENERAL, *ww, bp0d);	// 0x1C
-	Bit8u bp2a[16]; // 2a-1b
-	Bit16u bp0a;
+	U8 *bp08 = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x01_INTERFACE_GENERAL, *ww, bp0d);	// 0x1C
+	U8 bp2a[16]; // 2a-1b
+	U16 bp0a;
 	if (dstbpp != IMG_4_BPP) {	// IMG_8_BPP
-		bp2a[ 0] = (Bit8u)clr2;
-		bp2a[15] = (Bit8u)clr1;
+		bp2a[ 0] = (U8)clr2;
+		bp2a[15] = (U8)clr1;
 		bp0a = ((clr2 & 0x4000) != 0) ? 0 : -1;
 	}
 	else {	// IMG_4_BPP
@@ -447,16 +447,16 @@ const Bit8u *SkWinCore::DRAW_MBCS_STR(
 		else {
 			bp0a = -1;
 		}
-		Bit8u *bp12;
-		Bit16u di;
-		Bit16u si;
-		Bit32u bp16;
+		U8 *bp12;
+		U16 di;
+		U16 si;
+		U32 bp16;
 		if ((clr1 == 0 && clr2 == 0) || _4976_5d76 == 0) {
 			bp08 = QUERY_GDAT_IMAGE_ENTRY_BUFF(0x001c, *ww, bp0d);
 			if (clr1 != 0 || clr2 != 15) {
-				Bit8u *bp12 = bp08;
-				Bit16u di = ((Bit16u *)bp08)[-2];
-				Bit16u si = ((Bit16u *)bp08)[-1];
+				U8 *bp12 = bp08;
+				U16 di = ((Bit16u *)bp08)[-2];
+				U16 si = ((Bit16u *)bp08)[-1];
 				goto _02e5;
 			}
 		}

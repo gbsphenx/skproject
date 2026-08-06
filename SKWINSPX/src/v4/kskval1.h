@@ -168,5 +168,5 @@
 		// SPX: some extra tables for Beta version
 		memcpy(tblBetaMainScreenPalette, "\x00\x23\x36\x37\x39\xA7\xC7\xA9\x8F\x63\x66\x68\xDF\x05\xEF\xFF", 16);
 		memcpy(tblClassicPalette, "\x00\xF9\xFA\xCB\x3F\xCF\x7B\x7E\xBF\x9F\xDC\x8F\xF8\xFC\x2F\xFF", 16);
-		memcpy(tblBetaClassicPalette, "\x00\xF7\xF9\xB7\x4D\xA9\x68\x6D\xBF\x9F\xCD\x8F\xF4\xFB\x2F\xFF", 16);	// As 256c Beta palette is different, the classic must be adjusted too
+		memcpy(tblBetaClassicPalette, "\x00\xF7\xF9\xB7\x4D\xA9\x68\x6D\xBF\x9F\xCD\x8F\xF4\xFB\x2F\xFF", 16);	// As 256c Beta palette is a bit different, the classic palette mapping must be adjusted too
 

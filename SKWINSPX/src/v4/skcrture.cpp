@@ -1579,11 +1579,11 @@ X32 SkWinCore::CREATURE_GET_NEXT_THINK_GAMETICK()
 {
 	// DIFF!
 
-	//^1C9A:0A48
 	ENTER(20);
-	if (glbCurrentThinkingCreatureData == NULL && SkCodeParam::bDebugBypassNullPointers == true) // SPX DEBUG
+	if (!CheckSafePointer(glbCurrentThinkingCreatureData) && SkCodeParam::bDebugBypassNullPointers == true) // SPX DEBUG
 		return 0;
-	//^1C9A:0A4D
+	if (SkCodeParam::bDM2BetaGDATDetected)
+		return 0;
 	i8 bp03 = glbAIDef->b9x; // bp03
 	U16 iCreatureType = glbCurrentThinkingCreatureRec->CreatureType(); // bp06
 	U16 iAnimSeqOffset = glbCreatureAnimSeqInfo->iAnimSeq;	// bp0c
@@ -1594,17 +1594,14 @@ X32 SkWinCore::CREATURE_GET_NEXT_THINK_GAMETICK()
 		bp02 = (glbAIDef->IsStaticObject() != 0) ? glbCurrentThinkingCreatureRec->w12 : 0;
 		GET_CREATURE_ANIMATION_FRAME(U8(iCreatureType), glbCurrentThinkingCreatureData->Command, &iAnimSeqOffset, &iCurrentFrameInfo, &glbCreatureAnimationFrame, bp02);
 		if (glbCreatureAnimationFrame == NULL) {
-			ZERO_MEMORY(&bp14, 6);
+			ZERO_MEMORY(&bp14, sizeof(CreatureAnimationFrame));	// 6
 			glbCreatureAnimationFrame = &bp14;
 		}
 	}
-	//^1C9A:0AE6
 	bp02 = glbCurrentThinkingCreatureData->b7;
 	if ((glbCreatureAnimationFrame->b4 & 0x80) != 0) {
-		//^1C9A:0B01
 		i16 si = glbCurrentThinkingCreatureData->Command;
 		if (si != ccm24 && si != ccm23 && si != ccm25) {	// different from "sleep" commands
-			//^1C9A:0B1B
 			bp02 &= 0xc0;
 			si = bp03 & 3;	// bits 1 & 2 => value between 0 and 3
 			if (si != 0) {
@@ -1614,7 +1611,6 @@ X32 SkWinCore::CREATURE_GET_NEXT_THINK_GAMETICK()
 				}
 				bp02 |= si;
 			}
-			//^1C9A:0B4B
 			si = (bp03 >> 2) & 3;	// bits 3 & 4	// all flying creatures have bits 3+4 sets; dragoth and skeleton don't have bit 3, but have bit 4 set.
 			if (si != 0) {
 				si = RAND16(si);
@@ -1625,14 +1621,12 @@ X32 SkWinCore::CREATURE_GET_NEXT_THINK_GAMETICK()
 			}
 		}
 	}
-	//^1C9A:0B80
 	if ((glbCreatureAnimationFrame->b4 & 0x20) != 0) {
 		bp02 |= 0x40;
 	}
 	else {
 		bp02 &= 0xffbf;
 	}
-	//^1C9A:0B97
 	if ((glbCreatureAnimationFrame->b4 & 0x40) != 0) {
 		if (RAND01() != 0) {
 			bp02 |= 0x40;
@@ -1641,14 +1635,13 @@ X32 SkWinCore::CREATURE_GET_NEXT_THINK_GAMETICK()
 			bp02 &= 0xffbf;
 		}
 	}
-	//^1C9A:0BB7
 	glbCurrentThinkingCreatureData->b7 = U8(bp02);
 	glbCreatureAnimSeqInfo->iAnimSeq = iAnimSeqOffset;
 	glbCreatureAnimSeqInfo->iAnimInfo = iCurrentFrameInfo;	// this is where creature animation change internal frame index
 
 	U8 iSoundID = glbCreatureAnimationFrame->sound;
 
-	if (SkCodeParam::bDM2V5Mode) {
+	if (SkCodeParam::bDM2V5Mode && !SkCodeParam::bDM2BetaGDATDetected) {
 		glbCreatureAnimSeqInfoV5 = GET_ANIM_SEQUENCE_INFO_V5(iCreatureType, iAnimSeqOffset, iCurrentFrameInfo);
 		iSoundID = glbCreatureAnimSeqInfoV5->sound;
 		if (iSoundID == 0x7F)
@@ -1658,6 +1651,7 @@ X32 SkWinCore::CREATURE_GET_NEXT_THINK_GAMETICK()
 	if (iSoundID != SOUND_NONE) {	// != 0xFF
 		if (SkCodeParam::bUsePowerDebug) { 
 			U8 sCreatureName[32];
+			sprintf((char*)sCreatureName, "CREATURE %02X", U8(iCreatureType));
 			QUERY_GDAT_TEXT(GDAT_CATEGORY_x0F_CREATURES, U8(iCreatureType), 0x00, sCreatureName);
 			SkD((DLV_DBG_SND_CRE, "SND: Creature sound > idx:%02X (%s) snd:%02X xx:%02X yy:%02X x:%02d y:%02d tick:%02d\n"
 				, U8(iCreatureType), sCreatureName, iSoundID, 0x46, 0x80, glbCreatureTimer.XcoordB(), glbCreatureTimer.YcoordB(), 1));
@@ -1671,7 +1665,6 @@ X32 SkWinCore::CREATURE_GET_NEXT_THINK_GAMETICK()
 		iNextRethinkTick = i16(min_value(1, glbCreatureAnimationFrame->b4 & 7)) + glbGameTick;
 		goto _0cd1;
 	}
-	//^1C9A:0C2A
 	SkD((DLV_DBG_CANIM, "DBG: glbCreatureAnimationFrame %04X %04X %02X %02X \n", (Bitu)glbCreatureAnimationFrame->w0, (Bitu)glbCreatureAnimationFrame->w2, (Bitu)glbCreatureAnimationFrame->b4, (Bitu)glbCreatureAnimationFrame->sound));
 	iDeltaTicks = (glbCreatureAnimationFrame->b4 >> 3) & 3;
 	if (iDeltaTicks != 0) {

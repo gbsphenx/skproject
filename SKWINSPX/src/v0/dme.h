@@ -10,7 +10,7 @@
 #include <skdefine.h>
 #include <skdebug.h>
 
-//#include <skparam.h> // SPX: allow control of DM1 vs DM2 behaviour
+#include <skparam.h> // SPX: allow some behaviour control such as little-endian/big-endian switch
 
 //#if !defined (SKDOSV5) && defined (_MSC_VER)
 #if defined (_MSC_VER)
@@ -66,6 +66,9 @@ typedef X32 X32ptr;
 #include <sktypesx.h>
 
 #pragma pack(push, 1)
+
+#define DSWAPW(X) ( ((X & 0xFF00)>>8) + ((X & 0x00FF)<<8) )
+
 
 #if DM2_EXTENDED_MODE == 1
 	#define MEM_EMS_MB 32
@@ -2049,8 +2052,8 @@ namespace DM2Internal {
 		U16 iBpp;			// @4	w4_
 		U16 iMemPool;			// @6	w6_
 
-		i16 Xoffset() const { return w0_ >> 10; }
-		i16 Yoffset() const { return w2_ >> 10; }
+		i16 Xoffset() const { if (SkCodeParam::bUseBigEnd) { return (DSWAPW(w0_))>>10; } return w0_ >> 10; }	// return w0_ >> 10;
+		i16 Yoffset() const { if (SkCodeParam::bUseBigEnd) { return (DSWAPW(w2_))>>10; } return w2_ >> 10; }	// return w2_ >> 10;
 		U16 BitsPixel() const { return iBpp; }
 		U16 AllocLower() const { return iMemPool; }
 	};
@@ -2707,8 +2710,8 @@ namespace DM2Internal {
 			return b21_;
 		}
 	};
-	// 
-	struct skxxxf { // 10 bytes
+	// specific text font structure
+	struct SkTextFont { // (skxxxf) 10 bytes
 		X8 b0;	// @0 // table?
 		X8 b1;	// @1 // char index
 		X16 w2;	// @2 // cell x-cnt  // x1

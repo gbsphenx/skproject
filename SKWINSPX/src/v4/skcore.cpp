@@ -4090,27 +4090,23 @@ void SkWinCore::RESET_CAII()
 	}
 //	if (SkCodeParam::bDebugNoCreatures)
 //		return;
+	if (SkCodeParam::bDM2BetaGDATDetected)
+		return;
 	FILL_ORPHAN_CAII();
 	return;
 }
 
 
 //^0CD5:0039
-void SkWinCore::FILL_U16(i16 *buff, X16 cnt, i16 val, i16 delta)
+void SkWinCore::FILL_U16(i16 *pDataBuffer, X16 iSizeCount, i16 iFillValue, i16 iDeltaStep)
 {
-	//^0CD5:0039
 	ENTER(0);
-	//^0CD5:003E
-	X16 si = 0;
-	delta >>= 1;
-	//^0CD5:0043
-	for (U16 di = 0; di<cnt; di++) {
-		//^0CD5:0047
-		buff[si] = val;
-		si += delta;
-		//^0CD5:0059
+	X16 iBuffCursor = 0;	// si
+	iDeltaStep >>= 1;	// because working on X16 buffer
+	for (U16 iIndex = 0; iIndex < iSizeCount; iIndex++) {	// di
+		pDataBuffer[iBuffCursor] = iFillValue;
+		iBuffCursor += iDeltaStep;
 	}
-	//^0CD5:005F
 	return;
 }
 
@@ -6684,113 +6680,77 @@ U16 SkWinCore::QUERY_MBCS_PRESENCE(const U8 *str)
 }
 
 //^3929:0044
-skxxxf *SkWinCore::QUERY_CHAR_METRICS(U8 cls2, U8 yy, U8 chr, U8 *tableIdxOut)
+SkTextFont *SkWinCore::QUERY_CHAR_METRICS(U8 cls2, U8 yy, U8 chr, U8 *tableIdxOut)
 {
-	//^3929:0044
 	ENTER(6);
-	//^3929:0048
-	skxxxf *bp04 = _4976_5bfa[cls2];
+	SkTextFont *bp04 = _4976_5bfa[cls2];
 	U8 bp05 = _4976_5bf8[cls2];
 	bp05--;
-	//^3929:0071
 	U8 cl;
 	for (cl = 0; cl <= bp05; bp04++, cl++) {
-		//^3929:0075
 		if (true
 			&& bp04->b0 == yy 
 			&& bp04->b1 <= chr 
 			&& bp04->w2 * bp04->w4 +bp04->b1 >= chr
 		) {
-			//^3929:00A2
 			if (cl == bp05 || bp04[1].b0 != yy || bp04[1].b1 > chr) {
-				//^3929:00BB
 				if (tableIdxOut != NULL)
 					*tableIdxOut = cl;
 				return bp04;
 			}
 		}
-		//^3929:00D3
 	}
-	//^3929:00E0
 	return NULL;
 }
 
 //^3929:03DC
 U16 SkWinCore::QUERY_STR_METRICS(const U8 *buff, i16 *xx, i16 *yy)
 {
-	//^3929:03DC
-	//^3929:03E2
 	if (buff == NULL) {
-		//^3929:03EA
 		return 0;
 	}
-	//^3929:03EF
 	i16 si;
 	U16 di;
 	if (QUERY_MBCS_PRESENCE(buff) != 0) {
-		//^3929:0402
 		si = - _4976_0132;
 		U8 bp05 = 1;
 		di = 0;
-		//^3929:040F
 		U8 bp07;
 		for (; *buff != 0; ) {
-			//^3929:0412
 			U8 bp06 = *(buff++);
-			//^3929:041E
 			if (bp06 >= 0xf0) {
-				//^3929:0422
 				bp07 = *buff; buff++;
 			}
-			//^3929:0430
 			else if (bp06 < 32) {
-				//^3929:0436
 				if (bp06 == 2) {
-					//^3929:043C
 					bp05 = *buff + 0xe0;
 				}
-				//^3929:044A
 				continue;
 			}
 			else {
-				//^3929:044C
 				bp07 = bp06;
 				bp06 = 0;
 			}
-			//^3929:0456
 			U8 bp08;
-			skxxxf *bp04 = QUERY_CHAR_METRICS(bp05, bp06, bp07, &bp08);
-			//^3929:0474
+			SkTextFont *bp04 = QUERY_CHAR_METRICS(bp05, bp06, bp07, &bp08);
 			if (bp04 != NULL) {
-				//^3929:0478
 				si += bp04->w6 + _4976_0132;
-				//^3929:0485
 				di = max_value(di, bp04->w8 - _4976_0136);
 			}
-			//^3929:0498
 		}
-		//^3929:04A4
 	}
 	else {
-		//^3929:04A6
 		si = - _4976_0120;
 		di = _4976_011e - _4976_0124;
-		//^3929:04B6
 		while (*(buff++) != 0) {
-			//^3929:04B8
 			si += _4976_0126;
 		}
 	}
-	//^3929:04C8
 	if (si <= 0) {
-		//^3929:04CC
-		//^3929:03EA
 		return 0;
 	}
-	//^3929:04CF
 	*xx = si;
 	*yy = di;
-	//^3929:04DB
 	return 1;
 }
 
@@ -6805,79 +6765,51 @@ U16 SkWinCore::QUERY_STR_METRICS_U16(U8 *buff, U16 *xx, U16 *yy)
 //^3A15:020F
 void SkWinCore::_3a15_020f()
 {
-	//^3A15:020F
 	ENTER(4);
-	//^3A15:0215
 	U16 timerCnt = glbTimersCount;	// di
-	//^3A15:021A
 	if (timerCnt == 0)
-		//^3A15:021C
 		return;
-	//^3A15:0220
 	U16 si;
 	for (si = 0; si < MAX_CHAMPIONS; si++) {
-		//^3A15:0222
 		tblChampionSquad[si].timerIndex = TIMER_NONE;
-		//^3A15:0231
 	}
-	//^3A15:0237
 	si = 0;
-	//^3A15:0239
 	Timer *timer = glbTimersTable;	//*bp04
-	//^3A15:0246
 	for (; si < timerCnt; si++, timer++) {
-		//^3A15:0248
 		switch (timer->TimerType()) {
 			case tty0C:
-				//^3A15:0262
 				tblChampionSquad[timer->actor].timerIndex = si;
 				break;
 			case tty1D:
 			case tty1E:
-				//^3A15:0278
 				GET_ADDRESS_OF_RECORDE(timer->value)->TimerIndex(si);
 				break;
 		}
-		//^3A15:028D
 	}
-	//^3A15:0296
 	return;
 }
 
 //^3A15:029A
 void SkWinCore::COMPACT_TIMERLIST()
 {
-	//^3A15:029A
-	//^3A15:02A0
 	U16 si = 0;
 	U16 di = glbTimersCount;
-	//^3A15:02A7
 	if (di != 0) {
-		//^3A15:02AB
 		Timer *bp04 = glbTimersTable;
 
 		do {
-			//^3A15:02B8
 			if (bp04->TimerType() == tty00) {
-				//^3A15:02C2
 				Timer *bp08 = &bp04[1];
-				//^3A15:02D1
 				for (; bp08->TimerType() == tty00; bp08++);
-				//^3A15:02E1
 				*bp04 = *bp08;
-				//^3A15:02F5
 				bp08->TimerType(tty00);
 			}
-			//^3A15:02FD
 			bp04++;
 			si++;
-			//^3A15:0302
 		} while (si != di);
-		//^3A15:0308
 		__SORT_TIMERS();
 		_3a15_020f();
 	}
-	//^3A15:0310
 	return;
 }
 
@@ -6908,44 +6840,29 @@ U16 SkWinCore::_RAND02()
 {
 	// CSBwinSimilarity: TAG001074,STRandom0_3
 
-	//^0CD5:0147
-	//^0CD5:014A
 	glbRandomSeed = glbRandomSeed * 0xbb40e62d + 11;
-	//^0CD5:016A
 	return (glbRandomSeed >> 8) & 3;
-	//^0CD5:0175
 }
 
 //^098D:02D2
 U16 SkWinCore::CALC_SIZE_OF_COMPRESSED_RECT(U16 xx)
 {
-	//^098D:02D2
 	U16 di = xx;
 	U16 si = 8;
-	//^098D:02DD
 	if ((di & 4) != 0) {
-		//^098D:02E3
-		//^098D:02F7
 		si = si -2;
 	}
 	else {
-		//^098D:02E5
 		if ((di & 2) != 0) {
-			//^098D:02EB
 			si = si -2;
 		}
-		//^098D:02F1
 		if ((di & 1) != 0) {
-			//^098D:02F7
 			si = si -2;
 		}
 	}
-	//^098D:02FD
 	if ((di & 24) != 0) {
-		//^098D:0303
 		si = si -2;
 	}
-	//^098D:0309
 	return si;
 }
 
@@ -7265,54 +7182,35 @@ SRECT *SkWinCore::UNION_RECT(SRECT *rc1, const SRECT *rc2, i16 *offx, i16 *offy)
 	// 
 	// in this case, (offx,offy) is at (0, 0).
 
-	//^098D:0126
 	i16 si = rc2->x - rc1->x;
-	//^098D:0139
 	if (si > 0) {
-		//^098D:013D
 		*offx = si;
-		//^098D:0143
 		rc1->x += si;
 		rc1->cx -= si;
 	}
 	else {
-		//^098D:014F
 		*offx = 0;
 	}
-	//^098D:0157
 	si = rc2->y - rc1->y;
-	//^098D:0167
 	if (si > 0) {
-		//^098D:016B
 		*offy = si;
-		//^098D:0171
 		rc1->y += si;
 		rc1->cy -= si;
 	}
 	else {
-		//^098D:017E
 		*offy = 0;
 	}
-	//^098D:0186
 	si = (rc1->x +rc1->cx -1) - (rc2->x +rc2->cx -1);
-	//^098D:01AC
 	if (si > 0) {
-		//^098D:01B2
 		rc1->cx -= si;
 	}
-	//^098D:01B9
 	si = (rc1->y +rc1->cy -1) - (rc2->y +rc2->cy -1);
-	//^098D:01D5
 	if (si > 0) {
-		//^098D:01D9
 		rc1->cy -= si;
 	}
-	//^098D:01E0
 	if (rc1->cx > 0 && rc1->cy > 0) {
-		//^098D:01F1
 		return rc1;
 	}
-	//^098D:01F9
 	return NULL;
 }
 
@@ -7325,7 +7223,6 @@ void SkWinCore::BLIT_IMAGE_00eb_0845(U8 *buff, SRECT *rc, U16 ww) //#DS=04BF
 	LOADDS(0x0c48);
 	U16 bp12 = ((ww & 0x8000) != 0) ? 1 : 0;
 	LOCK_MOUSE_EVENT();
-	//^00EB:0867
 	if (true
 		&& glbMouseCursorVisible != 0
 		&&                           rc->y <= _04bf_09e0.y + _04bf_09e0.cy -1
@@ -7333,25 +7230,16 @@ void SkWinCore::BLIT_IMAGE_00eb_0845(U8 *buff, SRECT *rc, U16 ww) //#DS=04BF
 		&&               rc->x + rc->cx -1 >= _04bf_09e0.x
 		&& _04bf_09e0.x + _04bf_09e0.cx -1 >= rc->x
 	) {
-		//^00EB:08B0
-		//^00EB:092C
 		SRECT bp10;
 		bp10.y = max(rc->y, _04bf_09e0.y);
-		//^00EB:0948
 		bp10.x = max(rc->x, _04bf_09e0.x);
-		//^00EB:0962
 		bp10.cx = min(rc->x + rc->cx -1, _04bf_09e0.x + _04bf_09e0.cx -1) -bp10.x +1;
-		//^00EB:099D
 		bp10.cy = min(rc->y + rc->cy -1, _04bf_09e0.y + _04bf_09e0.cy -1) -bp10.y +1;
-		//^00EB:09D2
 		i16 bp06 = bp10.x - rc->x;
 		i16 bp08 = bp10.y - rc->y;
-		//^00EB:09E8
 		bp10.y -= _04bf_09e0.y;
 		bp10.x -= _04bf_09e0.x;
-		//^00EB:09F4
 		if (bp12 != 0) {
-			//^00EB:09FA
 			IBMIO_BLIT_TO_SCREEN_8TO8BPP(
 				buff,
 				_04bf_079e,
@@ -7363,90 +7251,64 @@ void SkWinCore::BLIT_IMAGE_00eb_0845(U8 *buff, SRECT *rc, U16 ww) //#DS=04BF
 				-1
 				);
 		}
-		//^00EB:0A1E
 		U16 si = rc->y * 320 + rc->x;
 		U16 bp02 = 0;
 		U16 di = 0;
 		U16 bp04 = rc->y;
-		//^00EB:0A3D
 		for (; rc->y + rc->cy -1 >= bp04; di += 103, bp02 += rc->cx, si += 320, bp04++) {
-			//^00EB:0A40
 			if (bp04 >= _04bf_09e0.y && _04bf_09e0.y + _04bf_09e0.cy -1 >= bp04) {
-				//^00EB:0A5C
 				glbBlitBufferSource = buff;
 				_04bf_0e34 = _04bf_0cf4;
-				//^00EB:0A73
 				if (bp12 != 0) {
-					//^00EB:0A79
 					MOVE_MEMORY_STRETCH_13TO16(
 						(((di >> 7) +8) *224) +21,
 						0
 						);
 				}
 				else {
-					//^00EB:0A94
 					MOVE_MEMORY_WITH_DELTA(bp02, 0, rc->cx);
 				}
-				//^00EB:0AA7
 				glbBlitBufferSource = _04bf_0cf4;
 				_04bf_0e34 = _04bf_079e;
-				//^00EB:0ABB
 				MOVE_MEMORY_WITH_DELTA(_04bf_09e0.x, ((bp04 - _04bf_09e0.y) * 24) +bp10.x, bp10.cx);
-				//^00EB:0AD9
 				glbBlitBufferSource = _04bf_0e80[_04bf_1938].b6;
 				_04bf_0e34 = _04bf_0cf4;
-				//^00EB:0AF5
 				COPY_MEMORY_WITH_DELTA_AND_TRANSPARENT(
 					(bp04 - _04bf_09e0.y) * (_04bf_0e80[_04bf_1938].b2) + bp10.x,
 					bp06,
 					bp10.cx,
 					(U8)glbBlitMouseColorkey
 					);
-				//^00EB:0B25
 				glbBlitBufferSource = _04bf_0cf4;
 				_04bf_0e34 = pbVram;
-				//^00EB:0B3B
-				//^00EB:0B8B
 				MOVE_MEMORY_WITH_DELTA(0, si, rc->cx);
 			}
 			else {
-				//^00EB:0B47
 				glbBlitBufferSource = buff;
 				_04bf_0e34 = pbVram;
-				//^00EB:0B60
 				if (bp12 != 0) {
-					//^00EB:0B66
 					MOVE_MEMORY_STRETCH_13TO16((((di >> 7) + 8) * 224) + 21, si);
 				}
 				else {
-					//^00EB:0B80
 					MOVE_MEMORY_WITH_DELTA(bp02, si, rc->cx);
 				}
 			}
-			//^00EB:0B92
 		}
 	}
 	else {
-		//^00EB:08B3
 		if (bp12 != 0) {
-			//^00EB:08B9
 			_04bf_0e34 = (U8 *)__vram;
 			glbBlitBufferSource = buff;
-			//^00EB:08D2
 			U16 di = 0;
 			U16 si = 320*40;
-			//^00EB:08D7
 			for (; si < 320*176; di += 103, si += 320) {
-				//^00EB:08D9
 				MOVE_MEMORY_STRETCH_13TO16(
 					((di >> 7) +8) *224 +21,
 					si
 					);
-				//^00EB:08F1
 			}
 		}
 		else {
-			//^00EB:0901
 			IBMIO_BLIT_TO_SCREEN_8TO8BPP(
 				buff,
 				__vram,
@@ -7464,7 +7326,6 @@ void SkWinCore::BLIT_IMAGE_00eb_0845(U8 *buff, SRECT *rc, U16 ww) //#DS=04BF
 	skWinApp->renderScreen(vram, 0, 40, 224, 136);
 #endif
 
-	//^00EB:0BBA
 	UNLOCK_MOUSE_EVENT();
 	return;
 }
@@ -7503,7 +7364,7 @@ RawEntry *SkWinCore::QUERY_GDAT_ENTRYPTR(U8 iGDatCategory, U16 iGDatItemId, U8 i
 		return NULL;
 	}
 	U16 si = glbGDatEntries.tblCls1toCls2[iGDatCategory];	// si
-	if (glbGDatEntries.tblCls1toCls2[iGDatCategory + 1] - si < iGDatEntryType) {	// SPX: this test feels weird
+	if (glbGDatEntries.tblCls1toCls2[iGDatCategory + 1] - si < iGDatEntryType) {
 		return NULL;
 	}
 	si += iGDatEntryType;
@@ -7534,7 +7395,7 @@ RawEntry *SkWinCore::QUERY_GDAT_ENTRYPTR(U8 iGDatCategory, U16 iGDatItemId, U8 i
 	iUpperBound = glbGDatEntries.tblCls2toCls3[si + 1] - di + 1;
 	iLowerBound = 0;
 	// SPX: BETA does not have sorted sub-entries the same way (sorted by RawDat index), instead use a straightforward search
-	if (SkCodeParam::bDM2BetaGDATDetected) {
+	if (SkCodeParam::bDM2BetaGDATDetected && glbGDatStructureRead) {
 		U16 iCurrentSearchIndex = 0;
 		RawEntry* xRawEnt = NULL;
 		for (iCurrentSearchIndex = iLowerBound; iCurrentSearchIndex < iUpperBound; iCurrentSearchIndex++) {
@@ -14929,9 +14790,13 @@ void SkWinCore::READ_GRAPHICS_STRUCTURE()
 	else {
 		if (READ_FILE(glbFileHandleGraphics1, 4, &glbGDat1stEntRawDatSize) == 0)	// Read the next 4 bytes of GDAT which hold the size for the first item entry which must be the ENT1 item
 			goto _read_graphics_structure__raise_error;
+		if (SkCodeParam::bUseBigEnd)
+			glbGDat1stEntRawDatSize = SWAP32(glbGDat1stEntRawDatSize);
 		glbGDatCursorDataCumulatedLength += glbGDat1stEntRawDatSize + 2;	// there _4976_5d6a gets the offset of the second item after ENT1 item
 		if (READ_FILE(glbFileHandleGraphics1, iTableDataSizesSize - 2, &pTableDataSizes[1]) == 0)	// here read the size table before the ENT1 item (except the first item already read, which is exceptionnally on 4 bytes; all others are on 2 bytes max)
 			goto _read_graphics_structure__raise_error;
+		if (SkCodeParam::bUseBigEnd)
+			SWAPWPX(&pTableDataSizes[1], iTableDataSizesSize - 2);
 	}
 	pTableDataSizes[0] = 0;
 	glbSizeOfGDATFull = glbGDatCursorDataCumulatedLength;
@@ -14959,8 +14824,8 @@ void SkWinCore::READ_GRAPHICS_STRUCTURE()
 
 //DEBUG_DISPLAY_GDAT_MAIN_INFO();
 
+	LOAD_GLOBAL_TABLE_RAWDAT_SOUNDS();	// SPX: quick test, invert this and glbGDatStructureRead after it for some Beta test; as it seem QUERY_GDAT_ENTRYPTR works differently before and after init
 	glbGDatStructureRead = 1;
-	LOAD_GLOBAL_TABLE_RAWDAT_SOUNDS();
 	return;
 
 _read_graphics_structure__raise_error:
@@ -14983,7 +14848,8 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_0A()
 	if (iItemSize <= 0) {
 		i16 hAnimFrameTabHandle = -1;
 		iItemSize = 1652;
-		SkCodeParam::bDM2V5Mode = true;
+		if (!SkCodeParam::bDM2BetaGDATDetected)
+			SkCodeParam::bDM2V5Mode = true;
 		// Then, we do a hardfile read to make up for missing item, not pretty but working
 		hAnimFrameTabHandle = FILE_OPEN((const U8*)"bin/v4/0653ctbl.bin");
 		tblCreatureFrameInfo14 = reinterpret_cast<U8 (*)[14]>(ALLOC_MEMORY_RAM(iItemSize,	afUseUpper, 0x400));
@@ -15090,7 +14956,8 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_00()
 		pDataTable = ALLOC_MEMORY_RAM(iItemSize,	afUseUpper, 0x400);
 		FILE_READ(hCreatureTabHandle, iItemSize, pDataTable);
 		FILE_CLOSE(hCreatureTabHandle);
-		SkCodeParam::bDM2V5Mode = true;
+		if (!SkCodeParam::bDM2BetaGDATDetected)
+			SkCodeParam::bDM2V5Mode = true;
 	}
 	else {
 		pDataTable = ALLOC_MEMORY_RAM(
@@ -15712,7 +15579,7 @@ UINT SkWinCore::SKLIB_GAMELOAD()
 // SPX: _38c8_04aa renamed INIT -- added a return code to handle pre-exit
 UINT SkWinCore::INIT()
 {
-	U16 iCompatibilityFlag = 0;
+ 	U16 iCompatibilityFlag = 0;
 	U16 iSpecialItem = 0;
 
 	SkD((SkCodeParam::bEngineNoDisplay||DLV_DBG_INIT, "INITIALIZATION\n"));
