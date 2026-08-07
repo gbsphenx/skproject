@@ -4600,19 +4600,14 @@ void SkWinCore::DRAW_VP_RC_STR(U16 rectno, U16 clr1, const U8 *str)
 	// like buttons: "SAVE", "QUIT", "RESULT", ...
 	// like item name: "SCOUT MAP", ...
 
-	//^3929:0BD7
-	//^3929:0BDB
 	i16 bp02;
 	i16 bp04;
 	if (QUERY_STR_METRICS(str, &bp02, &bp04) != 0) {
-		//^3929:0BF6
 		SRECT bp0c;
 		if (QUERY_BLIT_RECT(NULL, &bp0c, rectno, &bp02, &bp04, -1) != 0) {
-			//^3929:0C1A
 			DRAW_VP_STR(bp0c.x, bp0c.y + bp0c.cy -1, clr1, str);
 		}
 	}
-	//^3929:0C35
 	return;
 }
 
@@ -4631,11 +4626,11 @@ void SkWinCore::DRAW_GAMELOAD_DIALOGUE_TO_SCREEN(U8 *buffsrc, U16 iRectNo, i16 c
 			&bp0c,
 			bp02,
 			bp04,
-			*(U16 *)&buffsrc[-4],	//*(U16 *)&buffsrc[-4]	// width
+			READ_IMGBUFF_WIDTH(buffsrc),	//*(U16 *)&buffsrc[-4]	// width
 			glbScreenWidth,
 			colorkey,
 			0,
-			*(U16 *)&buffsrc[-6],	//*(U16 *)&buffsrc[-6]	// bpp
+			READ_IMGBUFF_BPP(buffsrc),	//*(U16 *)&buffsrc[-6]	// bpp
 			IMG_8_BPP,
 			localpal
 			);

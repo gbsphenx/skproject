@@ -42,6 +42,7 @@ public:
 
 	//--- Specific game setup
 	static bool bDM2BetaGDATDetected;	// special flag for DM2 Beta and adapt behaviour
+	static bool bDM2SegaGDATDetected;	// special flag for DM2 Sega and adapt behaviour
 	static bool bDM1Mode;				// dungeon loaded is a native DM1 dungeon
 	static bool bGFXFixModeDM1;
 	static bool bDM1ReadSavegame;		// read savegame as a native DM1 savegame (DM1 retrocompatibility)

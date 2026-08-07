@@ -24,7 +24,9 @@ bool SkCodeParam::bSpecialModeInspect = false;
 UINT SkCodeParam::bOptionNewGame = 0;
 int SkCodeParam::bOptionResumeSaveGame = -1;
 
-bool SkCodeParam::bUseBigEnd = false;	// Default is little-end
+bool SkCodeParam::bUseBigEnd = false;	// Default is little-end; big-end is used for SegaCD version
+bool SkCodeParam::bDM2BetaGDATDetected = false;
+bool SkCodeParam::bDM2SegaGDATDetected = false;	// Sega version specifically use standard 16c palettes and 16c*6 = 96c palettes for graphicssets.
 
 bool SkCodeParam::bNoAudio = false;
 bool SkCodeParam::bNoMusic = false;
@@ -33,7 +35,6 @@ bool SkCodeParam::bChampionImmune = false;
 bool SkCodeParam::bUseAudioSDL = false;
 bool SkCodeParam::bVideoSVGADisplay = false;
 
-bool SkCodeParam::bDM2BetaGDATDetected = false;
 bool SkCodeParam::bDM1Mode = false;
 bool SkCodeParam::bGFXFixModeDM1 = false;	// adjust gfx positions for DM1 mode
 bool SkCodeParam::bDM1ReadSavegame = false;

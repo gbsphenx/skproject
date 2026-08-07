@@ -7398,7 +7398,7 @@ RawEntry *SkWinCore::QUERY_GDAT_ENTRYPTR(U8 iGDatCategory, U16 iGDatItemId, U8 i
 	if (SkCodeParam::bDM2BetaGDATDetected && glbGDatStructureRead) {
 		U16 iCurrentSearchIndex = 0;
 		RawEntry* xRawEnt = NULL;
-		for (iCurrentSearchIndex = iLowerBound; iCurrentSearchIndex < iUpperBound; iCurrentSearchIndex++) {
+		for (iCurrentSearchIndex = iLowerBound; iCurrentSearchIndex <= iUpperBound; iCurrentSearchIndex++) {
 			xRawEnt = &bp08[iCurrentSearchIndex];
 			if (xRawEnt->cls2 == iGDatItemId && xRawEnt->cls4 == iGDatEntryId)
 				return xRawEnt;
@@ -15169,7 +15169,8 @@ void SkWinCore::SHOW_MENU_SCREEN()
 	cd.mo.glbImageCreditScreen = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x05_TITLE, 0x0, GDAT_IMG_x01_CREDITS_TOMBSTONE);		// Credit screen (tombstone)
 	// In some version, the menu screen is taken from raw7 or image
 	// 
-	if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x05_TITLE, 0x0, dt07, GDAT_IMG_x04_MAIN_MENU_SCREEN != 0xFFFF) && !SkCodeParam::bDM2BetaGDATDetected)	// 64000 bytes raw data for menu screen ?
+	if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x05_TITLE, 0x0, dt07, GDAT_IMG_x04_MAIN_MENU_SCREEN != 0xFFFF) 
+		&& !SkCodeParam::bDM2BetaGDATDetected && !SkCodeParam::bDM2SegaGDATDetected)	// 64000 bytes raw data for menu screen ?
 	{
 		glbMainMenuScreenImage8bpp = 1;
 		cd.mo.glbImageMenuScreen = QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_x05_TITLE, 0x0, dt07, GDAT_IMG_x04_MAIN_MENU_SCREEN);
@@ -15189,6 +15190,9 @@ void SkWinCore::SHOW_MENU_SCREEN()
 		// goes after the image data for the local palette (16 bytes)
 		if (SkCodeParam::bDM2BetaGDATDetected) {
 			glbMenuScreenLocalPal16 = (U8*)tblBetaMainScreenPalette;
+		}
+		if (SkCodeParam::bDM2SegaGDATDetected) {
+//			glbMenuScreenLocalPal16 = (U8*)tblSegaPalette16;
 		}
 	}
 	// cd.mo.glbImageMenuScreen - 6   would be like 06 FA | 00 00 | 02 00 => FA06 = 64006 | 0002 = afUseLower
@@ -15602,12 +15606,20 @@ UINT SkWinCore::INIT()
 	LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x00_BASE_DATA, dtPalIRGB, 0xFE, pPaletteBuffer);	// C01=I00=EFE=T009 palette IRGB (0x1, 0x0, dt09, 0xFE, bp04)
 	// SPX: Beta GDAT contains palette in raw7 data; if dtPalIRGB is not found, we should then look for raw7.
 	if (SkCodeParam::bDM2BetaGDATDetected)
-		LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 0x0, dtRaw7, 0xFE, pPaletteBuffer);
+		LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x00_BASE_DATA, dtRaw7, 0xFE, pPaletteBuffer);
+	// SPX: And for SegaCD, there is no 256c palette at all, there is a 16c IRGB palette at 01-00-00
+	if (!SkCodeParam::bDM2BetaGDATDetected && QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x00_BASE_DATA, dtPalIRGB, 0xFE) == 0xFFFF) {
+		LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x00_BASE_DATA, dtPalIRGB, 0x00, pPaletteBuffer);
+	}
 	SET_RGB_PALETTE_FROM_DATA(pPaletteBuffer);
 	DEALLOC_LOWER_MEMORY(0x400);
 	LOAD_GDAT_INTERFACE_00_02();
 	//glbPaletteT16 = QUERY_GDAT_ENTRY_DATA_PTR(0x1, 0x0, dt0d, 0xfe);
 	glbPaletteT16 = QUERY_GDAT_ENTRY_DATA_PTR(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x00_BASE_DATA, dtPalette16, 0xFE);
+	if (SkCodeParam::bUseBigEnd && glbPaletteT16 == NULL) {
+		SkCodeParam::bDM2SegaGDATDetected = true;
+		glbPaletteT16 = tblSegaPalette16;
+	}
 	INIT_LOAD_RECTS_ZONES();
 
 	// SPX: Added extended load here (requires the GDAT to be initialized, but must be before dungeon loading)

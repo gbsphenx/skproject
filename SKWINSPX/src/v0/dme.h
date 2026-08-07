@@ -1137,7 +1137,7 @@ namespace DM2Internal {
 	struct RawEntry {
 		U8 cls2;
 		U8 cls4;
-		U16 data;
+		U16 data;	// rawdata index or data value
 	};
 	// 
 	struct GraphicFileEntry {

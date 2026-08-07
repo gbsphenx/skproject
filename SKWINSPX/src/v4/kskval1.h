@@ -167,6 +167,7 @@
 
 		// SPX: some extra tables for Beta version
 		memcpy(tblBetaMainScreenPalette, "\x00\x23\x36\x37\x39\xA7\xC7\xA9\x8F\x63\x66\x68\xDF\x05\xEF\xFF", 16);
-		memcpy(tblClassicPalette, "\x00\xF9\xFA\xCB\x3F\xCF\x7B\x7E\xBF\x9F\xDC\x8F\xF8\xFC\x2F\xFF", 16);
-		memcpy(tblBetaClassicPalette, "\x00\xF7\xF9\xB7\x4D\xA9\x68\x6D\xBF\x9F\xCD\x8F\xF4\xFB\x2F\xFF", 16);	// As 256c Beta palette is a bit different, the classic palette mapping must be adjusted too
+		memcpy(tblClassicPalette,		"\x00\xF9\xFA\xCB\x3F\xCF\x7B\x7E\xBF\x9F\xDC\x8F\xF8\xFC\x2F\xFF", 16);
+		memcpy(tblBetaClassicPalette,	"\x00\xF7\xF9\xB7\x4D\xA9\x68\x6D\xBF\x9F\xCD\x8F\xF4\xFB\x2F\xFF", 16);	// As 256c Beta palette is a bit different, the classic palette mapping must be adjusted too
+		memcpy(tblSegaPalette16,		"\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F", 16);	// A straight indexed palette, as Sega does not hold a full 256c palette but a standard 16c.
 

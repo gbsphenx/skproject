@@ -881,6 +881,7 @@ protected:
 	U8							tblBetaMainScreenPalette[16];
 	U8							tblClassicPalette[16];
 	U8							tblBetaClassicPalette[16];
+	U8							tblSegaPalette16[16];
 	//}}SKSAVE_DESORTED_VARS
 
 public:
