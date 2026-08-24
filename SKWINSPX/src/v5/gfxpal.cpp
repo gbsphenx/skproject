@@ -170,7 +170,7 @@ void DM2_SELECT_PALETTE_SET(i16 set)
   X8 xPalWin[256][3];
 
 
-  printf("DM2_SELECT_PALETTE_SET mode = %d / mypal = %08X\n", bmode, mypal);
+  printf("DM2_SELECT_PALETTE_SET mode = %d / mypal = %p\n", bmode, mypal);
   if (bmode == 0)
   {
     for ( i = 0; i < PAL256; i++) // backup palette

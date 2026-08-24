@@ -234,19 +234,18 @@ void SkWinCore::DRAW_TEMP_PICST()
 //^0B36:037E
 // TODO: gfx related
 // SPX: _0b36_037e renamed PALETTE_TRANSLATE_WITH_LIGHTING
-U8 *SkWinCore::PALETTE_TRANSLATE_WITH_LIGHTING(U8 *localpal, i8 xx, i16 colorkey1, i16 colorkey2, i16 palentcnt)
+U8 *SkWinCore::PALETTE_TRANSLATE_WITH_LIGHTING(U8 *pLocalPal, i8 xx, i16 colorkey1, i16 colorkey2, i16 palentcnt)
 {
-	return localpal;
-	if (SkCodeParam::bDM2BetaGDATDetected)
-		return localpal;
+//	if (SkCodeParam::bDM2BetaGDATDetected)
+//		return localpal;
 	ENTER(8);
-	if (localpal != NULL && xx != 0) {
-		xx = U8(max_value(0, 64 -xx));
-		for (i16 bp02 = 0; bp02 < palentcnt; bp02++) {
-			if (bp02 != colorkey1 && bp02 != colorkey2) {
-				U16 di = tblOfsk4be2Palette[RCX(256,localpal[bp02])].b0;
+	if (pLocalPal != NULL && xx != 0) {
+		xx = U8(max_value(0, 64 -xx));	// xx
+		for (i16 iColorIdx = 0; iColorIdx < palentcnt; iColorIdx++) {	// bp02
+			if (iColorIdx != colorkey1 && iColorIdx != colorkey2) {
+				U16 di = tblOfsk4be2Palette[RCX(256,pLocalPal[iColorIdx])].b0;
 				i16 si = 0;
-				i16 bp04 = max_value((tblOfsk4bdePalette[RCX(16,di)].pTabRow1[tblOfsk4be2Palette[localpal[bp02]].b1] * xx) >> 6, 0);
+				i16 bp04 = max_value((tblOfsk4bdePalette[RCX(16,di)].pTabRow1[tblOfsk4be2Palette[pLocalPal[iColorIdx]].b1] * xx) >> 6, 0);
 				for (; tblOfsk4bdePalette[di].iRowSize -1 > si; si++) {
 					if (true
 						&& tblOfsk4bdePalette[di].pTabRow1[si] <= bp04
@@ -261,16 +260,16 @@ U8 *SkWinCore::PALETTE_TRANSLATE_WITH_LIGHTING(U8 *localpal, i8 xx, i16 colorkey
 				}
 				si = min_value(si, tblOfsk4bdePalette[di].iRowSize -1);
 
-				localpal[bp02] = tblOfsk4bdePalette[di].pTabRow2[si];
+				pLocalPal[iColorIdx] = tblOfsk4bdePalette[di].pTabRow2[si];
 			}
 		}
 	}
-	return localpal;
+	return pLocalPal;
 }
 
 //^32CB:0804
 // SPX: _32cb_0804 renamed PALETTE_SOMETHING_32cb_0804
-void SkWinCore::PALETTE_SOMETHING_32cb_0804(U8 *localpal, i16 cls4, U16 colorkey1, i16 colorkey2, U16 palentcnt)
+void SkWinCore::PALETTE_SOMETHING_32cb_0804(U8 *pLocalPal, i16 cls4, U16 colorkey1, i16 colorkey2, U16 palentcnt)
 {
 	ENTER(0);
 	U16 di = palentcnt;
@@ -290,11 +289,11 @@ void SkWinCore::PALETTE_SOMETHING_32cb_0804(U8 *localpal, i16 cls4, U16 colorkey
 	}
 	//^32CB:0854	// SPX: That part is for translating palette in case of 'fog'
 	if (!SkCodeParam::bDisableFogEffect && QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dt07, U8(cls4)) != 0) {
-		TRANSLATE_PALETTE(localpal, GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, U8(cls4), di);
-		PALETTE_TRANSLATE_WITH_LIGHTING(localpal, i8(glbViewportLightScale), colorkey1, colorkey2, di);
+		TRANSLATE_PALETTE(pLocalPal, GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, U8(cls4), di);
+		PALETTE_TRANSLATE_WITH_LIGHTING(pLocalPal, i8(glbViewportLightScale), colorkey1, colorkey2, di);
 	}
 	else {
-		PALETTE_TRANSLATE_WITH_LIGHTING(localpal, 64 -U8(((64 -si) * (64 - glbViewportLightScale)) >> 6), colorkey1, colorkey2, di);
+		PALETTE_TRANSLATE_WITH_LIGHTING(pLocalPal, 64 -U8(((64 -si) * (64 - glbViewportLightScale)) >> 6), colorkey1, colorkey2, di);
 	}
 	return;
 }
@@ -580,6 +579,28 @@ void SkWinCore::_44c8_1e43(U8 *src, U8 *dst, U8 *zz, SRECT *prc, U16 ss, U16 tt,
 }
 
 
+//^32CB:0649
+// TODO: image related / spell cloud inside
+// SPX: _32cb_0649 renamed GET_LOCAL_PALETTE_32cb_0649
+U8 *SkWinCore::GET_LOCAL_PALETTE_32cb_0649(U8 iGDatCls1Category, U8 iGDatCls2MainItemId, U8 iGDatCls4EntryId, i16 iTransparentColorKey)
+{
+	ENTER(6);
+	U8 *pLocalPal16 = QUERY_GDAT_IMAGE_LOCALPAL(iGDatCls1Category, iGDatCls2MainItemId, iGDatCls4EntryId);	// bp04
+	i16 iPalIndexCount;	// bp06
+	if (pLocalPal16 == NULL) {
+		if (glbViewportLightScale == 63)
+			return NULL;
+		for (iPalIndexCount = 0; iPalIndexCount < 256; iPalIndexCount++) {	// SPX: <256 ? the original array was just 16
+			tblSubstituteHazeCloudRainPal[iPalIndexCount] = U8(iPalIndexCount);
+		}
+		iPalIndexCount = 256;
+	}
+	else {
+		COPY_MEMORY(pLocalPal16, tblSubstituteHazeCloudRainPal, 16);
+		iPalIndexCount = 16;
+	}
+	return PALETTE_TRANSLATE_WITH_LIGHTING(tblSubstituteHazeCloudRainPal, U8(glbViewportLightScale), iTransparentColorKey, -1, iPalIndexCount);
+}
 
 
 //^32CB:0C7D
@@ -592,24 +613,27 @@ void SkWinCore::DRAW_RAIN_32cb_0c7d(ExtendedPicture *ref, U16 xx, U16 yy)
 		FILL_ENTIRE_PICT(reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(xx)), ref->iPal256[yy]);
 		return;
 	}
-	U8 bp0b;
-	U16 bp0a;
-	QUERY_RAINFALL_PARAM(&bp0b, &bp0a);
-	i16 bp06;
-	i16 bp08;
-	QUERY_GDAT_IMAGE_METRICS(0x17, glbMapGraphicsSet, bp0b, &bp06, &bp08);
+	U8 iRainImageId;	// bp0b
+	U16 isMirrored;	// bp0a
+	QUERY_RAINFALL_PARAM(&iRainImageId, &isMirrored);
+	i16 iRainImgWidth;	// bp06
+	i16 iRainImgHeight;	// bp08
+	QUERY_GDAT_IMAGE_METRICS(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, iRainImageId, &iRainImgWidth, &iRainImgHeight);
 	U16 di = ALLOC_TEMP_CACHE_INDEX();
-	ALLOC_NEW_PICT(di, ref->rc36.cx, bp08, 4);
-	U16 si = (ref->rc36.cx +1) & 0xfffe;
-	U8 *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(0x17, glbMapGraphicsSet, bp0b);
-	FIRE_BLIT_PICTURE(bp04, QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(di), ALLOC_TEMP_ORIGIN_RECT(si, READ_I16(bp04,-2)), 
-		0, 0, READ_I16(bp04,-4), si, -1, (bp0a == 1) ? 1 : 0, 4, 4, NULL);
+	ALLOC_NEW_PICT(di, ref->rc36.cx, iRainImgHeight, IMG_4_BPP);
+	U16 si = (ref->rc36.cx +1) & 0xFFFE;
+	U8 *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, iRainImageId);	// bp04
+//	FIRE_BLIT_PICTURE(bp04, QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(di), ALLOC_TEMP_ORIGIN_RECT(si, READ_I16(bp04,-2)), 
+//		0, 0, READ_I16(bp04,-4), si, -1, (bp0a == 1) ? 1 : 0, 4, 4, NULL);
+	FIRE_BLIT_PICTURE(bp04, QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(di), ALLOC_TEMP_ORIGIN_RECT(si, READ_IMGBUFF_HEIGHT(bp04)), 
+		0, 0, READ_IMGBUFF_WIDTH(bp04), si, -1, (isMirrored == 1) ? 1 : 0, IMG_4_BPP, IMG_4_BPP, NULL);
 	bp04 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(di));
-	U8 *bp10 = _32cb_0649(0x17, glbMapGraphicsSet, bp0b, 0);
-	bp10[0] = ref->iPal256[yy];
-	si = READ_I16(bp04,-4) * READ_I16(bp04,-2);
+	U8 *pLocalPal = GET_LOCAL_PALETTE_32cb_0649(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, iRainImageId, 0);	// bp10 localpal
+	pLocalPal[0] = ref->iPal256[yy];
+	//si = READ_I16(bp04,-4) * READ_I16(bp04,-2);	// width * height ?
+	si = READ_IMGBUFF_WIDTH(bp04) * READ_IMGBUFF_HEIGHT(bp04);	// width * height ?
 	_44c8_20a4(bp04, reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(xx)), NULL, &ref->rc36, 
-		si -(RAND() & 31) -16, RAND16(60), ref->iWidth, -1, bp10);
+		si -(RAND() & 31) -16, RAND16(60), ref->iWidth, -1, pLocalPal);
 	FREE_TEMP_CACHE_INDEX(di);
 	return;
 }

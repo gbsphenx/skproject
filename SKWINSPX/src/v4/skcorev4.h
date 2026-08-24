@@ -8,10 +8,11 @@
 
 #include <sktypes.h>
 #include <sktypesx.h>
-//#include <dme.h>
+#include <dme.h>
 
-//using namespace DMEncyclopaedia;
-//using namespace DM2Internal;
+// necessary for both V4/V5
+using namespace DMEncyclopaedia;
+using namespace DM2Internal;
 
 //..............................................................................
 
@@ -34,9 +35,18 @@ typedef struct {
 
 	U16		glbCPUClass;			// (_04bf_17aa)	CPU class
 
+	U16		glbIBMTick;				// _01b0_14d8
+
+
+
 } SKCoreLegacySystem;
 
+// cd.si.
+typedef struct {
+	U8*	tblZStringsBuffer[2];	// (_4976_52ea)
+	U16	glbZStringRoundRobinIndex;	// _4976_52f8
 
+} SKCoreSysInternal;
 
 
 // cd.mc.
@@ -94,13 +104,13 @@ typedef struct {
 	U16 mice_y;
 
 	U16	glbMouseButtonState;		// (_04bf_17ee) mouse push state (latest); bit0=left, bit1=right
-	U16	glbMouseXPos;		// (_04bf_03be) mouse x-pos
-	U16	glbMouseYPos;		// (_04bf_03c0) mouse y-pos
+	U16	glbMouseXPos;				// (_04bf_03be) mouse x-pos
+	U16	glbMouseYPos;				// (_04bf_03c0) mouse y-pos
 	U16	glbMousePreviousXPos;		// (_04bf_03c2) prev xpos
 	U16	glbMousePreviousYPos;		// (_04bf_03c4) prev ypos
 
-	i16	glbSomeMouseX;	// (_04bf_185e)
-	i16 glbSomeMouseY;	// (_04bf_1860)
+	i16	glbSomeMouseX;			// (_04bf_185e)
+	i16 glbSomeMouseY;			// (_04bf_1860)
 	U16	glbSomeMouseButton;		// (_04bf_1936)
 
 
@@ -114,16 +124,32 @@ typedef struct {
 // cd.sc.
 typedef struct {
 
-	U16	glbSoundBlasterBasePort;		// (_04bf_0288) sblaster base port #
-	U16	glbSoundCardType;		// (_04bf_028a) sndcard type: sblaster=6
-	U16	sndSoundInBuffer;		// (_04bf_028c) =1
-	U16	sndSoundBufferSize;		// (_04bf_028e)
-	X8* sndSoundBuffer;	// (_04bf_0290) sound buffer
-	U16	sndSoundPlaybackFrequency;		// (_04bf_17a6) playback speed
+	U16		glbSoundBlasterBasePort;		// (_04bf_0288) sblaster base port #
+	U16		glbSoundCardType;		// (_04bf_028a) sndcard type: sblaster=6
+	U16		sndSoundInBuffer;		// (_04bf_028c) =1
+	U16		sndSoundBufferSize;		// (_04bf_028e)
+	X8		*sndSoundBuffer;	// (_04bf_0290) sound buffer
+	U16		sndSoundPlaybackFrequency;		// (_04bf_17a6) playback speed
 
-	X16	_04bf_04f1;
+	U16		sndLockSoundBuffer;
 
-	tCDMusicMap*		glbTabCDMusicTriggers;	// Contains CD.DAT file data
+	U16		glbMemRAMAudioStuff;	// (_4976_5c7c)
+
+	X16		_04bf_04f1;
+	U8		_4976_04ee;			// (_4976_04ee)
+	X16		_01b0_14d9;			// _01b0_14d9
+
+	tCDMusicMap		*glbTabCDMusicTriggers;	// Contains CD.DAT file data
+
+	X16		glbSndDataLoaded;			// (_4976_5cae)
+	U16		glbGDatSoundRawDatCount;		// (_4976_5d58)
+
+	SoundStructure		*_4976_5efe;
+	SoundStructure		*_4976_5f02;
+	SoundShortInfo		*tblSoundShortInfo;	// (_4976_5f06) size=?
+	SoundShelfChained	*tblSoundShelf;	// (_4976_5f0a) size=nb gdat snd loaded
+	SoundEntryInfo		*glbSoundList;	// size=8 (_4976_5f0e)
+
 
 } SKCoreSoundCard;
 
@@ -170,6 +196,7 @@ typedef struct {
 	SKCoreLegacySystem		dos;
 
 	SKCodeMemCache			mc;
+	SKCoreSysInternal		si;
 
 	SKCoreDM1Variables		dm1;
 

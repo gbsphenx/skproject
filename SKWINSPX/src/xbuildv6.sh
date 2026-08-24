@@ -51,6 +51,8 @@ export SOURCE_FOLDER=./v4
 
 ## SYS CORE
 export SOURCE_FOLDER=./v5
+./xcomp.sh sk5core
+./xcomp.sh sk5start
 ./xcomp.sh bcreatur -w
 ./xcomp.sh bgdat -w
 ./xcomp.sh bitem

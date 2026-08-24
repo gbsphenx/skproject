@@ -1911,6 +1911,65 @@ void SkWinCore::SEARCH_STARTER_CHAMPION() // _2f3f_0789
 }
 
 
+//^443C:04B6
+void SkWinCore::CHANGE_PLAYER_POS(U16 squadPos)
+{
+	U16 di = 1;
+	if ((squadPos & 0x8000) != 0) {
+		di = 0;
+		squadPos &= 3;
+	}
+	i16 iChampionIdx = GET_PLAYER_AT_POSITION((squadPos + cd.pi.glbPlayerDir) & 3);	// si
+	if (_4976_5dbc == 0) {
+		if (iChampionIdx < 0)
+			return;
+		_4976_495c.cx = glbPictIconBufferX;
+		_4976_495c.cy = glbPictIconBufferY;
+		U8 *pPictBuffSquad = ALLOC_PICT_BUFF(glbPictIconBufferX, glbPictIconBufferY, afDefault, IMG_4_BPP);	// bp08
+		U8 *pPictBuffDest = ALLOC_PICT_BUFF(glbPictIconBufferX, glbPictIconBufferY, afDefault, IMG_8_BPP);	// bp0c
+		U8 iLocalPal[16];	// bp1c
+		QUERY_GDAT_SQUAD_ICON(pPictBuffSquad, (U8)iChampionIdx, iLocalPal);
+		FILL_ENTIRE_PICT(pPictBuffDest, 0x0C);	// fill with brown/orange ?
+		FIRE_BLIT_PICTURE(
+			pPictBuffSquad,	// src
+			pPictBuffDest,	// dst
+			&_4976_495c,
+			0,
+			0,
+			glbPictIconBufferX,
+			glbPictIconBufferY,	// would be Y?
+			4,
+			0,
+			IMG_4_BPP,
+			IMG_8_BPP,
+			iLocalPal
+			);
+		FIRE_HIDE_MOUSE_CURSOR();
+		IBMIO_SET_CURSOR_PATTERN(3, pPictBuffDest, 8, 6, glbPictIconBufferX, glbPictIconBufferY, 8, NULL, iLocalPal[12]) CALL_IBMIO;
+		_01b0_0c70_MOUSE(3) CALL_IBMIO;
+		FREE_PICT_BUFF(pPictBuffDest);
+		FREE_PICT_BUFF(pPictBuffSquad);
+		_4976_5dba = squadPos;
+		_4976_5dbc = squadPos +1;
+		FIRE_SHOW_MOUSE_CURSOR();
+	}
+	else {
+		U16 bp02 = _4976_5dbc -1;
+		_4976_5dbc = 0;
+		U16 iChampionIdx2 = GET_PLAYER_AT_POSITION((bp02 + cd.pi.glbPlayerDir) & 0x0003);	// bp04
+		if (di != 0) {
+			tblChampionSquad[iChampionIdx2].playerDir((U8)cd.pi.glbPlayerDir);
+		}
+		if (bp02 != squadPos) {
+			if (iChampionIdx >= 0) {
+				tblChampionSquad[iChampionIdx].playerPos((U8)bp02);
+			}
+			tblChampionSquad[iChampionIdx2].playerPos((U8)(squadPos + cd.pi.glbPlayerDir));
+		}
+	}
+	_443c_040e_MOUSE();
+}
+
 //^443C:0662
 // SPX: _443c_0662 renamed CHAMPION_SQUAD_RECOMPUTE_POSITION
 void SkWinCore::CHAMPION_SQUAD_RECOMPUTE_POSITION()
@@ -2651,6 +2710,49 @@ U16 SkWinCore::_121e_0351_THROW_LEFT_OR_RIGHT(U16 xx, U16 yy)
 	return si;
 }
 
+
+
+//^12B4:099E
+// SPX _12b4_099e renamed CHAMPION_WEIGHT_CREATURE_12b4_099e
+X16 SkWinCore::CHAMPION_WEIGHT_CREATURE_12b4_099e(ObjectID oidCreature)
+{
+	ENTER(8);
+	i16 bp06 = GET_CREATURE_WEIGHT(oidCreature);
+	if (bp06 == 0xFF)
+		return 0;
+	X16 bp08 = 0;
+	U16 iChampionIdx;	// si
+	for (iChampionIdx = 0; iChampionIdx < cd.pi.glbChampionsCount; iChampionIdx++) {
+		Champion *pChampion = &tblChampionSquad[iChampionIdx];	// pb04
+		if (pChampion->curHP() != 0) {
+			i16 di = GET_PLAYER_ABILITY(pChampion, abStr, 0);
+			if (iChampionIdx == glbChampionLeader) {
+				di += di >> 3;
+			}
+			if (bp06 <= 0x2d) {
+				di += di >> 2;
+			}
+			di = STAMINA_ADJUSTED_ATTR(pChampion, di);
+			if (di < bp06) {
+				if (RAND16(((bp06 - di) >> 1) +1) != 0)
+					continue;
+			}
+			bp08 = 1;
+			break;
+		}
+	}
+	for (iChampionIdx = 0; iChampionIdx < cd.pi.glbChampionsCount; iChampionIdx++) {
+		if (tblChampionSquad[iChampionIdx].curHP() != 0) {
+			if (tblChampionSquad[iChampionIdx].curStamina() > tblChampionSquad[iChampionIdx].maxStamina()) {
+				ADJUST_STAMINA(
+					iChampionIdx,
+					(bp08 != 0) ? max_value(5, bp06 >> 2) : 5
+					);
+			}
+		}
+	}
+	return bp08;
+}
 
 
 //..............................................................................

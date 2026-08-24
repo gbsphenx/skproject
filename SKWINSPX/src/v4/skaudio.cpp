@@ -17,47 +17,40 @@ X16 SkWinCore::IS_SCARD_PRESENT() //#DS=04BF
 // SPX: _01b0_1be8 renamed _RELOAD_SOUND_BUFFER
 X16 SkWinCore::_RELOAD_SOUND_BUFFER(U8 *buff, X16 buffSize, X16 playbackRate) //#DS=04BF
 {
-	//^01B0:1BE8
 	ENTER(0);
-	//^01B0:1BEC
 	LOADDS(0x3083);
 	if (buff == NULL) {
-		//^01B0:1C03
 		_01b0_18d3_AUDIO(0);
 		cd.sc.sndSoundInBuffer = 0;
 	}
 	else if (buffSize != 0) {
-		//^01B0:1C1C
 		cd.sc.sndSoundBufferSize = buffSize;
 		cd.sc.sndSoundBuffer = buff;
 		cd.sc.sndSoundPlaybackFrequency = playbackRate;
 		U16 si;
 		for (si = 0; si < buffSize; si++) {
-			//^01B0:1C39
 			cd.sc.sndSoundBuffer[si] = 0;
-			//^01B0:1C51
 		}
-		//^01B0:1C57
         sndSoundToPlayBuffer = buff;
 		sndSoundToPlayBufferSize = buffSize;
 		if (cd.sc.glbSoundCardType == 3 || cd.sc.glbSoundCardType == 5 || cd.sc.glbSoundCardType == ScardSBlaster)
-			//^01B0:1C80
 			cd.sc.sndSoundInBuffer = 1;
 	}
-	//^01B0:1C86
 	return cd.sc.sndSoundInBuffer;
 }
 
 //^47EB:0003
-void SkWinCore::_47eb_0003()
+// SPX: _47eb_0003 renamed ALLOC_AUDIO_RAM_BUFFER
+void SkWinCore::ALLOC_AUDIO_RAM_BUFFER()
 {
 	ENTER(0);
 	glbAudioUnknown = X8(IBMIO_AUDIO_ZERO() CALL_IBMIO);
 	if (IS_SCARD_PRESENT() CALL_IBMIO != 0) {
 		_RELOAD_SOUND_BUFFER(
-			ALLOC_MEMORY_RAM(glbMemRAMAudioStuff, afUseUpper, 0x400),
-			glbMemRAMAudioStuff, PLAYBACK_FREQUENCY
+			ALLOC_MEMORY_RAM(cd.sc.glbMemRAMAudioStuff, afUseUpper, 0x400),
+			cd.sc.glbMemRAMAudioStuff, C05500_SOUND_PLAYBACK_FREQUENCY
 			) CALL_IBMIO;
+		// SPX: with initial alloc of C05500_SOUND_PLAYBACK_FREQUENCY, that may be not enough for 6000 / 11025 / 22050 Hz samples ?!
 	}
 	return;
 }
@@ -66,17 +59,29 @@ void SkWinCore::_47eb_0003()
 // SPX: _482b_0004 renamed ALLOC_AUDIO_TABLES
 void SkWinCore::ALLOC_AUDIO_TABLES()
 {
-	ENTER(4);
-	_4976_5f0a = reinterpret_cast<sk5f0a *>(ALLOC_MEMORY_RAM(_4976_5cae << 4, afUseUpper, 0x400));	// << 4 (=*16)
-	tblSoundShortInfo = reinterpret_cast<SoundShortInfo *>(ALLOC_MEMORY_RAM(glbGDatSoundRawDatCount * (sizeof(SoundShortInfo)), afUseUpper, 0x400));	// *7 = size of SoundShortInfo
-	_4976_5f02 = reinterpret_cast<SoundStructure *>(ALLOC_MEMORY_RAM(0xF0, afUseUpper, 0x400));
+	cd.sc.tblSoundShelf = reinterpret_cast<SoundShelfChained *>(ALLOC_MEMORY_RAM(cd.sc.glbSndDataLoaded * sizeof(SoundShelfChained), afUseUpper, 0x400));	// << 4 (=*16) => replace with sizeof
+	cd.sc.tblSoundShortInfo = reinterpret_cast<SoundShortInfo *>(ALLOC_MEMORY_RAM(cd.sc.glbGDatSoundRawDatCount * (sizeof(SoundShortInfo)), afUseUpper, 0x400));	// *7 = size of SoundShortInfo
+	cd.sc._4976_5f02 = reinterpret_cast<SoundStructure *>(ALLOC_MEMORY_RAM(20*sizeof(SoundStructure), afUseUpper, 0x400));	// 0xF0 = 240 bytes for (SoundStructure = 12 bytes) => 20 items  
 	U32 iMemInitVal = 0; // bp04
-	glbSoundList = reinterpret_cast<SoundEntryInfo *>(ALLOC_MEMORY_RAM(iMemInitVal = 0x60, afUseUpper, 0x400));
-	ZERO_MEMORY(glbSoundList, iMemInitVal);
-	_4976_5efe = reinterpret_cast<SoundStructure *>(ALLOC_MEMORY_RAM(0x48, afUseUpper, 0x400));
-	_47eb_0003();
+	cd.sc.glbSoundList = reinterpret_cast<SoundEntryInfo *>(ALLOC_MEMORY_RAM(iMemInitVal = (C08_MAX_SOUND_QUEUE_LIST*sizeof(SoundEntryInfo)), afUseUpper, 0x400));	// 0x60 = 96 bytes for (SoundEntryInfo = 12 bytes) => 8 items
+	ZERO_MEMORY(cd.sc.glbSoundList, iMemInitVal);
+	cd.sc._4976_5efe = reinterpret_cast<SoundStructure *>(ALLOC_MEMORY_RAM(6*sizeof(SoundStructure), afUseUpper, 0x400));	// 0x48 = 72 bytes for (SoundStructure = 12 bytes) => 6 items
+	ALLOC_AUDIO_RAM_BUFFER();
 	return;
 }
+/*
+void DM2_SOUND6(void)
+{
+  dm2sound.sndptr4 = dm2_dballochandler.DM2_ALLOC_FREEPOOL_MEMORY(16 * dm2sound.v1e0ace, true);
+  dm2sound.xsndptr2 = XUPCAST(s_ssound, dm2_dballochandler.DM2_ALLOC_FREEPOOL_MEMORY(7 * unsignedlong(dm2_dballochandler.v1e0ad6), true));
+  dm2sound.xsndptr5 = XUPCAST(s_sfx, dm2_dballochandler.DM2_ALLOC_FREEPOOL_MEMORY(lcon(0xf0), true));
+  dm2sound.sndptr1 = XUPCAST(s_sizee, dm2_dballochandler.DM2_ALLOC_FREEPOOL_MEMORY(lcon(0x70), true));	// 0x70 is more than 0x60 (v4), meaning the s_sizee is 14 bytes
+  DM2_ZERO_MEMORY(DOWNCAST(s_sizee, dm2sound.sndptr1), lcon(0x70));
+  dm2sound.xsndptr3 = XUPCAST(s_sfx, dm2_dballochandler.DM2_ALLOC_FREEPOOL_MEMORY(lcon(0x48), true));
+  dm2sound.sndptr6 = dm2_dballochandler.DM2_ALLOC_FREEPOOL_MEMORY(unsignedlong(dm2_dballochandler.v1e0ad4));
+}
+*/
+
 
 //^01B0:1983
 // _01b0_1983 renamed _01b0_1983_AUDIO
@@ -111,70 +116,49 @@ void SkWinCore::_482b_060e_AUDIO()
 
 //^01B0:18D3
 // _01b0_18d3 renamed _01b0_18d3_AUDIO
-void SkWinCore::_01b0_18d3_AUDIO(Bit16u xx) //#DS=4976
+void SkWinCore::_01b0_18d3_AUDIO(U16 xx) //#DS=4976
 {
-	//^01B0:18D3
 	ENTER(2);
-	//^01B0:18D8
-	Bit8u bp02 = _4976_04ee;
-	//^01B0:18E9
+	U8 bp02 = cd.sc._4976_04ee;	// &bp02 is supposedly a buffer ? this looks weird as U8 and not U8*
 	LOADDS(0x3083);	//#DS=04BF
-	//^01B0:18EF
 	if (cd.sc.sndSoundInBuffer != 0) {
-		//^01B0:18F6
-		if (sndLockSoundBuffer != 0) {
-			//^01B0:18FE
-			sndLockSoundBuffer = 1;	
-			//^01B0:1908
-			while (sndLockSoundBuffer != 0);
-			//^01B0:1910
-			for (Bit16u si = 0; si < cd.sc.sndSoundBufferSize; si++) {
-				//^01B0:1914
-				cd.sc.sndSoundBuffer[si] = 0;
-				//^01B0:192C
+		if (cd.sc.sndLockSoundBuffer != 0) {
+			cd.sc.sndLockSoundBuffer = 1;	
+			while (cd.sc.sndLockSoundBuffer != 0);
+			for (U16 iSndBuffIdx = 0; iSndBuffIdx < cd.sc.sndSoundBufferSize; iSndBuffIdx++) {	// si
+				cd.sc.sndSoundBuffer[iSndBuffIdx] = 0;
+				// why not memset for this ?
 			}
 		}
-		//^01B0:1933
 	}
 	else {
-		//^01B0:1935
-		IBMIO_BLEND_TO_SNDBUFF(&bp02, 1, 1, 6000);
+		IBMIO_BLEND_TO_SNDBUFF(&bp02, 1, 1, C06000_SOUND_PLAYBACK_FREQUENCY);
 	}
-	//^01B0:1949
 	return;
 }
 
 //^47EB:02C3
 // _47eb_02c3 renamed _47eb_02c3_AUDIO
-void SkWinCore::_47eb_02c3_AUDIO(sk5f0a *ref)
+void SkWinCore::_47eb_02c3_AUDIO(SoundShelfChained *pRefChainedSound)
 {
 	ENTER(0);
-	_01b0_18d3_AUDIO(0) CALL_IBMIO;
+	_01b0_18d3_AUDIO(0) CALL_IBMIO;	// not fully implemented ??
 	return;
 }
 
 //^47EB:00D9
 // _47eb_00d9 renamed _47eb_00d9_AUDIO
-void SkWinCore::_47eb_00d9_AUDIO(sk5f0a *ref)
+void SkWinCore::_47eb_00d9_AUDIO(SoundShelfChained *pRefChainedSound)
 {
-	//^47EB:00D9
 	ENTER(4);
-	//^47EB:00DD
-	_47eb_02c3_AUDIO(ref);
-	//^47EB:00EA
-	sk5f0a **bp04 = &_4976_5efa;
-	//^47EB:00F2
-	while ((*bp04) != NULL && (*bp04) != ref) {
-		//^47EB:00F4
-		bp04 = &(*bp04)->pv8;
-		//^47EB:0107
+	_47eb_02c3_AUDIO(pRefChainedSound);
+	SoundShelfChained **ppChainedSound = &_4976_5efa;	// bp04
+	while ((*ppChainedSound) != NULL && (*ppChainedSound) != pRefChainedSound) {
+		ppChainedSound = &(*ppChainedSound)->pv8;
 	}
-	//^47EB:0124
-	if ((*bp04) == ref) {
-		//^47EB:0138
-		(*bp04) = ref->pv8;
+	if ((*ppChainedSound) == pRefChainedSound) {
+		(*ppChainedSound) = pRefChainedSound->pv8;
 	}
-	//^47EB:014D
 	return;
 }
 

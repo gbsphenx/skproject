@@ -45,27 +45,6 @@ SpellDefinition* SkWinCore::FIND_SPELL_BY_RUNES(U8* runes)
 }
 
 
-//^32CB:0649
-// TODO: image related / spell cloud inside
-U8 *SkWinCore::_32cb_0649(U8 cls1, U8 cls2, U8 cls4, i16 colorkey)
-{
-	ENTER(6);
-	U8 *bp04 = QUERY_GDAT_IMAGE_LOCALPAL(cls1, cls2, cls4);
-	i16 bp06;
-	if (bp04 == NULL) {
-		if (glbViewportLightScale == 63)
-			return NULL;
-		for (bp06 = 0; bp06 < 256; bp06++) {
-			_4976_582a[bp06] = U8(bp06);
-		}
-		bp06 = 256;
-	}
-	else {
-		COPY_MEMORY(bp04, _4976_582a, 16);
-		bp06 = 16;
-	}
-	return PALETTE_TRANSLATE_WITH_LIGHTING(_4976_582a, U8(glbViewportLightScale), colorkey, -1, bp06);
-}
 
 
 //^075F:1791
@@ -193,13 +172,13 @@ U16 SkWinCore::CAST_SPELL_PLAYER(U16 player, SpellDefinition *ref, U16 power)
 		case C4_SPELL_TYPE_SUMMON: // 4: summon creature
 			{
 				// SPX: beware, hard test for U-Haul minion (0x35)
-				if (ref->SpellCastIndex() == CREATURE_GOOD_U_HAUL_MINION) {
-					Creature *bp1e = reinterpret_cast<Creature *>(glbDBObjectData[dbCreature]);
-					for (bp08 = dunHeader->nRecords[dbCreature]; (bp08--) != 0; bp1e++) {
+				if (ref->SpellCastIndex() == CREATURE_x35_GOOD_U_HAUL_MINION) {
+					Creature *pCreature = reinterpret_cast<Creature *>(glbDBObjectData[dbCreature]);	// bp1e
+					for (bp08 = dunHeader->nRecords[dbCreature]; (bp08--) != 0; pCreature++) {
 						if (true
-							&& bp1e->w0 != OBJECT_NULL 
-							&& bp1e->CreatureType() == CREATURE_GOOD_U_HAUL_MINION
-							&& (bp0a = bp1e->iID) != 0x00FF
+							&& pCreature->w0 != OBJECT_NULL 
+							&& pCreature->CreatureType() == CREATURE_x35_GOOD_U_HAUL_MINION
+							&& (bp0a = pCreature->iID) != 0x00FF
 							&& glbTabCreaturesInfo[bp0a].Command != ccm13_Destroy	// 0x13
 						) {
 							glbTabCreaturesInfo[bp0a].Command2 = ccm13_Destroy;	// 0x13

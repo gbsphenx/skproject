@@ -225,7 +225,7 @@
       s_xmalloc* DM2_ALLOC_CPXHEAP_MEM(t_dbidx dbidx, i32 amount);
       s_xmalloc* DM2_ALLOCATION9(t_dbidx dbidx, i32 edxl);
       i32 DM2_ALLOCATION11(ui32 eaxul, i32 ebxl, OO t_dbidx& dbidx);
-      void DM2_dballoc_2636_03d4(void);
+      void SKW5_ALLOC_ZSTRINGS_BUFFER(void);	// DM2_dballoc_2636_03d4
       bool DM2_dballoc_3e74_55f9(ui32 eaxul, OO t_dbidx& dbidx);
       i8 DM2_dballoc_3e74_2439(i8 eaxb, i8 edxb);
       t_dbidx DM2_dballoc_3e74_5888(void);

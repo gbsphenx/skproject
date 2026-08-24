@@ -145,7 +145,6 @@
 #endif
 
 #define XDMX_FEATURE_AMBIENT_SOUND	1	// Rain/Weather
-//#define XDMX_FEATURE_PLAGUE			0
 
 #if defined (SKWINSPX)
 	#define XDMX_FEATURE_PLAGUE			1

@@ -872,117 +872,80 @@ void SkWinCore::ANIM_SOMETHING_0759_02c6(U16 xx, U16 yy, U16 zz)
 //^48AE:0281
 U16 SkWinCore::QUERY_CREATURES_ITEM_MASK(U8 cls2, U8 cls4, U8 itemflags[64], U16 isCreature)
 {
-	//^48AE:0281
 	ENTER(142);
-	//^48AE:0287
 	ZERO_MEMORY(itemflags, 64);
-	//^48AE:0299
 	U8 bp008e[128];
 	U8 *bp04 = QUERY_GDAT_TEXT(GDAT_CATEGORY_x0F_CREATURES, cls2, cls4 +0x10, bp008e);
-	//^48AE:02BB
 	if (*bp04 == 0)
-		//^48AE:02C3
 		return 0;
-	//^48AE:02C8
 	i16 bp0a = 0;
 	i16 di = -1;
 	U16 si = -1;
 	U16 bp0c = 0;
 	U8 bp05;
 	do {
-		//^48AE:02D9
 		bp05 = *(bp04++);
-		//^48AE:02E5
 		if (bp05 >= '0' && bp05 <='9') {
-			//^48AE:02F1
-			bp0a = bp0a * 10 +bp05 -'0';
+			bp0a = bp0a * 10 + bp05 -'0';
 			bp0c = 1;
-			//^48AE:030B
 			continue;
 		}
-		//^48AE:030E
 		if (bp05 == '-') {
-			//^48AE:0314
 			di = bp0a;
 			bp0a = 0;
-			//^48AE:031C
 			continue;
 		}
-		//^48AE:031F
 		if (bp0c != 0) {
-			//^48AE:0325
 			if (di < 0)
-				//^48AE:0329
 				di = bp0a;
 
             while (di <= bp0a) {
-				//^48AE:032E
 				i16 bp08 = di +si;
-				//^48AE:0335
 				itemflags[bp08 >> 3] = itemflags[bp08 >> 3] | (1 << (bp08 & 7));
-				//^48AE:035A
 				di++;
-				//^48AE:035B
 			}
-			//^48AE:0360
 			bp0a = 0;
 			di = -1;
 			si = -1;
 			bp0c = 0;
 		}
-		//^48AE:0371
 		U16 bp0e = bp05;
-		//^48AE:0379
 		switch (bp0e) {
 			case 'W':			// Weapon
-				//^48AE:0393
-				//^48AE:03AA
 				si = 0;
-				//^48AE:03AC
 				break;
 
-			case 'A':			// Clothing
-				//^48AE:0395
+			case 'A':			// Clothing (A=Armor?)
 				si = 0x0080;
-				//^48AE:0398
 				break;
 
-			case 'J':			// Misc
-				//^48AE:039A
+			case 'J':			// Misc (J=Junk)
 				si = 0x0100;
-				//^48AE:039D
 				break;
 
 			case 'P':			// Potion
-				//^48AE:039F
 				si = 0x0180;
-				//^48AE:03A2
 				break;
 
 			case 'C':			// Creature or Container?
-				//^48AE:03A4
-				si = (isCreature != 0) ? 0 : 0x01e0;
-				//^48AE:03B1
+				si = (isCreature != 0) ? 0 : 0x01E0;
 				break;
 
 			case 'S':			// Scroll
-				//^48AE:03B3
 				si = 0x01fc;
 
 				break;
 		}
-		//^48AE:03B6
 	} while (bp05 != 0);
 
-	//^48AE:03BF
 	return 1;
 }
 
 //^47E1:0089
 // There is also ZeroMem !!
-void SkWinCore::ZERO_MEMORY(void *buff, U32 size)
+void SkWinCore::ZERO_MEMORY(void *pBuffer, U32 iSize)
 {
-	memset(buff, 0, size);
+	memset(pBuffer, 0, iSize);
 }
 
 
@@ -1005,136 +968,90 @@ void SkWinCore::APPEND_RECORD_TO(ObjectID recordLink_whatYouAppend, ObjectID *re
 		|| ((U16)xpos_newParent < (U16)glbCurrentMapWidth && (U16)ypos_newParent < (U16)glbCurrentMapHeight)
 		);
 
-	//^0CEE:0B0D
 	i16 di = xpos_newParent;
-	//^0CEE:0B16
 	// SPX: Added test when DBIndex equals 1023 (x3FF) or 1022 (x3FE)
 	if (recordLink_whatYouAppend != OBJECT_END_MARKER && recordLink_whatYouAppend != OBJECT_NULL &&
 		(SkCodeParam::bUsePowerDebug && recordLink_whatYouAppend.DBIndex() != 1023) && 
 		(SkCodeParam::bUsePowerDebug && recordLink_whatYouAppend.DBIndex() != 1022)) {
-		//^0CEE:0B28
 		GenericRecord *bp0c = (GenericRecord *)GET_ADDRESS_OF_RECORD(recordLink_whatYouAppend);
-		//^0CEE:0B36
 		bp0c->w0 = OBJECT_END_MARKER;
-		//^0CEE:0B3E
 		if (di >= 0) {
-			//^0CEE:0B45
 			U8 *bp08 = &glbCurrentTileMap[di][ypos_newParent];
 			// SPX: problem with crashes here
 			if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(bp08))
 				return;
-			//^0CEE:0B60
 			ObjectID bp12;
 			if ((*bp08 & 0x10) != 0) {
-				//^0CEE:0B69
 				bp12 = GET_TILE_RECORD_LINK(di, ypos_newParent);
-				//^0CEE:0B76
-				//^0CEE:0C53
 
 				if (!SkCodeParam::bUsePowerDebug)	// Normally, a tile with x10 must have a record link
 					ATLASSERT(bp12 != OBJECT_END_MARKER); // BUG if tile record link is OBJECT_END_MARKER
 
 				ObjectID bp0e;
 				for (; (bp0e = GET_NEXT_RECORD_LINK(bp12)) != OBJECT_END_MARKER; ) {
-					//^0CEE:0C58
 					bp12 = bp0e;
 				}
 
-				//^0CEE:0C6D
 				bp0c = (GenericRecord *)GET_ADDRESS_OF_RECORD(bp12);
-				//^0CEE:0C7B
-				//^0CEE:0CA5
 				bp0c->w0 = recordLink_whatYouAppend;
 				return;
 			}
-			//^0CEE:0B79
 			if (dunGroundStacks[dunHeader->cwListSize -1] != OBJECT_NULL) {
-				//^0CEE:0B90
 				RAISE_SYSERR(SYSTEM_ERROR__CANT_APPEND_RECORD);
 			}
-			//^0CEE:0B98
 			*bp08 |= 0x10;
-			//^0CEE:0B9F
 			//U16 *bp04 = &glbIndexOfTilesWithObjects[di +1];
 			OID_T *bp04 = &glbIndexOfTilesWithObjects[di +1];	// Bit32u *bp04
-			//^0CEE:0BB5
 			U16 si = _4976_4cb4 -(dunMapColumnsSumArray[glbCurrentMapIndex] +di) -1;
 			ATLASSERT(si < (32*256)); // SPX: suppose 256 of 32 columns each, making a value not above 8192. If not, it might be a negative value hidden by the unsigned U16 si; then an issue with _4976_4cb4 value.
-			//^0CEE:0BCE
-			//^0CEE:0BDA
 			for (; si-- != 0; ) {
-				//^0CEE:0BD0
 				(*bp04)++;
 				bp04++;
 			}
-			//^0CEE:0BE1
 			U16 bp10 = 0;
 			bp08 -= ypos_newParent;
-			//^0CEE:0BEC
 			si = glbIndexOfTilesWithObjects[di];
 
-			//^0CEE:0C08
 			for (; bp10++ != ypos_newParent; ) {
-				//^0CEE:0BF9
 				if ((*(bp08++) & 0x10) != 0) {
-					//^0CEE:0C07
 					si++;
 				}
 			}
-			//^0CEE:0C13
 			bp04 = &dunGroundStacks[si];
-			//^0CEE:0C27
 			MOVE_MEMORY(
 				bp04,
 				bp04 +1,
 				(dunHeader->cwListSize -si -1) * 2
 				);
-			//^0CEE:0C4E
-			//^0CEE:0C51
-			//^0CEE:0CA8
 			*bp04 = recordLink_whatYouAppend;
 			return;
 		}
-		//^0CEE:0C7D
 		bp0c = (GenericRecord *)recordLink_newParent;
-		//^0CEE:0C9C
 		for (; bp0c->w0 != OBJECT_END_MARKER; ) {
-			//^0CEE:0C8B
 			bp0c = (GenericRecord *)GET_ADDRESS_OF_RECORD(bp0c->w0);
 		}
-		//^0CEE:0CA5
 		bp0c->w0 = recordLink_whatYouAppend;
 		return;
 	}
-	//^0CEE:0CAE
 }
 
 //^2066:1EC9
 ObjectID SkWinCore::_2066_1ec9(ObjectID link1Dst, ObjectID link2Src)
 {
-	//^2066:1EC9
 	ObjectID di = link1Dst;
 	ObjectID si = link2Src;
-	//^2066:1ED5
 	if (di == OBJECT_END_MARKER)
 		return si;
-	//^2066:1EDE
 	if (si == OBJECT_END_MARKER)
 		return di;
-	//^2066:1F09
 	while (si != OBJECT_END_MARKER && si.DBType() < dbCreature) {
-		//^2066:1EE5
 		ObjectID bp06 = di;
 		di = si;
 		si = GET_NEXT_RECORD_LINK(si);
 		GenericRecord *bp04 = GET_ADDRESS_OF_RECORD(di);
-		//^2066:1F00
 		bp04->w0 = bp06;
-		//^2066:1F09
 	}
-	//^2066:1F1B
 	APPEND_RECORD_TO(si, &GET_ADDRESS_OF_RECORD(di)->w0, -1, -1);
-	//^2066:1F31
 	return di;
 }
 
@@ -3011,90 +2928,70 @@ void SkWinCore::PUSH_PULL_RIGID_BODY(U16 arrowPos)
 	//  4 <--+  V  +--> 2
 	//          3
 
-	//^12B4:0AA5
 	ENTER(8);
-	//^12B4:0AAB
-	X16 di;
-	X16 si;
-	X16 bp02;
+	X16 iNewPlayerDir;	// di
+	X16 si;	// si
+	X16 iTargetMove;	// bp02
 	switch (arrowPos) {
 		default:
-			//^12B4:0AB3
 			return;
 		case 0://^0ABD
-			//^12B4:0ABD
-			di = cd.pi.glbPlayerDir;
+			iNewPlayerDir = cd.pi.glbPlayerDir;
 			si = 0;
 			goto _0adf;
 		case 5://^0AC5 // forward and left
-			//^12B4:0AC5
-			di = (cd.pi.glbPlayerDir -1) & 3;
+			iNewPlayerDir = (cd.pi.glbPlayerDir -1) & 3;
 			si = 1;
 			goto _0adf;
 		case 1://^0AD3 // forward and right
-			//^12B4:0AD3
-			di = (cd.pi.glbPlayerDir +1) & 3;
+			iNewPlayerDir = (cd.pi.glbPlayerDir +1) & 3;
 			si = 2;
 			goto _0adf;
-			//^12B4:0ADF
 _0adf:
-			bp02 = 3;
+			iTargetMove = 3;
 			break;
 		case 3://^0AE6 // back
-			//^12B4:0AE6
-			bp02 = 5;
+			iTargetMove = 5;
 			si = 0;
 			goto _0b01;
 		case 4://^0AEF // back and left
-			//^12B4:0AEF
-			bp02 = 6;
+			iTargetMove = 6;
 			si = 2;
 			goto _0b01;
 		case 2://^0AF9 // back and right
-			//^12B4:0AF9
-			bp02 = 4;
+			iTargetMove = 4;
 			si = 1;
-			//^12B4:0B01
 _0b01:
-			di = (cd.pi.glbPlayerDir + 2) & 3;
+			iNewPlayerDir = (cd.pi.glbPlayerDir + 2) & 3;
 			break;
 	}
-	//^12B4:0B0B
-	X16 bp04 = cd.pi.glbPlayerPosX + glbXAxisDelta[cd.pi.glbPlayerDir];
-	X16 bp06 = cd.pi.glbPlayerPosY + glbYAxisDelta[cd.pi.glbPlayerDir];
-	ObjectID bp08;
-	if (IS_CREATURE_MOVABLE_THERE(bp04, bp06, di, &bp08) == 0)
+	X16 iTargetPosX = cd.pi.glbPlayerPosX + glbXAxisDelta[cd.pi.glbPlayerDir];	// bp04	target x
+	X16 iTargetPosY = cd.pi.glbPlayerPosY + glbYAxisDelta[cd.pi.glbPlayerDir];	// bp06	target y
+	ObjectID oidCreatureOnTarget;	// bp08
+	if (IS_CREATURE_MOVABLE_THERE(iTargetPosX, iTargetPosY, iNewPlayerDir, &oidCreatureOnTarget) == 0)
 		return;
-	//^12B4:0B46
-	if (_12b4_099e(bp08) == 0) {
-		//^12B4:0B52
-		U16 bp02;
-		for (bp02 = 0; bp02 < cd.pi.glbChampionsCount; bp02++) {
-			//^12B4:0B59
-			if (tblChampionSquad[bp02].curHP() != 0) {
-				//^12B4:0B6D
-				if (bp02 == glbChampionLeader || RAND02() == 0) {
-					//^12B4:0B7C
+	if (CHAMPION_WEIGHT_CREATURE_12b4_099e(oidCreatureOnTarget) == 0) {
+		U16 iChampionIdx;	// bp02
+		for (iChampionIdx = 0; iChampionIdx < cd.pi.glbChampionsCount; iChampionIdx++) {
+			if (tblChampionSquad[iChampionIdx].curHP() != 0) {
+				if (iChampionIdx == glbChampionLeader || RAND02() == 0) {
 					// SPX: Sound made by champion when moving large object
-					QUEUE_NOISE_GEN2(GDAT_CATEGORY_x16_CHAMPIONS, U8(bp02), SOUND_CHAMPION_GETHIT, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0x69, 0xc8);
+					QUEUE_NOISE_GEN2(GDAT_CATEGORY_x16_CHAMPIONS, U8(iChampionIdx), SOUND_CHAMPION_GETHIT, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0x69, 0xC8);
 				}
 			}
-			//^12B4:0B9F
 		}
 	}
 	else {
-		//^12B4:0BAD
-		glbTargetPosXTest = bp04;
-		glbTargetPosYTest = bp06;
+		glbTargetPosXTest = iTargetPosX;
+		glbTargetPosYTest = iTargetPosY;
 		glbPosX_4976_4eae = cd.pi.glbPlayerPosX;
 		glbPosY_4976_4eb0 = cd.pi.glbPlayerPosY;
-		_4976_4eac = di;
+		glbPlayerDir_4976_4eac = iNewPlayerDir;
 		glbMap_4976_4eaa = cd.pi.glbPlayerMap;
 		_4976_4eb2 = si;
-		glbTableToMove = bp08;
-		PERFORM_MOVE(bp02);
+		glbTableToMove = oidCreatureOnTarget;
+		PERFORM_MOVE(iTargetMove);
 	}
-	//^12B4:0BE1
 	return;
 }
 
@@ -3136,14 +3033,14 @@ void SkWinCore::QUERY_GDAT_IMAGE_METRICS(U8 cls1, U8 cls2, U8 cls4, i16 *pcx, i1
 		return;
 	}
 	if (glbShelfMemoryTable[iRawDatIndex].Absent()) {
-		U8* xImageBuffer = QUERY_GDAT_IMAGE_ENTRY_BUFF(cls1, cls2, cls4);	// bp04
-		*pcx = READ_IMGBUFF_WIDTH(xImageBuffer);	//	READ_I16(bp04,-4);
-		*pcy = READ_IMGBUFF_HEIGHT(xImageBuffer);	//	READ_I16(bp04,-2);
+		U8* pImageBuffer = QUERY_GDAT_IMAGE_ENTRY_BUFF(cls1, cls2, cls4);	// bp04
+		*pcx = READ_IMGBUFF_WIDTH(pImageBuffer);	//	READ_I16(bp04,-4);
+		*pcy = READ_IMGBUFF_HEIGHT(pImageBuffer);	//	READ_I16(bp04,-2);
 	}
 	else {
-		U8* xImageBuffer = QUERY_GDAT_ENTRY_DATA_PTR(cls1, cls2, dtImage, cls4);	// bp04
-		*pcx = READ_I16(xImageBuffer,+0) & 1023;
-		*pcy = READ_I16(xImageBuffer,+2) & 1023;
+		U8* pImageBuffer = QUERY_GDAT_ENTRY_DATA_PTR(cls1, cls2, dtImage, cls4);	// bp04
+		*pcx = READ_I16(pImageBuffer,+0) & 1023;
+		*pcy = READ_I16(pImageBuffer,+2) & 1023;
 	}
 	return;
 }
@@ -3152,10 +3049,10 @@ void SkWinCore::QUERY_GDAT_IMAGE_METRICS(U8 cls1, U8 cls2, U8 cls4, i16 *pcx, i1
 U8 SkWinCore::SKCHR_TO_SCRIPTCHR(U8 xx)
 {
 	ENTER(0);
-	U8 dl = xx;
-	if (dl >= 'A' && dl <= 'Z')
-		return dl +0xBF;
-	if (dl == '.')
+	U8 iChar = xx;	// dl
+	if (iChar >= 'A' && iChar <= 'Z')
+		return iChar + 0xBF;
+	if (iChar == '.')
 		return 0x1B;
 	return 0x1A;
 }
@@ -6230,14 +6127,14 @@ void SkWinCore::MessageLoop(bool bBalanceWait, bool bShortWait) {
 //	2 = normal speed with no charges
 //	3 = medium speed (3/5 of max load)
 //	4 = overcharged (exceed max load)
-i16 SkWinCore::CALC_PLAYER_WALK_DELAY(U16 player)
+i16 SkWinCore::CALC_PLAYER_WALK_DELAY(U16 iChampion)
 {
 	ENTER(6);
 	if (glbGlobalSpellEffects.AuraOfSpeed != 0)
 		return 1;
-	Champion *champion = &tblChampionSquad[player];
-	U16 maxLoad = MAX_LOAD(champion);			// bp06
-	U16 currentLoad = GET_PLAYER_WEIGHT(player);		// di
+	Champion *pChampion = &tblChampionSquad[iChampion];
+	U16 maxLoad = MAX_LOAD(pChampion);			// bp06
+	U16 currentLoad = GET_PLAYER_WEIGHT(iChampion);		// di
 	U16 walkDelay = 0;		
 	U16 walkPenalty = 0; // another usage of di
 	if (!SkCodeParam::bUseFixedMode)	// SPX: I rewrote the whole block as I think there are some weird calculations
@@ -6250,14 +6147,14 @@ i16 SkWinCore::CALC_PLAYER_WALK_DELAY(U16 player)
 			walkPenalty = 1;
 		}
 		else {				// Champion exceeds his max load
-			walkDelay = ((currentLoad -maxLoad) << 2) / maxLoad +4;
+			walkDelay = ((currentLoad - maxLoad) << 2) / maxLoad + 4;
 			walkPenalty = 2;
 		}
-		if ((champion->bodyFlag & 0x20) != 0)	// Add penalties (what is 0x20 flag? wounded?)
+		if ((pChampion->bodyFlag & 0x20) != 0)	// Add penalties (what is 0x20 flag? wounded?)
 			walkDelay += walkPenalty;
-		walkDelay = max_value(1, walkDelay - champion->walkSpeed);	// walkspeed is changed by item giving bonus (positive)
+		walkDelay = max_value(1, walkDelay - pChampion->walkSpeed);	// walkspeed is changed by item giving bonus (positive)
 		if (walkDelay > 2) {
-			walkDelay = (walkDelay +1) & 0xfffe;
+			walkDelay = (walkDelay +1) & 0xFFFE;
 		}
 	}
 	else if (SkCodeParam::bUseFixedMode)
@@ -6274,9 +6171,9 @@ i16 SkWinCore::CALC_PLAYER_WALK_DELAY(U16 player)
 			walkDelay = ((currentLoad - maxLoad) << 2) / maxLoad + 4;
 			walkPenalty = 2;
 		}
-		if ((champion->bodyFlag & 0x20) != 0)	// Add penalties (what is 0x20 flag? wounded?)
+		if ((pChampion->bodyFlag & 0x20) != 0)	// Add penalties (what is 0x20 flag? wounded?)
 			walkDelay += walkPenalty;
-		walkDelay = max_value(1, walkDelay - champion->walkSpeed);	// walkspeed is changed by item giving bonus (positive)
+		walkDelay = max_value(1, walkDelay - pChampion->walkSpeed);	// walkspeed is changed by item giving bonus (positive)
 		//if (si > 2) {	// This is for rounding up to next even number. Why not try without this?
 		//	si = (si +1) & 0xfffe;
 		//}
@@ -6284,18 +6181,7 @@ i16 SkWinCore::CALC_PLAYER_WALK_DELAY(U16 player)
 	return walkDelay;
 }
 
-//^12B4:0953
-X16 SkWinCore::CREATURE_12b4_0953(Creature* xCreature, U16 ww)
-{
-	ENTER(0);
-	U16 si = (xCreature->b15_0_1() + ww) & 3;
-	if (si == 1 || si == 3) {
-		i16 di = QUERY_CREATURE_5x5_POS(xCreature, si);
-		if (((di / 5) -2) != 0)
-			return 1;
-	}
-	return 0;
-}
+
 
 //^12B4:0881
 // _12b4_0881
@@ -6369,58 +6255,7 @@ U16 SkWinCore::_12b4_023f_WOUND_RUNNING_INTO_CREATURE(i16 xx, i16 yy, i16 *ss, i
 	}
 	return di;
 }
-//^12B4:099E
-X16 SkWinCore::_12b4_099e(ObjectID rl)
-{
-	//^12B4:099E
-	ENTER(8);
-	//^12B4:09A4
-	i16 bp06 = GET_CREATURE_WEIGHT(rl);
-	if (bp06 == 0xff)
-		return 0;
-	X16 bp08 = 0;
-	U16 si;
-	for (si = 0; si < cd.pi.glbChampionsCount; si++) {
-		//^12B4:09C3
-		Champion *bp04 = &tblChampionSquad[si];
-		if (bp04->curHP() != 0) {
-			i16 di = GET_PLAYER_ABILITY(bp04, abStr, 0);
-			if (si == glbChampionLeader) {
-				di += di >> 3;
-			}
-			//^12B4:09FC
-			if (bp06 <= 0x2d) {
-				di += di >> 2;
-			}
-			//^12B4:0A09
-			di = STAMINA_ADJUSTED_ATTR(bp04, di);
-			if (di < bp06) {
-				if (RAND16(((bp06 -di) >> 1) +1) != 0)
-					continue;
-			}
-			//^12B4:0A32
-			bp08 = 1;
-			break;
-		}
-		//^12B4:0A39
-	}
-	//^12B4:0A40
-	for (si = 0; si < cd.pi.glbChampionsCount; si++) {
-		//^12B4:0A44
-		if (tblChampionSquad[si].curHP() != 0) {
-			//^12B4:0A54
-			if (tblChampionSquad[si].curStamina() > tblChampionSquad[si].maxStamina()) {
-				ADJUST_STAMINA(
-					si,
-					(bp08 != 0) ? max_value(5, bp06 >> 2) : 5
-					);
-			}
-		}
-		//^12B4:0A97
-	}
-	//^12B4:0A9E
-	return bp08;
-}
+
 
 
 
@@ -8286,64 +8121,7 @@ void SkWinCore::DEALLOC_UPPER_MEMORY(Bit32u size)
 }
 
 
-//^443C:04B6
-void SkWinCore::CHANGE_PLAYER_POS(U16 squadPos)
-{
-	U16 di = 1;
-	if ((squadPos & 0x8000) != 0) {
-		di = 0;
-		squadPos &= 3;
-	}
-	i16 iChampionIdx = GET_PLAYER_AT_POSITION((squadPos + cd.pi.glbPlayerDir) & 3);	// si
-	if (_4976_5dbc == 0) {
-		if (iChampionIdx < 0)
-			return;
-		_4976_495c.cx = glbPictIconBufferX;
-		_4976_495c.cy = glbPictIconBufferY;
-		U8 *pPictBuffSquad = ALLOC_PICT_BUFF(glbPictIconBufferX, glbPictIconBufferY, afDefault, IMG_4_BPP);	// bp08
-		U8 *pPictBuffDest = ALLOC_PICT_BUFF(glbPictIconBufferX, glbPictIconBufferY, afDefault, IMG_8_BPP);	// bp0c
-		U8 iLocalPal[16];	// bp1c
-		QUERY_GDAT_SQUAD_ICON(pPictBuffSquad, (U8)iChampionIdx, iLocalPal);
-		FILL_ENTIRE_PICT(pPictBuffDest, 0x0C);	// fill with brown/orange ?
-		FIRE_BLIT_PICTURE(
-			pPictBuffSquad,	// src
-			pPictBuffDest,	// dst
-			&_4976_495c,
-			0,
-			0,
-			glbPictIconBufferX,
-			glbPictIconBufferY,	// would be Y?
-			4,
-			0,
-			IMG_4_BPP,
-			IMG_8_BPP,
-			iLocalPal
-			);
-		FIRE_HIDE_MOUSE_CURSOR();
-		IBMIO_SET_CURSOR_PATTERN(3, pPictBuffDest, 8, 6, glbPictIconBufferX, glbPictIconBufferY, 8, NULL, iLocalPal[12]) CALL_IBMIO;
-		_01b0_0c70_MOUSE(3) CALL_IBMIO;
-		FREE_PICT_BUFF(pPictBuffDest);
-		FREE_PICT_BUFF(pPictBuffSquad);
-		_4976_5dba = squadPos;
-		_4976_5dbc = squadPos +1;
-		FIRE_SHOW_MOUSE_CURSOR();
-	}
-	else {
-		U16 bp02 = _4976_5dbc -1;
-		_4976_5dbc = 0;
-		U16 iChampionIdx2 = GET_PLAYER_AT_POSITION((bp02 + cd.pi.glbPlayerDir) & 0x0003);	// bp04
-		if (di != 0) {
-			tblChampionSquad[iChampionIdx2].playerDir((U8)cd.pi.glbPlayerDir);
-		}
-		if (bp02 != squadPos) {
-			if (iChampionIdx >= 0) {
-				tblChampionSquad[iChampionIdx].playerPos((U8)bp02);
-			}
-			tblChampionSquad[iChampionIdx2].playerPos((U8)(squadPos + cd.pi.glbPlayerDir));
-		}
-	}
-	_443c_040e_MOUSE();
-}
+
 
 
 
@@ -8409,16 +8187,16 @@ void SkWinCore::SUPPRESS_INIT()
 //SPX: This serves for Z000 variable replacement
 U8 *SkWinCore::FORMAT_SKSTR(const U8 *format, U8 *output)
 {
-	U8 *bp04;
-	U8 *bp08;
+	U8 *bp04;	// bp04
+	U8 *bp08;	// bp08
 	if (output != NULL) {
 		bp04 = bp08 = output;
 	}
 	else {
-		bp04 = bp08 = tblZStr_4976_52ea[glbZStringIdx_4976_52f8];
-		glbZStringIdx_4976_52f8++;
-		if (glbZStringIdx_4976_52f8 >= 2) {
-			glbZStringIdx_4976_52f8 = 0;
+		bp04 = bp08 = cd.si.tblZStringsBuffer[cd.si.glbZStringRoundRobinIndex];
+		cd.si.glbZStringRoundRobinIndex++;
+		if (cd.si.glbZStringRoundRobinIndex >= 2) {
+			cd.si.glbZStringRoundRobinIndex = 0;
 		}
 	}
 	U8 bp11;
@@ -11537,7 +11315,7 @@ _2eda:
 							RAND16(bp24 -0x28),
 							glbViewportWidth,
 							0,
-							_32cb_0649(GDAT_CATEGORY_x0D_SPELL_MISSILES, bp15, iCloudInsideVisualSize + C66_GDAT_IMG_SPELL_EXPLOSION_INSIDE_LOW, 0)
+							GET_LOCAL_PALETTE_32cb_0649(GDAT_CATEGORY_x0D_SPELL_MISSILES, bp15, iCloudInsideVisualSize + C66_GDAT_IMG_SPELL_EXPLOSION_INSIDE_LOW, 0)
 							);
 						continue;
 					}
@@ -14182,14 +13960,14 @@ void SkWinCore::INIT_CRAM_EMS_MEM()
 }
 
 //^2636:03D4
-// SPX: _2636_03d4 renamed SOME_ALLOC_TABLE_2636_03d4
-void SkWinCore::SOME_ALLOC_TABLE_2636_03d4()
+// SPX: _2636_03d4 renamed ALLOC_ZSTRINGS_BUFFER
+void SkWinCore::ALLOC_ZSTRINGS_BUFFER()
 {
 	ENTER(0);
-	glbZStringIdx_4976_52f8 = 0;
+	cd.si.glbZStringRoundRobinIndex = 0;
 	i16 iTabIdx = 0;	// si
 	for (; iTabIdx < 2; iTabIdx++) {
-		tblZStr_4976_52ea[iTabIdx] = ALLOC_MEMORY_RAM(0x80, afUseUpper, 0x400);
+		cd.si.tblZStringsBuffer[iTabIdx] = ALLOC_MEMORY_RAM(0x80, afUseUpper, 0x400);
 	}
 	return;
 }
@@ -14215,6 +13993,7 @@ U32 SkWinCore::SWAP32(U32 xx)
 	return ((xx & 0xFF000000)>>24) + ((xx & 0x00FF0000)>>8) + ((xx & 0x0000FF00)<<8) + ((xx & 0x000000FF)<<24);
 }
 
+// SPX: Swaps an array of U16
 void SkWinCore::SWAPWPX(U16* xData, U16 iNbItems)
 {
 	U16 iSwapIndex = 0;
@@ -14222,6 +14001,7 @@ void SkWinCore::SWAPWPX(U16* xData, U16 iNbItems)
 		*xData = SWAPW(*xData);
 }
 
+// SPX: Swaps specifically an object data array
 void SkWinCore::SWAP_OBJECTDATA(U16* xData, U8 iCategory, U16 iNbItems)
 {
 	int iItemIndex = 0;
@@ -14386,7 +14166,7 @@ X16 SkWinCore::LANG_FILTER(U16 entryIndex)
 
 	// SPX: manages also localized images only for char interface
 #if DM2_EXTENDED_LOCALIZED_IMAGES == 1
-	/*if (SkCodeParam::bUseMultilanguageExtended) {
+	if (SkCodeParam::bUseMultilanguageExtended) {
 		if (cls3 == fmtImage && (cls1 == GDAT_CATEGORY_x07_INTERFACE_CHARSHEET || cls1 == GDAT_CATEGORY_x05_TITLE)) {
 			U8 iLangSelect = (cls5 & 0xF0);	// Do not take variation 0x08 into account
 
@@ -14408,7 +14188,7 @@ X16 SkWinCore::LANG_FILTER(U16 entryIndex)
 			}
 		return 0;
 		}
-	}*/
+	}
 #endif // DM2_EXTENDED_LOCALIZED_IMAGES
 	
 	return 1; // always pass for non text entry.
@@ -14567,56 +14347,7 @@ void SkWinCore::LOAD_ENT1()
 	tblGDatEntries = NULL;
 	return;
 }
-//^3E74:24B8
-// SPX: _3e74_24b8 renamed LOAD_GLOBAL_TABLE_RAWDAT_SOUNDS
-void SkWinCore::LOAD_GLOBAL_TABLE_RAWDAT_SOUNDS()
-{
-	ENTER(38);
-	U16 iPhaseStep;	// si 0 = step1, scan? / 1 = step2, load table
-	for (iPhaseStep = 0; iPhaseStep < 2; iPhaseStep++) {
-		if (iPhaseStep > 0 && glbGDatSoundRawDatCount == 0)
-			break;
-		SkEntIter xEntIterator;	// bp26
-		xEntIterator.w0 = 1;
-		xEntIterator.w22 = 0;
-		xEntIterator.xEntrySearchFrom.xEnt4.cls1(0xFF);
-		xEntIterator.xEntrySearchFrom.xEnt4.cls2(0xFF);
-		xEntIterator.xEntrySearchFrom.xEnt4.cls3(fmtSound);
-		xEntIterator.xEntrySearchFrom.xEnt4.cls4(0xFF);
-		X16 iTableLastIndex;	// di
-		X16 *pAudioRawDatTable;	// bp04
-		if (iPhaseStep > 0) {
-			//bp04 = reinterpret_cast<X16 *>(ALLOC_MEMORY_RAM(glbGDatSoundRawDatCount << 1, afDefault, 0x400));
-			pAudioRawDatTable = reinterpret_cast<X16 *>(ALLOC_MEMORY_RAM(glbGDatSoundRawDatCount * sizeof(X16), afDefault, 0x400));
-			iTableLastIndex = 0;
-		}
-		while (QUERY_NEXT_GDAT_ENTRY(&xEntIterator)) {
-			U16 iRawDatSoundIdx = xEntIterator.pRawEntryFound->data;	// bp08
-			if (iPhaseStep == 0) {
-				glbGDatSoundRawDatCount++;
-				U16 iDataLength = QUERY_GDAT_RAW_DATA_LENGTH(iRawDatSoundIdx);	// bp06
-				if (iDataLength > glbMemRAMAudioStuff)
-					glbMemRAMAudioStuff = iDataLength;
-				continue;
-			}
-			X16 iTableIndex;	// bp0a
-			for (iTableIndex = 0; iTableIndex < iTableLastIndex; iTableIndex++) {
-				if (pAudioRawDatTable[iTableIndex] == iRawDatSoundIdx)	// if that sound rawdat already in table, go next
-					//goto _256a;
-					continue;	// replaced goto
-			}
-			pAudioRawDatTable[iTableLastIndex] = iRawDatSoundIdx;
-			iTableLastIndex++;
-			_4976_5cae++;
-//_256a:
-			continue;
-		}
-		if (iPhaseStep > 0) {
-			DEALLOC_UPPER_MEMORY(glbGDatSoundRawDatCount * sizeof(X16));	// glbGDatSoundRawDatCount << 1
-		}
-	}
-	return;
-}
+
 
 // SPX: Add function to detail important GDAT values, in order to compare to other SkWin versions
 void SkWinCore::DEBUG_DISPLAY_GDAT_MAIN_INFO()
@@ -15485,7 +15216,7 @@ UINT SkWinCore::SKLIB_INIT()
 	_4976_474a = 1;
 	_4976_474c = 1;
 	IBMIO_GET_ALL_DRIVE_NAMES();
-	SOME_ALLOC_TABLE_2636_03d4();
+	ALLOC_ZSTRINGS_BUFFER();
 
 	READ_GRAPHICS_STRUCTURE();
 	ALLOC_AUDIO_TABLES();
@@ -15594,7 +15325,7 @@ UINT SkWinCore::INIT()
 	_4976_474a = 1;
 	_4976_474c = 1;
 	IBMIO_GET_ALL_DRIVE_NAMES();
-	SOME_ALLOC_TABLE_2636_03d4();
+	ALLOC_ZSTRINGS_BUFFER();
 
 	READ_GRAPHICS_STRUCTURE();
 	ALLOC_AUDIO_TABLES();
@@ -15731,41 +15462,30 @@ void SkWinCore::ADVANCE_TILES_TIME(X16 xx, X16 yy)
 	// call this if you modify tile's type.
 	// c.g. convert floor to pit-fall. then it allows you to fall down if you are at the pit-fall.
 
-	//^3A15:2CA8
 	ENTER(12);
-	//^3A15:2CAE
 	if (glbCurrentMapIndex == glbMap_4c28 && xx == glbSomePosX_4c2e && yy == glbSomePosY_4c30) {
-		//^3A15:2CC9
 		MOVE_RECORD_TO(OBJECT_NULL, xx, yy, xx, yy);
 	}
-	//^3A15:2CDF
 	ObjectID si = GET_CREATURE_AT(xx, yy);
 	if (si != OBJECT_NULL) {
 		MOVE_RECORD_TO(si, xx, yy, xx, yy);
 	}
-	//^3A15:2D08
 	si = GET_WALL_TILE_ANYITEM_RECORD(xx, yy);
 	ObjectID bp0a = si;
 	X16 bp0c = 0;
 	for (; si != OBJECT_END_MARKER; si = GET_NEXT_RECORD_LINK(si)) {
-		//^3A15:2D21
 		if (si.DBType() <= dbCreature)
 			continue;
 		bp0c++;
-		//^3A15:2D31
 	}
-	//^3A15:2D3F
 	for (; (si = bp0a) != OBJECT_END_MARKER && bp0c != 0; ) {
-		//^3A15:2D42
 		bp0a = GET_NEXT_RECORD_LINK(si);
 		U16 di = si.DBType();
 		if (di <= dbCreature)
 			continue;
-		//^3A15:2D5E
 		bp0c--;
 		MOVE_RECORD_TO(si, xx, yy, xx, yy);
 		if (di == dbMissile) {
-			//^3A15:2D7E
 			Missile *bp08 = GET_ADDRESS_OF_RECORDE(si);
 			Timer *bp04 = &glbTimersTable[bp08->TimerIndex()];
 			bp04->w8_0_4(_4976_5826);
@@ -15775,9 +15495,7 @@ void SkWinCore::ADVANCE_TILES_TIME(X16 xx, X16 yy)
 			bp04->SetMap(_4976_581c);
 			continue;
 		}
-		//^3A15:2E21
 		if (di == dbCloud) {
-			//^3A15:2E26
 			Timer *bp04 = glbTimersTable;
 
 			// SPX: I had the case of infinite loop here because of non incrementation of di (nor bp04?)!!
@@ -15795,14 +15513,12 @@ void SkWinCore::ADVANCE_TILES_TIME(X16 xx, X16 yy)
 			}*/
 			// SPX: new block with supposition
 			for (di = 0; di < glbTimersActiveCount; di++, bp04++) {
-				//^3A15:2E37
 				if (bp04->TimerType() != ttyCloud || bp04->w8 != si)
 					continue;
 				bp04->XcoordB(U8(_4976_5826));
 				bp04->YcoordB(U8(_4976_5828));
 				bp04->id8(ObjectID(si, _4976_5820));
 				bp04->SetMap(_4976_581c);
-				//^3A15:2E95
 			}
 			// SPX: end of new block
 		}
@@ -16629,8 +16345,8 @@ SkWinCore::SkWinCore()
 	zeroMem(&glbGDatEntries, sizeof(glbGDatEntries));
 	_4976_480d = 0;
 	_4976_5d34 = 0;
-	glbGDatSoundRawDatCount = 0;
-	_4976_5cae = 0;
+	cd.sc.glbGDatSoundRawDatCount = 0;
+	cd.sc.glbSndDataLoaded = 0;
 	zeroMem(&glbRectNoTable, sizeof(glbRectNoTable));
 	glbRectZonesLoaded	 = 0;
 	_4976_4968 = 1; // EMS is always avail.
@@ -16671,11 +16387,11 @@ SkWinCore::SkWinCore()
 	_04bf_0280 = 0;
 	cd.dos.glbMouseHandlerSet = 0;
 	_01b0_0933 = 0;
-	_01b0_14d8 = 0;
+	cd.dos.glbIBMTick = 0;
 	glbZMode = 1;
-	_4976_04ee = 0;
+	cd.sc._4976_04ee = 0;
 	cd.sc.sndSoundInBuffer = 0;		// (_01b0_13d6)
-	sndLockSoundBuffer = 0;
+	cd.sc.sndLockSoundBuffer = 0;
 	cd.sc.sndSoundBufferSize = 0;
 	cd.sc.sndSoundBuffer = NULL;
 	_04bf_17e8 = 0;

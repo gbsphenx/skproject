@@ -1035,10 +1035,12 @@ void c_dm2data::init(void)
 	i16 i = 0;
   i16 j = 0;
 //--- some tables first
+  printf("READ BINS\n");
   DM2_READ_BINARY((t_text*)"bin/v5/v1d39bc.dat", v1d39bc, 0x1e4);
   DM2_READ_BINARY((t_text*)"bin/v5/v1d338c.dat", v1d338c, sizeof(v1d338c));
   DM2_READ_BINARY((t_text*)"bin/v5/v1d6802.dat", table1d6802, 0x110); 
   DM2_READ_BINARY((t_text*)"bin/v5/v1d296c.dat", table1d296c, 0x3f * 0x24);
+  printf("READ BINS OK\n");
 
   mainarg1 = 0x1; // at MAIN_ARGC
   mainarg2 = NULL; // pointer_at(MAIN_ARGV); // contents: 0x1410dd, TODO: link?!?
@@ -1063,9 +1065,12 @@ void c_dm2data::init(void)
 */
 
   // obsolete: drvinterfaceptr = DOWNCAST(i16, DRVW_drvinterface);
+  printf("datafoldername = %s\n", dfn);
   datafoldername = CHGCAST(t_text, dfn);
   // SPX
-	if (skWinApplication->sCustomDataFolder != NULL)
+  printf("skwin app = %p\n", skWinApplication);
+ // printf("custom data folder = %s\n", skWinApplication->sCustomDataFolder);
+/*	if (skWinApplication->sCustomDataFolder != NULL)
 	{
 		unsigned int iFolderLen = 0;
 		iFolderLen = strlen(skWinApplication->sCustomDataFolder);
@@ -1075,9 +1080,9 @@ void c_dm2data::init(void)
 #else
 		sprintf(datafoldername, "%s\\", skWinApplication->sCustomDataFolder);
 #endif
-	}
-  v1e0988 = 0;
-  for (i = 0; i < 2; i++) vp_1e097c[i] = NULL;
+	}*/
+  glbZStringRoundRobinIndex = 0;
+  for (i = 0; i < 2; i++) tblZStringsBuffer[i] = NULL;
   markerror = 0;
   errhandling = 0;
   errversion = 5;

@@ -4120,8 +4120,8 @@ void DM2_CHANGE_PLAYER_POS(i16 eaxw)
       /*TAG destw*/ destw,
       ALPHA_4,
       BLITMODE0,
-      BPP_4,
-      BPP_8,
+      IMG_4_BPP,
+      IMG_8_BPP,
       palette);
 
     DM2_HIDE_MOUSE();

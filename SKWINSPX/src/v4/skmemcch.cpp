@@ -1224,15 +1224,7 @@ shelf_memory SkWinCore::GET_SHELFMEM_FROM_GDAT_INDEX(U8 iGDatCls1Category, U8 iG
 	U16 iDataIdx = QUERY_GDAT_ENTRY_DATA_INDEX(iGDatCls1Category, iGDatCls2MainItemId, iGDatCls3DataType, iGDatCls4EntryId);	// si
 	return glbShelfMemoryTable[iDataIdx];
 }
-//^47EB:00A4
-void SkWinCore::_47eb_00a4(sk5f0a *ref)
-{
-	ENTER(4);
-	sk5f0a **bp04 = &ref->pv8;
-	*bp04 = _4976_5efa;
-	_4976_5efa = ref;
-	return;
-}
+
 
 
 
@@ -1300,6 +1292,7 @@ U8 *SkWinCore::t2ptr(tiamat t) {
 }
 
 // pointer to tiamat
+// SPX: does this work in 64 bits ???
 tiamat SkWinCore::ptr2t(U8 *pb) {
 	U32ptr val;
 	val = pb - xCRAM;

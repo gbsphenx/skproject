@@ -158,91 +158,85 @@ void* thread_func2(ALLEGRO_THREAD* thr, void* vparg)
 }
 #endif
 
-void DM2_THREAD_MAIN_LOOP_01()
-{
-  i16 i = 0;
-  do
-  {
-    try
-    {
-      //alg.restart();  // SPX: REMOVED ALLEGRO
+	void DM2_THREAD_MAIN_LOOP_01()
+	{
+	  i16 i = 0;
+	  do
+	  {
+		try
+		{
 
-      for (i=0; i<62; i++)
-        table1d3d23[i] = _table1d3d23[i];
-      for (i=0; i<4; i++)
-        v1d67be[i] = _v1d67be[i];
-      for (i=0; i<17; i++)
-        table1d70b4[i] = _table1d70b4[i];
-      for (i=0; i<10; i++)
-        table1d3ed5[i] = _table1d3ed5[i];
-      for (i=0; i<5; i++)
-        table1d674e[i] = _table1d674e[i];
-      for (i=0; i<76; i++)
-        table1d3ba0[i] = _table1d3ba0[i];
-      // dialogbox still missing!
+		  for (i=0; i<62; i++)
+			table1d3d23[i] = _table1d3d23[i];
+		  for (i=0; i<4; i++)
+			v1d67be[i] = _v1d67be[i];
+		  for (i=0; i<17; i++)
+			table1d70b4[i] = _table1d70b4[i];
+		  for (i=0; i<10; i++)
+			table1d3ed5[i] = _table1d3ed5[i];
+		  for (i=0; i<5; i++)
+			table1d674e[i] = _table1d674e[i];
+		  for (i=0; i<76; i++)
+			table1d3ba0[i] = _table1d3ba0[i];
+		  // dialogbox still missing!
 
-      filedat.init();
-      dm2keybd.init();
-      randdat.init();
-      tmprects.init();
-      glblrects.init();
-      xrectdat.init();
-      strdat.init();
-      ddat.init();
-      timdat.init();
-      init_global_records(); // TODO
-      init_global_images(); // TODO
-      init_global_buttongroups(); // TODO
-      init_mousecursors(); // TODO
-      init_bitmaps(); // TODO
-      mapdat.init();
-      gfxsys.init();
-      party.init();
-      s350.init();
-      gdat.init();
-      eventdata.init();
-      init_clickrecttable(); // TODO
-      eventqueue.init();
-      Tmouse.init();
-      cqueue.flush();
-      init_creatures();
+		  filedat.init();
+		  dm2keybd.init();
+		  randdat.init();
+		  tmprects.init();
+		  glblrects.init();
+		  xrectdat.init();
+		  strdat.init();
+		  ddat.init();
+		  timdat.init();
+		  init_global_records(); // TODO
+		  init_global_images(); // TODO
+		  init_global_buttongroups(); // TODO
+		  init_mousecursors(); // TODO
+		  init_bitmaps(); // TODO
+		  mapdat.init();
+		  gfxsys.init();
+		  party.init();
+		  s350.init();
+		  gdat.init();
+		  eventdata.init();
+		  init_clickrecttable(); // TODO
+		  eventqueue.init();
+		  Tmouse.init();
+		  cqueue.flush();
+		  init_creatures();
 
-	SPX_DEBUG_PRINT("DM2_DBALLOC START...\n");
-      dm2_dballochandler.DM2_SETUP_MEMORYALLOCATION();
-	SPX_DEBUG_PRINT("DM2_DBALLOC 2 ...\n");
-      dm2_dballochandler.DM2_SETUP_DB_ALLOCATION();
-	SPX_DEBUG_PRINT("DM2_DBALLOC DONE\n");
+		SPX_DEBUG_PRINT("DM2_DBALLOC START...\n");
+		  dm2_dballochandler.DM2_SETUP_MEMORYALLOCATION();
+		SPX_DEBUG_PRINT("DM2_DBALLOC 2 ...\n");
+		  dm2_dballochandler.DM2_SETUP_DB_ALLOCATION();
+		SPX_DEBUG_PRINT("DM2_DBALLOC DONE\n");
 
-      sysrestart = RESTART_NOTHING;
+		  sysrestart = RESTART_NOTHING;
 
- // SPX: REMOVED ALLEGRO
-//      alg.hide_mouse(); 
-//      alg.set_mouse(ORIG_SWIDTH / 2, ORIG_SHEIGHT / 2);
-//      alg.start_timer();
+		  gamethread_initialized = true;
 
-      gamethread_initialized = true;
+		  //DM2_HIDE_MOUSE();
 
-      //DM2_HIDE_MOUSE();
+		  DM2_WATCOM_STARTUP();
+		}
+		catch(unsigned int cn)
+		{
+		  if (   cn == THROW_CLOSEWIN
+			  || cn == THROW_DMABORT
+			  || (cn & THROW_SYS_EXIT)
+			 )
+			sysrestart = RESTART_QUIT;
+		}
+		gamethread_initialized = false;
+		dm2_dballochandler.DM2_DTOR_MEMORYALLOCATION();
+	  } while (sysrestart != RESTART_QUIT);
 
-      DM2_WATCOM_STARTUP();
-    }
-    catch(unsigned int cn)
-    {
-      if (   cn == THROW_CLOSEWIN
-          || cn == THROW_DMABORT
-          || (cn & THROW_SYS_EXIT)
-         )
-        sysrestart = RESTART_QUIT;
-    }
-    gamethread_initialized = false;
-    dm2_dballochandler.DM2_DTOR_MEMORYALLOCATION();
-  } while (sysrestart != RESTART_QUIT);
+	  dm2sound.stop_all_sound();
+	  main_exit = true;
 
-  dm2sound.stop_all_sound();
-  main_exit = true;
-
-  return;
-}
+	  return;
+	}
 
 void* thread_func(ALLEGRO_THREAD* thr, void* vparg)
 {
@@ -259,11 +253,8 @@ extern SkWinApp* skWinApplication;	// in GFXMAIN.cpp
 int SKWIN_V5BITDOS_MAIN(SkWinApp* skArgWinApplication)
 {
   logfile = fopen("logdm2.txt", FILEMODE_WT);
-  printf("SKWIN_V5BITDOS_MAIN\n");
-	skWinApplication = skArgWinApplication;
+  skWinApplication = skArgWinApplication;
   DM2_THREAD_MAIN_LOOP_01();
-
-  //alg.start();  // SPX: REMOVED ALLEGRO
 
   do
   {
@@ -273,13 +264,8 @@ int SKWIN_V5BITDOS_MAIN(SkWinApp* skArgWinApplication)
 
       while (!main_exit && gamethread_initialized)
       {
-		//printf("event_loop_T1 START\n");
         event_loop_T1();
-		//printf("event_loop_T1 END\n");
-		//printf("al_rest START\n");
-        //al_rest(0.001);
 		skWinApplication->skwin_Sleep(1);
-		//printf("al_rest END\n");
       }
     }
     catch(...)
@@ -289,7 +275,6 @@ int SKWIN_V5BITDOS_MAIN(SkWinApp* skArgWinApplication)
     }
   } while (!main_exit);
 
-  dm2sound.dtor();
   cleanup();
   return 0;
 }

@@ -15,16 +15,16 @@
 
 //^3DF7:075F
 // SPX: _3df7_075f renamed RETRIEVE_ENVIRONMENT_CMD_CD_FW
-X16 SkWinCore::RETRIEVE_ENVIRONMENT_CMD_CD_FW(DistantEnvironment *ref)
+X16 SkWinCore::RETRIEVE_ENVIRONMENT_CMD_CD_FW(DistantEnvironment *pDistEnv)
 {
 	ENTER(128);
-	U8 bp80[128];
-	if (QUERY_GDAT_TEXT(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, ref->envImg, bp80)[0] == 0)
+	U8 strEnvCmd[128];	// bp08
+	if (QUERY_GDAT_TEXT(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, pDistEnv->envImg, strEnvCmd)[0] == 0)
 		return 0;
-	ref->cmCD = QUERY_CMDSTR_TEXT(bp80, reinterpret_cast<const Bit8u *>(EnvCM_CD));
-	ref->w6 = ref->w4 = 0;
-	ref->cmFW = U8(QUERY_CMDSTR_TEXT(bp80, reinterpret_cast<const Bit8u *>(EnvCM_FW)));
-	ref->b9 = ref->b8 = 0x40;
+	pDistEnv->cmCD = QUERY_CMDSTR_TEXT(strEnvCmd, reinterpret_cast<const U8 *>(EnvCM_CD));
+	pDistEnv->w6 = pDistEnv->w4 = 0;
+	pDistEnv->cmFW = U8(QUERY_CMDSTR_TEXT(strEnvCmd, reinterpret_cast<const U8 *>(EnvCM_FW)));
+	pDistEnv->iScaleStretchY = pDistEnv->iScaleStretchX = C64_IMAGE_SCALE_100_PCT;
 	return 1;
 }
 
@@ -35,36 +35,36 @@ X16 SkWinCore::RETRIEVE_ENVIRONMENT_CMD_CD_FW(DistantEnvironment *ref)
 void SkWinCore::ENVIRONMENT_DRAW_DISTANT_ELEMENT(DistantEnvironment *ref, X16 dir, X16 xx, X16 yy)
 {
 	ENTER(6);
-	X16 bp02;	// SPX => bp02 = mirror flip
+	X16 iMirrorFlip;	// SPX => bp02 = mirror flip
 	if (ref->cmCD == 0)
 		return;
-	if (ref->cmFW == 8 && SET_GRAPHICS_FLIP_FROM_POSITION(1, dir, xx, yy) != 0) {
-		bp02 = 1;
+	if (ref->cmFW == 0x08 && SET_GRAPHICS_FLIP_FROM_POSITION(1, dir, xx, yy) != 0) {
+		iMirrorFlip = 1;
 	}
-	else if (ref->cmFW == 2 && SET_GRAPHICS_FLIP_FROM_POSITION(0x20, dir, xx, yy) != 0) {
-		bp02 = 1;
+	else if (ref->cmFW == 0x02 && SET_GRAPHICS_FLIP_FROM_POSITION(0x20, dir, xx, yy) != 0) {
+		iMirrorFlip = 1;
 	}
 	else if (ref->cmFW == 0x40 && SET_GRAPHICS_FLIP_FROM_POSITION(1, dir, xx, yy) != 0) {
-		bp02 = 1;
+		iMirrorFlip = 1;
 	}
 	else if (ref->cmFW == 0x20 && SET_GRAPHICS_FLIP_FROM_POSITION(0x20, dir, xx, yy) != 0) {
-		bp02 = 1;
+		iMirrorFlip = 1;
 	}
 	else {
-		bp02 = 0;
+		iMirrorFlip = 0;
 	}
 
-	X16 bp04 = ref->b8;
-	X16 bp06 = ref->b9;
+	X16 iStretchX = ref->iScaleStretchX;	// bp04
+	X16 iStretchY = ref->iScaleStretchY;	// bp06
 	X16 di = ref->w4;
 	X16 si = ref->w6;
 	if (cd.pi.glbIsPlayerMoving != 0)
 	{
-		di = CALC_STRETCHED_SIZE(di, 0x34);
-		si = CALC_STRETCHED_SIZE(si, 0x34);
-		bp04 = CALC_STRETCHED_SIZE(bp04, 0x34);
-		bp06 = CALC_STRETCHED_SIZE(bp06, 0x34);
-		if (ref->b8 == 0x40) {
+		di = CALC_STRETCHED_SIZE(di, C52_IMAGE_SCALE_081_PCT);
+		si = CALC_STRETCHED_SIZE(si, C52_IMAGE_SCALE_081_PCT);
+		iStretchX = CALC_STRETCHED_SIZE(iStretchX, C52_IMAGE_SCALE_081_PCT);
+		iStretchY = CALC_STRETCHED_SIZE(iStretchY, C52_IMAGE_SCALE_081_PCT);
+		if (ref->iScaleStretchX == C64_IMAGE_SCALE_100_PCT) {
 			di += _4976_00fe.x;
 			if (ref->cmCD == 0x1771) {	// 0x1771 = 6001
 				si += _4976_4681;
@@ -90,7 +90,7 @@ void SkWinCore::ENVIRONMENT_DRAW_DISTANT_ELEMENT(DistantEnvironment *ref, X16 di
 		, ref->envImg
 		, iElementRecto
 		));
-	QUERY_TEMP_PICST(bp02, bp04, bp06, 0, 0, 0, iElementRecto, -1, glbSceneColorKey, -1, GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, ref->envImg);
+	QUERY_TEMP_PICST(iMirrorFlip, iStretchX, iStretchY, 0, 0, 0, iElementRecto, -1, glbSceneColorKey, -1, GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, ref->envImg);
 	glbTempPicture.iXDisp += di;
 	glbTempPicture.iYDisp += si;
 	DRAW_TEMP_PICST();        
@@ -98,7 +98,8 @@ void SkWinCore::ENVIRONMENT_DRAW_DISTANT_ELEMENT(DistantEnvironment *ref, X16 di
 }
 
 //^32CB:54CE
-i16 SkWinCore::_32cb_54ce(X16 dir, i16 *xx, i16 *yy, X16 xl, X16 yl)
+// SPX: _32cb_54ce renamed ENVIRONMENT_COMPUTE_DISTANCE
+i16 SkWinCore::ENVIRONMENT_COMPUTE_DISTANCE(X16 dir, i16 *xx, i16 *yy, X16 xl, X16 yl)
 {
 	ENTER(4);
 	i16 si;
@@ -145,8 +146,8 @@ X16 SkWinCore::ENVIRONMENT_SET_DISTANT_ELEMENT(DistantEnvironment *ref, U8 *str,
 	ref->w4 = ref->w6 = 0;
 	X16 bp02 = QUERY_CMDSTR_TEXT(str, reinterpret_cast<const Bit8u *>(EnvCM_MV));
 	if (bp02 == 0) {
-		ref->b8 = 0x40;
-		ref->b9 = 0x40;
+		ref->iScaleStretchX = C64_IMAGE_SCALE_100_PCT;
+		ref->iScaleStretchY = C64_IMAGE_SCALE_100_PCT;
 		return 1;
 	}
 	if (bp02 == 1) {
@@ -154,13 +155,13 @@ X16 SkWinCore::ENVIRONMENT_SET_DISTANT_ELEMENT(DistantEnvironment *ref, U8 *str,
 		i16 bp0a = yy + dunMapLocalHeader->MapOffsetY();
 		X16 bp0c = QUERY_CMDSTR_TEXT(str, reinterpret_cast<const Bit8u *>(EnvCM_XLocation));
 		X16 di = QUERY_CMDSTR_TEXT(str, reinterpret_cast<const Bit8u *>(EnvCM_YLocation));
-		i16 si = _32cb_54ce(dir, &bp08, &bp0a, bp0c, di);
+		i16 si = ENVIRONMENT_COMPUTE_DISTANCE(dir, &bp08, &bp0a, bp0c, di);
 		if (bp0a >= 1) {
 			X16 bp04 = QUERY_CMDSTR_TEXT(str, reinterpret_cast<const Bit8u *>(EnvCM_FD));
-			X16 bp06 = max_value(1, 0x40 -(si -bp04));
+			X16 bp06 = max_value(1, C64_IMAGE_SCALE_100_PCT -(si -bp04));
 			bp06 = (((bp06 << 7) >> 6) +1) >> 1;
 			ref->w4 = (i32(bp08) * 210) / si;
-			ref->b8 = ref->b9 = X8(bp06);
+			ref->iScaleStretchX = ref->iScaleStretchY = X8(bp06);
 			return 1; // SPX: Element is visible
 		}
 	}

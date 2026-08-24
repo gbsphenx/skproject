@@ -22,84 +22,58 @@
 void SkWinCore::ADJUST_UI_EVENT(MousePosition *ref)
 {
 	ENTER(6);
-	//^1031:1575
 	Bit16u si = ref->event;
-	//^1031:157C
 	SkD((DLV_EUI, "Event UI %03d (%02X) %s triggered.\n", si, si, static_cast<LPCSTR>(getUIEventName(si))));
 	//if (si >= 0x74 && si <= 0x7b) { // access to hand item action
 	if (si >= UI_EVENTCODE_x74_CHAMPION1_ACTION_HAND_RIGHT && si <= UI_EVENTCODE_x7B_CHAMPION4_ACTION_HAND_LEFT) {
-		//^1031:1586
 		si -= UI_EVENTCODE_x74_CHAMPION1_ACTION_HAND_RIGHT;
-		//^1031:1589
 		Bit16u bp06 = ((si & 1) != 0) ? 1 : 0;
-		//^1031:1599
 		i16 di = GET_PLAYER_AT_POSITION(((si >> 1) + cd.pi.glbPlayerDir) & 3);
-		//^1031:15AD
 		if (false
 			|| di < 0 
 			|| tblChampionSquad[di + bp06].handCooldown[0] != 0 
 			|| IS_ITEM_HAND_ACTIVABLE(di, tblChampionSquad[di].Possess(bp06), bp06) == 0
 		) {
-			//^1031:15E6
 			si = 0;
 		}
 		else {
-			//^1031:15EB
 			si = (di << 1) +bp06 +UI_EVENTCODE_x74_CHAMPION1_ACTION_HAND_RIGHT;
 		}
 	}
-	//^1031:15FA
 	//else if (si >= 0x5f && si <= 0x62) {
 	else if (si >= UI_EVENTCODE_x5F_SPELL_OR_LEADER_1 && si <= UI_EVENTCODE_x62_SPELL_OR_LEADER_4) {
-		//^1031:160A
 		i16 di = GET_PLAYER_AT_POSITION((si -0x5f + cd.pi.glbPlayerDir) & 3);
-		//^1031:161F
 		if (di < 0) {
-			//^1031:1623
-			//^1031:15E6
 			si = 0;
 		}
 		else {
-			//^1031:1625
 			i16 bp04;
 			if (si <= UI_EVENTCODE_x60_SPELL_OR_LEADER_2) {
-				//^1031:162A
 				bp04 = ref->rc6.y + ref->rc6.cy -1 - ref->YPos;
 			}
 			else {
-				//^1031:163C
 				bp04 = ref->YPos - ref->rc6.y;
 			}
-			//^1031:164A
 			i16 bp02;
 			//if (si == 0x60 || si == 0x61) {
 			if (si == UI_EVENTCODE_x60_SPELL_OR_LEADER_2 || si == UI_EVENTCODE_x61_SPELL_OR_LEADER_3) {
-				//^1031:1654
 				bp02 = ref->XPos - ref->rc6.x;
 			}
 			else {
-				//^1031:1664
 				bp02 = ref->rc6.x + ref->rc6.cx -1 - ref->XPos;
 			}
-			//^1031:1676
 			if (bp02 <= bp04) {
-				//^1031:167E
 				si -= 0x4f;
 			}
-			//^1031:1683
 			else if (tblChampionSquad[di].herob44 != 0) {
-				//^1031:1693
 				si = 0;
 			}
 		}
 	}
 	else {
-		//^1031:1607
 		return;
 	}
-	//^1031:1695
 	ref->event = si;
-	//^1031:169C
 	return;
 }
 
@@ -799,7 +773,7 @@ _19b1:
 		// SPX: extended mode : clicking on stats bar will give player main stats :)
 		if (SkCodeParam::bUseDM2ExtendedMode && cd.pi.glbLeaderHandPossession.object == OBJECT_NULL)
 		{
-			U8 message[64];
+			U8 message[80];
 			U8 player = si - UI_EVENTCODE_xEA_CLICK_STATS_BAR_1;
 			sprintf((char*)message, "%s: HP %d / %d |STA %d / %d |MANA %d / %d\n",
 				tblChampionSquad[player].firstName,

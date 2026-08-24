@@ -93,6 +93,7 @@ enum MemoryArea
     C3_Unknown = 3
 };
 
+
 namespace DM2Internal {
 	// 
 	struct Ax3 { // 2 bytes
@@ -132,6 +133,7 @@ namespace DM2Internal {
 #endif
 	};
 };
+
 
 namespace DMEncyclopaedia {
 
@@ -1313,7 +1315,11 @@ namespace DM2Internal {
 
 		i32 getNegativeTotalBufferSize() const { return iNegBuffSize; }
 		//void dw0(i32 val) { _dw0 = val; }
+#ifndef SKDOSV5
 		void setNegativeTotalBufferSize(i32 val) { LOGX(("SET MEMENT %p dw0 = %08X", this, val)); iNegBuffSize = val; }
+#else
+		void setNegativeTotalBufferSize(i32 val) { iNegBuffSize = val; }
+#endif // SKDOSV5
 
 		X16 getMark4() const { return _w4; }	// w4() 
 		X16 getMark6() const { return _w6; }	// w6() 
@@ -1409,7 +1415,7 @@ namespace DM2Internal {
 		U8 ttype;		// @4	b04
 		U8 actor;	// @5	// b5 player index or creature type or other ...
 		U16 value;		// @6	// w6 => position x & y	// SPX: doesn't it take object ID ? or spell power ? it can also be an object! (door) ..
-		U16 w8;		// @8
+		U16 w8;		// @8	w8 // can also be ObjectID
 
 		X16 GetMap() const { return X16(dw00 >> 24); }
 		void SetMap(U16 val) {
@@ -1929,10 +1935,10 @@ namespace DM2Internal {
 //		U8 b15;		// @15
 //	};
 	// 
-	struct skxxx1 { // 8 bytes
-		U8 *pb0;		// @0
-		U16 w4;		// @4
-		U16 w6;		// @6
+	struct skxxx1 { // 8 bytes (32b) or 12 bytes (64b) -- used in _0aaf_02f8_DIALOG_BOX
+		U8 *pb0;		// @0 *pb0, would hold some text for dialog
+		U16 w4;		// @4 w4
+		U16 w6;		// @6 w6
 	};
 	// 
 	struct skxxx2 { // 9 bytes
@@ -1986,36 +1992,36 @@ namespace DM2Internal {
 	};
 	// SPX: sk5f06
 	struct SoundShortInfo { // 7 bytes
-		U16 w0;		// @0
+		U16 iSoundShelfIndex;		// @0	// w0 : index in tblSoundShelf => shelf index for sound table
 		U8 category;		// @2 // b2 cls1
 		U8 index;		// @3 // b3 cls2
 		U8 entry;		// @4 // b4 cls4
 		U16 iGDatRawIndex;		// @5	// w5
 	};
-	// SPX: sk5f0e
+	// SPX: sk5f0e, for queued sounds in glbSoundList
 	struct SoundEntryInfo { // 12 bytes
-		X16 w0;		// @0 // 1 if using
+		X16 iSoundSlotUsed;		// @0 w0 // 1 if using
 		X8 category;		// @2 // b2 cls1	= GDAT category
 		X8 index;		// @3 // b3 cls2	= index ?
 		X8 entry;		// @4 // b4 cls4	= entry = #sound
 		i8 b5;		// @5 // map#
 		X8 b6;		// @6 // xpos
 		X8 b7;		// @7 // ypos
-		X16 w8;		// @8
-		X16 w10;	// @10
+		X16 sndw8;		// @8	// w8
+		X16 sndw10;	// @10	// w10
 	};
-	// 
-	struct sk5f0a { // 16 bytes
-		sk5f0a *pv0;	// @0
-		U16 w4;		// @4	// size of sound		< 65536
-		X16 w6;			// @6	// playback frequency	= 5500
-		sk5f0a *pv8;	// @8
+	// SPX: sk5f0a renamed SoundShelfInfo
+	struct SoundShelfChained {		// 8 bytes + 2 pointers = 16 bytes (32bits) or 24 bytes (64bits)
+		SoundShelfChained *pv0;	// @0 *pv0
+		U16 iSoundSize;			// @4	// w4 size of sound		< 65536
+		X16 iSoundFrequency;			// @6	// w6 playback frequency	= 5500
+		SoundShelfChained *pv8;	// @8 *pv8
 
-		shelf_memory ps0;
+		shelf_memory iShelfMem;	// ps0 4 bytes
 	};
 	// SPX: sk5efe renamed SoundStructure
-	struct SoundStructure { // 12 bytes
-		sk5f0a *pv0;	// @0
+	struct SoundStructure { // 12 bytes (32b) or 16 bytes (64b)
+		SoundShelfChained *pv0;	// @0 *pv0
 		U8 b4;		// @4
 		U8 b5;		// @5
 		i8 b6;		// @6 // dist x
@@ -2035,7 +2041,7 @@ namespace DM2Internal {
 
 
 	// SPX: only used in EXTRACT_GDAT_IMAGE
-	struct sk5cfc_image { // 10 bytes + 1 pointer = 14 bytes / 18 bytes 64-bits
+	struct sk5cfc_image { // 10 bytes + 1 pointer = 14 bytes (32b) or 18 bytes (64b)
 		sk5cfc_image *pNextImage;	// @0	*pv0, spx: previous image ?
 		X16 iGDatRawDataIdx;			// @4		// w4 iGDAT Raw Data Index
 		X16 iMemPool;			// @6		// w6
@@ -2066,12 +2072,12 @@ namespace DM2Internal {
 		U16 AllocLower() const { return iMemPool; }
 	};
 	// SPX: unused structure ?
-	struct sk5cfc_root {	// 4 bytes, or 8 bytes in 64bits
+	struct sk5cfc_root {	// 1 pointer = 4 bytes (32b) or 8 bytes (64b)
 		sk5cfc_image	*pNextImage;			// @0	*pv0, spx: next image ?
 	};
 	// 
 
-	struct sk5d00 { // 28 bytes / 40 bytes 64-bits
+	struct sk5d00 { // 22 bytes + 1 pointer = 26 bytes (32b) or 30 bytes (64b)
 		sk5d00 *pv0;	// @0
 		U32 dw4;		// @4	// avail size after this->dw28
 		U32ptr dw8;		// @8	// (void *) or (shelf_memory)
@@ -2097,7 +2103,7 @@ namespace DM2Internal {
 	};
 	// 
 	// SPX: skxxx5 renamed Picture
-	struct Picture { // 24 bytes
+	struct Picture { // 20 bytes + 1 pointer = 24 bytes (32b) or 28 bytes (64b)
 		U8 *pb0;		// @0 // pic bits
 		U16 w4;		// @4 // 4=Use (b8,b9,b11), 8=Use w12 for cacheIndex
 		U16 iRawDataIndex;		// @6 // w6 raw data index
@@ -2114,7 +2120,7 @@ namespace DM2Internal {
 	};
 	// 
 	// SPX: skxxx4 renamed ExtendedPicture
-	struct ExtendedPicture : Picture { // 314 bytes (58 pic data + 256 colors)
+	struct ExtendedPicture : Picture { // 314 bytes (32b) or 322 bytes (64b) (58 bytes (32b) or 66 bytes (64b) + 256 colors)
 	//	U8 *pb0;		// @0
 	//	U16 w4;		// @4
 	//	U16 w6;		// @6
@@ -2295,7 +2301,7 @@ namespace DM2Internal {
 	};
 	// 
 	struct sk0cea;
-	struct skxxx7 { // 12 bytes
+	struct skxxx7 { // 12 bytes (32b) or 16 bytes (64b)
 		sk0cea *pv0;	// @0
 		SRECT rc4;		// @4
 	};
@@ -2311,7 +2317,7 @@ namespace DM2Internal {
 //		U8 b0_0_7() const { return U8(w0); }
 //	};
 	// 
-	struct sk0cea { // 10 bytes
+	struct sk0cea { // 10 bytes (32b) or 14 bytes (64b)
 		X8 b0_;
 		X8 b1_;
 		X8 b2_;
@@ -2671,7 +2677,7 @@ namespace DM2Internal {
 //		U8 b1() const { return U8(w0 >> 8); }
 //	};
 	// 
-	struct SkEntIter {	// 12+6+6+4/8 bytes = 28 bytes or 32 bytes (64bits)
+	struct SkEntIter {	// 12+6+6+4/8 bytes = 28 bytes (32bits) or 32 bytes (64bits)
 		X16 w0;		// @0 // enum init flag: 1=first num(need init), 0=second or later enum, 0x8000=ranged
 		SkLoadEnt xEntrySearchFrom;	// @2 bp5a x2 // single, or from
 		SkLoadEnt x8;	// @8 bp54 x8 // to
@@ -2846,13 +2852,13 @@ namespace DM2Internal {
 	};
 	// SPX: sk5c2a renamed DistantEnvironment
 	struct DistantEnvironment { // 10 bytes
-		X8 envImg;		// b0	: for sky image, distant thunder and wet ground
+		X8 envImg;			// b0	: for sky image, distant thunder and wet ground
 		X8 cmFW;			// b1 env command FW
 		X16 cmCD;			// w2 env command CD
-		X16 w4;
-		X16 w6;
-		U8 b8;
-		U8 b9;
+		X16 w4;				// w4 offset ?
+		X16 w6;				// w6
+		U8 iScaleStretchX;				// b8
+		U8 iScaleStretchY;				// b9
 	};
 	// 
 	struct TGDATFileHeader { // (skfh4) 4 bytes
@@ -2880,7 +2886,7 @@ namespace DM2Internal {
 		X8 b36[5];
 	};
 	// 
-	struct sk514e { // 14 bytes / 18 bytes // 514e-515b
+	struct sk514e { // 14 bytes (32b) / 18 bytes (64b) // 514e-515b
 		U8 b0;			// @0 // _4976_514e // max len
 		U8 b1;			// @1 // _4976_514f // cur pos: _4976_515c[b0 - b1]
 		X8 b2;			// @2 // _4976_5150
@@ -2934,14 +2940,14 @@ namespace DM2Internal {
 	};
 #endif
 	// 
-	struct skxxxh { // 7 bytes
+	struct skxxxh { // 7 bytes (32b) or 11 bytes (64b)
 		i8 b0;			// @0
 		i8 b1;			// @1 // if positive pass on 100.0/b1 percent. if negative skip on 100.0/b1 percent.
 		sk1bf9 *pv2;	// @2
 		X8 b6;			// @6	// 0 = end of table
 	};
 	// 
-	struct sk4efe { // 6 bytes
+	struct sk4efe { // 6 bytes (32b) or 10 bytes (64b)
 		X16 w0;			// @0
 		skxxxh *pv2;	// @2
 	};
@@ -2953,7 +2959,7 @@ namespace DM2Internal {
 		X8 b3;		// @3
 	};
 	// 
-	struct sk4f04 { // 32 bytes
+	struct sk4f04 { // 10 bytes + 1 pointer = 14 bytes (32b) or 18 bytes (64b) (spx: why was it indicated as 32 bytes ?)
 		sk1bf9 *pv0;	// @0
 		X8 b4;			// @4
 		i8 b5;			// @5
@@ -3229,7 +3235,9 @@ namespace DM2Internal {
 		U16					iMemEntIdx;
 		mement				*pMemEntry;	// points to tblRawDataToMement[x]
 	};
-};
+}; // namespace DM2Internal
+
+
 
 #pragma pack(pop)
 

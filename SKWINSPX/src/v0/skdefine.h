@@ -223,10 +223,10 @@ enum dtIndex
 #define C3_DIR_ROTATION_LEFT_270	3
 
 // Playback 0x157C = 5500 Hz
-#define PLAYBACK_FREQUENCY			5500
-#define SOUND_FREQUENCY_5500		5500
-#define SKWIN_PLAYBACK_FREQUENCY	6000
-#define SKWIN_PLAYBACK_FREQUENCY_V5	11025
+#define C05500_SOUND_PLAYBACK_FREQUENCY			5500
+//#define C05500_SOUND_FREQUENCY_5500				5500
+#define C06000_SOUND_PLAYBACK_FREQUENCY			6000
+#define C11025_SOUND_PLAYBACK_FREQUENCY			11025
 
 // Number of possible champions
 #define MAX_CHAMPIONS			4		// That can't be increased with no pain
@@ -239,6 +239,9 @@ enum dtIndex
 
 // AI special attributes
 #define AI_DEF_ARMOR_MAX		0xFF
+
+
+#define C08_MAX_SOUND_QUEUE_LIST		8
 
 
 #define C1000_LOAD_BAR_MAX		1000
@@ -642,6 +645,11 @@ enum SkillLevel {
 #define C02_GDAT_IMG_FLYING_METHOD_ONLY_FRONT		0x02
 #define C03_GDAT_IMG_FLYING_METHOD_SIDE				0x03
 
+
+#define C52_IMAGE_SCALE_081_PCT						0x34	// 0,8125
+#define C64_IMAGE_SCALE_100_PCT						0x40	// 1
+
+
 //------------------------------------------------------------------------------
 //	INTERFACE / GRAPHICS
 //------------------------------------------------------------------------------
@@ -801,11 +809,11 @@ enum SkillLevel {
 #define GDAT_ENVWTH_RAINFALL_OBLIQUE_1			0x6D
 #define GDAT_ENVWTH_RAINFALL_STRAIGHT_1			0x71
 
-#define GFX_ENVIRONMENT_IMG_THUNDER				0x64	// 3
-#define GFX_ENVIRONMENT_IMG_SKY_CLOUDS			0x67	// 3
-#define GFX_ENVIRONMENT_IMG_WET_GROUND			0x6A	// 3
-#define GFX_ENVIRONMENT_IMG_RAIN_SLANTED		0x6D	// 4
-#define GFX_ENVIRONMENT_IMG_RAIN_STRAIGHT		0x71	// 4
+#define GFX_ENVIRONMENT_IMG_x64_THUNDER				0x64	// 3
+#define GFX_ENVIRONMENT_IMG_x67_SKY_CLOUDS			0x67	// 3
+#define GFX_ENVIRONMENT_IMG_x6A_WET_GROUND			0x6A	// 3
+#define GFX_ENVIRONMENT_IMG_x6D_RAIN_SLANTED		0x6D	// 4
+#define GFX_ENVIRONMENT_IMG_x71_RAIN_STRAIGHT		0x71	// 4
 
 //------------------------------------------------------------------------------
 //	VIEWPORT CELLS DISPLAY
@@ -998,13 +1006,13 @@ enum SkillLevel {
 //	CREATURES / OBJECTS ID
 //------------------------------------------------------------------------------
 // Creatures used for specific code
-#define CREATURE_GOOD_SCOUT_MINION		0x30
-#define CREATURE_GOOD_ATTACK_MINION		0x31
-#define CREATURE_GOOD_CARRY_MINION		0x32
-#define CREATURE_GOOD_FETCH_MINION		0x33
-#define CREATURE_GOOD_GUARD_MINION		0x34
-#define CREATURE_GOOD_U_HAUL_MINION		0x35
-#define CREATURE_DRAGOTH_ATTACK_MINION	0x4C
+#define CREATURE_x30_GOOD_SCOUT_MINION		0x30	// 48
+#define CREATURE_x31_GOOD_ATTACK_MINION		0x31	// 49
+#define CREATURE_x32_GOOD_CARRY_MINION		0x32	// 50
+#define CREATURE_x33_GOOD_FETCH_MINION		0x33	// 51
+#define CREATURE_x34_GOOD_GUARD_MINION		0x34	// 52
+#define CREATURE_x35_GOOD_U_HAUL_MINION		0x35	// 53
+#define CREATURE_x4C_DRAGOTH_ATTACK_MINION	0x4C
 
 #define CREATURE_STAT_00				0x00
 #define CREATURE_STAT_AI_SEQ_01			0x01	// Goes to a table related to more AI info ?

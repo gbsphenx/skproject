@@ -100,6 +100,10 @@ SkWinApp::SkWinApp()
 	spfact = 1; // speed factor
 	lang = 0;
 	dung = -1;
+	engine = 4;
+#if defined (SKDOSV5)
+	engine = 5;
+#endif
 	freq = 11050;
 	sksave = 0;		// savegame to resume
 	newgame = 0;	// start new game
@@ -127,7 +131,7 @@ SkWinApp::~SkWinApp()
 {
 	free(xSKCRAM);
 	free(xSKCEMS);
-	free(xSKVRAM);
+	//free(xSKVRAM);
 
 	free(xVRAM);
 }
@@ -159,7 +163,7 @@ void SkWinApp::MemInfo()
 {
 	printf("Allocated CRAM = %d KiB (%p)\n", iSizeCRAM/1024, xSKCRAM);
 	printf("Allocated CEMS = %d MiB (%p)\n", iSizeCEMS/1024/1024, xSKCEMS);
-	printf("Allocated VRAM = %d KiB (%p)\n", iSizeVRAM/1024, xSKVRAM);
+	printf("Allocated VRAM = %d KiB (%p)\n", iSizeVRAM/1024, xVRAM->GET_VIDEO_ARRAY_RGB());
 }
 
 void SkWinApp::ProcessArgs(int argc, char** argv)
@@ -250,6 +254,15 @@ void SkWinApp::ProcessArgs(int argc, char** argv)
 			lang = _GDAT_x60_LANG_ITALIAN_;	// italian
 		}
 
+		// Options: engine
+		else if (!strcmp(argv[iArgIndex], "-v4")) {
+			printf("Option: engine = v4 (PC9821 1994)\n");
+			engine = 4;
+		}
+		else if (!strcmp(argv[iArgIndex], "-v5")) {
+			printf("Option: engine = v5 (PC-DOS 1995)\n");
+			engine = 5;
+		}
 
 		// Special mode: inspect (debug)
 		else if (!strcmp(argv[iArgIndex], "-inspect")) {
@@ -576,7 +589,7 @@ void SkWinApp::AudioPlayDirect(const char* sAudioFilename, i8 vol)
 void SkWinApp::skwin_SndPlayHi(const U8 *buff, U32 buffSize, i8 vol)
 {
 	// SPX: added this small block to have random frequencies
-	int iBasePlaybackFrequency = SKWIN_PLAYBACK_FREQUENCY;	// 6000
+	int iBasePlaybackFrequency = C06000_SOUND_PLAYBACK_FREQUENCY;	// 6000
 	int iPlaybackFrequency = iBasePlaybackFrequency;
 	if (SkCodeParam::bDM2V5Mode) {
 		iPlaybackFrequency = 22050;	// 11025	// SKWIN_PLAYBACK_FREQUENCY_V5

@@ -22,7 +22,7 @@ void SkWinCore::QUERY_RAINFALL_PARAM(U8 *iRainImageID, U16 *isMirrored)
 	ENTER(0);
 	*isMirrored = (glbRainDirection - _4976_5aa0) & 3;
 	// SPX: 0x71 is vertical rain view / 0x6D is side rain view
-	U8 iImageID = (*isMirrored == 0 || *isMirrored == 2) ? GFX_ENVIRONMENT_IMG_RAIN_STRAIGHT : GFX_ENVIRONMENT_IMG_RAIN_SLANTED;
+	U8 iImageID = (*isMirrored == 0 || *isMirrored == 2) ? GFX_ENVIRONMENT_IMG_x71_RAIN_STRAIGHT : GFX_ENVIRONMENT_IMG_x6D_RAIN_SLANTED;
 	U16 iRainLevel = C00_RAIN_POWERLEVEL_NONE;	// dx
 	if (glbRainStrength >= RAIN_THRESHOLD_x80_LEVEL_3) {
 		iRainLevel = C03_RAIN_POWERLEVEL_STRONG;
@@ -128,26 +128,26 @@ void SkWinCore::UPDATE_WEATHER(U16 aa)	// aa = 1 when called from timer, aa = 0 
 	if (glbRainHasCloudSky != 0 && glbRainLevelForSky >= 0x10) {
 		if (glbRainLevelForSky >= 0x80) {
 			glbRainAmbientLightModifier = 1;
-			bp04->envImg = GFX_ENVIRONMENT_IMG_SKY_CLOUDS+2;	// 0x69 Dark clouds
+			bp04->envImg = GFX_ENVIRONMENT_IMG_x67_SKY_CLOUDS+2;	// 0x69 Dark clouds
 		}
 		else if (glbRainLevelForSky >= 0x40) {
-			bp04->envImg = GFX_ENVIRONMENT_IMG_SKY_CLOUDS+1;	// 0x68 Medium clouds
+			bp04->envImg = GFX_ENVIRONMENT_IMG_x67_SKY_CLOUDS+1;	// 0x68 Medium clouds
 		}
 		else {
-			bp04->envImg = GFX_ENVIRONMENT_IMG_SKY_CLOUDS;	// 0x67 Grey clouds
+			bp04->envImg = GFX_ENVIRONMENT_IMG_x67_SKY_CLOUDS;		// 0x67 Grey clouds
 		}
 		if (RETRIEVE_ENVIRONMENT_CMD_CD_FW(bp04) != 0)
 			bp04++;
 	}
 	if (glbRainHasWetGround != 0 && glbRainLevelForGround >= 0x40) {
 		if (glbRainLevelForGround >= 0xc0) {
-			bp04->envImg = GFX_ENVIRONMENT_IMG_WET_GROUND+2;	// 0x6C Big water puddles
+			bp04->envImg = GFX_ENVIRONMENT_IMG_x6A_WET_GROUND+2;	// 0x6C Big water puddles
 		}
 		else if (glbRainLevelForGround >= 0x80) {
-			bp04->envImg = GFX_ENVIRONMENT_IMG_WET_GROUND+1;	// 0x6B Medium water puddles
+			bp04->envImg = GFX_ENVIRONMENT_IMG_x6A_WET_GROUND+1;	// 0x6B Medium water puddles
 		}
 		else {
-			bp04->envImg = GFX_ENVIRONMENT_IMG_WET_GROUND;	// 0x6A Small water puddles
+			bp04->envImg = GFX_ENVIRONMENT_IMG_x6A_WET_GROUND;		// 0x6A Small water puddles
 		}
 		if (RETRIEVE_ENVIRONMENT_CMD_CD_FW(bp04) != 0)
 			bp04++;
@@ -225,10 +225,10 @@ void SkWinCore::UPDATE_WEATHER(U16 aa)	// aa = 1 when called from timer, aa = 0 
 			}
 		}
 		if (bp0e == 0 && RAND01() != 0) {
-			bp04->envImg = U8(RAND16(3)) + GFX_ENVIRONMENT_IMG_THUNDER;	// 0x64 = thunder 1 => 0x66 = thunder 3
+			bp04->envImg = U8(RAND16(3)) + GFX_ENVIRONMENT_IMG_x64_THUNDER;	// 0x64 = thunder 1 => 0x66 = thunder 3
 			if (RETRIEVE_ENVIRONMENT_CMD_CD_FW(bp04) != 0) {
 				bp0a = 1;
-				SOMETHING_WITH_SCALED_RECTANGLES(bp04->cmCD, bp04->cmCD +1, RAND16(0x64), &bp04->w4, &bp04->w6);
+				SOMETHING_WITH_SCALED_RECTANGLES(bp04->cmCD, bp04->cmCD + 1, RAND16(0x64), &bp04->w4, &bp04->w6);
 				bp04->cmFW = U8(RAND02());
 				bp04++;
 			}
@@ -237,10 +237,10 @@ void SkWinCore::UPDATE_WEATHER(U16 aa)	// aa = 1 when called from timer, aa = 0 
 			if (glbThunderJustCast == 0) {
 				X16 bp0c;
 				if (glbRainStormController == 0) {
-					bp0c = RAND16(10) +5;
+					bp0c = RAND16(10) + 5;
 				}
 				else {
-					bp0c = 0x4c - (glbRainStormController / glbRainMultiplicator);
+					bp0c = 0x4C - (glbRainStormController / glbRainMultiplicator);
 				}
 				bp0c = BETWEEN_VALUE(1, bp0c, 15);
 				//SPX: Get sound of distant thunder

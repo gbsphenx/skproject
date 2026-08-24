@@ -62,61 +62,6 @@ int main(int argc, char* argv[])
     sprintf(sBuildInfo, "Build date and time: %s %s", __SKWIN_RELEASE_DATE__, __TIME__);
     printf("%s\n", sBuildInfo);
 
-	fpLog = fopen(sLogSkMini, "a");
-	if (fpLog == NULL) { 
-		printf("Failed to open %s.\n", sLogSkMini);
-		return 1;
-	}
-
-	//--- Execute the xsysinfo script
-	strcpy(sXSysInfoScript, "xsysinfo.bat");
-#if defined (__LINUX__)
-	strcpy(sXSysInfoScript, "./xsysinfo.sh");
-#endif
-	system(sXSysInfoScript);
-
-	//--- Open skinfo file
-    fpInSys = fopen("skmini.inf", "r");
-    if (fpInSys == NULL) {
-        perror("Error opening input file (skmini.inf)");
-		printf("Please run %s on your environment.\n", sXSysInfoScript);
-        bInSysFile =false;
-    }
-	else
-		bInSysFile = true;
-
-
-	fprintf(fpLog, "****************************************\n");
-	fprintf(fpLog, "%s <%s>\n", __SKWIN_PROGNAME__, __SKWIN_SYSTEM__);
-    // Read and write each line
-	if (bInSysFile == true) {
-		while (fgets(line, sizeof(line), fpInSys)) {
-			fputs(line, fpLog);
-		}
-	}
-	if (fpInSys != NULL)
-		fclose(fpInSys);
-	fprintf(fpLog, "----------------------------------------\n");
-	fprintf(fpLog, "Basic sizes\n");
-	fprintf(fpLog, "char -> %ld	short-> %ld	int  -> %ld	longint-> %ld\n", sizeof(char), sizeof(short), sizeof(int), sizeof(long int));
-	fprintf(fpLog, "U8   -> %ld	X8   -> %ld	i8   -> %ld\n", sizeof(U8), sizeof(X8), sizeof(i8));
-	fprintf(fpLog, "U16  -> %ld	X16  -> %ld	i16  -> %ld\n", sizeof(U16), sizeof(X16), sizeof(i16));
-	fprintf(fpLog, "U32  -> %ld	X32  -> %ld	i32  -> %ld\n", sizeof(U32), sizeof(X32), sizeof(i32));
-	fprintf(fpLog, "----------------------------------------\n");
-	fprintf(fpLog, "MAX CRAM = %d\n", MAX_CRAM);	// Conventional memory: 640KiB
-	fprintf(fpLog, "MAX CEMS = %d\n", MAX_CEMS);	// EMS memory space: 6MiB or more
-	fprintf(fpLog, "MAX VRAM = %d\n", MAX_VRAM);	// VRAM memory space: 64 KiB
-
-	fprintf(fpLog, "Dungeon File Header = %ld\n", sizeof(File_header));
-	fprintf(fpLog, "Map Definition = %ld\n", sizeof(Map_definition_info));
-	
-	fprintf(fpLog, "Champion struct. = %ld\n", sizeof(Champion));
-	fprintf(fpLog, "****************************************\n");
-
-	if (fpLog != NULL)
-		fclose(fpLog);
-	printf("Information written into %s\n", sLogSkMini);
-	printf("Done.\n");
 
 #if defined (__LINUX__)
 	SkCodeParam::bRenderingEngineSDL = true;
@@ -126,7 +71,6 @@ int main(int argc, char* argv[])
 
 	skWinApplication.ProcessArgs(argc, argv);
 	skWinApplication.MemInfo();
-
 
 	// depending on option, set the renderer
 	if (SkCodeParam::bRenderingEngineDOS)

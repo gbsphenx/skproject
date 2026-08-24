@@ -883,8 +883,8 @@ void SkWinCore::_01b0_0fa3()
 void SkWinCore::IBMIO_CALL_TICKSTEP() {
 	LOADDS(0x3083);
 	if (glbDMode == 0 || glbTickStepActive != 0) {
-		_01b0_14d8++;
-		if ((_01b0_14d8 & 3) == 0) {
+		cd.dos.glbIBMTick++;
+		if ((cd.dos.glbIBMTick & 3) == 0) {
 			(this->*glbFncTickStep)(); INDIRECT_CALL	// TICK_STEP_CHECK
 		}
 	}
@@ -955,9 +955,9 @@ void SkWinCore::IBMIO_UNINIT_TIMER()
 {
 	ENTER(0);
 	glbTickStepActive = 0;
-	while (sndLockSoundBuffer != 0) {
+	while (cd.sc.sndLockSoundBuffer != 0) {
 #if UseAltic
-		sndLockSoundBuffer = 0;
+		cd.sc.sndLockSoundBuffer = 0;
 #endif
 	}
 	SKDOS_OUTPORTB(0x43,0x36);
@@ -1950,7 +1950,7 @@ int SkWinCore::ANIM_MAIN(i16 argc, const char **argv, char **env) // #DS=089C
 	U8 *bp10;
 	X16 bp50;
 	if (IS_SCARD_PRESENT() CALL_IBMIO != 0 && (bp10 = ANIM_farmalloc(32000)) != NULL) {
-		if (_RELOAD_SOUND_BUFFER(bp10, 32000, PLAYBACK_FREQUENCY) CALL_IBMIO != 0) {
+		if (_RELOAD_SOUND_BUFFER(bp10, 32000, C05500_SOUND_PLAYBACK_FREQUENCY) CALL_IBMIO != 0) {
 			bp50 = 1;
 		}
 		else {

@@ -24,6 +24,8 @@
 #if defined (SK9821V4) || defined (SKWINSPX)
 	#include <skglobal.h>
 	#include <skcore.h>
+#elif defined (SKDOSV5)
+	#include <skcore.h>
 #endif // SK9821V4
 
 #include <stdio.h>
@@ -50,18 +52,18 @@
 //#if defined (__DJGPP__)
 //	int SKWIN_V5BITDOS_MAIN(SkWinApp* skWinApplication) { return (int)1; }
 //#elif defined (SKDOSV5) || defined (SKWINSPX)
-#if defined (SKDOSV5) || defined (SKWINSPX)
-	extern int SKWIN_V5BITDOS_MAIN(SkWinApp* skWinApplication);
-#else
-	int SKWIN_V5BITDOS_MAIN(SkWinApp* skWinApplication) { return (int)1; }
-#endif
+//#if defined (SKDOSV5) || defined (SKWINSPX)
+//	extern int SKWIN_V5BITDOS_MAIN(SkWinApp* skWinApplication);
+//#else
+//	int SKWIN_V5BITDOS_MAIN(SkWinApp* skWinApplication) { return (int)1; }
+//#endif
 
 
 //==============================================================================
 
 int SKWIN_START_MAIN(int iEngine, int argc, char **argv);
 
-int SKWIN_V5BIT_MAIN(SkWinApp* skWinApplication);
+//int SKWIN_V5BIT_MAIN(SkWinApp* skWinApplication);
 
 //==============================================================================
 //#ifndef _SKPROBE_
@@ -112,8 +114,6 @@ int SKWIN_START_MAIN(int iEngine, int argc, char **argv)
 	SkWinApp*	skWinApplication = NULL;
 
 	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
-	//if (XAUDIO_SDL_INIT())
-	//	SkCodeParam::bUseAudioSDL = true;
 
 	skWinApplication = new SkWinApp();
 
@@ -138,29 +138,39 @@ int SKWIN_START_MAIN(int iEngine, int argc, char **argv)
 		skWinApplication->setRenderer(GFX_RENDERER_MFC);
 
 	{
-#if defined(SK9821V4) || defined (SKWINSPX)
-		SkWinCore skApp;
-		skApp.skWinApp = skWinApplication;
-		/*skApp.skWinApp->pMouseButtons = &(skApp.cd.mk.mice_btn);
-		skApp.skWinApp->pMouseX = &(skApp.cd.mk.mice_x);
-		skApp.skWinApp->pMouseY = &(skApp.cd.mk.mice_y);
-		skApp.skWinApp->fCoreMouseCallback = &SkWinCore::IBMIO_MOUSE_HANDLER;
-		skApp.skWinApp->xCore = &skApp;*/
-#endif // SK9821V4
+//#if defined(SK9821V4) || defined (SKWINSPX)
+		SkWinCore skCore;
+		skCore.skWinApp = skWinApplication;
+		/*skCore.skWinApp->pMouseButtons = &(skApp.cd.mk.mice_btn);
+		skCore.skWinApp->pMouseX = &(skApp.cd.mk.mice_x);
+		skCore.skWinApp->pMouseY = &(skApp.cd.mk.mice_y);
+		skCore.skWinApp->fCoreMouseCallback = &SkWinCore::IBMIO_MOUSE_HANDLER;
+		skCore.skWinApp->xCore = &skApp;*/
+//#endif // SK9821V4
 		skWinApplication->setVideoMode();
 		skWinApplication->StartMessage();
 		skWinApplication->ProcessArgs(argc, argv); // just to display again
 		skWinApplication->MemInfo();
 		skWinApplication->runSplashTitle();
 		skWinApplication->skwin_Sleep(500);
-#if defined(SK9821V4) || defined (SKWINSPX)
+#if defined(SK9821V4)
 	// IBMIO_BOOTSTRAP => IBMIO_MAIN => IBMIO_EXEC (FIRE.EXE) => FIRE_BOOTSTRAP => FIRE_MAIN => INIT then GAME_LOOP
-		iGameRC = skApp.IBMIO_BOOTSTRAP();
+		iGameRC = skCore.IBMIO_BOOTSTRAP();
 #endif // SK9821V4
-#ifdef SKDOSV5
-	//skWinApplication->runWindowTest();
-	//skWinApplication->setVideoMode();
-	SKWIN_V5BIT_MAIN(skWinApplication);
+#if defined(SKDOSV5)
+		//SKWIN_V5BIT_MAIN(skWinApplication);
+		iGameRC = skCore.SKWINV5_MAIN_START();
+#endif
+#if defined (SKWINSPX)
+		switch(skWinApplication->engine) {
+		case 5:
+			iGameRC = skCore.SKW5_QUICK_START();	// SKWINV5_MAIN_START
+			//iGameRC = skCore.SKWINV5_MAIN_START();	// stand alone V5
+			break;
+		default:
+			iGameRC = skCore.IBMIO_BOOTSTRAP();
+			break;
+		}
 #endif
 	}
 	//XAUDIO_SDL_CLOSE();
@@ -174,10 +184,10 @@ int SKWIN_START_MAIN(int iEngine, int argc, char **argv)
 
 //==============================================================================
 
-int SKWIN_V5BIT_MAIN(SkWinApp* skWinApplication)
-{
-	return SKWIN_V5BITDOS_MAIN(skWinApplication);	// goes into DM2 V5 Bit's Code
-}
+//int SKWIN_V5BIT_MAIN(SkWinApp* skWinApplication)
+//{
+//	return SKWIN_V5BITDOS_MAIN(skWinApplication);	// goes into DM2 V5 Bit's Code
+//}
 
 //==============================================================================
 //==============================================================================
@@ -209,6 +219,7 @@ int SKWIN_START_MAIN_HEADLESS(tSKWinContext* xSKWinContext, int iEngine, int arg
 	else if (SkCodeParam::bRenderingEngineMFC)
 		skWinApplication->setRenderer(GFX_RENDERER_MFC);
 
+#ifndef SKDOSV5
 	{
 		xSKWinContext->xSkCore = new SkWinCore();
 //
@@ -228,7 +239,7 @@ int SKWIN_START_MAIN_HEADLESS(tSKWinContext* xSKWinContext, int iEngine, int arg
 
 		iGameRC = xSKWinContext->xSkCore->SKLIB_INIT();
 	}
-
+#endif // SKDOSV5
 	SkCodeParam::bDisplayNoMouse = false;
 	
 	return iGameRC;
@@ -274,7 +285,7 @@ SK_API int SK_MainStartHeadless(tSKWinContext* xSKWinContext, const char* sComma
     return SKWIN_START_MAIN_HEADLESS(xSKWinContext, __SK_ENGINE_V4_, argc, argv);
 }
 
-
+#ifndef SKDOSV5
 SK_API int SK_GameLoad(tSKWinContext* xSKWinContext)
 {
 	int iResult = 0;
@@ -311,5 +322,5 @@ SK_API void SK_ForceRenderScreen(tSKWinContext* xSKWinContext)
 {
 	xSKWinContext->xSkCore->SKExt_FORCE_RENDER_SCREEN();
 }
-
+#endif // SKDOSV5
 //==============================================================================

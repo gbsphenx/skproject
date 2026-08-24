@@ -1159,7 +1159,7 @@ _1d6a:
 			break;
 
 		case CmCallScout: // 47
-			bp35 = CREATURE_GOOD_SCOUT_MINION;		// SPX: 0x30 = Scout Minion
+			bp35 = CREATURE_x30_GOOD_SCOUT_MINION;		// SPX: 0x30 = Scout Minion
 			//SPX: bp35 holds creature to generate
 			goto _1ebe;
 
@@ -1170,7 +1170,7 @@ _1d6a:
 				_1c9a_0247_FREE_CACHE_FROM_CREATURE(bp08->GetContainedObject());
 			}
 			else if (bp1c == CmCallFetch) {
-				bp35 = CREATURE_GOOD_FETCH_MINION;	// SPX: Fetch Minion
+				bp35 = CREATURE_x33_GOOD_FETCH_MINION;	// SPX: Fetch Minion
 				bp0a = cd.pi.glbPlayerDir;
 				bp1e = bp08->GetDestX();
 				bp20 = bp08->GetDestY();
@@ -1179,7 +1179,7 @@ _1d6a:
 				goto _1ed8;
 			}
 			else {
-				bp35 = CREATURE_GOOD_CARRY_MINION;	// SPX: Carry Minion
+				bp35 = CREATURE_x32_GOOD_CARRY_MINION;	// SPX: Carry Minion
 _1ebe:
 				bp1e = cd.pi.glbPlayerPosX;
 				bp20 = cd.pi.glbPlayerPosY;
@@ -1219,15 +1219,15 @@ _ReleaseMinion:
 			goto _ReleaseMinion;
 
 		case CmGuardMinion: // 50
-			bp3c = CREATURE_GOOD_GUARD_MINION;	// Guard Minion
+			bp3c = CREATURE_x34_GOOD_GUARD_MINION;	// Guard Minion
 			goto _CreateMinion;
 
 		case CmUHaulMinion: // 51
-			bp3c = CREATURE_GOOD_U_HAUL_MINION;	// U-Haul Minion
+			bp3c = CREATURE_x35_GOOD_U_HAUL_MINION;	// U-Haul Minion
 			goto _CreateMinion;
 
 		case CmAttackMinion: // 49
-			bp3c = CREATURE_GOOD_ATTACK_MINION;	// Attack Minion
+			bp3c = CREATURE_x31_GOOD_ATTACK_MINION;	// Attack Minion
 //_1f8e:
 _CreateMinion:
 			if (CREATE_MINION(bp3c, si >> 3, (cd.pi.glbPlayerDir +2) & 3, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerMap, bp2e, cd.pi.glbPlayerDir) != OBJECT_NULL)
@@ -2391,13 +2391,13 @@ U16 SkWinCore::PERFORM_MOVE(X16 xx)
 			glbTableToMove = OBJECT_NULL;
 			bp10 = cd.pi.glbPlayerMap;
 			if (xx == 3) {
-				_12b4_0d75_CREATURE(glbTargetPosXTest, glbTargetPosYTest, _4976_4eac, 0xfe);
+				_12b4_0d75_CREATURE(glbTargetPosXTest, glbTargetPosYTest, glbPlayerDir_4976_4eac, 0xFE);
 			}
 			if (PERFORM_MOVE(xx) != 0) {
 				PERFORM_TURN_SQUAD(_4976_4eb2);
 				if (xx != 3) {
 					CHANGE_CURRENT_MAP_TO(bp10);
-					_12b4_0d75_CREATURE(glbTargetPosXTest, glbTargetPosYTest, _4976_4eac, 0xfe);
+					_12b4_0d75_CREATURE(glbTargetPosXTest, glbTargetPosYTest, glbPlayerDir_4976_4eac, 0xFE);
 				}
 			}
 			CHANGE_CURRENT_MAP_TO(cd.pi.glbPlayerMap);
@@ -2466,7 +2466,7 @@ _05c2:
 			_12b4_023f_WOUND_RUNNING_INTO_CREATURE(playerDestPosX, playerDestPosY, &bp16, &bp18, bp0e, di);
 		}
 		bp24 = ((bp0e +xx) -3) & 3;
-		if (IS_CREATURE_MOVABLE_THERE(playerDestPosX, playerDestPosY, bp24, &bp14) != 0 && _12b4_099e(bp14) != 0) {
+		if (IS_CREATURE_MOVABLE_THERE(playerDestPosX, playerDestPosY, bp24, &bp14) != 0 && CHAMPION_WEIGHT_CREATURE_12b4_099e(bp14) != 0) {
 			_12b4_0d75_CREATURE(playerDestPosX, playerDestPosY, bp24, 0xfe);
 			goto _0685;
 		}
@@ -3269,4 +3269,35 @@ void SkWinCore::CHECK_TRIGGER_MUSIC_FROM_PLAYER_POSITION(U16 iMapPosition, U16 i
 		REQUEST_PLAY_MUSIC(iSelectedMusicID, 25);
 	
 	//CHANGE_CURRENT_MAP_TO(iCurrentMapIndex);
+}
+
+//^0CEE:2821
+X16 SkWinCore::ADD_COIN_TO_WALLET(ObjectID rlMoneyBox, ObjectID rlCoin)
+{
+	ENTER(12);
+	ObjectID di = rlCoin;
+	if (IS_CONTAINER_MONEYBOX(rlMoneyBox) == 0)
+		return 0;
+	if (IS_MISCITEM_CURRENCY(di) == 0)
+		return 0;
+	Miscellaneous_item *bp08 = GET_ADDRESS_OF_RECORDA(di);
+	Container *bp0c = GET_ADDRESS_OF_RECORD9(rlMoneyBox);
+	ObjectID si = bp0c->GetContainedObject();
+	for (; si != OBJECT_END_MARKER; si = GET_NEXT_RECORD_LINK(si)) {
+		if (si.DBType() == dbMiscellaneous_item) {
+			Miscellaneous_item *bp04 = GET_ADDRESS_OF_RECORDA(si);
+			if (bp04->ItemType() != bp08->ItemType())
+				continue;
+			if (bp04->Charge() >= 0x3f)
+				continue;
+			bp04->Charge(bp04->Charge() +1);
+			QUEUE_DEALLOC_RECORD(di); // this causes many assertion prompts!
+			break;
+		}
+		return 0;
+	}
+	if (si != OBJECT_END_MARKER)
+		return 1;
+	APPEND_RECORD_TO(di, &bp0c->w2, -1, 0);
+	return 1;
 }

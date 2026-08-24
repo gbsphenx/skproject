@@ -77,7 +77,7 @@ void DM2_DRAW_GAMELOAD_DIALOGUE_TO_SCREEN(void)
         NOALPHA,
         BLITMODE0,
         bmpheader->res,
-        BPP_8);
+        IMG_8_BPP);	// BPP_8
     }
     DM2_SHOW_MOUSE();
   }
@@ -140,8 +140,8 @@ void DM2_gfxmain_0b36_0cbe(c_buttongroup* buttongroup, bool alloc)
         buttongroup->button.r.w,
         NOALPHA,
         BLITMODE0,
-        BPP_8,
-        BPP_8);
+        IMG_8_BPP,
+        IMG_8_BPP);
 
       r++;
     } while (--buttongroup->button.groupsize != 0);

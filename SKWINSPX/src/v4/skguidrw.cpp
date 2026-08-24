@@ -4741,7 +4741,7 @@ void SkWinCore::DRAW_DIALOGUE_PROGRESS(X32 iPermilleValue)
 	FIRE_FILL_BACKBUFF_RECT(&xRectProgressBar, glbPaletteT16[C09_COLOR_ORANGE]);
 	// SPX: draw some text on it
 	if (SkCodeParam::bUseDM2ExtendedMode) {
-		char sPctText[10];
+		char sPctText[12];
 		sprintf(sPctText, "%d%%", (iPermilleValue/10)); 
 			DRAW_STRONG_TEXT(
 				glbBackBuffViewport,
@@ -5856,7 +5856,7 @@ void SkWinCore::DRAW_TELEPORTER_TILE(i16 iViewportCell, X16 iGDatCls1Category, X
 		RAND() & 255,
 		glbViewportWidth, 
 		bp10, 
-		_32cb_0649(U8(iGDatCls1Category), U8(iGDatCls2MainItemId), 0x14, bp10)
+		GET_LOCAL_PALETTE_32cb_0649(U8(iGDatCls1Category), U8(iGDatCls2MainItemId), 0x14, bp10)
 		);
 	if (bp04[1] != 0xFF) {
 		FREE_PICT_MEMENT(&bp3c);
@@ -6238,7 +6238,7 @@ void SkWinCore::DRAW_RAIN()
 	}
 	//_44c8_20a4(bp04, glbBackBuffViewport, NULL, &bp14, READ_UI16(bp04,-4) * READ_UI16(bp04,-2) -40 -(RAND() & 0x1f), RAND() & 255, glbViewportWidth, 0,
 	_44c8_20a4(bp04, glbBackBuffViewport, NULL, &bp14, READ_IMGBUFF_WIDTH(bp04) * READ_IMGBUFF_HEIGHT(bp04) -40 -(RAND() & 0x1F), RAND() & 255, glbViewportWidth, 0,
-		_32cb_0649(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, bp07, 0)
+		GET_LOCAL_PALETTE_32cb_0649(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, bp07, 0)
 		);
 	if (bp06 == 1) {
 		FREE_TEMP_CACHE_INDEX(si);

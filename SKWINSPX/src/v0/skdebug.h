@@ -17,8 +17,9 @@
 
 #define SkDP(X) {if (SkCodeParam::bDebugPrint == true) {SkwinDEBUG (1, X);}}
 
-
+#ifndef SKDOSV5
 #define LOGX(X) Write2LOGX X
+#endif // SKDOSV5
 /*
 #ifdef _DEBUG
 	#define LOGX(X) Write2LOGX X
@@ -37,7 +38,7 @@
 #define DLV_DBM 0
 #define DLV_DYN 0
 #define DLV_SYS 0
-#define DLV_RCT 1
+#define DLV_RCT 0
 #define DLV_FIL 0	// Track file open (useful for custom GDAT)
 #define DLV_DBC 0
 #define DLV_TWEET 0
@@ -68,10 +69,10 @@
 #define DLV_DBG_TICK		0	// Tick information
 #define DLV_DBG_DOOR		0
 #define DLV_DBG_GAME_LOAD	0
-#define DLV_DBG_GAME_LOOP	1
+#define DLV_DBG_GAME_LOOP	0
 #define DLV_DBG_LUA			0
 #define DLV_DBG_SND			0
-#define DLV_USE_LOGX		1
+#define DLV_USE_LOGX		0
 
 #ifdef __DJGPP__
 #define DLV_DBG_DOS			1

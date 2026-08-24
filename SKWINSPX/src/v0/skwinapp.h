@@ -82,6 +82,7 @@ public:
 	int freq;
 	int sksave;		// savegame to resume
 	int newgame;	// start new game
+	int engine;		// 4 or 5
 	char*	sCustomGraphicsDatFilename;
 	char*	sCustomDungeonDatFilename;
 	char*	sCustomDataFolder;
@@ -90,7 +91,7 @@ public:
 	//--- main memory used within SK Core
 	X8* xSKCRAM;
 	X8* xSKCEMS;
-	X8* xSKVRAM;
+	//X8* xSKVRAM;
 	U32 iSizeCRAM;
 	U32 iSizeCEMS;
 	U32 iSizeVRAM;

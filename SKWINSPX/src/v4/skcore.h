@@ -77,11 +77,12 @@ protected:
 #endif
 
 
+#ifndef SKDOSV5
 
 	//{{SKSAVE_INSORTED_VARS
 	File_header fileHeader;
 	void	*__vram;		// =0xA0000000
-	Bit8u	*pbVram;		// =0xA0000000
+	U8	*pbVram;		// =0xA0000000
 	fileSet	fset;
 	void (SkWinCore::*intrvect[256])();
 	void (SkWinCore::*_int33_mouse_callback)();
@@ -124,18 +125,18 @@ protected:
 	U16 _01b0_13ca;
 	X16	glbSoundFreq_13cc;		// (_01b0_13cc)
 	U16	glbSoundFreq_13ce;	// (_01b0_13ce)
-	Bit8u	*sndSoundToPlayBuffer;	// sndbuff: buff
-	U16	sndLockSoundBuffer;
+	U8	*sndSoundToPlayBuffer;	// sndbuff: buff
+//	U16	sndLockSoundBuffer;
 	U8 _01b0_13d8[256];
-	U16		_01b0_14d8;
-	X16	_01b0_14d9;
+//	U16		_01b0_14d8;	// _01b0_14d8
+//	X16		_01b0_14d9;	// _01b0_14d9
 	X16		_01b0_14db;
 	U16	_01b0_14dd;		// sndbuff: current writing cursor
 	U16	sndSoundToPlayBufferSize;		// sndbuff: buff size (=0x35f4)
 
 	U16	glbFreqComparator;		// (_01b0_4896)
 
-	Bit8u	glbUpdatePalette;		// (_04bf_00fc)
+	U8	glbUpdatePalette;		// (_04bf_00fc)
 	U16	glbMouseCursorVisible;		// (_04bf_00fd) mouse cursor vis1: 0=invisible, 1=visible
 	X16		glbZMode;		// (_04bf_027e)
 	i16		_04bf_0280;
@@ -146,7 +147,7 @@ protected:
 //	U16	glbSoundCardType;		// (_04bf_028a) sndcard type: sblaster=6
 //	U16	sndSoundInBuffer;		// (_04bf_028c) =1
 //	U16	sndSoundBufferSize;		// (_04bf_028e)
-//	Bit8u	*sndSoundBuffer;	// (_04bf_0290) sound buffer
+//	U8	*sndSoundBuffer;	// (_04bf_0290) sound buffer
 	X16	sysSomeSemaphore;
 	i16		_04bf_0296;
 	X16		_04bf_0298;
@@ -171,7 +172,7 @@ protected:
 	i32	glbSomeCounter_0519;		// (_04bf_0519)
 	U8		_04bf_060b[80];
 	U16		glbBlitMouseColorkey;			// (_04bf_079c)	internalBlit colorkey
-	Bit8u	_04bf_079e[0x0242];	// size=?. blit dest buffer
+	U8	_04bf_079e[0x0242];	// size=?. blit dest buffer
 	X8		_04bf_09de;
 	SRECT	_04bf_09e0;
 	SRECT	_04bf_09e8;
@@ -229,7 +230,7 @@ protected:
 	X8		*_4976_0083;	// _heapbase
 	U8		*_4976_0087;	// _brklvl
 	U8		*_4976_008b;	// _heaptop
-	Bit32u	_4976_0090;		// SPX: Has something to do with GAME TICK
+	U32	_4976_0090;		// SPX: Has something to do with GAME TICK
 	i16		_4976_00e8;		// screen to viewport x (=0)
 	i16		_4976_00ea;		// screen to viewport y (=40)
 	X16		_4976_00ec;		// =9576 // avail heap size while game running
@@ -258,25 +259,25 @@ protected:
 	U16		_4976_012a;
 	U16		_4976_012c;
 	U16		_4976_012e;
-	U16	_4976_0130;
-	i16	_4976_0132;
-	U16	_4976_0134;
-	U16	_4976_0136;
-	U16	_4976_013a;		// jp's text cy
+	U16		_4976_0130;
+	i16		_4976_0132;
+	U16		_4976_0134;
+	U16		_4976_0136;
+	U16		_4976_013a;		// jp's text cy
 	U16		_4976_013e;		// cx? =320
 	U16		_4976_0140;
 	i16		_4976_0142;
-	U16	glbMagicMapWidth;		// (_4976_0144) width of map chip (=7)
-	U16	glbMagicMapHeight;		// (_4976_0146) height of map chip (=7)
+	U16		glbMagicMapWidth;		// (_4976_0144) width of map chip (=7)
+	U16		glbMagicMapHeight;		// (_4976_0146) height of map chip (=7)
 	i16		glbMagicMapInterlineX;		// =1 pixels between two tiles
-	U16	glbMagicMapInterlineY;		// =1
+	U16		glbMagicMapInterlineY;		// =1
 	RectTable	glbRectNoTable;	// (_4976_0194) starting mem for rectno info
 	U16		glbRectRingBufferIndex;		// (_4976_0198) current ring buffer index
 	//U16	glbGameHasEnded;		// (_4976_01ba)
-	U16	_4976_022c;		// 1 if modal dialog working
+	U16		_4976_022c;		// 1 if modal dialog working
 	X16		glbTickStepReached;		// (_4976_022e) 1 if system interval timer reached
-	U16	glbMapToLoad;		// (_4976_0230) non 0xffff if you need load map. change the player's current map.
-	Bit8u	_4976_04ee;
+	U16		glbMapToLoad;		// (_4976_0230) non 0xffff if you need load map. change the player's current map.
+//	U8		_4976_04ee;			// (_4976_04ee)
 	i16		glbCurrentMapIndex;		// (_4976_0c5a) current map number (is not a player's map index)
 	U16		glbTargetTypeMoveObject;		// candidate target to move table // 0=Fwd, 1=FwdR, 2=BackR, 3=Back, 4=BackL, 5=FwdL, 6=Noop
 
@@ -309,7 +310,7 @@ protected:
 	U8		_4976_3d7f; // size=?
 	U16	glbLangageLetterIndex;	// (_4976_3d82)	holds index for langage letter?
 	U16	glbRightPanelType;	// (_4976_3ddc) right pane replacement: 3=magic map 4=money-box 5=container
-	Bit8u	glbSquadInterfaceMapGfxSet;	// (_4976_3df6) graphics set only used for drawing player squad interface
+	U8	glbSquadInterfaceMapGfxSet;	// (_4976_3df6) graphics set only used for drawing player squad interface
 	U16	_4976_3df7;
 	U16	_4976_3f68;
 	U16	glbPreviousRightPanelType;	// (_4976_3f6a)
@@ -322,7 +323,7 @@ protected:
 	X16		_4976_4212;
 	U16		glbMistyMap;		// (_4976_4214) is misty fogged map
 	U16		glbSceneColorKey;		// (_4976_4216) scene colorkey
-	Bit8u	glbMapGraphicsSet;		// (_4976_4218) current dungeon graphics set
+	U8	glbMapGraphicsSet;		// (_4976_4218) current dungeon graphics set
 	ObjectID	_4976_421a;
 	X16		_4976_467f;
 	X16		_4976_4681;
@@ -335,7 +336,7 @@ protected:
 	X16		_4976_474e;
 	U16		glbFontLoaded;					// (_4976_4750)
 	U16		_4976_475c;
-	Bit8u	_4976_475e;
+	U8	_4976_475e;
 	i16	glbTimer_4976_4762;				// (_4976_4762) timer related ?
 	X16		glbStartQuickRain;			// (_4976_47fc)
 	X16		glbThunderJustCast;	// (_4976_47fe)
@@ -356,11 +357,11 @@ protected:
 	X16		_4976_4952;
 	U16		_4976_4954[4];	// may be SRECT?
 	SRECT	_4976_495c;
-	Bit8u	*_4976_4964;	// NULL (to blit to screen)
+	U8	*_4976_4964;	// NULL (to blit to screen)
 	U16		_4976_4968;				// ems avail more than 16 pages, if 1
 	U16	_4976_499e;
 	U16	_4976_49a0;
-	Bit32u	glbRandomSeed;		// (_4976_49ba) random seed
+	U32	glbRandomSeed;		// (_4976_49ba) random seed
 	U16	_4976_49be;
 	i16		_4976_49d0;
 	i16		_4976_49d2;
@@ -368,7 +369,7 @@ protected:
 	U16	glbProjectileAttackType;	// (_4976_4b7a)
 	U16	glbPoisonAttackDamage;		// (_4976_4b7c) poisonous attack value
 	U16		_4976_4b7e;
-	Bit32u	glbGameTick_4b80;		// (_4976_4b80) something about game tick
+	U32	glbGameTick_4b80;		// (_4976_4b80) something about game tick
 	sk4b84	tblRectRingBuffer[4];	// (_4976_4b84) size=4? temporary ring rect buffer
 	U16		glbRectZonesLoaded;		// (_4976_4ba4)	1=rect is present // set after loading rectangle zones
 	U16		_4976_4ba6;		// index of next avail temporary rects
@@ -387,7 +388,7 @@ protected:
 	U16		_4976_4be6;
 	//U16	glbIsPlayerSleeping; // (_4976_4be8) 1 if sleep?
 	//U16	glbIsPlayerMoving; // (_4976_4bea) 0 if you stay, not 0 if stepping forward/backward
-	Bit32u	glbGameTick;	// (_4976_4bec) current game tick
+	U32	glbGameTick;	// (_4976_4bec) current game tick
 	U16		glbTickSpeed;	// (_4976_4bf0) 0 is the fastest (no wait between game tick), 15 is slow
 	//U16	glbPlayerLastMove;		// (_4976_4bf2) Last effective move (see PERFORM_MOVE)
 	//U16	glbPlayerMap;	// (_4976_4bf4) current player map #
@@ -409,9 +410,9 @@ protected:
 	U16		glbMap_4976_4c12;				// (_4976_4c12) map for someone
 	U16		glbPlayerThrowCounter;	// (_4976_4c14) Spx: I don't get the real usage of this .. seems quite useless ...
 	U8*		glbBackBuffViewport;	// (_4976_4c16) off-screen viewport? (224x136) =0xE0008006
-	Bit32u	_4976_4c1a;		// game tick?
+	U32	_4976_4c1a;		// game tick?
 	U16		glbSomePosY_4976_4c1e;		// (_4976_4c1e)
-	Bit32u	glbAbsoluteTickCounter;			// (_4976_4c20)
+	U32	glbAbsoluteTickCounter;			// (_4976_4c20)
 	//i16	glbSpecialScreen;		// (_4976_4c24) Spx: some sort of flag telling if we are in MAIN screen, CREDITS or INGAME ?
 	U16		_4976_4c26;
 	U16		glbMap_4c28;	// (_4976_4c28) a map?
@@ -429,23 +430,23 @@ protected:
 	U16		_4976_4c40;	// dir?
 	U8		_4976_4c42[16];
 	OID_T	*glbIndexOfTilesWithObjects;			// (_4976_4c52) U16* [LOCAL] Index of tiles with objects on them (per column)
-	//Bit8u	glbCreaturesMaxCount;				// (_4976_4c56) creatures cnt in GRAPHICS.dat
+	//U8	glbCreaturesMaxCount;				// (_4976_4c56) creatures cnt in GRAPHICS.dat
 	//U8		*glbSomeCreatureTable;			// (_4976_4c58) 3 values per creature type
-	Bit8u	*_4976_4c5c;			// default dungeon graphics set (outside map) per level (6=ground floor)
-	Bit8u	glbMapDoorOrnatesList[16];			// locallevel door deco. graphics?
+	U8	*_4976_4c5c;			// default dungeon graphics set (outside map) per level (6=ground floor)
+	U8	glbMapDoorOrnatesList[16];			// locallevel door deco. graphics?
 	U8		*_4976_4c72;			// array of map indexes. grouped by zLevel. termed by 0xff
 	i16		glbCountMoneyItems;		// (_4976_4c76) count of coin types (=6)
-	Bit8u	**glbCurrentTileMap;			// (_4976_4c78) tileval = glbCurrentTileMap[column][row]
+	U8	**glbCurrentTileMap;			// (_4976_4c78) tileval = glbCurrentTileMap[column][row]
 	OID_T	*dunMapTilesObjectIndexPerColumn;	// U16 (_4976_4c7c) [GLOBAL] Index of tiles with objects on them (per column)
 	i16		glbMoneyItemsValueTable[MONEY_ITEM_MAX];	// (_4976_4c80)
 	U16		glbMoneyItemsIDTable[MONEY_ITEM_MAX];	// (_4976_4c94) coin types (by distinctive item types)
 	U8		***glbMapTileValue;	// (_4976_4ca8) tileval = glbMapTileValue[mapnum][column][row]; map-number-to-map-data-column-pointer
-	Bit8u	*glbMapCreaturesTypeNumber;			// (_4976_4cac) creature types on level
+	U8	*glbMapCreaturesTypeNumber;			// (_4976_4cac) creature types on level
 	U8		*_4976_4cb0;			// map[zLevel] to _4976_4c72 index
 	U16	_4976_4cb4;				// word count of (Index of tiles with objects on them (per column))
 	U8		glbMapDoorType[2];			// (_4976_4cb6) doortype0,1
 	U16	glbDoLightCheck;				// (_4976_4cb8) 1 if something happens at player's map (e.g. creature barks?)
-	Bit8u	_4976_4cba[16];			// locallevel floor graphics?
+	U8	_4976_4cba[16];			// locallevel floor graphics?
 	U8	*glbDBObjectData[16];		// (_4976_4cca)
 	Map_definitions *dunMapLocalHeader;	// [LOCAL] map def
 	File_header *dunHeader;		// file header (_4976_4d0e)
@@ -456,7 +457,7 @@ protected:
 	Map_definitions	*dunMapsHeaders;	// (_4976_4dba) [GLOBAL] map def
 	U16		_4976_4dbe;
 	U16		_4976_4dc0;
-	Bit8u	_4976_4dc2[16];	// locallevel wall graphics?
+	U8	_4976_4dc2[16];	// locallevel wall graphics?
 	i16		glbCurrentMapWidth;				// (_4976_4dd2) current map width
 	i16		glbCurrentMapHeight;				// (_4976_4dd4) current map height
 	U16		*dunMapColumnsSumArray;	// (_4976_4dd6) array-of-sum-of-columns-per-map
@@ -465,7 +466,7 @@ protected:
 	U16		glbViewportClickableRectCount;		// (_4976_4dde) pick up able item count
 //	jmp_buf	_4976_4de0;
 	i16		_4976_4df4;
-	Bit8u	_4976_4df6[2];
+	U8	_4976_4df6[2];
 	U16	_4976_4df8;		// rectno?
 	i16		glbUIEventCode;		// (_4976_4dfa) SPX: sort of timer for credits screen?
 	U16	_4976_4dfc;
@@ -494,7 +495,7 @@ protected:
 	i16		_4976_4ea6;	// _4976_4ea6
 	U16		_4976_4ea8;	// _4976_4ea8
 	U16		glbMap_4976_4eaa;	// map#?
-	U16		_4976_4eac; // map#?
+	U16		glbPlayerDir_4976_4eac; // _4976_4eac
 	U16		glbPosX_4976_4eae;	// x?
 	U16		glbPosY_4976_4eb0;	// y?
 	U16		_4976_4eb2;
@@ -602,14 +603,16 @@ protected:
 	U16	_4976_52e4;		// 0=fighter, 1=ninja, 2=priest, 3=wizard
 	U16	glbChampionBonesIndex;		// (_4976_52e6) who's bone? (0 to 3)
 	U16	glbItemWeightKg;		// (_4976_52e8) weight xxx part of xxx.?
-	U8*	tblZStr_4976_52ea[2];	// (_4976_52ea)
+
+//	U8*	tblZStr_4976_52ea[2];	// (_4976_52ea)
+//	U16	glbZStringIdx_4976_52f8;	// _4976_52f8
+
 	U16	_4976_52f4;
 	U16	glbChampMaxLoadDisplay;	// _4976_52f6
-	U16	glbZStringIdx_4976_52f8;	// _4976_52f8
 	U16	glbChampWeightLoadTenthDisplay;	// _4976_52fa
 	SkLoadEnt	*tblSkEntries;	// _4976_52fc
 	X16		glbSkEntriesCount;		// (_4976_5300) count of used _4976_52fc entries
-	Bit8u	glbStrBufferActionName[20]; // (_4976_5302[20])
+	U8	glbStrBufferActionName[20]; // (_4976_5302[20])
 	U16	glbMagicMapManaCounter;	// _4976_5316
 	i16	_4976_5318; // a map?
 	U16	glbMagicMapManaDivisor;	// _4976_531a
@@ -622,7 +625,7 @@ protected:
 	i16	_4976_5328; // a x3?
 	i16	_4976_532a; // a y3?
 	U16	glbWeaponShooterNum;	// (_4976_532e) Word value 0x05 of launcher
-	Bit8u	glbChampionHandCoolingDown[MAX_CHAMPIONS][3];	// _4976_5330[4][3]
+	U8	glbChampionHandCoolingDown[MAX_CHAMPIONS][3];	// _4976_5330[4][3]
 	U16	_4976_5336;
 	i16	_4976_533c;	// a map?
 	i16	_4976_533e;	// a map?
@@ -650,7 +653,7 @@ protected:
 	U16	_4976_53a2;
 	U16		glbCommandSlotsNum;	// _4976_53a4
 	SRECT	_4976_53a6;
-	Bit8u	glbHoldedContainerType;	// (_4976_53ae) type of showing chest
+	U8	glbHoldedContainerType;	// (_4976_53ae) type of showing chest
 	//LeaderPossession	glbLeaderHandPossession;	// (_4976_57c8) player handy posession
 	U8		_4976_57de;
 	U16		glbLeaderItemFlags;	// (_4976_57e0) item flags (wordvalue 00)
@@ -673,7 +676,8 @@ protected:
 	U16	_4976_5824;
 	i16	_4976_5826;		// new-x?
 	i16	_4976_5828;		// new-y?
-	U8		_4976_582a[16];	// palette
+//	U8		_4976_582a[16];	// _4976_582a	palette
+	U8		tblSubstituteHazeCloudRainPal[256];	// _4976_582a	palette => SPX: pushed it to 256, because GET_LOCAL_PALETTE_32cb_0649 which uses it loops over 256 (a mistake?) => to be checked with other versions
 	X8		_4976_592a;
 	U8		_4976_592b[13];
 	SRECT	_4976_5938;
@@ -726,7 +730,7 @@ protected:
 	U16		_4976_5c06;
 	U8		*_4976_5c08;
 	U16		glbTimerTickRemoveHintMessageIndex;		// index for _4976_5c02 (tblTimerTickRemoveHintMessage), but must be always 0, since the table has only 1 slot
-	Bit8u	*_4976_5c0e;	// font-bitmap at 01-00-07-00-00-00
+	U8	*_4976_5c0e;	// font-bitmap at 01-00-07-00-00-00
 	U16		_4976_5c12;
 	U16		glbTimersActiveCount;				// (_4976_5c14) active timer count
 	U16		glbTimersMaximumCount;				// (_4976_5c16) maximum timer count
@@ -738,29 +742,29 @@ protected:
 	X16		_4976_5c28;
 	DistantEnvironment	_4976_5c2a[5];
 	U8		glbRainHasThunderImage;	// (_4976_5c5c)
-	Bit8u	glbRainFlagSomething;	// (_4976_5c5d)
-	Bit8u	glbRainStrength;	// (_4976_5c5e) rain strength: 0=no rainfall, 1to15=lv1, 16to63=lv2, 64to127=lv3, 128to255=lv4
-	Bit8u	glbRainRelated3;	// (_4976_5c5f)
-	Bit8u	glbRainLevelForSky;		// (_4976_5c60)
-	Bit8u	glbRainLevelForGround;	// (_4976_5c61)
-	Bit8u	glbRainRelated2;		// (_4976_5c62)
-	Bit8u	glbRainAmbientLightModifier;	// (_4976_5c63) 1 when darker, 0 else
-	Bit8u	glbRainMultiplicator;				// (_4976_5c64) Rain/Thunder related
+	U8	glbRainFlagSomething;	// (_4976_5c5d)
+	U8	glbRainStrength;	// (_4976_5c5e) rain strength: 0=no rainfall, 1to15=lv1, 16to63=lv2, 64to127=lv3, 128to255=lv4
+	U8	glbRainRelated3;	// (_4976_5c5f)
+	U8	glbRainLevelForSky;		// (_4976_5c60)
+	U8	glbRainLevelForGround;	// (_4976_5c61)
+	U8	glbRainRelated2;		// (_4976_5c62)
+	U8	glbRainAmbientLightModifier;	// (_4976_5c63) 1 when darker, 0 else
+	U8	glbRainMultiplicator;				// (_4976_5c64) Rain/Thunder related
 	i16		glbRainStormController; // (_4976_5c66) Rain and storm strength
 	U16	glbRainSomeLightMod;
-	Bit8u	glbRainDirection;		// (_4976_5c6a) rain direction
+	U8	glbRainDirection;		// (_4976_5c6a) rain direction
 	U8		glbRainHasRainFall;		// (_4976_5c6b)
 	U8		glbRainHasCloudSky;		// (_4976_5c6c)
-	Bit32u	glbRainSpecialNextTick;	// (_4976_5c6e)
+	U32	glbRainSpecialNextTick;	// (_4976_5c6e)
 	X16		glbRainThunderRandom;	// (_4976_5c72)
 	U8		glbRainHasWetGround;	// (_4976_5c74)
 	U16		glbRainSceneType;	// (_4976_5c76) WordValue:66
 	U16		glbNextFreeMementIndex;		// (_4976_5c78) next index of free entry mement
 	X16		_4976_5c7a;
-	U16		glbMemRAMAudioStuff;	// (_4976_5c7c)
+//	U16		glbMemRAMAudioStuff;	// (_4976_5c7c)
 	U16		*_4976_5c7e_cache_ici;	// ici-to-cacheindex. to supply quick sort for searching hash value from _4976_5c86
 	U16		*tblRawDataToMement;	// (_4976_5c82) raw data index to mementi. (usually 3491 word values). 0xffff for unused mark.
-	Bit32u	*_4976_5c86_cache_hash;	// (_4976_5c86) cacheindex-to-hashval:  0xFFFFxxxx for pict?  0x2000xxxx for creature thing?  (13:dbidx,7:horzScale,5:vertScale) for stretched pict?
+	U32	*_4976_5c86_cache_hash;	// (_4976_5c86) cacheindex-to-hashval:  0xFFFFxxxx for pict?  0x2000xxxx for creature thing?  (13:dbidx,7:horzScale,5:vertScale) for stretched pict?
 	U16		glbNewMap_4976_5c8a;		// _4976_5c8a
 	mement	*glbMement3;	// (_4976_5c8c) mement#3
 	//U16	_4976_5c90; // (_4976_5c90)
@@ -774,7 +778,7 @@ protected:
 	mement	**tblMementsPointers;	// (_4976_5ca4) mementi-to-mement
 	U16		glbGDatFloppyFlag;			// (_4976_5ca8)
 	U32		glbSizeOfGDATFull;		// (_4976_5caa) copy of GRAPHICS.DAT absolute file position of 2nd raw data
-	X16		_4976_5cae;
+//	X16		glbSndDataLoaded;				// (_4976_5cae)
 	U16		glbGDatStructureRead;			// (_4976_5cb0) set at the end of READ_GRAPHICS_STRUCTURE
 	mement	*glbCpxHeapCurrentMementPtr;	// (_4976_5cb2) for complex alloc mem. most lower address of memory pool(#x1) in FIRE.exe?
 	GDATEntries	glbGDatEntries;		// (sk5cb6 _4976_5cb6) entries for loaded gdat
@@ -783,7 +787,7 @@ protected:
 	U32		glbSizeOfGDATFile;		// (_4976_5cea) size of GRAPH1.DAT or GRAPHICS.DAT
 	U16		_4976_5cee;		// (_4976_5cee)
 	U8		*_4976_5cf0;	// (_4976_5cf0)
-	Bit8u	*_4976_5cf4;	// for allocmem. most upper address of free memory pool(#1) in FIRE.exe
+	U8	*_4976_5cf4;	// for allocmem. most upper address of free memory pool(#1) in FIRE.exe
 	i32		glbFreeCPXMemory;		// (_4976_5cf8) for complex alloc mem. avail size of memory pool(#x1)?
 	sk5cfc_root	gblLinkedImageRoot;	// _4976_5cfc
 	sk5d00	*_4976_5d00;	// EMS mapped memory location. always point to E000:0000. also first mement located at first EMS page
@@ -796,7 +800,7 @@ protected:
 	shelf_memory glbShelfMemTopEMS;		// (_4976_5d20) top of EMS
 	U16		glbCacheRecyclerMax;	// _4976_5d24 / cache relaed ? / value =128?
 	i32		_4976_5d26; // 9E AA 01 00 -> 0001AA9E
-	Bit32u	glbGameTickHoldFromMement;		// (_4976_5d2a) tick?
+	U32	glbGameTickHoldFromMement;		// (_4976_5d2a) tick?
 	X16		glbGDatNumberOfData; // (_4976_5d2e) 3,491 entries in graphics data file
 	i32		glbFreeRAMMemPool;		// (_4976_5d30) for allocmem. avail size of free memory pool(#1). 325732 bytes avail when dosbox runs
 	U16	_4976_5d34;		// (_4976_5d34)
@@ -807,7 +811,7 @@ protected:
 	X16		_4976_5d40;		// (_4976_5d40) w4 of 2nd raw
 	i16		tblGDatEntryPosOrder[7];	// (_4976_5d42[7])
 	U8		tblGDatEntryPosSize[7];	// (_4976_5d50[7])	// size of each GDat Entry value (Cls1, cls2, etc ...) (=> each are 1 byte except the data value which is 2 bytes)
-	U16		glbGDatSoundRawDatCount;		// (_4976_5d58)
+//	U16		glbGDatSoundRawDatCount;		// (_4976_5d58)
 	tiamat	_4976_5d5a;	// for allocmem. most upper address of largest memory pool (#2) in ibmio?
 	mement*	glbMement5;	// (_4976_5d5e) mement#5
 	i32		_4976_5d62; // C6 6C D0 00 -> 00D06CC6
@@ -837,7 +841,7 @@ protected:
 	U16		_4976_5dbc;		// (_4976_5dbc) 0=no drag, 1,2,3,4=dragging player icon
 	U8		*_4976_5dbe;	// palette?
 	X16		_4976_5dc2;
-	Bit8u	*_4976_5e64;	// blit2mem src
+	U8	*_4976_5e64;	// blit2mem src
 	U16	glbPaletteIRGBLoaded;	// (_4976_5e68) tells if the global IRGB palette has been loaded/set
 	U8*		glbBlit2MemDest;	// (_4976_5e6a)	blit2mem dst
 	U8*		_4976_5e6e;	// (_4976_5e6e)	blit2mem underlay
@@ -848,7 +852,7 @@ protected:
 	U16	_4976_5e96;
 	X32		_4976_5e98;		// ptr int 0xfe
 	U32		glbCRAMSize;		// (_4976_5e9c) size of CRAM
-	Bit8u	*_4976_5ea0;	// EMS mapped memory location (E000:0000)
+	U8	*_4976_5ea0;	// EMS mapped memory location (E000:0000)
 	U16	_4976_5ea4;		// EMS handle
 	U32		glbEMSMemPool;		// (_4976_5ea6) EMS allocated size
 	i16		glbTickStepValue;	// (_4976_5eaa)
@@ -860,12 +864,12 @@ protected:
 	U16	_4976_5eb8;
 	X16		glbDriveNumber;		// drive number
 	X16		glbDriveNumber2;			// (_4976_5ebc) drive number 2
-	sk5f0a	*_4976_5efa;
-	SoundStructure*	_4976_5efe;
-	SoundStructure*	_4976_5f02;
-	SoundShortInfo*	tblSoundShortInfo;	// (_4976_5f06) size=?
-	sk5f0a	*_4976_5f0a;	// (_4976_5f0a) size=?
-	SoundEntryInfo	*glbSoundList;	// size=8 (_4976_5f0e)
+	SoundShelfChained	*_4976_5efa;
+//	SoundStructure*	_4976_5efe;
+//	SoundStructure*	_4976_5f02;
+//	SoundShortInfo*	tblSoundShortInfo;	// (_4976_5f06) size=?
+//	SoundShelfChained	*_4976_5f0a;	// (_4976_5f0a) size=?
+//	SoundEntryInfo	*glbSoundList;	// size=8 (_4976_5f0e)
 	U8	glbIngameGlobVarFlags[8];	// 64 game flags		// (_4976_5f52)
 	U8	glbIngameGlobVarBytes[64];	// game byte val	// (_4976_5f12)
 	U16	glbIngameGlobVarWords[64];	// game word val	// (_4976_5f5a)
@@ -883,13 +887,16 @@ protected:
 	U8							tblBetaClassicPalette[16];
 	U8							tblSegaPalette16[16];
 	//}}SKSAVE_DESORTED_VARS
+#endif // SKDOSV5
+
 
 public:
 	SkWinCore();
 
+#ifndef SKDOSV5
 // SPX: Special new V5
 	U8 GET_CREATURE_ANIMATION_IMAGE_ID_V5(U8 iCreatureType, U16 iAnimSeq, U16 iAnimInfo, U16 iFaceDirImg);
-	CreatureCommandAnimation* GET_CREATURE_COMMAND_ANIMATION_V5(Bit8u iCreatureType, U16 command);
+	CreatureCommandAnimation* GET_CREATURE_COMMAND_ANIMATION_V5(U8 iCreatureType, U16 command);
 	CreatureAnimationFrameInfoFC_V5* GET_ANIM_SEQUENCE_INFO_V5(U8 iCreatureType, U16 iAnimSeqOffset, U16 iCurrentFrameInfo);
 	void PREPARE_CREATURE_ANIMATION_INFO_V5(U8 iCreatureType, U16 iAnimOffset, U16* iAnimInfo);
 	U16 CREATURE_STEP_ANIMATION_V5(U8 iCreatureType, U16 iAnimOffset, U16 *pAnimFrame, CreatureAnimationFrame **rref);
@@ -909,8 +916,8 @@ public:
 	X16 SELECT_CHAMPION_FROM_GDAT(U8 iChampionID);
 
 	void TEST_TEXT();
-	X8* DIRECT_QUERY_GDAT_ENTRY_DATA_BUFF(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4);
-	X8* DIRECT_QUERY_GDAT_TEXT(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u *buff);
+	X8* DIRECT_QUERY_GDAT_ENTRY_DATA_BUFF(U8 cls1, U8 cls2, U8 cls3, U8 cls4);
+	X8* DIRECT_QUERY_GDAT_TEXT(U8 cls1, U8 cls2, U8 cls4, U8 *buff);
 	X8 IS_OBJECT_VISIBLE_TEXT(ObjectID rlObject);
 
 	U16 CREATE_ABSOLUTE_ACTIVATOR_ITEM_ID(int iDBType, int iItemID);
@@ -1019,7 +1026,7 @@ public:
 	void DRAW_EXTENDED_FLOOR_INTERWALLS(i16 iViewportCell);
 	void DRAW_EXTENDED_INTERWALLS(i16 iViewportCell);
 	void DRAW_EXTENDED_INTERWALLS_DIRECT_FACE(i16 iDisplayCell, U8 iWallFace, U8 iInterwallType);
-	Bit8u* QUERY_BWDAT_TEXT(U8 iTextID, U8* sTextBuffer);
+	U8* QUERY_BWDAT_TEXT(U8 iTextID, U8* sTextBuffer);
 	U8 BW_GET_DOOR_BUTTON_CLASS(Door_Info* xDoorInfo);
 #endif // __SK_ENGINE_V6_
 
@@ -1165,7 +1172,7 @@ protected:
 	int ANIM_BOOTSTRAP_TITLE();
 
 	U16 QUERY_CREATURES_ITEM_MASK(U8 cls2, U8 cls4, U8 itemflags[64], U16 isCreature);
-	void ZERO_MEMORY(void *buff, U32 size);
+	void ZERO_MEMORY(void *pBuffer, U32 iSize);
 	void PROCESS_TIMER_0E(Timer *v0, U16 v1);
 	void CALC_PLAYER_WEIGHT(U16 player);
 	void PROCEED_GLOBAL_EFFECT_TIMERS();
@@ -1209,12 +1216,12 @@ protected:
 	U16 QUERY_ITEM_MONEY_VALUE(ObjectID oItem);
 	U16 ADD_ITEM_CHARGE(ObjectID recordLink, i16 delta);
 	U16 IS_CONTAINER_MONEYBOX(ObjectID recordLink);
-	U16 QUERY_GDAT_DBSPEC_WORD_VALUE(ObjectID rl, Bit8u cls4);
-	i32 QUERY_ITEM_VALUE(ObjectID recordLink, Bit8u cls4);
+	U16 QUERY_GDAT_DBSPEC_WORD_VALUE(ObjectID rl, U8 cls4);
+	i32 QUERY_ITEM_VALUE(ObjectID recordLink, U8 cls4);
 	i32 QUERY_ITEM_WEIGHT(ObjectID recordLink);
 	U16 IS_CONTAINER_CHEST(ObjectID recordLink);
 	U16 GET_ITEM_MAX_CHARGE(ObjectID recordLink);
-	Bit8u GET_ITEM_ICON_ANIM_FRAME(ObjectID recordLink, i16 xx, i16 yy); // _2405_014a renamed GET_ITEM_ICON_ANIM_FRAME
+	U8 GET_ITEM_ICON_ANIM_FRAME(ObjectID recordLink, i16 xx, i16 yy); // _2405_014a renamed GET_ITEM_ICON_ANIM_FRAME
 
 
 	//-------------- Creatures functions
@@ -1227,8 +1234,8 @@ protected:
 	void RESET_CAII();
 	void CREATURE_1c9a_0fcb(U16 iCreatureNo); // _1c9a_0fcb
 
-	AIDefinition *QUERY_CREATURE_AI_SPEC_FROM_TYPE(Bit8u creatureType);
-	U16 QUERY_GDAT_CREATURE_WORD_VALUE(Bit8u creatureType, Bit8u cls4);
+	AIDefinition *QUERY_CREATURE_AI_SPEC_FROM_TYPE(U8 creatureType);
+	U16 QUERY_GDAT_CREATURE_WORD_VALUE(U8 creatureType, U8 cls4);
 	sk1c9a02c3* GET_CREATURE_INFO_DATA(Creature *xCreature, AIDefinition *xAIDef); // _1c9a_02c3
 	U16 CREATURE_STEP_ANIMATION(U16 xx, U16 *yy, CreatureAnimationFrame **rref);	// _4937_01a9
 	Missile *GET_MISSILE_REF_OF_MINION(ObjectID rlCreature, ObjectID rlContainer);
@@ -1254,7 +1261,7 @@ protected:
 	X16 CREATURE_12b4_0953(Creature* xCreature, U16 ww);
 	U16 _12b4_023f_WOUND_RUNNING_INTO_CREATURE(i16 xx, i16 yy, i16 *ss, i16 *tt, i16 ww, X16 vv); // _12b4_023f
 	X16 IS_CREATURE_MOVABLE_THERE(i16 xx, i16 yy, i16 dir, ObjectID *prlWhatsLying);
-	U16 GET_CREATURE_ANIMATION_FRAME(Bit8u ct, U16 command, U16 *pw08, U16 *pw0a, CreatureAnimationFrame **animframe, U16 vv);	
+	U16 GET_CREATURE_ANIMATION_FRAME(U8 ct, U16 command, U16 *pw08, U16 *pw0a, CreatureAnimationFrame **animframe, U16 vv);	
 	void CREATURE_SET_ANIM_FRAME(ObjectID recordLink); // _1c9a_09db
 	U16 QUERY_CREATURE_AI_SPEC_FLAGS(ObjectID rl);
 	AIDefinition *QUERY_CREATURE_AI_SPEC_FROM_RECORD(ObjectID rlCreature);
@@ -1336,7 +1343,7 @@ protected:
 
 	//-------------- Dialog Box
 	U8 DIALOG_BOX_0aaf_0067(U8 iDialogBoxID); //cls2
-	U8 _0aaf_02f8_DIALOG_BOX(U8 iDialogBoxID, Bit8u yy);	// _0aaf_02f8
+	U8 _0aaf_02f8_DIALOG_BOX(U8 iDialogBoxID, U8 yy);	// _0aaf_02f8
 	U16 DIALOG_BOX_2066_03e0(U16 xx);
 
 	//-------------- Door
@@ -1368,10 +1375,10 @@ protected:
 	void SET_TILE_ATTRIBUTE_02(U16 xx, U16 yy, U16 map); // _2066_1ea3
 	void GRAPHICS_DATA_OPEN();
 		void ORIGINAL__GRAPHICS_DATA_OPEN();
-	i16 LOCATE_OTHER_LEVEL(U16 curmap, i16 zDelta, i16 *xx, i16 *yy, Bit8u **ss);
+	i16 LOCATE_OTHER_LEVEL(U16 curmap, i16 zDelta, i16 *xx, i16 *yy, U8 **ss);
 	SRECT *ALLOC_TEMP_RECT(i16 x, i16 y, i16 cx, i16 cy);
 	SRECT *ALLOC_TEMP_ORIGIN_RECT(U16 width, U16 height);
-	U16 FIND_ICI_FROM_CACHE_HASH(Bit32u cacheHash, U16 *ici);
+	U16 FIND_ICI_FROM_CACHE_HASH(U32 cacheHash, U16 *ici);
 	void RECYCLE_MEMENTI(U16 mementi, U16 yy);
 	int TEST_MEMENT(mement* xMemEntry);	// SPX: changed "void" to "int"
 	mement* GET_MEMENT_FROM_MEMENTINDEX(U16 mementi); // _3e74_48c9
@@ -1382,38 +1389,38 @@ protected:
 	virtual bool ValidateMements(bool display);
 	void FREE_INDEXED_MEMENT(U16 index);
 	U16 _3e74_4471_CACHE(); // _3e74_4471
-	U16 INSERT_CACHE_HASH_AT(Bit32u cacheHash, U16 ici);
+	U16 INSERT_CACHE_HASH_AT(U32 cacheHash, U16 ici);
 	void MEMENT_3e74_44ad();	// _3e74_44ad
 	U16 QUERY_MEMENTI_FROM(U16 iRawDataIdx);
-	U16 ADD_CACHE_HASH(Bit32u cacheHash, U16 *piYaCacheIndex);
+	U16 ADD_CACHE_HASH(U32 cacheHash, U16 *piYaCacheIndex);
 	U8 *QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(U16 cacheIndex);
 	void _3e74_583a_MEMENTI(U16 xx);
 	U16 FIND_FREE_MEMENTI();
 	void GUARANTEE_FREE_CPXHEAP_SIZE(i32 iBufferSize);
 	void MEMENT_INIT_GFX_TABLE();	// _3e74_2b30
 	mement *ALLOC_LOWER_CPXHEAP(i32 iBufferSize);
-	Bit8u *ALLOC_CPXHEAP_MEM(U16 index, Bit32u buffSize);
+	U8 *ALLOC_CPXHEAP_MEM(U16 index, U32 buffSize);
 	void _3e74_585a_CACHE(U16 iCacheIndex, U16 yy); // _3e74_585a
-	void FILL_ENTIRE_PICT(Bit8u *buff, U16 fill);
+	void FILL_ENTIRE_PICT(U8 *buff, U16 fill);
 	void FIRE_HIDE_MOUSE_CURSOR();
 	void _01b0_0adb();
-	void IBMIO_SET_CURSOR_PATTERN(	i16 index, 	Bit8u *buffSrc, 	Bit8u zz, 	Bit8u ss, 	U16 srcWidth, 	U16 srcHeight,	U16 srcBits, 	Bit8u *localPal, 	U16 colorkey);
+	void IBMIO_SET_CURSOR_PATTERN(	i16 index, 	U8 *buffSrc, 	U8 zz, 	U8 ss, 	U16 srcWidth, 	U16 srcHeight,	U16 srcBits, 	U8 *localPal, 	U16 colorkey);
 	void _01b0_0c70_MOUSE(U16 xx); // _01b0_0c70
 	void _01b0_0ca4_MOUSE(U16 *xx, U16 yy); // _01b0_0ca4
 	void _443c_040e_MOUSE(); // _443c_040e
 	U8* ALLOC_NEW_PICT(U16 index, U16 width, U16 height, U16 bpp);
-	Bit32u GET_TEMP_CACHE_HASH();
+	U32 GET_TEMP_CACHE_HASH();
 	U16 ALLOC_TEMP_CACHE_INDEX();
 	void SOME_RECT_0b36_0d67(sk3f6c *ref, SRECT *rc);	// _0b36_0d67
 	sk3f6c* SOME_RECT_PICT_0b36_0c52(sk3f6c *ref, U16 iRectNo, U16 ww);	// _0b36_0c52
 	SRECT *OFFSET_RECT(const sk3f6c *refOrg, const SRECT *prcSrc, SRECT *prcOut);
-	void FILL_RECT_SUMMARY(sk3f6c *ref, SRECT *rc, Bit8u fill);
+	void FILL_RECT_SUMMARY(sk3f6c *ref, SRECT *rc, U8 fill);
 	void SOMETHING_RIGHT_PANEL_29ee_00a3(U16 xx);	// _29ee_00a3
 	U16 IS_MISSILE_VALID_TO_LAUNCHER(U16 player, i16 hand, ObjectID rlWhatYouLaunch);
 	i16 BETWEEN_VALUE(i16 minv, i16 newv, i16 maxv);
 	void RECALC_LIGHT_LEVEL();
 	U16 IS_ITEM_FIT_FOR_EQUIP(ObjectID recordLink, i16 inventorySlot, U16 onlyBodyPart);
-	i16 RETRIEVE_ITEM_BONUS(ObjectID x1, Bit8u x2, U16 x3, i16 iBonusDir); // SPX: changed to i16 SIGNED
+	i16 RETRIEVE_ITEM_BONUS(ObjectID x1, U8 x2, U16 x3, i16 iBonusDir); // SPX: changed to i16 SIGNED
 	void BOOST_ATTRIBUTE(Champion *ref, U16 xx, U16 yy);
 	void PROCESS_ITEM_BONUS(i16 player, ObjectID recordLink, i16 inventorySlot, i16 x4);	// Is that working?
 	ObjectID REMOVE_POSSESSION(U16 player, U16 possess);
@@ -1422,10 +1429,10 @@ protected:
 	void LOAD_PROJECTILE_TO_HAND(U16 player, i16 hand);
 	X8* QUERY_GDAT_ENTRY_DATA_PTR(U8 iGDatCls1Category, U8 iGDatCls2MainItemId, U8 iGDatCls3DataType, U16 iGDatCls4EntryId);
 	void FREE_PICT6(SkImage *ref);
-	i16 QUERY_GDAT_PICT_OFFSET(Bit8u cls1, Bit8u cls2, Bit8u cls4);
-	ExtendedPicture *QUERY_GDAT_SUMMARY_IMAGE(ExtendedPicture *ref, Bit8u cls1, Bit8u cls2, Bit8u cls4);
+	i16 QUERY_GDAT_PICT_OFFSET(U8 cls1, U8 cls2, U8 cls4);
+	ExtendedPicture *QUERY_GDAT_SUMMARY_IMAGE(ExtendedPicture *ref, U8 cls1, U8 cls2, U8 cls4);
 	void DRAW_DEF_PICT(ExtendedPicture *ref);
-	Bit8u *QUERY_PICT_BITS(Picture *ref);
+	U8 *QUERY_PICT_BITS(Picture *ref);
 	void DRAW_SOME_PICTURE_0b36_11c0(ExtendedPicture *xx, sk3f6c *yy, U16 ss, i16 colorkey2);	// _0b36_11c0
 	i16 CALC_STRETCHED_SIZE(i16 val, i16 fact64);
 	X8* QUERY_PICST_IMAGE_FROM_MEMENT_CACHE(i16 iCacheIndex, Picture *ref);	// (_0b36_00c3)
@@ -1439,22 +1446,22 @@ protected:
 
 
 	void _44c8_2307(X16 xx, X16 yy, X16 zz, X16 ww);
-	void _44c8_2351(Bit8u *xx, Bit8u *yy, U16 ss, U16 tt, U16 uu, U16 vv);
+	void _44c8_2351(U8 *xx, U8 *yy, U16 ss, U16 tt, U16 uu, U16 vv);
 	void FIRE_BLIT_TO_MEMORY_ROW_4TO4BPP(U16 offSrc, U16 offDst, U16 width);
 	void _44c8_20e5(U16 srcOff, U16 dstOff, U16 srcWidth, U16 dstWidth);
 	void _44c8_2143(U16 xx, U16 yy, U16 ss, U16 tt);
-	void FIRE_STRETCH_BLIT_TO_MEMORY_4TO4BPP(Bit8u *src, Bit8u *dst, U16 srcWidth, U16 srcHeight, U16 dstWidth, U16 dstHeight, U8 *aa);
+	void FIRE_STRETCH_BLIT_TO_MEMORY_4TO4BPP(U8 *src, U8 *dst, U16 srcWidth, U16 srcHeight, U16 dstWidth, U16 dstHeight, U8 *aa);
 	ExtendedPicture *QUERY_PICST_IT(ExtendedPicture* xExtPicture);
-	void DRAW_SIMPLE_STR(sk3f6c *ref, U16 rectno, U16 clr1, U16 clr2, Bit8u *str);
-	void DRAW_ICON_PICT_BUFF(const Bit8u *buff, 	sk3f6c *tt, 	SRECT *rc, 	i16 srcx, 	i16 srcy, 	i16 colorkey, 	i16 flipmirror, 	Bit8u *localpal);
-	void DRAW_ICON_PICT_ENTRY(Bit8u cls1, Bit8u cls2, Bit8u cls4, sk3f6c *ss, U16 rectno, i16 colorkey);
+	void DRAW_SIMPLE_STR(sk3f6c *ref, U16 rectno, U16 clr1, U16 clr2, U8 *str);
+	void DRAW_ICON_PICT_BUFF(const U8 *buff, 	sk3f6c *tt, 	SRECT *rc, 	i16 srcx, 	i16 srcy, 	i16 colorkey, 	i16 flipmirror, 	U8 *localpal);
+	void DRAW_ICON_PICT_ENTRY(U8 cls1, U8 cls2, U8 cls4, sk3f6c *ss, U16 rectno, i16 colorkey);
 	void SHOW_ATTACK_RESULT(i16 yourValue);
 	void PUT_OBJECT_INTO_CONTAINER();
 	void DISPLAY_RIGHT_PANEL_SQUAD_HANDS();
 	X8* TRANSLATE_PALETTE(X8* localpal, U8 iGDatCategory, U8 iGDatItemId, U8 iGDatEntryId, i16 palentcnt);
-	Bit8u *DRAW_ITEM_ON_WOOD_PANEL(U16 iChampionIndex, U16 possessionIndex, Picture *ref);
+	U8 *DRAW_ITEM_ON_WOOD_PANEL(U16 iChampionIndex, U16 possessionIndex, Picture *ref);
 	void FIRE_BLIT_TO_MEMORY_ROW_4TO8BPP(U16 offSrc, U16 offDst, U16 width, i16 colorkey);
-	void _44c8_1aca(Bit8u *buff, SRECT *rc, U16 xx, U16 yy);
+	void _44c8_1aca(U8 *buff, SRECT *rc, U16 xx, U16 yy);
 	void DRAW_GRAY_OVERLAY(sk3f6c *ref, SRECT *rc, U16 xx);	// _0b36_105b
 	void DRAW_HAND_ACTION_ICONS(U16 iChampionIndex, U16 possessionIndex, U16 leftOrRight);
 	void DRAW_SQUAD_SPELL_AND_LEADER_ICON(U16 player, U16 yy);
@@ -1462,15 +1469,15 @@ protected:
 	void DRAW_MONEYBOX(ObjectID rl);
 	void DRAW_CONTAINER_PANEL(ObjectID rl, U16 xx);
 	void DRAW_SQUAD_POS_INTERFACE(); // _29ee_0396
-	void DRAW_STRONG_TEXT(Bit8u *buff, U16 ww, U16 cx, U16 xx, U16 yy, U16 clr1, U16 fill, Bit8u *str);
-	void DRAW_NAME_STR(sk3f6c *ref, U16 rectno, U16 clr1, U16 fill, Bit8u *str);
+	void DRAW_STRONG_TEXT(U8 *buff, U16 ww, U16 cx, U16 xx, U16 yy, U16 clr1, U16 fill, U8 *str);
+	void DRAW_NAME_STR(sk3f6c *ref, U16 rectno, U16 clr1, U16 fill, U8 *str);
 	void DRAW_PLAYER_NAME_AT_CMDSLOT();
 	i16 SK_STRLEN(const U8 *pszString);
 	void DRAW_SPELL_TO_BE_CAST(U16 xx);
 	void DRAW_SPELL_PANEL();
-	Bit8u *SK_STRSTR(const Bit8u *xx, const Bit8u *yy);
-	U16 QUERY_CMDSTR_TEXT(const Bit8u *cmdStr, const Bit8u *name);
-	U16 QUERY_CMDSTR_ENTRY(Bit8u cls1, Bit8u cls2, Bit8u cls4, U16 cmdNum);
+	U8 *SK_STRSTR(const U8 *xx, const U8 *yy);
+	U16 QUERY_CMDSTR_TEXT(const U8 *cmdStr, const U8 *name);
+	U16 QUERY_CMDSTR_ENTRY(U8 cls1, U8 cls2, U8 cls4, U16 cmdNum);
 	U16 COMMAND_ON_MAGIC_MAP(U16 player, ObjectID recordLink, U16 cmdNum);	// _2759_01fe
 	i16 FIND_POUCH_OR_SCABBARD_POSSESSION_POS(i16 player, i16 yy);	// yy = pouch or scabbard;
 	U16 QUERY_PLAYER_SKILL_LV(i16 player, U16 skill, U16 yy);
@@ -1486,8 +1493,8 @@ protected:
 	void _443c_07d5(sk0cea *ref);
 	void _1031_0541(U16 xx);	// _1031_0541
 	void _1031_0667();
-	U8 *QUERY_CMDSTR_NAME(Bit8u cls1, Bit8u cls2, Bit8u cls4);
-	void DRAW_CMD_SLOT(U16 cmdSlot, Bit8u ww);
+	U8 *QUERY_CMDSTR_NAME(U8 cls1, U8 cls2, U8 cls4);
+	void DRAW_CMD_SLOT(U16 cmdSlot, U8 ww);
 	void DRAW_SEVERAL_CMD_SLOTS();	// _29ee_0b2b
 	void DRAW_SOME_MAGICAL_MAP_STRING_29ee_1d03(U16 xx);	// _29ee_1d03
 	i16 FIND_LADDER_AROUND(i16 xx, i16 yy, i16 isupper, Actuator **ref);
@@ -1496,15 +1503,15 @@ protected:
 	void CALC_VECTOR_W_DIR(i16 dir, i16 xx, i16 yy, i16 *ss, i16 *tt);
 	U16 GET_WALL_ORNATE_ALCOVE_TYPE(U8 iGDatItemId);
 	U16 GET_RANDOM_ORNAMENT_INDEX(U16 iValue1, U16 iValue2, U16 iModulo); // _0cee_17e7 renamed GET_RANDOM_ORNAMENT_INDEX
-	Bit8u GET_RANDOM_ORNAMENT_ORDINAL(i16 xx, i16 yy, U16 ss, U16 tt, U16 uu); // _0cee_1815 renamed GET_RANDOM_ORNAMENT_ORDINAL
+	U8 GET_RANDOM_ORNAMENT_ORDINAL(i16 xx, i16 yy, U16 ss, U16 tt, U16 uu); // _0cee_1815 renamed GET_RANDOM_ORNAMENT_ORDINAL
 	void SET_SQUARE_ASPECT_RANDOM_WALL_ORNAMENT_ORDINALS(ExtendedTileInfo *ref, U16 xx, U16 yy, U16 zz, U16 ww, U16 vv, i16 ss, i16 tt); // _0cee_185a renamed SET_SQUARE_ASPECT_RANDOM_WALL_ORNAMENT_ORDINALS
 	ObjectID _0cee_1a46(ExtendedTileInfo *ref, ObjectID recordLink, i16 xx, i16 yy);
-	U16 QUERY_ORNATE_ANIM_FRAME(Bit8u cls1, Bit8u cls2, Bit32u tick, Bit32u delta);
+	U16 QUERY_ORNATE_ANIM_FRAME(U8 cls1, U8 cls2, U32 tick, U32 delta);
 	void SUMMARIZE_STONE_ROOM(ExtendedTileInfo *ref, U16 dir, U16 xx, U16 yy);
-	i16 QUERY_DUNGEON_MAP_CHIP_PICT(Bit8u cls1, Bit8u cls2, Bit8u **ppBuff, Bit8u *localpal);
-	void DRAW_CHIP_OF_MAGIC_MAP(const Bit8u *buff, U16 aa, U16 xx, U16 yy, U16 flipMirror, Bit8u *localpal);
+	i16 QUERY_DUNGEON_MAP_CHIP_PICT(U8 cls1, U8 cls2, U8 **ppBuff, U8 *localpal);
+	void DRAW_CHIP_OF_MAGIC_MAP(const U8 *buff, U16 aa, U16 xx, U16 yy, U16 flipMirror, U8 *localpal);
 	U16 GET_MISSILE_FLYING_IMAGE_METHOD(ObjectID recordLink);	// _48ae_011a
-	void DRAW_MAP_CHIP(ObjectID recordLink, i16 ss, i16 tt, i16 ww, U16 xx, U16 yy, Bit8u cc, U16 flags);
+	void DRAW_MAP_CHIP(ObjectID recordLink, i16 ss, i16 tt, i16 ww, U16 xx, U16 yy, U8 cc, U16 flags);
 	void _29ee_1946(ObjectID recordLink, i16 xx, i16 yy, i16 zz, i16 dir, i16 ss, i16 tt, U16 flags);
 	void DRAW_MAJIC_MAP(ObjectID recordLink);
 	void DRAW_PLAYER_ATTACK_DIR();
@@ -1543,11 +1550,11 @@ protected:
 	U16 _1031_0c58(U16 xx, sk0d9e *ref);
 	U16 _1031_03f2(sk1891 *ref, U16 xx);
 	void ADJUST_UI_EVENT(MousePosition *ref);
-	Bit8u *TRANSMIT_UI_EVENT(MousePosition *xx);
-	void DRAW_STUFF_0b36_129a(sk3f6c *ref, i16 xx, i16 yy, Bit8u clr1, Bit8u clr2, Bit8u *str);	// _0b36_129a
+	U8 *TRANSMIT_UI_EVENT(MousePosition *xx);
+	void DRAW_STUFF_0b36_129a(sk3f6c *ref, i16 xx, i16 yy, U8 clr1, U8 clr2, U8 *str);	// _0b36_129a
 	void DRAW_PICST(ExtendedPicture *ref);
-	void DRAW_STATIC_PIC(Bit8u cls1, Bit8u cls2, Bit8u cls4, U16 rectno, i16 colorkey);
-	void DRAW_CHARSHEET_OPTION_ICON(Bit8u cls4, U16 rectno, U16 zz);
+	void DRAW_STATIC_PIC(U8 cls1, U8 cls2, U8 cls4, U16 rectno, i16 colorkey);
+	void DRAW_CHARSHEET_OPTION_ICON(U8 cls4, U16 rectno, U16 zz);
 	void DRAW_PLAYER_3STAT_PANE(U16 player, U16 xx);
 	void DRAW_CHAMPION_PICTURE(U16 player); // _2e62_061d
 	void DRAW_PLAYER_3STAT_HEALTH_BAR(U16 player);
@@ -1578,7 +1585,7 @@ protected:
 	void DRAW_ITEM_STATS_BAR(U16 rectno, i16 curVal, i16 maxVal, U8 chr, U16 color);
 	U16 DRAW_ITEM_SURVEY(ObjectID recordLink, U16 xx);	// quite modified
 	U16 DRAW_ITEMS_HANDS_OR_INVENTORY(U16 iChampIdx, U16 itemNo, U16 yy);	// 2e62_03b5
-	void DRAW_LOCAL_TEXT(U16 rectno, U16 clr1, U16 clr2, Bit8u *str);
+	void DRAW_LOCAL_TEXT(U16 rectno, U16 clr1, U16 clr2, U8 *str);
 	U16 GET_PLAYER_ABILITY(Champion *ref, U16 parm7, U16 getMax);
 	void FILL_STR(U8* xBuffer, U16 iMaxCount, U8 iValue, U16 iDeltaStep);
 	U8 *FMT_NUM(U16 value, U16 clean, U16 keta);
@@ -1606,7 +1613,7 @@ protected:
 	void _3929_07e1(U16 xx, U16 yy);
 	void _3929_0826();
 	void _3929_0914_HINT_TEXT();
-	void PRINT_SYSERR_TEXT(U16 dstx, U16 dsty, U16 clr1, U16 clr2, Bit8u *str);
+	void PRINT_SYSERR_TEXT(U16 dstx, U16 dsty, U16 clr1, U16 clr2, U8 *str);
 	void DRAW_HINT_TEXT(U16 clr1, U8 *str); // _3929_0929 renamed DRAW_HINT_TEXT
 	void DISPLAY_HINT_TEXT(U16 color, const U8 *str);
 	void DISPLAY_HINT_NEW_LINE();
@@ -1664,23 +1671,7 @@ protected:
 	void FIRE_MOUSE_SET_CAPTURE();
 	void MOUSE_STATE_443c_08ab(i16 *xx, i16 *yy, i16 *zz);	// _443c_08ab
 
-	//--- NEW FUNCTIONS -------------------------------------
-	U16 QUERY_GDAT_POTION_SPELL_TYPE_FROM_RECORD(ObjectID rl);
-	U16 QUERY_GDAT_POTION_BEHAVIOUR_FROM_RECORD(ObjectID rl);
-	U16 QUERY_GDAT_WATER_VALUE_FROM_RECORD(ObjectID rl);
-	U16 QUERY_GDAT_DOOR_IS_MIRRORED(U8 doortype);
 
-	void DRAW_STATIC_PIC_X_SRECT(SRECT xRectangle, Bit8u iCategory, Bit8u iItemNo, Bit8u iEntry, U16 rectno, i16 colorkey);
-	void DRAW_PICST_X_SRECT(SRECT xRectangle, ExtendedPicture *ref);
-
-#if (XDMX_FEATURE_AMBIENT_SOUND == 1)
-	void PROCESS_TIMER_AMBIENT_SOUND(Timer *ref);
-#endif
-#if (XDMX_FEATURE_PLAGUE == 1)
-	void CURE_PLAGUE(U16 player);
-	void PROCESS_PLAGUE(i16 player, U16 counters);
-#endif
-	//--- NEW FUNCTIONS -------------------------------------
 
 
 	U16 QUERY_GDAT_FOOD_VALUE_FROM_RECORD(ObjectID rl);
@@ -1711,15 +1702,15 @@ protected:
 	void PALETTE_SOMETHING_32cb_0804(U8 *localpal, i16 cls4, U16 colorkey1, i16 colorkey2, U16 palentcnt);	// _32cb_0804
 	U16 QUERY_MULTILAYERS_PIC(ExtendedPicture *ref, U8 cls1, U8 cls2, U8 cls4, U16 horzRes, U16 vertRes, i16 zz, U16 mirrorflip, i16 colorkey1, U16 colorkey2);
 	void QUERY_RAINFALL_PARAM(U8 *iRainImageID, U16 *isMirrored);
-	U8 *_32cb_0649(U8 cls1, U8 cls2, U8 cls4, i16 colorkey);
+	U8 *GET_LOCAL_PALETTE_32cb_0649(U8 iGDatCls1Category, U8 iGDatCls2MainItemId, U8 iGDatCls4EntryId, i16 iTransparentColorKey);	// _32cb_0649
 	void FIRE_UPDATE_BLIT_PALETTE(const U8 *localpal);
 	void FIRE_BLIT_TO_MEMORY_ROW_4TO8BPP_NOKEY(U16 offSrc, U16 offDst, U16 size);
 	U16 _44c8_1e1a(U8 *xx, U16 yy);
 	void _44c8_1e43(U8 *src, U8 *dst, U8 *zz, SRECT *prc, U16 ss, U16 tt, U16 aa, U16 bb, U16 hazeWidth, U16 dstWidth, i16 colorkey, U8 *localpal);
 	void _44c8_20a4(U8 *src, U8 *dst, U8 *zz, SRECT *prc, U16 ss, U16 tt, U16 oo, i16 pp, U8 *localpal);
 	void DRAW_RAIN_32cb_0c7d(ExtendedPicture *ref, U16 xx, U16 yy);	// _32cb_0c7d
-	Bit8u *QUERY_GDAT_ENTRY_DATA_BUFF(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4);
-	Bit8u *QUERY_GDAT_ENTRY_DATA_BUFF_FORCE(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4);	// SPX: added, bypass the critical for load
+	U8 *QUERY_GDAT_ENTRY_DATA_BUFF(U8 cls1, U8 cls2, U8 cls3, U8 cls4);
+	U8 *QUERY_GDAT_ENTRY_DATA_BUFF_FORCE(U8 cls1, U8 cls2, U8 cls3, U8 cls4);	// SPX: added, bypass the critical for load
 	U8 QUERY_ITEMDB_FROM_DISTINCTIVE_ITEMTYPE(U16 actuatorData);
 	ObjectID ALLOC_NEW_DBITEM_DEEPLY(U16 actuatorData);
 	U16 IS_DISTINCTIVE_ITEM_ON_ACTUATOR(Actuator *ref, U16 disit, U16 onTile);
@@ -1755,8 +1746,8 @@ protected:
 	U16 FILE_WRITE_DATA_BUFFER(void* xDataBuffer, U16 iBufferSize); // _2066_036e
 	U16 SKSAVE_WRITE(void *buff, U16 buffSize);
 	U8 SUPPRESS_WRITER(const void *pvData, const void *pvMask, U16 cbData, U32 repeat);
-	Bit8u WRITE_1BIT(Bit8u nibble);
-	Bit8u WRITE_RECORD_CHECKCODE(ObjectID recordLink, Bit8u writeDir, Bit8u writeFollowing);
+	U8 WRITE_1BIT(U8 nibble);
+	U8 WRITE_RECORD_CHECKCODE(ObjectID recordLink, U8 writeDir, U8 writeFollowing);
 	i16 _2066_0b44_WRITE_TIMERS(); // _2066_0b44
 	U16 STORE_EXTRA_DUNGEON_DATA();
 	U16 WRITE_MINION_ASSOC();
@@ -1816,11 +1807,11 @@ protected:
 	void SHOW_CREDITS();
 	void MessageLoop(bool fBalanceWait, bool fShortWait = false);
 
-	i16 CALC_PLAYER_WALK_DELAY(U16 player);
+	i16 CALC_PLAYER_WALK_DELAY(U16 iChampion);
 	X16 IS_TILE_BLOCKED(U8 tile);
 	X16 _12b4_0881_CHECK_MOVE_BETWEEN_TILES(X16 aa, U16 oldTile, U16 newTile, i16 xx, i16 yy, ObjectID *rl);	// _12b4_0881
 	X16 CHECK_MOVE_BETWEEN_TILES_AND_INTERWALLS(X16 aa, U16 iInterwall, U16 oldTile, U16 newTile, i16 xx, i16 yy, ObjectID *rl); // SPX: addition
-	X16 _12b4_099e(ObjectID rl);
+	X16 CHAMPION_WEIGHT_CREATURE_12b4_099e(ObjectID oidCreature);	// _12b4_099e
 	U16 PERFORM_MOVE(X16 xx);
 	U16 HANDLE_UI_EVENT(MousePosition *ref);	// Important func
 	void MAIN_LOOP(); // _1031_1e6a
@@ -1845,32 +1836,32 @@ protected:
 	void _1031_096a();
 	U16 AUDIO_482b_015c(U16 iGDatRawIndex);	// _482b_015c
 	void _01b0_18d3_AUDIO(U16 xx); // _01b0_18d3
-	void _47eb_02c3_AUDIO(sk5f0a *ref); // _47eb_02c3
-	void _47eb_00d9_AUDIO(sk5f0a *ref); // _47eb_00d9
+	void _47eb_02c3_AUDIO(SoundShelfChained *pRefChainedSound); // _47eb_02c3
+	void _47eb_00d9_AUDIO(SoundShelfChained *pRefChainedSound); // _47eb_00d9
 	void AUDIO_482b_07c2(U16 xx);	// _482b_07c2
 	void EMS_FREE();
 	void _farfree(void *ref);
 	void __restorezero();	// ????
-	void __DECLSPEC_NORETURN_ __terminate(Bit8u errorLevel);
+	void __DECLSPEC_NORETURN_ __terminate(U8 errorLevel);
 	void SK_EXIT();
 //	void _sk_longjmp(jmp_buf xx, U16 yy);
 	void SK_PREPARE_EXIT();
 	void ACTIVATE_TICK_GENERATOR(Actuator *ref, ObjectID recordLink);
-	void DRAW_DIALOGUE_PARTS_PICT(Bit8u *buffsrc, SRECT *rc, i16 colorkey, Bit8u *localpal);
+	void DRAW_DIALOGUE_PARTS_PICT(U8 *buffsrc, SRECT *rc, i16 colorkey, U8 *localpal);
 	void FREE_PICT_ENTRY(U8* xPictureBuffer);
 	void DRAW_VP_RC_STR(U16 rectno, U16 clr1, const U8 *str);
-	U16 QUERY_MBCS_PRESENCE(const Bit8u *str);
+	U16 QUERY_MBCS_PRESENCE(const U8 *str);
 	SkTextFont *QUERY_CHAR_METRICS(U8 cls2, U8 yy, U8 chr, U8 *tableIdxOut);
 
-	U16 QUERY_STR_METRICS(const Bit8u *buff, i16 *xx, i16 *yy);
-	//inline U16 QUERY_STR_METRICS(Bit8u *buff, U16 *xx, U16 *yy);	// INLINE
-	U16 QUERY_STR_METRICS_U16(Bit8u *buff, U16 *xx, U16 *yy);	// SPX currently removed inline by U16 version
+	U16 QUERY_STR_METRICS(const U8 *buff, i16 *xx, i16 *yy);
+	//inline U16 QUERY_STR_METRICS(U8 *buff, U16 *xx, U16 *yy);	// INLINE
+	U16 QUERY_STR_METRICS_U16(U8 *buff, U16 *xx, U16 *yy);	// SPX currently removed inline by U16 version
 
-	U16 _3929_04e2_DRAW_TEXT_STRINGS(const Bit8u *strIn, Bit8u *strOut, U16 *textPos, i16 maxWidth); // _3929_04e2
-	const Bit8u *DRAW_MBCS_STR(const Bit8u *str,	Bit8u *dst, 	i16 zz, 	Bit8u *ww, 	U16 clr1, 	U16 clr2, 	U16 *xx, 	U16 *yy, 	U16 dstpitch, 	U16 dstbpp);
-	Bit8u *QUERY_FONT(i8 input, Bit8u fore, Bit8u back);
-	void DRAW_STRING(Bit8u *dst, 	U16 ss, 	U16 dstpitch, 	U16 dstx, 	U16 dsty, 	U16 clr1, 	U16 clr2, 	const Bit8u *str, 	U16 dstbpp);
-	void DRAW_VP_STR(U16 dstx, U16 dsty, U16 clr1, const Bit8u *str);
+	U16 _3929_04e2_DRAW_TEXT_STRINGS(const U8 *strIn, U8 *strOut, U16 *textPos, i16 maxWidth); // _3929_04e2
+	const U8 *DRAW_MBCS_STR(const U8 *str,	U8 *dst, 	i16 zz, 	U8 *ww, 	U16 clr1, 	U16 clr2, 	U16 *xx, 	U16 *yy, 	U16 dstpitch, 	U16 dstbpp);
+	U8 *QUERY_FONT(i8 input, U8 fore, U8 back);
+	void DRAW_STRING(U8 *dst, 	U16 ss, 	U16 dstpitch, 	U16 dstx, 	U16 dsty, 	U16 clr1, 	U16 clr2, 	const U8 *str, 	U16 dstbpp);
+	void DRAW_VP_STR(U16 dstx, U16 dsty, U16 clr1, const U8 *str);
 	void _3a15_020f();
 	void COMPACT_TIMERLIST();
 	U16 RAND16(U16 maxcnt);
@@ -1880,23 +1871,23 @@ protected:
 	U16 _RAND02();
 	U16 CALC_SIZE_OF_COMPRESSED_RECT(U16 xx);
 	void INIT_LOAD_RECTS_ZONES();	// _098d_1208
-	void DEALLOC_LOWER_MEMORY(Bit32u size);
-	U16 QUERY_GDAT_ENTRY_DATA_LENGTH(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4);
+	void DEALLOC_LOWER_MEMORY(U32 size);
+	U16 QUERY_GDAT_ENTRY_DATA_LENGTH(U8 cls1, U8 cls2, U8 cls3, U8 cls4);
 	void LOAD_RECTS_AND_COMPRESS(U8 iGDatCls1Category, U8 iGDatCls2MainItemId, U8 iGDatCls4EntryId);
-	void LOAD_GDAT_ENTRY_DATA_TO(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4, Bit8u *where);
-	Bit8u *ALLOC_UPPER_MEMORY(Bit32u size);
-	void COMPRESS_RECTS(i16 *data, Bit32u size, RectTable *zz, Bit8u *(SkWinCore::*allocFunc)(Bit32u size));
+	void LOAD_GDAT_ENTRY_DATA_TO(U8 cls1, U8 cls2, U8 cls3, U8 cls4, U8 *where);
+	U8 *ALLOC_UPPER_MEMORY(U32 size);
+	void COMPRESS_RECTS(i16 *data, U32 size, RectTable *zz, U8 *(SkWinCore::*allocFunc)(U32 size));
 	SRECT *QUERY_RECT(RectTable *entry, U16 iRectNo);
 	SRECT *SET_SRECT(SRECT *prc, U16 x, U16 y, U16 cx, U16 cy);
 	SRECT *UNION_RECT(SRECT *rc1, const SRECT *rc2, i16 *offx, i16 *offy);
-	SRECT *QUERY_BLIT_RECT(Bit8u *buff, SRECT *rect, U16 rectno, i16 *yourcx, i16 *yourcy, i16 ww);
-	void DRAW_GAMELOAD_DIALOGUE_TO_SCREEN(Bit8u *buffsrc, U16 rectno, i16 colorkey, Bit8u localpal[16]);
+	SRECT *QUERY_BLIT_RECT(U8 *buff, SRECT *rect, U16 rectno, i16 *yourcx, i16 *yourcy, i16 ww);
+	void DRAW_GAMELOAD_DIALOGUE_TO_SCREEN(U8 *buffsrc, U16 rectno, i16 colorkey, U8 localpal[16]);
 	void MOUSE_STATE_01b0_0d39(i16 *xx, i16 *yy, i16 *zz, U16 ww);	// _01b0_0d39
 	void MOVE_MEMORY(const void *buffSrc, void *buffDst, U16 size);
 	void MOVE_MEMORY_WITH_DELTA(U16 offSrc, U16 offDst, U16 size);
-	void COPY_MEMORY_WITH_DELTA_AND_TRANSPARENT(U16 offSrc, U16 offDst, U16 size, Bit8u colorkey);
+	void COPY_MEMORY_WITH_DELTA_AND_TRANSPARENT(U16 offSrc, U16 offDst, U16 size, U8 colorkey);
 	void MOVE_MEMORY_STRETCH_13TO16(U16 offSrc, U16 offDst);
-	void BLIT_IMAGE_00eb_0845(Bit8u *buff, SRECT *rc, U16 ww);	// _00eb_0845
+	void BLIT_IMAGE_00eb_0845(U8 *buff, SRECT *rc, U16 ww);	// _00eb_0845
 	SRECT *SCALE_RECT(U16 rectno, SRECT *rc, U16 horzResolution, U16 vertResolution);
 	SRECT *QUERY_EXPANDED_RECT(U16 rectno, SRECT *rc);
 	void CHANGE_VIEWPORT_TO_INVENTORY(U16 xx);
@@ -1905,10 +1896,10 @@ protected:
 	U16 min_value(i16 v1, i16 v2);
 	void FIRE_WAIT_VSYNC();
 	void WAIT_SCREEN_REFRESH();
-	RawEntry *QUERY_GDAT_ENTRYPTR(Bit8u cls1, U16 cls2, Bit8u cls3, U16 cls4);
+	RawEntry *QUERY_GDAT_ENTRYPTR(U8 cls1, U16 cls2, U8 cls3, U16 cls4);
 
-	U16 QUERY_GDAT_ENTRY_IF_LOADABLE(Bit8u cls1, Bit8u cls2, Bit8u cls3, Bit8u cls4);
-	U16 CALC_IMAGE_BYTE_LENGTH(Bit8u *buff);
+	U16 QUERY_GDAT_ENTRY_IF_LOADABLE(U8 cls1, U8 cls2, U8 cls3, U8 cls4);
+	U16 CALC_IMAGE_BYTE_LENGTH(U8 *buff);
 	void IBMIO_WAIT_VSYNC();
 	void IBMIO_UPDATE_PALETTE_SET();
 	void IBMIO_SELECT_PALETTE_SET(U8 iPaletteSet);
@@ -1916,13 +1907,13 @@ protected:
 	void IBMIO_FILL_SCREEN_LINE(U16 offDst, U16 fill, U16 size);
 	void IBMIO_FILL_RECT_SCREEN(SRECT *rc, U16 fill);
 	void FIRE_FILL_4BPP_PICT_LINE(U16 offDst, U16 fill, U16 size);
-	void FIRE_FILL_RECT_4BPP_PICT(Bit8u *buff, SRECT *rc, U16 fill, U16 width);
+	void FIRE_FILL_RECT_4BPP_PICT(U8 *buff, SRECT *rc, U16 fill, U16 width);
 	void FIRE_FILL_8BPP_PICT_LINE(U16 offDst, U16 fill, U16 size);
-	void FIRE_FILL_RECT_8BPP_PICT(Bit8u *buff, SRECT *rc, U16 fill, U16 width);
-	void FIRE_FILL_RECT_ANY(Bit8u *buff, SRECT *rc, U16 fill, U16 width, U16 bpp);
-	void FIRE_FILL_SCREEN_RECT(U16 rectno, Bit8u fill);
+	void FIRE_FILL_RECT_8BPP_PICT(U8 *buff, SRECT *rc, U16 fill, U16 width);
+	void FIRE_FILL_RECT_ANY(U8 *buff, SRECT *rc, U16 fill, U16 width, U16 bpp);
+	void FIRE_FILL_SCREEN_RECT(U16 rectno, U8 fill);
 	void FIRE_FADE_SCREEN(U16 fadeOutIfTrue);
-	void FIRE_FILL_BACKBUFF_RECT(SRECT* xRect, Bit8u fill);
+	void FIRE_FILL_BACKBUFF_RECT(SRECT* xRect, U8 fill);
 	SRECT *SET_ORIGIN_RECT(SRECT* xRect, i16 width, i16 height);
 	SRECT *INFLATE_RECT(SRECT* xRect, i16 halfWidth, i16 halfHeight);
 	SRECT *CALC_CENTERED_RECT_IN_RECT(SRECT *rcNew, const SRECT *rcBBox, U16 newWidth, U16 newHeight);
@@ -1934,7 +1925,7 @@ protected:
 	U16 _RAND();
 	void ARRANGE_DUNGEON();
 	i16 FILE_OPEN(const U8 *filename);
-	U16 FILE_READ(U16 handle, Bit32u buffSize, void *buff);
+	U16 FILE_READ(U16 handle, U32 buffSize, void *buff);
 	void FILE_CLOSE(U16 handle);
 	void FILE_RENAME(const U8 *curf, const U8 *newf);
 
@@ -1957,29 +1948,29 @@ protected:
 	U16 _476d_030a(U16 xx); // TODO: Unr
 	i16 GET_PLAYER_AT_POSITION(U16 position);
 	void EMS_MAP_BANK_TO_MEMORY(); // TODO: Unr
-	Bit8u *EMS_MAP_BANK_TO_MEMORY(shelf_memory info, U16 physPage0to3); // TODO: Unr
-	Bit8u *FIND_FREE_POOL(U32 size, U16 poolno);
+	U8 *EMS_MAP_BANK_TO_MEMORY(shelf_memory info, U16 physPage0to3); // TODO: Unr
+	U8 *FIND_FREE_POOL(U32 size, U16 poolno);
 	U8 *ALLOC_MEMORY_RAM(U32 size, U16 flags, U16 poolno);
 	shelf_memory ALLOC_MEMORY_EMS(U32 size, U16 flags, U16 poolno);
 	tiamat ALLOC_MEMORY_(U32 size, U16 flags, U16 poolno);
-	Bit8u *ALLOC_PICT_BUFF(U16 srccx, U16 srccy, U16 flags, U16 bpp);
-	void COPY_MEMORY(const void *buffSrc, void *buffDst, Bit32u buffSize);
+	U8 *ALLOC_PICT_BUFF(U16 srccx, U16 srccy, U16 flags, U16 bpp);
+	void COPY_MEMORY(const void *buffSrc, void *buffDst, U32 buffSize);
 	U16 QUERY_GDAT_ENTRY_DATA_INDEX(U8 iGDatCls1Category, U16 iGDatCls2MainItemId, U8 iGDatCls3DataType, U16 iGDatCls4EntryId);
-	Bit8u *REALIZE_GRAPHICS_DATA_MEMORY(shelf_memory info);
+	U8 *REALIZE_GRAPHICS_DATA_MEMORY(shelf_memory info);
 	U16 QUERY_GDAT_RAW_DATA_LENGTH(U16 index);	// * check rewrite
 	U16 IS_CLS1_CRITICAL_FOR_LOAD(U8 iGDatCls1Category);
 
 	i32 QUERY_GDAT_RAW_DATA_FILE_POS(U16 index);
 
-	U16 FILE_SEEK(U16 handle, Bit32u pos);
+	U16 FILE_SEEK(U16 handle, U32 pos);
 	U32 FILE_TELL(U16 handle);
 	void RAISE_SYSERR_UNIMPLEMENTED(U8 *str); // (_476d_05e3) TODO: Unr
 	void __DECLSPEC_NORETURN_ RAISE_SYSERR(U16 syserr);
 	void GRAPHICS_DATA_READ(U32 location, U32 size, X8 *buff);
 	void LOAD_GDAT_RAW_DATA(U16 index, shelf_memory ps);
-	shelf_memory CONVERT_PHYS_TO_SHELF_FORM(Bit8u *buff);
-	Bit8u *QUERY_GDAT_DYN_BUFF(U16 index, U16 *yy, U16 allocUpper);
-	Bit8u *QUERY_GDAT_IMAGE_LOCALPAL(Bit8u cls1, Bit8u cls2, Bit8u cls4);
+	shelf_memory CONVERT_PHYS_TO_SHELF_FORM(U8 *buff);
+	U8 *QUERY_GDAT_DYN_BUFF(U16 index, U16 *yy, U16 allocUpper);
+	U8 *QUERY_GDAT_IMAGE_LOCALPAL(U8 cls1, U8 cls2, U8 cls4);
 	U8* MEMENT_3e74_0245(X16 iRawDatIdx, X16 iRecycle);	// _3e74_0245
 	X8 READ_IMG3_NIBBLE();
 	U16 READ_IMG3_DURATION();
@@ -1990,17 +1981,17 @@ protected:
 	void DECODE_IMG9(IMG3 *xx, U8 *pOut);
 	void DECODE_IMG3_UNDERLAY(IMG3 *xx, U8 *yy);
 	void DECODE_IMG3_UNDERLAY_LOCAL(IMG3 *xx, U8 *yy);
-	Bit8u *EXTRACT_GDAT_IMAGE(U16 index, i16 allocUpper);
+	U8 *EXTRACT_GDAT_IMAGE(U16 index, i16 allocUpper);
 	void DUMP_5CA4();
-	Bit8u *QUERY_GDAT_IMAGE_ENTRY_BUFF(Bit8u cls1, Bit8u cls2, Bit8u cls4);
-	void DRAW_DIALOGUE_PICT(Bit8u *srcImage, Bit8u *dstImage, SRECT *rect, U16 srcx, U16 srcy, U16 colorkey, Bit8u localpal[16]);
-	Bit8u *QUERY_GDAT_SQUAD_ICON(U8 *dstImage, U8 iChampionIdx, U8 localpal[16]);
-	void DEALLOC_UPPER_MEMORY(Bit32u size);
+	U8 *QUERY_GDAT_IMAGE_ENTRY_BUFF(U8 cls1, U8 cls2, U8 cls4);
+	void DRAW_DIALOGUE_PICT(U8 *srcImage, U8 *dstImage, SRECT *rect, U16 srcx, U16 srcy, U16 colorkey, U8 localpal[16]);
+	U8 *QUERY_GDAT_SQUAD_ICON(U8 *dstImage, U8 iChampionIdx, U8 localpal[16]);
+	void DEALLOC_UPPER_MEMORY(U32 size);
 	void FREE_PICT_BUFF(U8* xImageBuffer);
 	void LOCK_MOUSE_EVENT();
 	X16 _443c_00f8_MOUSE(X16 xx, X16 yy); // _443c_00f8
 	U16 FIRE_MOUSE_EVENT_RECEIVER(U16 xx, U16 yy, i16 button);
-	void IBMIO_BLIT_MOUSE_CURSOR(Bit8u *buff, SRECT *rc, U16 srcx, U16 srcy, U16 srcpitch, i16 colorkey);
+	void IBMIO_BLIT_MOUSE_CURSOR(U8 *buff, SRECT *rc, U16 srcx, U16 srcy, U16 srcpitch, i16 colorkey);
 	void _01b0_05ae_PRECALL_BLIT_MOUSE(); // _01b0_05ae
 	void IBMIO_HIDE_MOUSE_CURSOR();
 	void _01b0_073d_MOUSE(); // _01b0_073d
@@ -2011,11 +2002,11 @@ protected:
 	void CHANGE_PLAYER_POS(U16 squadPos);
 	void CHAMPION_SQUAD_RECOMPUTE_POSITION();
 	void _38c8_0002();
-	U8 *QUERY_GDAT_TEXT(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u *buff);
+	U8 *QUERY_GDAT_TEXT(U8 cls1, U8 cls2, U8 cls4, U8 *buff);
 	void SUPPRESS_INIT();
 	void REARRANGE_TIMERLIST();
 	void __SORT_TIMERS();
-	U8 *FORMAT_SKSTR(const Bit8u *format, Bit8u *output);	// Z00* replacement
+	U8 *FORMAT_SKSTR(const U8 *format, U8 *output);	// Z00* replacement
 
 	U16 FILE_READ_FROM_CURRENT_FILE(void *pDataBuffer, int iSizeToRead);	// _2066_033c
 	int SKLOAD_READ(void *pDataBuffer, int iSizeToRead);
@@ -2025,7 +2016,7 @@ protected:
 	int READ_DUNGEON_STRUCTURE(X16 isNewGame);
 	int AUTO_DETECT_ENDIANNESS(File_header* xDunHeader);	// SPX: addition to check wether big endian or little endian
 	void CHECK_TILE_RECORDS();
-	int SUPPRESS_READER(void *_data, const void *_mask, U16 buffSize, Bit32u repeat, U16 fill);
+	int SUPPRESS_READER(void *_data, const void *_mask, U16 buffSize, U32 repeat, U16 fill);
 	int READ_1BIT(U16 *pw);
 	void ADD_MINION_ASSOC(ObjectID recordLink);
 	int READ_RECORD_CHECKCODE(i16 xpos, i16 ypos, ObjectID *recordLinkPtr, U16 readDir, U16 readSub);
@@ -2037,12 +2028,12 @@ protected:
 	i16 GAME_LOAD();	// GAME LOAD
 	ObjectID GET_OBJECT_INDEX_FROM_TILE(i16 xx, i16 yy);
 	void CUT_RECORD_FROM(ObjectID recordLink, ObjectID *recordLinkLookFor, i16 xposLookFor, i16 yposLookFor);
-	Bit8u QUERY_CLS2_OF_TEXT_RECORD(ObjectID recordLink);
-	Bit8u QUERY_CLS2_FROM_RECORD(ObjectID recordLink);
+	U8 QUERY_CLS2_OF_TEXT_RECORD(ObjectID recordLink);
+	U8 QUERY_CLS2_FROM_RECORD(ObjectID recordLink);
 	U16 GET_ITEMDB_OF_ITEMSPEC_ACTUATOR(U16 actuatorData);
-	Bit8u GET_ITEMTYPE_OF_ITEMSPEC_ACTUATOR(U16 actuatorData);
-	Bit8u QUERY_CLS1_FROM_RECORD(ObjectID recordLink);
-	tiamat TIAMAT_ZERO(Bit8u *xx, i32 size); // (_3e74_0756) TODO: Unr
+	U8 GET_ITEMTYPE_OF_ITEMSPEC_ACTUATOR(U16 actuatorData);
+	U8 QUERY_CLS1_FROM_RECORD(ObjectID recordLink);
+	tiamat TIAMAT_ZERO(U8 *xx, i32 size); // (_3e74_0756) TODO: Unr
 	U16 TRY_PUSH_OBJECT_TO(ObjectID rl, i16 xpos, i16 ypos, i16 *xx, i16 *yy);
 	X16 GET_CHAMPION_SPECIAL_FORCE(U16 iChampionIdx);
 	U16 GET_PARTY_SPECIAL_FORCE();
@@ -2095,14 +2086,14 @@ protected:
 
 	void DRAW_DIALOGUE_PROGRESS(X32 iPermilleValue);
 	shelf_memory GET_SHELFMEM_FROM_GDAT_INDEX(U8 iGDatCls1Category, U8 iGDatCls2MainItemId, U8 iGDatCls3DataType, U8 iGDatCls4EntryId);	// _3e74_5133
-	void _47eb_00a4(sk5f0a *ref);
+	void AUDIO_47eb_00a4(SoundShelfChained *ref);	// _47eb_00a4
 	void  AUDIO_482b_0684();	// _482b_0684
 	tiamat MEM_3e74_32a2(sk5d12 *ref, i32 xx);	// _3e74_32a2
 	void LOAD_DYN4(SkLoadEnt *ref, i16 iLoadEntCount);	// big func
 	void LOAD_MISCITEM();
 	void SET_TIMER_WEATHER(U32 tickDelta);
 	void INIT_WEATHER_RAIN(X16 ww);	// _3df7_0037
-	X16 RETRIEVE_ENVIRONMENT_CMD_CD_FW(DistantEnvironment *ref);
+	X16 RETRIEVE_ENVIRONMENT_CMD_CD_FW(DistantEnvironment *pDistEnv);
 	X16 SOMETHING_WITH_SCALED_RECTANGLES(X16 rcno1, X16 rcno2, X16 scale, X16 *ss, X16 *tt);	// _098d_04c7
 	void UPDATE_WEATHER(U16 aa);
 	void LOAD_LOCALLEVEL_DYN();	//*	interesting stuff in there
@@ -2113,10 +2104,13 @@ protected:
 	X16 SET_GRAPHICS_FLIP_FROM_POSITION(X16 aa, X16 ww, X16 xx, X16 yy);
 	void DRAW_DUNGEON_GRAPHIC(U8 cls1, U8 cls2, U8 cls4, X16 rectno, i16 colorkey, U16 mirrorflip);
 	void DRAW_RESET_SOME_RECTANGLE();	// _098d_0c45
+
 	void ENVIRONMENT_DRAW_DISTANT_ELEMENT(DistantEnvironment *ref, X16 dir, X16 xx, X16 yy);
-	i16 _32cb_54ce(X16 dir, i16 *xx, i16 *yy, X16 xl, X16 yl);
+	i16 ENVIRONMENT_COMPUTE_DISTANCE(X16 dir, i16 *xx, i16 *yy, X16 xl, X16 yl);	// _32cb_54ce
 	X16 ENVIRONMENT_SET_DISTANT_ELEMENT(DistantEnvironment *ref, U8 *str, X16 dir, X16 xx, X16 yy);
 	void ENVIRONMENT_DISPLAY_ELEMENTS(X16 dir, X16 xx, X16 yy);
+
+
 	void GET_SOME_VIEWPORT_INFO_TELEPORTER();	// _32cb_5c67
 	void SET_SOME_CELL_INFO_32cb_5a8f();	// _32cb_5a8f
 	U8 _48ae_01af(X16 xx, X16 yy);
@@ -2156,29 +2150,29 @@ protected:
 	void _01b0_0ec3(X16 xx); // TODO: Unr
 	void BLEND_TO_SNDBUFF_GENERAL(U8 *buff, U16 buffSize, U16 volume, U16 caller, U16 ss, U16 tt);
 	void BLEND_TO_SNDBUFF_SNDCARD_4(void *ref, U16 xx, U16 yy, U16 zz); // TODO: Unr
-	U16 _47eb_02e0(SoundStructure *xx, SoundStructure *yy);
-	Bit8u *_47eb_0048(shelf_memory info, U16 physPage0to3);
+	U16 AUDIO_47eb_02e0(SoundStructure *xx, SoundStructure *yy);	// _47eb_02e0
+	U8 *_47eb_0048(shelf_memory info, U16 physPage0to3);
 	X16 IS_OBJECT_ALCOVE(ObjectID rl);	// _0cee_317f
 	X16 _19f0_2024(ObjectID rl, i16 ss, i16 tt);
 	i16 _19f0_2165(X16 aa, i16 xx, i16 yy, i16 ss, i16 tt, i16 vv, i16 ww);	
-	ObjectID *OVERSEE_RECORD(ObjectID *ref, Bit8u dir, ObjectID **recordMatched, U16 (SkWinCore::*pfnFinder)(ObjectID *ref, void *pvUser), void *pvUser, U16 alsoCreaturePossessions, U16 alsoContainedObjects);
+	ObjectID *OVERSEE_RECORD(ObjectID *ref, U8 dir, ObjectID **recordMatched, U16 (SkWinCore::*pfnFinder)(ObjectID *ref, void *pvUser), void *pvUser, U16 alsoCreaturePossessions, U16 alsoContainedObjects);
 	int TIMER_COMPARE(Timer* xTimer1, Timer* xTimer2);	// _3a15_0381
 	void TIMER_SORT_EXCHANGE(U16 xx); // _3a15_0486
 	U16 QUEUE_TIMER(Timer *ref);	// _3a15_061a
-	void _01b0_1c8d(U16 xx);
-	U16 IBMIO_SBLASTER_BLEND_TO_SNDBUFF(Bit8u *buff, U16 buffSize, i8 volume, U16 caller);
-	U16 IBMIO_BLEND_TO_SNDBUFF(Bit8u *buff, U16 buffSize, Bit8u volume, U16 caller);
+	void AUDIO_01b0_1c8d(U16 xx);	// _01b0_1c8d
+	U16 IBMIO_SBLASTER_BLEND_TO_SNDBUFF(U8 *buff, U16 buffSize, i8 volume, U16 caller);
+	U16 IBMIO_BLEND_TO_SNDBUFF(U8 *buff, U16 buffSize, U8 volume, U16 caller);
 	void _47eb_0333(SoundStructure *ref);
 	U16 PLAY_SOUND(U16 xx, SoundStructure *ref);
-	U16 QUERY_SND_ENTRY_INDEX(Bit8u cls1, Bit8u cls2, Bit8u cls4);
-	void QUEUE_NOISE_GEN1(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u xx, Bit8u yy, i16 xpos, i16 ypos, i16 tickDelta);
-	void QUEUE_NOISE_GEN2(Bit8u iGDatCategory, Bit8u iGDatItemId, Bit8u iSoundID, Bit8u iGDatItemIdAlt, i16 xpos, i16 ypos, U16 tickDelta, Bit8u ss, Bit8u tt);
+	U16 QUERY_SND_ENTRY_INDEX(U8 cls1, U8 cls2, U8 cls4);
+	void QUEUE_NOISE_GEN1(U8 cls1, U8 cls2, U8 cls4, U8 xx, U8 yy, i16 xpos, i16 ypos, i16 tickDelta);
+	void QUEUE_NOISE_GEN2(U8 iGDatCategory, U8 iGDatItemId, U8 iSoundID, U8 iGDatItemIdAlt, i16 xpos, i16 ypos, U16 tickDelta, U8 ss, U8 tt);
 	void DELETE_TIMER(U16 iTimerIndex);
-	void INVOKE_MESSAGE(i16 xpos, i16 ypos, U16 dir, U16 actionType, Bit32u tick);
-	void SET_ITEMTYPE(ObjectID recordLink, Bit8u itemType);
+	void INVOKE_MESSAGE(i16 xpos, i16 ypos, U16 dir, U16 actionType, U32 tick);
+	void SET_ITEMTYPE(ObjectID recordLink, U8 itemType);
 	ObjectID ALLOC_NEW_DBITEM(U16 itemspec);
-	Bit8u GET_WALL_DECORATION_OF_ACTUATOR(Actuator *ref);	
-	Bit8u GET_FLOOR_DECORATION_OF_ACTUATOR(Actuator *ref);
+	U8 GET_WALL_DECORATION_OF_ACTUATOR(Actuator *ref);	
+	U8 GET_FLOOR_DECORATION_OF_ACTUATOR(Actuator *ref);
 	U16 GET_DM1_DISTINCTIVE_ITEMTYPE(ObjectID recordLink);	// SPX DM1 retrocompatibility
 	U16 GET_DISTINCTIVE_ITEMTYPE(ObjectID recordLink);
 	void INVOKE_ACTUATOR(Actuator *ref, U16 actionType, i16 delayPlus);
@@ -2205,7 +2199,7 @@ protected:
 
 	void _075f_056c(ObjectID rl);
 	void DELETE_MISSILE_RECORD(ObjectID rlMissile, ObjectID *prlDropTo, i16 xposDropTo, i16 yposDropTo);
-	ObjectID RECYCLE_A_RECORD_FROM_THE_WORLD(U16 itemdb, Bit8u itemtype);
+	ObjectID RECYCLE_A_RECORD_FROM_THE_WORLD(U16 itemdb, U8 itemtype);
 	ObjectID ALLOC_NEW_RECORD(U16 db);
 	X16 _069a_035b(X16 xx);
 //	X16 _sk_setjmp(jmp_buf xx);
@@ -2241,7 +2235,7 @@ protected:
 	void IBMIO_GET_DRIVE_NAME(i16 iDriveNo, U8* sDriveString);	// _01b0_20ca
 	void IBMIO_GET_DRIVE_NAME_2(i16 iDriveNo, U8* sDriveString);	// _476d_04f4
 	void IBMIO_GET_ALL_DRIVE_NAMES();	// _476d_018a
-	void SOME_ALLOC_TABLE_2636_03d4();	// _2636_03d4
+	void ALLOC_ZSTRINGS_BUFFER();	// _2636_03d4
 	U32 GET_FILE_POS_6(i16 handle);
 	U32 GET_FILE_SIZE(i16 handle);
 	U16 SWAPW(U16 xx);
@@ -2258,7 +2252,7 @@ protected:
 	void READ_GRAPHICS_STRUCTURE();
 	X16 IS_SCARD_PRESENT();
 	X16 _RELOAD_SOUND_BUFFER(U8 *buff, X16 buffSize, X16 playbackRate);
-	void _47eb_0003();
+	void ALLOC_AUDIO_RAM_BUFFER();	// _47eb_0003
 	void ALLOC_AUDIO_TABLES();	// _482b_0004
 	void LOAD_GDAT_INTERFACE_00_0A();
 	void LOAD_GDAT_INTERFACE_00_02();
@@ -2395,8 +2389,8 @@ protected:
 	void ACTUATE_TELEPORTER(Timer *ref);
 	void ACTUATE_TRICKWALL(Timer *ref);
 	void PROCESS_TIMER_3D(Timer *ref);
-	void PROCESS_SOUND(U8 xx);
-	void PROCESS_TIMER_0C(U8 player);
+	void PROCESS_SOUND(U8 iSoundQueueIndex);
+	void PROCESS_TIMER_0C(U8 iChampionIndex);
 	void PROCESS_TIMER_LIGHT(Timer *ref);
 	void PROCESS_TIMER_RESURRECTION(Timer *ref);
 	void CONTINUE_ORNATE_ANIMATOR(Timer *ref);
@@ -2441,6 +2435,47 @@ public:
 	void DEBUG_DUMP_ULP();
 	const char* DEBUG_SKLOADENT(U8* xSkLoadEnt);
 	const char* DEBUG_SKGDATENT(SkEntIter* xSkGDATEnt);
+#endif // SKDOSV5
+
+
+protected:
+	//--- NEW FUNCTIONS -------------------------------------
+	U16 QUERY_GDAT_POTION_SPELL_TYPE_FROM_RECORD(ObjectID rl);
+	U16 QUERY_GDAT_POTION_BEHAVIOUR_FROM_RECORD(ObjectID rl);
+	U16 QUERY_GDAT_WATER_VALUE_FROM_RECORD(ObjectID rl);
+	U16 QUERY_GDAT_DOOR_IS_MIRRORED(U8 doortype);
+
+	void DRAW_STATIC_PIC_X_SRECT(SRECT xRectangle, U8 iCategory, U8 iItemNo, U8 iEntry, U16 rectno, i16 colorkey);
+	void DRAW_PICST_X_SRECT(SRECT xRectangle, ExtendedPicture *ref);
+
+#if (XDMX_FEATURE_AMBIENT_SOUND == 1)
+	void PROCESS_TIMER_AMBIENT_SOUND(Timer *ref);
+#endif
+#if (XDMX_FEATURE_PLAGUE == 1)
+	void CURE_PLAGUE(U16 player);
+	void PROCESS_PLAGUE(i16 player, U16 counters);
+#endif
+	//--- NEW FUNCTIONS -------------------------------------
+
+
+
+#if defined(SKDOSV5) || defined(SKWINSPX)
+public:
+	// SKW5 Startup
+	UINT SKWINV5_MAIN_START();
+	void SKW5_STARTUP_THREAD_MAIN_LOOP_01();
+	UINT SKW5_QUICK_START();
+	void SKW5_MAIN_STARTUP();
+	void SKW5_SYS_EXIT(i8 iExitCode);
+	void SKW5_FIRE_SHUTDOWN();
+	void SKW5_END_GAME();
+	void SKW5_GAME_LOOP();
+	void SKW5_INIT();
+
+	bool bSK5GameThreadInitialized;
+
+#endif // SKDOSV5
+
 
 };
 

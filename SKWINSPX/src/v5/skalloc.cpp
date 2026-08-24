@@ -279,22 +279,28 @@ void c_allochandler::DM2_RESTORE_FREEPOOL(void)
 void c_allochandler::DM2_COMPLETE_ALLOCATION(void)
 {
   is_allocated = true; // never read or written elsewhere
-
+printf("DM2_COMPLETE_ALLOCATION\n");
   c_freepool* fpd = DM2_TAG_LARGEST_FREE_POOL(DEFAULT_MASK);
   if (fpd == NULL)
     DM2_RAISE_SYSERR(0x31); // TODO constant
 
   void* vptr = VCAST(DOWNCAST(c_freepool, fpd) + sizeof(c_freepool)); // virtual start of memory of the largest free pool
+printf("CA_1\n");
   bigpool_start_a = CHGCAST(s_xmalloc, vptr);
   bigpool_start_b = CHGCAST(s_xmalloc, vptr);
-
+printf("CA_12\n");
   vptr = fpd->endoffree; // virtual end of memory of the largest free pool
   //malloca = vptr; // malloca only here - obsolete
   bigpool_endoffree = vptr;
-LOGX(("DM2_COMPLETE_ALLOCATION: BPEOF = %08x changed by vptr\n", bigpool_endoffree));
+printf("CA_13 fpd = %p\n", fpd);
+printf("DM2_COMPLETE_ALLOCATION: BPEOF = %p changed by vptr\n", bigpool_endoffree);
+printf("fpd %d %d\n", fpd->amount, fpd->mode);
+printf("allochandler %p %d %d\n", this, bigpool, bigpool_mode);
+
+  LOGX(("DM2_COMPLETE_ALLOCATION: BPEOF = %p changed by vptr\n", bigpool_endoffree));
   bigpool = fpd->amount;
   bigpool_mode = fpd->mode;
-
+printf("CA_2\n");
   // now tag the 2nd best
   c_freepool* fpa = DM2_TAG_LARGEST_FREE_POOL(DEFAULT_MASK); // that's the 2nd largest then
   if (fpa != NULL)
@@ -303,6 +309,7 @@ LOGX(("DM2_COMPLETE_ALLOCATION: BPEOF = %08x changed by vptr\n", bigpool_endoffr
     secondpool_endoffree = UPCAST(void, DOWNCAST(c_freepool, fpa) + sizeof(c_freepool) + fpa->amount); // real end of 2nd largest block
     secondpool_available = fpa->amount;
   }
+printf("CA_END\n");
 }
 
 void c_allochandler::DM2_SETUP_MEMORYALLOCATION(void)

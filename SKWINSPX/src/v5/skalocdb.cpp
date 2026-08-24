@@ -1071,19 +1071,18 @@ i32 c_dballochandler::DM2_ALLOCATION11(ui32 eaxul, i32 ebxl, OO t_dbidx& dbidx)
   return 0;
 }
 
-void c_dballochandler::DM2_dballoc_2636_03d4(void)
+// DM2_dballoc_2636_03d4 => ALLOC_ZSTRINGS_BUFFER
+void c_dballochandler::SKW5_ALLOC_ZSTRINGS_BUFFER(void)
 {
-  ddat.v1e0988 = 0;
+  ddat.glbZStringRoundRobinIndex = 0;	// ddat.v1e0988
 
-SPX_DEBUG_PRINT("DM2_dballoc_2636_03d4 Start\n");
   for (i16 i = 0; i < 2; i++)
-    ddat.vp_1e097c[i] = DM2_ALLOC_FREEPOOL_MEMORY(lcon(0x80));
+    ddat.tblZStringsBuffer[i] = DM2_ALLOC_FREEPOOL_MEMORY(0x80);	 // ddat.vp_1e097c[i]
 
   // Note: setting of ddat.datafoldername if DRVB_unknown contains a value removed
   // this had maybe smth todo with findfirst and readsectors
   // after all obsolete.
 
-SPX_DEBUG_PRINT("DM2_dballoc_2636_03d4 End\n");
 }
 
 bool c_dballochandler::DM2_dballoc_3e74_55f9(ui32 eaxul, OO t_dbidx& dbidx)

@@ -105,7 +105,7 @@ short int SkCodeParam::iTickSpeedFactor = 2;
 UINT SkCodeParam::iVideoScale = 3;
 float SkCodeParam::fVideoYScale = 1.20f;
 
-bool SkCodeParam::bUseExtendedSound = false;
+bool SkCodeParam::bUseExtendedSound = true;
 
 #if (DM2_EXTENDED_MODE == 0)
 bool SkCodeParam::bUseVaryingPlaybackFrequency = false;

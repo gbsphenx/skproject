@@ -2589,42 +2589,34 @@ void SkWinCore::PROCESS_TIMER_3D(Timer *ref)
 
 //^482B:04E9
 // SPX: _482b_04e9 renamed PROCESS_SOUND
-void SkWinCore::PROCESS_SOUND(U8 xx)
+void SkWinCore::PROCESS_SOUND(U8 iSoundQueueIndex)
 {
-	//^482B:04E9
 	ENTER(0);
-	//^482B:04ED
-	X16 si = xx;
-	if (glbSoundList[si].b5 == glbMap_4c28 || glbSoundList[si].b5 == glbMap_4976_4c12) {
-		//^482B:0523
+	X16 iSndIdx = iSoundQueueIndex;	// si
+	if (cd.sc.glbSoundList[iSndIdx].b5 == glbMap_4c28 || cd.sc.glbSoundList[iSndIdx].b5 == glbMap_4976_4c12) {
 		QUEUE_NOISE_GEN1(
-			glbSoundList[si].category,
-			glbSoundList[si].index,
-			glbSoundList[si].entry,
-			U8(glbSoundList[si].w8),
-			U8(glbSoundList[si].w10),
-			glbSoundList[si].b6,
-			glbSoundList[si].b7,
+			cd.sc.glbSoundList[iSndIdx].category,
+			cd.sc.glbSoundList[iSndIdx].index,
+			cd.sc.glbSoundList[iSndIdx].entry,
+			U8(cd.sc.glbSoundList[iSndIdx].sndw8),
+			U8(cd.sc.glbSoundList[iSndIdx].sndw10),
+			cd.sc.glbSoundList[iSndIdx].b6,
+			cd.sc.glbSoundList[iSndIdx].b7,
 			1
 			);
 	}
-	//^482B:05AA
-	glbSoundList[si].w0 = 0;
-	//^482B:05BC
+	cd.sc.glbSoundList[iSndIdx].iSoundSlotUsed = 0;	// sound slot is free
 	return;
 }
 //^3A15:303F
 // SPX: _3a15_303f renamed PROCESS_TIMER_0C
-void SkWinCore::PROCESS_TIMER_0C(U8 player)
+void SkWinCore::PROCESS_TIMER_0C(U8 iChampionIndex)
 {
-	//^3A15:303F
 	ENTER(4);
-	//^3A15:3043
-	Champion *champion = &tblChampionSquad[player];
-	champion->timerIndex = TIMER_NONE;
-	if (champion->curHP() != 0)
-		champion->heroFlag |= CHAMPION_FLAG_0800;	// 0x800
-	//^3A15:306A
+	Champion *pChampion = &tblChampionSquad[iChampionIndex];
+	pChampion->timerIndex = TIMER_NONE;
+	if (pChampion->curHP() != 0)
+		pChampion->heroFlag |= CHAMPION_FLAG_0800;	// 0x800
 	return;
 }
 //^3A15:316C
@@ -3064,7 +3056,7 @@ void SkWinCore::PROCEED_TIMERS()
 				PROCESS_TIMER_3D(xCurrentTimer);
 				break;
 			case ttySound://^3BCD
-				PROCESS_SOUND(timer.XcoordB());
+				PROCESS_SOUND(timer.XcoordB());	// xcoordb = sound queue index
 				break;
 			case tty0C://^3BD8
 				PROCESS_TIMER_0C(timer.actor);

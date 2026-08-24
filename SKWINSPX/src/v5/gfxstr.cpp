@@ -311,10 +311,10 @@ t_text* DM2_FORMAT_SKSTR(t_text* eaxtp, t_text* edxtp)
 
   if (RG4t == NULL)
   {
-    RG7t = RG4t = UPCAST(t_text, ddat.vp_1e097c[ddat.v1e0988]);
-    ddat.v1e0988++;
-    if (ddat.v1e0988 >= 2)
-      ddat.v1e0988 = 0;
+    RG7t = RG4t = UPCAST(t_text, ddat.tblZStringsBuffer[ddat.glbZStringRoundRobinIndex]);
+    ddat.glbZStringRoundRobinIndex++;
+    if (ddat.glbZStringRoundRobinIndex >= 2)
+      ddat.glbZStringRoundRobinIndex = 0;
   }
 
   //m_2A79E:

@@ -7,8 +7,13 @@
 
   typedef i16 t_record; // TODO: temporary. Later: (check adds on pointers!)
   // special values:
+#ifndef SKWINSPX
   #define OBJECT_NULL (-1)
   #define OBJECT_END_MARKER (-2)
+#else
+	#include <skglobal.h>
+	#include <skdefine.h>
+#endif // SKWINSPX
 
   class c_aidef;
 

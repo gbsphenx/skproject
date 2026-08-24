@@ -315,7 +315,7 @@ const char* DEBUG_SKGDATENT(s_gdat* xSkGDATEnt)
 //	sprintf(sLoadEntTo, "%s", DEBUG_SKLOADENT((ui8*)&xSkGDATEnt->s_0a));
 
 
-	sprintf(xStaticDebugGDATEnt, "%s to %s -=- x32 = %08x / pRaw = %08x", sLoadEntFrom, sLoadEntTo, iValue32, xRawPointer);
+	sprintf(xStaticDebugGDATEnt, "%s to %s -=- x32 = %08x / pRaw = %p", sLoadEntFrom, sLoadEntTo, iValue32, xRawPointer);
 	return xStaticDebugGDATEnt;
 
 }

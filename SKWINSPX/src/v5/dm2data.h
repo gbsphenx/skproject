@@ -189,8 +189,8 @@
      // s_exittableentry exittable[(EXITTABLE2 - EXITTABLE1)/sizeof(s_exittableentry)];
 
      t_text* datafoldername;
-     i16 v1e0988; // value range: 0...1 - index for vp_1e097c
-     i8* vp_1e097c[2]; // points to two malloced 0x80 - areas
+     i16 glbZStringRoundRobinIndex; // v1e0988 - value range: 0...1 - index for vp_1e097c
+     i8* tblZStringsBuffer[2]; // vp_1e097c - points to two malloced 0x80 - areas
      i32 markerror;
      i32 errhandling;
      ui8 errversion;

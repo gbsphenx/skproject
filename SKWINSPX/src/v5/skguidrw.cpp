@@ -281,8 +281,8 @@ void DM2_DRAW_PLAYER_3STAT_TEXT(c_hero* hero)
 
 void DM2_DRAW_PLAYER_NAME_AT_CMDSLOT(void)
 {
-  DM2_DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_INTERFACE_GENERAL, 4, 20, &dm2_buttongroup2, lcon(0x3c));
-  DM2_DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_INTERFACE_GENERAL, 4, 14, &dm2_buttongroup2, lcon(0x3b));
+  DM2_DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 4, 20, &dm2_buttongroup2, lcon(0x3c));
+  DM2_DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 4, 14, &dm2_buttongroup2, lcon(0x3b));
   e_hero heroidx = (e_hero)(party.curacthero - 1);
   DM2_DRAW_NAME_STR(&dm2_buttongroup2, lcon(0x3d), unsignedword(palettecolor_to_ui8(paldat.palette[(heroidx != eventqueue.event_heroidx) ? E_COL15 : E_COL09])), unsignedword(palettecolor_to_ui8(paldat.palette[E_COL12])) | lcon(0x4000), party.hero[heroidx].name1);
 }
@@ -302,7 +302,7 @@ void DM2_DRAW_PLAYER_DAMAGE(i32 eaxl)
   RG1L += lcon(0xb1);
   RG5L = signedlong(RG1W);
   put16(parw00, RG5W);
-  DM2_DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_INTERFACE_GENERAL, 2, 3, &dm2_buttongroup1, parw00, ALPHA_A);
+  DM2_DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 2, 3, &dm2_buttongroup1, parw00, ALPHA_A);
   RG4L = unsignedlong(RG6w);
   par_tp02 = DM2_FMT_NUM(party.hero[RG4L].damagesuffered, 0, 3); // BUGFIX RG4L
   DM2_DRAW_BUTTON_STR(&dm2_buttongroup1, RG5L, unsignedword(palettecolor_to_ui8(paldat.palette[E_COL15])), unsignedword(palettecolor_to_ui8(paldat.palette[E_COL08])), par_tp02);
@@ -676,7 +676,7 @@ void DM2_DRAW_PLAYER_3STAT_PANE(i32 eaxl, i32 edxl)
   RG3L = signedlong(RG3W);
   DM2_guidraw_0b36_0c52(&dm2_buttongroup1, RG3L, RG5l);
   put16(parw00, RG3W);
-  DM2_DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_INTERFACE_GENERAL, 2, vb_00, &dm2_buttongroup1, parw00);
+  DM2_DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 2, vb_00, &dm2_buttongroup1, parw00);
   if (RG5l == 0)
     dm2_buttongroup1.button.groupsize = 0;
 }
@@ -702,7 +702,7 @@ void DM2_DRAW_CMD_SLOT(i16 eaxw, i8 edxb)
     DM2_DRAW_ICON_PICT_ENTRY(20, ddat.v1e0ba4, 2 * (ddat.v1e0b40[eaxw].b_02 - bcon(0x8)) + bcon(0x41) + edxb, &dm2_buttongroup2, eaxw + wcon(0x6e));
     return;
   }
-  DM2_DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_INTERFACE_GENERAL, 4, edxb + 21, &dm2_buttongroup2, eaxw + wcon(0x3f)); // engage command button
+  DM2_DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 4, edxb + 21, &dm2_buttongroup2, eaxw + wcon(0x3f)); // engage command button
   RG4Blo = ddat.v1e0b40[eaxw].b_01;
   par_tp04 = DM2_QUERY_CMDSTR_NAME(ddat.v1e0b40[eaxw].b_00, RG4Blo, ddat.v1e0b40[eaxw].b_02);
   RG4W = unsignedword(RG4Blo);
@@ -718,7 +718,7 @@ void DM2_DRAW_SPELL_TO_BE_CAST(i32 eaxl)
 
   DM2_guidraw_29ee_00a3(0);
   if (eaxl != 0)
-    DM2_DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_INTERFACE_GENERAL, 5, 9, &dm2_buttongroup2, lcon(0xfc));	// cast spell button
+    DM2_DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 5, 9, &dm2_buttongroup2, lcon(0xfc));	// cast spell button
   c_hero* hero = &party.hero[party.curacthero - 1];
   tarr_04[1] = '\0';
   i16 vw_00 = CUTX16(DM2_STRLEN(hero->rune));
@@ -798,8 +798,8 @@ void DM2_DRAW_PLAYER_ATTACK_DIR(void)
   }
   //m_33638:
   DM2_FREE_PICT_BUFF(bmp);
-  DM2_DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_INTERFACE_GENERAL, 4, 16, &dm2_buttongroup2, lcon(0x60));
-  DM2_DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_INTERFACE_GENERAL, 4, 18, &dm2_buttongroup2, lcon(0x61));
+  DM2_DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 4, 16, &dm2_buttongroup2, lcon(0x60));
+  DM2_DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 4, 18, &dm2_buttongroup2, lcon(0x61));
 }
 
 // was SKW_29ee_09d5
@@ -821,7 +821,7 @@ void DM2_DRAW_SPELL_PANEL(void)
   vo_04.poke16(RG1W);
   RG1Blo = vo_04.peek8() + 1;
   RG2L = unsignedlong(RG1Blo);
-  DM2_DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_INTERFACE_GENERAL, 5, RG2Blo, &dm2_buttongroup2, lcon(0x5c));
+  DM2_DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 5, RG2Blo, &dm2_buttongroup2, lcon(0x5c));
   RG1L = unsignedlong(vo_04.peek16());
   if (RG1L < lcon(0x4))
   {
@@ -2382,7 +2382,7 @@ void DM2_DRAW_HAND_ACTION_ICONS(i16 eaxw, i32 edxl, i32 ebxl)
   put16(parw00, RG53w);
   RG1Blo = 2 * vql_00.peek8() + bcon(0x2) + RG2Blo;
   RG2L = unsignedlong(RG1Blo);
-  DM2_DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_INTERFACE_GENERAL, 4, RG2Blo, &dm2_buttongroup2, parw00);
+  DM2_DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 4, RG2Blo, &dm2_buttongroup2, parw00);
   RG4L = signedlong(vql_00.peek16());
   t_bmp* bmp = DM2_DRAW_ITEM_ON_WOOD_PANEL(signedlong(vql_04.peek16()), RG4L, &imgdesc);
   if (bmp != NULL)
@@ -4171,7 +4171,7 @@ void DM2_HIGHLIGHT_ARROW_PANEL(i32 eaxl, i32 edxl, i32 ebxl)
   DM2_FILL_ENTIRE_PICT(dm2_dballochandler.DM2_GET_BMP(buttongroup.button.dbidx), palettecolor_to_pixel(paldat.palette[E_COL00]));
   put16(parw00, RG5W);
   RG2L = unsignedlong(RG3Blo);
-  DM2_DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_INTERFACE_GENERAL, 3, RG2Blo, &buttongroup, parw00);
+  DM2_DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 3, RG2Blo, &buttongroup, parw00);
   DM2_gfxmain_0b36_0cbe(&buttongroup, true);
   DM2_SHOW_MOUSE();
   DM2_WAIT_SCREEN_REFRESH();
@@ -4895,7 +4895,7 @@ i32 DM2_guidraw_29ee_000f(void)
   for (i16 i = 40; i < 46; i++)
   {
     //m_32BE8:
-    DM2_DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_INTERFACE_GENERAL, 3, iArrowButtonID, &buttongroup, i);	//arrow
+    DM2_DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 3, iArrowButtonID, &buttongroup, i);	//arrow
     iArrowButtonID += 2;
   }
   DM2_gfxmain_0b36_0cbe(&buttongroup, true);

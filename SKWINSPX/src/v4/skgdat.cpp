@@ -35,8 +35,8 @@ void SkWinCore::SOUND_ENTRY(U8 iGDatCls1Category, U8 iGDatCls2MainItemId, U8 iGD
 {
 	ENTER(4);
 //#ifndef __DJGPP__
-	if (QUERY_SND_ENTRY_INDEX(iGDatCls1Category, iGDatCls2MainItemId, iGDatCls4EntryId) == 0 && _4976_49d4[0][0] < glbGDatSoundRawDatCount) {
-		SoundShortInfo* xSoundInfo = &tblSoundShortInfo[_4976_49d4[0][0]];	// bp04
+	if (QUERY_SND_ENTRY_INDEX(iGDatCls1Category, iGDatCls2MainItemId, iGDatCls4EntryId) == 0 && _4976_49d4[0][0] < cd.sc.glbGDatSoundRawDatCount) {
+		SoundShortInfo* xSoundInfo = &cd.sc.tblSoundShortInfo[_4976_49d4[0][0]];	// bp04
 		xSoundInfo->category = iGDatCls1Category;
 		xSoundInfo->index = iGDatCls2MainItemId;
 		xSoundInfo->entry = iGDatCls4EntryId;
@@ -390,7 +390,7 @@ U8* SkWinCore::EXTRACT_GDAT_IMAGE(U16 iGDatIndex, i16 allocUpper)
 		sk5cfc_image* xLinkedImage = gblLinkedImageRoot.pNextImage;	// bp04
 		while (xLinkedImage != NULL) {
 			if (xLinkedImage->iGDatRawDataIdx == iLocalGDatIdx) {
-				return (U8 *)&xLinkedImage[1]; // +14 bytes
+				return (U8 *)&xLinkedImage[1]; // +14 bytes (size of sk5cfc_image)
 			}
 			xLinkedImage = xLinkedImage->pNextImage;
 		}
@@ -495,7 +495,7 @@ U8* SkWinCore::EXTRACT_GDAT_IMAGE(U16 iGDatIndex, i16 allocUpper)
 		xLinkedImage->pv0->iHeight = bp14;
 		*/
 // rewrite without the ++/-1
-		COPY_MEMORY(	// what is this -16 ??? related to sk5cfc_image size ???
+		COPY_MEMORY(	// what is this -16 ??? related to sk5cfc_image size ??? or for local palette of 16 colors ?
 			PTR_PADD(xImage,+QUERY_GDAT_RAW_DATA_LENGTH(iLocalGDatIdx) -16),
 			PTR_PADD(xLinkedImage,+bp0c -16),
 			16

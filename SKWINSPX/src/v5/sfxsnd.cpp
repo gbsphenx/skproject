@@ -1,11 +1,11 @@
 // FILE c_sound.cpp
 
-#ifndef __SK_NO_ALLEGRO__
-#include <allegro5/allegro5.h>
-#include <allegro5/allegro_audio.h>
-#else
-#include <skalegro.h>
-#endif // __SK_NO_ALLEGRO__
+//#ifndef __SK_NO_ALLEGRO__
+//#include <allegro5/allegro5.h>
+//#include <allegro5/allegro_audio.h>
+//#else
+//#include <skalegro.h>
+//#endif // __SK_NO_ALLEGRO__
 
 #include <util.h>
 #include <sfxmidi.h>
@@ -14,6 +14,8 @@
 #include <dm2data.h>
 #include <startend.h> // THROW...
 #include <sfxsnd.h>
+
+// SPX: stuff obsolete : all "driver" code will be handled outside this module, directly into the SkWinApplication core base.
 
 // ---------------
 // function is obsolete
@@ -104,7 +106,7 @@ void c_sound::stop_all_sound(void)
 
 void c_sound::dtor(void)
 {
-  al_uninstall_audio();
+//  al_uninstall_audio();
 }
 
 // ###########################################
@@ -596,7 +598,7 @@ void DM2_SOUND5(void)
   dm2sound.v1d2694 = 0;
 }
 
-// was SKW_482b_0004
+// was SKW_482b_0004 // ALLOC_AUDIO_TABLES
 void DM2_SOUND6(void)
 {
   dm2sound.sndptr4 = dm2_dballochandler.DM2_ALLOC_FREEPOOL_MEMORY(16 * dm2sound.v1e0ace, true);

@@ -535,10 +535,10 @@ static void DM2_INIT(void)
   c_nreg _RG1;
   ui8* RG51p;
   i32 RG52l;
-
+printf("DM2 init\n");
 SPX_DEBUG_PRINT("DM2_INIT...\n");
 SPX_DEBUG_PRINT("DM2_dballoc_2636_03d4...\n");
-  dm2_dballochandler.DM2_dballoc_2636_03d4();
+  dm2_dballochandler.SKW5_ALLOC_ZSTRINGS_BUFFER();
 // SK4 => INIT_CRAM_EMS_MEM + 2 vars + 2 FUNC
 
  SPX_DEBUG_PRINT("DM2_READ_GRAPHICS_STRUCTURE...\n");
