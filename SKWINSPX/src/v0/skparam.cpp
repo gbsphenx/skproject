@@ -24,7 +24,7 @@ bool SkCodeParam::bSpecialModeInspect = false;
 UINT SkCodeParam::bOptionNewGame = 0;
 int SkCodeParam::bOptionResumeSaveGame = -1;
 
-bool SkCodeParam::bUseBigEnd = false;	// Default is little-end; big-end is used for SegaCD version
+bool SkCodeParam::bUseBigEnd = false;	// Default is little-end (PC); big-end is used for SegaCD, Amiga, sometimes MAC versions
 bool SkCodeParam::bDM2BetaGDATDetected = false;
 bool SkCodeParam::bDM2SegaGDATDetected = false;	// Sega version specifically use standard 16c palettes and 16c*6 = 96c palettes for graphicssets.
 

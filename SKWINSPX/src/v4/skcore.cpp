@@ -7779,21 +7779,21 @@ U8 *SkWinCore::QUERY_GDAT_DYN_BUFF(U16 iDataIndex, U16 *yy, U16 allocUpper)
 	U16 iLocalDataIndex = iDataIndex;	// si
 	U16 iAllocFlags = allocUpper;	// di
 	if (_4976_5d76 == 0) {
-		i32 bp08;
-		X8* xData = ALLOC_MEMORY_RAM(	// bp04
-			bp08 = (QUERY_GDAT_RAW_DATA_LENGTH(iLocalDataIndex) +6),
+		i32 iDataBufferSize;	// bp08 = data size + 6 -> 6 = sizeof(32b) (to store iDataBufferSize) + sizeof(16b) (to store the Mempool type)
+		X8* pNewAllocatedData = ALLOC_MEMORY_RAM(	// bp04
+			iDataBufferSize = (QUERY_GDAT_RAW_DATA_LENGTH(iLocalDataIndex) +6),
 			(iAllocFlags != 0) ? afDefault : afUseLower,
 			1024
-			) + 6;
+			) + 6;	// move 6 ahead to data buffer => there is a header of 6 bytes.
 //LOGX(("LOAD_GDAT_RAW_DATA call from QUERY_GDAT_DYN_BUFF (1)"));
 		LOAD_GDAT_RAW_DATA(
 			iLocalDataIndex,
-			CONVERT_PHYS_TO_SHELF_FORM(xData)
+			CONVERT_PHYS_TO_SHELF_FORM(pNewAllocatedData)
 			);
-		SkD((DLV_GLD, "GLD: Dyn2-load Raw#%4d at RAM(%p)\n", (Bitu)iLocalDataIndex, xData));
-		WRITE_UI16(xData,-6 +4,(iAllocFlags != 0) ? afDefault : afUseLower);
-		WRITE_UI32(xData,-6 +0,bp08);
-		return xData;
+		SkD((DLV_GLD, "GLD: Dyn2-load Raw#%4d at RAM(%p)\n", (Bitu)iLocalDataIndex, pNewAllocatedData));
+		WRITE_UI16(pNewAllocatedData,-6 +4,(iAllocFlags != 0) ? afDefault : afUseLower);
+		WRITE_UI32(pNewAllocatedData,-6 +0,iDataBufferSize);
+		return pNewAllocatedData;
 	}
 	else {
 		X8* xData; // bp04
@@ -11310,7 +11310,7 @@ _2eda:
 							bp04,
 							glbBackBuffViewport,
 							NULL,
-							QUERY_EXPANDED_RECT(RECTZONE_004, &bp2e),
+							QUERY_EXPANDED_RECT(RECTZONE_004_DIALOG_BOX_PANEL, &bp2e),
 							(RAND() & 0x1f) + (bp24 - 0x28),
 							RAND16(bp24 -0x28),
 							glbViewportWidth,
@@ -14900,7 +14900,7 @@ void SkWinCore::SHOW_MENU_SCREEN()
 	cd.mo.glbImageCreditScreen = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x05_TITLE, 0x0, GDAT_IMG_x01_CREDITS_TOMBSTONE);		// Credit screen (tombstone)
 	// In some version, the menu screen is taken from raw7 or image
 	// 
-	if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x05_TITLE, 0x0, dt07, GDAT_IMG_x04_MAIN_MENU_SCREEN != 0xFFFF) 
+	if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x05_TITLE, 0x0, dt07, GDAT_IMG_x04_MAIN_MENU_SCREEN) != 0xFFFF
 		&& !SkCodeParam::bDM2BetaGDATDetected && !SkCodeParam::bDM2SegaGDATDetected)	// 64000 bytes raw data for menu screen ?
 	{
 		glbMainMenuScreenImage8bpp = 1;
@@ -15373,7 +15373,28 @@ UINT SkWinCore::INIT()
 	else
 		skWinApp->skwin_SndSetFrequency(6000); // or 5500 ?
 
+	// SPX specific: get raw item 2 which contains internal GDAT information for mainly packages above V4 and display it
+	{
+		U16 iRawDatIndex = 2;
+		X8* pRawData = NULL;
+		U16 iMementIdx = 0;
+		if (glbShelfMemoryTable[iRawDatIndex].Absent()) {
+			pRawData = QUERY_GDAT_DYN_BUFF(iRawDatIndex, &iMementIdx, 0);
+		}
+		else {
+			pRawData = REALIZE_GRAPHICS_DATA_MEMORY(glbShelfMemoryTable[iRawDatIndex]);
+		}
+
+		if (pRawData != NULL) {
+			if (strstr((char*)pRawData, "Copyright") != NULL) {
+				CHANGE_CONSOLE_COLOR(BRIGHT, CYAN, BLACK);
+				printf("Internal Version : %s\n", pRawData);
+				CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
+			}
+		}
+	}
 	
+
 	SkD((DLV_DBG_INIT, "LOAD_GDAT_INTERFACE_00_00\n"));
 	LOAD_GDAT_INTERFACE_00_00();
 	_38c8_00c8_ALLOC_PICT();

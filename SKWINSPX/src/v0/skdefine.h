@@ -1785,7 +1785,7 @@ typedef enum
 
 #define RECTZONE_002_TITLE_SCREEN_FULL_SCREEN		2
 
-#define RECTZONE_004								4
+#define RECTZONE_004_DIALOG_BOX_PANEL				4
 #define RECTZONE_005								5
 
 #define RECTZONE_007								7

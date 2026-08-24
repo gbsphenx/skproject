@@ -1357,10 +1357,14 @@ namespace DM2Internal {
 		i16 cy;		// @2
 		i16 iBpp;		// @4	w4 bpp
 
-		U16 Width() const { return cx & 0x3FF; }
-		U16 Height() const { return cy & 0x3FF; }
-		i16 OffsetX() const { return cx >> 10; }
-		i16 OffsetY() const { return cy >> 10; }
+//		U16 Width() const { return cx & 0x3FF; }
+//		U16 Height() const { return cy & 0x3FF; }
+		U16 Width() const { if (SkCodeParam::bUseBigEnd) { return (DSWAPW(cx)) & 0x3FF; } return cx & 0x3FF; }
+		U16 Height() const { if (SkCodeParam::bUseBigEnd) { return (DSWAPW(cy)) & 0x3FF; } return cy & 0x3FF; }
+//		i16 OffsetX() const { return cx >> 10; }
+//		i16 OffsetY() const { return cy >> 10; }
+		i16 OffsetX() const { if (SkCodeParam::bUseBigEnd) { return (DSWAPW(cx))>>10; } return cx >> 10; }
+		i16 OffsetY() const { if (SkCodeParam::bUseBigEnd) { return (DSWAPW(cy))>>10; } return cy >> 10; }
 
 #if DM2_EXTENDED_MODE
 		DMEncyclopaedia::picfmt Getpf() const {

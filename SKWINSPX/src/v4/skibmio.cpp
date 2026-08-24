@@ -1296,6 +1296,8 @@ void SkWinCore::FIRE_BLIT_PICTURE(
 	const U8 *localPal
 	)
 {
+	if (!CheckSafePointer(rc))	// should have some ATLASSERT
+		return;
 	SkD((DLV_GUI||SkCodeParam::bDebugPrint, 
 		"FIRE_BLIT_PICT: xTox (%p -> %p RZ(%3d,%3d,%3d,%3d) SRC:(%3d,%3d) Pitch(%3d -> %3d) CK:%2d Flip:%d BPP (%d -> %d) PAL:%p)\n", src, dst
 		, (Bitu)rc->x, (Bitu)rc->y, (Bitu)rc->cx, (Bitu)rc->cy, (Bitu)srcx, (Bitu)srcy

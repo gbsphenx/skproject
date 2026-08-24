@@ -425,46 +425,46 @@ U8* SkWinCore::EXTRACT_GDAT_IMAGE(U16 iGDatIndex, i16 allocUpper)
 			return bp04;
 		}
 	}
-	U16 bp12 = xImage->Width();
-	U16 bp14 = xImage->Height();
+	U16 iImageWidth = xImage->Width();		// bp12
+	U16 iImageHeight = xImage->Height();	// bp14
 #if DM2_EXTENDED_MODE == 1
-	i32 bp0c = xImage->GetImageSize();
+	i32 iImageTotalSize = xImage->GetImageSize();	// bp0c
 #else
-	i32 bp0c = (((bp12 +1) & 0xFFFE) >> 1) * bp14;
+	i32 iImageTotalSize = (((iImageWidth +1) & 0xFFFE) >> 1) * iImageHeight;
 #endif
 	if (_4976_5d76 == 0) {
-		bp0c += 16;
+		iImageTotalSize += 16;	// add 16 bytes for the local palette
 	}
 	U16 si;
-	U8* _bp04;	// _bp04
+	U8* pImageBufferOrMement;	// _bp04
 	if (_4976_5d76 != 0) {
-		if ((bp0c & 1) != 0) {
-			bp0c++;
+		if ((iImageTotalSize & 1) != 0) {
+			iImageTotalSize++;
 		}
-		bp0c += sizeof(mement) + sizeof(i32);
-		mement* bp04 = ALLOC_LOWER_CPXHEAP(bp0c);	// bp04
+		iImageTotalSize += sizeof(mement) + sizeof(i32);
+		mement *pMemEntry = ALLOC_LOWER_CPXHEAP(iImageTotalSize);	// bp04
 		if (bp16 >= 0) {
 			xImage = reinterpret_cast<IMG3 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp16));
 		}
 		si = FIND_FREE_MEMENTI();
 		tblRawDataToMement[iLocalGDatIdx] = si;
 		ATLASSERT(tblMementsPointers[si] == NULL);
-		tblMementsPointers[si] = bp04;
-		bp04->setCacheIndex(iLocalGDatIdx);
+		tblMementsPointers[si] = pMemEntry;
+		pMemEntry->setCacheIndex(iLocalGDatIdx);
 #if DM2_EXTENDED_MODE == 1
-		bp04->w12(xImage->GetBitsCount());
+		pMemEntry->w12(xImage->GetBitsCount());
 #else
-		bp04->w12(4);
+		pMemEntry->w12(IMG_4_BPP);
 #endif
-		bp04->w14(bp12);
-		bp04->w16(bp14);
-		bp04++; // +18 bytes
-		_bp04 = reinterpret_cast<U8 *>(bp04);
+		pMemEntry->w14(iImageWidth);
+		pMemEntry->w16(iImageHeight);
+		pMemEntry++; // +18 bytes
+		pImageBufferOrMement = reinterpret_cast<U8 *>(pMemEntry);
 
 		// SkD((DLV_DBG_GETPIC,"DBG: CPX Alloc #%02d (Raw #%04d)\n", si, di));
 	}
 	else {
-		sk5cfc_image* xLinkedImage = reinterpret_cast<sk5cfc_image *>(ALLOC_MEMORY_RAM(bp0c +sizeof(sk5cfc_image), (allocUpper != 0) ? afDefault : afUseLower, 8));	// bp04
+		sk5cfc_image* xLinkedImage = reinterpret_cast<sk5cfc_image *>(ALLOC_MEMORY_RAM(iImageTotalSize + sizeof(sk5cfc_image), (allocUpper != 0) ? afDefault : afUseLower, 8));	// bp04
 		LOGX(("Linked Image (%p) pv0 = %p", xLinkedImage, gblLinkedImageRoot.pNextImage));
 		xLinkedImage->pNextImage = gblLinkedImageRoot.pNextImage;
 		gblLinkedImageRoot.pNextImage = xLinkedImage;
@@ -480,8 +480,8 @@ U8* SkWinCore::EXTRACT_GDAT_IMAGE(U16 iGDatIndex, i16 allocUpper)
 #else
 		xLinkedImage[-1].iBpp = IMG_4_BPP;
 #endif
-		xLinkedImage[-1].iWidth = bp12;
-		xLinkedImage[-1].iHeight = bp14;
+		xLinkedImage[-1].iWidth = iImageWidth;
+		xLinkedImage[-1].iHeight = iImageHeight;
 		
 		/*
 		xLinkedImage->pv0->w6 = (allocUpper != 0) ? 0 : 2;
@@ -495,12 +495,12 @@ U8* SkWinCore::EXTRACT_GDAT_IMAGE(U16 iGDatIndex, i16 allocUpper)
 		xLinkedImage->pv0->iHeight = bp14;
 		*/
 // rewrite without the ++/-1
-		COPY_MEMORY(	// what is this -16 ??? related to sk5cfc_image size ??? or for local palette of 16 colors ?
+		COPY_MEMORY(	// copy the 16 bytes local palette from raw dat image (xImage) to uncompressed data image (xLinkedImage)
 			PTR_PADD(xImage,+QUERY_GDAT_RAW_DATA_LENGTH(iLocalGDatIdx) -16),
-			PTR_PADD(xLinkedImage,+bp0c -16),
+			PTR_PADD(xLinkedImage,+iImageTotalSize -16),
 			16
 			);
-		_bp04 = reinterpret_cast<U8 *>(xLinkedImage);
+		pImageBufferOrMement = reinterpret_cast<U8 *>(xLinkedImage);
 	}
 	U16 bp20;
 	if (bp1e != 0) {
@@ -508,20 +508,20 @@ U8* SkWinCore::EXTRACT_GDAT_IMAGE(U16 iGDatIndex, i16 allocUpper)
 			bp20 = QUERY_MEMENTI_FROM(bp1c);
 			bp1a = reinterpret_cast<U8 *>(&tblMementsPointers[bp20][1]); // +18 bytes
 		}
-		DECODE_IMG3_OVERLAY(bp1a, xImage, _bp04);
+		DECODE_IMG3_OVERLAY(bp1a, xImage, pImageBufferOrMement);
 	}
 	else {
 #if DM2_EXTENDED_MODE == 1
 		switch (xImage->Getpf()) {
 			case pfC8:
-				DECODE_IMG9(xImage, _bp04);
+				DECODE_IMG9(xImage, pImageBufferOrMement);
 				break;
 			case pfC4:
-				DECODE_IMG3_UNDERLAY_LOCAL(xImage, _bp04);
+				DECODE_IMG3_UNDERLAY_LOCAL(xImage, pImageBufferOrMement);
 				break;
 		}
 #else
-		DECODE_IMG3_UNDERLAY_LOCAL(xImage, _bp04);
+		DECODE_IMG3_UNDERLAY_LOCAL(xImage, pImageBufferOrMement);
 #endif
 	}
 	if (_4976_5d76 != 0) {
@@ -532,9 +532,9 @@ U8* SkWinCore::EXTRACT_GDAT_IMAGE(U16 iGDatIndex, i16 allocUpper)
 			_3e74_585a_CACHE(bp16, 0);
 		}
 		if (bp1e == 0)
-			return _bp04;
+			return pImageBufferOrMement;
 		RECYCLE_MEMENTI(bp20, 0);
-		return _bp04;
+		return pImageBufferOrMement;
 	}
 	if (xShelfMem.Absent()) {
 		DEALLOC_BIGPOOL_STRUCT_BEFORE(reinterpret_cast<U8 *>(xImage));
@@ -542,7 +542,7 @@ U8* SkWinCore::EXTRACT_GDAT_IMAGE(U16 iGDatIndex, i16 allocUpper)
 	if (bp1e != 0) {
 		FREE_PICT_ENTRY(bp1a);
 	}
-	return _bp04;
+	return pImageBufferOrMement;
 }
 
 //^3929:0CA8
