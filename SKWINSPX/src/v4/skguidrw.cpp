@@ -4280,6 +4280,13 @@ void SkWinCore::SHOW_CREDITS()
 {
 	ENTER(0);
 	U16 iScreenTimer = SCREEN_CREDITS_TIMER;	// si		// SPX: 1800 time before going back to main screen
+	if (SkCodeParam::bDM2SegaGDATDetected) {
+		glbCreditScreenLocalPal16 = (U8*)tblSegaPalette16;
+		U8 *pPaletteBuffer = ALLOC_MEMORY_RAM(0x400, afUseLower, 1024);
+		LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_x05_TITLE, 0x0, dtPalIRGB, GDAT_IMG_x01_CREDITS_TOMBSTONE, pPaletteBuffer);
+		SET_RGB_PALETTE_FROM_DATA(pPaletteBuffer);
+		DEALLOC_LOWER_MEMORY(0x400);
+	}
 	FIRE_SELECT_PALETTE_SET(0);
 	FIRE_HIDE_MOUSE_CURSOR();
 	DRAW_GAMELOAD_DIALOGUE_TO_SCREEN(cd.mo.glbImageCreditScreen, RECTZONE_002_TITLE_SCREEN_FULL_SCREEN, -1, glbCreditScreenLocalPal16);

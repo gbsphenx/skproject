@@ -237,7 +237,9 @@ void SkWinCore::DRAW_TEMP_PICST()
 U8 *SkWinCore::PALETTE_TRANSLATE_WITH_LIGHTING(U8 *pLocalPal, i8 xx, i16 colorkey1, i16 colorkey2, i16 palentcnt)
 {
 //	if (SkCodeParam::bDM2BetaGDATDetected)
-//		return localpal;
+//		return pLocalPal;
+	if (SkCodeParam::bDM2SegaGDATDetected)	// working only on 16 col palettes
+		return pLocalPal;
 	ENTER(8);
 	if (pLocalPal != NULL && xx != 0) {
 		xx = U8(max_value(0, 64 -xx));	// xx
@@ -1401,11 +1403,11 @@ X16 SkWinCore::SET_GRAPHICS_RGB_PALETTE(U8 (*pal)[4], X16 yy) //#DS=04BF
 {
 	ENTER(0);
 	LOADDS(0x0C48);
-	i16 si;
-	for (si = 0; si < 0x100; si++) {
-		glbPaletteRGB[si][0] = pal[si][1] >> 2;
-		glbPaletteRGB[si][1] = pal[si][2] >> 2;
-		glbPaletteRGB[si][2] = pal[si][3] >> 2;
+	i16 iPalIdx;	// si
+	for (iPalIdx = 0; iPalIdx < 256; iPalIdx++) {
+		glbPaletteRGB[iPalIdx][0] = pal[iPalIdx][1] >> 2;
+		glbPaletteRGB[iPalIdx][1] = pal[iPalIdx][2] >> 2;
+		glbPaletteRGB[iPalIdx][2] = pal[iPalIdx][3] >> 2;
 	}
 	if (glbUpdatePalette == 1)
 		IBMIO_UPDATE_PALETTE_SET();

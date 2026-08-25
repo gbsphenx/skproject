@@ -6751,7 +6751,9 @@ void SkWinCore::LOAD_RECTS_AND_COMPRESS(U8 iGDatCls1Category, U8 iGDatCls2MainIt
 	DEALLOC_LOWER_MEMORY(iDataLength);
 
 	// SPX: for Beta, this item does not exist. Load preextracted V4 bin instead
-	if (SkCodeParam::bDM2BetaGDATDetected && iDataLength == 0) {
+	// For MegaCD/SegaCD, the defined rectangles do not use exactly the same ID and are not compatible. It is best to replace them with preextracted V4 bin.
+	if ( (SkCodeParam::bDM2BetaGDATDetected && iDataLength == 0) ||
+		SkCodeParam::bDM2SegaGDATDetected ) {
 		i16 hRectTabHandle = -1;
 		hRectTabHandle = FILE_OPEN((const U8*)"bin/v4/0646rect.bin");
 		iDataLength = 17280;
@@ -14675,7 +14677,7 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_00()
 	bool bSwap32 = false;	// SPX: addition of U32 swap when reading some special gdat
 
 	iItemSize = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x00_BASE_DATA, dt06, 0x0);
-	if (iItemSize <= 0) {
+	if (iItemSize <= 0 || SkCodeParam::bDM2SegaGDATDetected) {
 		i16 hCreatureTabHandle = -1;
 		iItemSize = 5092;
 		SkCodeParam::bDM2V5Mode = false;
@@ -14687,7 +14689,7 @@ void SkWinCore::LOAD_GDAT_INTERFACE_00_00()
 		pDataTable = ALLOC_MEMORY_RAM(iItemSize,	afUseUpper, 0x400);
 		FILE_READ(hCreatureTabHandle, iItemSize, pDataTable);
 		FILE_CLOSE(hCreatureTabHandle);
-		if (!SkCodeParam::bDM2BetaGDATDetected)
+		if (!SkCodeParam::bDM2BetaGDATDetected && !SkCodeParam::bDM2SegaGDATDetected)
 			SkCodeParam::bDM2V5Mode = true;
 	}
 	else {
@@ -14889,9 +14891,11 @@ void SkWinCore::SHOW_MENU_SCREEN()
 	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_RED, BLACK);
 	SkD((SkCodeParam::bEngineNoDisplay||DLV_DBG_INIT, "DISPLAY TITLE MENU SCREEN\n"));
 	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
-	if (SkCodeParam::bDM2CDMusic && !SkCodeParam::bDM2V5Mode)
-		REQUEST_PLAY_MUSIC(5, 50);
-		//REQUEST_PLAY_CD_MUSIC(5, 100);	// SPX: CD title music
+	if (SkCodeParam::bDM2SegaGDATDetected || (SkCodeParam::bDM2CDMusic && !SkCodeParam::bDM2V5Mode)) {
+		if (SkCodeParam::bDM2SegaGDATDetected)
+			SkCodeParam::bDM2CDMusic = true;
+		REQUEST_PLAY_MUSIC(5, 50);		// SPX: CD title music, used in Mega/Sega CD version
+	}
 	else
 		REQUEST_PLAY_MUSIC(100, 50);	// SPX: title music
 
@@ -14923,7 +14927,13 @@ void SkWinCore::SHOW_MENU_SCREEN()
 			glbMenuScreenLocalPal16 = (U8*)tblBetaMainScreenPalette;
 		}
 		if (SkCodeParam::bDM2SegaGDATDetected) {
-//			glbMenuScreenLocalPal16 = (U8*)tblSegaPalette16;
+			glbMenuScreenLocalPal16 = (U8*)tblSegaPalette16;
+
+			U8 *pPaletteBuffer = ALLOC_MEMORY_RAM(0x400, afUseLower, 1024);
+			LOAD_GDAT_ENTRY_DATA_TO(GDAT_CATEGORY_x05_TITLE, 0x0, dtPalIRGB, GDAT_IMG_x04_MAIN_MENU_SCREEN, pPaletteBuffer);
+			SET_RGB_PALETTE_FROM_DATA(pPaletteBuffer);
+			DEALLOC_LOWER_MEMORY(0x400);
+
 		}
 	}
 	// cd.mo.glbImageMenuScreen - 6   would be like 06 FA | 00 00 | 02 00 => FA06 = 64006 | 0002 = afUseLower
