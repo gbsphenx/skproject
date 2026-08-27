@@ -74,6 +74,11 @@ UINT SkRendererSDL::InitAudio()
 	   printf("Mixer error: %s\n", Mix_GetError());
 	}
 
+	for (int iChannelIdx = 0; iChannelIdx < 128; iChannelIdx++) {
+		tblSamplesChannels[iChannelIdx].pSoundChunk = NULL;
+		tblSamplesChannels[iChannelIdx].iChannel = -1;
+		tblSamplesChannels[iChannelIdx].bInUse = false;
+	}
 
 #endif // not __NO_SDL__
 	return 0;
@@ -347,6 +352,17 @@ UINT SkRendererSDL::AudioPlaySound(const U8 *xSoundBuffer, U32 iBufferSize, i8 i
 */
 
 #if !defined (__NO_SDL__)
+void FreeChunk(Mix_Chunk* chunk)
+{
+	if (chunk != NULL) {
+		if (chunk->abuf != NULL)
+			SDL_free(chunk->abuf);
+		free(chunk);
+	}
+}
+#endif // not __NO_SDL__
+
+#if !defined (__NO_SDL__)
 Mix_Chunk* MakeMixChunkFromPCM(const U8* buffInt, Uint32 buffSize, int volume)
 {
     Mix_Chunk* chunk = (Mix_Chunk*)malloc(sizeof(Mix_Chunk));
@@ -411,9 +427,30 @@ UINT SkRendererSDL::AudioPlaySound(const U8* xSoundBuffer, U32 iBufferSize, i8 i
 {
 #if !defined (__NO_SDL__)
 	static int cnt = 0;
+	int iChannelIdx = 0;
+
+	// Check what is still in use, and free if necessary
+	for (iChannelIdx = 0; iChannelIdx < 128; iChannelIdx++) {
+		if (!Mix_Playing(iChannelIdx)) {
+			if (tblSamplesChannels[iChannelIdx].bInUse && tblSamplesChannels[iChannelIdx].pSoundChunk != NULL) {
+				printf("Freeing chunk %p from channel %d\n", tblSamplesChannels[iChannelIdx].pSoundChunk, iChannelIdx);
+				FreeChunk((Mix_Chunk*)tblSamplesChannels[iChannelIdx].pSoundChunk);
+				tblSamplesChannels[iChannelIdx].pSoundChunk = NULL;
+				tblSamplesChannels[iChannelIdx].iChannel = -1;
+				tblSamplesChannels[iChannelIdx].bInUse = false;
+			}
+		}
+	}
 
     Mix_Chunk* chunk = MakeMixChunkFromConvertedPCM(xSoundBuffer, iBufferSize, (int)(MIX_MAX_VOLUME * (float)iSoundVolume / 16.f)); // full volume
-	int channel = Mix_PlayChannel(-1, chunk, 0); // play once
+	iChannelIdx = Mix_PlayChannel(-1, chunk, 0); // play once
+
+	if (chunk != NULL && (iChannelIdx >= 0 && iChannelIdx < 128)) {
+		printf("ALLOC SOUND CHUNK %p to channel %d\n", chunk, iChannelIdx);
+		tblSamplesChannels[iChannelIdx].pSoundChunk = (void*) chunk;
+		tblSamplesChannels[iChannelIdx].iChannel = iChannelIdx;
+		tblSamplesChannels[iChannelIdx].bInUse = true;
+	}
 
     cnt |= 1;
 

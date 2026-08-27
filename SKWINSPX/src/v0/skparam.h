@@ -70,6 +70,7 @@ public:
 	static bool bUseSuperInfoEye;
 	static bool bShowLuck;
 
+	static bool bMouseCursorReduceFlickering;
 	static bool bDisplayNoMouse;
 
 	static bool bMIDIMusicEnabled;

@@ -2028,12 +2028,12 @@ namespace DM2Internal {
 		SoundShelfChained *pv0;	// @0 *pv0
 		U8 b4;		// @4
 		U8 b5;		// @5
-		i8 b6;		// @6 // dist x
-		i8 b7;		// @7 // dist y
-		U8 b8;		// @8 // volume
-		U8 b9;		// @9 // SPX: left volume ?
-		U8 b10;		// @10 // SPX: right volume ?
-		U8 b11;		// @11
+		i8 iDistToPlayerX;		// @6 b6 // distance to player x
+		i8 iDistToPlayerY;		// @7 b7 // distance to player y
+		U8 b8;		// @8 b8 // volume
+		U8 b9;		// @9 b9 // SPX: left volume ?
+		U8 b10;		// @10 b10 // SPX: right volume ?
+		U8 b11;		// @11 b11 // °num of sound to play in chained struct ?
 	};
 	// 
 /* not used anywhere

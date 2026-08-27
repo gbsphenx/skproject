@@ -31,6 +31,12 @@ class SkWinApp;
 
 int SKSDL_INIT_TEST(SkWinApp* skWinApplication);
 
+typedef struct {
+	void*	pSoundChunk;	// Mix_Chunk*
+	int		iChannel;
+	bool	bInUse;
+} tSampleChannel;
+
 
 class SkRendererSDL : public SkRendererGeneric
 {
@@ -47,6 +53,8 @@ private:
 	SDL_AudioDeviceID sdlAudioDeviceId;
 
 	uint32_t* xRGBBuffer;
+
+	tSampleChannel	tblSamplesChannels[128];
 
 public:
 	SkRendererSDL();

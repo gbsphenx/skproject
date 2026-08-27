@@ -194,7 +194,7 @@ U16 SkWinCore::PLAY_SOUND(U16 xx, SoundStructure *ref)
 		xSoundStruct->b11 = (U8)bp02;
 	}
 
-	U16 bp10 = 0;
+	U16 bp10 = 0; // SPX => that means this block is always bypassed, is it a mistake ?
 	do {
 		xSoundStruct = ref;
 		U16 bp0c = xSoundStruct->b11;

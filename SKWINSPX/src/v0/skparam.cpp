@@ -64,6 +64,7 @@ bool SkCodeParam::bDebugInfoMapInit = false;
 bool SkCodeParam::bUseSuperInfoEye = true;
 bool SkCodeParam::bShowLuck = false;
 
+bool SkCodeParam::bMouseCursorReduceFlickering = true;
 bool SkCodeParam::bDisplayNoMouse = false;
 
 bool SkCodeParam::bEnableDoubleStepMove = true;
