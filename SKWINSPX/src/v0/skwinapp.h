@@ -137,8 +137,8 @@ public:
 //-- old compatibility
 	const X8* GET_DATA_FOLDER_NAME();
 
-	void skwin_SndPlayHi(const U8 *buff, U32 buffSize, i8 vol);
-	void skwin_SndPlayLo(const U8 *buff, U32 buffSize, i8 dX, i8 dY);
+	void skwin_SndPlayHi(const U8 *buff, U32 buffSize, i8 vol, U8 iVolumeLeft, U8 iVolumeRight);
+	void skwin_SndPlayLo(const U8 *buff, U32 buffSize, i8 dX, i8 dY, U8 iVolumeLeft, U8 iVolumeRight);
 
 	X8 skwin_GetLang();
 	void skwin_SndSetFrequency(U16 iSoundPlaybackFrequency);

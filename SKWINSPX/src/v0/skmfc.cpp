@@ -122,7 +122,7 @@ bool SkRendererMFC::ML()
 
 //..............................................................................
 
-UINT SkRendererMFC::AudioPlaySound(const U8 *xSoundBuffer, U32 iBufferSize, i8 iSoundVolume, U16 iPlaybackFrequency)
+UINT SkRendererMFC::AudioPlaySound(const U8 *xSoundBuffer, U32 iBufferSize, i8 iSoundVolume, U16 iPlaybackFrequency, U8 iVolumeLeft, U8 iVolumeRight)
 {
 #if !defined(__NO_MFC__) && ((_MSC_VER >= 1200) || defined(_USE_MFC80) || defined(_USE_MFC60))
 	U32 nSamples = iBufferSize;

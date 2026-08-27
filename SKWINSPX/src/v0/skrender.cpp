@@ -75,7 +75,7 @@ bool SkRendererGeneric::ML()
 	return false;
 }
 
-UINT SkRendererGeneric::AudioPlaySound(const U8 *xSoundBuffer, U32 iBufferSize, i8 iSoundVolume, U16 iPlaybackFrequency)
+UINT SkRendererGeneric::AudioPlaySound(const U8 *xSoundBuffer, U32 iBufferSize, i8 iSoundVolume, U16 iPlaybackFrequency, U8 iVolumeLeft, U8 iVolumeRight)
 {
 	return 0;
 }

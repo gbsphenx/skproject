@@ -2150,8 +2150,8 @@ protected:
 	void _01b0_0ec3(X16 xx); // TODO: Unr
 	void BLEND_TO_SNDBUFF_GENERAL(U8 *buff, U16 buffSize, U16 volume, U16 caller, U16 ss, U16 tt);
 	void BLEND_TO_SNDBUFF_SNDCARD_4(void *ref, U16 xx, U16 yy, U16 zz); // TODO: Unr
-	U16 AUDIO_47eb_02e0(SoundStructure *xx, SoundStructure *yy);	// _47eb_02e0
-	U8 *_47eb_0048(shelf_memory info, U16 physPage0to3);
+	U16 SOUND_COMPARE_PRIORITY(SoundStructure *pSoundRef1, SoundStructure *pSoundRef2);	// _47eb_02e0
+	U8*	REALIZE_GRAPHICS_DATA_MEMORY_FROM_MEMPOOL(shelf_memory info, U16 physPage0to3);	// _47eb_0048
 	X16 IS_OBJECT_ALCOVE(ObjectID rl);	// _0cee_317f
 	X16 _19f0_2024(ObjectID rl, i16 ss, i16 tt);
 	i16 _19f0_2165(X16 aa, i16 xx, i16 yy, i16 ss, i16 tt, i16 vv, i16 ww);	
@@ -2162,7 +2162,7 @@ protected:
 	void AUDIO_01b0_1c8d(U16 xx);	// _01b0_1c8d
 	U16 IBMIO_SBLASTER_BLEND_TO_SNDBUFF(U8 *buff, U16 buffSize, i8 volume, U16 caller);
 	U16 IBMIO_BLEND_TO_SNDBUFF(U8 *buff, U16 buffSize, U8 volume, U16 caller);
-	void _47eb_0333(SoundStructure *ref);
+	void SOUND_SPATIALIZE(SoundStructure *ref);	// _47eb_0333
 	U16 PLAY_SOUND(U16 xx, SoundStructure *ref);
 	U16 QUERY_SND_ENTRY_INDEX(U8 cls1, U8 cls2, U8 cls4);
 	void QUEUE_NOISE_GEN1(U8 cls1, U8 cls2, U8 cls4, U8 xx, U8 yy, i16 xpos, i16 ypos, i16 tickDelta);

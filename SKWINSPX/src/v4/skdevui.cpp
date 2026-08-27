@@ -817,8 +817,8 @@ void SkWinCore::FIRE_SHOW_MOUSE_CURSOR()
 void SkWinCore::FIRE_HIDE_MOUSE_CURSOR()
 {
 	// SPX: in order to avoid some mouse flickering, I added option to bypass HIDE & SHOW mouse cursor
-	if (SkCodeParam::bMouseCursorReduceFlickering)
-		return;
+//	if (SkCodeParam::bMouseCursorReduceFlickering)
+//		return;
 
 	cd.mk.glbMouseVisibility++;
 	_01b0_0adb() CALL_IBMIO;

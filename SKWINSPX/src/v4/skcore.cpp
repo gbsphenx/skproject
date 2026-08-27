@@ -11472,7 +11472,8 @@ _1741:
 
 
 //^47EB:0048
-U8 *SkWinCore::_47eb_0048(shelf_memory info, U16 physPage0to3)
+// SPX: _47eb_0048 renamed REALIZE_GRAPHICS_DATA_MEMORY_FROM_MEMPOOL
+U8 *SkWinCore::REALIZE_GRAPHICS_DATA_MEMORY_FROM_MEMPOOL(shelf_memory info, U16 physPage0to3)
 {
 #if UseAltic
 	return REALIZE_GRAPHICS_DATA_MEMORY(info);

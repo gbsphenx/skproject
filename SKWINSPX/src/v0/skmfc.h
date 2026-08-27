@@ -36,7 +36,7 @@ public:
 	UINT Render();
 	UINT Close();
 
-	UINT AudioPlaySound(const U8 *xSoundBuffer, U32 iBufferSize, i8 iSoundVolume, U16 iPlaybackFrequency);
+	UINT AudioPlaySound(const U8 *xSoundBuffer, U32 iBufferSize, i8 iSoundVolume, U16 iPlaybackFrequency, U8 iVolumeLeft, U8 iVolumeRight);
 
 };
 

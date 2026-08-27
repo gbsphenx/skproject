@@ -423,7 +423,7 @@ Mix_Chunk* MakeMixChunkFromConvertedPCM(const U8* xSoundBuffer, Uint32 iBufferSi
 
 
 
-UINT SkRendererSDL::AudioPlaySound(const U8* xSoundBuffer, U32 iBufferSize, i8 iSoundVolume, U16 iPlaybackFrequency)
+UINT SkRendererSDL::AudioPlaySound(const U8* xSoundBuffer, U32 iBufferSize, i8 iSoundVolume, U16 iPlaybackFrequency, U8 iVolumeLeft, U8 iVolumeRight)
 {
 #if !defined (__NO_SDL__)
 	static int cnt = 0;
@@ -433,7 +433,7 @@ UINT SkRendererSDL::AudioPlaySound(const U8* xSoundBuffer, U32 iBufferSize, i8 i
 	for (iChannelIdx = 0; iChannelIdx < 128; iChannelIdx++) {
 		if (!Mix_Playing(iChannelIdx)) {
 			if (tblSamplesChannels[iChannelIdx].bInUse && tblSamplesChannels[iChannelIdx].pSoundChunk != NULL) {
-				printf("Freeing chunk %p from channel %d\n", tblSamplesChannels[iChannelIdx].pSoundChunk, iChannelIdx);
+				//printf("Freeing chunk %p from channel %d\n", tblSamplesChannels[iChannelIdx].pSoundChunk, iChannelIdx);
 				FreeChunk((Mix_Chunk*)tblSamplesChannels[iChannelIdx].pSoundChunk);
 				tblSamplesChannels[iChannelIdx].pSoundChunk = NULL;
 				tblSamplesChannels[iChannelIdx].iChannel = -1;
@@ -444,9 +444,11 @@ UINT SkRendererSDL::AudioPlaySound(const U8* xSoundBuffer, U32 iBufferSize, i8 i
 
     Mix_Chunk* chunk = MakeMixChunkFromConvertedPCM(xSoundBuffer, iBufferSize, (int)(MIX_MAX_VOLUME * (float)iSoundVolume / 16.f)); // full volume
 	iChannelIdx = Mix_PlayChannel(-1, chunk, 0); // play once
+	//printf("PLAY SOUND L/R %d/%d\n", iVolumeLeft, iVolumeRight);
+	Mix_SetPanning(iChannelIdx, iVolumeLeft*16, iVolumeRight*16);	// max is 255, iVolumeX is supposed to be 0 to 15
 
 	if (chunk != NULL && (iChannelIdx >= 0 && iChannelIdx < 128)) {
-		printf("ALLOC SOUND CHUNK %p to channel %d\n", chunk, iChannelIdx);
+		//printf("ALLOC SOUND CHUNK %p to channel %d\n", chunk, iChannelIdx);
 		tblSamplesChannels[iChannelIdx].pSoundChunk = (void*) chunk;
 		tblSamplesChannels[iChannelIdx].iChannel = iChannelIdx;
 		tblSamplesChannels[iChannelIdx].bInUse = true;

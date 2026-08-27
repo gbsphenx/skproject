@@ -41,7 +41,7 @@ public:
 
 	bool ML();
 
-	UINT AudioPlaySound(const U8 *xSoundBuffer, U32 iBufferSize, i8 iSoundVolume, U16 iPlaybackFrequency);
+	UINT AudioPlaySound(const U8 *xSoundBuffer, U32 iBufferSize, i8 iSoundVolume, U16 iPlaybackFrequency, U8 iVolumeLeft, U8 iVolumeRight);
 };
 
 void SKDOS_GET_MOUSE_POS_BUTTONS(U16 *x, U16 *y, U16 *buttons);

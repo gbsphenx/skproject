@@ -42,7 +42,7 @@ U16 SkWinCore::IBMIO_SBLASTER_BLEND_TO_SNDBUFF(Bit8u *buff, U16 buffSize, i8 vol
 {
 #if UseAltic
 	//skwin.SndPlayHi(buff, buffSize, volume);
-	skWinApp->skwin_SndPlayHi(buff, buffSize, volume);
+	skWinApp->skwin_SndPlayHi(buff, buffSize, volume, volume, volume);
 	return 1;
 #else
 	U16 bp02 = 0;
@@ -134,101 +134,103 @@ U16 SkWinCore::IBMIO_BLEND_TO_SNDBUFF(X8* buff, U16 buffSize, U8 iVolume, U16 iF
 }
 
 //^47EB:0333
-void SkWinCore::_47eb_0333(SoundStructure *ref)
+// SPX: _47eb_0333 renamed SOUND_SPATIALIZE
+void SkWinCore::SOUND_SPATIALIZE(SoundStructure *ref)
 {
 	U16 bp08 = 0;
-	i16 si = ref->iDistToPlayerX;
-	i16 di = ref->iDistToPlayerY;
-	U8 *bp04 = &ref->b8;	// volume
-	bp04[0] = (i8)(((ref->b5 << 8) / (si * si + di * di + 8)) >> 8);
-	Bit8u cl;
-	if (si == 0) {
-		cl = 8;
+	i16 iDistanceToPlayerX = ref->iDistToPlayerX;	// si
+	i16 iDistanceToPlayerY = ref->iDistToPlayerY;	// di
+	U8 *iSoundVolumes = &ref->iVolumeGlobal;	// volume	// bp04 takes the 3 bytes from iVolumeGlobal, [1]iVolumeLeft and [2]iVolumeRight
+	iSoundVolumes[0] = (i8)(((ref->b5 << 8) / ((iDistanceToPlayerX * iDistanceToPlayerX) + (iDistanceToPlayerY * iDistanceToPlayerY) + 8)) >> 8);
+	U8 iSoundPan;	// cl
+	if (iDistanceToPlayerX == 0) {
+		iSoundPan = 8;
 	}
-	else if (di == 0) {
-		if (si < 0) {
-			cl = 15;
+	else if (iDistanceToPlayerY == 0) {
+		if (iDistanceToPlayerX < 0) {
+			iSoundPan = 15;
 		}
 		else {
-			cl = 1;
+			iSoundPan = 1;
 		}
 	}
 	else {
-		if (si < 0) {
-			si = -si;
+		if (iDistanceToPlayerX < 0) {
+			iDistanceToPlayerX = -iDistanceToPlayerX;
 			bp08 = 1;
 		}
-		if (di < 0) {
-			di = -di;
+		if (iDistanceToPlayerY < 0) {
+			iDistanceToPlayerY = -iDistanceToPlayerY;
 		}
-		U16 bp06 = (si << 11) / di;
-		cl = 0;
+		U16 bp06 = (iDistanceToPlayerX << 11) / iDistanceToPlayerY;
+		iSoundPan = 0;
 
-		while (_4976_49c0[cl++] > bp06);
+		while (_4976_49c0[iSoundPan++] > bp06);
 	}
 
 	if (bp08 != 0) {
-		bp04[1] = 16 - cl;
-		bp04[2] = cl;
+		iSoundVolumes[1] = 16 - iSoundPan;	// left
+		iSoundVolumes[2] = iSoundPan;		// right
 	}
 	else {
-		bp04[1] = cl;
-		bp04[2] = 16 - cl;
+		iSoundVolumes[1] = iSoundPan;		// left
+		iSoundVolumes[2] = 16 - iSoundPan;	// right
 	}
 	return;
 }
 
 //^47EB:014F
 // SPX: _47eb_014f renamed PLAY_SOUND
-U16 SkWinCore::PLAY_SOUND(U16 xx, SoundStructure *ref)
+U16 SkWinCore::PLAY_SOUND(U16 iNbSounds, SoundStructure *ref)
 {
-	SkD((DLV_DBG_SND_OUT, "SND: Play sound xx:%02X struct:%04X\n"
-		, U16(xx), ref));
+	SkD((DLV_DBG_SND_OUT, "SND: Play sounds xx:%02X struct:%p\n"
+		, U16(iNbSounds), ref));
 
-	if (xx == 0)
+	if (iNbSounds == 0)
 		return 0;
-	U16 bp02 = 0;
+	U16 iSoundIndex = 0;	// bp02
 	SoundStructure* xSoundStruct = ref;	// bp06
-	for (; bp02 < xx; bp02++, xSoundStruct++) {
-		_47eb_0333(xSoundStruct);
-		xSoundStruct->b11 = (U8)bp02;
+	for (; iSoundIndex < iNbSounds; iSoundIndex++, xSoundStruct++) {
+		SOUND_SPATIALIZE(xSoundStruct);
+		xSoundStruct->iSoundNum = (U8)iSoundIndex;
 	}
 
-	U16 bp10 = 0; // SPX => that means this block is always bypassed, is it a mistake ?
+	U16 bp10 = 0;
 	do {
 		xSoundStruct = ref;
-		U16 bp0c = xSoundStruct->b11;
-		for (xSoundStruct++, bp02++; bp02 < xx; bp02++, xSoundStruct++) {
-			U16 bp0e = xSoundStruct->b11;
-			if (AUDIO_47eb_02e0(&ref[bp0c], &ref[bp0e]) == 0) {
-				WRITE_UI8(xSoundStruct,-1,(U8)bp0e);
-				xSoundStruct->b11 = (U8)bp0c;
+		U16 iRefSoundNum = xSoundStruct->iSoundNum;	// bp0c
+		for (xSoundStruct++, iSoundIndex++; iSoundIndex < iNbSounds; iSoundIndex++, xSoundStruct++) {
+			U16 iSoundNum = xSoundStruct->iSoundNum;	// bp0e
+			if (SOUND_COMPARE_PRIORITY(&ref[iRefSoundNum], &ref[iSoundNum]) == 0) {
+				WRITE_UI8(xSoundStruct,-1,(U8)iSoundNum);
+				xSoundStruct->iSoundNum = (U8)iRefSoundNum;
 				bp10 = 1;
 			}
 			else {
-				bp0c = bp0e;
+				iRefSoundNum = iSoundNum;
 			}
 		}
 	} while (bp10 != 0);
-	U16 si = 0;
+	U16 iSoundToPlayIndex = 0;	// si
 	U16 di = 0;
 	while (di < _4976_49be) {
-		while (si < xx) {
-			U16 bp0c = ref[si].b11;
-			si++;
-			xSoundStruct = &ref[bp0c];
-			U8 *bp0a = &xSoundStruct->b8;
+		while (iSoundToPlayIndex < iNbSounds) {
+			U16 iSoundNum = ref[iSoundToPlayIndex].iSoundNum;	// bp0c
+			iSoundToPlayIndex++;
+			xSoundStruct = &ref[iSoundNum];
+			U8 *iGlobalVolume = &xSoundStruct->iVolumeGlobal;	// bp0a
 #if UseAltic
 			//skwin.SndPlayLo(_47eb_0048(xSoundStruct->pv0->ps0, 0), xSoundStruct->pv0->w4, xSoundStruct->b6, xSoundStruct->b7);
-			skWinApp->skwin_SndPlayLo(_47eb_0048(xSoundStruct->pv0->iShelfMem, 0), xSoundStruct->pv0->iSoundSize, xSoundStruct->iDistToPlayerX, xSoundStruct->iDistToPlayerY);
+			//skWinApp->skwin_SndPlayLo(REALIZE_GRAPHICS_DATA_MEMORY_FROM_MEMPOOL(xSoundStruct->pv0->iShelfMem, 0), xSoundStruct->pv0->iSoundSize, xSoundStruct->iDistToPlayerX, xSoundStruct->iDistToPlayerY);
+			skWinApp->skwin_SndPlayLo(REALIZE_GRAPHICS_DATA_MEMORY_FROM_MEMPOOL(xSoundStruct->pv0->iShelfMem, 0), xSoundStruct->pv0->iSoundSize, xSoundStruct->iDistToPlayerX, xSoundStruct->iDistToPlayerY, xSoundStruct->iVolumeLeft, xSoundStruct->iVolumeRight);
 #else
-			if (IBMIO_BLEND_TO_SNDBUFF(_47eb_0048(xSoundStruct->pv0->iShelfMem, 0), xSoundStruct->pv0->iSoundSize, *bp0a, PLAYBACK_FREQUENCY) CALL_IBMIO == 0)
-				return si;
+			if (IBMIO_BLEND_TO_SNDBUFF(REALIZE_GRAPHICS_DATA_MEMORY_FROM_MEMPOOL(xSoundStruct->pv0->iShelfMem, 0), xSoundStruct->pv0->iSoundSize, *iGlobalVolume, PLAYBACK_FREQUENCY) CALL_IBMIO == 0)
+				return iSoundToPlayIndex;
 #endif
 		}
 		di++;
 	}
-	return si;
+	return iSoundToPlayIndex;
 }
 
 //^482B:0101
@@ -480,20 +482,21 @@ void SkWinCore::BLEND_TO_SNDBUFF_SNDCARD_4(void *ref, U16 xx, U16 yy, U16 zz) { 
 
 //^47EB:02E0
 // SPX: _47eb_02e0 renamed AUDIO_47eb_02e0
-U16 SkWinCore::AUDIO_47eb_02e0(SoundStructure *xx, SoundStructure *yy)
+// Returns 1 if xx > yy, else 0
+U16 SkWinCore::SOUND_COMPARE_PRIORITY(SoundStructure *pSoundRef1, SoundStructure *pSoundRef2)
 {
 	ENTER(0);
-	U16 si;
-	if (xx->b4 > yy->b4)
-		return si = 1;
-	if (yy->b4 == yy->b4) {
-		U8 cl = xx->b8;
-		U8 dl = yy->b8;
-		if (cl >= dl)
-			return si = 1;
-		return si = 0;
+	U16 iCompareResult;	// si
+	if (pSoundRef1->b4 > pSoundRef2->b4)
+		return iCompareResult = 1;
+	if (pSoundRef2->b4 == pSoundRef2->b4) {
+		U8 iVolume1 = pSoundRef1->iVolumeGlobal;	// cl
+		U8 iVolume2 = pSoundRef2->iVolumeGlobal;	// dl
+		if (iVolume1 >= iVolume2)
+			return iCompareResult = 1;
+		return iCompareResult = 0;
 	}
-	return si = 0;
+	return iCompareResult = 0;
 }
 
 

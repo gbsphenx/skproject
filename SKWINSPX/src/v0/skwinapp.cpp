@@ -586,7 +586,7 @@ void SkWinApp::AudioPlayDirect(const char* sAudioFilename, i8 vol)
 
 // Old compatibility with CSkWin -----------------------------------------------
 
-void SkWinApp::skwin_SndPlayHi(const U8 *buff, U32 buffSize, i8 vol)
+void SkWinApp::skwin_SndPlayHi(const U8 *buff, U32 buffSize, i8 vol, U8 iVolumeLeft, U8 iVolumeRight)
 {
 	// SPX: added this small block to have random frequencies
 	int iBasePlaybackFrequency = C06000_SOUND_PLAYBACK_FREQUENCY;	// 6000
@@ -602,17 +602,17 @@ void SkWinApp::skwin_SndPlayHi(const U8 *buff, U32 buffSize, i8 vol)
 	// SPX
 */
 	if (xSkWinRenderer != NULL)
-		xSkWinRenderer->AudioPlaySound(buff, buffSize, vol, iPlaybackFrequency);
+		xSkWinRenderer->AudioPlaySound(buff, buffSize, vol, iPlaybackFrequency, iVolumeLeft, iVolumeRight);
 }
 
-void SkWinApp::skwin_SndPlayLo(const U8 *buff, U32 buffSize, i8 dX, i8 dY)
+void SkWinApp::skwin_SndPlayLo(const U8 *buff, U32 buffSize, i8 dX, i8 dY, U8 iVolumeLeft, U8 iVolumeRight)
 {
 	i8 iSoundVolume = 0;
 
 	iSoundVolume = 16 - (i8)(sqrt(float(dX*dX +dY*dY)) * 3);
 	if (iSoundVolume < 1)
 		return;
-	skwin_SndPlayHi(buff, buffSize, iSoundVolume);
+	skwin_SndPlayHi(buff, buffSize, iSoundVolume, iVolumeLeft, iVolumeRight);
 }
 
 

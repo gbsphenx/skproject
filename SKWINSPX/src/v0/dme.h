@@ -2026,14 +2026,14 @@ namespace DM2Internal {
 	// SPX: sk5efe renamed SoundStructure
 	struct SoundStructure { // 12 bytes (32b) or 16 bytes (64b)
 		SoundShelfChained *pv0;	// @0 *pv0
-		U8 b4;		// @4
+		U8 b4;		// @4 b4	// used in comparison of soundstructure
 		U8 b5;		// @5
 		i8 iDistToPlayerX;		// @6 b6 // distance to player x
 		i8 iDistToPlayerY;		// @7 b7 // distance to player y
-		U8 b8;		// @8 b8 // volume
-		U8 b9;		// @9 b9 // SPX: left volume ?
-		U8 b10;		// @10 b10 // SPX: right volume ?
-		U8 b11;		// @11 b11 // °num of sound to play in chained struct ?
+		U8 iVolumeGlobal;		// @8 b8 // volume
+		U8 iVolumeLeft;			// @9 b9 // SPX: left volume ?
+		U8 iVolumeRight;		// @10 b10 // SPX: right volume ?
+		U8 iSoundNum;			// @11 b11 // °num of sound to play in chained struct ?
 	};
 	// 
 /* not used anywhere
