@@ -71,7 +71,7 @@ void DM2_gfxmain_3929_0914(void)
 //^3929:0BA6
 void SkWinCore::PRINT_SYSERR_TEXT(Bit16u dstx, Bit16u dsty, Bit16u clr1, Bit16u clr2, Bit8u *str)
 {
-	DRAW_STRING(_4976_4964, -1, glbScreenWidth, dstx, dsty+1, clr1, clr2, str, 8);
+	DRAW_STRING(_4976_4964, -1, glbScreenWidth, dstx, dsty+1, clr1, clr2, str, IMG_8_BPP);
 }
 
 //^3929:0929
@@ -91,7 +91,7 @@ void SkWinCore::DRAW_HINT_TEXT(U16 clr1, U8 *str)
 			clr1,
 			glbPaletteT16[C00_COLOR_BLACK],
 			str,
-			8
+			IMG_8_BPP
 			);
 	}
 	else {

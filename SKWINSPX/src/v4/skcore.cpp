@@ -6049,7 +6049,7 @@ _1523:
 void SkWinCore::MessageLoop(bool bBalanceWait, bool bShortWait) {
 
 	static UINT iInternalMLCount = 0;
-
+	// SPX: Note: no draw function allowed in MessageLoop -- because IBMIO_BLIT will call again MessageLoop
 	SkD((DLV_DBG_INIT, "MessageLoop %06d: %d %d | tickThen = %d\n", iInternalMLCount, (int)bBalanceWait, (int)bShortWait, tickThen)); iInternalMLCount++;
 	if (bBalanceWait) {
 		if (bShortWait) {
@@ -6459,34 +6459,22 @@ void SkWinCore::_sk_longjmp(jmp_buf xx, U16 yy)
 //^101B:0111
 void SkWinCore::SK_PREPARE_EXIT()
 {
-	//^101B:0111
 	ENTER(0);
-	//^101B:0114
 	_1031_096a();
-	//^101B:0119
-	while (glbMouseVisibility <= 0)
-		//^101B:011B
+	while (cd.mk.glbMouseVisibility <= 0)
 		FIRE_HIDE_MOUSE_CURSOR();
-	//^101B:0127
 	GRAPHICS_DATA_CLOSE();
-	//^101B:012C
 	GRAPHICS_DATA_CLOSE();
-	//^101B:0131
 	AUDIO_482b_07c2(1);
-	//^101B:0139
 	if (_4976_4c26 != 0) {
-		//^101B:0140
 		FIRE_FILL_SCREEN_RECT(2, 0);
 	}
 #if UseAltic
 	throw i8(0);
 #else
-	//^101B:014B
 	SK_EXIT();
-	//^101B:0150
 	_sk_longjmp(_4976_4de0, 1);
 #endif
-	//^101B:015B
 	return;
 
 }
@@ -13822,50 +13810,36 @@ sk5d00 *SkWinCore::TAG_LARGEST_FREE_POOL(X16 mask)
 //^3E74:1175
 U16 SkWinCore::ADD_MEM_TO_FREE_POOL(sk5d00 *pool, i32 size, X16 poolflag)
 {
-	//^3E74:1175
 	ENTER(4);
-	//^3E74:1179
 	if (pool != NULL) {
-		//^3E74:118A
 		size &= 0xfffffffe;
 		if (size < 32) {
-			//^3E74:11A2
 			return 0;
 		}
-		//^3E74:11A7
 		INIT_FREE_POOL(pool, size, poolflag);
 		return 1;
 	}
-	//^3E74:11C0
 	_4976_5c7a = 1;
-	sk5d00 *bp04 = TAG_LARGEST_FREE_POOL(0x7f8);	// 0x7f8 = 2040
+	sk5d00 *bp04 = TAG_LARGEST_FREE_POOL(0x7F8);	// 0x7f8 = 2040
 	if (bp04 == NULL) {
-		//^3E74:11DF
 		RAISE_SYSERR(SYSTEM_ERROR__CANT_ADD_MEM);
 	}
 	SkD((DLV_MEM, "MEM: ADD_MEM_TO_FREE_POOL => Expected Free = %05d, S(sk5d00) = %d\n", bp04->dw4, sizeof(sk5d00)));
-	//^3E74:11E7
 	glbCpxHeapCurrentMementPtr = _4976_5ce6 = reinterpret_cast<mement *>(&bp04[+1]);
 	_4976_5cf0 = _4976_5cf4 = PTR_PADD(bp04,+bp04->dw4 + sizeof(sk5d00));
 	glbFreeRAMMemPool = bp04->dw4;
 	_4976_5cee = bp04->w16;
-	//^3E74:124C
-	bp04 = TAG_LARGEST_FREE_POOL(0xc00);
+	bp04 = TAG_LARGEST_FREE_POOL(0xC00);
 	if (bp04 != NULL || (bp04 = TAG_LARGEST_FREE_POOL(0x400)) != NULL) {
-		//^3E74:127E
 		_4976_5d6e = bp04->w16;
 		if ((_4976_5d6e & 0x800) != 0) {
-			//^3E74:1290
 			_4976_5d5a = tiamat::From_cems(bp04->dw4 + sizeof(sk5d00));
 		}
 		else {
-			//^3E74:12A7
 			_4976_5d5a = ptr2t(PTR_PADD(bp04,+bp04->dw4 + sizeof(sk5d00)));
 		}
-		//^3E74:12CE
 		glbFreeEMSMemPool = bp04->dw4;
 	}
-	//^3E74:12E0
 	_4976_5d04 = ALLOC_MEMORY_RAM(TEMP_BUFF_SIZE, afUseUpper, 0x280);
 	glbMement1 = NULL;
 	glbMement2 = NULL;
@@ -13873,7 +13847,6 @@ U16 SkWinCore::ADD_MEM_TO_FREE_POOL(sk5d00 *pool, i32 size, X16 poolflag)
 	glbMement4 = NULL;
 	glbMement5 = NULL;
 	glbGameTickHoldFromMement = -1;
-	//^3E74:132B
 	return 1;
 }
 //^4726:0055
@@ -16018,13 +15991,18 @@ _01f7:
 				di = GET_TILE_FROM_VECTOR_W_DIR(cd.pi.glbPlayerDir, 1, 0, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
 				if ((di >> 5) != 6 || (di & 1) == 0 || (di & 4) != 0) {
 					_4976_4c3e = 0;
+#ifndef __DJGPP__
 					FIRE_MOUSE_RELEASE_CAPTURE();
-					glbMouseVisibility = 1;
+#endif
+					cd.mk.glbMouseVisibility = 1;
 					FIRE_SHOW_MOUSE_CURSOR();
 				}
 			}
 			MAIN_LOOP();
-
+			/*{
+				char sDebugMessage[64]; sprintf(sDebugMessage, "MESSAGE LOOP");
+				DISPLAY_HINT_TEXT(C04_COLOR_CYAN, (X8*)sDebugMessage);
+			}*/
 			MessageLoop(false); // in game
 			//SkD((DLV_DBG_GAME_LOOP, "GL (%08d) - TICK STEP = %d / _4976_4c02 = %d\n", iLoopCount, glbTickStepReached, _4976_4c02));
 
@@ -16205,7 +16183,7 @@ _01f7:
 				if ((di >> 5) != 6 || (di & 1) == 0 || (di & 4) != 0) {
 					_4976_4c3e = 0;
 					FIRE_MOUSE_RELEASE_CAPTURE();
-					glbMouseVisibility = 1;
+					cd.mk.glbMouseVisibility = 1;
 					FIRE_SHOW_MOUSE_CURSOR();
 				}
 			}
@@ -16405,7 +16383,7 @@ SkWinCore::SkWinCore()
 	glbScreenWidth = 320;	// Screen width
 	glbScreenHeight = 200;	// Screen height
 	_4976_4964 = NULL;
-	glbMouseVisibility = 1;	// (_4976_4860)
+	cd.mk.glbMouseVisibility = 1;	// (_4976_4860)
 	glbMouseEventLock = 0;
 	cd.mk.glbMouseXPos = 0;
 	cd.mk.glbMouseYPos = 0;

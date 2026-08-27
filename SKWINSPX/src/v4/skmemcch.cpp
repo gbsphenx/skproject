@@ -394,7 +394,7 @@ void SkWinCore::FREE_INDEXED_MEMENT(U16 index)
 		i32 iMemEntReadSize = READ_I32(xMemEntry,-sizeof(i32));	// bp10 READ_I32(xMemEntry,-4);
 //		printf("WHAT IS bp10 = %08x\n", iMemEntReadSize);
 //		printf("AFTER READ_I32 %p\n", xMemEntry);
-		LOGX(("FREE INDEXED MEMENT %04X => pX]%p S=%06X RS=%08X (NEG:%08X) [(-4)%08X (0)%08X]", index, xMemEntry, iMementSize, iMemEntReadSize, -iMemEntReadSize, *(((U32*)xMemEntry)-1), *((U32*)xMemEntry) ));
+//		LOGX(("FREE INDEXED MEMENT %04X => pX]%p S=%06X RS=%08X (NEG:%08X) [(-4)%08X (0)%08X]", index, xMemEntry, iMementSize, iMemEntReadSize, -iMemEntReadSize, *(((U32*)xMemEntry)-1), *((U32*)xMemEntry) ));
 		SkD((SkCodeParam::bDebugPrint, "Mement Readsize = %X (%d) (bounds %X to %X)\n", iMemEntReadSize, iMemEntReadSize, -BUFF_SIZE_MAX, BUFF_SIZE_MAX));
 		ATLASSERT(-BUFF_SIZE_MAX < iMemEntReadSize && iMemEntReadSize < BUFF_SIZE_MAX);	//ATLASSERT(-60000 < bp10 && bp10 < 60000);
 
@@ -724,10 +724,10 @@ _2da5:
 		if (iDeltaBuffSize >= 30) {
 			pMemEnt2 = reinterpret_cast<mement *>(PTR_PADD(pMemEnt,iBufferSize));
 			WRITE_I32(pMemEnt2,iDeltaBuffSize - sizeof(i32),iDeltaBuffSize);	// WRITE_I32(pMemEnt2,bp0c -4,bp0c);
-			LOGX(("WRITE MEMENT(2) @pX]%p - %08X | size = %08X abs(%8X/%d) (written @pX]%p", pMemEnt2, iDeltaBuffSize - sizeof(i32), iDeltaBuffSize, abs(iDeltaBuffSize), abs(iDeltaBuffSize), ((X8*)(pMemEnt2)+(iDeltaBuffSize - sizeof(i32))) ));
+			//LOGX(("WRITE MEMENT(2) @pX]%p - %08X | size = %08X abs(%8X/%d) (written @pX]%p", pMemEnt2, iDeltaBuffSize - sizeof(i32), iDeltaBuffSize, abs(iDeltaBuffSize), abs(iDeltaBuffSize), ((X8*)(pMemEnt2)+(iDeltaBuffSize - sizeof(i32))) ));
 			pMemEnt2->setNegativeTotalBufferSize(iDeltaBuffSize);
 			MEMENT_3e74_0d32(pMemEnt2);
-			LOGX(("pX]%p S=%06X RS=%08X [(-4)%08X (0)%08X]", pMemEnt2, iDeltaBuffSize - sizeof(i32), READ_I32(pMemEnt2,-sizeof(i32)), *(((U32*)pMemEnt2)-1), *((U32*)pMemEnt2) ));
+			//LOGX(("pX]%p S=%06X RS=%08X [(-4)%08X (0)%08X]", pMemEnt2, iDeltaBuffSize - sizeof(i32), READ_I32(pMemEnt2,-sizeof(i32)), *(((U32*)pMemEnt2)-1), *((U32*)pMemEnt2) ));
 		}
 		else {
 			iBufferSize = pMemEnt->getNegativeTotalBufferSize();
@@ -736,9 +736,9 @@ _2da5:
 	glbFreeCPXMemory -= iBufferSize;
 	pMemEnt->setNegativeTotalBufferSize(-iBufferSize);
 	WRITE_I32(pMemEnt,+iBufferSize -sizeof(i32),-iBufferSize);
-	LOGX(("WRITE MEMENT(1) @pX]%p - %08X | size = %08X abs(%8X/%d) (written @pX]%p", pMemEnt, iBufferSize -sizeof(i32), -iBufferSize, iBufferSize, iBufferSize, ((X8*)(pMemEnt)+(iBufferSize -sizeof(i32))) ));
-	LOGX(("pX]%p S=%06X RS=%08X [(-4)%08X (0)%08X]", pMemEnt, iBufferSize -sizeof(i32), READ_I32(pMemEnt,-sizeof(i32)), *(((U32*)pMemEnt)-1), *((U32*)pMemEnt) ));
-	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_YELLOW, BLACK); printf("pX]%p S=%06X RS=%08X [(-4)%08X (0)%08X]\n", pMemEnt, iBufferSize -sizeof(i32), READ_I32(pMemEnt,-sizeof(i32)), *(((U32*)pMemEnt)-1), *((U32*)pMemEnt) );CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
+//	LOGX(("WRITE MEMENT(1) @pX]%p - %08X | size = %08X abs(%8X/%d) (written @pX]%p", pMemEnt, iBufferSize -sizeof(i32), -iBufferSize, iBufferSize, iBufferSize, ((X8*)(pMemEnt)+(iBufferSize -sizeof(i32))) ));
+//	LOGX(("pX]%p S=%06X RS=%08X [(-4)%08X (0)%08X]", pMemEnt, iBufferSize -sizeof(i32), READ_I32(pMemEnt,-sizeof(i32)), *(((U32*)pMemEnt)-1), *((U32*)pMemEnt) ));
+//	CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_YELLOW, BLACK); printf("pX]%p S=%06X RS=%08X [(-4)%08X (0)%08X]\n", pMemEnt, iBufferSize -sizeof(i32), READ_I32(pMemEnt,-sizeof(i32)), *(((U32*)pMemEnt)-1), *((U32*)pMemEnt) );CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
 	reinterpret_cast<mement *>(pMemEnt)->setMark8(MEMENT_MARK_M1_FFFF);
 	reinterpret_cast<mement *>(pMemEnt)->setMark6(MEMENT_MARK_M1_FFFF);
 	reinterpret_cast<mement *>(pMemEnt)->setMark4(MEMENT_MARK_M1_FFFF);

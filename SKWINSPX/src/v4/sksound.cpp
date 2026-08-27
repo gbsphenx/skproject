@@ -137,8 +137,8 @@ U16 SkWinCore::IBMIO_BLEND_TO_SNDBUFF(X8* buff, U16 buffSize, U8 iVolume, U16 iF
 void SkWinCore::_47eb_0333(SoundStructure *ref)
 {
 	U16 bp08 = 0;
-	i16 si = ref->b6;
-	i16 di = ref->b7;
+	i16 si = ref->iDistToPlayerX;
+	i16 di = ref->iDistToPlayerY;
 	U8 *bp04 = &ref->b8;	// volume
 	bp04[0] = (i8)(((ref->b5 << 8) / (si * si + di * di + 8)) >> 8);
 	Bit8u cl;
@@ -220,7 +220,7 @@ U16 SkWinCore::PLAY_SOUND(U16 xx, SoundStructure *ref)
 			U8 *bp0a = &xSoundStruct->b8;
 #if UseAltic
 			//skwin.SndPlayLo(_47eb_0048(xSoundStruct->pv0->ps0, 0), xSoundStruct->pv0->w4, xSoundStruct->b6, xSoundStruct->b7);
-			skWinApp->skwin_SndPlayLo(_47eb_0048(xSoundStruct->pv0->iShelfMem, 0), xSoundStruct->pv0->iSoundSize, xSoundStruct->b6, xSoundStruct->b7);
+			skWinApp->skwin_SndPlayLo(_47eb_0048(xSoundStruct->pv0->iShelfMem, 0), xSoundStruct->pv0->iSoundSize, xSoundStruct->iDistToPlayerX, xSoundStruct->iDistToPlayerY);
 #else
 			if (IBMIO_BLEND_TO_SNDBUFF(_47eb_0048(xSoundStruct->pv0->iShelfMem, 0), xSoundStruct->pv0->iSoundSize, *bp0a, PLAYBACK_FREQUENCY) CALL_IBMIO == 0)
 				return si;
@@ -248,7 +248,7 @@ U16 SkWinCore::QUERY_SND_ENTRY_INDEX(Bit8u cls1, Bit8u cls2, Bit8u cls4)
 }
 
 //^482B:018B
-void SkWinCore::QUEUE_NOISE_GEN1(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u xx, Bit8u yy, i16 xpos, i16 ypos, i16 tickDelta)
+void SkWinCore::QUEUE_NOISE_GEN1(U8 cls1, U8 cls2, U8 cls4, U8 xx, U8 yy, i16 xpos, i16 ypos, i16 tickDelta)
 {
 	if (tickDelta > 0 && glbCurrentMapIndex != glbMap_4c28 && glbCurrentMapIndex != glbMap_4976_4c12) {
 		return;
@@ -338,15 +338,15 @@ void SkWinCore::QUEUE_NOISE_GEN1(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u xx, B
 			if (bp08->pv0 != bp0c[si].pv0)
 				continue;
 		}
-		if (bp0c[si].b6 == xpos && bp0c[si].b7 == ypos)
+		if (bp0c[si].iDistToPlayerX == xpos && bp0c[si].iDistToPlayerY == ypos)
 			return;
 
 	}
 	bp0c[di].pv0 = &cd.sc.tblSoundShelf[cd.sc.tblSoundShortInfo[bp0e -1].iSoundShelfIndex];
     bp0c[di].b4 = xx;
 	bp0c[di].b5 = yy;
-	bp0c[di].b6 = (i8)xpos;
-	bp0c[di].b7 = (i8)ypos;
+	bp0c[di].iDistToPlayerX = (i8)xpos;
+	bp0c[di].iDistToPlayerY = (i8)ypos;
 	if (tickDelta == 0) {
 		PLAY_SOUND(1, &bp0c[di]);
 	}
@@ -361,7 +361,7 @@ void SkWinCore::QUEUE_NOISE_GEN1(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u xx, B
 
 //^482B:00BF
 //void SkWinCore::QUEUE_NOISE_GEN2(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u cls2alt, i16 xpos, i16 ypos, U16 tickDelta, Bit8u ss, Bit8u tt)
-void SkWinCore::QUEUE_NOISE_GEN2(Bit8u iGDatCategory, Bit8u iGDatItemId, Bit8u iSoundID, Bit8u iGDatItemIdAlt, i16 xpos, i16 ypos, U16 tickDelta, Bit8u ss, Bit8u tt)
+void SkWinCore::QUEUE_NOISE_GEN2(U8 iGDatCategory, U8 iGDatItemId, U8 iSoundID, U8 iGDatItemIdAlt, i16 xpos, i16 ypos, U16 tickDelta, U8 ss, U8 tt)
 {
 	// SPX: In the case of sound at cls2 is not found, use the default with cls2alt
 	QUEUE_NOISE_GEN1(

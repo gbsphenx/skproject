@@ -97,21 +97,23 @@ typedef struct {
 // cd.mk.
 typedef struct {
 
-	U16	glbMouseCurVis2;	// (_04bf_17a8) mouse cursor vis2?
+	U16		glbMouseCurVis2;	// (_04bf_17a8) mouse cursor vis2?
 
-	U16 mice_btn;
-	U16 mice_x;
-	U16 mice_y;
+	i16		glbMouseVisibility;		// (_4976_4860)
 
-	U16	glbMouseButtonState;		// (_04bf_17ee) mouse push state (latest); bit0=left, bit1=right
-	U16	glbMouseXPos;				// (_04bf_03be) mouse x-pos
-	U16	glbMouseYPos;				// (_04bf_03c0) mouse y-pos
-	U16	glbMousePreviousXPos;		// (_04bf_03c2) prev xpos
-	U16	glbMousePreviousYPos;		// (_04bf_03c4) prev ypos
+	U16		mice_btn;
+	U16		mice_x;
+	U16		mice_y;
 
-	i16	glbSomeMouseX;			// (_04bf_185e)
-	i16 glbSomeMouseY;			// (_04bf_1860)
-	U16	glbSomeMouseButton;		// (_04bf_1936)
+	U16		glbMouseButtonState;		// (_04bf_17ee) mouse push state (latest); bit0=left, bit1=right
+	U16		glbMouseXPos;				// (_04bf_03be) mouse x-pos
+	U16		glbMouseYPos;				// (_04bf_03c0) mouse y-pos
+	U16		glbMousePreviousXPos;		// (_04bf_03c2) prev xpos
+	U16		glbMousePreviousYPos;		// (_04bf_03c4) prev ypos
+
+	i16		glbSomeMouseX;			// (_04bf_185e)
+	i16		glbSomeMouseY;			// (_04bf_1860)
+	U16		glbSomeMouseButton;		// (_04bf_1936)
 
 
 //--- These are special from external control outside SKWin (not original code)

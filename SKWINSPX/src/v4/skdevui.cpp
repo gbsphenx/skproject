@@ -121,7 +121,7 @@ void SkWinCore::FIRE_QUEUE_MOUSE_EVENT(Bit16u xx, Bit16u yy, Bit16u button)
 //^443C:0342
 U16 SkWinCore::FIRE_MOUSE_EVENT_RECEIVER(Bit16u xx, Bit16u yy, i16 button) //#DS=4976
 {
-	//printf("FIRE_MOUSE_EVENT_RECEIVER\n");
+	//printf("FIRE_MOUSE_EVENT_RECEIVER - BUTTON %d\n", button);
 	// DOS values :
 	// Left button Click = 2 / Release = 4
 	// Right button Click = 1 / Release = 8
@@ -227,8 +227,8 @@ void SkWinCore::_443c_00a9_MOUSE(sk0cea *ref, i16 x, i16 cx, i16 y, i16 cy)
 X16 SkWinCore::_443c_00f8_MOUSE(X16 xx, X16 yy)
 {
 	ENTER(14);
-	if (glbMouseVisibility > 0)
-		return 0xffff;
+	if (cd.mk.glbMouseVisibility > 0)
+		return 0xFFFF;
 
 	if (_4976_5dae.rc4.cx != 0 || xx < _4976_5da8 || xx > _4976_5dae.rc4.x || yy < _4976_5daa || yy > _4976_5dae.rc4.y) {
 		_4976_5dae.rc4.cx = 0;
@@ -434,12 +434,6 @@ void SkWinCore::_01b0_0aa8_MOUSE() //#DS=04BF
 }
 
 
-//^443C:086B
-void SkWinCore::FIRE_SHOW_MOUSE_CURSOR()
-{
-	glbMouseVisibility--;
-	_01b0_0aa8_MOUSE() CALL_IBMIO;
-}
 
 
 //^01B0:08D8
@@ -601,7 +595,7 @@ void SkWinCore::IBMIO_USER_INPUT_CHECK() //#DS=4976
 			if (_4976_4e62 == 0 && _4976_4e48 == 0 && _4976_4e64 == 0) {
 				while (glbPtrTransmittedUIEvent == 0) {
 					_4976_19a7 = 1;
-					Bit16u di = 1;
+					U16 di = 1;
 _0fa6:
 					if (_4976_4e00 == 0) {
 						_4976_19a7 = 0;
@@ -613,7 +607,7 @@ _0fa6:
 					_4976_4ea6++;
 					if (_4976_4ea6 > 10)
 						_4976_4ea6 = 0;
-					Bit16u si = 0;
+					U16 si = 0;
 					if (bp0e.MouseButton() >= 0x20) {
 						if (bp0e.MouseButton() == 0x20) {
 							si = _1031_03f2(&_4976_1891[_4976_19ad], bp0e.MouseX());
@@ -648,8 +642,10 @@ _0fa6:
 					_4976_19a7 = 0;
 					_1031_0b7e_MOUSE();
 					glbPtrTransmittedUIEvent = TRANSMIT_UI_EVENT(&glbMousePosition);
+#ifndef __DJGPP__
 					if (glbPtrTransmittedUIEvent != NULL)
 						printf("TRANSMIT %x %d\n", glbPtrTransmittedUIEvent, *glbPtrTransmittedUIEvent);
+#endif // __DJGPP__
 					iIsTickDifferent = 0;
 				}
 			}
@@ -810,11 +806,21 @@ void SkWinCore::IBMIO_SET_CURSOR_PATTERN(
 }
 
 
+//^443C:086B
+void SkWinCore::FIRE_SHOW_MOUSE_CURSOR()
+{
+	cd.mk.glbMouseVisibility--;
+	_01b0_0aa8_MOUSE() CALL_IBMIO;
+}
 
 //^443C:085A
 void SkWinCore::FIRE_HIDE_MOUSE_CURSOR()
 {
-	glbMouseVisibility++;
+	// SPX: in order to avoid some mouse flickering, I added option to bypass HIDE & SHOW mouse cursor
+	if (SkCodeParam::bMouseCursorReduceFlickering)
+		return;
+
+	cd.mk.glbMouseVisibility++;
 	_01b0_0adb() CALL_IBMIO;
 }
 

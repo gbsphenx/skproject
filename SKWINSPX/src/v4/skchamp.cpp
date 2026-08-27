@@ -1344,7 +1344,7 @@ void SkWinCore::PLAYER_CONSUME_OBJECT(U16 player, ObjectID rlConsume, i16 posses
 			return;
 		}
 		FIRE_HIDE_MOUSE_CURSOR();
-		glbMouseVisibility = 1;
+		cd.mk.glbMouseVisibility = 1;
 		return;
 	}
 	else {
@@ -2335,13 +2335,13 @@ void SkWinCore::BRING_CHAMPION_TO_LIFE(X16 xx) { // TODO: Unr
 
 
 //^2C1D:14DE
-void SkWinCore::DROP_PLAYER_ITEMS(U16 iChampionIdx)
+void SkWinCore::DROP_PLAYER_ITEMS(U16 iChampionIndex)
 {
 	ENTER(2);
-	X16 iQuarterPos = tblChampionSquad[iChampionIdx].playerPos();	// di
+	X16 iQuarterPos = tblChampionSquad[iChampionIndex].playerPos();	// di
 	X16 iInvSlot;	// si
 	for (iInvSlot = 0; iInvSlot < C30_INVENTORY_MAX_SLOT; iInvSlot++) {
-		ObjectID oChampItem = REMOVE_POSSESSION(iChampionIdx, tblDropChampionInventory[iInvSlot]);	// bp02
+		ObjectID oChampItem = REMOVE_POSSESSION(iChampionIndex, tblDropChampionInventory[iInvSlot]);	// bp02
 		if (oChampItem != OBJECT_NULL) {
 			MOVE_RECORD_TO(ObjectID(oChampItem, iQuarterPos), -1, 0, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
 		}
@@ -2351,79 +2351,78 @@ void SkWinCore::DROP_PLAYER_ITEMS(U16 iChampionIdx)
 
 //^2C1D:15BA
 // SPX: PLAYER_DEFEATED renamed CHAMPION_DEFEATED
-void SkWinCore::CHAMPION_DEFEATED(X16 player)
+void SkWinCore::CHAMPION_DEFEATED(X16 iChampionIndex)
 {
 	// CSBwinSimilarity: TAG016c5a,KillCharacter
 
 	ENTER(12);
-	X16 di;
-	Champion *champion = &tblChampionSquad[di = player];
+	X16 iChampionIdx;	// di
+	Champion *pChampion = &tblChampionSquad[iChampionIdx = iChampionIndex];
 
 #if (DM2_EXTENDED_MODE == 1)
 	if (SkCodeParam::bUseExtendedSound == true) {	// SPX: Play the champion own scream sound if dead
-		printf("champion dead: %d\n", champion->HeroType());
-		QUEUE_NOISE_GEN1(GDAT_CATEGORY_x16_CHAMPIONS, champion->HeroType(), SOUND_CHAMPION_SCREAM, 0x61, 0x80, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1);
+		QUEUE_NOISE_GEN1(GDAT_CATEGORY_x16_CHAMPIONS, pChampion->HeroType(), SOUND_CHAMPION_SCREAM, 0x61, 0x80, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1);
 	}
 #endif
 
-	if (cd.pi.glbChampionIndex -1 == di)
+	if (cd.pi.glbChampionIndex -1 == iChampionIdx)
 		DISPLAY_RIGHT_PANEL_SQUAD_HANDS();
-	champion->curHP(0);
-	champion->herob44 = champion->handCooldown[C01_INVENTORY_HAND_LEFT] = champion->handCooldown[C00_INVENTORY_HAND_RIGHT] = 0;
-	champion->heroFlag |= CHAMPION_FLAG_4000;	// 0x4000
-	if (di +1 == glbChampionInventory) {
+	pChampion->curHP(0);
+	pChampion->herob44 = pChampion->handCooldown[C01_INVENTORY_HAND_LEFT] = pChampion->handCooldown[C00_INVENTORY_HAND_RIGHT] = 0;
+	pChampion->heroFlag |= CHAMPION_FLAG_4000;	// 0x4000
+	if (iChampionIdx + 1 == glbChampionInventory) {
 		if (glbShowItemStats != 0) {
 			glbShowItemStats = 0;
 			FIRE_MOUSE_RELEASE_CAPTURE();
 			if (cd.pi.glbLeaderHandPossession.object != OBJECT_NULL)
 				DISPLAY_TAKEN_ITEM_NAME(cd.pi.glbLeaderHandPossession.object);
-			glbMouseVisibility = 1;
+			cd.mk.glbMouseVisibility = 1;
 		}
 		if (_4976_4bfe != 0) {
 			_4976_4bfe = 0;
 			FIRE_MOUSE_RELEASE_CAPTURE();
-			glbMouseVisibility = 1;
+			cd.mk.glbMouseVisibility = 1;
 			FIRE_SHOW_MOUSE_CURSOR();
 		}
 		INTERFACE_CHAMPION(4);
 	}
-	if (di == glbChampionLeader && _4976_4c3e != 0) {
+	if (iChampionIdx == glbChampionLeader && _4976_4c3e != 0) {
 		_4976_4c3e = 0;
 		FIRE_MOUSE_RELEASE_CAPTURE();
-		glbMouseVisibility = 1;
+		cd.mk.glbMouseVisibility = 1;
 		FIRE_SHOW_MOUSE_CURSOR();
 	}
-	DROP_PLAYER_ITEMS(di);
-	X16 bp0a = champion->playerPos();
+	DROP_PLAYER_ITEMS(iChampionIdx);
+	X16 bp0a = pChampion->playerPos();
 	ObjectID bp0c = ALLOC_NEW_RECORD(0x800A); // bp0C
 	if (bp0c != OBJECT_NULL) {
 		Miscellaneous_item *xItem = GET_ADDRESS_OF_RECORDA(bp0c); // bp08
 		xItem->ItemType(GET_CHAMPION_BONES_ITEM_ID()); // SPX: changed hardcoded 0 to function to get proper Bones ID depending on DM2 or DM1 mode
 		xItem->Important(1);
-		xItem->Bone(di);
+		xItem->Bone(iChampionIdx);
 		MOVE_RECORD_TO(ObjectID(bp0c, bp0a), -1, 0, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);
 	}
 	FIRE_HIDE_MOUSE_CURSOR();
-	champion->RuneCnt(0);
-	champion->GetRunes()[0] = 0;
-	champion->playerDir(U8(cd.pi.glbPlayerDir));
-	champion->herob41 = 0;
+	pChampion->RuneCnt(0);
+	pChampion->GetRunes()[0] = 0;
+	pChampion->playerDir(U8(cd.pi.glbPlayerDir));
+	pChampion->herob41 = 0;
 	if (((bp0a + 4 - cd.pi.glbPlayerDir) & 3) == _4976_5dbc)
 		CHAMPION_SQUAD_RECOMPUTE_POSITION();
-	if (champion->PoisonValue != 0)
-		CURE_POISON(di);
+	if (pChampion->PoisonValue != 0)
+		CURE_POISON(iChampionIdx);
 #if (XDMX_FEATURE_PLAGUE == 1)
-	if (champion->PlagueValue != 0)
-		CURE_PLAGUE(di);
+	if (pChampion->PlagueValue != 0)
+		CURE_PLAGUE(iChampionIdx);
 #endif
-	X16 si;
-	for (si = 0; si < cd.pi.glbChampionsCount && tblChampionSquad[si].curHP() == 0; si++);
-	if (si == cd.pi.glbChampionsCount) {
+	X16 iChampionCheckIdx;	// si
+	for (iChampionCheckIdx = 0; iChampionCheckIdx < cd.pi.glbChampionsCount && tblChampionSquad[iChampionCheckIdx].curHP() == 0; iChampionCheckIdx++);
+	if (iChampionCheckIdx == cd.pi.glbChampionsCount) {
 		cd.pi.glbPlayerDefeated = 1;
 		_1031_098e();
 	}
-	else if (di == glbChampionLeader) {
-		SELECT_CHAMPION_LEADER(si);
+	else if (iChampionIdx == glbChampionLeader) {
+		SELECT_CHAMPION_LEADER(iChampionCheckIdx);
 	}
 	_1031_0667();
 	FIRE_SHOW_MOUSE_CURSOR();

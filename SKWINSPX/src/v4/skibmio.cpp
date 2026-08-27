@@ -97,7 +97,7 @@ int getdrive() { return 3; }
 // SPX Renamed inportb to SKDOS_IMPORTB to avoid confusion with real DOS inportb
 U8 SkWinCore::SKDOS_IMPORTB(U16 port) {
 #ifdef __DJGPP__
-	return inportb(port)
+	return inportb(port);
 #else
 	switch (port) {
 		case 0x60: // key in
@@ -2609,7 +2609,7 @@ void SkWinCore::FIRE_1031_050c()
 		_4976_4bfe = 0;
 		glbShowItemStats = 0;
 		FIRE_MOUSE_RELEASE_CAPTURE();
-		glbMouseVisibility = 1;
+		cd.mk.glbMouseVisibility = 1;
 		FIRE_SHOW_MOUSE_CURSOR();
 	}
 	return;

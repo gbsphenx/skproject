@@ -2271,7 +2271,6 @@ void SkWinCore::__INIT_GAME_38c8_03ad()
 	}
 	FIRE_FILL_SCREEN_RECT(2, 0);
 	DRAW_ARROW_PANEL();
-	printf("38c8_03ad:INIT_CHAMPIONS\n");
 	SEARCH_STARTER_CHAMPION();
 	_4976_4c02 = 1;
 	CHECK_RECOMPUTE_LIGHT(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY);

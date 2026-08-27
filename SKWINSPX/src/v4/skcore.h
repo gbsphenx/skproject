@@ -351,7 +351,7 @@ protected:
 	U32		glbGDatLastDataCumulatedLength;		// (_4976_483b) previously loaded raw data file pos 
 	U16	_4976_484b_cache;		// incremental serial for use with memory alloc counter?
 	U16		_4976_484d;
-	i16	glbMouseVisibility;		// (_4976_4860)
+//	i16		glbMouseVisibility;		// (_4976_4860)
 	SRECT	_4976_4942;
 	SRECT	_4976_494a;
 	X16		_4976_4952;
@@ -2399,8 +2399,8 @@ protected:
 	void PROCESS_TIMER_59(Timer *ref);
 	void CONTINUE_ORNATE_NOISE(Timer *ref);
 	void PROCEED_TIMERS();
-	void DROP_PLAYER_ITEMS(U16 player);
-	void CHAMPION_DEFEATED(X16 player);
+	void DROP_PLAYER_ITEMS(U16 iChampionIndex);
+	void CHAMPION_DEFEATED(X16 iChampionIndex);
 	void TIMER_3a15_05f7(X16 xx);	// _3a15_05f7
 	void PROCESS_PLAYERS_DAMAGE();
 	void UPDATE_CHAMPIONS_STATS();

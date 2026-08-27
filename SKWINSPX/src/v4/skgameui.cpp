@@ -118,8 +118,10 @@ void SkWinCore::HANDLE_UI_EVENT_1031_111e(U16 xx)
 	do {
 		iRawUIEvent = *(glbPtrTransmittedUIEvent++);	// bp05
 		i16 si;
+#ifndef __DJGPP__
 		SkD((DLV_DBG_UI, "HANDLEUI %04X => %04X\n", iRawUIEvent, (iRawUIEvent & 0xFF3F)));
 		printf("INPUT %d : HANDLEUI %04X => %04X\n", xx, iRawUIEvent, (iRawUIEvent & 0xFF3F));
+#endif // __DJGPP__
 		switch (iRawUIEvent & 0xFF3F) {
 			case 0:	// 0:
 				{
@@ -267,6 +269,7 @@ _148a:
 				}
 			case 13:	// 13: return to viewport
 				{
+					DISPLAY_HINT_TEXT(C11_COLOR_YELLOW, (X8*)"RETURN TO VIEWPORT");
 					si = glbChampionInventory;
 					if (si != 0) {
 						_4976_581a |= *glbPtrTransmittedUIEvent;

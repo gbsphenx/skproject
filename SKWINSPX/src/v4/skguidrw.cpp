@@ -102,7 +102,6 @@ void SkWinCore::DRAW_ICON_PICT_BUFF(
 void SkWinCore::DRAW_ICON_PICT_ENTRY(U8 cls1, U8 cls2, U8 cls4, sk3f6c *ss, U16 iRectNo, i16 iColorKey)
 {
 	ENTER(20);
-	printf("DRAW_ICON_PICT_ENTRY for iRectNo = %d\n");
 	i16 iSourceY = 0; // bp0c
 	i16 iSourceX = 0; // bp0a
 	X8* xImageBuffer = QUERY_GDAT_IMAGE_ENTRY_BUFF(cls1, cls2, cls4); // bp04
@@ -243,11 +242,9 @@ void SkWinCore::DISPLAY_RIGHT_PANEL_SQUAD_HANDS()
 U8 *SkWinCore::DRAW_ITEM_ON_WOOD_PANEL(U16 iChampionIndex, U16 possessionIndex, Picture *ref)
 {
 	ENTER(348);
-	printf("DIOWP-01\n");
 	if (IS_ITEM_HAND_ACTIVABLE(iChampionIndex, tblChampionSquad[iChampionIndex].Possess(possessionIndex), possessionIndex) == 0) {
 		return NULL;
 	}
-	printf("DIOWP-02\n");
 	U16 bp0c = glbRectX_0106 + _4976_010e;
 	U16 bp0e = glbRectY_0108 + _4976_0110;
 	U16 bp0a = ALLOC_TEMP_CACHE_INDEX();
@@ -354,7 +351,6 @@ void SkWinCore::DRAW_HAND_ACTION_ICONS(U16 iChampionIndex, U16 iChampionHand, U1
 		DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x04_CHAMPION, (U8(iChampionHand) << 1) + U8(iActivatedHand) + 2, &glbScreenBufferRightPanel, iRectNo, -1);
 		Picture xPicture;	// bp30
 		U8 *xImgBuffer = DRAW_ITEM_ON_WOOD_PANEL(iChampionIndex, iChampionHand, &xPicture);	// bp08
-		printf(">>>>>>>>DRAW_ITEM_ON_WOOD_PANEL ==> %p\n", xImgBuffer);
 		if (xImgBuffer != NULL) {
 			SRECT xRect2;	// bp18
 			// SPX: draw item (weapon, shield, flask, etc ..) in hand
@@ -867,7 +863,6 @@ void SkWinCore::DRAW_CHIP_OF_MAGIC_MAP(const U8 *buff, U16 aa, U16 xx, U16 yy, U
 				di,
 				localpal
 				);
-			//printf("");
 		}
 	}
 	//^29EE:0CFD
@@ -1095,18 +1090,12 @@ _10b7:
 			}
 
 	}
-	//^29EE:10D2
 	if ((flags & 0x0010) != 0) {
-		//^29EE:10DC
 		for (bp0a = 0; bp0a < cd.pi.glbChampionsCount; bp0a++) {
-			//^29EE:10E4
 			if (tblChampionSquad[bp0a].curHP() != 0) {
-				//^29EE:10F8
 				U8 bp21 = QUERY_CLS1_FROM_RECORD(recordLink);
 				U8 bp22 = QUERY_CLS2_FROM_RECORD(recordLink);
-				//^29EE:1110
 				U8 *bp32 = QUERY_GDAT_IMAGE_ENTRY_BUFF(bp21, bp22, 0x40);
-				//^29EE:1125
 				DRAW_CHIP_OF_MAGIC_MAP(
 					bp32,
 					(glbGlobalSpellEffects.Invisibility != 0) ? 0x09 : (bp0a +5),
@@ -1115,21 +1104,14 @@ _10b7:
 					_4976_3fa4[(tblChampionSquad[bp0a].playerPos() +4 -ww) & 3],
 					QUERY_GDAT_IMAGE_LOCALPAL(bp21, bp22, 0x40)
 					);
-				//printf("");
 			}
-			//^29EE:117F
 		}
 	}
-	//^29EE:118E
 	if ((flags & 0x0040) != 0) {
-		//^29EE:1195
 		bp0a = (_4976_5326 != 2) ? ((_4976_5326 != 3) ? 0x02 : 0x0a) : (0x0b);
-		//^29EE:11B7
 		U8 bp21 = QUERY_CLS1_FROM_RECORD(recordLink);
 		U8 bp22 = QUERY_CLS2_FROM_RECORD(recordLink);
-		//^29EE:11CF
 		U8 *bp32 = QUERY_GDAT_IMAGE_ENTRY_BUFF(bp21, bp22, 0x40);
-		//^29EE:11E4
 		DRAW_CHIP_OF_MAGIC_MAP(
 			bp32,
 			bp0a,
@@ -1139,118 +1121,73 @@ _10b7:
 			QUERY_GDAT_IMAGE_LOCALPAL(bp21, bp22, 0x40)
 			);
 	}
-	//^29EE:120E
 	if ((flags & 0x00a5) != 0) {
-		//^29EE:1218
 		ObjectID bp1c = OBJECT_END_MARKER;
 		ObjectID bp1a = OBJECT_END_MARKER;
 		ObjectID bp18 = OBJECT_END_MARKER;
-		//^29EE:1224
 		ObjectID si = bp4c.w4;
-		//^29EE:1227
 		for (; si != OBJECT_END_MARKER; si = GET_NEXT_RECORD_LINK(si)) {
-			//^29EE:122A
 			bp0a = si.DBType();
-			//^29EE:1235
 			if (bp0a == dbCreature) {
-				//^29EE:123A
 				U16 bp16 = QUERY_CREATURE_AI_SPEC_FLAGS(si);
-				//^29EE:1244
 				if (QUERY_GDAT_ENTRY_DATA_INDEX(0x0f, QUERY_CLS2_FROM_RECORD(si), dtWordValue, 0xf9) != 0) {
-					//^29EE:125F
 					bp18 = si;
 				}
 				else {
-					//^29EE:1265
 					if ((bp16 & 0x0001)	!= 0) {
-						//^29EE:126C
 						if ((flags & 0x0080) != 0) {
-							//^29EE:1276
 							bp18 = si;
 						}
 					}
 					else {
-						//^29EE:127C
 						if ((flags & 0x0021) != 0) {
-							//^29EE:1286
 							bp18 = si;
 						}
 					}
 				}
 			}
 			else {
-				//^29EE:128C
 				if ((flags & 0x0004) != 0) {
-					//^29EE:1296
 					if (bp0a == dbMissile) {
-						//^29EE:129C
 						if (bp1a == OBJECT_END_MARKER) {
-							//^29EE:12A5
 							bp1a = si;
 						}
 					}
-					//^29EE:12AB
 					else if (bp0a == dbCloud) {
-						//^29EE:12B1
 						if (bp1c == OBJECT_END_MARKER) {
-							//^29EE:12BA
 							bp1c = si;
 						}
 					}
-					//^29EE:12C0
 					else if (bp0a >= dbWeapon && bp0a <= dbMiscellaneous_item) {
-						//^29EE:12D2
 						bp0a = QUERY_DUNGEON_MAP_CHIP_PICT(QUERY_CLS1_FROM_RECORD(si), QUERY_CLS2_FROM_RECORD(si), &bp2a, bp6c);
-						//^29EE:12F6
 						if (bp0a != 0) {
-							//^29EE:12FA
 							bp0c = (si.Dir() - ww) & 3;
-							//^29EE:1308
 							if (bp4c.w0 == 0 && bp14 == 0) {
-								//^29EE:1314
 								if (bp0a <= 2)
-									//^29EE:1318
 									continue;
-								//^29EE:131A
 								bp0a = (bp0c & 1) +1;
-								//^29EE:1324
 								bp0c = _4976_3fa0[bp0c];
 							}
 							else {
-								//^29EE:132D
 								bp0a = 0;
-								//^29EE:1332
 								bp0c = _4976_3fa4[bp0c];
 							}
-							//^29EE:1339
-							//^29EE:133E
 							DRAW_CHIP_OF_MAGIC_MAP(bp2a, bp0a, xx, di, bp0c, bp6c);
 						}
 					}
 				}
 			}
-			//^29EE:135A
 		}
-		//^29EE:136B
 		if (bp18 != OBJECT_END_MARKER) {
-			//^29EE:1374
 			Creature* xCreature = GET_ADDRESS_OF_RECORD4(bp18); // bp04
-			//^29EE:1383
 			U16 bp16 = QUERY_CREATURE_AI_SPEC_FLAGS(bp18);
-			//^29EE:138F
 			U8 bp21;
 			U8 bp22;
 			U8 *bp32;
 			if ((flags & 0x0020) != 0) {
-				//^29EE:1396
 				bp21 = QUERY_CLS1_FROM_RECORD(recordLink);
-				//^29EE:13A2
 				bp22 = QUERY_CLS2_FROM_RECORD(recordLink);
-				//^29EE:13AE
 				bp32 = QUERY_GDAT_IMAGE_ENTRY_BUFF(bp21, bp22, 0x40);
-				//^29EE:13C3
-				//^29EE:13E6
-				//^29EE:1546
 				DRAW_CHIP_OF_MAGIC_MAP(
 					bp32, 
 					(U16(glbGameTick) & 1) +3, 
@@ -1262,39 +1199,25 @@ _10b7:
 
 				goto _1554;
 			}
-			//^29EE:13E9
 			bp0c = QUERY_DUNGEON_MAP_CHIP_PICT(QUERY_CLS1_FROM_RECORD(bp18), QUERY_CLS2_FROM_RECORD(bp18), &bp2a, bp6c);
-			//^29EE:1411
 			if (bp0c != 0) {
-				//^29EE:1418
 				if ((bp16 & 0x0001) != 0) {
 					sk1c9a02c3* xInfoData = GET_CREATURE_INFO_DATA(xCreature, QUERY_CREATURE_AI_SPEC_FROM_TYPE(xCreature->CreatureType()));
-					//^29EE:1443
 					bp0a = CREATURE_SEQUENCE_4937_000f(xInfoData->iAnimSeq, &xInfoData->iAnimInfo);
-					//^29EE:145D
 					bp0a = (bp0a >= 4 && bp0a <= 7) ? 4 : 0;
-					//^29EE:1474
 					if (((bp0a +1) << 1) > bp0c) {
-						//^29EE:147F
 						bp0a = 0;
 					}
 					else {
-						//^29EE:1486
 						bp0a = bp0a << 1;
 					}
 				}
 				else {
-					//^29EE:1490
 					bp0a = i16(glbGameTick % (bp0c / 2)) << 1;
 				}
-				//^29EE:14AE
 				bp0c = (ww - xCreature->b15_0_1());
-				//^29EE:14C4
-				//^29EE:14E9
-				//^29EE:154D
 				DRAW_CHIP_OF_MAGIC_MAP(bp2a, (bp0c & 1) + bp0a, xx, di, _4976_3fa0[bp0c], bp6c);
 			}
-			//^29EE:14EB
 			else if ((bp16 & 0x0001) == 0 && (bp16 & 0x2000) == 0) {
 				//^29EE:14F9
 				bp21 = QUERY_CLS1_FROM_RECORD(recordLink);
@@ -1972,6 +1895,7 @@ void SkWinCore::DRAW_CHARSHEET_OPTION_ICON(U8 cls4, U16 rectno, U16 zz)
 	ENTER(0);
 	if ((_4976_581a & zz) != 0)
 		cls4++;
+	printf(">>DISPLAY OPTION ICON %d %d [%8x]\n", cls4, zz, _4976_581a);
 	DRAW_STATIC_PIC(GDAT_CATEGORY_x07_INTERFACE_CHARSHEET, 0x00, cls4, rectno, -1);
 	return;
 }
@@ -4267,7 +4191,7 @@ void SkWinCore::__OPEN_DIALOG_PANEL(U8 cls2, U16 yy)
 	_4976_4bd2 = yy;
 	SQUAD_SOMETHING_1031_0675(4);
 	_4976_523a = 0;
-	while (glbMouseVisibility > 0) {
+	while (cd.mk.glbMouseVisibility > 0) {
 		FIRE_SHOW_MOUSE_CURSOR();
 		_4976_523a++;
 	}
@@ -4393,7 +4317,7 @@ U8 SkWinCore::DIALOG_BOX_0aaf_0067(U8 iDialogBoxID)
 	}
 	SQUAD_SOMETHING_1031_0675(4);
 	U16 bp06;
-	for (bp06 = 0; glbMouseVisibility > 0; bp06++) {
+	for (bp06 = 0; cd.mk.glbMouseVisibility > 0; bp06++) {
 		FIRE_SHOW_MOUSE_CURSOR();
 	}
 	_4976_4dfc = 0x00ff;
@@ -4664,7 +4588,8 @@ void SkWinCore::DRAW_ARROW_PANEL()
 
 	SOME_RECT_PICT_0b36_0c52(&bp36, RECT_009_PANEL_ARROW__ZONE, 1);
 	FILL_ENTIRE_PICT(reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp36.iCacheIndex0)), glbPaletteT16[C00_COLOR_BLACK]);	// make black the background of area for 6 arrow buttons
-	
+
+	printf("DRAW ARROW!!\n");
 	i16 iRectNo = RECT_040_PANEL_ARROW__FIRST; // si
 	for (; iRectNo < RECT_046_PANEL_ARROW__AFTER_LAST; iStartArrowID += 2, iRectNo++) {
 		DRAW_ICON_PICT_ENTRY(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x03_MOVE_ARROWS, iStartArrowID, &bp36, iRectNo, -1);
@@ -6322,7 +6247,12 @@ void SkWinCore::DISPLAY_VIEWPORT(U16 dir, i16 xx, i16 yy)
 	U16 iMemAllocCellTiles = iMemSizeCellTileDetail * 23;	// originally 414 = 18 * 23
 	// 23 = number of displayable cells in the viewport
 	ENTER(6);
-	IBMIO_USER_INPUT_CHECK();
+	{
+		//char sDebugMessage[64]; sprintf(sDebugMessage, "<VIEWPORT>");
+		//DISPLAY_HINT_TEXT(C08_COLOR_RED, (X8*)sDebugMessage);
+		MessageLoop(false);
+	}
+	IBMIO_USER_INPUT_CHECK();	// <<<<
 	// SPX: glbLightLevel is between 0 (light) and 5 (dark). Palette is thereafter controlled by value between 0 (light) and 64 (dark)
 	// Having *10 makes 0 to 50 -> loss of darkest colors. Having *13 makes 0 to 65 -> full range (full darkness)
 	glbViewportLightScale = glbLightLevel * 10;	
