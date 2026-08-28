@@ -361,5 +361,259 @@ U16 SkWinCore::GET_DM1_DISTINCTIVE_ITEMTYPE(ObjectID recordLink)
 	return 511;
 }
 
+// SPX: Decryption algorithm from Christophe Fontanel :
+// http://dmweb.free.fr/community/documentation/file-formats/saved-game-files/
+U16 SkWinCore::DM1_DECYPHER_SAVEGAME_BLOCK(U16* pDataBlock, U16 iCypherKey, U16 iBlockSize)
+{
+	U16 iTempValue = iCypherKey;
+	U16 iComputedChecksum = iCypherKey;
+
+	for (int i = 0; i < iBlockSize; i++)
+	{
+		iComputedChecksum = (iComputedChecksum + pDataBlock[i]) & 0xFFFF;
+		pDataBlock[i] = pDataBlock[i] ^ iTempValue;
+		iComputedChecksum = (iComputedChecksum + pDataBlock[i]) & 0xFFFF;
+		iTempValue = (iTempValue + iBlockSize - i) & 0xFFFF;
+	}
+	return iComputedChecksum;
+}
+
+
+i16 SkWinCore::DM1_GAME_LOAD()
+{
+	do {
+		U16 iTimerIndex;
+		U8 iBlockIndex;
+
+		U8 iChampionIndex = 0;
+		U8 glbDummyData[10000];
+		// there are 0x24C0 bytes of encoded data
+		SkD((DLV_DBG_GAME_LOAD, "Read as a DM1 savegame ...\n"));
+
+		// Init savegame blocks
+		for (iBlockIndex = 0; iBlockIndex < 10; iBlockIndex++) {
+			cd.dm1.pDM1SavegameBlock[iBlockIndex] = NULL;
+		}
+
+		// Init champions
+		for (iChampionIndex = 0; iChampionIndex < 4; iChampionIndex++) {
+			Champion *pChampion = &tblChampionSquad[iChampionIndex];
+			INIT_CHAMPION(pChampion);
+		}
+
+		// 42 bytes already been read
+		if (FILE_READ(glbDataFileHandle, 0x24C0-42, glbDummyData) == 0)
+			break;
+
+		// 0x24C0 (9408 bytes) of data, what to put into it ? 
+		// An Amiga save looks to have 0x2924 = 10532 bytes
+		// CSBWin tells there are 1 block of 512, then a 2nd block of data,
+		// then block of items, heros, timers, timers queued
+		// some global variables and that may be all ? ...
+		// CSB hero would be around 284 without portraits and fillers
+		// 284 * 4 = 1136
+		// +50 fill * 4 = +200
+		// timers should be around 10 or 12, maybe having 50 at first ? so 50 * 10 = 500, not much
+
+		// Go back to start and read 1st block
+		U16 *pDataBlock = NULL;
+		FILE_SEEK(glbDataFileHandle, 0);
+		cd.dm1.pDM1SavegameBlock[0] = (X8*) calloc(128, sizeof(X16));
+		pDataBlock = (U16*)cd.dm1.pDM1SavegameBlock[0];
+		FILE_READ(glbDataFileHandle, 128*sizeof(X16), pDataBlock);
+		cd.dm1.iDM1SVGDecryptKey2 = pDataBlock[10];
+		cd.dm1.iDM1SVGBlock2Checksum = pDataBlock[10+1+116];
+		free(pDataBlock);
+
+		// Block 2
+		U16 iBlockChecksum = -1;
+		cd.dm1.pDM1SavegameBlock[1] = (X8*) calloc(128, sizeof(X16));
+		pDataBlock = (U16*)cd.dm1.pDM1SavegameBlock[1];
+		FILE_READ(glbDataFileHandle, 128*sizeof(X16), pDataBlock);
+		iBlockChecksum = DM1_DECYPHER_SAVEGAME_BLOCK(pDataBlock, cd.dm1.iDM1SVGDecryptKey2, 128);
+		cd.dm1.iDM1SVGDecryptKey3 = pDataBlock[27];
+		cd.dm1.iDM1SVGDecryptKey4ExtCreatures = pDataBlock[28];
+		cd.dm1.iDM1SVGDecryptKey5Champions = pDataBlock[29];
+		cd.dm1.iDM1SVGDecryptKey6Timers = pDataBlock[30];
+		cd.dm1.iDM1SVGDecryptKey7TimerQueue = pDataBlock[31];
+		free(pDataBlock);
+
+		// Block 3 - Global game data
+		tDM1SaveGameBlock3* pSGBlock3 = NULL;
+		cd.dm1.pDM1SavegameBlock[2] = (X8*) calloc(64, sizeof(X16));
+		pDataBlock = (U16*)cd.dm1.pDM1SavegameBlock[2];
+		FILE_READ(glbDataFileHandle, 64*sizeof(X16), pDataBlock);
+		iBlockChecksum = DM1_DECYPHER_SAVEGAME_BLOCK(pDataBlock, cd.dm1.iDM1SVGDecryptKey3, 64);
+		pSGBlock3 = (tDM1SaveGameBlock3*) pDataBlock;
+		cd.dm1.iDM1SVGNbExtCreatures = pSGBlock3->MaxITEM16;
+
+		// Block 4 - Extended Creature Data
+		cd.dm1.pDM1SavegameBlock[3] = (X8*) calloc(cd.dm1.iDM1SVGNbExtCreatures*16, sizeof(X8));
+		pDataBlock = (U16*)cd.dm1.pDM1SavegameBlock[3];
+		FILE_READ(glbDataFileHandle, cd.dm1.iDM1SVGNbExtCreatures*16*sizeof(X8), pDataBlock);
+		iBlockChecksum = DM1_DECYPHER_SAVEGAME_BLOCK(pDataBlock, cd.dm1.iDM1SVGDecryptKey4ExtCreatures, cd.dm1.iDM1SVGNbExtCreatures*8);
+		free(pDataBlock);		
+
+		// Block 5 - Champion Data
+		cd.dm1.pDM1SavegameBlock[4] = (X8*) calloc(1404, sizeof(X8));
+		pDataBlock = (U16*)cd.dm1.pDM1SavegameBlock[4];
+		FILE_READ(glbDataFileHandle, 1404, pDataBlock);
+		iBlockChecksum = DM1_DECYPHER_SAVEGAME_BLOCK(pDataBlock, cd.dm1.iDM1SVGDecryptKey5Champions, 702);
+		tCHARDESC *pBlock4Champion = (tCHARDESC*) pDataBlock;
+		Champion *pChampion = &glbChampionTable[1];
+		strcpy((char*)pChampion->firstName, (char*)pBlock4Champion->name);
+		strcpy((char*)pChampion->lastName, (char*)pBlock4Champion->title);
+		pBlock4Champion++;
+		free(pDataBlock);		
+
+		FILE_SEEK(glbDataFileHandle, 0x24C0);
+		// then comes portraits : 4 * 29*16 bytes
+		SkD((DLV_DBG_GAME_LOAD, "Read Portraits ...\n"));
+		// copy portrait data at +6 because we need some meta-info before
+		if (FILE_READ(glbDataFileHandle, (29*16), glbDummyData) == 0)
+			break;
+		memcpy(cd.dm1.xDM1PortraitsData[0]+6, glbDummyData, 29*16);
+
+		if (FILE_READ(glbDataFileHandle, (29*16), glbDummyData) == 0)
+			break;
+		memcpy(cd.dm1.xDM1PortraitsData[1]+6, glbDummyData, 29*16);
+		if (FILE_READ(glbDataFileHandle, (29*16), glbDummyData) == 0)
+			break;
+		memcpy(cd.dm1.xDM1PortraitsData[2]+6, glbDummyData, 29*16);
+		if (FILE_READ(glbDataFileHandle, (29*16), glbDummyData) == 0)
+			break;
+		memcpy(cd.dm1.xDM1PortraitsData[3]+6, glbDummyData, 29*16);
+		//if (FILE_READ(glbDataFileHandle, 8, bp26) == 0)
+
+		// adjust image data with meta-info
+		for (iChampionIndex = 0; iChampionIndex < 4; iChampionIndex++)
+		{
+			U16 *pPortraitImage = (U16*) (cd.dm1.xDM1PortraitsData[iChampionIndex]+6);
+			cd.dm1.bDM1PortraitsActivated[iChampionIndex] = false;
+			//*((U16*)(&cd.dm1.xDM1PortraitsData[iChampionIndex])) = IMG_4_BPP; // 4bpp
+			//*((U16*)(&cd.dm1.xDM1PortraitsData[iChampionIndex])+1) = 32; // x pitch
+			//*((U16*)(&cd.dm1.xDM1PortraitsData[iChampionIndex])+2) = 29; // y pitch
+			WRITE_IMGBUFF_WIDTH(pPortraitImage,32);
+			WRITE_IMGBUFF_HEIGHT(pPortraitImage,29);
+			WRITE_IMGBUFF_BPP(pPortraitImage,IMG_4_BPP);
+		}
+		// Note: if there are only X champions (with X < 4), then the X+1 portrait would be a zero array.
+		cd.pi.glbChampionsCount = 4;	// player cnt
+		cd.dm1.bDM1PortraitsActivated[0] = true;
+		for (iChampionIndex = 1; iChampionIndex < 4; iChampionIndex++)
+		{
+			// test array
+			if (IS_ZERO_ARRAY(cd.dm1.xDM1PortraitsData[iChampionIndex]+6, 29*16) != 0) {
+				cd.pi.glbChampionsCount = iChampionIndex;
+				break;
+			}
+			// little hack, portrait would have grey in corners (i.e. nibble 11), so I may use this to check if it looks like a portrait
+			if (*(X8*)(cd.dm1.xDM1PortraitsData[iChampionIndex]+6) == 0x11) {
+				cd.pi.glbChampionsCount = iChampionIndex+1;
+				cd.dm1.bDM1PortraitsActivated[iChampionIndex] = true;
+			}
+			else
+				cd.dm1.bDM1PortraitsActivated[iChampionIndex] = false;
+		}
+
+		glbDungeonDatFileCursor = (0x24C0 + (4*29*16)); // file cursor to start dungeon structure
+
+
+		// the regular dungeon structure starts at 0x2C00
+		SkD((DLV_DBG_GAME_LOAD, "Read Dungeon Structure DM1 Mode ...\n"));
+		SkCodeParam::bDM1ReadSavegame = true;
+		if (READ_DUNGEON_STRUCTURE(0) == 0)
+		{
+			break;
+		}
+		_4976_5bf2 = 1; // load is complete
+		// Copy from DM2 read
+		SkD((DLV_DBG_GAME_LOAD, "Suppress Init ...\n"));
+		cd.mo.glbSpecialScreen = _MENU_SCREEN__RESUME_GAME_SELECT;
+		SUPPRESS_INIT();
+		SkD((DLV_DBG_GAME_LOAD, "Start Read File Handle %02d ...\n", glbDataFileHandle));
+		SkD((DLV_DBG_GAME_LOAD, "Read Global Variables ...\n"));
+
+		cd.pi.glbLeaderHandPossession.object = OBJECT_NULL;
+
+		glbGameTick = _4976_4c1a = 1;	// game tick
+		glbRandomSeed = 63;	// random seed
+		//cd.pi.glbChampionsCount = 4;	// player cnt
+
+		cd.pi.glbPlayerPosX = pSGBlock3->partyx;		// column
+		cd.pi.glbPlayerPosY = pSGBlock3->partyy;		// row
+		cd.pi.glbPlayerDir = pSGBlock3->partyfacing;	// dir
+		cd.pi.glbPlayerMap = pSGBlock3->partyLevel;		// map#
+
+
+		glbChampionLeader = 0;	// leader
+		glbTimersCount = 0;	// wTimersCount
+		_4976_0090 = 0;
+		glbGameTick_4b80 = 0;
+		_4976_4c00 = 0;
+		glbPlayerThrowCounter = 0; //wPlayerThrowCounter
+		_4976_4c0c = 0;
+		glbRainFlagSomething = 0;
+		glbRainAmbientLightModifier = 0;
+		glbRainDirection = 0;	// rain dir.
+		glbRainStrength = 0;	// rain str.
+		glbRainLevelForSky = 0;
+		glbRainLevelForGround = 0;
+		glbRainMultiplicator = 0;
+		glbRainStormController = 0;
+		glbRainRelated3 = 0;
+		glbRainRelated2 = 0;
+		glbRainSpecialNextTick = 0;
+
+		free((X8*)pSGBlock3);
+
+	/*
+		skload_table_60 t1;
+		if (SUPPRESS_READER(&t1, _4976_395a, 56, 1, 1) != 0)
+			break;
+	*/
+		iTimerIndex = glbTimersCount;
+
+		SkD((DLV_DBG_GAME_LOAD, "Read Timers ...\n"));
+		while (iTimerIndex < glbTimersMaximumCount) {
+			glbTimersTable[iTimerIndex].TimerType(tty00);
+			iTimerIndex++;
+		}
+		__SORT_TIMERS();
+		if (READ_SKSAVE_DUNGEON() != 0)
+			break;
+
+		PROCEED_GLOBAL_EFFECT_TIMERS();
+		_3a15_020f();
+		_4976_5bf2 = 1;
+		FILE_CLOSE(glbDataFileHandle);
+		
+		PROCESS_ACTUATOR_TICK_GENERATOR();
+		glbGDatFloppyFlag = 0;
+		if (cd.mo.glbSpecialScreen != _MENU_SCREEN__RESUME_GAME_SELECT) {
+			//if (bp04 != 0) {
+				WAIT_SCREEN_REFRESH();
+			//}
+			DIALOG_BOX_2066_03e0(0);
+		}
+		else {
+			_4976_5bf6 = 1;
+//			if (bp08 != 0) {
+				FILE_RENAME(FORMAT_SKSTR(ptrSKSave_bak, NULL), FORMAT_SKSTR(ptrSKSave_dat, NULL));
+//			}
+			DIALOG_BOX_2066_03e0(1);
+		}
+		_0aaf_02f8_DIALOG_BOX(DIALOGBOX_x0E_LOADING_GAME, 0x0000);
+		_4976_4bd8 = 0x0001;
+		cd.pi.glbPlayerDefeated = 0x0000;
+		TELEPORTER_2fcf_0b8b(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerMap);
+		glbDoLightCheck = 0x0001;
+		//LOG_FULL_DUNGEON_INFO();
+		return 1;
+	} while (false);
+
+
+	return 0;
+}
 
 //==============================================================================

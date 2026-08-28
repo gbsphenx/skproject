@@ -575,7 +575,7 @@ protected:
 	U16		*_4976_5240;	// certain table for containers
 	U16		glbTimerFlag;		//_4976_5244
 	U16		*_4976_5246;	// certain table for creatures
-	U32		_4976_524a;				// DUNGEON.dat file position while gameload
+	U32		glbDungeonDatFileCursor;				// (_4976_524a) DUNGEON.dat file position while gameload
 	U8		_4976_524e;				// by suppress writer (current bit position)
 	sksave_header_asc	*tblSaveGamesInfo;	// (_4976_5250) 10 pieces of sksave header while gameload
 	U8		_4976_5254;				// by suppress writer (queued nibble)
@@ -906,10 +906,14 @@ public:
 	void LUA_CALL_SCRIPT(U8 iScriptEvent, i16 iPosMap, i16 iPosX, i16 iPosY, i16 iDir);
 	const X8* GET_DATA_FOLDER_ZNAME();
 	const X8* GET_DATA_FOLDER_NAME();
+
+	U16 DM1_DECYPHER_SAVEGAME_BLOCK(U16* pDataBlock, U16 iCypherKey, U16 iBlockSize);
+	i16 DM1_GAME_LOAD();
 	X16	EXTENDED_LOAD_DM1_ITEM_CONVERSION_LIST(void);
 	X16	EXTENDED_LOAD_SPELLS_DEFINITION(void);
 	X16 EXTENDED_LOAD_AI_DEFINITION(void);
 	X16 DM1_ROTATE_ACTUATOR_LIST(X16 localActionType, i16 iMapX, i16 iMapY, i16 iMapLevel, U16 iSide);
+	
 	ObjectID GET_WALL_TILE_ANY_TAKEABLE_ITEM_RECORD(U16 iMapX, U16 iMapY, U16 iDirection);
 	U16 GET_TILE_COUNT_TAKEABLE_ITEMS(U16 iMapX, U16 iMapY, U16 iDirection);
 	void SET_NEXT_RECORD_LINK(ObjectID rlSourceObject, ObjectID rlObjectToAppend);

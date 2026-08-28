@@ -7385,8 +7385,6 @@ U16 SkWinCore::_RAND() //#DS=4976
 }
 
 
-
-
 //^476D:007A
 i16 SkWinCore::FILE_OPEN(const U8 *filename) {
 	i16 iHandle = fset.fileOpen(reinterpret_cast<const char *>(filename));
@@ -7395,7 +7393,7 @@ i16 SkWinCore::FILE_OPEN(const U8 *filename) {
 }
 
 //^476D:00D2
-U16 SkWinCore::FILE_READ(U16 handle, Bit32u buffSize, void *buff) {
+U16 SkWinCore::FILE_READ(U16 handle, U32 buffSize, void *buff) {
 	return fset.fileRead(handle, buffSize, buff);
 }
 
@@ -8392,9 +8390,11 @@ U8 *SkWinCore::FORMAT_SKSTR(const U8 *format, U8 *output)
 							{
 								static char sFolderString[256];
 #ifdef __LINUX__
-								sprintf(sFolderString, ".Z008%s/", skWinApp->sCustomDataFolder);
+//								sprintf(sFolderString, ".Z008%s/", skWinApp->sCustomDataFolder);
+								sprintf(sFolderString, "%s/", skWinApp->sCustomDataFolder);
 #else
-								sprintf(sFolderString, ".Z008%s\\", skWinApp->sCustomDataFolder);
+//								sprintf(sFolderString, ".Z008%s\\", skWinApp->sCustomDataFolder);
+								sprintf(sFolderString, "%s\\", skWinApp->sCustomDataFolder);
 #endif
 								bp0c = (const X8*) sFolderString;
 							}
@@ -8572,8 +8572,8 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 	if (*(U16 *)bp26 == 0x8104)	// x8104 is for compressed dungeon data. DM2 is not handling it.
 		return 0; // returns with "the game is damaged"
 
-	SkD((DLV_DBG_GAME_LOAD, "FILE_SEEK pos @ %d\n", _4976_524a));
-	FILE_SEEK(glbDataFileHandle, _4976_524a);
+	SkD((DLV_DBG_GAME_LOAD, "FILE_SEEK pos @ %d\n", glbDungeonDatFileCursor));
+	FILE_SEEK(glbDataFileHandle, glbDungeonDatFileCursor);
 	if (_4976_3b5d != 0) {
 		dunHeader = reinterpret_cast<File_header *>(ALLOC_MEMORY_RAM(44, 1, 1024));
 	}
@@ -9365,8 +9365,8 @@ i16 SkWinCore::GAME_LOAD()
 	U16 bp04 = 0;
 	U16 si = 0;
 	U8 bp01 = 0;
-	U16 bp08;
-	U16 bp06;
+	U16 bp08;	// bp08
+	U16 bp06;	// bp06
 
 	if (cd.mo.glbSpecialScreen != _MENU_SCREEN__RESUME_GAME_SELECT) {
 _2db4:
@@ -9471,7 +9471,7 @@ _2e5b:
 	sksave_header_asc bp6a;
 	FILE_READ(glbDataFileHandle, 42, &bp6a);
 	glbTimerFlag = bp6a.wTimerFlag;
-	_4976_524a = 42;
+	glbDungeonDatFileCursor = 42;
 	cd.mo.glbSpecialScreen = !_4976_5bf2;
 
 
@@ -9575,167 +9575,8 @@ _31b8:		// we jump there from loading a dungeon from new game
 			return 1; // U16 di = 1; return di;
 		} while (false);
 	}
-	else	// try read as DM1 savegame
-	{
-		do {
-			U8 iChampionIndex = 0;
-			U8 glbDummyData[10000];
-			// there are 0x24C0 bytes of encoded data
-			SkD((DLV_DBG_GAME_LOAD, "Read as a DM1 savegame ...\n"));
-			// 42 bytes already been read
-			if (FILE_READ(glbDataFileHandle, 0x24C0-42, glbDummyData) == 0)
-				break;
-		
-			// 0x24C0 (9408 bytes) of data, what to put into it ? 
-			// An Amiga save looks to have 0x2924 = 10532 bytes
-			// CSBWin tells there are 1 block of 512, then a 2nd block of data,
-			// then block of items, heros, timers, timers queued
-			// some global variables and that may be all ? ...
-			// CSB hero would be around 284 without portraits and fillers
-			// 284 * 4 = 1136
-			// +50 fill * 4 = +200
-			// timers should be around 10 or 12, maybe having 50 at first ? so 50 * 10 = 500, not much
-
-			// then comes portraits : 4 * 29*16 bytes
-			SkD((DLV_DBG_GAME_LOAD, "Read Portraits ...\n"));
-			// copy portrait data at +6 because we need some meta-info before
-			if (FILE_READ(glbDataFileHandle, (29*16), glbDummyData) == 0)
-				break;
-			memcpy(cd.dm1.xDM1PortraitsData[0]+6, glbDummyData, 29*16);
-
-			if (FILE_READ(glbDataFileHandle, (29*16), glbDummyData) == 0)
-				break;
-			memcpy(cd.dm1.xDM1PortraitsData[1]+6, glbDummyData, 29*16);
-			if (FILE_READ(glbDataFileHandle, (29*16), glbDummyData) == 0)
-				break;
-			memcpy(cd.dm1.xDM1PortraitsData[2]+6, glbDummyData, 29*16);
-			if (FILE_READ(glbDataFileHandle, (29*16), glbDummyData) == 0)
-				break;
-			memcpy(cd.dm1.xDM1PortraitsData[3]+6, glbDummyData, 29*16);
-			//if (FILE_READ(glbDataFileHandle, 8, bp26) == 0)
-
-			// adjust image data with meta-info
-			for (iChampionIndex = 0; iChampionIndex < 4; iChampionIndex++)
-			{
-				cd.dm1.bDM1PortraitsActivated[iChampionIndex] = false;
-				*((U16*)(&cd.dm1.xDM1PortraitsData[iChampionIndex])) = IMG_4_BPP; // 4bpp
-				*((U16*)(&cd.dm1.xDM1PortraitsData[iChampionIndex])+1) = 32; // x pitch
-				*((U16*)(&cd.dm1.xDM1PortraitsData[iChampionIndex])+2) = 29; // y pitch
-			}
-			// Note: if there are only X champions (with X < 4), then the X+1 portrait would be a zero array.
-			cd.pi.glbChampionsCount = 4;	// player cnt
-			cd.dm1.bDM1PortraitsActivated[0] = true;
-			for (iChampionIndex = 1; iChampionIndex < 4; iChampionIndex++)
-			{
-				// test array
-				if (IS_ZERO_ARRAY(cd.dm1.xDM1PortraitsData[iChampionIndex]+6, 29*16) != 0) {
-					cd.pi.glbChampionsCount = iChampionIndex;
-					break;
-				}
-				cd.dm1.bDM1PortraitsActivated[iChampionIndex] = true;
-			}
-
-			_4976_524a = (0x24C0 + (4*29*16)); // file cursor to start dungeon structure
-
-			// Init champions
-			for (iChampionIndex = 0; iChampionIndex < 4; iChampionIndex++)
-			{
-				Champion *pChampion = &tblChampionSquad[iChampionIndex];
-				INIT_CHAMPION(pChampion);
-			}
-
-
-			// the regular dungeon structure starts at 0x2C00
-			SkD((DLV_DBG_GAME_LOAD, "Read Dungeon Structure DM1 Mode ...\n"));
-			//getch();
-			SkCodeParam::bDM1ReadSavegame = true;
-			if (READ_DUNGEON_STRUCTURE(0) == 0)
-			{
-				break;
-			}
-			_4976_5bf2 = 1; // load is complete
-			//getch();
-			// Copy from DM2 read
-			SkD((DLV_DBG_GAME_LOAD, "Suppress Init ...\n"));
-			cd.mo.glbSpecialScreen = _MENU_SCREEN__RESUME_GAME_SELECT;
-			SUPPRESS_INIT();
-			SkD((DLV_DBG_GAME_LOAD, "Start Read File Handle %02d ...\n", glbDataFileHandle));
-			SkD((DLV_DBG_GAME_LOAD, "Read Global Variables ...\n"));
-
-			cd.pi.glbLeaderHandPossession.object = OBJECT_NULL;
-
-			glbGameTick = _4976_4c1a = 1;	// game tick
-			glbRandomSeed = 63;	// random seed
-			//cd.pi.glbChampionsCount = 4;	// player cnt
-			cd.pi.glbPlayerPosX = 10;	// column
-			cd.pi.glbPlayerPosY = 4;	// row
-			cd.pi.glbPlayerDir = 0;	// dir
-			cd.pi.glbPlayerMap = 0;	// map#
-			glbChampionLeader = 0;	// leader
-			glbTimersCount = 0;	// wTimersCount
-			_4976_0090 = 0;
-			glbGameTick_4b80 = 0;
-			_4976_4c00 = 0;
-			glbPlayerThrowCounter = 0; //wPlayerThrowCounter
-			_4976_4c0c = 0;
-			glbRainFlagSomething = 0;
-			glbRainAmbientLightModifier = 0;
-			glbRainDirection = 0;	// rain dir.
-			glbRainStrength = 0;	// rain str.
-			glbRainLevelForSky = 0;
-			glbRainLevelForGround = 0;
-			glbRainMultiplicator = 0;
-			glbRainStormController = 0;
-			glbRainRelated3 = 0;
-			glbRainRelated2 = 0;
-			glbRainSpecialNextTick = 0;
-/*
-			skload_table_60 t1;
-			if (SUPPRESS_READER(&t1, _4976_395a, 56, 1, 1) != 0)
-				break;
-*/
-			bp06 = glbTimersCount;
-
-			SkD((DLV_DBG_GAME_LOAD, "Read Timers ...\n"));
-			while (bp06 < glbTimersMaximumCount) {
-				glbTimersTable[bp06].TimerType(tty00);
-				bp06++;
-			}
-			__SORT_TIMERS();
-			if (READ_SKSAVE_DUNGEON() != 0)
-				break;
-
-			PROCEED_GLOBAL_EFFECT_TIMERS();
-			_3a15_020f();
-			_4976_5bf2 = 1;
-			FILE_CLOSE(glbDataFileHandle);
-			
-			si = 0;
-			PROCESS_ACTUATOR_TICK_GENERATOR();
-			glbGDatFloppyFlag = 0;
-			if (cd.mo.glbSpecialScreen != _MENU_SCREEN__RESUME_GAME_SELECT) {
-				if (bp04 != 0) {
-					WAIT_SCREEN_REFRESH();
-				}
-				DIALOG_BOX_2066_03e0(0);
-			}
-			else {
-				_4976_5bf6 = 1;
-				if (bp08 != 0) {
-					FILE_RENAME(FORMAT_SKSTR(ptrSKSave_bak, NULL), FORMAT_SKSTR(ptrSKSave_dat, NULL));
-				}
-				DIALOG_BOX_2066_03e0(1);
-			}
-			_0aaf_02f8_DIALOG_BOX(DIALOGBOX_x0E_LOADING_GAME, 0x0000);
-			_4976_4bd8 = 0x0001;
-			cd.pi.glbPlayerDefeated = 0x0000;
-			TELEPORTER_2fcf_0b8b(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerMap);
-			glbDoLightCheck = 0x0001;
-			//LOG_FULL_DUNGEON_INFO();
-			return 1;
-		} while (false);
-
-
+	else {	// try read as DM1 savegame
+		return DM1_GAME_LOAD();
 	}
 
 _3262:

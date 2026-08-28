@@ -49,6 +49,12 @@ mement* SkWinCore::GET_MEMENT_FROM_MEMENTINDEX(U16 mementi)
 			TEST_MEMENT(xMement);
 			xMement->setMark8(di);
 		}
+		if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(xMement3)) {
+			CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_RED, BLACK);
+			printf("SOMETHING BAD HAPPENED ON xMement3\n");
+			CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
+			return xMement;
+		}
 		xMement3->setMark6(bp0e);
 		xMement2->setMark4(MEMENT_MARK_M1_FFFF);
 		RECYCLE_MEMENTI(mementi, 0);
@@ -62,6 +68,8 @@ mement* SkWinCore::GET_MEMENT_FROM_MEMENTINDEX(U16 mementi)
 			return xMement;
 		}
 		U16 di = xMement->getMark8();
+		if (SkCodeParam::bUsePowerDebug && (di == MEMENT_MARK_M1_FFFF || di == MEMENT_MARK_M2_FFFE))	// SPX: added this check to prevent crash; is that right ?
+			return xMement;
 		mement* xMement3 = tblMementsPointers[di];	// bp08
 		TEST_MEMENT(xMement3);
 		if (xMement3->getMark4() >= si) {
@@ -164,6 +172,12 @@ void SkWinCore::MEMENT_3e74_4549(U16 iMemEntIdx)
 					xMemEnt2 = tblMementsPointers[si];
 					TEST_MEMENT(xMemEnt2);
 					glbMement5 = xMemEnt2;
+					if (SkCodeParam::bUsePowerDebug && !CheckSafePointer(xMemEnt2)) {
+						CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_RED, BLACK);
+						printf("SOMETHING BAD HAPPENED ON xMemEnt2\n");
+						CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
+						return;
+					}
 					xMemEnt2->setMark6(MEMENT_MARK_M1_FFFF);
 					goto _4682;
 				}

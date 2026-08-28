@@ -14,6 +14,107 @@
 using namespace DMEncyclopaedia;
 using namespace DM2Internal;
 
+//------------------------------------------------------------------------------
+//..............................................................................
+
+// http://dmweb.free.fr/community/documentation/file-formats/saved-game-files/
+typedef struct
+{
+  // The following 128 bytes are the second thing
+  // read from the game file.
+  i32 Time;          //000; reversed
+  i32 ranseed;       //004; reversed
+  U16 ObjectInHand; //008; swapped
+  i16 numcharacter;  //010; swapped
+  i16 partyx;        //012; swapped
+  i16 partyy;        //014; swapped
+  i16 partyfacing;   //016; swapped
+  i16 partyLevel;    //018; swapped
+  i16 handChar;      //020; swapped Character index
+  i16 MagicCaster;   //022; swapped
+  i16 NumTimer;      //024; swapped
+  i16 NextAvailTimer;//026; swapped
+  i16 MaxTimers;     //028; swapped
+  i16 ITEM16QueLen;  //030; swapped
+  i32 Long12950;     //032; reversed
+  i32 Long12954;     //036; A timestamp. reversed
+  i16 Word11710;     //040; swapped
+  i16 Word11712;     //042; swapped
+  i16 Word11714;     //044; swapped
+  i16 MaxITEM16;     //046; swapped
+  i8  FILL180[80];   //048;
+} tDM1SaveGameBlock3;
+
+typedef struct  // 3-byte structure in character
+{
+  U8 ubMaximum;
+  U8 ubCurrent;
+  U8 ubMinimum;
+} tATTRIBUTE;
+
+typedef struct	// 6-byte structure in character
+{
+  i16 word0;
+  i32 Long2;  // Experience in this skill
+} tSKILL;
+
+typedef struct  // character info???
+{ 
+  X8  name[8];  // 00
+  X8  title[16];// 08 // size??
+  i16 wordx24; // Not swapped because I don't see it used.
+  U8 FILL26[28-26];
+  U8 facing;  //28
+  U8 position; //29
+  U8 byte30;
+  U8 byte31;
+   i8 attackType; //32Signed so check for -1 works.
+   i8 byte33;
+   i8 incantation[4];//34;
+        // [0] = power 96 through 111 --> 1 through 6
+        // [1] =      102 through 107
+        // [2] =      108 through 113
+        // [3] =      114 through 119
+  U8 FILL38[40-38];
+  U8 facing3; //40
+  U8 uByte41;
+  U8 uByte42; //Poison count.  A timer for each one??
+  U8 uByte43;
+  i16 busyTimer;// 44 // Timer Index. Signed so -1 works.
+  i16 timerIndex;//46;
+  i16 word48; // ORed with 0x280
+              // 0x8000 while selecting attack option
+  i16 ouches;     //50;// mask of damaged body parts.
+  i16 HP;         //52
+  i16 maxHP;      //54
+  i16 stamina;    //56;
+  i16 maxStamina; //58;
+  i16 mana;       //60;
+  i16 maxMana;    //62;
+  i16 word64;
+  i16 food;       //66;
+  i16 water;      //68;
+  tATTRIBUTE Attributes[7]; // 70 (maximum, current, minimum)
+                           // 70 = [0] Luck??
+                           // 73 = [1] Strength
+                           // 76 = [2] Dexterity
+                           // 79 = [3] Wisdom
+                           // 82 = [4] Vitality
+                           // 85 = [5] AntiMagic
+                           // 88 = [6] AntiFire
+  i8  FILL91;
+  tSKILL skills92[20]; // 92 //0 and 4-7  =Fighter
+                            //1 and 8-11 =Ninja
+                            //2 and 12-15=Priest
+                            //3 and 16-19=Wizard
+  X16  possessions[30]; //212
+  U16 load;//272; In 10ths of KG
+  U16 shieldStrength; //274;
+  U8 FILL276[336-276];
+  i8  portrait[1]; //336
+  U8 FILL337[800-337];
+} tCHARDESC;
+
 //..............................................................................
 
 //using ObjectID = DMEncyclopaedia::ObjectID;
@@ -185,7 +286,19 @@ typedef struct {
 
 // DM1 support variables
 	bool	bDM1PortraitsActivated[4];
-	X8		xDM1PortraitsData[4][(29*32)+6];	// image contains 6 bytes of info before image itself
+	X8		xDM1PortraitsData[4][(29*32)+6];	// a DM2 image contains 6 bytes of info before image itself
+
+//--- Savegame variables
+	X8*		pDM1SavegameBlock[10];	// store the different blocks to decrypt when reading a DM1 savegame
+	U16		iDM1SVGDecryptKey2;
+	U16		iDM1SVGBlock2Checksum;
+	U16		iDM1SVGDecryptKey3;
+	U16		iDM1SVGDecryptKey4ExtCreatures;
+	U16		iDM1SVGDecryptKey5Champions;
+	U16		iDM1SVGDecryptKey6Timers;
+	U16		iDM1SVGDecryptKey7TimerQueue;
+	U16		iDM1SVGNbExtCreatures;
+
 //
 } SKCoreDM1Variables;
 

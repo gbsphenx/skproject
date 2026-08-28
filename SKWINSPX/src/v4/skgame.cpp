@@ -2616,7 +2616,7 @@ U16 SkWinCore::LOAD_NEW_DUNGEON()
 	_4976_5bf6 = 0;
 	cd.pi.glbChampionsCount = 0;
 	cd.pi.glbLeaderHandPossession.object = OBJECT_NULL;
-	_4976_524a = 0;
+	glbDungeonDatFileCursor = 0;
 	return READ_DUNGEON_STRUCTURE(1);
 }
 
@@ -2640,7 +2640,7 @@ U16 SkWinCore::ORIGINAL__LOAD_NEW_DUNGEON()
 	_4976_5bf6 = 0;
 	cd.pi.glbChampionsCount = 0;
 	cd.pi.glbLeaderHandPossession.object = OBJECT_NULL;
-	_4976_524a = 0;
+	glbDungeonDatFileCursor = 0;
 	return READ_DUNGEON_STRUCTURE(1);
 }
 

@@ -1168,7 +1168,7 @@ sk01b2	_04bf_01b2[4]; //Rr
 U8 _04bf_03d6[220]; //Rr
 U8 tlbUIEventTable[236]; //Rr	// _4976_18b9
 U8	tblDefaultNbItemAllocationPerDB[16]; //Rr	// _4976_0252
-U8	_4976_3b5f[9]; //Rp
+U8	_4976_3b5f[9]; //Rp	// stores unused savegame slots as "X UNUSED"
 X8	_4976_4736[12]; //Rp
 U16	_4976_404d[5][3]; //Rp
 U16	_4976_49e8_ItemHoldMask[13]; //Rr // (_4976_49e8) player item holding mask
