@@ -222,6 +222,14 @@ void SkWinCore::DIALOG_SAVEGAMES_NAMES(i16 iSelectedSavegame)
 	QUERY_EXPANDED_RECT(RECTZONE_451_PANEL_SELECT_SAVEGAMES, &xRectText);
 	i16 iTextYPos = xRectText.y + 4;	// di
 	for (i16 iSavegameIdx = 0; iSavegameIdx < 10; iSavegameIdx++) {	// si
+		if (SkCodeParam::bUseDM2ExtendedMode) {
+			if (tblSaveGamesInfo[iSavegameIdx].wTimerFlag == C00_DM2SAVE_TIMERFLAG_EMPTY_SLOT)
+				iColorText = C02_COLOR_GRAY;
+			else if (tblSaveGamesInfo[iSavegameIdx].wTimerFlag == (U16) M01_DM2SAVE_TIMERFLAG_DM1)
+				iColorText = C04_COLOR_CYAN;
+			else if (tblSaveGamesInfo[iSavegameIdx].wTimerFlag == (U16) M02_DM2SAVE_TIMERFLAG_NOT_DM)
+				iColorText = C08_COLOR_RED;
+		}
 		U16 iColorTextDisplay = (iSavegameIdx == iSelectedSavegame) ? glbPaletteT16[iColorTextHighlighted] : glbPaletteT16[iColorText];	// bp02
 		DRAW_VP_STR(xRectText.x, iTextYPos, iColorTextDisplay, tblSaveGamesInfo[iSavegameIdx].sSavegameName);
 		iTextYPos += glbPanelStatsYDelta;

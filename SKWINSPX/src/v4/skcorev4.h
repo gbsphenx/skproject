@@ -52,13 +52,16 @@ typedef struct  // 3-byte structure in character
   U8 ubMinimum;
 } tATTRIBUTE;
 
+#pragma pack(push, 1)
 typedef struct	// 6-byte structure in character
 {
   i16 word0;
   i32 Long2;  // Experience in this skill
 } tSKILL;
+#pragma pack(pop)
 
-typedef struct  // character info???
+#pragma pack(push, 1)
+typedef struct  // character
 { 
   X8  name[8];  // 00
   X8  title[16];// 08 // size??
@@ -102,7 +105,7 @@ typedef struct  // character info???
                            // 82 = [4] Vitality
                            // 85 = [5] AntiMagic
                            // 88 = [6] AntiFire
-  i8  FILL91;
+  //i8  FILL91;
   tSKILL skills92[20]; // 92 //0 and 4-7  =Fighter
                             //1 and 8-11 =Ninja
                             //2 and 12-15=Priest
@@ -110,11 +113,9 @@ typedef struct  // character info???
   X16  possessions[30]; //212
   U16 load;//272; In 10ths of KG
   U16 shieldStrength; //274;
-  U8 FILL276[336-276];
-  i8  portrait[1]; //336
-  U8 FILL337[800-337];
+  U8 FILL276[44];
 } tCHARDESC;
-
+#pragma pack(pop)
 //..............................................................................
 
 //using ObjectID = DMEncyclopaedia::ObjectID;

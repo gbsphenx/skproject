@@ -446,6 +446,7 @@ i16 SkWinCore::DM1_GAME_LOAD()
 		iBlockChecksum = DM1_DECYPHER_SAVEGAME_BLOCK(pDataBlock, cd.dm1.iDM1SVGDecryptKey3, 64);
 		pSGBlock3 = (tDM1SaveGameBlock3*) pDataBlock;
 		cd.dm1.iDM1SVGNbExtCreatures = pSGBlock3->MaxITEM16;
+		cd.pi.glbChampionsCount = pSGBlock3->numcharacter;
 
 		// Block 4 - Extended Creature Data
 		cd.dm1.pDM1SavegameBlock[3] = (X8*) calloc(cd.dm1.iDM1SVGNbExtCreatures*16, sizeof(X8));
@@ -461,10 +462,65 @@ i16 SkWinCore::DM1_GAME_LOAD()
 		iBlockChecksum = DM1_DECYPHER_SAVEGAME_BLOCK(pDataBlock, cd.dm1.iDM1SVGDecryptKey5Champions, 702);
 		tCHARDESC *pBlock4Champion = (tCHARDESC*) pDataBlock;
 		Champion *pChampion = &glbChampionTable[1];
-		strcpy((char*)pChampion->firstName, (char*)pBlock4Champion->name);
-		strcpy((char*)pChampion->lastName, (char*)pBlock4Champion->title);
-		pBlock4Champion++;
-		free(pDataBlock);		
+		for (iChampionIndex = 0; iChampionIndex < cd.pi.glbChampionsCount; iChampionIndex++) {
+			U8 iSkillIndex = 0;
+			U16 iInventorySlot = 0;
+			strcpy((char*)pChampion->firstName, (char*)pBlock4Champion->name);
+			strcpy((char*)pChampion->lastName, (char*)pBlock4Champion->title);
+			pChampion->maxHP(pBlock4Champion->maxHP);
+			pChampion->curHP(pBlock4Champion->HP);
+			pChampion->maxStamina(pBlock4Champion->maxStamina);
+			pChampion->curStamina(pBlock4Champion->stamina);
+			pChampion->maxMP(pBlock4Champion->maxMana);
+			pChampion->curMP(pBlock4Champion->mana);
+			pChampion->curFood(pBlock4Champion->food);
+			pChampion->curWater(pBlock4Champion->water);
+			
+
+//			pChampion->maxLuck(pBlock4Champion->Attributes[0].ubMinimum);
+			pChampion->maxLuck(pBlock4Champion->Attributes[0].ubMaximum);
+			pChampion->curLuck(pBlock4Champion->Attributes[0].ubCurrent);
+
+//			pChampion->maxStr(pBlock4Champion->Attributes[1].ubMinimum);
+			pChampion->maxStr(pBlock4Champion->Attributes[1].ubMaximum);
+			pChampion->curStr(pBlock4Champion->Attributes[1].ubCurrent);
+
+//			pChampion->maxDex(pBlock4Champion->Attributes[2].ubMinimum);
+			pChampion->maxDex(pBlock4Champion->Attributes[2].ubMaximum);
+			pChampion->curDex(pBlock4Champion->Attributes[2].ubCurrent);
+
+//			pChampion->maxWiz(pBlock4Champion->Attributes[3].ubMinimum);
+			pChampion->maxWiz(pBlock4Champion->Attributes[3].ubMaximum);
+			pChampion->curWiz(pBlock4Champion->Attributes[3].ubCurrent);
+
+//			pChampion->maxVit(pBlock4Champion->Attributes[4].ubMinimum);
+			pChampion->maxVit(pBlock4Champion->Attributes[4].ubMaximum);
+			pChampion->curVit(pBlock4Champion->Attributes[4].ubCurrent);
+
+//			pChampion->maxAntiM(pBlock4Champion->Attributes[5].ubMinimum);
+			pChampion->maxAntiM(pBlock4Champion->Attributes[5].ubMaximum);
+			pChampion->curAntiM(pBlock4Champion->Attributes[5].ubCurrent);
+
+//			pChampion->maxAntiF(pBlock4Champion->Attributes[6].ubMinimum);
+			pChampion->maxAntiF(pBlock4Champion->Attributes[6].ubMaximum);
+			pChampion->curAntiF(pBlock4Champion->Attributes[6].ubCurrent);
+			
+
+			for (iSkillIndex = 0; iSkillIndex < 20; iSkillIndex++) {
+				pChampion->skills[iSkillIndex] = pBlock4Champion->skills92[iSkillIndex].Long2;
+			}
+			pChampion->weight = pBlock4Champion->load;
+			
+			// inventory
+			for (iInventorySlot = 0; iInventorySlot < 30; iInventorySlot++) {
+				pChampion->Possess(iInventorySlot, pBlock4Champion->possessions[iInventorySlot]);
+			}
+
+			pBlock4Champion++;
+			pChampion++;
+		}
+		pBlock4Champion = (tCHARDESC*) pDataBlock;
+	
 
 		FILE_SEEK(glbDataFileHandle, 0x24C0);
 		// then comes portraits : 4 * 29*16 bytes
@@ -526,6 +582,9 @@ i16 SkWinCore::DM1_GAME_LOAD()
 		{
 			break;
 		}
+
+
+
 		_4976_5bf2 = 1; // load is complete
 		// Copy from DM2 read
 		SkD((DLV_DBG_GAME_LOAD, "Suppress Init ...\n"));
@@ -580,8 +639,23 @@ i16 SkWinCore::DM1_GAME_LOAD()
 			iTimerIndex++;
 		}
 		__SORT_TIMERS();
-		if (READ_SKSAVE_DUNGEON() != 0)
+		if (READ_SKSAVE_DUNGEON() != 0)	// this resets champion inventory
 			break;
+
+		// sets inventory from savegame at this point
+		pChampion = &glbChampionTable[1];
+		pDataBlock = (X16*)pBlock4Champion;
+		for (iChampionIndex = 0; iChampionIndex < cd.pi.glbChampionsCount; iChampionIndex++) {
+			U16 iInventorySlot = 0;
+			// inventory
+			for (iInventorySlot = 0; iInventorySlot < 30; iInventorySlot++) {
+				pChampion->Possess(iInventorySlot, pBlock4Champion->possessions[iInventorySlot]);
+			}
+			pBlock4Champion++;
+			pChampion++;
+		}
+		free(pDataBlock);
+		// inventory block
 
 		PROCEED_GLOBAL_EFFECT_TIMERS();
 		_3a15_020f();

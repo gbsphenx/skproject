@@ -1657,6 +1657,8 @@ namespace DM2Internal {
 		U8 maxAntiM() const { return attributes[5][1]; } //83 53
 		U8 curAntiF() const { return attributes[6][0]; } //84 54
 		U8 maxAntiF() const { return attributes[6][1]; } //85 55
+		void curLuck(U8 val) { attributes[0][0] = val; }	//SPX: added (specially for DM1 savegame loading)
+		void maxLuck(U8 val) { attributes[0][1] = val; }	//SPX: added (specially for DM1 savegame loading)
 		void curStr(U8 val) { attributes[1][0] = val; }
 		void maxStr(U8 val) { attributes[1][1] = val; }
 		void curDex(U8 val) { attributes[2][0] = val; }

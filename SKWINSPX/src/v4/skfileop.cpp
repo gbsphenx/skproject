@@ -501,20 +501,26 @@ void SkWinCore::READ_SAVEGAMES_FILENAMES()
 			READ_FILE(iFileHandle, sizeof(sksave_header_asc), &tblSaveGamesInfo[iFileIndex]);	// read first 42 to get savegame name
 
 			// SPX : We also check for DM1 native savegames, which don't have the same format
-			if (tblSaveGamesInfo[iFileIndex].wTimerFlag != 1)	// not a DM2 savegame
+			if (tblSaveGamesInfo[iFileIndex].wTimerFlag != C01_DM2SAVE_TIMERFLAG_REGULAR)	// not a DM2 savegame
 			{
 				X8 xDungeonDatBeginning[16];
 				// Check if PC DM savegame, we would find x6300 at 0x2C00
 				SEEK_FILE(iFileHandle, 0x2C00);
 				READ_FILE(iFileHandle, 16, &xDungeonDatBeginning);
-				if ((*(U16*)(&xDungeonDatBeginning)) == 0x0063)
+				if ((*(U16*)(&xDungeonDatBeginning)) == 0x0063) {
 					sprintf((char*)tblSaveGamesInfo[iFileIndex].sSavegameName, "SKSAVE%d.DAT (DM1 SAVEGAME)", iFileIndex);
-				else
+					tblSaveGamesInfo[iFileIndex].wTimerFlag = M01_DM2SAVE_TIMERFLAG_DM1;
+				}
+				else {
 					sprintf((char*)tblSaveGamesInfo[iFileIndex].sSavegameName, "SKSAVE%d.DAT (NOT DM2 SAVEGAME)", iFileIndex);
+					tblSaveGamesInfo[iFileIndex].wTimerFlag = M02_DM2SAVE_TIMERFLAG_NOT_DM;
+				}
 			}
 			CLOSE_FILE(iFileHandle);
 		}
-		else {
+		else { // empty slot
+			if (SkCodeParam::bUseDM2ExtendedMode)
+				tblSaveGamesInfo[iFileIndex].wTimerFlag = C00_DM2SAVE_TIMERFLAG_EMPTY_SLOT;
 			_4976_3b5f[0] = glbSKSaveDigitAlpha;
 			SK_STRCPY(tblSaveGamesInfo[iFileIndex].sSavegameName, _4976_3b5f);
 			tblSaveGamesInfo[iFileIndex].wBEEF = 0xBEEF;

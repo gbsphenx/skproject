@@ -1925,6 +1925,11 @@ typedef enum
 //	OK
 //	Cancel
 
+#define C01_DM2SAVE_TIMERFLAG_REGULAR		1
+#define C00_DM2SAVE_TIMERFLAG_EMPTY_SLOT	0	// SPX: added for displaying free savegame slots
+#define M01_DM2SAVE_TIMERFLAG_DM1			-1	// SPX: added for showing DM1 (or non DM2) savegame
+#define M02_DM2SAVE_TIMERFLAG_NOT_DM		-2	// SPX: added for showing non DM2 nor DM1
+
 //------------------------------------------------------------------------------
 // Extended GDAT
 

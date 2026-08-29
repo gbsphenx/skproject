@@ -5914,7 +5914,7 @@ _1045:
 	else {
 		bp4c.wBEEF = 0;
 	}
-	bp4c.wTimerFlag = 1;
+	bp4c.wTimerFlag = C01_DM2SAVE_TIMERFLAG_REGULAR;
 	SK_STRCPY(bp4c.sSavegameName, _4976_5268);
 	WRITE_FILE(glbDataFileHandle, 42, &bp4c);
 	if (SKSAVE_WRITE(dunHeader, 44) == 0)
@@ -9478,7 +9478,7 @@ _2e5b:
 	// SPX: a regular DM2 savegame will have wTimerFlag = 1. If not, we are probably not reading a native DM2 savegame.
 	// There is a chance this is a DM1 savegame, and we will try it.
 
-	if (bp6a.wTimerFlag == 1) // native DM2 savegame
+	if (bp6a.wTimerFlag == C01_DM2SAVE_TIMERFLAG_REGULAR) // native DM2 savegame
 	{
 		do {
 			SkD((DLV_DBG_GAME_LOAD, "Read Dungeon Structure (Native DM2) ...\n"));
