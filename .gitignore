@@ -1,6 +1,7 @@
 *.suo
 *.user
 *.ncb
+*.o
 
 /SKWIN/Debug
 /SKWIN/Release
@@ -23,3 +24,5 @@ obj
 /SKWINSPX/allegro-5.0.9
 /SKWINSPX/allegro
 /SKWINSPX/al
+/SKWINSPX/skgame
+/SKWINSPX/src/skmini.log
