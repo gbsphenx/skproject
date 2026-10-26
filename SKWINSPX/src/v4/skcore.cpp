@@ -8078,6 +8078,10 @@ U8 *SkWinCore::QUERY_GDAT_SQUAD_ICON(U8 *dstImage, U8 iChampionIdx, U8 tiLocalPa
 		tiLocalPal,
 		16
 		);
+	// Callers pass afDefault scratch buffers, and the source blit skips
+	// color-key 2. The returned icon is later blitted with key 12, so
+	// seed transparent pixels instead of retaining stale or undefined data.
+	FILL_ENTIRE_PICT(dstImage, 12);
 	DRAW_DIALOGUE_PICT(
 		QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x01_INTERFACE_GENERAL, GDAT_INTERFACE_SUBCAT_x06_CHAMPION_FACING, iChampionIdx),
 		dstImage,
