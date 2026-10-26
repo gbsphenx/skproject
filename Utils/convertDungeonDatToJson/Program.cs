@@ -452,7 +452,7 @@ namespace convertDungeonDatToJson {
                             containerType = (attr >> 1) & 3,
                             destX = (attr3 >> 0) & 31,
                             destY = (attr3 >> 5) & 31,
-                            destMap = (attr >> 10) & 63,
+                            destMap = (attr3 >> 10) & 63,
                         });
                         if (childOid != oidEnd) {
                             me.childObjRef = convertObject(mapdef, childOid, tile);
