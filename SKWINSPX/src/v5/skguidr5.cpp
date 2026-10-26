@@ -407,6 +407,9 @@ void DM2_QUERY_GDAT_SQUAD_ICON(t_bmp* bmp, i32 edxl, t_palette* palette)
   else
     RG1W = 4;
   //m_38174:
+  // The source blit skips color key 2; seed the scratch image with the
+  // color key used when the completed squad icon is drawn (12).
+  DM2_FILL_ENTIRE_PICT(bmp, c_pixel(E_COL12));
   DM2_COPY_SMALL_PALETTE(palette, DM2_QUERY_GDAT_IMAGE_LOCALPAL(1, 6, RG4Blo));
   DM2_DRAW_DIALOGUE_PICT(BMPCAST(DM2_QUERY_GDAT_IMAGE_ENTRY_BUFF(1, 6, RG4Blo)), bmp, tmprects.alloc_origin_tmprect(ddat.v1d272c, ddat.v1d272e), ddat.v1d272c * (RG3W + RG1W), 0, 2, NULL);
 }
