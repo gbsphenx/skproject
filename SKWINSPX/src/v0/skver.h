@@ -70,7 +70,7 @@
 #endif // SUBVER
 
 // INTERNAL PROGNAME
-#if defined (__DJGPP__)
+#if defined (__DJGPP__) || defined (__WATCOMC__)
 	#define __SKWIN_PROGNAME__ __SKWIN_BASEPROGNAME__ "" __SKULL_SUBVER__
 #elif defined (__MINGW__)
 	//#define TOSTRING(x) #x

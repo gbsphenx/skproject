@@ -17,7 +17,7 @@
 #elif defined (__LINUX__)
 	#include <SDL2/SDL.h>
 	#include <SDL2/SDL_mixer.h>
-#elif !defined (__DJGPP__)
+#elif !defined (__DJGPP__) && !defined (__WATCOMC__)
 	#include <SDL_mixer.h>
 	#include <SDL.h>
 #endif // __LINUX__

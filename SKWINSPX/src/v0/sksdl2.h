@@ -9,7 +9,7 @@
 
 #if defined (__LINUX__) && !defined (__NO_SDL__)
 	#include <SDL2/SDL.h>
-#elif defined (__DJGPP__)	// not using SDL on DOS
+#elif defined (__DJGPP__) || defined (__WATCOMC__)	// not using SDL on DOS
 	#define __NO_SDL__
 #elif !defined (__DJGPP__) && !defined (__NO_SDL__)
 	#include <SDL.h>

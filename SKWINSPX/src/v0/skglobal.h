@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 
-#if defined(__MINGW__) || defined(__DJGPP__) || defined(__LINUX__)
+#if defined(__WATCOMC__) || defined(__MINGW__) || defined(__DJGPP__) || defined(__LINUX__)
 #include <stdio.h> // for FILE
 #endif
 

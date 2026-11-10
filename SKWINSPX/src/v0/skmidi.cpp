@@ -5,7 +5,7 @@
 //#endif // LIBSKWINDLL_EXPORTS
 #include <skmidi.h>
 
-#if !defined(__DJGPP__) && !defined(__LINUX__)
+#if !defined(__WATCOMC__) && !defined(__DJGPP__) && !defined(__LINUX__)
 #include <windows.h>
 #endif
 

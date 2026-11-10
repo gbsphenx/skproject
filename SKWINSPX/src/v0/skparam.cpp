@@ -9,7 +9,7 @@ bool SkCodeParam::bCompilation64bits = false;
 
 
 bool SkCodeParam::bRenderingEngineSDL = false;
-#ifdef __DJGPP__
+#if defined(__DJGPP__) || defined(__WATCOMC__)
 	bool SkCodeParam::bRenderingEngineDOS = true;
 #else
 	bool SkCodeParam::bRenderingEngineDOS = false;

@@ -18,7 +18,7 @@
 #include <fcntl.h> // _O_BINARY etc...
 
 // SPX: that part for non Microsoft compiler
-#if defined(__DJGPP__) || defined (__MINGW__) || defined (__LINUX__)
+#if defined(__WATCOMC__) || defined(__DJGPP__) || defined (__MINGW__) || defined (__LINUX__)
 	#include <sys/stat.h>
 	#include <unistd.h>
 	#ifndef _S_IWRITE

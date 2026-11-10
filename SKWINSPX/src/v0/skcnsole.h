@@ -11,7 +11,7 @@
 #define REVERSE			7
 #define HIDDEN			8
 
-#if (defined (__MINGW__))
+#if defined (__MINGW__)
 #define BLACK 			0
 #define RED				1
 #define GREEN			2
@@ -31,7 +31,7 @@
 #define CYAN			14
 #define WHITE			15
 
-#elif (defined (__DJGPP__))
+#elif defined (__DJGPP__) || defined(__WATCOMC__)
 
 #define BLACK 			0
 #define BLUE			4		
@@ -53,7 +53,7 @@
 
 //#elif (defined (__LINUX__) || (__CYGWIN__))
 //#elif (defined (__LINUX__) || (__MINGW__))
-#elif (defined (__LINUX__))
+#elif defined (__LINUX__)
 
 #define BLACK 			0
 #define BLUE			4		
@@ -73,7 +73,7 @@
 #define LIGHT_YELLOW	3
 #define WHITE			7
 
-#elif (defined (WIN32))
+#elif defined (WIN32)
 //#elif (defined (__WINDOWS__))
 
 #define BLACK 			0

@@ -53,7 +53,7 @@ void CHANGE_CONSOLE_COLOR(int attr, int fg, int bg)
 			sprintf(command, "\x1B[0m");
 		printf("%s", command);
 	}
-#elif (defined __WINDOWS__ || defined WIN32)
+#elif defined (__WINDOWS__) || defined (WIN32)
 	HANDLE hconsole = GetStdHandle (STD_OUTPUT_HANDLE); 
 	SetConsoleTextAttribute (hconsole, fg | bg << 4); 
 #endif

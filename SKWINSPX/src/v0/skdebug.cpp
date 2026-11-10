@@ -23,7 +23,7 @@ void SkwinDEBUG (int lv, const char *psz, ...) {
 #endif // _USE_SDL
 
 
-#if defined(__MINGW__) || defined(__DJGPP__) || defined(__LINUX__) || (_MSC_VER >= 1200)
+#if defined(__WATCOMC__) || defined(__MINGW__) || defined(__DJGPP__) || defined(__LINUX__) || (_MSC_VER >= 1200)
 void SkwinDEBUG (int lv, const char *psz, ...) {
 	if (lv < DLV_BUGHERE) return;
 
@@ -85,7 +85,7 @@ void Write2LOGX(LPCTSTR pszFormat, ...) {
 void Write2LOGX(const char *message, ...) {
 #if DLV_USE_LOGX
 
-#if defined (__DJGPP__)
+#if defined (__DJGPP__) || defined (__WATCOMC__)
 	static char flogName[] = "SKLOGDOS.TXT";
 #elif defined (__LINUX__)
 	static char flogName[] = "sklinux.log";

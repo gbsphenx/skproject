@@ -9,7 +9,7 @@
 
 //------------------------------------------------------------------------------
 
-#ifdef __DJGPP__
+#if defined (__DJGPP__) || defined (__WATCOMC__)
 	#define SkD(X) ;;
 #else
 	#define SkD(X) SkwinDEBUG X
@@ -74,7 +74,7 @@
 #define DLV_DBG_SND			0
 #define DLV_USE_LOGX		0
 
-#ifdef __DJGPP__
+#if defined(__DJGPP__) || defined (__WATCOMC__)
 #define DLV_DBG_DOS			1
 #else
 #define DLV_DBG_DOS			0
@@ -98,7 +98,7 @@
 //// Check if it is the only version ? (this for 80 and 60 only?)
 #if defined(_USE_SDL)
 void SkwinDEBUG (int lv, const char* psz, ...);
-#elif defined(__DJGPP__) || defined(__MINGW__) || defined(__LINUX__)
+#elif defined(__WATCOMC__) || defined(__DJGPP__) || defined(__MINGW__) || defined(__LINUX__)
 void SkwinDEBUG (int lv, const char* psz, ...);
 #elif defined(_USE_MFC80) || defined(_USE_MFC60)
 void SkwinDEBUG (int lv, LPCSTR psz, ...);
@@ -115,7 +115,7 @@ void SkwinDEBUG (int lv, const char* psz, ...);
 #elif defined(_USE_SDL)
 	#define Unr() Unreachable(__FUNCTION__, __FILE__, __LINE__)
 	void Unreachable(const char *funct, const char *file, int line);
-#elif defined(__DJGPP__) || defined(__MINGW__) || defined(__LINUX__)
+#elif defined(__WATCOMC__) || defined(__DJGPP__) || defined(__MINGW__) || defined(__LINUX__)
 	#define Unr() Unreachable(__FUNCTION__, __FILE__, __LINE__)
 	void Unreachable(const char *funct, const char *file, int line);
 #else

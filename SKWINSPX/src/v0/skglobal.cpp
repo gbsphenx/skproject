@@ -14,7 +14,7 @@
 using namespace DM2Internal;
 
 
-#if defined(__LINUX__) || defined(__DJGPP__) || defined (__MINGW__)
+#if defined(__WATCOMC__) || defined(__LINUX__) || defined(__DJGPP__) || defined (__MINGW__)
 #define min(A,B) ((A < B) ? A : B)
 #define max(A,B) ((A < B) ? B : A)
 #endif

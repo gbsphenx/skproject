@@ -9,6 +9,10 @@
 #include <skvram.h>
 #include <skdebug.h>
 
+//#if defined (__WATCOMC__)
+//#include <skcore.h>	// specifically for complete declaration
+//#endif
+
 //--- the 3 different renderers
 #include <skdos.h>
 #include <sksdl2.h>
@@ -38,6 +42,9 @@
 	#endif
 #elif defined (__DJGPP__)
 	#include <dos.h>	// delay (sleep)
+#elif defined (__WATCOMC__)
+	#include <i86.h>
+	#include <dos.h>
 #endif
 
 
@@ -182,7 +189,7 @@ void SkWinApp::ProcessArgs(int argc, char** argv)
 		// Options: renderer mode
 		if (!strcmp(argv[iArgIndex], "-sdl")) {
 			printf("Option: renderer = SDL\n");
-#ifdef __DJGPP__
+#if defined(__DJGPP__) || defined (__WATCOMC__)
 			printf("(option ignored)\n");
 #else
 			SkCodeParam::bRenderingEngineSDL = true;
@@ -204,7 +211,7 @@ void SkWinApp::ProcessArgs(int argc, char** argv)
 		}
 		else if (!strcmp(argv[iArgIndex], "-dos")) {	// dos only
 			printf("Option: renderer = DOS\n");
-#ifndef __DJGPP__
+#if !defined(__DJGPP__) && !defined(__WATCOMC__)
 			printf("(option ignored)\n");
 #else
 			SkCodeParam::bRenderingEngineDOS = true;
@@ -642,7 +649,7 @@ void SkWinApp::skwin_Sleep(U32 millisecs)
 	//_sleep(millisecs);
 #elif defined (__LINUX__)
 	usleep(millisecs*1000);
-#elif defined (__DJGPP__)
+#elif defined (__DJGPP__) || defined (__WATCOMC__)
 	//delay(millisecs);
 	delay(1);
 #endif
@@ -657,6 +664,15 @@ unsigned long linux_GetTickCount() {
     return (ts.tv_sec * 1000) + (ts.tv_nsec / 1000000); // milliseconds
 }
 #endif // __LINUX__
+
+#if defined (__WATCOMC__)
+unsigned long DOS_GetTickCount() {
+	union REGPACK regs;
+	regs.w.ax = 0x0000;
+	intr(0x1A, &regs);
+	return ((unsigned long)regs.w.cx << 16) | regs.w.dx;
+}
+#endif // __WATCOMC__
 
 #if defined (__DJGPP__)
 unsigned long DOS_GetTickCount() {
@@ -676,7 +692,7 @@ U32 SkWinApp::skwin_GetTickCount()
 	return GetTickCount();
 #elif defined (__LINUX__)
 	return linux_GetTickCount();
-#elif defined (__DJGPP__)
+#elif defined (__DJGPP__) || defined (__WATCOMC__)
 	return DOS_GetTickCount();
 #endif
 	//return 1;	// return 0 => this breaks the MessageLoop function to fall into infinite loop
@@ -797,7 +813,7 @@ void SkWinApp::GetMousePosButtons(U16 *x, U16 *y, U16 *buttons)
 		//printf("GetMousePosButton x,y = %d %d\n", *x, *y);
 	}
 	else if (SkCodeParam::bRenderingEngineDOS) {
-#if defined (__DJGPP__)
+#if defined (__DJGPP__) || defined (__WATCOMC__)
 		SKDOS_GET_MOUSE_POS_BUTTONS((U16*)&iDeviceMouseX, (U16*)&iDeviceMouseY, (U16*)&iDeviceButtons);
 		if (iDeviceButtons & 1)
 			*buttons |= 1; // left
@@ -855,10 +871,12 @@ void SkWinApp::processMinput(U8 button, bool pressed, int x, int y)
 		*pMouseX = U16(iDeviceMouseX)/SkCodeParam::iVideoScale;
 		*pMouseY = U16(iDeviceMouseY)/(SkCodeParam::iVideoScale*SkCodeParam::fVideoYScale);
 	/// needs to call the SkWinCore mouse callback
+
+#ifndef __WATCOMC__	// not sure how to handle this yet
 		if (fCoreMouseCallback != NULL) {
-			//printf("call Callback!\n");
 			 (xCore->*fCoreMouseCallback)();
 		}
+#endif
 	}
 
 //#if defined(__LINUX__) && defined(__SDL__)

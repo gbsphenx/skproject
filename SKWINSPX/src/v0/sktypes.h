@@ -52,7 +52,7 @@ typedef unsigned int	uint_t;
 //..............................................................................
 // MINGW / DOS (DJGPP)
 
-#if defined(__DJGPP__)
+#if defined(__DJGPP__) || defined(__WATCOMC__)
 #include <assert.h>
 #include <stdint.h>
 typedef signed char		int8_t;
