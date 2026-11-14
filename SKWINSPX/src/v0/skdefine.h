@@ -1496,7 +1496,7 @@ enum SkillLevel {
 // position changed	=> 1000 ?
 // weapon attack
 // portrait changed
-
+/*
 #define	CHAMPION_FLAG_0010_MALE		0x0010	// 0x0010
 #define	CHAMPION_FLAG_0400			0x0400	// 0x0400
 #define	CHAMPION_FLAG_0800			0x0800	// 0x0800
@@ -1508,6 +1508,17 @@ enum SkillLevel {
 #define	CHAMPION_FLAG_4000			0x4000	// 0x4000
 #define	CHAMPION_FLAG_8000			0x8000	// 0x8000
 #define CHAMPION_FLAG_FC00			0xfc00	// 0xfc00
+*/
+
+#define X0010_CHAMPION_REDRAW_SLOW_STEP			0x0010
+#define X03FF_CHAMPION_REDRAW_KEEP				0x03FF
+#define X0400_CHAMPION_REDRAW_NAME				0x0400
+#define X0800_CHAMPION_REDRAW_BARS				0x0800
+#define X1000_CHAMPION_REDRAW_LOAD				0x1000
+#define X2000_CHAMPION_REDRAW_TITLE_ALL			0x2000
+#define X4000_CHAMPION_REDRAW_STATUS_BOX		0x4000
+#define X8000_CHAMPION_REDRAW_ALL_INVENTORY		0x8000
+#define XFC00_CHAMPION_REDRAW_ALL				0xFC00
 
 /* DM1/ReDMCSB: Champion attributes
 #define MASK0x0000_NONE           0x0000
@@ -1957,6 +1968,15 @@ typedef enum
 #define C000_GDAT_PALETTE_SIZE_ZERO				0
 #define C016_GDAT_PALETTE_SIZE_16				16
 #define C256_GDAT_PALETTE_SIZE_256				256
+
+//------------------------------------------------------------------------------
+
+#define C2_RESURRECT_STEP_SMOKE					2
+#define C1_RESURRECT_STEP_BONES					1
+#define C0_RESURRECT_STEP_RESURRECT				0
+
+#define C5_RESURRECT_SMOKE_DURATION				5
+
 
 //------------------------------------------------------------------------------
 

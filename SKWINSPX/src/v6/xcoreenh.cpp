@@ -423,15 +423,15 @@ X16 SkWinCore::SELECT_CHAMPION_FROM_GDAT(U8 iChampionID)
 		_38c8_0002();
 	}
 	CHANGE_CURRENT_MAP_TO(iCurrentMap);
-	CALC_PLAYER_WEIGHT(iChampionNumber);
+	CHAMPION_COMPUTE_LOAD(iChampionNumber);
 	return iChampionNumber + 1;
 }
 
 
 // Check QUERY_CREATURES_ITEM_MASK
-Bit16u SkWinCore::CREATE_ABSOLUTE_ACTIVATOR_ITEM_ID(int iDBType, int iItemID)
+U16 SkWinCore::CREATE_ABSOLUTE_ACTIVATOR_ITEM_ID(int iDBType, int iItemID)
 {
-	Bit16u iAbsoluteItemID = 0xFFFF;
+	U16 iAbsoluteItemID = 0xFFFF;
 	switch (iDBType) {
 		case dbWeapon:		// W - range 128
 			iAbsoluteItemID = 0x0000 + iItemID; break;
@@ -554,7 +554,7 @@ Bit8u *SkWinCore::DIRECT_QUERY_GDAT_ENTRY_DATA_BUFF(Bit8u cls1, Bit8u cls2, Bit8
 		return NULL;
 	}
 	if (glbShelfMemoryTable[si].Absent()) {
-		Bit16u bp02;
+		U16 bp02;
 		return QUERY_GDAT_DYN_BUFF(si, &bp02, 0);
 	}
 	else {
@@ -566,8 +566,8 @@ Bit8u *SkWinCore::DIRECT_QUERY_GDAT_ENTRY_DATA_BUFF(Bit8u cls1, Bit8u cls2, Bit8
 Bit8u *SkWinCore::DIRECT_QUERY_GDAT_TEXT(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit8u *buff)
 {
 	*buff = 0;
-	Bit16u di = 0;
-	Bit16u si = 0;
+	U16 di = 0;
+	U16 si = 0;
 	Bit8u *bp0e = DIRECT_QUERY_GDAT_ENTRY_DATA_BUFF(cls1, cls2, dtText, cls4);
 	if (bp0e != NULL) {
 		Bit8u *bp0a = ALLOC_MEMORY_RAM(

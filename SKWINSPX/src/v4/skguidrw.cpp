@@ -3076,7 +3076,7 @@ void SkWinCore::REFRESH_PLAYER_STAT_DISP(i16 iChampIdx)
 	U16 bp1a = 0;
 	U16 bp1c = 0;
 	Champion *pChampion = &tblChampionSquad[iChampIdx];	//*bp04
-	U16 si = pChampion->heroFlag;
+	U16 si = pChampion->redrawFlags;
 	U16 bp08 = (iChampIdx + 1 == glbChampionInventory) ? 1 : 0; // 1=draw entire inventory panel
 	if (bp08 != 0 && _4976_022c != 0)
 		si |= 0x8000;
@@ -3319,7 +3319,7 @@ _0a25:
 		_4976_022c = 0;
  		CHANGE_VIEWPORT_TO_INVENTORY(0);
 	}
-	pChampion->heroFlag &= 0x03FF;	// 0x03FF
+	pChampion->redrawFlags &= 0x03FF;	// 0x03FF
 	return;
 }
 
@@ -3370,7 +3370,7 @@ void SkWinCore::UPDATE_GENERAL_CHAMPIONS_STAT_DISP(U16 xx)
 		U16 iChampionIndex = glbChampionInventory - 1;	// si
 		Champion* xChampion = &tblChampionSquad[iChampionIndex];
 		if (xChampion->enchantmentPower != 0 && xChampion->enchantmentAura >= C03_ENCHANTMENT_AURA_FIRST && xChampion->enchantmentAura <= C06_ENCHANTMENT_AURA_LAST) {
-			xChampion->heroFlag |= (glbShowItemStats != 0 && cd.pi.glbLeaderHandPossession.object == OBJECT_NULL) ? CHAMPION_FLAG_3000 : CHAMPION_FLAG_1000;	// 0x3000 or 0x1000
+			xChampion->redrawFlags |= (glbShowItemStats != 0 && cd.pi.glbLeaderHandPossession.object == OBJECT_NULL) ? (X2000_CHAMPION_REDRAW_TITLE_ALL|X1000_CHAMPION_REDRAW_LOAD) : X1000_CHAMPION_REDRAW_LOAD;	// 0x3000 or 0x1000
 		}
 		REFRESH_PLAYER_STAT_DISP(glbChampionInventory -1);
 	}
@@ -6833,7 +6833,7 @@ void SkWinCore::UPDATE_RIGHT_PANEL(U16 xx)
 					if (--glbMagicMapManaCounter == 0) {
 						if (pChampion->manaCurrent != 0) {
 							pChampion->manaCurrent--;
-							pChampion->heroFlag |= CHAMPION_FLAG_0800;
+							pChampion->redrawFlags |= X0800_CHAMPION_REDRAW_BARS;
 							glbMagicMapManaCounter = 25 / glbMagicMapManaDivisor;
 						}
 						else {
@@ -7001,7 +7001,7 @@ void SkWinCore::UPDATE_RIGHT_PANEL(U16 xx)
 					glbMagicMapManaCounter = 25;
 					if (champion->curMP() != 0) {
 						champion->manaCurrent--;
-						champion->heroFlag |= CHAMPION_FLAG_0800;	// 0x0800
+						champion->redrawFlags |= X0800_CHAMPION_REDRAW_BARS;	// 0x0800
 						glbMagicalMapFlags = 0x8200;	// 0x8200
 					}
 					else {

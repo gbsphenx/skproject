@@ -222,7 +222,7 @@ ObjectID SkWinCore::REMOVE_OBJECT_FROM_HAND()
 		DO_NOTHING_FROM_REMOVE_HAND();
 		CHANGE_CURSOR_HAND_ITEM();
 		FIRE_SHOW_MOUSE_CURSOR();
-		PROCESS_ITEM_BONUS(glbChampionLeader, si, -1, -1);
+		CHAMPION_PROCESS_ITEM_BONUS(glbChampionLeader, si, -1, -1);
 // SPX: that part is for giving item sound when put it back to inventory or on ground
 		if (SkCodeParam::bUseExtendedSound)
 			QUEUE_NOISE_GEN2(QUERY_CLS1_FROM_RECORD(si), QUERY_CLS2_FROM_RECORD(si), SOUND_ITEM_PUT_DOWN, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 1, 0, 0);
@@ -252,7 +252,7 @@ void SkWinCore::TAKE_OBJECT(ObjectID rl, U16 xx)
 			CHANGE_CURSOR_HAND_ITEM();
 		}
 		FIRE_SHOW_MOUSE_CURSOR();
-		PROCESS_ITEM_BONUS(glbChampionLeader, si, -1, 1);
+		CHAMPION_PROCESS_ITEM_BONUS(glbChampionLeader, si, -1, 1);
 		PLACE_OR_REMOVE_OBJECT_IN_ROOM(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, -1, 1, FCT_PLACE_ON, 0); // NOTE: it is PLACE_ON or REMOVE_OFF ??? item is taken off its place!
 
 // SPX: that part is for giving item sound when taking it
@@ -335,8 +335,8 @@ void SkWinCore::CLICK_MONEYBOX(Bit16u xx)
 	ENTER(2);
 	if (glbRightPanelType != RIGHT_PANEL_MONEY_BOX)	// 4
 		return;
-	X16 bp02 = cd.pi.glbChampionIndex -1;
-	ObjectID si = tblChampionSquad[bp02].Possess(glbSelectedHandAction);
+	X16 iChampionIndex = cd.pi.glbChampionIndex -1;	// bp02
+	ObjectID si = tblChampionSquad[iChampionIndex].Possess(glbSelectedHandAction);
 	ObjectID di;
 	if (cd.pi.glbLeaderHandPossession.object != OBJECT_NULL) {
 		if (ADD_COIN_TO_WALLET(si, cd.pi.glbLeaderHandPossession.object) != 0) {
@@ -353,7 +353,7 @@ _2945:
 			UPDATE_RIGHT_PANEL(0);
 		}
 	}
-	CALC_PLAYER_WEIGHT(bp02);
+	CHAMPION_COMPUTE_LOAD(iChampionIndex);
 	return;
 }
 
@@ -700,15 +700,15 @@ void SkWinCore::CLICK_MAGICAL_MAP_RUNE(U16 rune)
 	ENTER(4);
 	U16 iManaQty = tblMagicMapRuneMana[RCJ(4,rune)];	// si
 	U16 di = 1 << rune;
-	Champion* xChampion;
+	Champion* pChampion;
 	if ((glbMagicalMapFlags & di) != 0) {
 		iManaQty = -iManaQty;
 		goto _1445;
 	}
-	xChampion = &glbChampionTable[cd.pi.glbChampionIndex];
-	if (xChampion->curMP() >= iManaQty) {
-		xChampion->curMP(xChampion->curMP() - iManaQty);
-		xChampion->heroFlag |= CHAMPION_FLAG_0800;	// 0x0800
+	pChampion = &glbChampionTable[cd.pi.glbChampionIndex];
+	if (pChampion->curMP() >= iManaQty) {
+		pChampion->curMP(pChampion->curMP() - iManaQty);
+		pChampion->redrawFlags |= X0800_CHAMPION_REDRAW_BARS;	// 0x0800
 _1445:
 		glbMagicalMapFlags ^= di;
 		glbMagicMapManaDivisor += iManaQty;
@@ -852,7 +852,7 @@ _1ab8:
 		}
 	}
 	else if (si == UI_EVENTCODE_x46_MOUTH) {	// 0x46
-		PLAYER_CONSUME_OBJECT(0xFFFF, OBJECT_NULL, -1);
+		CHAMPION_CONSUME_OBJECT(0xFFFF, OBJECT_NULL, -1);
 	}
 	else if (si == UI_EVENTCODE_x47_EYE) {	// 0x47
 		CLICK_INVENTORY_EYE();

@@ -49,15 +49,6 @@
 	#define CHANGE_CONSOLE_COLOR(_A_,_F_,_B_) ;;
 #endif
 
-//#if defined (__DJGPP__)
-//	int SKWIN_V5BITDOS_MAIN(SkWinApp* skWinApplication) { return (int)1; }
-//#elif defined (SKDOSV5) || defined (SKWINSPX)
-//#if defined (SKDOSV5) || defined (SKWINSPX)
-//	extern int SKWIN_V5BITDOS_MAIN(SkWinApp* skWinApplication);
-//#else
-//	int SKWIN_V5BITDOS_MAIN(SkWinApp* skWinApplication) { return (int)1; }
-//#endif
-
 
 //==============================================================================
 
@@ -159,18 +150,19 @@ int SKWIN_START_MAIN(int iEngine, int argc, char **argv)
 #endif // SK9821V4
 #if defined(SKDOSV5)
 		//SKWIN_V5BIT_MAIN(skWinApplication);
-		iGameRC = skCore.SKWINV5_MAIN_START();
+		//iGameRC = skCore.SKWINV5_MAIN_START();
+		iGameRC = skCore.IBMIO_BOOTSTRAP();
 #endif
 #if defined (SKWINSPX)
-		switch(skWinApplication->engine) {
-		case 5:
-			iGameRC = skCore.SKW5_QUICK_START();	// SKWINV5_MAIN_START
+//		switch(skWinApplication->engine) {
+//		case 5:
+//			iGameRC = skCore.SKW5_QUICK_START();	// SKWINV5_MAIN_START
 			//iGameRC = skCore.SKWINV5_MAIN_START();	// stand alone V5
-			break;
-		default:
+//			break;
+//		default:
 			iGameRC = skCore.IBMIO_BOOTSTRAP();
-			break;
-		}
+//			break;
+//		}
 #endif
 	}
 	//XAUDIO_SDL_CLOSE();

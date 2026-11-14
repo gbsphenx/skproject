@@ -6612,29 +6612,6 @@ void SkWinCore::_3a15_020f()
 	return;
 }
 
-//^3A15:029A
-void SkWinCore::COMPACT_TIMERLIST()
-{
-	U16 si = 0;
-	U16 di = glbTimersCount;
-	if (di != 0) {
-		Timer *bp04 = glbTimersTable;
-
-		do {
-			if (bp04->TimerType() == C00_TIME_EVENT_NONE) {
-				Timer *bp08 = &bp04[1];
-				for (; bp08->TimerType() == C00_TIME_EVENT_NONE; bp08++);
-				*bp04 = *bp08;
-				bp08->TimerType(C00_TIME_EVENT_NONE);
-			}
-			bp04++;
-			si++;
-		} while (si != di);
-		__SORT_TIMERS();
-		_3a15_020f();
-	}
-	return;
-}
 
 U16 SkWinCore::RAND16(U16 maxcnt) {
 	U16 r = _RAND16(maxcnt);
@@ -9230,7 +9207,7 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 				*xInvObject = OBJECT_NULL;
 			}
 			else {
-				PROCESS_ITEM_BONUS(iChampionIndex, *xInvObject, iInvSlot, 0);
+				CHAMPION_PROCESS_ITEM_BONUS(iChampionIndex, *xInvObject, iInvSlot, 0);
 			}
 		}
 	}
@@ -9239,7 +9216,7 @@ U16 SkWinCore::READ_SKSAVE_DUNGEON()
 		cd.pi.glbLeaderHandPossession.object = OBJECT_NULL;
 	}
 	else {
-		PROCESS_ITEM_BONUS(glbChampionLeader, cd.pi.glbLeaderHandPossession.object, -1, 0);
+		CHAMPION_PROCESS_ITEM_BONUS(glbChampionLeader, cd.pi.glbLeaderHandPossession.object, -1, 0);
 	}
 	if (READ_SKSAVE_TIMER_3C_3D() != 0) {
 		goto _1e7e;
@@ -11936,96 +11913,64 @@ void SkWinCore::ROTATE_SQUAD(U16 dir)
 // SPX: _2fcf_0434 renamed SOMETHING_TELEPORT_OR_PITS
 U16 SkWinCore::SOMETHING_TELEPORT_OR_PITS(ObjectID recordLink, i16 xpos, i16 ypos, i16 xx, i16 yy, U16 zz)
 {
-	//^2FCF:0434
-	//^2FCF:043A
 	ObjectID si = recordLink;
 	_4976_5822 = 0;
 	U16 bp14 = 0; // 1 if telefragged?
 	U16 bp12 = 0;
 	U16 bp20 = glbCurrentMapIndex; // curmap
 	U16 di = glbCurrentMapIndex; // curmap
-	//^2FCF:0452
 	U16 bp28;
 	U16 bp1e;
 	U16 bp26;
 	U16 bp24; // teleporter scope
 	if (si == OBJECT_NULL) {
-		//^2FCF:0457
 		if (glbTryPushPullObject != 0) {
 			glbTryPushPullObject = 0;
 			DRAW_ARROW_PANEL();
 		}
-		//^2FCF:0469
 		cd.pi.glbPlayerPosX = xx;
 		cd.pi.glbPlayerPosY = yy;
 		bp24 = 2;
-		//^2FCF:047A
 		bp26 = (glbChampionInventory == 0 && cd.pi.glbIsPlayerSleeping == 0) ? 1 : 0;
-		bp1e = 0xffff;
+		bp1e = 0xFFFF;
 		bp28 = 0;
 	}
 	else {
-		//^2FCF:049E
 		bp28 = IS_OBJECT_FLOATING(si);
 		bp1e = si.DBType();
 		bp24 = 3;
-		//^2FCF:04B7
 		if (bp1e == dbCreature) {
-			//^2FCF:04BD
 			bp24 = (QUERY_GDAT_DBSPEC_WORD_VALUE(si, 0x1e) != 0) ? 2 : 1;
 		}
-		//^2FCF:04D9
 		else if (bp1e == dbMissile) {
-			//^2FCF:04DF
 			Missile *bp04 = GET_ADDRESS_OF_RECORD(si)->castToMissile();
-			//^2FCF:04EC
 			_4976_581e = glbTimersTable[bp04->TimerIndex()].Direction();
 		}
-		//^2FCF:050B
 		bp26 = 0;
 	}
-	//^2FCF:0510
 	for (U16 bp1a = 50; bp1a != 0; --bp1a) {
-		//^2FCF:0518
 		U16 bp16 = glbCurrentTileMap[xx][yy];
-		//^2FCF:0532
 		U16 bp18 = bp16 >> 5;	
-		//^2FCF:053A
 		if (bp18 == ttTeleporter) {
-			//^2FCF:0542
 			if ((bp16 & 0x0008) == 0)	// if teleporter tile is not active, just leave
-				//^2FCF:0549
 				break;
-			//^2FCF:054C
 			Teleporter *bp04 = GET_ADDRESS_OF_TILE_RECORD((U8)xx, (U8)yy)->castToTeleporter();
-			//^2FCF:055F
 			if (bp04->Scope() == scopeCreatures && bp1e != dbCreature)
-				//^2FCF:0577
 				break;
-			//^2FCF:057A
 			if (bp24 != 3) {
-				//^2FCF:0580
 				if ((bp24 & bp04->Scope()) == 0)
-					//^2FCF:0592
 					break;
 			}
-			//^2FCF:0595
 			bp14 = (bp04->DestinationX() == xx && bp04->DestinationY() == yy && bp04->DestinationMap() == di) ? 1 : 0;
-			//^2FCF:05C8
 			xx = bp04->DestinationX();
 			yy = bp04->DestinationY();
 			_4976_5822 = bp04->Sound();
 			di = bp04->DestinationMap();
-			//^2FCF:05F8
 			CHANGE_CURRENT_MAP_TO(di);
-			//^2FCF:05FF
 			if (si == OBJECT_NULL) {
-				//^2FCF:0604
 				cd.pi.glbPlayerPosX = xx;
 				cd.pi.glbPlayerPosY = yy;
-				//^2FCF:0610
 				if (bp04->Sound() != 0) {
-					//^2FCF:0621
 					// SPX: TODO More in the spirit, it should call the 0x18 (teleporter) category instead of 0x03 (messages),
 					// and use the index of teleporter (is it possible?)
 					//if (!SkCodeParam::bUseDM2ExtendedMode)
@@ -12033,192 +11978,125 @@ U16 SkWinCore::SOMETHING_TELEPORT_OR_PITS(ObjectID recordLink, i16 xpos, i16 ypo
 					//else
 					//	QUEUE_NOISE_GEN1(GDAT_CATEGORY_TELEPORTERS,0x00,SOUND_STD_TELEPORT,0x61,0x80,glbPlayerPosX,glbPlayerPosY,-1);
 				}
-				//^2FCF:063F
 				if (bp20 == di) {
-					//^2FCF:0644
 					bp26 &= _4976_5bee[0];
 				}
-				//^2FCF:064C
 				ROTATE_SQUAD((bp04->Rotation() + ((bp04->RotationType() != 0) ? 0 : cd.pi.glbPlayerDir)) & 3);
 			}
-			//^2FCF:0680
 			else if (bp1e == dbCreature && zz != 00) {
-				//^2FCF:068C
 				if (bp04->Sound() != 0) {
-					//^2FCF:069D
 					QUEUE_NOISE_GEN1(GDAT_CATEGORY_x03_MESSAGES,0x00,SOUND_STD_TELEPORT_MESSAGE,0x61,0x80,xx,yy,0x01);
 				}
-				//^2FCF:06B9
 				ROTATE_CREATURE(si, bp04->RotationType(), bp04->Rotation());
 			}
-			//^2FCF:06DC
 			else if (bp1e == dbMissile) {
-				//^2FCF:06E2
 				si = ROTATE_RECORD_BY_TELEPORTER(bp04, si);
 			}
-			//^2FCF:06F4
 			else if (bp04->RotationType() == 0 && xpos != -2) {
-				//^2FCF:070B
 				si.Dir(si.Dir() + bp04->Rotation());
 			}
-			//^2FCF:072D
 			if (bp14 == 0)
-				//^2FCF:0733
 				continue;
-			//^2FCF:0736
 			break;
 		}
-		//^2FCF:0739
 		// SPX: Add special switchable parameter to not fall into pits
 		if (bp18 == ttPit && bp28 == 0 && (bp16 & 8) != 0 && (bp16 & 1) == 0 && !SkCodeParam::bWalkOverPits) {
-			//^2FCF:075F
 			// SPX: Retrieving 1 (only for VOID set) tells to do special treatment when falling into a pit
 			U16 bp2a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, dunMapLocalHeader->MapGraphicsStyle(), dtWordValue, GDAT_GFXSET_x6A_VOID_RANDOM_FALL);
-			//^2FCF:077F
 			if (bp2a != 0 && bp1e == dbCreature) {
-				//^2FCF:078B
 				Creature *bp10 = GET_ADDRESS_OF_RECORD(si)->castToCreature();
-				//^2FCF:0798
 				xx = bp10->TriggerX();
 				yy = bp10->TriggerY();
 				di = bp10->TriggerMap();
-				//^2FCF:07BE
 				CHANGE_CURRENT_MAP_TO(di);
-				//^2FCF:07C5
 				continue;
 			}
-			//^2FCF:07C8
 			if (bp26 != 0 && bp2a == 0 && _4976_5824 == 0) {
-				//^2FCF:07DB
 				bp26 = _4976_5bee[0];
-				//^2FCF:07E3
 				if (bp12 != 0) {
-					//^2FCF:07E9
 					LOAD_LOCALLEVEL_GRAPHICS_TABLE(di);
-					//^2FCF:07F0
 					LOAD_LOCALLEVEL_DYN();
 				}
-				//^2FCF:07F5
 				DISPLAY_VIEWPORT(cd.pi.glbPlayerDir, xx, yy);
-				//^2FCF:0807
 				CHANGE_VIEWPORT_TO_INVENTORY(1);
 			}
-			//^2FCF:080F
 			if (bp2a != 0) {
-				//^2FCF:0818
 				U16 bp2e = 0;
-				//^2FCF:081D
 				ObjectID bp2c = GET_TILE_RECORD_LINK(xx, yy);
-				//^2FCF:082A
 				for (; bp2c != OBJECT_END_MARKER && ((bp1e = bp2c.DBType()) <= dbActuator); bp2c = GET_NEXT_RECORD_LINK(bp2c)) {
-					//^2FCF:082C
 					if (bp1e == dbText) {
-						//^2FCF:0832
 						Text *bp0c = GET_ADDRESS_OF_RECORD(bp2c)->castToText();
-						//^2FCF:0841
 						if (bp0c->TextMode() == 1) {
-							//^2FCF:0852
 							if (bp0c->SimpleTextExtUsage() == 0x0c) {
-								//^2FCF:0867
 								bp2e = bp0c->TextIndex() & 0xff;
-								//^2FCF:0877
 								break;
 							}
 						}
 					}
-					//^2FCF:0879
 				}
-				//^2FCF:089C
 				// SPX: 1) Counts how many "special markers" for valid destinations when falling from VOID.
 				U16 bp30 = SEARCH_DUNGEON_FOR_SPECIAL_MARKER(SDFSM_CMD_COUNT_MARKERS, 0x0000, bp2e, &xx, &yy);
 				SkD((DLV_FSM, "Found %d special markers.\n", bp30));
-				//^2FCF:08B8
 				// SPX: 2) Search one of this "special markers" with a random on the count
 				di = SEARCH_DUNGEON_FOR_SPECIAL_MARKER(SDFSM_CMD_FIND_MAP_OFFVOID, RAND16(bp30), bp2e, &xx, &yy);
 			}
 			else {
-				//^2FCF:08DC
 				di = LOCATE_OTHER_LEVEL(di, 1, &xx, &yy, NULL);
 			}
-			//^2FCF:08FA
 			CHANGE_CURRENT_MAP_TO(di);
-			//^2FCF:0901
 			if (si == OBJECT_NULL) {
-				//^2FCF:0909
 				cd.pi.glbPlayerPosX = xx;
 				cd.pi.glbPlayerPosY = yy;
-				//^2FCF:0915
 				if (cd.pi.glbChampionsCount > 0) {
-					//^2FCF:091F
-					Champion *bp08;
+					Champion *pChampion;	// bp08
+					U16 iChampionIdx;	// bp18
 					if (_4976_5824 != 0) {
-						//^2FCF:0926
 						bp26 = (_4976_5bee[0] != 0 && glbChampionInventory == 0 && cd.pi.glbIsPlayerSleeping == 0) ? 1 : 0;
-						//^2FCF:0945
-						bp08 = tblChampionSquad;
-						//^2FCF:094D
-						for (bp18=0; bp18 < cd.pi.glbChampionsCount; bp08++, bp18++) {
-							//^2FCF:0954
-							if (bp08->curHP() != 0) {
-								//^2FCF:095E
-								ADJUST_STAMINA(
-									bp18,
-									((GET_PLAYER_WEIGHT(bp18) * 25) / MAX_LOAD(bp08)) + 1
+						pChampion = tblChampionSquad;
+						for (iChampionIdx=0; iChampionIdx < cd.pi.glbChampionsCount; pChampion++, iChampionIdx++) {
+							if (pChampion->curHP() != 0) {
+								CHAMPION_ADJUST_STAMINA(
+									iChampionIdx,
+									((GET_PLAYER_WEIGHT(bp18) * 25) / MAX_LOAD(pChampion)) + 1
 									);
 							}
-							//^2FCF:098D
 						}
 					}
 					else {
-						//^2FCF:09A1
-						bp08 = tblChampionSquad;
-						//^2FCF:09A9
-						for (bp18 = 0; (bp18 < cd.pi.glbChampionsCount); bp08++, bp18++) {
-							//^2FCF:09B0
-							if (bp08->curHP() != 0) {
-								//^2FCF:09BA
+						pChampion = tblChampionSquad;
+						for (iChampionIdx = 0; (iChampionIdx < cd.pi.glbChampionsCount); pChampion++, iChampionIdx++) {
+							if (pChampion->curHP() != 0) {
 								WOUND_PLAYER(
 									bp18, 
-									min_value(bp08->maxHP() >> 2, 17) + RAND02(),
+									min_value(pChampion->maxHP() >> 2, 17) + RAND02(),
 									0x0030,
 									0x0002
 									);
-								//^2FCF:09E9
 								// SPX: Noise when falling a pit
 								QUEUE_NOISE_GEN2(
 									GDAT_CATEGORY_x16_CHAMPIONS,
-									bp08->HeroType(),
+									pChampion->HeroType(),
 									SOUND_CHAMPION_SCREAM,
 									0xFE,
 									cd.pi.glbPlayerPosX,
 									cd.pi.glbPlayerPosY,
-									0xffff,
-									0x00be,
-									0x00ff
+									0xFFFF,
+									0x00BE,
+									0x00FF
 									);
 							}
-							//^2FCF:0A12
 						}
 					}
 				}
-				//^2FCF:0A23
 				_4976_5824 = 0;
-				//^2FCF:0A29
 				continue;
 			}
-			//^2FCF:0A2C
 			if (bp1e != dbCreature)
-				//^2FCF:0A32
 				continue;
-			//^2FCF:0A35
 			if (zz == 0)
-				//^2FCF:0A3B
 				continue;
-			//^2FCF:0A3E
 			if (xpos >= 0) {
-				//^2FCF:0A44
 				CHANGE_CURRENT_MAP_TO(bp20);
-				//^2FCF:0A4D
 				ATTACK_CREATURE(
 					si,
 					xpos,
@@ -12228,48 +12106,29 @@ U16 SkWinCore::SOMETHING_TELEPORT_OR_PITS(ObjectID recordLink, i16 xpos, i16 ypo
 					0x0014
 					);
 			}
-			//^2FCF:0A62
 			CHANGE_CURRENT_MAP_TO(di);
-			//^2FCF:0A69
 			continue;
 		}
-		//^2FCF:0A6C
 		if (bp18 != ttStairs || si == OBJECT_NULL || bp1e == 14 || bp1e == 4)
-			//^2FCF:0A8C
 			break;
-		//^2FCF:0A8F
 		if ((bp16 & 0x0004) == 0) {
-			//^2FCF:0A96
 			di = LOCATE_OTHER_LEVEL(di, 1, &xx, &yy, NULL);
-			//^2FCF:0AB1
 			CHANGE_CURRENT_MAP_TO(di);
 		}
-		//^2FCF:0AB8
 		U16 bp22 = _0cee_06dc_GET_TILE_DIRECTION(xx, yy);
-		//^2FCF:0AC8
 		xx += glbXAxisDelta[bp22];
-		//^2FCF:0AD4
 		yy += glbYAxisDelta[bp22];
-		//^2FCF:0AE0
 		bp22 = (bp22 +2 ) & 3;
-		//^2FCF:0AEB
 		U16 bp1c = si.Dir();
-		//^2FCF:0AF3
 		bp1c = ((((bp1c - bp22 + 1) & 2) >> 1) + bp22) & 3;
-		//^2FCF:0B05
 		si.Dir(bp1c);
 
-		//^2FCF:0B12
 	}
-	//^2FCF:0B1F
 	_4976_5826 = xx;
 	_4976_5828 = yy;
 	_4976_581c = di;
-	//^2FCF:0B2F
 	_4976_5820 = si.Dir();
-	//^2FCF:0B37
 	if (bp12 != 0 && zz != 0 && si != OBJECT_NULL) {
-		//^2FCF:0B48
 		// SPX: Sound when an item hit an obstacle
 		QUEUE_NOISE_GEN2(
 			QUERY_CLS1_FROM_RECORD(si),
@@ -12283,11 +12142,8 @@ U16 SkWinCore::SOMETHING_TELEPORT_OR_PITS(ObjectID recordLink, i16 xpos, i16 ypo
 			0x0080
 			);
 	}
-	//^2FCF:0B73
 	CHANGE_CURRENT_MAP_TO(bp20);
-	//^2FCF:0B7C
 	SOUND_482b_05bf(1);
-	//^2FCF:0B84
 	return bp28;
 }
 
@@ -15214,7 +15070,7 @@ void SkWinCore::_2759_12e6()
 			bp0a = glbSelectedHandAction;
 			glbSelectedHandAction = di;
 			IS_ITEM_HAND_ACTIVABLE(si, bp04->id4, di);
-			ENGAGE_COMMAND(si, bp04->b3|0x8000);
+			CHAMPION_ENGAGE_COMMAND(si, bp04->b3|0x8000);
 			glbSelectedHandAction = bp0a;
 			//^2759:13A7
 		}

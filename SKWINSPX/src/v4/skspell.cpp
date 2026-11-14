@@ -136,7 +136,7 @@ U16 SkWinCore::CAST_SPELL_PLAYER(U16 player, SpellDefinition *ref, U16 power)
 	i16 bp0a;
 	for (bp0a = bp08 -bp06; (bp0a--) > 0; ) {
 		if ((RAND() & 127) > min_value(GET_PLAYER_ABILITY(champion, abWiz, 0) +15, 115)) {
-			ADJUST_SKILLS(player, ref->requiredSkill, bp0c << (bp08 -bp06));
+			CHAMPION_ADJUST_SKILLS(player, ref->requiredSkill, bp0c << (bp08 -bp06));
 			di = 16;
 			goto _26fe; // go to end, spell failed ?
 		}
@@ -224,7 +224,7 @@ _2540:	// Do light
 				case C03_SPELL_ENCHANTMENT_INVISIBILITY:		// Invisibility (OH EW SAR)
 					bp18.TimerType(ttyInvisibility);
 					if (glbGlobalSpellEffects.Invisibility++ == 0 && glbChampionInventory != 0) {
-						glbChampionTable[glbChampionInventory].heroFlag |= CHAMPION_FLAG_4000;	// 0x4000
+						glbChampionTable[glbChampionInventory].redrawFlags |= X4000_CHAMPION_REDRAW_STATUS_BOX;	// 0x4000
 					}
 					bp08 <<= 3;
 					bp18.SetMap(cd.pi.glbPlayerMap);
@@ -362,7 +362,7 @@ tag01cdaa:
 _26cf:
 	di = 0;
 	if (bp0e != 0) {
-		ADJUST_SKILLS(player, ref->requiredSkill, bp0c);
+		CHAMPION_ADJUST_SKILLS(player, ref->requiredSkill, bp0c);
 		if (!SkCodeParam::bDebugInfiniteSpells)
 			ADJUST_HAND_COOLDOWN(player, bp0e, 2);
 	}

@@ -55,7 +55,7 @@ Bit16u SkWinCore::IS_TILE_PASSAGE(i16 xx, i16 yy)
 
 	//^0CEE:0330
 	ATLASSERT(glbCurrentTileMap[xx]);
-	Bit8u tileType = (glbCurrentTileMap[xx])[yy] >> 5;
+	U8 tileType = (glbCurrentTileMap[xx])[yy] >> 5;
 	if (tileType == ttTeleporter) {
 		//^0CEE:0357
 		if (GET_ADDRESS_OF_TILE_RECORD(xx, yy)->castToTeleporter()->w4_0_0() != 0) {
@@ -303,7 +303,7 @@ Bit16u SkWinCore::GET_RANDOM_ORNAMENT_INDEX(Bit16u iValue1, Bit16u iValue2, Bit1
 // SPX: DM1 Reference F0170_DUNGEON_GetRandomOrnamentOrdinal
 // SPX: _0cee_1815 renamed GET_RANDOM_ORNAMENT_ORDINAL
 // (i16 xx, i16 yy, Bit16u ss, Bit16u tt, Bit16u uu)
-Bit8u SkWinCore::GET_RANDOM_ORNAMENT_ORDINAL(i16 iRandomOrnamentAllowed, i16 yy, Bit16u ss, Bit16u tt, Bit16u uu)
+U8 SkWinCore::GET_RANDOM_ORNAMENT_ORDINAL(i16 iRandomOrnamentAllowed, i16 yy, Bit16u ss, Bit16u tt, Bit16u uu)
 {
 	// CSBwinSimilarity: TAG00a44c,RandomWallDecoration
 
@@ -369,7 +369,7 @@ void SkWinCore::SET_SQUARE_ASPECT_RANDOM_WALL_ORNAMENT_ORDINALS(ExtendedTileInfo
 		//^0CEE:192E
 		for (si = 3; si <= 6; si++) {
 			//^0CEE:1933
-			if (GET_WALL_ORNATE_ALCOVE_TYPE(Bit8u(ref->tfoi[RCJ(4,si - 3)])) != 0) {
+			if (GET_WALL_ORNATE_ALCOVE_TYPE(U8(ref->tfoi[RCJ(4,si - 3)])) != 0) {
 				//^0CEE:194A
 				ref->tfoi[RCJ(4,si -3)] = 0x00ff;
 			}
@@ -410,7 +410,7 @@ ObjectID SkWinCore::_0cee_1a46(ExtendedTileInfo *ref, ObjectID recordLink, i16 d
 				//^0CEE:1AA6
 				GenericRecord *_bp04 = GET_ADDRESS_OF_RECORD(recordLink);
 				//^0CEE:1AB4
-				Bit8u bp13;
+				U8 bp13;
 				if (dbtype == dbText && (!SkCodeParam::bUseFixedMode || (SkCodeParam::bUseFixedMode && !iOppositeSide))) {
 					Text *bp04 = _bp04->castToText();
 					//^0CEE:1ABD
@@ -439,7 +439,7 @@ _1ad5:
 
 						case 1:
 							//^0CEE:1B1B
-							bp13 = Bit8u(bp04->OrnateIndex());
+							bp13 = U8(bp04->OrnateIndex());
 							//^0CEE:1B2D
 							switch (bp04->SimpleTextExtUsage()) {
 								case 14:
@@ -685,7 +685,7 @@ void SkWinCore::SUMMARIZE_STONE_ROOM(ExtendedTileInfo *ref, Bit16u dir, Bit16u x
 	ref->tfoi[3] = (0x00FF);
 	ref->xvalue = (0x0000);
 	//^0CEE:1DE8
-	Bit8u bp05 = GET_TILE_VALUE(xx, yy);	// CSBWin cellFlags = GetCellFlags(rslt->x, rslt->y);
+	U8 bp05 = GET_TILE_VALUE(xx, yy);	// CSBWin cellFlags = GetCellFlags(rslt->x, rslt->y);
 	//^0CEE:1DF7
 	ref->w2 = (bp05);
 	//^0CEE:1E00
@@ -699,7 +699,7 @@ void SkWinCore::SUMMARIZE_STONE_ROOM(ExtendedTileInfo *ref, Bit16u dir, Bit16u x
 	Bit16u bp0a;
 	Bit16u bp08;
 	Bit16u bp0c;
-	Bit8u bp15;
+	U8 bp15;
 	i16 bp18;
 	i16 bp1a;
 	Bit16u bp12;
@@ -823,7 +823,7 @@ _2000:
 				//^0CEE:2020
 				if (bp14 != 0) {	// SPX: That value is only used for VOID and is 0x8028; 0x28 is the floor animated blue cloud
 					//^0CEE:2027
-					bp15 = Bit8u(bp14);
+					bp15 = U8(bp14);
 					//^0CEE:202D
 					if ((bp14 & 0x8000) != 0) {
 						//^0CEE:2034
@@ -856,7 +856,7 @@ _2075:
 					//^0CEE:20AA
 					if (bp04->TextMode() == 1) {
 						//^0CEE:20BE
-						bp15 = Bit8u(bp04->OrnateIndex());
+						bp15 = U8(bp04->OrnateIndex());
 						//^0CEE:20CD
 						switch (bp04->SimpleTextExtUsage()) {
 							case 0x11: // 0x11 - ?
@@ -1068,7 +1068,7 @@ _233a:
 }
 
 //^29EE:0BCC
-i16 SkWinCore::QUERY_DUNGEON_MAP_CHIP_PICT(Bit8u cls1, Bit8u cls2, Bit8u **ppBuff, Bit8u *localpal)
+i16 SkWinCore::QUERY_DUNGEON_MAP_CHIP_PICT(U8 cls1, U8 cls2, U8 **ppBuff, U8 *localpal)
 {
 	//^29EE:0BCC
 	ENTER(0);
@@ -1561,7 +1561,7 @@ Bit16u SkWinCore::GET_ITEMDB_OF_ITEMSPEC_ACTUATOR(Bit16u actuatorData)
 }
 
 //^0CEE:2679
-Bit8u SkWinCore::GET_ITEMTYPE_OF_ITEMSPEC_ACTUATOR(Bit16u actuatorData)
+U8 SkWinCore::GET_ITEMTYPE_OF_ITEMSPEC_ACTUATOR(Bit16u actuatorData)
 {
 	// returns a value ranged from 0 to 127, as an item type.
 
@@ -1600,7 +1600,7 @@ Bit8u SkWinCore::GET_ITEMTYPE_OF_ITEMSPEC_ACTUATOR(Bit16u actuatorData)
 			dx -= 0x0180;
 	}
 	//^0CEE:26CB
-	return (Bit8u)dx;
+	return (U8)dx;
 }
 
 
@@ -1901,7 +1901,7 @@ U8 SkWinCore::GET_WALL_DECORATION_OF_ACTUATOR(Actuator *ref)
 	// if iGFXNum is 0, then no gfx to fetch
 	U16 iGFXNum = ref->GraphicNumber();	// si
 	if (iGFXNum != 0) {
-		Bit8u *bp04 = &glbCurrentTileMap[glbCurrentMapWidth -1][glbCurrentMapHeight + dunMapLocalHeader->CreaturesTypes()];
+		U8 *bp04 = &glbCurrentTileMap[glbCurrentMapWidth -1][glbCurrentMapHeight + dunMapLocalHeader->CreaturesTypes()];
 		return bp04[iGFXNum -1];
 	}
 	return -1; // 0xFF
@@ -1913,7 +1913,7 @@ U8 SkWinCore::GET_FLOOR_DECORATION_OF_ACTUATOR(Actuator *ref)
 	// if iGFXNum is 0, then no gfx to fetch
 	U16 iGFXNum = ref->GraphicNumber();	// si
 	if (iGFXNum != 0) {
-		Bit8u *bp04 = &glbCurrentTileMap[glbCurrentMapWidth -1][glbCurrentMapHeight + dunMapLocalHeader->CreaturesTypes() + dunMapLocalHeader->WallGraphics()];
+		U8 *bp04 = &glbCurrentTileMap[glbCurrentMapWidth -1][glbCurrentMapHeight + dunMapLocalHeader->CreaturesTypes() + dunMapLocalHeader->WallGraphics()];
 		return bp04[iGFXNum - 1];
 	}
 	else {
@@ -2047,7 +2047,7 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(i16 xpos, i16 ypos, ObjectID reco
 					//^2FCF:25F0
 					continue;
 				//^2FCF:25F2
-				Bit8u bp0106[200];
+				U8 bp0106[200];
 				QUERY_MESSAGE_TEXT(bp0106, si, 1);
 				//^2FCF:2603
 				DISPLAY_HINT_TEXT(C15_COLOR_WHITE, bp0106);
@@ -2110,10 +2110,10 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(i16 xpos, i16 ypos, ObjectID reco
 			bp3c.SetMap(glbCurrentMapIndex);
 			bp3c.SetTick(glbGameTick + 1);
 			//^2FCF:2774
-			bp3c.TimerType(ttyResurrect);
-			bp3c.actor = (Bit8u)bp2e;
-			bp3c.Xcoord((Bit8u)xpos);
-			bp3c.Ycoord((Bit8u)ypos);
+			bp3c.TimerType(C13_TIME_EVENT_RESURRECT);
+			bp3c.actor = (U8)bp2e;
+			bp3c.Xcoord((U8)xpos);
+			bp3c.Ycoord((U8)ypos);
 			bp3c.Value2(bp1e);
 			bp3c.ActionType(2);
 			//^2FCF:2794
@@ -2239,7 +2239,7 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(i16 xpos, i16 ypos, ObjectID reco
 						{
 							if (iObjectDBType == DB_CATEGORY_CREATURE)
 							{
-								Bit8u iActuatorTriggers = 0;
+								U8 iActuatorTriggers = 0;
 								Bit16u iActuatorEffectType = xActuator->ActionType();
 
 								if (place == FCT_PLACE_ON &&
@@ -2485,7 +2485,7 @@ _29a8:
 			//SPX: test DM1
 			if (SkCodeParam::bDM1Mode && !bp18->TextVisibility())
 			{
-				Bit8u bp0106[200];
+				U8 bp0106[200];
 				QUERY_MESSAGE_TEXT(bp0106, si, 1);
 				DISPLAY_HINT_TEXT(C11_COLOR_YELLOW, bp0106);
 			}
@@ -2533,9 +2533,9 @@ _29a8:
 							//^2FCF:2C34
 							bp3c.TimerType(tty5D);
 							bp3c.actor = TIMER_ACTOR__00;
-							bp3c.b6_0_4((Bit8u)xpos);
+							bp3c.b6_0_4((U8)xpos);
 							bp3c.w6_5_9(ypos);
-							bp3c.Value2((Bit8u)cd.pi.glbPlayerMap);
+							bp3c.Value2((U8)cd.pi.glbPlayerMap);
 							bp3c.w6_a_b(cd.pi.glbPlayerDir);
 							//^2FCF:2C70
 							QUEUE_TIMER(&bp3c);
@@ -2564,7 +2564,7 @@ _29a8:
 						//^2FCF:2CC9
 						QUEUE_NOISE_GEN1(
 							GDAT_CATEGORY_x0A_FLOOR_GFX,
-							((Bit8u)bp18->TextIndex()) & 0xff,
+							((U8)bp18->TextIndex()) & 0xff,
 							SOUND_STD_ACTIVATION,
 							0x8c,
 							0x80,
@@ -2636,8 +2636,8 @@ _29a8:
 				//^2FCF:2D34
 				continue;
 			//^2FCF:2D36
-			//if (QUERY_GDAT_ENTRY_DATA_INDEX(0x09, ((Bit8u)bp18->TextIndex()) & 0xff, dtWordValue, 0x0e) != di)
-			if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x09_WALL_GFX, ((Bit8u)bp18->TextIndex()) & 0xff, dtWordValue, GDAT_WALL_ORNATE__IS_ITEM_TRIGGERED) != di)
+			//if (QUERY_GDAT_ENTRY_DATA_INDEX(0x09, ((U8)bp18->TextIndex()) & 0xff, dtWordValue, 0x0e) != di)
+			if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x09_WALL_GFX, ((U8)bp18->TextIndex()) & 0xff, dtWordValue, GDAT_WALL_ORNATE__IS_ITEM_TRIGGERED) != di)
 				//^2FCF:2D56
 				continue;
 			//^2FCF:2D58
@@ -3159,9 +3159,9 @@ _13ce:
 				//^2FCF:144C
 				if (bp06 != 0xffff) {
 					//^2FCF:1454
-					glbTimersTable[bp06].Xcoord((Bit8u)xposTo);
+					glbTimersTable[bp06].Xcoord((U8)xposTo);
 					//^2FCF:1466
-					glbTimersTable[bp06].Ycoord((Bit8u)yposTo);
+					glbTimersTable[bp06].Ycoord((U8)yposTo);
 					//^2FCF:147B
 					glbTimersTable[bp06].SetMap(di);
 					//^2FCF:14C3

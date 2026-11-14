@@ -38,7 +38,7 @@ void SkWinCore::PROCESS_TIMER_0E(Timer *v0, U16 v1)
 		bp0c
 		);
 	SET_ITEMTYPE(si, v0->Value2());
-	PROCESS_ITEM_BONUS(v0->actor, si, -1, v1);
+	CHAMPION_PROCESS_ITEM_BONUS(v0->actor, si, -1, v1);
 	COPY_MEMORY(bp04, bp08, bp0c);
 	DEALLOC_UPPER_MEMORY(bp0c);
 	return;
@@ -105,8 +105,8 @@ void SkWinCore::PROCEED_GLOBAL_EFFECT_TIMERS()
 				}
 		}
 	}
-	for (U16 si=0; si < cd.pi.glbChampionsCount; si++) {
-		CALC_PLAYER_WEIGHT(si);
+	for (U16 iChampionIdx = 0; iChampionIdx < cd.pi.glbChampionsCount; iChampionIdx++) {
+		CHAMPION_COMPUTE_LOAD(iChampionIdx);
 	}
 	return;
 }
@@ -1322,11 +1322,11 @@ void SkWinCore::ACTIVATE_ITEM_TELEPORT(Timer *ref, Actuator *pr4, ObjectID rl, X
 								// SPX: There I wonder why the DEALLOC comes first ? ... I inverted the order in fixed mode
 								if (!SkCodeParam::bUseFixedMode) {
 									DEALLOC_RECORD(bp0e);
-									BRING_CHAMPION_TO_LIFE(ADD_ITEM_CHARGE(bp0e, 0));
+									CHAMPION_RESURRECT(ADD_ITEM_CHARGE(bp0e, 0));
 								}
 								else if (SkCodeParam::bUseFixedMode)
 								{
-									BRING_CHAMPION_TO_LIFE(ADD_ITEM_CHARGE(bp0e, 0));
+									CHAMPION_RESURRECT(ADD_ITEM_CHARGE(bp0e, 0));
 									DEALLOC_RECORD(bp0e);
 								}
 								continue;
@@ -2491,11 +2491,10 @@ void SkWinCore::PROCESS_SOUND(U8 iSoundQueueIndex)
 // SPX: _3a15_303f renamed PROCESS_TIMER_0C
 void SkWinCore::PROCESS_TIMER_0C(U8 iChampionIndex)
 {
-	ENTER(4);
 	Champion *pChampion = &tblChampionSquad[iChampionIndex];
 	pChampion->timerIndex = TIMER_NONE;
 	if (pChampion->curHP() != 0)
-		pChampion->heroFlag |= CHAMPION_FLAG_0800;	// 0x800
+		pChampion->redrawFlags |= X0800_CHAMPION_REDRAW_BARS;	// 0x800
 	return;
 }
 //^3A15:316C
@@ -2503,17 +2502,13 @@ void SkWinCore::PROCESS_TIMER_0C(U8 iChampionIndex)
 // CSBWin: Timer.cpp TAG0114fa ProcessLightLevelTimer
 void SkWinCore::PROCESS_TIMER_LIGHT(Timer *ref)
 {
-	//^3A15:316C
 	ENTER(12);
-	//^3A15:3172
 	i16 si = ref->value;	// si
 	if (si == 0)
 		return;
-	//^3A15:3182
 	X16 isNegative = (si < 0) ? 1 : 0; // bp02
 	if (isNegative) //if (bp02 != 0)
 		si = -si;
-	//^3A15:319A
 	i16 di;	// di
 	
 	si = tLightLevelItem[RCJ(16,si)] - tLightLevelItem[RCJ(16,di = si -1)];
@@ -2523,19 +2518,15 @@ void SkWinCore::PROCESS_TIMER_LIGHT(Timer *ref)
 
 	if (isNegative) // if (bp02 != 0) 
 	{
-		//^3A15:31B7
 		si = -si;
 		di = -di;
 	}
 	else {
-		//^3A15:31C5
 		si <<= 1;
 	}
-	//^3A15:31C7
 	glbGlobalSpellEffects.Light += si;
 	if (di == 0)
 		return;
-	//^3A15:31CF
 	Timer newTimer; // bp0c
 	newTimer.TimerType(ttyLight);
 	newTimer.value = di;
@@ -2543,78 +2534,57 @@ void SkWinCore::PROCESS_TIMER_LIGHT(Timer *ref)
 	newTimer.SetTick(glbGameTick +8);
 	newTimer.actor = TIMER_ACTOR__00;
 	QUEUE_TIMER(&newTimer);
-	//^3A15:3208
 	return;
 }
 //^3A15:306C
 // SPX: _3a15_306c renamed PROCESS_TIMER_RESURRECTION
 // Check CSBWin::ProcessTT_ViAltar
-void SkWinCore::PROCESS_TIMER_RESURRECTION(Timer *ref)
+void SkWinCore::TIME_EVENT_PROCESS_RESURRECTION(Timer *pEvent)
 {
-	//^3A15:306C
-	ENTER(8);
-	//^3A15:3072
-	X16 bonesX = ref->XcoordB();	// bp02
-	X16 bonesY = ref->YcoordB();	// bp04
-	X16 bonesPos = ref->Value2();	// bp06
-	X16 championNo = ref->actor;		// bp08
-	//X16 di = ref->b9_0_0();
-	X16 VIState = ref->ActionType(); // di / SPX: I think this is action rather than b9_0_0 which is only 1 bit, and Action is set when the timer is created ...
-	ObjectID si;
-	switch (VIState) {
-		case 2:
-			//^3A15:30B5
+	X16 bonesX = pEvent->XcoordB();	// bp02
+	X16 bonesY = pEvent->YcoordB();	// bp04
+	X16 bonesPos = pEvent->Value2();	// bp06
+	X16 iChampionIdx = pEvent->actor;		// bp08
+	X16 iResurrectionStep = pEvent->ActionType(); // di / SPX: I think this is action rather than b9_0_0 which is only 1 bit, and Action is set when the timer is created ...
+	ObjectID oidCurrent;	// si
+	switch (iResurrectionStep) {
+		case C2_RESURRECT_STEP_SMOKE:
 			CREATE_CLOUD(OBJECT_EFFECT_CLOUD_REBIRTH, 0, bonesX, bonesY, bonesPos);	// oFFE4
-			ref->SetTick(ref->GetTick() +5);
-			//^3A15:30D6
-			VIState--;
-			//ref->b9_0_0(U8(di));
-			ref->ActionType(U8(VIState)); // SPX: fix
-			QUEUE_TIMER(ref);
+			pEvent->SetTick(pEvent->GetTick() + C5_RESURRECT_SMOKE_DURATION);
+			iResurrectionStep--;
+			pEvent->ActionType(U8(iResurrectionStep)); // SPX: fix
+			QUEUE_TIMER(pEvent);
 			break;
-		case 1:
-			//^3A15:30EE
-			for (si = GET_TILE_RECORD_LINK(bonesX, bonesY); si != OBJECT_END_MARKER; si = GET_NEXT_RECORD_LINK(si)) {
-				//^3A15:30FD
+		case C1_RESURRECT_STEP_BONES:
+			for (oidCurrent = GET_TILE_RECORD_LINK(bonesX, bonesY); oidCurrent != OBJECT_END_MARKER; oidCurrent = GET_NEXT_RECORD_LINK(oidCurrent)) {
 				if (true
-					&& si.Dir() == bonesPos 
-					&& QUERY_CLS1_FROM_RECORD(si) == GDAT_CATEGORY_x15_MISCELLANEOUS
-					&& QUERY_CLS2_FROM_RECORD(si) == GET_CHAMPION_BONES_ITEM_ID()	// bones item (SPX: was hard coded 0, for DM1 compatibility, I changed using a function to get the correct item ID)
-					&& ADD_ITEM_CHARGE(si, 0) == championNo
+					&& oidCurrent.Dir() == bonesPos 
+					&& QUERY_CLS1_FROM_RECORD(oidCurrent) == GDAT_CATEGORY_x15_MISCELLANEOUS
+					&& QUERY_CLS2_FROM_RECORD(oidCurrent) == GET_CHAMPION_BONES_ITEM_ID()	// bones item (SPX: was hard coded 0, for DM1 compatibility, I changed using a function to get the correct item ID)
+					&& ADD_ITEM_CHARGE(oidCurrent, 0) == iChampionIdx
 				) {
-					//^3A15:312C
-					CUT_RECORD_FROM(si, NULL, bonesX, bonesY);
-					DEALLOC_RECORD(si);
-					ref->SetTick(ref->GetTick() +1);
-					//^3A15:314D
-					//^3A15:30D6
-					VIState--;
-//						ref->b9_0_0(U8(di));
-					ref->ActionType(U8(VIState)); // SPX: fix
-					QUEUE_TIMER(ref);
+					CUT_RECORD_FROM(oidCurrent, NULL, bonesX, bonesY);
+					DEALLOC_RECORD(oidCurrent);
+					pEvent->SetTick(pEvent->GetTick() + 1);
+					iResurrectionStep--;
+					pEvent->ActionType(U8(iResurrectionStep)); // SPX: fix
+					QUEUE_TIMER(pEvent);
 					break;
 				}
-				//^3A15:314F
 			}
-			//^3A15:315D
 			break;
-		case 0:
-			//^3A15:315F
-			BRING_CHAMPION_TO_LIFE(championNo);
+		case C0_RESURRECT_STEP_RESURRECT:
+			CHAMPION_RESURRECT(iChampionIdx);
 			break;
 		default:
-			//^3A15:30B2
 			break;
 	}
-	//^3A15:3168
 	return;
 }
 //^3A15:32BC
 void SkWinCore::CONTINUE_ORNATE_ANIMATOR(Timer *ref)
 {
-	//^3A15:32BC
 	ENTER(4);
-	//^3A15:32C1
 	ref->SetTick(ref->GetTick() +1);
 	Actuator *bp04 = GET_ADDRESS_OF_ACTU(ref->id6());
 	X16 si = GET_ORNATE_ANIM_LEN(bp04, ref->w8);
@@ -2623,10 +2593,8 @@ void SkWinCore::CONTINUE_ORNATE_ANIMATOR(Timer *ref)
 		bp04->ActiveStatus(0);
 	}
 	else {
-		//^3A15:3322
 		QUEUE_TIMER(ref);
 	}
-	//^3A15:332E
 	return;
 }
 //^3A15:341C
@@ -2668,20 +2636,14 @@ void SkWinCore::PROCESS_TIMER_RELEASE_DOOR_BUTTON(Timer *ref)
 // I hit this one in starting cave, after reviving some champions
 void SkWinCore::PROCESS_TIMER_59(Timer *ref) 
 {
-	//^3A15:3766
 	ENTER(4);
-	//^3A15:376A
 	Actuator *bp04 = GET_ADDRESS_OF_ACTU(ref->id8());
 	if (bp04->OnceOnlyActuator() == 0) {
-		//^3A15:378E
 		if (glbCurrentMapIndex == cd.pi.glbPlayerMap) {
-			//^3A15:3797
 			glbDoLightCheck = 1;
 		}
-		//^3A15:379D
 		bp04->ActiveStatus(0);
 	}
-	//^3A15:37A5
 	return;
 }
 
@@ -2949,7 +2911,7 @@ void SkWinCore::PROCEED_TIMERS()
 				glbGlobalSpellEffects.Invisibility = glbGlobalSpellEffects.Invisibility -1;
 				if (glbGlobalSpellEffects.Invisibility != 0 || glbChampionInventory == 0)
 					break;
-				glbChampionTable[glbChampionInventory].heroFlag |= CHAMPION_FLAG_4000;	// 0x4000
+				glbChampionTable[glbChampionInventory].redrawFlags |= X4000_CHAMPION_REDRAW_STATUS_BOX;	// 0x4000
 				break;
 			case ttyEnchantment://		(0x48 / 72)
 				for (iChampionIndex = 0; iChampionIndex < cd.pi.glbChampionsCount; iChampionIndex++) {
@@ -2976,8 +2938,8 @@ void SkWinCore::PROCEED_TIMERS()
 				PROCESS_PLAGUE(iEventActor, timer.value);
 				break;
 #endif
-			case ttyResurrect:
-				PROCESS_TIMER_RESURRECTION(xCurrentTimer);
+			case C13_TIME_EVENT_RESURRECT:
+				TIME_EVENT_PROCESS_RESURRECTION(xCurrentTimer);
 			case ttyItemBonus:
 				PROCESS_TIMER_0E(xCurrentTimer, 0xfffe);
 				break;

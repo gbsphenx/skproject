@@ -1,11 +1,11 @@
 //--- SkWinCore-DM1 -------------------------------------
 //SPX: This part of code contains:
 // - Retrocompatibility with DM1
-
+/*
 #if defined (SKDLL_EXPORTS) || defined (LIBSKWINDLL_EXPORTS)
 #include <StdAfx.h>
 #endif // LIBSKWINDLL_EXPORTS
-
+*/
 #include <skver.h>
 
 #include <skparam.h>
@@ -14,6 +14,8 @@
 #include <skcore.h>
 #include <skmidi.h>
 #include <sklua.h>
+
+#include <string.h>
 
 //--- Common part with A.cpp
 //using namespace DMEncyclopaedia;
@@ -467,6 +469,11 @@ i16 SkWinCore::DM1_GAME_LOAD()
 			U16 iInventorySlot = 0;
 			strcpy((char*)pChampion->firstName, (char*)pBlock4Champion->name);
 			strcpy((char*)pChampion->lastName, (char*)pBlock4Champion->title);
+			// position in party
+			pChampion->squadPosition = (iChampionIndex+3)%4;
+			pChampion->absoluteDirection = 3;
+
+
 			pChampion->maxHP(pBlock4Champion->maxHP);
 			pChampion->curHP(pBlock4Champion->HP);
 			pChampion->maxStamina(pBlock4Champion->maxStamina);
@@ -635,7 +642,7 @@ i16 SkWinCore::DM1_GAME_LOAD()
 
 		SkD((DLV_DBG_GAME_LOAD, "Read Timers ...\n"));
 		while (iTimerIndex < glbTimersMaximumCount) {
-			glbTimersTable[iTimerIndex].TimerType(tty00);
+			glbTimersTable[iTimerIndex].TimerType(C00_TIME_EVENT_NONE);
 			iTimerIndex++;
 		}
 		__SORT_TIMERS();

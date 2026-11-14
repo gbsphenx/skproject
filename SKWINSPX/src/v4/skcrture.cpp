@@ -4092,17 +4092,17 @@ void SkWinCore::CREATURE_CCM06()
 	return;
 }
 //^075F:1C74
-i16 SkWinCore::CREATURE_ATTACKS_PLAYER(Creature *ref, U16 player)
+i16 SkWinCore::CREATURE_ATTACKS_CHAMPION(Creature *ref, U16 iChampionIdx)
 {
 	ENTER(16);
-	Champion *champion;	//*bp04
-    if (player >= cd.pi.glbChampionsCount || (champion = &tblChampionSquad[player])->curHP() == 0)
+	Champion *pChampion;	//*bp04
+    if (iChampionIdx >= cd.pi.glbChampionsCount || (pChampion = &tblChampionSquad[iChampionIdx])->curHP() == 0)
 		return 0;
 	i16 si = 0;	// si
 	X16 iLocalDifficultyModifier = dunMapLocalHeader->Difficulty() << 1;			// bp0e
 	AIDefinition *AIdef = QUERY_CREATURE_AI_SPEC_FROM_TYPE(ref->CreatureType());	//*bp08
 	X16 iAIb28 = AIdef->b28;	// bp10
-	ADJUST_SKILLS(player, SKILL_FIGHTER_PARRY, AIdef->w22_8_b());	// 7
+	CHAMPION_ADJUST_SKILLS(iChampionIdx, SKILL_FIGHTER_PARRY, AIdef->w22_8_b());	// 7
 	X16 di;
 	if (glbGlobalSpellEffects.Invisibility != 0 && AIdef->w0_a_a() == 0) {
 		di = 0x10;
@@ -4123,7 +4123,7 @@ i16 SkWinCore::CREATURE_ATTACKS_PLAYER(Creature *ref, U16 player)
 	if (false
 		|| cd.pi.glbIsPlayerSleeping != 0
 		|| bp0c == 255
-		|| ((USE_DEXTERITY_ATTRIBUTE(player) < U16((RAND()&0x1f) +bp0c + iLocalDifficultyModifier +di -0x10) || RAND02() == 0) && USE_LUCK_ATTRIBUTE(champion, 0x3c) == 0)
+		|| ((USE_DEXTERITY_ATTRIBUTE(iChampionIdx) < U16((RAND()&0x1f) +bp0c + iLocalDifficultyModifier +di -0x10) || RAND02() == 0) && USE_LUCK_ATTRIBUTE(pChampion, 0x3c) == 0)
 	) {
 		di = RAND();
 		U16 bp0a;
@@ -4142,7 +4142,7 @@ i16 SkWinCore::CREATURE_ATTACKS_PLAYER(Creature *ref, U16 player)
 		}
 		si = AIdef->AttackStrength + min_value(AIdef->AttackStrength, (RAND()&15) + iLocalDifficultyModifier);
 		if (iAIb28 != 8) {
-			si = si -(QUERY_PLAYER_SKILL_LV(player, SKILL_FIGHTER_PARRY, 1) << 1);
+			si = si -(QUERY_PLAYER_SKILL_LV(iChampionIdx, SKILL_FIGHTER_PARRY, 1) << 1);
 			if (si <= 1) {
 				if (RAND01() != 0) {
 					si = 0;
@@ -4161,14 +4161,14 @@ i16 SkWinCore::CREATURE_ATTACKS_PLAYER(Creature *ref, U16 player)
 		if (RAND01() != 0) {
 			si = si -(RAND16((si >> 1) +1) -1);
 		}
-		si = WOUND_PLAYER(player, si, bp0a, iAIb28);
+		si = WOUND_PLAYER(iChampionIdx, si, bp0a, iAIb28);
 		if (si != 0) {
 			// SPX: Champion "oof" sound when hit
 			// => it would be possible to have several oof sounds using a random
-			QUEUE_NOISE_GEN2(GDAT_CATEGORY_x16_CHAMPIONS, champion->HeroType(), SOUND_CHAMPION_GETHIT, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 2, 0x69, 0xc8);
+			QUEUE_NOISE_GEN2(GDAT_CATEGORY_x16_CHAMPIONS, pChampion->HeroType(), SOUND_CHAMPION_GETHIT, 0xFE, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 2, 0x69, 0xc8);
 			di = AIdef->PoisonDamage;
-			if (di != 0 && RAND01() != 0 && (di = USE_ABILITY_ATTRIBUTE(champion, abVit, di)) > 0) {
-				PROCESS_POISON(player, di);
+			if (di != 0 && RAND01() != 0 && (di = USE_ABILITY_ATTRIBUTE(pChampion, abVit, di)) > 0) {
+				PROCESS_POISON(iChampionIdx, di);
 			}
 
 #if __SK_EXTENDED_SKWIN_V6__
@@ -4177,7 +4177,7 @@ i16 SkWinCore::CREATURE_ATTACKS_PLAYER(Creature *ref, U16 player)
 				// Get plague damage from creature if any
 				iPlagueDamage = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0F_CREATURES, ref->CreatureType(), dtWordValue, GDAT_AI_PLAGUE_DAMAGE);
 				if (iPlagueDamage > 0 && iPlagueDamage < 255)
-					PROCESS_PLAGUE(player, iPlagueDamage);
+					PROCESS_PLAGUE(iChampionIdx, iPlagueDamage);
 			
 			}
 #endif
@@ -4237,32 +4237,24 @@ i16 SkWinCore::CREATURE_ATTACKS_CREATURE(X16 xx, X16 yy)
 //^1887:05F3
 X16 SkWinCore::CREATURE_ATTACKS_PARTY()
 {
-	//^1887:05F3
 	ENTER(38);
-	//^1887:05F9
 	CreatureInfoData *bp08 = glbCurrentThinkingCreatureData;
 	AIDefinition *bp0c = glbAIDef;
 	X16 bp10 = glbCreatureTempTargetX;
 	X16 bp12 = glbCreatureTempTargetY;
 	X16 bp14 = glbCurrentThinkingCreatureRec->b15_0_1();
 	if (bp08->b32 == 6) {
-		//^1887:0637
 		bp14 += 2;
 		bp14 &= 3;
 	}
-	//^1887:0640
 	X16 bp1e = (glbCreatureTimerGetX == bp10 && glbCreatureTimerGetY == bp12) ? 1 : 0;
 	if (bp1e == 0) {
-		//^1887:0664
 		if (ABS16(glbCreatureTimerGetX -bp10) +ABS16(glbCreatureTimerGetY -bp12) > 1)
 			return 1;
-		//^1887:068E
 		if (CALC_VECTOR_DIR(glbCreatureTimerGetX, glbCreatureTimerGetY, bp10, bp12) != bp14 && bp0c->w0_2_2() == 0)
 			return 1;
 	}
-	//^1887:06BA
 	if (glbCurrentMapIndex == glbCreatureMap && bp10 == glbCreaturePosX && bp12 == glbCreaturePosY) {
-		//^1887:06DE
 		_4976_0090 = glbGameTick;
 		X16 bp22 = 0;
 		X16 bp20 = bp0c->w0_4_4();
@@ -4270,113 +4262,85 @@ X16 SkWinCore::CREATURE_ATTACKS_PARTY()
 		i16 bp1c = 0;
 		i8 bp26[4];
 		for (; bp1c < cd.pi.glbChampionsCount; bp1c++) {
-			//^1887:0706
 			if (tblChampionSquad[bp1c].curHP() != 0) {
 				bp26[di++] = U8(bp1c);
 			}
-			//^1887:071E
 		}
-		//^1887:072A
 		if (di == 0)
 			return 1;
-		//^1887:0731
 		X16 bp18;
 		if (bp0c->w0_3_3() != 0) {
 			bp18 = (bp20 != 0) ? (RAND16(di) +1) : cd.pi.glbChampionsCount;
 		}
 		else {
-			//^1887:0756
 			bp18 = (bp0c->b9_5_5() != 0) ? 2 : 1;
 		}
-		i16 si;
-		//^1887:076C
+		i16 iChampionAttacked;	// si
 		if (bp08->b28 == 4) {
-			//^1887:0776
-			si = _2c1d_028c(glbCreatureTimerGetX, glbCreatureTimerGetY, 0xff);
-			if (si != -1) {
-				//^1887:0794
-				bp08->b28 = tblChampionSquad[si].playerPos();
+			iChampionAttacked = _2c1d_028c(glbCreatureTimerGetX, glbCreatureTimerGetY, 0xff);
+			if (iChampionAttacked != -1) {
+				bp08->b28 = tblChampionSquad[iChampionAttacked].playerPos();
 			}
 		}
-		//^1887:07A6
 		X16 bp16 = bp08->b28;
 		bp18 = min_value(bp18, cd.pi.glbChampionsCount);
-		//^1887:07C3
 		// SPX: bp18 is either
 		for (; bp18-- != 0; ) {
-			//^1887:07C6
 			if (bp20 != 0) {
-				//^1887:07CC
+				i16 si;	// SPX added
 				si = RAND16(di);
 				if (bp26[si] < 0) {
 					for (bp1c = 0; bp1c < di; bp1c++) {
-						//^1887:07E2
 						if (++si >= di)
 							si = 0;
 						if (bp26[si] >= 0)
 							break;
-						//^1887:07F1
 					}
 				}
-				//^1887:07F9
 				bp1c = si;
 				si = bp26[bp1c];
 				bp26[bp1c] = -1;
 			}
 			else {
-				//^1887:0819
-				si = GET_PLAYER_AT_POSITION(bp16);
+				iChampionAttacked = GET_PLAYER_AT_POSITION(bp16);
 				X16 bp1a = CALC_VECTOR_DIR(bp10, bp12, glbCreatureTimerGetX, glbCreatureTimerGetY);
 				(((bp16 +bp1a) & 1) != 0) ? --bp16 : ++bp16;
 				bp16 &= 3;
-				if (si == -1) {
-					//^1887:085E
-					si = _2c1d_028c(glbCreatureTimerGetX, glbCreatureTimerGetY, 0xff);
+				if (iChampionAttacked == -1) {
+					iChampionAttacked = _2c1d_028c(glbCreatureTimerGetX, glbCreatureTimerGetY, 0xff);
 				}
-				//^1887:0877
-				if (si == -1)
+				if (iChampionAttacked == -1)
 					continue;
 			}
-			//^1887:087C
 			bp22 = 1;
-			i16 bp0e = CREATURE_ATTACKS_PLAYER(glbCurrentThinkingCreatureRec, si) +1;
-			Champion *champion = &tblChampionSquad[si];
-			if (champion->herob41 < bp0e) {
-				//^1887:08B4
-				champion->herob41 = U8(bp0e);
-				champion->direction = (CALC_VECTOR_DIR(glbCreatureTimerGetX, glbCreatureTimerGetY, glbCreaturePosX, glbCreaturePosY) +2)&3;
+			i16 bp0e = CREATURE_ATTACKS_CHAMPION(glbCurrentThinkingCreatureRec, iChampionAttacked) +1;
+			Champion *pChampion = &tblChampionSquad[iChampionAttacked];
+			if (pChampion->herob41 < bp0e) {
+				pChampion->herob41 = U8(bp0e);
+				pChampion->direction = (CALC_VECTOR_DIR(glbCreatureTimerGetX, glbCreatureTimerGetY, glbCreaturePosX, glbCreaturePosY) +2)&3;
 			}
-			//^1887:08E2
 		}
-		//^1887:08EF
 		if (bp22 == 0)
 			return 1;
 	}
 	else {
-		//^1887:08F8
 		i16 bp0e;
 		if ((GET_TILE_VALUE(bp10, bp12) >> 5) == ttDoor) {
-			//^1887:090E
 			bp0e = RAND16(bp0c->AttackStrength + (bp0c->AttackStrength >> 1));
 			if (ATTACK_DOOR(bp10, bp12, bp0e, 0, 0) != 0)
 				return 1;
 		}
-		//^1887:0946
 		if (bp1e != 0)
 			return 1;
 		bp0e = CREATURE_ATTACKS_CREATURE(bp10, bp12);
 		if (bp0e < 0)
 			return 1;
 	}
-	//^1887:0960
 	if (bp08->Command == ccm26_PushBack) {
-		//^1887:096A
 		if ((GET_CREATURE_WEIGHT(glbCurrentThinkingCreatureID) > 100 && (RAND() & 15) != 0) || RAND02() != 0) {
-			//^1887:098C
 			_12b4_0d75_CREATURE(bp10, bp12, bp14, 0xfe);
 		}
 	}
-	//^1887:09A0
 	return 0;
 }
 //^1887:09AB

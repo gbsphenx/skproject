@@ -1588,7 +1588,7 @@ namespace DM2Internal {
 
 		U16 timerIndex;			// @46 // w46 timer index?
         X16 damageSuffered;			// @48 // w48 current damage?
-		U16 heroFlag;			// @50 // w50 update mask: 0x8000=all?
+		U16 redrawFlags;			// @50 // (old heroFlag) w50 update mask: 0x8000=all?
 									// 0x3000=wearing boosting attribute item
 									// 0x2000=wearing boosting skill item
 									// 0x1000=weight calculated ?
@@ -3053,13 +3053,13 @@ namespace DM2Internal {
 		// CSBWin			-3 : Monster damaged by cloud or door
 		//					-2 : When a monster is damaged
 		//					-1 : When a monster is attacked. When we bump into a monster
-		tty00 = 0,			// csbwin: empty
+		C00_TIME_EVENT_NONE = 0x00,			// csbwin: empty
 		tty01DoorStep		= 0x01, // tty01 step door
 		C02_tty_DoorDestroy		= 0x02,		// tty02 CSBWin => Bash door
 		tty04 = 0x04, // activation for tile record (such as floor/wall/pitfall/door/trickwall/teleporter)
 		// csbwin: 0x0B (11) reenable character attack
 		tty0C = 0x0C,		// csbwin 12 ? highlight for champion damaged ?
-		ttyResurrect		= 0x0D,	// tty0D CSBWin (13) => VI Altar
+		C13_TIME_EVENT_RESURRECT		= 0x0D,	// tty0D CSBWin (13) => VI Altar
 		ttyItemBonus		= 0x0E,	// item bonus ?
 		// csbwin 0x14 (20) ? queue sound
 		ttySound			= 0x15,		// tty15
@@ -3067,12 +3067,15 @@ namespace DM2Internal {
 		// tty18			= 0x18, // csbwin (24): remove fluxcage
 		ttyCloud			= 0x19,	// csbwin tty19 (25) : cloud processing
 		// csbwin 0x01C (28) ??
-		tty1D = 0x1D, // (29) step missile 0
-		tty1E = 0x1E, // (30) step missile 1
-		tty21 = 0x21, // (33) think creature 0
-		tty22 = 0x22, // (34) think creature 1
+		C29_TIME_EVENT_PROJECTILE_MOVE_NO_HIT = 0x1D, // (29) step missile 0 => no hit (because from the source tile)
+		C30_TIME_EVENT_PROJECTILE_MOVE = 0x1E, // (30) step missile 1 => can hit
+
+		C33_TIME_EVENT_CREATURE_ANIMATION = 0x21, // (33) think creature 0
+		C34_TIME_EVENT_CREATURE_THINK = 0x22, // (34) think creature 1
+
 		C60_tty = 0x3C,	// (3C=60)
 		tty3D = 0x3D,		// (3D=61) about minion and teleport / opening something ?
+
 		ttyLight			= 0x46,	// tty46 (70) light
 		ttyInvisibility		= 0x47,	// tty47 (71) csbwin OH EW SAR
 		ttyEnchantment		= 0x48, // tty48 (72) enchantment/aura timer?
@@ -3103,6 +3106,7 @@ namespace DM2Internal {
 		tty5B = 0x5B, // (91) 
 		ttySimpleActuTurnOn = 0x5C,	// tty5C (92) restore ornate (simple actuator) in ON state (used for RESPAWNING flowers, mushrooms, gems ..)
 		tty5D = 0x5D, // (93) 
+		C94_TIME_EVENT_CREATURE_SPAWN = 0x5E,	// DM2/V5 only ? (94)
 #if	XDMX_FEATURE_AMBIENT_SOUND == 1	// SPX: new timer types
 		ttyAmbientSound		= 0xE0,	// CUSTOM timer for ambient sound (i.e. rain)
 #endif

@@ -626,7 +626,7 @@ protected:
 	i16	_4976_532a; // a y3?
 	U16	glbWeaponShooterNum;	// (_4976_532e) Word value 0x05 of launcher
 	U8	glbChampionHandCoolingDown[MAX_CHAMPIONS][3];	// _4976_5330[4][3]
-	U16	_4976_5336;
+	U16	glbChampionInAction;	// (_4976_5336) champion index performing action
 	i16	_4976_533c;	// a map?
 	i16	_4976_533e;	// a map?
 	U16	glbChampionAttackDamage; // (_4976_5340) damage to target creature?
@@ -1178,7 +1178,7 @@ protected:
 	U16 QUERY_CREATURES_ITEM_MASK(U8 cls2, U8 cls4, U8 itemflags[64], U16 isCreature);
 	void ZERO_MEMORY(void *pBuffer, U32 iSize);
 	void PROCESS_TIMER_0E(Timer *v0, U16 v1);
-	void CALC_PLAYER_WEIGHT(U16 player);
+	
 	void PROCEED_GLOBAL_EFFECT_TIMERS();
 	U16 _2066_1f37(ObjectID recordLink, U16 yy, U16 *zz);
 	void APPEND_RECORD_TO(ObjectID recordLink_whatYouAppend, ObjectID *recordLink_newParent, i16 xpos_newParent, i16 ypos_newParent);
@@ -1312,7 +1312,7 @@ protected:
 	X16 CREATURE_CCM03();
 	X16 CREATURE_JUMPS();
 	void CREATURE_CCM06();
-	i16 CREATURE_ATTACKS_PLAYER(Creature *ref, U16 player);
+	i16 CREATURE_ATTACKS_CHAMPION(Creature *ref, U16 iChampionIdx);	// CREATURE_ATTACKS_PLAYER
 	i16 CREATURE_ATTACKS_CREATURE(X16 xx, X16 yy);
 	X16 CREATURE_ATTACKS_PARTY();
 	X16 CREATURE_CAST_SPELL();
@@ -1426,7 +1426,7 @@ protected:
 	U16 IS_ITEM_FIT_FOR_EQUIP(ObjectID recordLink, i16 inventorySlot, U16 onlyBodyPart);
 	i16 RETRIEVE_ITEM_BONUS(ObjectID x1, U8 x2, U16 x3, i16 iBonusDir); // SPX: changed to i16 SIGNED
 	void BOOST_ATTRIBUTE(Champion *ref, U16 xx, U16 yy);
-	void PROCESS_ITEM_BONUS(i16 player, ObjectID recordLink, i16 inventorySlot, i16 x4);	// Is that working?
+	
 	ObjectID REMOVE_POSSESSION(U16 player, U16 possess);
 	void EQUIP_ITEM_TO_INVENTORY(U16 player, ObjectID rl, U16 inventorySlot);
 	U16 CHECK_SOME_HAND_READY(U16 player, ObjectID rl, i16 hand);	// _2759_0e93
@@ -1637,7 +1637,7 @@ protected:
 	void INIT_BACKBUFF();
 	SpellDefinition* FIND_SPELL_BY_RUNES(U8* runes);
 	i16 FIND_HAND_WITH_EMPTY_FLASK(Champion *ref);
-	void ADJUST_SKILLS(U16 player, U16 yy, U16 zz);
+	
 	void SHOOT_ITEM(ObjectID rlItemThrown, U16 xx, U16 yy, U16 dir, U16 aa, U16 energyVal, U16 ene2Val, U16 dd);
 	void SHOOT_CHAMPION_MISSILE(Champion *ref, ObjectID rl, U16 yy, U16 zz, U16 ww);
 	U16 CAST_CHAMPION_MISSILE_SPELL(U16 xx, ObjectID rl, i16 zz, U16 ww);
@@ -1662,12 +1662,12 @@ protected:
 	i16 STAMINA_ADJUSTED_ATTR(Champion *ref, i16 quantity);
 	U16 COMPUTE_PLAYER_ATTACK_OR_THROW_STRENGTH(U16 xx, U16 yy, i16 zz);
 	U16 SOMETHING_ITEM_WEIGHT_2c1d_0e23(U16 xx);	// _2c1d_0e23
-	U16 _2c1d_1de2_CHAMPION_SHOOT(U16 xx, i16 yy, U16 zz); // _2c1d_1de2
+	
 	U16 SET_DESTINATION_OF_MINION_MAP(ObjectID rlContainer, i16 xx, i16 yy, U16 zz);
 	void TRANSFER_PLAYER(i16 xx, i16 yy, U16 zz, U16 dir);
 	i16 SEARCH_DUNGEON_FOR_SPECIAL_MARKER(U16 ss, U16 tt, U16 uu, i16 *xx, i16 *yy);
 	U16 ENGAGE_X_TELEPORTER();
-	U16 ENGAGE_COMMAND(U16 player, i16 cmdSlot);
+	
 	U16 PROCEED_COMMAND_SLOT(i16 cmdSlot);
 	void ACTIVATE_ACTION_HAND(U16 iChampionNo, U16 iHandNo);
 	void SET_SPELLING_CHAMPION(U16 iChampionNo);
@@ -1682,7 +1682,7 @@ protected:
 	U16 IS_MISCITEM_DRINK_WATER(ObjectID rlMiscItem);
 	void CURE_POISON(U16 iChampIdx);
 	void PROCEED_ENCHANTMENT_SELF(U16 mask, U16 yy, U16 zz, U16 tick);
-	void PLAYER_CONSUME_OBJECT(U16 player, ObjectID rlConsume, i16 possess);
+	
 
 	void CLICK_INVENTORY_EYE();
 	void PUSH_PULL_RIGID_BODY(U16 arrowPos);
@@ -2140,9 +2140,9 @@ protected:
 	void DRAW_RAIN();
 	void DRAW_PLAYER_TILE();
 	void DISPLAY_VIEWPORT(U16 dir, i16 xx, i16 yy);
-	void ADJUST_STAMINA(U16 iCharIdx, i16 iStaminaDecrement);
-	U16 GET_PLAYER_WEIGHT(U16 player);
-	U16 MAX_LOAD(Champion *ref);
+	
+	
+	
 	void SOUND_482b_05bf(U16 xx);	// _482b_05bf
 	X32 _3e74_5673_CACHE(X32 cacheHash, U16 *piYaCacheIndex, X16 ifTryInsert); // _3e74_5673
 	void QUERY_MESSAGE_TEXT(U8 *str, ObjectID rl, U16 ww);
@@ -2390,8 +2390,24 @@ protected:
 	void _3a15_0d5c(Timer *ref, Actuator *pr4); // TODO: Unr
 	void ACTIVATE_ORNATE_ANIMATOR(Timer *ref, Actuator *pr4, ObjectID rl, X16 isWall);
 	void ACTIVATE_CONTINUOUS_ORNATE_ANIMATOR(ObjectID rl, Timer *ref, Actuator *pr4, X16 isWall);
-	void _2c1d_153f(X16 xx);
-	void BRING_CHAMPION_TO_LIFE(X16 xx);
+	
+
+	/// Champion
+	void CHAMPION_RESURRECT(U16 iChampionIdx);	// BRING_CHAMPION_TO_LIFE
+	void CHAMPION_COMPUTE_LOAD(U16 iChampionIdx);	// CALC_PLAYER_WEIGHT
+	void CHAMPION_ADJUST_SKILLS(U16 iChampionIdx, U16 yy, U16 zz);	// ADJUST_SKILLS
+	void CHAMPION_PROCESS_ITEM_BONUS(i16 iChampionIdx, ObjectID recordLink, i16 inventorySlot, i16 x4);	// PROCESS_ITEM_BONUS
+	void CHAMPION_CONSUME_OBJECT(U16 iChampionIdx, ObjectID rlConsume, i16 possess);	// PLAYER_CONSUME_OBJECT
+	void CHAMPION_ADJUST_STAMINA(U16 iChampionIdx, i16 iStaminaDecrement);	// ADJUST_STAMINA
+	U16 CHAMPION_ENGAGE_COMMAND(U16 player, i16 cmdSlot);	// ENGAGE_COMMAND
+	void CHAMPION_2c1d_153f(U16 iChampionIdx);	// _2c1d_153f
+	U16 CHAMPION_2c1d_1de2_SHOOT(U16 iChampionIdx, i16 yy, U16 zz); // _2c1d_1de2 / _2c1d_1de2_CHAMPION_SHOOT
+
+	U16 GET_PLAYER_WEIGHT(U16 iChampoinIdx);
+	U16 MAX_LOAD(Champion *pChampion);	//
+
+
+
 	void ACTIVATE_ITEM_TELEPORT(Timer *ref, Actuator *pr4, ObjectID rl, X16 isFloor, X16 recycler, ObjectID *prl, X16 capture, X16 onlyFirstItem);
 	void SET_ITEM_IMPORTANCE(ObjectID rlItem, X16 isImportant);
 	void MOVE_ITEM_TO(ObjectID rl, Actuator *pr4, i16 xposFrm, i16 yposFrm, i16 xposTo, i16 yposTo, X16 dir, X16 takeFrmCreature, X16 putToCreature);
@@ -2408,7 +2424,10 @@ protected:
 	void PROCESS_SOUND(U8 iSoundQueueIndex);
 	void PROCESS_TIMER_0C(U8 iChampionIndex);
 	void PROCESS_TIMER_LIGHT(Timer *ref);
-	void PROCESS_TIMER_RESURRECTION(Timer *ref);
+
+// Process Time Event
+	void TIME_EVENT_PROCESS_RESURRECTION(Timer *pEvent);	// PROCESS_TIMER_RESURRECTION
+
 	void CONTINUE_ORNATE_ANIMATOR(Timer *ref);
 	void CONTINUE_TICK_GENERATOR(Timer *ref);
 	void PROCESS_TIMER_RELEASE_DOOR_BUTTON(Timer *ref);
