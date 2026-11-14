@@ -12563,13 +12563,8 @@ U16 SkWinCore::CREATURE_1c9a_0958(ObjectID recordLink)
 U16 SkWinCore::_RAND01()
 {
 	// CSBwinSimilarity: TAG001050,STRandomBool
-
-	//^0CD5:0118
-	//^0CD5:011B
 	glbRandomSeed = glbRandomSeed * 0xbb40e62d + 11;
-	//^0CD5:013B
 	return (glbRandomSeed >> 8) & 1;
-	//^0CD5:0146
 }
 
 
@@ -12578,26 +12573,18 @@ U16 SkWinCore::_RAND01()
 // SPX: Something to do when an item (missile) hit an obstacle
 U16 SkWinCore::MISSILE_HIT_075f_0af9(i16 u16tileType, i16 xpos, i16 ypos, U16 dir, ObjectID rlMissile)
 {
-	//^075F:0AF9
-	//^075F:0AFF
 	U16 bp1c = 0;
 	U16 bp2a = 0;
-	//^075F:0B09
 	Missile* bp08 = GET_ADDRESS_OF_RECORDE(rlMissile); // bp08
-	//^075F:0B18
 	ObjectID si = bp08->GetMissileObject();
-	//^075F:0B21
 	U16 bp2c = si.DBType();
-	//^075F:0B2A
 	U16 bp28;
 	ObjectID bp1e;
 	ObjectID bp20;
 	tileTypeIndex tileType = UtilConvertU16ToTile(u16tileType);	// SPX added for safe conversion
 
 	if (bp2c == dbPotion) {
-		//^075F:0B2F
 		Potion *bp04 = GET_ADDRESS_OF_RECORD(si)->castToPotion();
-		//^075F:0B3C
 		U8	potionType = 0;
 		potionType = bp04->PotionType();
 
@@ -12607,24 +12594,15 @@ U16 SkWinCore::MISSILE_HIT_075f_0af9(i16 u16tileType, i16 xpos, i16 ypos, U16 di
 			switch (potionType)
 			{
 				case POTION_TYPE_VEN_BOMB: // 0x03 -> {VEN} BOMB
-					//^075F:0B52
 					bp20 = OBJECT_EFFECT_POISON_CLOUD;
-					//^075F:0B57
-					//^075F:0B5E
 					bp2a = 1;
-					//^075F:0B63
 					bp28 = bp04->PotionPower();
-					//^075F:0B70
 					bp1e = si;
 					break;
 				case POTION_TYPE_FUL_BOMB: // 0x13 -> {FUL} BOMB
-					//^075F:0B59
 					bp20 = OBJECT_EFFECT_FIREBALL;
-					//^075F:0B5E
 					bp2a = 1;
-					//^075F:0B63
 					bp28 = bp04->PotionPower();
-					//^075F:0B70
 					bp1e = si;
 					break;
 			}
@@ -12649,45 +12627,33 @@ U16 SkWinCore::MISSILE_HIT_075f_0af9(i16 u16tileType, i16 xpos, i16 ypos, U16 di
 		}
 // SPX: End of standard/custom block
 	}
-	//^075F:0B73
 //		U16 bp26 = (bp2c == dbCloud && si != oFF81 && si != oFF86) ? 1 : 0;
 	U16 bp26 = (bp2c == dbCloud && si != OBJECT_EFFECT_POISON_BLOB && si != OBJECT_EFFECT_POISON_BOLT) ? 1 : 0;
-	//^075F:0B8D
 	ObjectID *bp10 = NULL;
 	U16 bp36 = 0;
-	//^075F:0B9C
 	i16 bp22;
 	i16 bp24;
 	if (xpos <= 255) {
-		//^075F:0BA3
 		bp22 = xpos;
 		bp24 = ypos;
 	}
 	else {
-		//^075F:0BB1
 		bp22 = (xpos >> 8) -1;
 		bp24 =  ypos >> 8;
-		//^075F:0BC4
 		xpos &= 255;
 		ypos &= 255;
 	}
-	//^075F:0BCE
 	i16 bp30 = bp22;
 	i16 bp38 = bp22;
 	i16 bp32 = bp24;
 	i16 bp3a = bp24;
-	//^075F:0BE0
 	U16 bp16;
 	switch (tileType) {
 		case  ttWall:	// WALL
 			{
-				//^075F:0BF5
 				U16 di = glbTimersTable[bp08->TimerIndex()].Direction();
-				//^075F:0C13
 				bp38 += glbXAxisDelta[di];
-				//^075F:0C1E
 				bp3a += glbYAxisDelta[di];
-				//^075F:0C29
 
 				SkD((DLV_TWEET, "Tweet: %s (x:%d, y:%d, map:%d) attacks the wall! \n"
 					, static_cast<LPCSTR>(getRecordNameOf(rlMissile))
@@ -12698,23 +12664,16 @@ U16 SkWinCore::MISSILE_HIT_075f_0af9(i16 u16tileType, i16 xpos, i16 ypos, U16 di
 
 				if (ATTACK_WALL(bp38, bp3a, bp22, bp24, di, rlMissile) == 0)
 					break;
-				//^075F:0C47
 				return 1;
 			}
 		case  ttDoor:	// DOOR
 			{
-				//^075F:0C4A
 				i16 bp12 = glbCurrentTileMap[xpos][ypos] & 0x07;
-				//^075F:0C66
 				Door *door = GET_ADDRESS_OF_TILE_RECORD((U8)xpos, (U8)ypos)->castToDoor();	//*bp1a
-				//^075F:0C79
 				if (bp12 != 5 && (si == OBJECT_EFFECT_ZO_SPELL || si == OBJECT_EFFECT_ZO_2)) {	// (si == oFF84 || si == oFF8D
-					//^075F:0C89
 					if (door->Button() == 0 && door->DoorBit13C() == 0) {
-						//^075F:0C9A
 						break;
 					}
-					//^075F:0CAB
 					INVOKE_MESSAGE(
 						xpos,
 						ypos,
@@ -12722,76 +12681,47 @@ U16 SkWinCore::MISSILE_HIT_075f_0af9(i16 u16tileType, i16 xpos, i16 ypos, U16 di
 						(si == OBJECT_EFFECT_ZO_SPELL) ? 2 : 0,
 						glbGameTick +1
 						);
-					//^075F:0CD8
 					break;
 				}
-				//^075F:0CDB
 				if (bp12 == 5 || bp12 <= 1)
-					//^075F:0CDF
-					//^075F:0CE5
-					//^075F:0D42
 					return 0;
 
-				//^075F:0CE7
 				if (GET_DOOR_STAT_10(GET_GRAPHICS_FOR_DOOR(door)) != 0) {
-					//^075F:0CFF
 					if (bp2c == dbCloud) { // bp2c == 15
-						//^075F:0D05
 						// SPX: that would say only FIREBALL and LIGHTNING will pass
 						if (((si >= OBJECT_EFFECT_DISPELL) ? 1 : 0) != 0) {	// (si >= oFF83)
-							//^075F:0D42
 							return 0;
 						}
 					}
-					//^075F:0D13
 					if (((bp08->EnergyRemaining2() < (RAND() & 0x007f)) && (QUERY_GDAT_DBSPEC_WORD_VALUE(si, 0) & 2) != 0) ? 1 : 0) {
-						//^075F:0D42
 						return 0;
 					}
 				}
-				//^075F:0D47
 				U16 bp16 = PROJECTILE_GET_IMPACT_ATTACK(bp08, si) +1;
-				//^075F:0D59
 				ATTACK_DOOR(xpos, ypos, bp16 + RAND16(bp16), 0, 0);
-				//^075F:0D7A
 				break;
 			}
 		case ttTeleporter://-3:	// TELEPORTER
 		case ttTrickWall://-2:	// TRICKWALL
 			{
-				//^075F:0D7D
 				i16 bp12 = GET_PLAYER_AT_POSITION(dir);
-				//^075F:0D89
 				if (bp12 < 0) {
-					//^075F:0D8D
 					if (tileType == ttTeleporter) {
-						//^075F:0D93
 						goto _0e37;
 					}
-					//^075F:0D96
-					//^075F:0D42
 					return 0;
 				}
-				//^075F:0D98
 				bp36 = 1;
-				//^075F:0D9D
 				bp16 = PROJECTILE_GET_IMPACT_ATTACK(bp08, si);
-				//^075F:0DAE
 				if (bp16 != 0) {
-					//^075F:0DB2
 					if ((((tblChampionSquad[bp12].playerDir() == (glbTimersTable[bp08->TimerIndex()].Direction() +2)) ? 1 : 0) & 3) != 0) {
-						//^075F:0DF2
 						glbProjectileAttackType |= 0x8000;
 					}
-					//^075F:0DF8
 					if (WOUND_PLAYER(bp12, bp16, 0, glbProjectileAttackType) != 0 && glbPoisonAttackDamage != 0 && RAND01() != 0) {
-						//^075F:0E20
 						PROCESS_POISON(bp12, glbPoisonAttackDamage);
 					}
 				}
-				//^075F:0E2E
 				if (tileType == ttTrickWall) {
-					//^075F:0E34
 					break;
 				}
 
@@ -12799,106 +12729,64 @@ U16 SkWinCore::MISSILE_HIT_075f_0af9(i16 u16tileType, i16 xpos, i16 ypos, U16 di
 			}
 		case ttMapExit://-1:	// EXTERN TILE
 			{
-				//^075F:0E37
 _0e37:
 				bp38 = xpos;
 				bp3a = ypos;
-				//^075F:0E43
 				ObjectID bp2e = GET_CREATURE_1c9a_03cf(&bp38, &bp3a, dir);
-				//^075F:0E5B
 				if (bp2e == OBJECT_NULL) {
-					//^075F:0E60
 					if (tileType == ttTeleporter)
-						//^075F:0E66
 						break;
-					//^075F:0E69
-					//^075F:0D42
 					return 0;
 				}
-				//^075F:0E6C
 				if (CREATURE_1c9a_0958(bp2e) != 0) {
-					//^075F:0E79
 					if (tileType == ttTeleporter)
-						//^075F:0E7F
 						break;
-					//^075F:0E82
-					//^075F:0D42
 					return 0;
 				}
-				//^075F:0E85
 				Creature* xCreature = GET_ADDRESS_OF_RECORD(bp2e)->castToCreature(); // bp04
-				//^075F:0E94
 				AIDefinition* xAIDef = QUERY_CREATURE_AI_SPEC_FROM_TYPE(xCreature->CreatureType()); // bp0c
 				if (xAIDef->w0_5_5() != 0 && si != OBJECT_EFFECT_DISPELL) {	// oFF83
 					if (tileType == ttTeleporter)
 						break;
 					return 0;
 				}
-				//^075F:0EC3
 				if (xAIDef->IsStaticObject() == 0) {
-					//^075F:0ECD
 					if (xAIDef->Weight != 255) {
-						//^075F:0ED4
 						goto _0f82;
 					}
 					else {
-						//^075F:0ED7
 						goto _0f11;
 					}
 				}
-				//^075F:0ED9
 				if ((xAIDef->wc30 & 0x0100) != 0 && si < OBJECT_EFFECT_FIREBALL) {	// oFF80
-					//^075F:0EE7
-					//^075F:0EFA
 					if (tileType == ttTeleporter)
-						//^075F:0F00
 						break;
-					//^075F:0F03
-					//^075F:0D42
 					return 0;
 				}
-				//^075F:0EE9
 				if (xAIDef->w0_6_7() > 1) {
-					//^075F:0EFA
 					if (tileType == ttTeleporter)
-						//^075F:0F00
 						break;
-					//^075F:0F03
-					//^075F:0D42
 					return 0;
 				}
-				//^075F:0F06
 				// SPX: This is turning the direction of the missile (for reflectors certainly ..)
 				if ((xAIDef->wc30 & AI_W30_FLAGS__TURN_MISSILE) == 0) {	// 0x0800
-					//^075F:0F11
 _0f11:
 					U16 di = glbTimersTable[bp08->TimerIndex()].Direction();	// get direction
-					//^075F:0F2F
 					di = (di +2) &3;
-					//^075F:0F36
 					bp30 += glbXAxisDelta[di];
-					//^075F:0F41
 					bp32 += glbYAxisDelta[di];
-					//^075F:0F4C
 					U16 bp34 = rlMissile.Dir();
-					//^075F:0F55
 					if ((di & 1) == (bp34 & 1)) {
-						//^075F:0F65
 						bp34--;
 					}
 					else {
-						//^075F:0F6A
 						bp34++;
 					}
-					//^075F:0F6D
 					rlMissile.Dir(bp34);
 				}
-				//^075F:0F82
 _0f82:
 				bp16 = (PROJECTILE_GET_IMPACT_ATTACK(bp08, si) << 6) / xAIDef->ArmorClass;
-				//^075F:0FA7
 				if (bp16 != 0) {
-					//^075F:0FAB
 					ATTACK_CREATURE(
 						bp2e,
 						bp38,
@@ -12907,31 +12795,23 @@ _0f82:
 						0x0064,
 						((xAIDef->w24 & 0x1000) != 0 && glbProjectileAttackType != 1) ? 0 : (bp16 + APPLY_CREATURE_POISON_RESISTANCE(bp2e, glbPoisonAttackDamage))
 						);
-					//^075F:0FED
 					if (bp26 == 0 && xAIDef->AbsorbsMissile() != 0) {	// if not a grey cloud and w0_9_9 = 1
-						//^075F:0FFD
 						// si is the item thrown
 						if ((QUERY_GDAT_DBSPEC_WORD_VALUE(si, 0) & ITEM_FLAG_40) != 0) {	// 0x0040
-							//^075F:100C
 							bp10 = &xCreature->possession;	// bp04 is the creature
 						}
 					}
 				}
-				//^075F:101A
 				if (bp2a == 0 && bp2c != 5) {
-					//^075F:1026
 					if (false
 						|| bp2c != 15
 						|| si == OBJECT_EFFECT_ZO_SPELL
 						|| (si >= OBJECT_EFFECT_PUSH && si <= OBJECT_EFFECT_REFLECTOR)	// (si >= oFF89 && si <= oFF8E)
 					) {
-						//^075F:1039
-						//^075F:1064
 						bp36 = 1;
 						break;
 					}
 				}
-				//^075F:103B
 				ATTACK_CREATURE(
 					bp2e,
 					bp38,
@@ -12946,58 +12826,38 @@ _0f82:
 		case  ttFloor:	// FLOOR
 		case  ttPit:	// PIT
 		case  ttStairs:	// STAIRS
-			//^075F:1069
 			break;
 	}
-	//^075F:1069
 	if (tileType == ttTeleporter && bp36 == 0) {
-		//^075F:0D42
 		return 0;
 	}
-	//^075F:1078
 	if (bp26 == 0 && bp2a == 0 && si != OBJECT_EFFECT_POISON_BOLT)
-		//^075F:1089
 		goto _113b;
 
-	//^075F:108C
 	U16 bp14;
 	if (bp2a != 0) {
-		//^075F:1092
 		bp14 = bp28;
 		DEALLOC_RECORD(bp1e);
-		//^075F:10A1
 		bp08->SetMissileObject(si = bp20);
 	}
 	else {
-		//^075F:10AF
 		bp14 = bp08->EnergyRemaining();
-		//^075F:10BB
 		if (si == OBJECT_EFFECT_POISON_BOLT) {
-			//^075F:10C0
 			bp14 >>= 2;
-			//^075F:10C4
 			if (bp14 == 0)
-				//^075F:10C9
 				goto _113b;
 		}
-		//^075F:10CB
 		if (si == OBJECT_EFFECT_LIGHTNING) {
-			//^075F:10D0
 			bp14 >>= 1;
 			if (bp14 == 0)
-				//^075F:10D8
 				goto _113b;
 		}
 	}
-	//^075F:10DA
 	U16 di;
 	if (si == OBJECT_EFFECT_PUSH || si == OBJECT_EFFECT_PULL) {
-		//^075F:10E8
 		di = glbTimersTable[bp08->TimerIndex()].Direction();
-		//^075F:1106
 		bp1c = bp08->EnergyRemaining();
 	}
-	//^075F:1112
 	CREATE_CLOUD(
 		si,
 		bp14,
@@ -13005,15 +12865,11 @@ _0f82:
 		bp24,
 		(si == OBJECT_EFFECT_POISON_CLOUD || si == OBJECT_EFFECT_ZO_SPELL || si == OBJECT_EFFECT_ZO_2) ? 255 : dir
 		);
-	//^075F:113B
 _113b:
 	CUT_RECORD_FROM(rlMissile, NULL, bp22, bp24);
-	//^075F:1150
 	// SPX: I think this actually attach the missile to another object, like creature possession (= absorb)
 	DELETE_MISSILE_RECORD(rlMissile, bp10, bp30, bp32);
-	//^075F:1166
 	if (bp1c != 0) {
-		//^075F:116C
 		_12b4_0d75_CREATURE(
 			xpos,
 			ypos,
@@ -13021,7 +12877,6 @@ _113b:
 			max_value(min_value(bp1c, 0xfe), 0x28)
 			);
 	}
-	//^075F:11A3
 	return 1;
 }
 

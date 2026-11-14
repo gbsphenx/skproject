@@ -269,7 +269,6 @@ _148a:
 				}
 			case 13:	// 13: return to viewport
 				{
-					DISPLAY_HINT_TEXT(C11_COLOR_YELLOW, (X8*)"RETURN TO VIEWPORT");
 					si = glbChampionInventory;
 					if (si != 0) {
 						_4976_581a |= *glbPtrTransmittedUIEvent;

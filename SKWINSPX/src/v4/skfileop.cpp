@@ -511,6 +511,10 @@ void SkWinCore::READ_SAVEGAMES_FILENAMES()
 					sprintf((char*)tblSaveGamesInfo[iFileIndex].sSavegameName, "SKSAVE%d.DAT (DM1 SAVEGAME)", iFileIndex);
 					tblSaveGamesInfo[iFileIndex].wTimerFlag = M01_DM2SAVE_TIMERFLAG_DM1;
 				}
+				else if ((*(U16*)(&xDungeonDatBeginning)) == 0x0D00) {
+					sprintf((char*)tblSaveGamesInfo[iFileIndex].sSavegameName, "SKSAVE%d.DAT (CSB SAVEGAME)", iFileIndex);
+					tblSaveGamesInfo[iFileIndex].wTimerFlag = M01_DM2SAVE_TIMERFLAG_DM1;
+				}
 				else {
 					sprintf((char*)tblSaveGamesInfo[iFileIndex].sSavegameName, "SKSAVE%d.DAT (NOT DM2 SAVEGAME)", iFileIndex);
 					tblSaveGamesInfo[iFileIndex].wTimerFlag = M02_DM2SAVE_TIMERFLAG_NOT_DM;

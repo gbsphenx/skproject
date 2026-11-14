@@ -27,9 +27,7 @@
 // SPX: _3a15_320c renamed PROCESS_TIMER_0E
 void SkWinCore::PROCESS_TIMER_0E(Timer *v0, Bit16u v1)
 {
-	//^3A15:320C
 	ENTER(12);
-	//^3A15:3211
 	X32 bp0c = glbItemSizePerDB[v0->value];
 	U8 *bp04;
 	U8 *bp08;
@@ -39,12 +37,10 @@ void SkWinCore::PROCESS_TIMER_0E(Timer *v0, Bit16u v1)
 		bp04 = ALLOC_MEMORY_RAM(bp0c, afDefault, 0x400),
 		bp0c
 		);
-	//^3A15:326A
 	SET_ITEMTYPE(si, v0->Value2());
 	PROCESS_ITEM_BONUS(v0->actor, si, -1, v1);
 	COPY_MEMORY(bp04, bp08, bp0c);
 	DEALLOC_UPPER_MEMORY(bp0c);
-	//^3A15:32B9
 	return;
 }
 
@@ -53,45 +49,34 @@ void SkWinCore::PROCESS_TIMER_0E(Timer *v0, Bit16u v1)
 
 //^2066:2B6C
 // SPX: _2066_2b6c renamed PROCEED_GLOBAL_EFFECT_TIMERS
+// Used only at game loading
 void SkWinCore::PROCEED_GLOBAL_EFFECT_TIMERS()
 {
-	//^2066:2B6C
 	Timer *bp04 = glbTimersTable;
-	//^2066:2B7F
 	ZERO_MEMORY(&glbGlobalSpellEffects, sizeof(glbGlobalSpellEffects));
-	//^2066:2B8F
-	for (Bit16u di=0; di < glbTimersActiveCount; bp04++, di++) {
-		//^2066:2B94
-		Bit16u si = bp04->actor;
-		Bit16u bp08 = bp04->TimerType();
-		//^2066:2BA8
+	for (U16 di=0; di < glbTimersActiveCount; bp04++, di++) {
+		U16 si = bp04->actor;
+		U16 bp08 = bp04->TimerType();
 		switch (bp08) {
 			case ttyItemBonus:			// x0e
 				{
-					//^2066:2C60
 					PROCESS_TIMER_0E(bp04, 3);
 					break;
 				}
 			case ttyLight:		// x46
 				{
-					//^2066:2C1A
 					i16 bp06 = bp04->value;
-					//^2066:2C24
 					if (bp06 == 0 || bp06 < -15 || bp06 > 15)
 						break;
-					//^2066:2C34
 					if (bp06 < 0) {
-						//^2066:2C3A
 						glbGlobalSpellEffects.Light += tLightLevelItem[RCJ(16,-bp06)];
 						break;
 					}
-					//^2066:2C4A
 					glbGlobalSpellEffects.Light -= tLightLevelItem[RCJ(16,bp06)] << 1;
 					break;
 				}
 			case ttyInvisibility:		// x47
 				{
-					//^2066:2C5A
 					glbGlobalSpellEffects.Invisibility++;
 					break;
 				}
@@ -104,17 +89,12 @@ void SkWinCore::PROCEED_GLOBAL_EFFECT_TIMERS()
 #endif
 			case ttyEnchantment:		// x48
 				{
-					//^2066:2BD1
 					for (i16 bp06 = 0; bp06 < cd.pi.glbChampionsCount; bp06++) {
-						//^2066:2BD8
 						if ((si & (1 << bp06)) == 0)
 							continue;
-						//^2066:2BE4
 						if (tblChampionSquad[bp06].curHP() == 0)
 							continue;
-						//^2066:2BF5
 						tblChampionSquad[bp06].enchantmentPower += bp04->value;
-						//^2066:2C0C
 					}
 					break;
 				}
@@ -124,15 +104,10 @@ void SkWinCore::PROCEED_GLOBAL_EFFECT_TIMERS()
 					break;
 				}
 		}
-		//^2066:2C70
 	}
-	//^2066:2C7E
 	for (Bit16u si=0; si < cd.pi.glbChampionsCount; si++) {
-		//^2066:2C82
 		CALC_PLAYER_WEIGHT(si);
-		//^2066:2C89
 	}
-	//^2066:2C90
 	return;
 }
 

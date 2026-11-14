@@ -3274,29 +3274,29 @@ void SkWinCore::CHECK_TRIGGER_MUSIC_FROM_PLAYER_POSITION(U16 iMapPosition, U16 i
 X16 SkWinCore::ADD_COIN_TO_WALLET(ObjectID rlMoneyBox, ObjectID rlCoin)
 {
 	ENTER(12);
-	ObjectID di = rlCoin;
+	ObjectID oidMoneyItem = rlCoin;	// di
 	if (IS_CONTAINER_MONEYBOX(rlMoneyBox) == 0)
 		return 0;
-	if (IS_MISCITEM_CURRENCY(di) == 0)
+	if (IS_MISCITEM_CURRENCY(oidMoneyItem) == 0)
 		return 0;
-	Miscellaneous_item *bp08 = GET_ADDRESS_OF_RECORDA(di);
-	Container *bp0c = GET_ADDRESS_OF_RECORD9(rlMoneyBox);
-	ObjectID si = bp0c->GetContainedObject();
-	for (; si != OBJECT_END_MARKER; si = GET_NEXT_RECORD_LINK(si)) {
-		if (si.DBType() == dbMiscellaneous_item) {
-			Miscellaneous_item *bp04 = GET_ADDRESS_OF_RECORDA(si);
-			if (bp04->ItemType() != bp08->ItemType())
+	Miscellaneous_item *bp08 = GET_ADDRESS_OF_RECORDA(oidMoneyItem);	// bp08
+	Container *pMoneyBox = GET_ADDRESS_OF_RECORD9(rlMoneyBox);	// bp0c
+	ObjectID oidCurrentItemInWallet = pMoneyBox->GetContainedObject();	// si
+	for (; oidCurrentItemInWallet != OBJECT_END_MARKER; oidCurrentItemInWallet = GET_NEXT_RECORD_LINK(oidCurrentItemInWallet)) {
+		if (oidCurrentItemInWallet.DBType() == dbMiscellaneous_item) {
+			Miscellaneous_item *pMiscItem = GET_ADDRESS_OF_RECORDA(oidCurrentItemInWallet);	// bp04
+			if (pMiscItem->ItemType() != bp08->ItemType())
 				continue;
-			if (bp04->Charge() >= 0x3f)
+			if (pMiscItem->Charge() >= 0x3F)
 				continue;
-			bp04->Charge(bp04->Charge() +1);
-			QUEUE_DEALLOC_RECORD(di); // this causes many assertion prompts!
+			pMiscItem->Charge(pMiscItem->Charge() + 1);
+			QUEUE_DEALLOC_RECORD(oidMoneyItem); // this causes many assertion prompts!
 			break;
 		}
 		return 0;
 	}
-	if (si != OBJECT_END_MARKER)
+	if (oidCurrentItemInWallet != OBJECT_END_MARKER)
 		return 1;
-	APPEND_RECORD_TO(di, &bp0c->w2, -1, 0);
+	APPEND_RECORD_TO(oidMoneyItem, &pMoneyBox->w2, -1, 0);
 	return 1;
 }
