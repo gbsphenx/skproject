@@ -6603,8 +6603,8 @@ void SkWinCore::_3a15_020f()
 			case tty0C:
 				tblChampionSquad[timer->actor].timerIndex = si;
 				break;
-			case tty1D:
-			case tty1E:
+			case C29_TIME_EVENT_PROJECTILE_MOVE_NO_HIT:
+			case C30_TIME_EVENT_PROJECTILE_MOVE:
 				GET_ADDRESS_OF_RECORDE(timer->value)->TimerIndex(si);
 				break;
 		}
@@ -6621,11 +6621,11 @@ void SkWinCore::COMPACT_TIMERLIST()
 		Timer *bp04 = glbTimersTable;
 
 		do {
-			if (bp04->TimerType() == tty00) {
+			if (bp04->TimerType() == C00_TIME_EVENT_NONE) {
 				Timer *bp08 = &bp04[1];
-				for (; bp08->TimerType() == tty00; bp08++);
+				for (; bp08->TimerType() == C00_TIME_EVENT_NONE; bp08++);
 				*bp04 = *bp08;
-				bp08->TimerType(tty00);
+				bp08->TimerType(C00_TIME_EVENT_NONE);
 			}
 			bp04++;
 			si++;
@@ -9539,7 +9539,7 @@ _2e5b:
 			bp06 = glbTimersCount;
 			SkD((DLV_DBG_GAME_LOAD, "Read Timers ...\n"));
 			while (bp06 < glbTimersMaximumCount) {
-				glbTimersTable[bp06].TimerType(tty00);
+				glbTimersTable[bp06].TimerType(C00_TIME_EVENT_NONE);
 				bp06++;
 			}
 			__SORT_TIMERS();
@@ -12868,7 +12868,7 @@ _0f82:
 _113b:
 	CUT_RECORD_FROM(rlMissile, NULL, bp22, bp24);
 	// SPX: I think this actually attach the missile to another object, like creature possession (= absorb)
-	DELETE_MISSILE_RECORD(rlMissile, bp10, bp30, bp32);
+	PROJECTILE_DESTROY(rlMissile, bp10, bp30, bp32);
 	if (bp1c != 0) {
 		_12b4_0d75_CREATURE(
 			xpos,
@@ -12884,100 +12884,61 @@ _113b:
 // SPX: Move PLAYER from xy to xy
 void SkWinCore::_2fcf_0234(i16 xposFrom, i16 yposFrom, i16 xposTo, i16 yposTo)
 {
-	//^2FCF:0234
-	//^2FCF:023A
 	U16 bp04 = 0;
-	//^2FCF:023F
 	U8 bp10[4];
 	ZERO_MEMORY(&bp10, 4);
-	//^2FCF:0250
 	U16 bp02;
 	for (bp02=0; bp02 < 4; bp02++) {
-		//^2FCF:0257
 		if (GET_PLAYER_AT_POSITION(bp02) >= 0) {
-			//^2FCF:0264
 			bp10[bp02] = bp02 +1;
 		}
-		//^2FCF:0274
 	}
-	//^2FCF:027D
 	U8 bp0c[4];
 	if (xposTo >= 0 && CALC_SQUARE_DISTANCE(xposFrom, yposFrom, xposTo, yposTo) == 1) {
-		//^2FCF:02A2
 		bp02 = CALC_VECTOR_DIR(xposFrom, yposFrom, xposTo, yposTo);
-		//^2FCF:02B9
 		U16 di = (bp02 +1) & 3;
-		//^2FCF:02BF
 		ZERO_MEMORY(&bp0c, 4);
-		//^2FCF:02D0
 		if ((bp0c[(bp02 +3) &3] = bp10[bp02]) != 0) {
-			//^2FCF:02F3
 			bp04 = 1;
 		}
-		//^2FCF:02F8
 		if ((bp0c[(di +1) &3] = bp10[di]) != 0) {
-			//^2FCF:030E
 			bp04 = 1;
 		}
-		//^2FCF:0313
 		if (bp10[bp02] == 0) {
-			//^2FCF:0324
 			bp10[bp02] = bp10[((bp02 +3) &3)];
 		}
-		//^2FCF:0341
 		if (bp10[di] == 0) {
-			//^2FCF:034A
 			bp10[di] = bp10[(di +1) &3];
 		}
 	}
-	//^2FCF:035C
 	i16 bp06 = xposFrom;
 	i16 bp08 = yposFrom;
 
-	//^2FCF:0368
 	while (true) {
-		//^2FCF:0368
 _0368:
 		ObjectID si = GET_TILE_RECORD_LINK(bp06, bp08);
-		//^2FCF:0375
 		for (; si != OBJECT_END_MARKER; si = GET_NEXT_RECORD_LINK(si)) {
-			//^2FCF:0377
 			if (si.DBType() == dbMissile) {
-				//^2FCF:0384
-				if (glbTimersTable[GET_ADDRESS_OF_RECORDE(si)->TimerIndex()].TimerType() != tty1D) {
-					//^2FCF:03A5
+				if (glbTimersTable[GET_ADDRESS_OF_RECORDE(si)->TimerIndex()].TimerType() != C29_TIME_EVENT_PROJECTILE_MOVE_NO_HIT) {
 					bp02 = bp10[si.Dir()];
-					//^2FCF:03B7
 					if (bp02 != 0) {
-						//^2FCF:03BB
 						if (MISSILE_HIT_075f_0af9(-3, xposFrom, yposFrom, bp02, si) != 0) {
-							//^2FCF:03D2
 							_075f_056c(si);
-							//^2FCF:03D9
 							goto _0368;
 						}
 					}
 				}
 			}
-			//^2FCF:03DB
 		}
-		//^2FCF:03E9
 		if (bp04 == 0) {
-			//^2FCF:03ED
 			break;
 		}
-		//^2FCF:03EF
 		xposFrom |= ((bp06 = xposTo) +1) << 8;
-		//^2FCF:0401
 		yposFrom |= ((bp08 = yposTo)) << 8;
-		//^2FCF:0412
 		COPY_MEMORY(bp0c, bp10, 4);
-		//^2FCF:0428
 		bp04 = 0;
-		//^2FCF:042D
 		continue;
 	}
-	//^2FCF:0430
 	return;
 }
 
@@ -12987,15 +12948,9 @@ _0368:
 U16 SkWinCore::_RAND16(U16 maxcnt)
 {
 	// CSBwinSimilarity: STRandom
-
-	//^0CD5:00FE
-	//^0CD5:0101
 	if (maxcnt == 0)
-		//^0CD5:0107
 		return 0;
-	//^0CD5:010B
 	return RAND() % maxcnt;
-	//^0CD5:0117
 }
 
 
@@ -13004,34 +12959,25 @@ U16 SkWinCore::_RAND16(U16 maxcnt)
 //^0CEE:00CD
 void SkWinCore::LOAD_LOCALLEVEL_GRAPHICS_TABLE(U16 curmap) //#DS=4976?
 {
-	//^0CEE:00CD
-	//^0CEE:00D3
 	CHANGE_CURRENT_MAP_TO(cd.pi.glbPlayerMap = curmap);
-	//^0CEE:00DF
 	U8 *bp04 = (glbMapCreaturesTypeNumber = &glbCurrentTileMap[glbCurrentMapWidth -1][glbCurrentMapHeight]);
-	//^0CEE:0107
 	U16 si = dunMapLocalHeader->WallGraphics();
-	//^0CEE:0114
 	COPY_MEMORY(
 		bp04 += dunMapLocalHeader->CreaturesTypes(), 
 		_4976_4dc2,
 		si
 		);
-	//^0CEE:0137
 	U16 di = dunMapLocalHeader->FloorGraphics();
-	//^0CEE:0144
 	COPY_MEMORY(
 		bp04 += si,
 		_4976_4cba,
 		di
 		);
-	//^0CEE:015D
 	COPY_MEMORY(
 		bp04 += di,
 		glbMapDoorOrnatesList,
 		dunMapLocalHeader->DoorDecorationGraphics()
 		);
-	//^0CEE:0180
 	return;
 }
 
@@ -13043,99 +12989,13 @@ void SkWinCore::LOAD_LOCALLEVEL_GRAPHICS_TABLE(U16 curmap) //#DS=4976?
 // TODO: Delete missile ?
 void SkWinCore::_075f_056c(ObjectID rl)
 {
-	//^075F:056C
-	ENTER(0);
-	//^075F:056F
 	if (rl.DBType() == dbMissile) {
-		DELETE_TIMER(GET_ADDRESS_OF_RECORDE(rl)->TimerIndex());
+		EVENTQUEUE_DELETE_EVENT(GET_ADDRESS_OF_RECORDE(rl)->TimerIndex());
 	}
-	//^075F:0594
 	return;
 }
 
-//^075F:0596
-void SkWinCore::DELETE_MISSILE_RECORD(ObjectID rlMissile, ObjectID *prlDropTo, i16 xposDropTo, i16 yposDropTo)
-{
-	SkD((DLV_DBM,"DBM: DELETE_MISSILE_RECORD(%04X,%p(%04X),%2d,%2d)\n"
-		, (Bitu)rlMissile.w
-		, prlDropTo
-		, (prlDropTo != NULL) ? (Bitu)prlDropTo->w : 0
-		, (Bitu)xposDropTo
-		, (Bitu)yposDropTo));
 
-	//^075F:0596
-	//^075F:059C
-	ObjectID si = rlMissile;
-	//^075F:059F
-	Missile *bp04 = GET_ADDRESS_OF_RECORDE(si);
-	//^075F:05AF
-	ObjectID di = bp04->GetMissileObject();
-	//^075F:05B5
-	if (di.DBType() != dbCloud) {
-		//^075F:05C3
-		if (prlDropTo != NULL) {
-			//^075F:05CB
-			APPEND_RECORD_TO(di, prlDropTo, -1, 0);
-		}
-		else {
-			//^075F:05DE
-			ObjectID bp06 = GET_CREATURE_AT(xposDropTo, yposDropTo);
-			//^075F:05EE
-			if (bp06 != OBJECT_NULL && (QUERY_CREATURE_AI_SPEC_FLAGS(bp06) & 0x0001) != 0) {
-				//^075F:0602
-				U16 bp08 = si.Dir();
-				//^075F:060A
-				if ((QUERY_CREATURE_AI_SPEC_FROM_RECORD(bp06)->wc30 & 15) == 1) {
-					//^075F:0623
-					bp08 = glbTimersTable[bp04->TimerIndex()].Direction();
-					//^075F:063F
-				}
-				else {
-					//^075F:0641
-					bp08 = si.Dir();
-				}
-				//^075F:0649
-				MOVE_RECORD_TO(ObjectID(di, bp08), -2, -1, xposDropTo, yposDropTo);
-
-				SkD((DLV_TWEET, "Tweet: %s (a#%03d, x:%d, y:%d, map:%d) have acquired %s! \n"
-					, static_cast<LPCSTR>(getRecordNameOf(bp06))
-					, bp06.DBIndex()
-					, xposDropTo
-					, yposDropTo
-					, glbCurrentMapIndex
-					, static_cast<LPCSTR>(getRecordNameOf(di))
-					));
-			}
-			else {
-				//^075F:0667
-				MOVE_RECORD_TO(ObjectID(di, si.Dir()), -2, 0, xposDropTo, yposDropTo);
-
-				SkD((DLV_TWEET, "Tweet: %s (x:%d, y:%d, map:%d) have fallen down! \n"
-					, static_cast<LPCSTR>(getRecordNameOf(di))
-					, xposDropTo
-					, yposDropTo
-					, glbCurrentMapIndex
-					));
-			}
-		}
-		//^075F:0687
-		QUEUE_NOISE_GEN2(
-			QUERY_CLS1_FROM_RECORD(si),
-			QUERY_CLS2_FROM_RECORD(si),
-			SOUND_STD_KNOCK,
-			0xfe,
-			xposDropTo,
-			yposDropTo,
-			0x01,
-			0x3a,
-			0x80
-			);
-	}
-	//^075F:06B2
-	DEALLOC_RECORD(si);
-	//^075F:06B9
-	return;
-}
 
 //^0CEE:0EC8
 ObjectID SkWinCore::RECYCLE_A_RECORD_FROM_THE_WORLD(U16 itemdb, U8 itemtype)
@@ -13263,7 +13123,7 @@ ObjectID SkWinCore::RECYCLE_A_RECORD_FROM_THE_WORLD(U16 itemdb, U8 itemtype)
 										}
 										_075f_056c(si);
 										CUT_RECORD_FROM(si, NULL, bp10, bp12);
-										DELETE_MISSILE_RECORD(si, NULL, bp10, bp12);
+										PROJECTILE_DESTROY(si, NULL, bp10, bp12);
 										break;
 									}
 								case dbCloth:		// 6
@@ -15272,165 +15132,6 @@ _0062:
 	return si;
 }
 
-
-//^075F:11BA
-void SkWinCore::STEP_MISSILE(Timer *ref)
-{
-	ENTER(48);
-	Timer bp30;
-	COPY_MEMORY(ref, &bp30, 10);
-	Timer *bp04 = &bp30;
-	ObjectID bp0e = bp04->id6();
-	ObjectID bp14 = bp04->id6();
-	Missile *bp08 = GET_ADDRESS_OF_RECORDE(bp0e);
-	i16 di = bp04->w8_0_4();	// di = x
-	i16 bp10 = bp04->w8_5_9();	// bp10 = y
-	ATLASSERT(OBJECT_END_MARKER != GET_TILE_RECORD_LINK(di, bp10));
-	ObjectID bp24;
-	X16 si;
-	U16 bp12;
-	if (bp04->TimerType() == tty1D) {
-		bp04->TimerType(tty1E);
-	}
-	else {
-		si = bp0e.Dir();
-		bp24 = GET_CREATURE_AT(di, bp10);
-		if (bp24 != OBJECT_NULL) {
-			Creature *bp0c = GET_ADDRESS_OF_RECORD4(bp24);
-			if ((QUERY_CREATURE_AI_SPEC_FLAGS(bp24) & 2) != 0) {
-				if (bp08->GetMissileObject().IsMissile()) {
-					i16 bp26 = tbl32_4976_0094[RCJ(32, bp04->Direction() + (((bp0c->b15_0_1() & 1) << 4) + (si << 2)))];
-					if (bp26 < 4) {
-						bp04->Direction(U8(bp26));
-						glbTimersTable[bp08->TimerIndex()].Direction(bp26 & 3);
-					}
-					goto _132b;
-				}
-			}
-		}
-		if (glbCurrentMapIndex == glbMap_4c28) {
-			if (di == glbSomePosX_4c2e) {
-				if (bp10 == glbSomePosY_4c30) {
-					if (MISSILE_HIT_075f_0af9(-3, di, bp10, si, bp0e) != 0) {
-						return;
-					}
-				}
-			}
-		}
-		if (MISSILE_HIT_075f_0af9(-1, di, bp10, si, bp14) != 0)
-			return;
-_132b:
-		if (bp08->EnergyRemaining() <= (bp12 = bp04->b9_4_7())) {
-			CUT_RECORD_FROM(bp0e = bp14, NULL, di, bp10);
-			DELETE_MISSILE_RECORD(bp0e, NULL, di, bp10);
-			return;
-		}
-		bp08->EnergyRemaining(bp08->EnergyRemaining() -U8(bp12));
-		if (bp08->EnergyRemaining2() < bp12) {
-			bp08->EnergyRemaining2(0);
-		}
-		else {
-			bp08->EnergyRemaining2(bp08->EnergyRemaining2() -bp12);
-		}
-	}
-	X16 bp1c = bp04->Direction();
-	bp0e = bp04->id6();
-	si = bp0e.Dir();
-	X16 bp1e = (bp1c == si || ((bp1c +1) & 3) == si) ? 1 : 0;
-	X16 bp20;
-	X16 bp22;
-	if (bp1e != 0) {
-		bp20 = di;
-		bp22 = bp10;
-		di += glbXAxisDelta[bp1c];
-		bp10 += glbYAxisDelta[bp1c];
-		bp12 = GET_TILE_VALUE(di, bp10);
-		//ATLASSERT((bp12 >> 5) != ttMapExit); // SPX: why not? turn off this assert and see if it's that bad
-		if ((bp12 >> 5) != ttWall) {
-			if ((bp12 >> 5) != ttTrickWall || (bp12 & 5) != 0) {
-				if ((bp12 >> 5) != ttStairs)
-					goto _146e;
-				if ((glbCurrentTileMap[bp20][bp22] >> 5) != ttStairs)
-					goto _146e;
-			}
-		}
-		if (MISSILE_HIT_075f_0af9(bp12 >> 5, bp20, bp22, si, bp0e) != 0)
-			return;
-_146e:
-		ObjectID bp1a = GET_WALL_TILE_ANYITEM_RECORD(di, bp10);
-		for (; bp1a != OBJECT_END_MARKER; bp1a = GET_NEXT_RECORD_LINK(bp1a)) {
-			if (bp1a.DBType() == dbCloud) {
-				Cloud *bp18 = GET_ADDRESS_OF_RECORDF(bp1a);
-				if (bp18->CloudType() == missileTeleporter) {	// missileTeleporter
-					X16 bp26 = ((glbTimersTable[bp08->TimerIndex()].Direction() & 3) +2) & 3;
-					bp04->Direction(U8(bp26));
-					glbTimersTable[bp08->TimerIndex()].Direction(U8(bp26));
-					di = bp20;
-					bp10 = bp22;
-					bp1e = 0;
-					break;
-				}
-			}
-		}
-	}
-	bp12 = si;
-	if ((bp1c & 1) == (si & 1)) {
-		si--;
-	}
-	else {
-		si++;
-	}
-	si &= 3;
-	if (bp1e != 0) {
-		MOVE_RECORD_TO(ObjectID(bp0e, si), bp20, bp22, di, bp10);
-		if (bp08->GetMissileObject() == OBJECT_EFFECT_FIREBALL && glbCurrentMapIndex == cd.pi.glbPlayerMap) {	// oFF80
-			glbDoLightCheck = 1;
-		}
-		bp04->w8_0_4(_4976_5826);
-		bp04->w8_5_9(_4976_5828);
-		bp04->w8_a_b(_4976_581e);
-		bp0e.Dir(_4976_5820);
-		bp04->SetMap(_4976_581c);
-		di = glbCurrentMapIndex;
-		if (di != _4976_581c) {
-			CHANGE_CURRENT_MAP_TO(_4976_581c);
-		}
-		_4976_5826 += glbXAxisDelta[_4976_581e];
-		_4976_5828 += glbYAxisDelta[_4976_581e];
-		bp24 = GET_CREATURE_AT(_4976_5826, _4976_5828);
-		if (bp24 != OBJECT_NULL) {
-			ATTACK_CREATURE(bp24, _4976_5826, _4976_5828, 0x2006, 0x64, 0);
-		}
-		bp12 = GET_TILE_VALUE(_4976_5826, _4976_5828);
-		si = bp12 >> 5;
-		if (si != ttWall) {
-			if (si == ttTrickWall || (bp12 & 4) != 0) {
-				if (si == ttDoor || (bp12 &= 7) == 5 || bp12 <= 1) {
-					_4976_5826 += glbXAxisDelta[_4976_581e];
-					_4976_5828 += glbYAxisDelta[_4976_581e];
-					bp24 = GET_CREATURE_AT(_4976_5826, _4976_5828);
-					if (bp24 != OBJECT_NULL) {
-						ATTACK_CREATURE(bp24, _4976_5826, _4976_5828, 0x2006, 0x64, 0);
-					}
-				}
-			}
-		}
-		if (_4976_581c != di) {
-			CHANGE_CURRENT_MAP_TO(di);
-		}
-	}
-	else {
-		if ((GET_TILE_VALUE(di, bp10) >> 5) == ttDoor && MISSILE_HIT_075f_0af9(4, di, bp10, bp12, bp14) != 0)
-			return;
-		CUT_RECORD_FROM(bp0e, NULL, di, bp10);
-		bp0e.Dir(si);
-		APPEND_RECORD_TO(bp0e, NULL, di, bp10);
-	}
-	bp04->dw00 += 1;
-	bp04->id6(bp0e);
-	bp08->TimerIndex(QUEUE_TIMER(bp04));
-	return;
-}
 
 
 

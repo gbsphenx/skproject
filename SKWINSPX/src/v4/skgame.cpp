@@ -435,61 +435,6 @@ void SkWinCore::DO_NOTHING_FROM_REMOVE_HAND()
 
 
 
-//^075F:000B
-// SPX: TODO I wonder if aa is rather direction
-void SkWinCore::SHOOT_ITEM(ObjectID rlItemThrown, U16 xx, U16 yy, U16 dir, U16 aa, U16 energyVal, U16 ene2Val, U16 dd)
-{
-	ATLASSERT(rlItemThrown.DBType() != dbDoor); // you cannot throw this kind of objects.
-	ATLASSERT(rlItemThrown.DBType() != dbTeleporter); // you cannot throw this kind of objects.
-	ATLASSERT(rlItemThrown.DBType() != dbText); // you cannot throw this kind of objects.
-	ATLASSERT(rlItemThrown.DBType() != dbActuator); // you cannot throw this kind of objects.
-	ATLASSERT(rlItemThrown.DBType() != dbCreature); // you cannot throw this kind of objects.
-	ATLASSERT(rlItemThrown.DBType() != db11); // you cannot throw this kind of objects.
-	ATLASSERT(rlItemThrown.DBType() != db12); // you cannot throw this kind of objects.
-	ATLASSERT(rlItemThrown.DBType() != db13); // you cannot throw this kind of objects.
-	ATLASSERT(rlItemThrown.IsMissile() || (!rlItemThrown.IsMissile() && rlItemThrown.DBType() != dbCloud)); // you cannot throw this kind of objects.
-
-	ENTER(14);
-	ObjectID di = rlItemThrown;
-	ObjectID si = ALLOC_NEW_RECORD(dbMissile);
-	if (si == OBJECT_NULL) {
-		if (di.DBType() != dbCloud) {
-			MOVE_RECORD_TO(ObjectID(di, dir), -1, 0, xx, yy);
-		}
-		return;
-	}
-	QUEUE_NOISE_GEN2(
-		QUERY_CLS1_FROM_RECORD(di),
-		QUERY_CLS2_FROM_RECORD(di),
-		SOUND_STD_THROW,
-		0xfe,
-		xx,
-		yy,
-		1,
-		0x6e,
-		0x80
-		);
-	si = ObjectID(si, dir);
-	Missile *missile = GET_ADDRESS_OF_RECORDE(si);	//*bp04
-	missile->SetMissileObject(di);
-	missile->EnergyRemaining(U8(min_value(energyVal, 255)));
-	missile->EnergyRemaining2(U8(ene2Val));
-	APPEND_RECORD_TO(si, NULL, xx, yy);
-	if (missile->GetMissileObject() == OBJECT_EFFECT_FIREBALL && glbCurrentMapIndex == cd.pi.glbPlayerMap)	// oFF80
-		glbDoLightCheck = 1;
-	Timer bp0e;
-	bp0e.SetMap(glbCurrentMapIndex);
-	bp0e.SetTick(glbGameTick +1);
-	bp0e.TimerType((_4976_4b7e != 0) ? tty1E : tty1D);
-	bp0e.actor = TIMER_ACTOR__00;
-	bp0e.value = si;
-	bp0e.w8_0_4(xx);
-	bp0e.w8_5_9(yy);
-	bp0e.w8_c_f(dd);
-	bp0e.w8_a_b(aa);
-	missile->TimerIndex(QUEUE_TIMER(&bp0e));
-	return;
-}
 
 
 
@@ -3069,7 +3014,7 @@ U8 *SkWinCore::PREPARE_LOCAL_CREATURE_VAR(ObjectID rl, i16 xx, i16 yy, U16 timer
 	glbCreatureActionProceeded = 0;
 	glbCreatureAIStatIndex = 0xffff;
 	if (xCreatureInfo == NULL && SkCodeParam::bDebugBypassNullPointers == false) {
-		if (timerType == tty22) {
+		if (timerType == C34_TIME_EVENT_CREATURE_THINK) {
 			glbCreatureCommand_4976_4ee8 = 0;
 			_4976_4eea = 0;
 			glbCreatureCommandThinking = (xCreatureInfo->Command == -1) ? 0 : xCreatureInfo->Command;
@@ -3110,7 +3055,7 @@ U16 SkWinCore::ATTACK_WALL(i16 xTo, i16 yTo, i16 xFrm, i16 yFrm, U16 dirTo, Obje
 		) {
 			CUT_RECORD_FROM(si, NULL, xFrm, yFrm);
 			si.Dir(di.Dir());
-			DELETE_MISSILE_RECORD(si, NULL, xTo, yTo);
+			PROJECTILE_DESTROY(si, NULL, xTo, yTo);
 			bp0c = 1;
 			continue;
 		}
@@ -3139,7 +3084,7 @@ U16 SkWinCore::ATTACK_WALL(i16 xTo, i16 yTo, i16 xFrm, i16 yFrm, U16 dirTo, Obje
 					continue;
 				CUT_RECORD_FROM(si, NULL, xFrm, yFrm);
 				si.Dir(dirTo);
-				DELETE_MISSILE_RECORD(si, NULL, xTo, yTo);
+				PROJECTILE_DESTROY(si, NULL, xTo, yTo);
 				bp0c = 1;
 				continue;
 			case ACTUATOR_TYPE_FLYING_ITEM_TELEPORTER: // 0x23 -> Item teleporter (flying item)
@@ -3153,7 +3098,7 @@ U16 SkWinCore::ATTACK_WALL(i16 xTo, i16 yTo, i16 xFrm, i16 yFrm, U16 dirTo, Obje
 					? bp04->Direction()
 					: bp04->ActionType()
 					);
-				DELETE_MISSILE_RECORD(si, NULL, bp04->Xcoord(), bp04->Ycoord());
+				PROJECTILE_DESTROY(si, NULL, bp04->Xcoord(), bp04->Ycoord());
 				bp0c = 1;
 				break;
 			default: // ^_0ae1

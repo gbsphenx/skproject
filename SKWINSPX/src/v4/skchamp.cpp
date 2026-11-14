@@ -1308,7 +1308,7 @@ void SkWinCore::CURE_POISON(U16 iChampIdx)
 		for (iTimerIdx = 0; iTimerIdx < glbTimersActiveCount; xTimer++, iTimerIdx++) {
 			if (xTimer->TimerType() == C75_tty_PoisonChampion) {	// search for poison timer and delete it if it is for the same champion index
 				if (xTimer->actor == iLocalChampIdx) {
-					DELETE_TIMER(iTimerIdx);
+					EVENTQUEUE_DELETE_EVENT(iTimerIdx);
 				}
 			}
 		}

@@ -2171,7 +2171,6 @@ protected:
 	U16 QUERY_SND_ENTRY_INDEX(U8 cls1, U8 cls2, U8 cls4);
 	void QUEUE_NOISE_GEN1(U8 cls1, U8 cls2, U8 cls4, U8 xx, U8 yy, i16 xpos, i16 ypos, i16 tickDelta);
 	void QUEUE_NOISE_GEN2(U8 iGDatCategory, U8 iGDatItemId, U8 iSoundID, U8 iGDatItemIdAlt, i16 xpos, i16 ypos, U16 tickDelta, U8 ss, U8 tt);
-	void DELETE_TIMER(U16 iTimerIndex);
 	void INVOKE_MESSAGE(i16 xpos, i16 ypos, U16 dir, U16 actionType, U32 tick);
 	void SET_ITEMTYPE(ObjectID recordLink, U8 itemType);
 	ObjectID ALLOC_NEW_DBITEM(U16 itemspec);
@@ -2202,7 +2201,13 @@ protected:
 	U16 MOVE_RECORD_TO(ObjectID rlWhatYouMove, i16 xposFrom, i16 yposFrom, i16 xposTo, i16 yposTo);
 
 	void _075f_056c(ObjectID rl);
-	void DELETE_MISSILE_RECORD(ObjectID rlMissile, ObjectID *prlDropTo, i16 xposDropTo, i16 yposDropTo);
+	
+	
+	// ItemDB 0x0E : Projectile
+	void PROJECTILE_DESTROY(ObjectID rlMissile, ObjectID *prlDropTo, i16 xposDropTo, i16 yposDropTo);
+	void PROJECTILE_PROCESS_EVENT(Timer *ref);	// STEP_MISSILE
+
+
 	ObjectID RECYCLE_A_RECORD_FROM_THE_WORLD(U16 itemdb, U8 itemtype);
 	ObjectID ALLOC_NEW_RECORD(U16 db);
 	X16 _069a_035b(X16 xx);
@@ -2288,7 +2293,15 @@ protected:
 	void SET_RGB_PALETTE_FROM_DATA(U8* xPalette);	// _44c8_1baf renamed SET_RGB_PALETTE_FROM_DATA
 	UINT INIT();	// _38c8_04aa renamed INIT
 	X16 IS_TIMER_TO_PROCEED();
-	void GET_AND_DELETE_NEXT_TIMER(Timer *ref);
+
+
+	// EventQueue
+
+	void EVENTQUEUE_POP_FIRST_EVENT(Timer *pEvent); // GET_AND_DELETE_NEXT_TIMER
+	void EVENTQUEUE_DELETE_EVENT(U16 iTimerIndex);	// DELETE_TIMER
+
+	// EventQueue
+
 	X16 _1c9a_17c7(U8 xx, U8 yy, U8 zz);
 	X8 _14cd_062e();
 	U8 *_3e74_5788_CACHE(U16 xx, i32 yy); // _3e74_5788
@@ -2370,7 +2383,6 @@ protected:
 	X16 OPERATE_PIT_TELE_TILE(X16 xx, X16 yy, X16 ww);
 
 
-	void STEP_MISSILE(Timer *ref);
 	void PROCESS_CLOUD(Timer *ref);
 	X16 TOGGLE_ACTUATOR_MESSAGE(X8 iNewMessageDirection, X8 iCurrentMessageDirection);	// _3a15_1da8
 	void ACTIVATE_RELAY1(Timer *ref, Actuator *pr4, X16 delayAsMult);

@@ -25,7 +25,7 @@
 
 //^3A15:320C
 // SPX: _3a15_320c renamed PROCESS_TIMER_0E
-void SkWinCore::PROCESS_TIMER_0E(Timer *v0, Bit16u v1)
+void SkWinCore::PROCESS_TIMER_0E(Timer *v0, U16 v1)
 {
 	ENTER(12);
 	X32 bp0c = glbItemSizePerDB[v0->value];
@@ -105,7 +105,7 @@ void SkWinCore::PROCEED_GLOBAL_EFFECT_TIMERS()
 				}
 		}
 	}
-	for (Bit16u si=0; si < cd.pi.glbChampionsCount; si++) {
+	for (U16 si=0; si < cd.pi.glbChampionsCount; si++) {
 		CALC_PLAYER_WEIGHT(si);
 	}
 	return;
@@ -115,12 +115,12 @@ void SkWinCore::PROCEED_GLOBAL_EFFECT_TIMERS()
 
 
 //^2066:1F37
-Bit16u SkWinCore::_2066_1f37(ObjectID recordLink, Bit16u yy, Bit16u *zz)
+U16 SkWinCore::_2066_1f37(ObjectID recordLink, U16 yy, U16 *zz)
 {
 	//^2066:1F37
 	ObjectID di = recordLink;
 	//^2066:1F40
-	Bit16u si = 0;
+	U16 si = 0;
 	//^2066:1F42
 	while ((di = GET_NEXT_RECORD_LINK(di)) != OBJECT_END_MARKER) {
 		//^2066:1F44
@@ -222,23 +222,17 @@ void SkWinCore::PROCEED_LIGHT(U16 cmdNum, U16 yy)
 //^2759:1451
 U16 SkWinCore::CONFUSE_CREATURE(U16 ww, U16 xx, U16 yy)
 {
-	//^2759:1451
 	ENTER(8);
-	//^2759:1457
 	X16 si = 0;
 	if (glbObjectID_4976_534c != OBJECT_NULL) {
-		//^2759:1460
 		Creature* creature = GET_ADDRESS_OF_RECORD4(glbObjectID_4976_534c);	//*bp04
 		AIDefinition *bp08 = QUERY_CREATURE_AI_SPEC_FROM_TYPE(creature->CreatureType());
 		U16 di;
 		if (RAND16(ww) >= (di = bp08->w16_4_7()) && di != 15) {
-			//^2759:14A6
 			ATTACK_CREATURE(glbObjectID_4976_534c, xx, yy, 0x2005, 0x64, 0);
-			//^2759:14BF
 			si = 1;
 		}
 	}
-	//^2759:14C4
 	return si;
 }
 
@@ -248,67 +242,49 @@ U16 SkWinCore::CONFUSE_CREATURE(U16 ww, U16 xx, U16 yy)
 // SPX: _2c1d_0009 replaced by PROCEED_ENCHANTMENT_SELF
 void SkWinCore::PROCEED_ENCHANTMENT_SELF(U16 mask, U16 yy, U16 zz, U16 tick) 
 {
-	//^2C1D:0009
 	ENTER(18);
-	//^2C1D:000F
 	Timer bp12;
 	X16 bp08 = 0;
 	i16 bp06 = 0;
-	//^2C1D:0019
 	for (; bp06 < 4; bp06++) {
-		//^2C1D:001C
 		X16 di = 1 << bp06;
 		if ((mask & di) != 0) {
-			//^2C1D:002E
 			if (tblChampionSquad[bp06].curHP() == 0) {
-				//^2C1D:003F
 				mask &= ~di;
 			}
 			if (tblChampionSquad[bp06].enchantmentAura != U8(yy) || tblChampionSquad[bp06].curHP() == 0) {
 				tblChampionSquad[bp06].enchantmentPower = 0;
 				i16 si = 0;
-				Timer *bp04 = glbTimersTable;
-				for (; si < glbTimersActiveCount; bp04++, si++) {
-					//^2C1D:008B
-					if (bp04->TimerType() == ttyEnchantment && (mask & bp04->actor) != 0) {
-						if ((bp04->actor & (~mask)) == 0) {
-							//^2C1D:00AF
-							DELETE_TIMER(si);
+				Timer *pEvent = glbTimersTable;	// bp04
+				for (; si < glbTimersActiveCount; pEvent++, si++) {
+					if (pEvent->TimerType() == ttyEnchantment && (mask & pEvent->actor) != 0) {
+						if ((pEvent->actor & (~mask)) == 0) {
+							EVENTQUEUE_DELETE_EVENT(si);
 						}
 						else {
-							//^2C1D:00B8
-							bp04->actor = bp04->actor & (~U8(mask));
+							pEvent->actor = pEvent->actor & (~U8(mask));
 						}
 					}
-					//^2C1D:00CA
 				}
 			}
 		}
-		//^2C1D:00D5
 		if (tblChampionSquad[bp06].enchantmentPower > 0x32)
 			bp08 = 1;
-		//^2C1D:00EB
 	}
-	//^2C1D:00F7
 	if (bp08 != 0)
 		zz >>= 2;
-	//^2C1D:0101
 	for (bp06 = 0; bp06 < cd.pi.glbChampionsCount; bp06++) {
-		//^2C1D:0108
 		if ((mask & (1 << bp06)) != 0) {
 			tblChampionSquad[bp06].enchantmentAura = U8(yy);
 			tblChampionSquad[bp06].enchantmentPower += zz;
 		}
-		//^2C1D:0137
 	}
-	//^2C1D:0143
 	bp12.value = zz;
 	bp12.TimerType(ttyEnchantment);
 	bp12.actor = U8(mask);
 	bp12.SetMap(U8(cd.pi.glbPlayerMap));
 	bp12.SetTick(glbGameTick +tick);
 	QUEUE_TIMER(&bp12);
-	//^2C1D:0182
 	return;
 }
 
@@ -317,94 +293,63 @@ void SkWinCore::PROCEED_ENCHANTMENT_SELF(U16 mask, U16 yy, U16 zz, U16 tick)
 //SPX: somewhat called when in bat caves
 U16 SkWinCore::_1c9a_1bae(i16 xx, i16 yy)
 {
-	//^1C9A:1BAE
 	ENTER(0);
-	//^1C9A:1BB1
 	if (glbCreatureTimerGetX == xx && glbCreatureTimerGetY == yy)
 		return 0;
-	//^1C9A:1BC9
 	return _19f0_00b8(xx, yy);
-	//^1C9A:1BD6
 }
 
 
 //^3A15:3331
 void SkWinCore::ACTIVATE_TICK_GENERATOR(Actuator *ref, ObjectID recordLink)
 {
-	//^3A15:3331
-    //^3A15:3337
-	Bit16u di = ref->ActuatorType();
-	//^3A15:3343
-	Bit16u si;
+	U16 di = ref->ActuatorType();
+	U16 si;
 	switch (di) {
 		case ACTUATOR_TYPE_TICK_GENERATOR: // 0x001e -> Activator, tick generator
-			//^3A15:3358
 			si = 1; break;
 		case ACTUATOR_TYPE_X33_V008: // 0x0033 -> -
-			//^3A15:335D
 			si = 8; break;
 		case ACTUATOR_TYPE_X34_V016: // 0x0034 -> -
-			//^3A15:3362
 			si = 16; break;
 		case ACTUATOR_TYPE_X35_V032: // 0x0035 -> -
-			//^3A15:3367
 			si = 32; break;
 		case ACTUATOR_TYPE_X36_V064: // 0x0036 -> -
-			//^3A15:336C
 			si = 64; break;
 		case ACTUATOR_TYPE_X37_V128: // 0x0037 -> -
-			//^3A15:3371
 			si = 128; break;
 	}
-	//^3A15:3374
 	if (ref->ActuatorData() != 0) {
-		//^3A15:3385
 		Timer bp0a;
 		bp0a.SetMap(glbCurrentMapIndex);
 		bp0a.SetTick(glbGameTick + (glbGameTick % (Bit32u(ref->ActuatorData()) * Bit32u(si))));
 		bp0a.TimerType(ttyTickGenerator);
 		bp0a.actor = TIMER_ACTOR__00;
 		bp0a.value = recordLink;
-		bp0a.Value2(Bit8u(si & 0xff));
+		bp0a.Value2(U8(si & 0xff));
 		bp0a.ActionType(0);
-		//^3A15:33ED
 		QUEUE_TIMER(&bp0a);
 	}
-	//^3A15:3400
 	return;
 }
 
 //^3A15:3511
 void SkWinCore::PROCESS_ACTUATOR_TICK_GENERATOR() //#DS=4976?
 {
-	//^3A15:3511
-	for (Bit16u di=0; dunHeader->nMaps > di; di++) {
-		//^3A15:351C
-		Bit16u bp14 = dunMapsHeaders[di].RawColumn();
-		//^3A15:3534
-		Bit16u bp16 = dunMapsHeaders[di].RawRow();
-		//^3A15:354C
-		Bit8u *bp04 = *glbMapTileValue[di];
-		//^3A15:3567
-		OID_T *bp0c = &dunGroundStacks[dunMapTilesObjectIndexPerColumn[dunMapColumnsSumArray[di]]];	 // Bit16u *bp0c
-		//^3A15:3591
-		for (Bit16u bp10=0; bp10 <= bp14; bp10++) {
-			//^3A15:3599
-			for (Bit16u bp12=0; bp12 <= bp16; bp12++) {
-				//^3A15:35A1
+	for (U16 di=0; dunHeader->nMaps > di; di++) {
+		U16 bp14 = dunMapsHeaders[di].RawColumn();
+		U16 bp16 = dunMapsHeaders[di].RawRow();
+		U8 *bp04 = *glbMapTileValue[di];
+		OID_T *bp0c = &dunGroundStacks[dunMapTilesObjectIndexPerColumn[dunMapColumnsSumArray[di]]];	 // U16 *bp0c
+		for (U16 bp10=0; bp10 <= bp14; bp10++) {
+			for (U16 bp12=0; bp12 <= bp16; bp12++) {
 				if ((*(bp04++) & 0x10) != 0) {
-					//^3A15:35B0
 					ObjectID bp0e = *bp0c;
 					bp0c++;
-					//^3A15:35BD
 					while (bp0e.DBType() <= dbActuator) {
-						//^3A15:35C0
 						if (bp0e.DBType() == dbActuator) {
-							//^3A15:35D1
 							Actuator *bp08 = GET_ADDRESS_OF_RECORD(bp0e)->castToActuator();
-							//^3A15:35E0
-							Bit16u bp1c = bp08->ActuatorType();
-							//^3A15:35ED
+							U16 bp1c = bp08->ActuatorType();
 							switch (bp1c) {
 								case ACTUATOR_TYPE_TICK_GENERATOR: // 0x001e -> 'Activator, tick generator'
 								case ACTUATOR_TYPE_X33_V008: // 0x0033 -> ?
@@ -413,68 +358,43 @@ void SkWinCore::PROCESS_ACTUATOR_TICK_GENERATOR() //#DS=4976?
 								case ACTUATOR_TYPE_X36_V064: // 0x0036 -> ?
 								case ACTUATOR_TYPE_X37_V128: // 0x0037 -> ?
 									{
-										//^3A15:3606
 										if (cd.mo.glbSpecialScreen != _MENU_SCREEN__RESUME_GAME_SELECT) {
-											//^3A15:360D
 											if (bp08->OnceOnlyActuator() != 0) {
-												//^3A15:361E
 												CHANGE_CURRENT_MAP_TO(di);
-												//^3A15:3625
 												ACTIVATE_TICK_GENERATOR(bp08, bp0e);
-												//^3A15:3635
 												break;
 											}
-											//^3A15:3638
 											bp08->w4 &= 0xfffe;
-											//^3A15:3640
 											break;
 										}
-										//^3A15:3643
-										Bit16u si;
+										U16 si;
 										for (si=0; si < glbTimersMaximumCount; ) {
-											//^3A15:3647
 											Timer *bp1a = &glbTimersTable[si];
 											si++;
-											//^3A15:365F
 											if (bp1a->TimerType() == ttyTickGenerator && bp1a->value == bp0e) {
-												//^3A15:3672
 												bp1a->SetMap(di);
 												break;
 											}
-											//^3A15:36A1
 										}
-										//^3A15:36A7
 										for (; si < glbTimersMaximumCount; si++) {
-											//^3A15:36A9
 											Timer *bp1a = &glbTimersTable[si];
-											//^3A15:36C3
 											if (bp1a->TimerType() == ttyTickGenerator) {
-												//^3A15:36CA
 												if (bp1a->value == bp0e) {
-													//^3A15:36D3
-													DELETE_TIMER(si);
+													EVENTQUEUE_DELETE_EVENT(si);
 												}
 											}
-											//^3A15:36D9
 										}
 										break;
 									}
 							}
 						}
-						//^3A15:36E0
 						bp0e = GET_NEXT_RECORD_LINK(bp0e);
-						//^3A15:36EC
 					}
 				}
-				//^3A15:36FD
 			}
-			//^3A15:370B
 		}
-		//^3A15:3719
 	}
-	//^3A15:372B
 	COMPACT_TIMERLIST();
-	//^3A15:372F
 	return;
 }
 
@@ -483,36 +403,24 @@ void SkWinCore::REARRANGE_TIMERLIST()
 {
 	// chain an unused timer entry to next unused timer entry.
 
-	//^3A15:0314
-	//^3A15:0319
 	glbTimersActiveCount = 0;
 	glbTimerIndexNextAvailable = 0xffff;
-	//^3A15:0325
-	Bit16u di;
-	for (Bit16u si=0; si < glbTimersMaximumCount; si++) {
-		//^3A15:0329
-		if (glbTimersTable[si].TimerType() == tty00) {
-			//^3A15:033D
+	U16 di;
+	for (U16 si=0; si < glbTimersMaximumCount; si++) {
+		if (glbTimersTable[si].TimerType() == C00_TIME_EVENT_NONE) {
 			if (glbTimerIndexNextAvailable == TIMER_NONE) {	// 0xFFFF
-				//^3A15:0344
 				glbTimerIndexNextAvailable = si;
 			}
 			else {
-				//^3A15:034A
 				glbTimersTable[di].w0_0_f(si);
 			}
-			//^3A15:035A
 			glbTimersTable[si].w0_0_f(0xffff);
-			//^3A15:036C
 			di = si;
 		}
 		else {
-			//^3A15:0370
 			glbTimersActiveCount = si+1;
 		}
-		//^3A15:0376
 	}
-	//^3A15:037D
 	return;
 }
 
@@ -520,19 +428,19 @@ void SkWinCore::REARRANGE_TIMERLIST()
 // SPX: _3a15_008e renamed __SORT_TIMERS
 void SkWinCore::__SORT_TIMERS()
 {
-	Bit16u iTimersCount = glbTimersCount;	// bp12
-	Bit16u iTimerIndex = 0; // di
-	Bit16u iTimerIndex2 = 0; // si
+	U16 iTimersCount = glbTimersCount;	// bp12
+	U16 iTimerIndex = 0; // di
+	U16 iTimerIndex2 = 0; // si
 	if (iTimersCount != 0) {
-		for (Bit16u iTimerIndex = 0; iTimerIndex < iTimersCount; iTimerIndex++) {
+		for (U16 iTimerIndex = 0; iTimerIndex < iTimersCount; iTimerIndex++) {
 			glbTimerNextEntries[iTimerIndex] = iTimerIndex;
 		}
 		if (iTimersCount != 1) {
 			for (i16 bp0e = (iTimersCount - 2) >> 1; bp0e >= 0; bp0e--) {
-				Bit16u iTimerIndex = bp0e;
+				U16 iTimerIndex = bp0e;
 				Timer* xTimer = &glbTimersTable[glbTimerNextEntries[iTimerIndex]];	// bp04
 				while (true) {
-					Bit16u iTimerIndex2 = (iTimerIndex << 1) + 1;
+					U16 iTimerIndex2 = (iTimerIndex << 1) + 1;
 					if (iTimerIndex2 >= iTimersCount)
 						break;
 					Timer* xTimer2 = &glbTimersTable[glbTimerNextEntries[iTimerIndex2]];	// bp08
@@ -553,7 +461,7 @@ void SkWinCore::__SORT_TIMERS()
 							break;
 					}
 					// SPX: This is a swap typical in sort algo
-					Bit16u iSwapIndex = glbTimerNextEntries[iTimerIndex];	// bp10
+					U16 iSwapIndex = glbTimerNextEntries[iTimerIndex];	// bp10
 					glbTimerNextEntries[iTimerIndex] = glbTimerNextEntries[iTimerIndex2];
 					glbTimerNextEntries[iTimerIndex2] = iSwapIndex;
 					iTimerIndex = iTimerIndex2;
@@ -578,7 +486,7 @@ void SkWinCore::INIT_TIMERS()
 		Timer* pTimer = glbTimersTable;	// bp04
 		U16 iTimerIndex = 0;	// si
 		for (; iTimerIndex < glbTimersMaximumCount; pTimer++) {
-			pTimer->TimerType(tty00);
+			pTimer->TimerType(C00_TIME_EVENT_NONE);
 			pTimer->w0_0_f(++iTimerIndex);
 		}
 		glbTimersActiveCount = 0;
@@ -592,7 +500,7 @@ void SkWinCore::INIT_TIMERS()
 
 //^2FCF:01C5
 // _2fcf_01c5 renamed SET_TIMER_3C_OR_3D
-void SkWinCore::SET_TIMER_3C_OR_3D(ObjectID recordLink, i16 xx, i16 yy, Bit16u curmap, Bit16u ss)
+void SkWinCore::SET_TIMER_3C_OR_3D(ObjectID recordLink, i16 xx, i16 yy, U16 curmap, U16 ss)
 {
 	ENTER(10);
 	Timer tTimer; // bp0a
@@ -872,7 +780,7 @@ void SkWinCore::TIMER_SORT_EXCHANGE(U16 xx)
 //^3A15:0447
 // SPX: Count timers until timer number xx
 // SPX: _3a15_0447 renamed GET_TIMER_NEW_INDEX
-Bit16u SkWinCore::GET_TIMER_NEW_INDEX(U16 iCurrentTimerIndex)
+U16 SkWinCore::GET_TIMER_NEW_INDEX(U16 iCurrentTimerIndex)
 {
 	ENTER(4);
 	U16* pTimerNextIndex = glbTimerNextEntries;	// bp04
@@ -888,7 +796,7 @@ Bit16u SkWinCore::GET_TIMER_NEW_INDEX(U16 iCurrentTimerIndex)
 }
 
 //^3A15:0696
-Bit16u SkWinCore::QUEUE_TIMER(Timer *ref)
+U16 SkWinCore::QUEUE_TIMER(Timer *ref)
 {
 	ATLASSERT(ref->TimerType() != 0xCC);
 
@@ -929,13 +837,14 @@ Bit16u SkWinCore::QUEUE_TIMER(Timer *ref)
 
 //^3A15:061A
 // SPX: _3a15_061a renamed DELETE_TIMER
-void SkWinCore::DELETE_TIMER(U16 iTimerIndex)
+// DELETE_TIMER => EVENTQUEUE_DELETE_EVENT
+void SkWinCore::EVENTQUEUE_DELETE_EVENT(U16 iTimerIndex)
 {
 	U16 iLocalTimerIndex = iTimerIndex;	// si
 	if (glbTimer_4976_4762 >= 0) {
 		TIMER_SORT_EXCHANGE(glbTimer_4976_4762);
 	}
-	glbTimersTable[iLocalTimerIndex].TimerType(tty00);
+	glbTimersTable[iLocalTimerIndex].TimerType(C00_TIME_EVENT_NONE);
 	glbTimersTable[iLocalTimerIndex].w0_0_f(glbTimerIndexNextAvailable);
 	glbTimerIndexNextAvailable = iLocalTimerIndex;
 	glbTimersCount--;
@@ -985,12 +894,12 @@ X16 SkWinCore::IS_TIMER_TO_PROCEED()
 
 //^3A15:072F
 // SPX: _3a15_072f renamed GET_AND_DELETE_NEXT_TIMER
-void SkWinCore::GET_AND_DELETE_NEXT_TIMER(Timer *ref)
+// GET_AND_DELETE_NEXT_TIMER => EVENTQUEUE_POP_FIRST_EVENT
+void SkWinCore::EVENTQUEUE_POP_FIRST_EVENT(Timer *pEvent)
 {
-	ENTER(0);
-	X16 iTimerIndex = *glbTimerNextEntries;	// si
-	*ref = glbTimersTable[iTimerIndex];
-	DELETE_TIMER(iTimerIndex);
+	U16 iTimerIndex = *glbTimerNextEntries;	// si
+	*pEvent = glbTimersTable[iTimerIndex];
+	EVENTQUEUE_DELETE_EVENT(iTimerIndex);
 	return;
 }
 
@@ -998,9 +907,7 @@ void SkWinCore::GET_AND_DELETE_NEXT_TIMER(Timer *ref)
 X16 SkWinCore::_1c9a_17c7(U8 xx, U8 yy, U8 zz)
 {
 	// SPX: I hit this one with undefined AI table
-	//^1C9A:17C7
 	ENTER(0);
-	//^1C9A:17CC
 	U16 di = xx;
 	U16 si = yy;
 	if (true
@@ -1012,12 +919,9 @@ X16 SkWinCore::_1c9a_17c7(U8 xx, U8 yy, U8 zz)
 		&& ABS16(glbCreaturePosX -di) <= 2
 		&& ABS16(glbCreaturePosY -si) <= 2
 	) {
-		//^1C9A:1841
 		return 1;
 	}
-	//^1C9A:1846
 	return 0;
-	//^1C9A:1848
 }
 
 
@@ -2335,10 +2239,10 @@ void SkWinCore::STEP_DOOR(Timer *ref)
 	SkD((DLV_DBG_DOOR, "DOOR: STEP_DOOR(TIMER=%04X,T=%d,Actor=%d,V=%2d,W8=%2d\n", (Bitu)ref->dw00, (Bitu)ref->ttype, (Bitu)ref->actor, (Bitu)ref->value, (Bitu)ref->w8));
 
 //		Bit32u dw00;	// @0
-//		Bit8u ttype;		// @4	b04
-//		Bit8u actor;	// @5	// b5 player index or creature type or other ...
-//		Bit16u value;		// @6	// w6 => position x & y	// SPX: don't it take object ID ? or spell power ? it can also be an object! (door) ..
-//		Bit16u w8;		// @8
+//		U8 ttype;		// @4	b04
+//		U8 actor;	// @5	// b5 player index or creature type or other ...
+//		U16 value;		// @6	// w6 => position x & y	// SPX: don't it take object ID ? or spell power ? it can also be an object! (door) ..
+//		U16 w8;		// @8
 
 	//^3A15:07B4
 	ENTER(26);
@@ -2934,7 +2838,7 @@ void SkWinCore::PROCEED_TIMERS()
 					, (Bitu)a.w0, (Bitu)a.w2, (Bitu)a.b4, (Bitu)a.b5_, (Bitu)a.b6_, (Bitu)a.b7, (Bitu)a.b8_, (Bitu)a.b9_, (Bitu)a.b10_, (Bitu)a.b11_
 					, (Bitu)a.w12.w0, (Bitu)a.w14, (Bitu)a.w16
 
-					, (Bitu)(Bit8u)a.b18, (Bitu)(Bit8u)a.b19, (Bitu)a.w20, (Bitu)a.b22, (Bitu)a.b23, (Bitu)a.w24.w0, (Bitu)a.b26, (Bitu)a.b27, (Bitu)a.b28, (Bitu)a.b29
+					, (Bitu)(U8)a.b18, (Bitu)(U8)a.b19, (Bitu)a.w20, (Bitu)a.b22, (Bitu)a.b23, (Bitu)a.w24.w0, (Bitu)a.b26, (Bitu)a.b27, (Bitu)a.b28, (Bitu)a.b29
 					, (Bitu)a.b30, (Bitu)a.b31, (Bitu)a.b32, (Bitu)a.b33
 					));
 				Creature &db = reinterpret_cast<Creature *>(glbDBObjectData[dbCreature])[+a.w0];
@@ -2968,7 +2872,7 @@ void SkWinCore::PROCEED_TIMERS()
 			break;	// SPX: this is a way to get out of an infinite loop
 		//LOGX(("3A15:3AB0 %u %u %u %d", (U32)glbUserInputCheck, (U32)glbAbsoluteTickCounter, (U32)_4976_19a9, (i16)_4976_4e62, (U16)_4976_4e48, (U16)_4976_4e64));
 		IBMIO_USER_INPUT_CHECK();
-		GET_AND_DELETE_NEXT_TIMER(xCurrentTimer);
+		EVENTQUEUE_POP_FIRST_EVENT(xCurrentTimer);
 		CHANGE_CURRENT_MAP_TO(timer.GetMap());
 		//X16 si = timer.TimerType(); // si
 		U16 iTimerType = (U16) timer.TimerType();; // di (from si)
@@ -2982,72 +2886,72 @@ void SkWinCore::PROCEED_TIMERS()
 		
 		//printf("PROCEED_TIMERS: Timer type = %d\n", di);// getch();
 		switch (iTimerType) {
-			case tty21://^3AF4
-			case tty22://^3AF4 // TiTy22: 'think creature'
+			case C33_TIME_EVENT_CREATURE_ANIMATION:
+			case C34_TIME_EVENT_CREATURE_THINK:// TiTy22: 'think creature'
 				THINK_CREATURE(timer.XcoordB(), timer.YcoordB(), iTimerType);
 				break;
-			case tty1D://^3B09
-			case tty1E://^3B09
-				STEP_MISSILE(xCurrentTimer);
+			case C29_TIME_EVENT_PROJECTILE_MOVE_NO_HIT:
+			case C30_TIME_EVENT_PROJECTILE_MOVE:
+				PROJECTILE_PROCESS_EVENT(xCurrentTimer);
 				break;
-			case tty01DoorStep://^3B17
+			case tty01DoorStep:
 				STEP_DOOR(xCurrentTimer);
 				break;
 
-			case ttyCloud://^3B24
+			case ttyCloud:
 				PROCESS_CLOUD(xCurrentTimer);
 				break;
 
-			case C02_tty_DoorDestroy://^3B32
+			case C02_tty_DoorDestroy:
 				PROCESS_TIMER_DESTROY_DOOR(xCurrentTimer);
 				break;
 
-			case tty04://^3B3F // TiTy04: 'launch actuator'
+			case tty04:// TiTy04: 'launch actuator'
 				switch (glbCurrentTileMap[timer.XcoordB()][timer.YcoordB()] >> 5) {
-					case ttWall://^3B72
+					case ttWall:
 						ACTUATE_WALL_MECHA(xCurrentTimer);
 						break;
-					case ttFloor://^3B7F
+					case ttFloor:
 						ACTUATE_FLOOR_MECHA(xCurrentTimer);
 						break;
-					case ttPit://^3B8C
+					case ttPit:
 						ACTUATE_PITFALL(xCurrentTimer);
 						break;
-					case ttDoor://^3B99
+					case ttDoor:
 						ACTUATE_DOOR(xCurrentTimer);
 						break;
-					case ttTeleporter://^3BA6
+					case ttTeleporter:
 						ACTUATE_TELEPORTER(xCurrentTimer);
 						break;
-					case ttTrickWall://^3BB3
+					case ttTrickWall:
 						ACTUATE_TRICKWALL(xCurrentTimer);
 						break;
-					case ttStairs://^3D93
+					case ttStairs:
 						goto _3d93;
 				}
 				break;
-			case C60_tty://^3BC0
-			case tty3D://^3BC0
+			case C60_tty:
+			case tty3D:
 				PROCESS_TIMER_3D(xCurrentTimer);
 				break;
-			case ttySound://^3BCD
+			case ttySound:
 				PROCESS_SOUND(timer.XcoordB());	// xcoordb = sound queue index
 				break;
-			case tty0C://^3BD8
+			case tty0C:
 				PROCESS_TIMER_0C(timer.actor);
 				break;
-			case ttyLight://^3BE5
+			case ttyLight:
 				CHANGE_CURRENT_MAP_TO(cd.pi.glbPlayerMap);
 				PROCESS_TIMER_LIGHT(xCurrentTimer);
 				RECALC_LIGHT_LEVEL();
 				break;
-			case ttyInvisibility: //^3C03	(0x47 / 71)		// SPX: decrease invisibility value
+			case ttyInvisibility: //	(0x47 / 71)		// SPX: decrease invisibility value
 				glbGlobalSpellEffects.Invisibility = glbGlobalSpellEffects.Invisibility -1;
 				if (glbGlobalSpellEffects.Invisibility != 0 || glbChampionInventory == 0)
 					break;
 				glbChampionTable[glbChampionInventory].heroFlag |= CHAMPION_FLAG_4000;	// 0x4000
 				break;
-			case ttyEnchantment://^3C31		(0x48 / 72)
+			case ttyEnchantment://		(0x48 / 72)
 				for (iChampionIndex = 0; iChampionIndex < cd.pi.glbChampionsCount; iChampionIndex++) {
 					if (((1 << iChampionIndex) & timer.actor) != 0 && tblChampionSquad[iChampionIndex].curHP() != 0) {
 						tblChampionSquad[iChampionIndex].enchantmentPower -= xCurrentTimer->value; 
@@ -3062,7 +2966,7 @@ void SkWinCore::PROCEED_TIMERS()
 				glbGlobalSpellEffects.SeeThruWalls = glbGlobalSpellEffects.SeeThruWalls -1;
 				break;
 #endif
-			case C75_tty_PoisonChampion://^3CA1	(0x4B / 75)
+			case C75_tty_PoisonChampion://	(0x4B / 75)
 				tblChampionSquad[iEventActor = timer.actor].PoisonValue--;
 				PROCESS_POISON(iEventActor, timer.value);
 				break;
@@ -3072,39 +2976,39 @@ void SkWinCore::PROCEED_TIMERS()
 				PROCESS_PLAGUE(iEventActor, timer.value);
 				break;
 #endif
-			case ttyResurrect://^3CBE
+			case ttyResurrect:
 				PROCESS_TIMER_RESURRECTION(xCurrentTimer);
-			case ttyItemBonus://^3CCA
+			case ttyItemBonus:
 				PROCESS_TIMER_0E(xCurrentTimer, 0xfffe);
 				break;
-			case ttyWeather://^3CDC
+			case ttyWeather:
 				UPDATE_WEATHER(1);
 				break;
-			case ttyOrnateAnimator://^3CE7
+			case ttyOrnateAnimator:
 				CONTINUE_ORNATE_ANIMATOR(xCurrentTimer);
 				break;
-			case ttyTickGenerator://^3CF3
+			case ttyTickGenerator:
 				CONTINUE_TICK_GENERATOR(xCurrentTimer);
 				break;
-			case ttyDoorButton://^3CFF
+			case ttyDoorButton:
 				PROCESS_TIMER_RELEASE_DOOR_BUTTON(xCurrentTimer);
 				break;
-			case tty59://^3D0B
+			case tty59:
 				PROCESS_TIMER_59(xCurrentTimer);
 				break;
-			case tty5A://^3D17
+			case tty5A:
 				CONTINUE_ORNATE_NOISE(xCurrentTimer);
 				break;
-			case ttyWallButton://^3D25
-			case tty5B://^3D25
+			case ttyWallButton:
+			case tty5B:
 				// when door opens/closes by actuator?
 				GET_ADDRESS_OF_ACTU(xCurrentTimer->id6())->ActiveStatus(0);
 				break;
-			case ttySimpleActuTurnOn://^3D3D
+			case ttySimpleActuTurnOn:
 				// when acquire mineral?
 				GET_ADDRESS_OF_RECORD2(xCurrentTimer->id6())->TextVisibility(1);
 				break;
-			case tty5D://^3D55
+			case tty5D:
 				if (timer.Value2() == cd.pi.glbPlayerMap) {
 					MOVE_RECORD_TO(OBJECT_NULL, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, timer.b6_0_4(), timer.w6_5_9());
 					ROTATE_SQUAD(timer.w6_a_b());
@@ -3126,3 +3030,27 @@ _3d93:
 }
 
 
+//^3A15:029A
+void SkWinCore::COMPACT_TIMERLIST()
+{
+	U16 iTimerIndex = 0;	// si
+	U16 iTimersCount = glbTimersCount;	// di
+	if (iTimersCount != 0) {
+		Timer *pTimeEvent = glbTimersTable;	// bp04
+
+		//do {
+		for (iTimerIndex = 0; iTimerIndex < iTimersCount; iTimerIndex++) {
+			if (pTimeEvent->TimerType() == C00_TIME_EVENT_NONE) {
+				Timer *bp08 = &pTimeEvent[1];
+				for (; bp08->TimerType() == C00_TIME_EVENT_NONE; bp08++);
+				*pTimeEvent = *bp08;
+				bp08->TimerType(C00_TIME_EVENT_NONE);
+			}
+			pTimeEvent++;
+		//	si++;
+		} //while (si != di);
+		__SORT_TIMERS();
+		_3a15_020f();
+	}
+	return;
+}

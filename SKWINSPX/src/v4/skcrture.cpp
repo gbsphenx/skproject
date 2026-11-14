@@ -382,7 +382,7 @@ void SkWinCore::QUEUE_THINK_CREATURE(U16 iXPos, U16 iYPos)
 	Timer tNewTimer;	// bp0e
 	tNewTimer.SetMap(glbCurrentMapIndex);
 	tNewTimer.SetTick(glbGameTick +1);
-	tNewTimer.TimerType((xCreature->iAnimSeq == 0xFFFF) ? tty21 : tty22);
+	tNewTimer.TimerType((xCreature->iAnimSeq == 0xFFFF) ? C33_TIME_EVENT_CREATURE_ANIMATION : C34_TIME_EVENT_CREATURE_THINK);
 	tNewTimer.actor = xCreature->CreatureType();
 	tNewTimer.XcoordB(U8(iXPos));
 	tNewTimer.YcoordB(U8(iYPos));
@@ -1921,7 +1921,7 @@ void SkWinCore::RELEASE_CREATURE_TIMER(ObjectID recordLink)
 		if (iGlbCreatureIndex != 0xff) {
 			i16 iTimerIndex = glbTabCreaturesInfo[iGlbCreatureIndex].TimerIndex();	// si
 			if (iTimerIndex >= 0) {
-				DELETE_TIMER(iTimerIndex);
+				EVENTQUEUE_DELETE_EVENT(iTimerIndex);
 				glbTabCreaturesInfo[iGlbCreatureIndex].TimerIndex(0xFFFF);
 			}
 		}
@@ -5129,7 +5129,7 @@ void SkWinCore::CREATURE_THINK_0982()
 	// SPX: Creature can currently stuck themselves by keeping a tty22 timer and no progressing in their animation.
 	// Typical case is a creature wanting to go towards a wall => can't but get stuck in its animation. How to solve this situation ?
 	// It seems that with a tty22, we expect to get a new animation.
-	if (glbCreatureTimer.TimerType() == tty22) {
+	if (glbCreatureTimer.TimerType() == C34_TIME_EVENT_CREATURE_THINK) {
 		CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_YELLOW, BLACK);
 		SkD((DLV_DBG_CANIM, "Creature (tty22) => Commands : %02X %02X\n", xCreatureInfo->Command, xCreatureInfo->Command2));
 		CHANGE_CONSOLE_COLOR(BRIGHT, LIGHT_GRAY, BLACK);
@@ -5248,10 +5248,10 @@ _0b90:
 	}
 	//^13E4:0C06
 	if (di == 1)
-		glbCreatureTimer.TimerType(tty21);
+		glbCreatureTimer.TimerType(C33_TIME_EVENT_CREATURE_ANIMATION);
 	else
 	{
-		glbCreatureTimer.TimerType(tty22);
+		glbCreatureTimer.TimerType(C34_TIME_EVENT_CREATURE_THINK);
 		if (SkCodeParam::bUseFixedMode)
 			xCreatureInfo->iSeqControl = 0;	// somehow, this resets the animation sequence control and allow the creature to properly proceed its animation instead of being stuck and generate tty22 continuously
 	}
