@@ -17,39 +17,43 @@
 
 
 //^32CB:0AA6
-void SkWinCore::QUERY_RAINFALL_PARAM(U8 *iRainImageID, U16 *isMirrored)
+void SkWinCore::WEATHER_QUERY_RAINFALL_IMAGEID(U8 *iRainImageID, U16 *isMirrored)
 {
-	ENTER(0);
 	*isMirrored = (glbRainDirection - _4976_5aa0) & 3;
 	// SPX: 0x71 is vertical rain view / 0x6D is side rain view
 	U8 iImageID = (*isMirrored == 0 || *isMirrored == 2) ? GFX_ENVIRONMENT_IMG_x71_RAIN_STRAIGHT : GFX_ENVIRONMENT_IMG_x6D_RAIN_SLANTED;
 	U16 iRainLevel = C00_RAIN_POWERLEVEL_NONE;	// dx
-	if (glbRainStrength >= RAIN_THRESHOLD_x80_LEVEL_3) {
+	if (glbRainIntensity >= RAIN_THRESHOLD_x80_LEVEL_3) {
 		iRainLevel = C03_RAIN_POWERLEVEL_STRONG;
 	}
-	else if (glbRainStrength >= RAIN_THRESHOLD_x40_LEVEL_2) {
+	else if (glbRainIntensity >= RAIN_THRESHOLD_x40_LEVEL_2) {
 		iRainLevel = C02_RAIN_POWERLEVEL_MEDIUM;
 	}
-	else if (glbRainStrength >= RAIN_THRESHOLD_x10_LEVEL_1) {
+	else if (glbRainIntensity >= RAIN_THRESHOLD_x10_LEVEL_1) {
 		iRainLevel = C01_RAIN_POWERLEVEL_SMALL;
 	}
-	else if (glbRainStrength > RAIN_THRESHOLD_x00_LEVEL_0 && glbRainStrength < RAIN_THRESHOLD_x10_LEVEL_1) {
+	else if (glbRainIntensity > RAIN_THRESHOLD_x00_LEVEL_0 && glbRainIntensity < RAIN_THRESHOLD_x10_LEVEL_1) {
 		iRainLevel = C00_RAIN_POWERLEVEL_NONE;
 	}
 	*iRainImageID = iImageID + U8(iRainLevel);
 	return;
 }
 
+// SPX: Not in V4, added for convienence
+U8 SkWinCore::WEATHER_GET_HOUR_OF_DAY()
+{
+	return RCJ(24,((glbGameTick + _4976_5c24) / C1365_WEATHER_HOUR_TICKS) % C24_WEATHER_DAY_HOURS);
+}
 
 //^3DF7:014D
-// SPX: _3df7_014d renamed UPDATE_WEATHER
-void SkWinCore::UPDATE_WEATHER(U16 aa)	// aa = 1 when called from timer, aa = 0 else
+// SPX: _3df7_014d renamed WEATHER_UPDATE
+void SkWinCore::WEATHER_UPDATE(U16 aa)	// aa = 1 when called from timer, aa = 0 else
 {
 	ENTER(46);
 	glbRainFlagSomething = tlbRainScene[RCJ(5,glbRainSceneType)][0];
 	if (aa != 0) {
 		if (++glbRainRelated3 > 0x1F) {
-			INIT_WEATHER_RAIN(0);
+			WEATHER_INIT(0);
 			return;
 		}
 
@@ -61,15 +65,21 @@ void SkWinCore::UPDATE_WEATHER(U16 aa)	// aa = 1 when called from timer, aa = 0 
 		_4976_5c28 = glbRainStormController;
 		glbRainStormController += tlbRainRelated[RCJ(128,glbRainRelated2 + glbRainRelated3)] * glbRainMultiplicator;
 		glbRainStormController = BETWEEN_VALUE(0, glbRainStormController, 255);
-		SET_TIMER_WEATHER(U32(RAND16(0x100)) +0x32);	// RAND16(256) + 50
+		WEATHER_SET_TIME_EVENT(U32(RAND16(0x100)) + 0x32);	// RAND16(256) + 50
 		return;
 	}
 	if (glbGameTick >= glbRainSpecialNextTick) {
-		glbRainSomeLightMod = _4976_4764[RCJ(24,((glbGameTick + _4976_5c24) / 0x555) % 0x18)];
-		glbRainSpecialNextTick = glbGameTick +0x555;
+		U8 iDayHour = WEATHER_GET_HOUR_OF_DAY();
+		glbWeatherDayHourLight = tblOutsideLightByHour[iDayHour];
+		glbRainSpecialNextTick = glbGameTick + C1365_WEATHER_HOUR_TICKS;
 
+		{
+			U8 sMessage[128]; memset(sMessage, 0, 128);
+			sprintf((char*)sMessage, "HOUR: %02d LIGHT=%d (TICK = %d)\n", iDayHour, glbWeatherDayHourLight, glbGameTick + _4976_5c24);
+			DISPLAY_HINT_TEXT(C04_COLOR_CYAN, sMessage);
+		}
 		SkD((DLV_DBG_RAIN, "Update Weather >> lightmod = %d / next tick = %d\n"
-			, glbRainSomeLightMod
+			, glbWeatherDayHourLight
 			, glbRainSpecialNextTick
 			));
 
@@ -83,25 +93,25 @@ void SkWinCore::UPDATE_WEATHER(U16 aa)	// aa = 1 when called from timer, aa = 0 
 		bp10 = (RAND() & 15) + (0x100 - glbRainStormController);
 		bp12 = (glbRainStormController >= 0xcd) ? 0x28 : 7;
 		glbRainLevelForSky = U8(glbRainStormController);
-		if (glbRainStrength == 0) {
-			glbRainStrength = (RAND16(bp10) <= 7) ? 1 : 0;
+		if (glbRainIntensity == 0) {
+			glbRainIntensity = (RAND16(bp10) <= 7) ? 1 : 0;
 		}
 		else {
-			glbRainStrength = U8(glbRainStormController);
+			glbRainIntensity = U8(glbRainStormController);
 		}
 
 		SkD((DLV_DBG_RAIN, "Update Weather >> lvl=%03d / cnt=%03d (v1:%d v2:%d pw:%d) / tick=%d\n"
-			, glbRainStrength
+			, glbRainIntensity
 			, glbRainLevelForGround
 			, glbRainRelated2, glbRainRelated3, glbRainMultiplicator
 			, glbGameTick
 			));
 
-		if (glbRainStrength != 0 && glbRainLevelForGround < 0xff) {
+		if (glbRainIntensity != 0 && glbRainLevelForGround < 0xff) {
 			if (false
-				|| (glbRainStrength >= RAIN_THRESHOLD_x80_LEVEL_3)
-				|| (glbRainStrength >= RAIN_THRESHOLD_x40_LEVEL_2 || (glbGameTick & 1) == 0)
-				|| (glbRainStrength >= RAIN_THRESHOLD_x10_LEVEL_1 || (glbGameTick % 3) == 0)
+				|| (glbRainIntensity >= RAIN_THRESHOLD_x80_LEVEL_3)
+				|| (glbRainIntensity >= RAIN_THRESHOLD_x40_LEVEL_2 || (glbGameTick & 1) == 0)
+				|| (glbRainIntensity >= RAIN_THRESHOLD_x10_LEVEL_1 || (glbGameTick % 3) == 0)
 				|| (U16(glbGameTick & 3) == 0)
 			) {
 				glbRainLevelForGround++;
@@ -115,7 +125,7 @@ void SkWinCore::UPDATE_WEATHER(U16 aa)	// aa = 1 when called from timer, aa = 0 
 		if (glbRainLevelForGround > 0 && (glbGameTick % 3) == 0)
 			--glbRainLevelForGround;
 		bp0a = (RAND16(0x40) == 0) ? 1 : 0;
-		glbRainStrength = 0;
+		glbRainIntensity = 0;
 		glbRainLevelForSky = 1;
 	}
 	if (glbRainFlagSomething == 0)
@@ -124,33 +134,34 @@ void SkWinCore::UPDATE_WEATHER(U16 aa)	// aa = 1 when called from timer, aa = 0 
 		glbRecalcLightIndicator = 0;
 		RECALC_LIGHT_LEVEL();
 	}
-	DistantEnvironment *bp04 = &_4976_5c2a[0];
+	// This is a table of 5 distant possible elements; first two are for sky, then ground
+	DistantEnvironment *xEnvElement = &tblEnvironmentElement[0];	// bp04
 	if (glbRainHasCloudSky != 0 && glbRainLevelForSky >= 0x10) {
 		if (glbRainLevelForSky >= 0x80) {
 			glbRainAmbientLightModifier = 1;
-			bp04->envImg = GFX_ENVIRONMENT_IMG_x67_SKY_CLOUDS+2;	// 0x69 Dark clouds
+			xEnvElement->envImg = GFX_ENVIRONMENT_IMG_x67_SKY_CLOUDS+2;	// 0x69 Dark clouds
 		}
 		else if (glbRainLevelForSky >= 0x40) {
-			bp04->envImg = GFX_ENVIRONMENT_IMG_x67_SKY_CLOUDS+1;	// 0x68 Medium clouds
+			xEnvElement->envImg = GFX_ENVIRONMENT_IMG_x67_SKY_CLOUDS+1;	// 0x68 Medium clouds
 		}
 		else {
-			bp04->envImg = GFX_ENVIRONMENT_IMG_x67_SKY_CLOUDS;		// 0x67 Grey clouds
+			xEnvElement->envImg = GFX_ENVIRONMENT_IMG_x67_SKY_CLOUDS;		// 0x67 Grey clouds
 		}
-		if (RETRIEVE_ENVIRONMENT_CMD_CD_FW(bp04) != 0)
-			bp04++;
+		if (RETRIEVE_ENVIRONMENT_CMD_CD_FW(xEnvElement) != 0)
+			xEnvElement++;
 	}
 	if (glbRainHasWetGround != 0 && glbRainLevelForGround >= 0x40) {
 		if (glbRainLevelForGround >= 0xc0) {
-			bp04->envImg = GFX_ENVIRONMENT_IMG_x6A_WET_GROUND+2;	// 0x6C Big water puddles
+			xEnvElement->envImg = GFX_ENVIRONMENT_IMG_x6A_WET_GROUND+2;	// 0x6C Big water puddles
 		}
 		else if (glbRainLevelForGround >= 0x80) {
-			bp04->envImg = GFX_ENVIRONMENT_IMG_x6A_WET_GROUND+1;	// 0x6B Medium water puddles
+			xEnvElement->envImg = GFX_ENVIRONMENT_IMG_x6A_WET_GROUND+1;	// 0x6B Medium water puddles
 		}
 		else {
-			bp04->envImg = GFX_ENVIRONMENT_IMG_x6A_WET_GROUND;		// 0x6A Small water puddles
+			xEnvElement->envImg = GFX_ENVIRONMENT_IMG_x6A_WET_GROUND;		// 0x6A Small water puddles
 		}
-		if (RETRIEVE_ENVIRONMENT_CMD_CD_FW(bp04) != 0)
-			bp04++;
+		if (RETRIEVE_ENVIRONMENT_CMD_CD_FW(xEnvElement) != 0)
+			xEnvElement++;
 	}
 	i16 si;
 	i16 di;
@@ -225,12 +236,12 @@ void SkWinCore::UPDATE_WEATHER(U16 aa)	// aa = 1 when called from timer, aa = 0 
 			}
 		}
 		if (bp0e == 0 && RAND01() != 0) {
-			bp04->envImg = U8(RAND16(3)) + GFX_ENVIRONMENT_IMG_x64_THUNDER;	// 0x64 = thunder 1 => 0x66 = thunder 3
-			if (RETRIEVE_ENVIRONMENT_CMD_CD_FW(bp04) != 0) {
+			xEnvElement->envImg = U8(RAND16(3)) + GFX_ENVIRONMENT_IMG_x64_THUNDER;	// 0x64 = thunder 1 => 0x66 = thunder 3
+			if (RETRIEVE_ENVIRONMENT_CMD_CD_FW(xEnvElement) != 0) {
 				bp0a = 1;
-				SOMETHING_WITH_SCALED_RECTANGLES(bp04->cmCD, bp04->cmCD + 1, RAND16(0x64), &bp04->w4, &bp04->w6);
-				bp04->cmFW = U8(RAND02());
-				bp04++;
+				SOMETHING_WITH_SCALED_RECTANGLES(xEnvElement->cmCD, xEnvElement->cmCD + 1, RAND16(100), &xEnvElement->w4, &xEnvElement->w6);
+				xEnvElement->cmFW = U8(RAND02());
+				xEnvElement++;
 			}
 		}
 		if (bp0a != 0) {
@@ -255,7 +266,7 @@ void SkWinCore::UPDATE_WEATHER(U16 aa)	// aa = 1 when called from timer, aa = 0 
 		glbRecalcLightIndicator = 1;
 		RECALC_LIGHT_LEVEL();
 	}
-	bp04->envImg = 0xFF;
+	xEnvElement->envImg = 0xFF;
 
 #if (XDMX_FEATURE_AMBIENT_SOUND == 1)
 	{	// Activate ambient sound, checking global variable then issuing a first Ambient Sound timer that will regenerate itself.
@@ -279,8 +290,8 @@ void SkWinCore::UPDATE_WEATHER(U16 aa)	// aa = 1 when called from timer, aa = 0 
 
 //^3DF7:0037
 // SPX: some sort of init, called from read_structure
-// _3df7_0037 renamed INIT_WEATHER_RAIN
-void SkWinCore::INIT_WEATHER_RAIN(X16 ww)
+// _3df7_0037 renamed WEATHER_INIT
+void SkWinCore::WEATHER_INIT(X16 ww)
 {
 	ENTER(4);
 	if (ww != 0) {
@@ -306,17 +317,40 @@ void SkWinCore::INIT_WEATHER_RAIN(X16 ww)
 			glbRainMultiplicator = RAND16(3) +1;
 		}
 		glbRainLevelForSky = 1;
-		glbRainStrength = 0;
+		glbRainIntensity = 0;
 		glbRainStormController = 0;
 		_4976_5c28 = 0;
 		glbRainDirection = U8(RAND02());
 		// SPX: This might be the initial rain timer : NOPE, it must be still called ingame (when there is no rain)
-		SET_TIMER_WEATHER(iTickDelayForRain);
+		WEATHER_SET_TIME_EVENT(iTickDelayForRain);
 	}
 	glbRainThunderRandom = RAND16(3) +2;
-	glbRainSomeLightMod = _4976_4764[RCJ(24,((glbGameTick + _4976_5c24) / 0x555) % 0x18)];
+	//glbWeatherDayHourLight = tblOutsideLightByHour[RCJ(24,((glbGameTick + _4976_5c24) / 0x555) % 0x18)];
+	glbWeatherDayHourLight = tblOutsideLightByHour[WEATHER_GET_HOUR_OF_DAY()];
 	glbStartQuickRain = 0;
 	return;
 }
 
 
+//^3DF7:000A
+// SPX: _3df7_000a renamed WEATHER_SET_TIME_EVENT
+void SkWinCore::WEATHER_SET_TIME_EVENT(U32 tickDelta)
+{
+	ENTER(10);
+
+	if (SkCodeParam::bUseDM2ExtendedMode && SkCodeParam::fDebugRainSpeed != 1)
+		tickDelta = (U32) ((float) tickDelta / (float) SkCodeParam::fDebugRainSpeed);
+
+	SkD((DLV_DBG_RAIN, "Rain timer duration = %03d (will hit at %d)\n"
+		, tickDelta
+		, glbGameTick +tickDelta
+		));
+
+	Timer tTimerWeather;	// bp0a
+	tTimerWeather.SetMap(0);
+	tTimerWeather.SetTick(glbGameTick + tickDelta);
+	tTimerWeather.TimerType(C84_TIME_EVENT_WEATHER);
+	tTimerWeather.actor = TIMER_ACTOR__00;
+	QUEUE_TIMER(&tTimerWeather);
+	return;
+}

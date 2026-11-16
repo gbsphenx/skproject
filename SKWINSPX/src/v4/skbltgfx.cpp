@@ -611,13 +611,13 @@ U8 *SkWinCore::GET_LOCAL_PALETTE_32cb_0649(U8 iGDatCls1Category, U8 iGDatCls2Mai
 void SkWinCore::DRAW_RAIN_32cb_0c7d(ExtendedPicture *ref, U16 xx, U16 yy)
 {
 	ENTER(16);
-	if (glbRainStrength == 0) {
+	if (glbRainIntensity == 0) {
 		FILL_ENTIRE_PICT(reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(xx)), ref->iPal256[yy]);
 		return;
 	}
 	U8 iRainImageId;	// bp0b
 	U16 isMirrored;	// bp0a
-	QUERY_RAINFALL_PARAM(&iRainImageId, &isMirrored);
+	WEATHER_QUERY_RAINFALL_IMAGEID(&iRainImageId, &isMirrored);
 	i16 iRainImgWidth;	// bp06
 	i16 iRainImgHeight;	// bp08
 	QUERY_GDAT_IMAGE_METRICS(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, iRainImageId, &iRainImgWidth, &iRainImgHeight);
@@ -2084,7 +2084,7 @@ void SkWinCore::DRAW_SOME_CLOUD_EXPLOSION(U8 cls2, U16 scale64, U16 mirrorFlip, 
 	QUERY_PICST_IT(&glbTempPicture);
 
 	// SPX: it seems to be missing the displacement from GDAT, else, a cloud/explosion appears on the floor
-	if (SkCodeParam::bUseFixedMode) {
+	/*if (SkCodeParam::bUseFixedMode) {
 		glbTempPicture.iXOffset = 0;	// default
 		glbTempPicture.iYOffset = -55;	// default
 		X16 iDisplacementWord = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0D_SPELL_MISSILES, cls2, dtImageOffset, C65_GDAT_IMG_SPELL_EXPLOSION_FRONT);
@@ -2092,7 +2092,7 @@ void SkWinCore::DRAW_SOME_CLOUD_EXPLOSION(U8 cls2, U16 scale64, U16 mirrorFlip, 
 			glbTempPicture.iXOffset = ((i8)(iDisplacementWord>>8));
 			glbTempPicture.iYOffset = ((i8)(iDisplacementWord&0xFF));
 		}
-	}
+	}*/
 
 	return;
 }

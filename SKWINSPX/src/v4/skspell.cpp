@@ -115,7 +115,7 @@ _187e:
 //^2759:222E
 // SPX: _2759_222e replaced by CAST_SPELL_PLAYER
 // CSBWin: partially TAG01ca0c
-U16 SkWinCore::CAST_SPELL_PLAYER(U16 player, SpellDefinition *ref, U16 power)
+U16 SkWinCore::CHAMPION_CAST_SPELL(U16 iChampionIdx, SpellDefinition *ref, U16 power)
 {
 	// CSBwinSimilarity: TAG01ca0c,CastSpell
 
@@ -123,7 +123,7 @@ U16 SkWinCore::CAST_SPELL_PLAYER(U16 player, SpellDefinition *ref, U16 power)
 	// not 0 if fails
 
 	ENTER(30);
-	Champion *champion = &tblChampionSquad[player];	//*bp04
+	Champion *champion = &tblChampionSquad[iChampionIdx];	//*bp04
 	U16 bp0e = (ref->w6_a_f() * (power +18)) / 24;
 	U16 bp08 = ref->difficulty +power; // global difficulty of the spell
 	U16 bp0c = 0
@@ -131,12 +131,12 @@ U16 SkWinCore::CAST_SPELL_PLAYER(U16 player, SpellDefinition *ref, U16 power)
 		+((ref->difficulty * (power -1)) << 3)
 		+(bp08 * bp08)
 		;
-	U16 bp06 = QUERY_PLAYER_SKILL_LV(player, ref->requiredSkill, 1);
+	U16 bp06 = QUERY_PLAYER_SKILL_LV(iChampionIdx, ref->requiredSkill, 1);
 	U16 di;
 	i16 bp0a;
 	for (bp0a = bp08 -bp06; (bp0a--) > 0; ) {
 		if ((RAND() & 127) > min_value(GET_PLAYER_ABILITY(champion, abWiz, 0) +15, 115)) {
-			CHAMPION_ADJUST_SKILLS(player, ref->requiredSkill, bp0c << (bp08 -bp06));
+			CHAMPION_ADJUST_SKILLS(iChampionIdx, ref->requiredSkill, bp0c << (bp08 -bp06));
 			di = 16;
 			goto _26fe; // go to end, spell failed ?
 		}
@@ -151,10 +151,10 @@ U16 SkWinCore::CAST_SPELL_PLAYER(U16 player, SpellDefinition *ref, U16 power)
 					di = 48;		// SPX: for displaying graphics : needs flask in hand
 					goto _26fe;
 				}
-				ObjectID si = REMOVE_POSSESSION(player, bp0a);
+				ObjectID si = REMOVE_POSSESSION(iChampionIdx, bp0a);
 				SET_ITEMTYPE(si, ref->SpellCastIndex());
 				GET_ADDRESS_OF_RECORD8(si)->PotionPower((RAND() & 15) + (power * 40));
-				EQUIP_ITEM_TO_INVENTORY(player, si, bp0a);
+				EQUIP_ITEM_TO_INVENTORY(iChampionIdx, si, bp0a);
 				break;
 			}
 		case C2_SPELL_TYPE_MISSILE: // 2: shoot spell
@@ -162,7 +162,7 @@ U16 SkWinCore::CAST_SPELL_PLAYER(U16 player, SpellDefinition *ref, U16 power)
 				if (ref->SpellCastIndex() == 4) // zo spell ?
 					bp06 <<= 1; // multiply by 2
 				CAST_CHAMPION_MISSILE_SPELL(
-					player,
+					iChampionIdx,
 					ObjectID::MissileRecord(ref->SpellCastIndex()),
 					BETWEEN_VALUE(21, ((bp06 << 1) +4) * (power +2), 255),
 					0
@@ -362,9 +362,9 @@ tag01cdaa:
 _26cf:
 	di = 0;
 	if (bp0e != 0) {
-		CHAMPION_ADJUST_SKILLS(player, ref->requiredSkill, bp0c);
+		CHAMPION_ADJUST_SKILLS(iChampionIdx, ref->requiredSkill, bp0c);
 		if (!SkCodeParam::bDebugInfiniteSpells)
-			ADJUST_HAND_COOLDOWN(player, bp0e, 2);
+			CHAMPION_ADJUST_HAND_COOLDOWN(iChampionIdx, bp0e, 2);
 	}
 _26fe:
 	if (di != 0) {

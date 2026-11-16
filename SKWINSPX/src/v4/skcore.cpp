@@ -5956,15 +5956,15 @@ _1045:
 	sGameVar.w34 = _4976_4c0c;
 
 	sGameVar.wRainFlagSomething = glbRainFlagSomething;
-	sGameVar.bRainAmbientLightModifier = glbRainAmbientLightModifier;
-	sGameVar.bRainDirection = glbRainDirection;
-	sGameVar.bRainStrength = glbRainStrength;
-	sGameVar.bRainLevelForSky = glbRainLevelForSky;
-	sGameVar.bRainLevelForGround = glbRainLevelForGround;
-	sGameVar.bRainMultiplicator = glbRainMultiplicator;
+	sGameVar.iRainAmbientLightModifier = glbRainAmbientLightModifier;
+	sGameVar.iRainDirection = glbRainDirection;
+	sGameVar.iRainIntensity = glbRainIntensity;
+	sGameVar.iRainLevelForSky = glbRainLevelForSky;
+	sGameVar.iRainLevelForGround = glbRainLevelForGround;
+	sGameVar.iRainMultiplicator = glbRainMultiplicator;
 	sGameVar.wRainStormController = glbRainStormController;
-	sGameVar.bRainRelated3 = glbRainRelated3;
-	sGameVar.bRainRelated2 = glbRainRelated2;
+	sGameVar.iRainRelated3 = glbRainRelated3;
+	sGameVar.iRainRelated2 = glbRainRelated2;
 	sGameVar.dwRainSpecialNextTick = glbRainSpecialNextTick;
 
 	s_testSKSave.StartWrite(FILE_TELL(glbDataFileHandle));
@@ -6247,7 +6247,7 @@ U16 SkWinCore::_12b4_023f_WOUND_RUNNING_INTO_CREATURE(i16 xx, i16 yy, i16 *ss, i
 	for (i16 si = 0; si < 2; si++) {
 		i16 bp02 = bp06[si];
 		if (bp02 >= 0) {
-			if (WOUND_PLAYER(bp02, 1, 0x18, 2) != 0) {
+			if (CHAMPION_GET_DAMAGE_AND_WOUNDS(bp02, 1, 0x18, 2) != 0) {
 				di = 1;
 				QUEUE_NOISE_GEN2(GDAT_CATEGORY_x16_CHAMPIONS, tblChampionSquad[bp02].HeroType(), SOUND_CHAMPION_BUMP, 0xFE, xx, yy, 1, 0x64, 0xC8);
 			}
@@ -8774,7 +8774,7 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 		INIT_TIMERS();
 	}
 
-	INIT_WEATHER_RAIN(!_4976_3b5d);
+	WEATHER_INIT(!_4976_3b5d);
 	if (_4976_3b5d != 0) {
 		//!ALT
 
@@ -9490,15 +9490,15 @@ _2e5b:
 			glbPlayerThrowCounter = t1.wPlayerThrowCounter;
 			_4976_4c0c = t1.w34;
 			glbRainFlagSomething = (U8)t1.wRainFlagSomething;
-			glbRainAmbientLightModifier = t1.bRainAmbientLightModifier;
-			glbRainDirection = t1.bRainDirection;	// rain dir.
-			glbRainStrength = t1.bRainStrength;	// rain str.
-			glbRainLevelForSky = t1.bRainLevelForSky;
-			glbRainLevelForGround = t1.bRainLevelForGround;
-			glbRainMultiplicator = t1.bRainMultiplicator;
+			glbRainAmbientLightModifier = t1.iRainAmbientLightModifier;
+			glbRainDirection = t1.iRainDirection;	// rain dir.
+			glbRainIntensity = t1.iRainIntensity;	// rain str.
+			glbRainLevelForSky = t1.iRainLevelForSky;
+			glbRainLevelForGround = t1.iRainLevelForGround;
+			glbRainMultiplicator = t1.iRainMultiplicator;
 			glbRainStormController = t1.wRainStormController;
-			glbRainRelated3 = t1.bRainRelated3;
-			glbRainRelated2 = t1.bRainRelated2;
+			glbRainRelated3 = t1.iRainRelated3;
+			glbRainRelated2 = t1.iRainRelated2;
 			glbRainSpecialNextTick = t1.dwRainSpecialNextTick;
 			SkD((DLV_DBG_GAME_LOAD, "Read Game Variables (Flags / Bytes / Words) ...\n"));
 			if (SUPPRESS_READER(glbIngameGlobVarFlags, _4976_3956, 1, 8, 1) != 0)
@@ -10740,7 +10740,7 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 	U16 bp32 = (bp38 & 0xffff) * bp3a;
 	i16 bp34;
 	i16 bp36;
-	QUERY_GDAT_IMAGE_METRICS(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_CEIL, &bp34, &bp36); // ceil
+	QUERY_GDAT_IMAGE_METRICS(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_CEILING, &bp34, &bp36); // ceil
 	U16 bp30 = (bp34 & 0xffff) * bp36;
 
 	_4976_5be6 = _4976_00f4 -bp30;
@@ -10755,7 +10755,7 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 	SkD((DLV_DBG_INIT, "LOAD_LOCALLEVEL_DYN: Part 9: Ending\n"));
 	
 	_4976_022c = 1;
-	UPDATE_WEATHER(0);
+	WEATHER_UPDATE(0);
 	RECALC_LIGHT_LEVEL();
 	
 	return;
@@ -12066,7 +12066,7 @@ U16 SkWinCore::SOMETHING_TELEPORT_OR_PITS(ObjectID recordLink, i16 xpos, i16 ypo
 						pChampion = tblChampionSquad;
 						for (iChampionIdx = 0; (iChampionIdx < cd.pi.glbChampionsCount); pChampion++, iChampionIdx++) {
 							if (pChampion->curHP() != 0) {
-								WOUND_PLAYER(
+								CHAMPION_GET_DAMAGE_AND_WOUNDS(
 									bp18, 
 									min_value(pChampion->maxHP() >> 2, 17) + RAND02(),
 									0x0030,
@@ -12338,71 +12338,7 @@ void SkWinCore::DEALLOC_RECORD(ObjectID recordLink)
 	GET_ADDRESS_OF_RECORD(recordLink)->w0 = OBJECT_NULL;
 }
 
-//^075F:06BD
-// _075f_06bd renamed PROJECTILE_GET_IMPACT_ATTACK
-// TODO: related to missile/item attack strength ?
-// F0216_PROJECTILE_GetImpactAttack
-U16 SkWinCore::PROJECTILE_GET_IMPACT_ATTACK(Missile *ref, ObjectID recordLink) //#DS=4976?
-{
-	//^075F:06BD
-	//^075F:06C3
-	glbPoisonAttackDamage = 0;
-	glbProjectileAttackType = C3_ATTACK_BLUNT;
-	U16 iKineticEnergy = ref->EnergyRemaining();	// di
-	U16 iAttackDamage = 0; // si
-	if (recordLink.DBType() != dbCloud) {
-		iAttackDamage = QUERY_GDAT_DBSPEC_WORD_VALUE(recordLink, GDAT_ITEM_WEAPON_THROW_STRENGTH);	// 0x09
-		if (iAttackDamage != 0) {
-			iAttackDamage += (iKineticEnergy >> 1);
-			U16 bp02 = ref->b5_4_7() +3;
-			iAttackDamage = (bp02 * bp02 * iAttackDamage) >> 7;
-			glbProjectileAttackType = C4_ATTACK_SHARP;
-			glbPoisonAttackDamage = QUERY_GDAT_DBSPEC_WORD_VALUE(recordLink, GDAT_ITEM_STATS_POISONOUS);	// 0x0D
-			if (glbPoisonAttackDamage != 0) {
-				if ((RAND() & 0x007f) > iKineticEnergy) {
-					glbPoisonAttackDamage -= RAND16((glbPoisonAttackDamage >> 1) + 1);
-				}
-			}
-		}
-		iAttackDamage += RAND02();
-		iAttackDamage += QUERY_ITEM_WEIGHT(recordLink);
-		if ((RAND() & 0x01ff) < ref->EnergyRemaining2()) {
-			iAttackDamage <<= 1;
-		}
-	}
-	else {
-		if (recordLink == OBJECT_EFFECT_POISON_BLOB) {	// oFF81
-			iAttackDamage = (RAND() & 0x000F);
-			glbPoisonAttackDamage = iAttackDamage + 10;
-			iAttackDamage += (RAND() & 0x001F);
-		}
-		else {
-			if (recordLink >= OBJECT_EFFECT_DISPELL) {	// oFF83
-				glbProjectileAttackType = C5_ATTACK_MAGIC;
-				if (recordLink == OBJECT_EFFECT_POISON_BOLT) {	// oFF86
-					glbPoisonAttackDamage = iKineticEnergy >> 1;	// DM1 has not this divided /2
-					return (iKineticEnergy >> 4) + 1;
-				}
-				return 0;
-			}
-			glbProjectileAttackType = C1_ATTACK_FIRE;
-			iAttackDamage = (RAND() & 0x000F) + (RAND() & 0x000F) + 10;	// 0 to 40
-			if (recordLink == OBJECT_EFFECT_LIGHTNING) {	// oFF82
-				glbProjectileAttackType = C7_ATTACK_LIGHTNING;
-				iAttackDamage <<= 4;	// SPX: weirdly was written as iAttackDamage >>= 4 ! mistake ?!
-				iAttackDamage += iKineticEnergy;
-			}
-		}
-	}
-	iAttackDamage = ((iAttackDamage + iKineticEnergy) >> 4) + 1;
-	iAttackDamage += (RAND16((iAttackDamage >> 1) + 1) + RAND02());
-	// SPX: should check V5 to be sure
-	iAttackDamage = max_value(iAttackDamage, iAttackDamage - 32 - ((ref->EnergyRemaining2() >> 3) << 1));
-	// AL0483_ui_Attack = F0025_MAIN_GetMaximumValue(AL0483_ui_Attack >> 1, AL0483_ui_Attack - (32 - (P0451_ps_Projectile->Attack >> 3)));
-	iAttackDamage = min_value(iAttackDamage, iKineticEnergy << 1);
-	printf("MISSILE ATTACK [%d] = %d\n", glbProjectileAttackType, iAttackDamage);
-	return iAttackDamage;
-}
+
 
 //^1C9A:0958
 // TODO: get some info of creature anim ?
@@ -12560,8 +12496,8 @@ U16 SkWinCore::MISSILE_HIT_075f_0af9(i16 u16tileType, i16 xpos, i16 ypos, U16 di
 		case ttTeleporter://-3:	// TELEPORTER
 		case ttTrickWall://-2:	// TRICKWALL
 			{
-				i16 bp12 = GET_PLAYER_AT_POSITION(dir);
-				if (bp12 < 0) {
+				i16 iChampionIdx = GET_PLAYER_AT_POSITION(dir);	// bp12
+				if (iChampionIdx < 0) {
 					if (tileType == ttTeleporter) {
 						goto _0e37;
 					}
@@ -12570,11 +12506,11 @@ U16 SkWinCore::MISSILE_HIT_075f_0af9(i16 u16tileType, i16 xpos, i16 ypos, U16 di
 				bp36 = 1;
 				bp16 = PROJECTILE_GET_IMPACT_ATTACK(bp08, si);
 				if (bp16 != 0) {
-					if ((((tblChampionSquad[bp12].playerDir() == (glbTimersTable[bp08->TimerIndex()].Direction() +2)) ? 1 : 0) & 3) != 0) {
+					if ((((tblChampionSquad[iChampionIdx].playerDir() == (glbTimersTable[bp08->TimerIndex()].Direction() +2)) ? 1 : 0) & 3) != 0) {
 						glbProjectileAttackType |= 0x8000;
 					}
-					if (WOUND_PLAYER(bp12, bp16, 0, glbProjectileAttackType) != 0 && glbPoisonAttackDamage != 0 && RAND01() != 0) {
-						PROCESS_POISON(bp12, glbPoisonAttackDamage);
+					if (CHAMPION_GET_DAMAGE_AND_WOUNDS(iChampionIdx, bp16, 0, glbProjectileAttackType) != 0 && glbPoisonAttackDamage != 0 && RAND01() != 0) {
+						PROCESS_POISON(iChampionIdx, glbPoisonAttackDamage);
 					}
 				}
 				if (tileType == ttTrickWall) {
@@ -15152,10 +15088,10 @@ _00a4:
 			break;
 		}
 
-		UPDATE_WEATHER(0);
+		WEATHER_UPDATE(0);
 		
 		SkD((DLV_DBG_RAIN, "Loop (Rain) >> lvl=%03d / strm=%03d / wet=%03d (r2:%d r3:%d mlt:%d) / tick=%d\n"
-			, glbRainStrength, glbRainStormController
+			, glbRainIntensity, glbRainStormController
 			, glbRainLevelForGround
 			, glbRainRelated2, glbRainRelated3, glbRainMultiplicator
 			, glbGameTick
@@ -15362,7 +15298,7 @@ _00a4_proceed_timers:
 			break;
 		}
 
-		UPDATE_WEATHER(0);
+		WEATHER_UPDATE(0);
 
 		if (cd.pi.glbIsPlayerSleeping == 0) {
 			if (cd.pi.glbNextChampionNumber == 0)
@@ -15762,7 +15698,7 @@ SkWinCore::SkWinCore()
 	zeroMem(glbChampionsBodyFlags, sizeof(glbChampionsBodyFlags));
 	zeroMem(_4976_4fd8, sizeof(_4976_4fd8));
 	zeroMem(&glbGlobalSpellEffects, sizeof(glbGlobalSpellEffects));
-	zeroMem(&_4976_5c2a, sizeof(_4976_5c2a));
+	zeroMem(&tblEnvironmentElement, sizeof(tblEnvironmentElement));
 	zeroMem(_089c_02c0, sizeof(_089c_02c0));
 	zeroMem(_089c_025a, sizeof(_089c_025a));
 	zeroMem(_089c_0090, sizeof(_089c_0090)); _089c_0090[0] = -1;

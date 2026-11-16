@@ -1618,7 +1618,7 @@ void SkWinCore::CHOOSE_HIGHLIGHT_ARROW_PANEL()
 void SkWinCore::IBMIO_FILL_HALFTONE_RECT(SRECT *xRect) //#DS=04BF
 {
 	ENTER(4);
-	LOADDS(0x0c48);
+//	LOADDS(0x0c48);
 	for (i16 y = xRect->y; xRect->y + xRect->cy -1 >= y; y++) {	// si
 		U8* xVMem = &pbVram[y * 320 + xRect->x];	// bp04
 		for (i16 x = xRect->x; xRect->x + xRect->cx -1 >= x; xVMem++, x++) {	// di
@@ -1627,17 +1627,12 @@ void SkWinCore::IBMIO_FILL_HALFTONE_RECT(SRECT *xRect) //#DS=04BF
 			}
 		}
 	}
-#if UseAltic
-	//skwin.UpdateRect(rc->x, rc->y, rc->cx, rc->cy);
 	skWinApp->renderScreen(vram, xRect->x, xRect->y, xRect->cx, xRect->cy);
-#endif
-	return;
 }
 
 //^44C8:1D11
 void SkWinCore::FIRE_FILL_HALFTONE_RECTV(SRECT* xRect, U16 aa)
 {
-	ENTER(0);
 	IBMIO_FILL_HALFTONE_RECT(xRect) CALL_IBMIO;
     return;
 }
@@ -1645,7 +1640,6 @@ void SkWinCore::FIRE_FILL_HALFTONE_RECTV(SRECT* xRect, U16 aa)
 //^44C8:1DDA
 void SkWinCore::FIRE_FILL_HALFTONE_RECTI(U16 iRectNo, U16 aa)
 {
-	ENTER(8);
 	SRECT xRect;	// bp08
 	FIRE_FILL_HALFTONE_RECTV(QUERY_EXPANDED_RECT(iRectNo, &xRect), aa);
 }
@@ -6146,36 +6140,35 @@ void SkWinCore::DRAW_MIRRORED_PIC(const U8 *blitSrc, U8 *blitDst)
 // SPX: _32cb_0b11 renamed DRAW_RAIN
 void SkWinCore::DRAW_RAIN()
 {
-	ENTER(20);
-	if (glbRainStrength == 0 || tlbRainScene[RCJ(5,glbRainSceneType)][2] == 0)
+	if (glbRainIntensity == 0 || tlbRainScene[RCJ(5,glbRainSceneType)][2] == 0)
 		return;
 	i16 iViewportWidth = glbViewportWidth;	// bp0a
 	i16 iViewportHeight = glbViewportHeight;	// bp0c
-	SRECT bp14;
+	SRECT bp14;	// bp14
 	if (QUERY_BLIT_RECT(NULL, &bp14, RECTZONE_702_VIEWPORT_BASE, &iViewportWidth, &iViewportHeight, -1) == NULL)
 		return;
-	U8 bp07 = 0;
-	U16 bp06 = 0;
-	QUERY_RAINFALL_PARAM(&bp07, &bp06);
-	U8 *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, bp07);
-	ALLOC_IMAGE_MEMENT(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, bp07);
+	U8 iRainImageId = 0;	// bp07 rain image id
+	U16 bp06 = 0;	// bp06 relative dir
+	WEATHER_QUERY_RAINFALL_IMAGEID(&iRainImageId, &bp06);
+	U8 *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, iRainImageId);	// bp04
+	ALLOC_IMAGE_MEMENT(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, iRainImageId);
 	X16 si = 0;
 	if (bp06 == 1) {
 		si = ALLOC_TEMP_CACHE_INDEX();
 		//ALLOC_NEW_PICT(si, READ_UI16(bp04,-4), READ_UI16(bp04,-2), 4);
 		ALLOC_NEW_PICT(si, READ_IMGBUFF_WIDTH(bp04), READ_IMGBUFF_HEIGHT(bp04), IMG_4_BPP);
-		bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(0x17, glbMapGraphicsSet, bp07);
+		bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(0x17, glbMapGraphicsSet, iRainImageId);
 		DRAW_MIRRORED_PIC(bp04, reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(si)));
 		bp04 = reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(si));
 	}
 	//_44c8_20a4(bp04, glbBackBuffViewport, NULL, &bp14, READ_UI16(bp04,-4) * READ_UI16(bp04,-2) -40 -(RAND() & 0x1f), RAND() & 255, glbViewportWidth, 0,
 	_44c8_20a4(bp04, glbBackBuffViewport, NULL, &bp14, READ_IMGBUFF_WIDTH(bp04) * READ_IMGBUFF_HEIGHT(bp04) -40 -(RAND() & 0x1F), RAND() & 255, glbViewportWidth, 0,
-		GET_LOCAL_PALETTE_32cb_0649(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, bp07, 0)
+		GET_LOCAL_PALETTE_32cb_0649(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, iRainImageId, 0)
 		);
 	if (bp06 == 1) {
 		FREE_TEMP_CACHE_INDEX(si);
 	}
-	FREE_IMAGE_MEMENT(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, bp07);
+	FREE_IMAGE_MEMENT(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, iRainImageId);
 	return;
 }
 
@@ -6425,10 +6418,10 @@ void SkWinCore::DISPLAY_VIEWPORT(U16 dir, i16 xx, i16 yy)
 	}
 	TRIM_BLIT_RECT(0, 0, 0, bp02);
 	if (SET_GRAPHICS_FLIP_FROM_POSITION(0x20, dir, xx, yy) != 0) {
-		DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_CEIL, RECTZONE_700_VIEWPORT_CEILING, -1, 1); // draw ceil
+		DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_CEILING, RECTZONE_700_VIEWPORT_CEILING, -1, 1); // draw ceil
 	}
 	else {
-		DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_CEIL, RECTZONE_700_VIEWPORT_CEILING, -1, 0); // draw ceil
+		DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_CEILING, RECTZONE_700_VIEWPORT_CEILING, -1, 0); // draw ceil
 	}
 	DRAW_RESET_SOME_RECTANGLE();
 	TRIM_BLIT_RECT(0, di, 0, 0);

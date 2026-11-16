@@ -334,7 +334,7 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 		di += glbGlobalSpellEffects.Light;
 		di = di + QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_x67_AMBIANT_LIGHT);
 		if (glbRainFlagSomething != 0) {
-			di += tLightLevelTable[RCJ(6,BETWEEN_VALUE(0, glbRainAmbientLightModifier + glbRainSomeLightMod, 5))];
+			di += tLightLevelTable[RCJ(6,BETWEEN_VALUE(0, glbRainAmbientLightModifier + glbWeatherDayHourLight, 5))];
 		}
 		if (SkCodeParam::bUseFixedMode && di < 0)
 			di = 0;
@@ -579,12 +579,12 @@ U16 SkWinCore::TRY_CAST_SPELL()
 	// SPX: then si = 32 means a "meaningless spell", not existing spell
 	U16 si = (xSpellDef == NULL) 
 		? 32
-		: CAST_SPELL_PLAYER(iChampionIndex, xSpellDef, i16(xChampion->GetRunes()[0]) - 0x5F);	// (0x5F is first rune (0x60) - 1)
+		: CHAMPION_CAST_SPELL(iChampionIndex, xSpellDef, i16(xChampion->GetRunes()[0]) - 0x5F);	// (0x5F is first rune (0x60) - 1)
 	// SPX: di = 0 : spell ok / di = 1 : spell failed
 	U16 di = (si != 0) ? 1 : 0;
 	if (di != 0)
 		PROCEED_SPELL_FAILURE(si);
-	si &= 0x00f0;
+	si &= 0x00F0;
 	if (si != 0x0030) {
 		xChampion->GetRunes()[0] = 0;
 		xChampion->runesCount = 0;
@@ -638,14 +638,14 @@ void SkWinCore::ADD_RUNE_TO_TAIL(U16 symbol_0to5)
 
 //^2C1D:11BF
 //SPX: _2c1d_11bf renamed COMPUTE_PLAYER_ATTACK_OR_THROW_STRENGTH
-U16 SkWinCore::COMPUTE_PLAYER_ATTACK_OR_THROW_STRENGTH(U16 xx, U16 yy, i16 zz)
+U16 SkWinCore::CHAMPION_COMPUTE_ATTACK_OR_THROW_STRENGTH(U16 iChampionIdx, U16 yy, i16 zz)
 {
 	ENTER(8);
-	Champion *bp04 = &tblChampionSquad[xx];
-	i16 si = (RAND() & 15) + GET_PLAYER_ABILITY(bp04, abStr, 0);
-	ObjectID bp08 = bp04->Possess(yy);
+	Champion *pChampion = &tblChampionSquad[iChampionIdx];	// bp04
+	i16 si = (RAND() & 15) + GET_PLAYER_ABILITY(pChampion, abStr, 0);
+	ObjectID bp08 = pChampion->Possess(yy);
 	U16 bp06 = QUERY_ITEM_WEIGHT(bp08);
-	U16 di = MAX_LOAD(bp04) >> 4;
+	U16 di = MAX_LOAD(pChampion) >> 4;
 	si = (bp06 -12) +si;
 	if (bp06 > di) {
 		si = si - ((bp06 -di) >> 1);
@@ -655,7 +655,7 @@ U16 SkWinCore::COMPUTE_PLAYER_ATTACK_OR_THROW_STRENGTH(U16 xx, U16 yy, i16 zz)
 		}
 	}
 	if (zz >= 0) {
-		si = (QUERY_PLAYER_SKILL_LV(xx, zz, 1) << 1) +si;
+		si = (QUERY_PLAYER_SKILL_LV(iChampionIdx, zz, 1) << 1) +si;
 		di = 0;
 		switch (zz) {
 			case  0:	// fighter 0	(global)
@@ -692,8 +692,8 @@ U16 SkWinCore::COMPUTE_PLAYER_ATTACK_OR_THROW_STRENGTH(U16 xx, U16 yy, i16 zz)
 		}
 		si = si + di;
 	}
-	si = STAMINA_ADJUSTED_ATTR(bp04, si);
-	if ((bp04->bodyFlag & ((yy == 0) ? 1 : 2)) != 0)
+	si = STAMINA_ADJUSTED_ATTR(pChampion, si);
+	if ((pChampion->bodyFlag & ((yy == 0) ? 1 : 2)) != 0)
 		si >>= 1;
 	return BETWEEN_VALUE(0, si >> 1, 100);
 }
@@ -1572,7 +1572,7 @@ void SkWinCore::ADD_BACKGROUND_LIGHT_FROM_TILE(i16 aa, U16 bb, i16 xx, i16 yy, U
 			bp10 = ((si & 0x8000) != 0) ? 1 : 0;
 			si &= 0x7fff;
 			if (QUERY_GDAT_ENTRY_DATA_INDEX(9, bp0b, dtWordValue, 0x63) != 0) {
-				bp1e = BETWEEN_VALUE(0, glbRainAmbientLightModifier + glbRainSomeLightMod, 5);
+				bp1e = BETWEEN_VALUE(0, glbRainAmbientLightModifier + glbWeatherDayHourLight, 5);
 				bp12 = (tLightLevelTable[RCJ(6,bp1e)] * si) / 0x64 +bp12;
 				break;
 			}
@@ -1602,7 +1602,7 @@ void SkWinCore::ADD_BACKGROUND_LIGHT_FROM_TILE(i16 aa, U16 bb, i16 xx, i16 yy, U
 			si &= 0x7fff;
 			TELE_inf bp1c;
 			if (GET_TELEPORTER_DETAIL(&bp1c, U8(xx), U8(yy)) != 0) {
-				bp1e = BETWEEN_VALUE(0, glbRainAmbientLightModifier + glbRainSomeLightMod, 5);
+				bp1e = BETWEEN_VALUE(0, glbRainAmbientLightModifier + glbWeatherDayHourLight, 5);
 				bp12 = (tLightLevelTable[RCJ(6,bp1e)] * si) / 0x64 +bp12;
 				goto _0519;
 			}
@@ -2394,7 +2394,7 @@ X16 SkWinCore::ATTACK_PARTY(U16 quantity, U16 yy, U16 zz)
 	bp04 <<= 1;
 	U16 bp02;
 	for (bp02 = 0; bp02 < cd.pi.glbChampionsCount; bp02++) {
-		if (WOUND_PLAYER(bp02, max_value(1, di + RAND16(bp04)), yy, zz) != 0) {
+		if (CHAMPION_GET_DAMAGE_AND_WOUNDS(bp02, max_value(1, di + RAND16(bp04)), yy, zz) != 0) {
 			si |= 1 << bp02;
 		}
 	}

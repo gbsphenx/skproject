@@ -4161,7 +4161,7 @@ i16 SkWinCore::CREATURE_ATTACKS_CHAMPION(Creature *ref, U16 iChampionIdx)
 		if (RAND01() != 0) {
 			si = si -(RAND16((si >> 1) +1) -1);
 		}
-		si = WOUND_PLAYER(iChampionIdx, si, bp0a, iAIb28);
+		si = CHAMPION_GET_DAMAGE_AND_WOUNDS(iChampionIdx, si, bp0a, iAIb28);
 		if (si != 0) {
 			// SPX: Champion "oof" sound when hit
 			// => it would be possible to have several oof sounds using a random

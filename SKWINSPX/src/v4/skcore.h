@@ -740,10 +740,10 @@ protected:
 	Timer	*glbTimersTable;	// (_4976_5c20) timer entities?
 	U32		_4976_5c24;
 	X16		_4976_5c28;
-	DistantEnvironment	_4976_5c2a[5];
+	DistantEnvironment	tblEnvironmentElement[5];	// _4976_5c2a
 	U8		glbRainHasThunderImage;	// (_4976_5c5c)
 	U8	glbRainFlagSomething;	// (_4976_5c5d)
-	U8	glbRainStrength;	// (_4976_5c5e) rain strength: 0=no rainfall, 1to15=lv1, 16to63=lv2, 64to127=lv3, 128to255=lv4
+	U8	glbRainIntensity;	// (_4976_5c5e) rain strength: 0=no rainfall, 1to15=lv1, 16to63=lv2, 64to127=lv3, 128to255=lv4
 	U8	glbRainRelated3;	// (_4976_5c5f)
 	U8	glbRainLevelForSky;		// (_4976_5c60)
 	U8	glbRainLevelForGround;	// (_4976_5c61)
@@ -751,7 +751,7 @@ protected:
 	U8	glbRainAmbientLightModifier;	// (_4976_5c63) 1 when darker, 0 else
 	U8	glbRainMultiplicator;				// (_4976_5c64) Rain/Thunder related
 	i16		glbRainStormController; // (_4976_5c66) Rain and storm strength
-	U16	glbRainSomeLightMod;
+	U16		glbWeatherDayHourLight;	// light from day hour
 	U8	glbRainDirection;		// (_4976_5c6a) rain direction
 	U8		glbRainHasRainFall;		// (_4976_5c6b)
 	U8		glbRainHasCloudSky;		// (_4976_5c6c)
@@ -1643,8 +1643,7 @@ protected:
 	U16 CAST_CHAMPION_MISSILE_SPELL(U16 xx, ObjectID rl, i16 zz, U16 ww);
 	void PROCEED_LIGHT(U16 cmdNum, U16 yy);
 	U16 CALL_ENCHANTMENT_SELF(Champion *ref, i16 xx, U16 yy, U16 zz);
-	void ADJUST_HAND_COOLDOWN(U16 player, U16 yy, U16 zz);
-	U16 CAST_SPELL_PLAYER(U16 player, SpellDefinition *ref, U16 power);
+	
 	void DRAW_TRANSPARENT_STATIC_PIC(U8 cls1, U8 cls2, U8 cls4, U16 rectno, U16 colorkey);
 	
 	U16 GET_GLOB_VAR(U16 iGlobalVar);
@@ -1657,10 +1656,10 @@ protected:
 	U16 QUERY_CUR_CMDSTR_ENTRY(U16 cmdNum);
 	U16 USE_DEXTERITY_ATTRIBUTE(U16 player);
 	U16 USE_LUCK_ATTRIBUTE(Champion *ref, U16 xx);
-	U16 CALC_PLAYER_ATTACK_DAMAGE(Champion *ref, U16 player, ObjectID rlEnemy, U16 xx, U16 yy, U16 valPb, U16 valDM, U16 valSk, U16 valAt);
+	
 	U16 WIELD_WEAPON(U16 iChampionIdx, U16 valPa, U16 xx, U16 yy, U16 valSk, U16 valAt);
 	i16 STAMINA_ADJUSTED_ATTR(Champion *ref, i16 quantity);
-	U16 COMPUTE_PLAYER_ATTACK_OR_THROW_STRENGTH(U16 xx, U16 yy, i16 zz);
+	
 	U16 SOMETHING_ITEM_WEIGHT_2c1d_0e23(U16 xx);	// _2c1d_0e23
 	
 	U16 SET_DESTINATION_OF_MINION_MAP(ObjectID rlContainer, i16 xx, i16 yy, U16 zz);
@@ -1705,7 +1704,7 @@ protected:
 	U8 *PALETTE_TRANSLATE_WITH_LIGHTING(U8 *localpal, i8 xx, i16 colorkey1, i16 colorkey2, i16 palentcnt);	// _0b36_037e
 	void PALETTE_SOMETHING_32cb_0804(U8 *localpal, i16 cls4, U16 colorkey1, i16 colorkey2, U16 palentcnt);	// _32cb_0804
 	U16 QUERY_MULTILAYERS_PIC(ExtendedPicture *ref, U8 cls1, U8 cls2, U8 cls4, U16 horzRes, U16 vertRes, i16 zz, U16 mirrorflip, i16 colorkey1, U16 colorkey2);
-	void QUERY_RAINFALL_PARAM(U8 *iRainImageID, U16 *isMirrored);
+	
 	U8 *GET_LOCAL_PALETTE_32cb_0649(U8 iGDatCls1Category, U8 iGDatCls2MainItemId, U8 iGDatCls4EntryId, i16 iTransparentColorKey);	// _32cb_0649
 	void FIRE_UPDATE_BLIT_PALETTE(const U8 *localpal);
 	void FIRE_BLIT_TO_MEMORY_ROW_4TO8BPP_NOKEY(U16 offSrc, U16 offDst, U16 size);
@@ -2048,11 +2047,10 @@ protected:
 	X16 _0cee_319e_ALCOVE_GET_GDAT_X13(ObjectID rl); // _0cee_319e
 	U16 ATTACK_WALL(i16 xTo, i16 yTo, i16 xFrm, i16 yFrm, U16 dirTo, ObjectID rlThrown);
 	X16 _2c1d_132c(i16 ss, U16 tt);
-	X16 CHAMPION_COMPUTE_SOME_SHIELD(i16 play, U16 ww);	// _2c1d_135d
 	i16 GET_SCALED_PRODUCT(U16 iValue, U16 iDivideScale, U16 iMultiplier);	// _0cd5_0176
 	i16 USE_ABILITY_ATTRIBUTE(Champion *ref, X16 ability, i16 tt); // _2c1d_0f2a renamed USE_ABILITY_ATTRIBUTE
 
-	U16 WOUND_PLAYER(i16 iCharIdx, i16 iSourceAttackDamage, U16 iMask, U16 iAttackType);
+	
 	void _075f_0182(ObjectID rl, X16 xx, X16 yy);
 	void CREATE_CLOUD(ObjectID rl, U16 ww, U16 xx, U16 yy, U16 ss);
 	void BUILD_5x5_POS(i16 xx, i16 yy, U16 ww, U16 *x2, U16 *y2);	// _098d_000f
@@ -2095,11 +2093,18 @@ protected:
 	tiamat MEM_3e74_32a2(sk5d12 *ref, i32 xx);	// _3e74_32a2
 	void LOAD_DYN4(SkLoadEnt *ref, i16 iLoadEntCount);	// big func
 	void LOAD_MISCITEM();
-	void SET_TIMER_WEATHER(U32 tickDelta);
-	void INIT_WEATHER_RAIN(X16 ww);	// _3df7_0037
+	
+	//--- Weather / Day & Night
+	void WEATHER_SET_TIME_EVENT(U32 tickDelta);	// SET_TIMER_WEATHER
+	void WEATHER_INIT(X16 ww);	// _3df7_0037 / INIT_WEATHER_RAIN
+	void WEATHER_UPDATE(U16 aa);
+	void WEATHER_QUERY_RAINFALL_IMAGEID(U8 *iRainImageID, U16 *isMirrored);	// QUERY_RAINFALL_PARAM
+	U8 WEATHER_GET_HOUR_OF_DAY();	// SPX, not in V4, added.
+	
+	
 	X16 RETRIEVE_ENVIRONMENT_CMD_CD_FW(DistantEnvironment *pDistEnv);
 	X16 SOMETHING_WITH_SCALED_RECTANGLES(X16 rcno1, X16 rcno2, X16 scale, X16 *ss, X16 *tt);	// _098d_04c7
-	void UPDATE_WEATHER(U16 aa);
+	
 	void LOAD_LOCALLEVEL_DYN();	//*	interesting stuff in there
 	void CHANCE_TABLE_OPERATION();
 	void _32cb_4069(i16 xx, i16 yy, X16 ww, U16 *ss, U16 *tt);
@@ -2399,12 +2404,22 @@ protected:
 	void CHAMPION_PROCESS_ITEM_BONUS(i16 iChampionIdx, ObjectID recordLink, i16 inventorySlot, i16 x4);	// PROCESS_ITEM_BONUS
 	void CHAMPION_CONSUME_OBJECT(U16 iChampionIdx, ObjectID rlConsume, i16 possess);	// PLAYER_CONSUME_OBJECT
 	void CHAMPION_ADJUST_STAMINA(U16 iChampionIdx, i16 iStaminaDecrement);	// ADJUST_STAMINA
-	U16 CHAMPION_ENGAGE_COMMAND(U16 player, i16 cmdSlot);	// ENGAGE_COMMAND
+	U16 CHAMPION_ENGAGE_COMMAND(U16 iChampionIdx, i16 cmdSlot);	// ENGAGE_COMMAND
 	void CHAMPION_2c1d_153f(U16 iChampionIdx);	// _2c1d_153f
 	U16 CHAMPION_2c1d_1de2_SHOOT(U16 iChampionIdx, i16 yy, U16 zz); // _2c1d_1de2 / _2c1d_1de2_CHAMPION_SHOOT
 
+
+	X16 CHAMPION_COMPUTE_SOME_SHIELD(i16 iChampionIdx, U16 ww);	// _2c1d_135d
+	void CHAMPION_ADJUST_HAND_COOLDOWN(U16 iChampionIdx, U16 yy, U16 zz);	// ADJUST_HAND_COOLDOWN
+
 	U16 GET_PLAYER_WEIGHT(U16 iChampoinIdx);
 	U16 MAX_LOAD(Champion *pChampion);	//
+
+	U16 CHAMPION_CAST_SPELL(U16 iChampionIdx, SpellDefinition *ref, U16 power);	// CAST_SPELL_PLAYER
+	U16 CHAMPION_COMPUTE_ATTACK_OR_THROW_STRENGTH(U16 iChampionIdx, U16 yy, i16 zz);	// COMPUTE_PLAYER_ATTACK_OR_THROW_STRENGTH
+
+	U16 CHAMPION_COMPUTE_ATTACK_DAMAGE(Champion *pChampion, U16 player, ObjectID rlEnemy, U16 xx, U16 yy, U16 valPb, U16 valDM, U16 valSk, U16 valAt);	// CALC_PLAYER_ATTACK_DAMAGE
+	U16 CHAMPION_GET_DAMAGE_AND_WOUNDS(i16 iChampionIdx, i16 iSourceAttackDamage, U16 iMask, U16 iAttackType);	// WOUND_PLAYER
 
 
 

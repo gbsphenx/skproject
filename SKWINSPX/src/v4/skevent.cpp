@@ -679,28 +679,7 @@ _0476:
 }
 
 
-//^3DF7:000A
-// SPX: _3df7_000a renamed SET_TIMER_WEATHER
-void SkWinCore::SET_TIMER_WEATHER(U32 tickDelta)
-{
-	ENTER(10);
 
-	if (SkCodeParam::bUseDM2ExtendedMode && SkCodeParam::fDebugRainSpeed != 1)
-		tickDelta = (U32) ((float) tickDelta / (float) SkCodeParam::fDebugRainSpeed);
-
-	SkD((DLV_DBG_RAIN, "Rain timer duration = %03d (will hit at %d)\n"
-		, tickDelta
-		, glbGameTick +tickDelta
-		));
-
-	Timer tTimerWeather;	// bp0a
-	tTimerWeather.SetMap(0);
-	tTimerWeather.SetTick(glbGameTick + tickDelta);
-	tTimerWeather.TimerType(ttyWeather);
-	tTimerWeather.actor = TIMER_ACTOR__00;
-	QUEUE_TIMER(&tTimerWeather);
-	return;
-}
 
 
 
@@ -2727,16 +2706,16 @@ void SkWinCore::PROCESS_TIMER_AMBIENT_SOUND(Timer *ref)
 
 	U16 rainLevel = 0;
 	U16 iSoundID = 0x80;
-	if (glbRainStrength >= RAIN_THRESHOLD_x80_LEVEL_3) {
+	if (glbRainIntensity >= RAIN_THRESHOLD_x80_LEVEL_3) {
 		rainLevel = C04_RAIN_POWERLEVEL_STRONGEST;
 	}
-	else if (glbRainStrength >= RAIN_THRESHOLD_x40_LEVEL_2) {
+	else if (glbRainIntensity >= RAIN_THRESHOLD_x40_LEVEL_2) {
 		rainLevel = C03_RAIN_POWERLEVEL_STRONG;
 	}
-	else if (glbRainStrength >= RAIN_THRESHOLD_x10_LEVEL_1) {
+	else if (glbRainIntensity >= RAIN_THRESHOLD_x10_LEVEL_1) {
 		rainLevel = C02_RAIN_POWERLEVEL_MEDIUM;
 	}
-	else if (glbRainStrength > RAIN_THRESHOLD_x00_LEVEL_0 && glbRainStrength < RAIN_THRESHOLD_x10_LEVEL_1) {
+	else if (glbRainIntensity > RAIN_THRESHOLD_x00_LEVEL_0 && glbRainIntensity < RAIN_THRESHOLD_x10_LEVEL_1) {
 		rainLevel = C01_RAIN_POWERLEVEL_SMALL;
 	}
 	iSoundID = 0x70 + rainLevel;
@@ -2750,7 +2729,7 @@ void SkWinCore::PROCESS_TIMER_AMBIENT_SOUND(Timer *ref)
 
 	//static int iRainSoundCount = 0;
 	SkD((DLV_DBG_RAIN, "Tick %d / Playing Rain sound %02x ! (rain level = %d, rain strength = %d) | Map: %d / GfxSet: %d\n",
-		glbGameTick, iSoundID, rainLevel, glbRainStrength, cd.pi.glbPlayerMap, glbMapGraphicsSet));
+		glbGameTick, iSoundID, rainLevel, glbRainIntensity, cd.pi.glbPlayerMap, glbMapGraphicsSet));
 	
 	// Generate sound
 	if (SkCodeParam::bUseExtendedSound)
@@ -2943,8 +2922,8 @@ void SkWinCore::PROCEED_TIMERS()
 			case ttyItemBonus:
 				PROCESS_TIMER_0E(xCurrentTimer, 0xfffe);
 				break;
-			case ttyWeather:
-				UPDATE_WEATHER(1);
+			case C84_TIME_EVENT_WEATHER:
+				WEATHER_UPDATE(1);
 				break;
 			case ttyOrnateAnimator:
 				CONTINUE_ORNATE_ANIMATOR(xCurrentTimer);
