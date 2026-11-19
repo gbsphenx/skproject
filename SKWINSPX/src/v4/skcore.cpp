@@ -2812,50 +2812,6 @@ void SkWinCore::LOAD_NEWMAP(U8 newmap)
 
 
 
-//^44C8:1C99
-// SPX: _44c8_1c99 renamed SCROLLBOX_MESSAGE
-// That should roll 1 row of old message
-void SkWinCore::SCROLLBOX_MESSAGE()
-{
-	ENTER(8);
-	FIRE_HIDE_MOUSE_CURSOR();
-	SRECT bp08;
-	QUERY_EXPANDED_RECT(RECT_015_BOTTOM_MESSAGE_3_LINES, &bp08);
-	VIDEO_MEM_MOVE(&bp08, _4976_0140) INDIRECT_CALL;
-	bp08.y = bp08.y +bp08.cy -1 - _4976_0130 +1;
-	FIRE_BLIT_PICTURE(
-		_4976_5c08,
-		NULL,
-		&bp08,
-		0,
-		0,
-		_4976_013e,
-		glbScreenWidth,
-		-1,
-		0,
-		IMG_8_BPP,
-		IMG_8_BPP,
-		NULL	// no palette
-		);
-	FIRE_SHOW_MOUSE_CURSOR();
-	return;
-}
-
-//^3929:07E1
-void SkWinCore::_3929_07e1(U16 xx, U16 yy)
-{
-	ENTER(0);
-	i16 di = xx;
-	U16 si = yy;
-	if (di < 0)
-		di = 0;
-	_4976_475c = min_value(di * _4976_0126, _4976_013e - _4976_0126);
-	if (si < 0 || si >= 1)
-		si = 0;
-	glbTimerTickRemoveHintMessageIndex = si;
-	_4976_5c06 = 0;
-	return;
-}
 
 
 
@@ -5955,7 +5911,7 @@ _1045:
 	sGameVar.wPlayerThrowCounter = glbPlayerThrowCounter;
 	sGameVar.w34 = _4976_4c0c;
 
-	sGameVar.wRainFlagSomething = glbRainFlagSomething;
+	sGameVar.wRainFlagSomething = glbEnvironmentIsOutdoor;
 	sGameVar.iRainAmbientLightModifier = glbRainAmbientLightModifier;
 	sGameVar.iRainDirection = glbRainDirection;
 	sGameVar.iRainIntensity = glbRainIntensity;
@@ -9489,7 +9445,7 @@ _2e5b:
 			_4976_4c00 = t1.w30;
 			glbPlayerThrowCounter = t1.wPlayerThrowCounter;
 			_4976_4c0c = t1.w34;
-			glbRainFlagSomething = (U8)t1.wRainFlagSomething;
+			glbEnvironmentIsOutdoor = (U8)t1.wRainFlagSomething;
 			glbRainAmbientLightModifier = t1.iRainAmbientLightModifier;
 			glbRainDirection = t1.iRainDirection;	// rain dir.
 			glbRainIntensity = t1.iRainIntensity;	// rain str.
@@ -10718,12 +10674,12 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 	if (glbNewMap_4976_5c8a == 0)
 		LOAD_MISCITEM();
 	
-	glbRainHasThunderImage = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_THUNDER_1)); // 0x64 thunder
-	glbRainHasWetGround = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_WETGROUND_1)); // 0x6a wet floor
-	glbRainHasCloudSky = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_CLOUDSKY_1)); // 0x67 ceil cloud
-	glbRainHasRainFall = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_RAINFALL_STRAIGHT_1)); // 0x71 vertical direct rain fall
-	glbSceneColorKey = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_x64_SCENE_COLORKEY); // colorkey
-    glbSceneFlags = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_x65_SCENE_FLAGS);
+	glbMapSceneHasThunderImage = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_THUNDER_1)); // 0x64 thunder
+	glbMapSceneHasWetGround = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_WETGROUND_1)); // 0x6a wet floor
+	glbMapSceneHasCloudSky = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_CLOUDSKY_1)); // 0x67 ceil cloud
+	glbMapSceneHasRainFall = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_RAINFALL_STRAIGHT_1)); // 0x71 vertical direct rain fall
+	glbMapSceneColorKey = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_x64_SCENE_COLORKEY); // colorkey
+    glbMapSceneFlags = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_x65_SCENE_FLAGS);
     
 	SkD((DLV_DBG_INIT, "LOAD_LOCALLEVEL_DYN: Part 8: DEALLOC\n"));
 
@@ -10882,8 +10838,8 @@ X16 SkWinCore::SET_GRAPHICS_FLIP_FROM_POSITION(X16 aa, X16 ww, X16 xx, X16 yy)
 	X16 si = (xx +yy +ww + dunMapLocalHeader->MapOffsetX() + dunMapLocalHeader->MapOffsetY() + dunMapLocalHeader->Level()) & 1;
 	switch (aa) {
 		case 1: //^_5a0a
-			if ((glbSceneFlags & 8) != 0) {
-				if ((glbSceneFlags & 0x10) != 0) {
+			if ((glbMapSceneFlags & 8) != 0) {
+				if ((glbMapSceneFlags & 0x10) != 0) {
 					//^32CB:5A1A
 					if ((U16(glbGameTick) & 7) > 3)
 						return 1;
@@ -10891,19 +10847,19 @@ X16 SkWinCore::SET_GRAPHICS_FLIP_FROM_POSITION(X16 aa, X16 ww, X16 xx, X16 yy)
 				}
 				return si;
 			}
-			if ((glbSceneFlags & 0x40) != 0)
+			if ((glbMapSceneFlags & 0x40) != 0)
 				return cd.pi.glbPlayerDir & 1;
 			return 0;
 		case 0x20: //^_5a41
-			if ((glbSceneFlags & 2) != 0) {
-				if ((glbSceneFlags & 4) != 0) {
+			if ((glbMapSceneFlags & 2) != 0) {
+				if ((glbMapSceneFlags & 4) != 0) {
 					if ((U16(glbGameTick) & 7) <= 3)
 						return 1;
 					return 0;
 				}
 				return !si;
 			}
-			if ((glbSceneFlags & 0x20) != 0)
+			if ((glbMapSceneFlags & 0x20) != 0)
 				return cd.pi.glbPlayerDir & 1;
 			return 0;
 		default: //^_5a8a
@@ -15088,6 +15044,13 @@ _00a4:
 			break;
 		}
 
+		if (glbGameTick%C1365_WEATHER_HOUR_TICKS == 0)
+		{
+			U8 iDayHour = WEATHER_GET_HOUR_OF_DAY();
+			U8 sMessage[128]; memset(sMessage, 0, 128);
+			sprintf((char*)sMessage, "HOUR: %02d DARKNESS=%d (TICK = %d)\n", iDayHour, glbWeatherDayHourLight, glbGameTick + _4976_5c24);
+			DISPLAY_HINT_TEXT(C04_COLOR_CYAN, sMessage);
+		}
 		WEATHER_UPDATE(0);
 		
 		SkD((DLV_DBG_RAIN, "Loop (Rain) >> lvl=%03d / strm=%03d / wet=%03d (r2:%d r3:%d mlt:%d) / tick=%d\n"

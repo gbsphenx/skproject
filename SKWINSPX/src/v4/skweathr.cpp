@@ -50,7 +50,7 @@ U8 SkWinCore::WEATHER_GET_HOUR_OF_DAY()
 void SkWinCore::WEATHER_UPDATE(U16 aa)	// aa = 1 when called from timer, aa = 0 else
 {
 	ENTER(46);
-	glbRainFlagSomething = tlbRainScene[RCJ(5,glbRainSceneType)][0];
+	glbEnvironmentIsOutdoor = tlbRainScene[RCJ(5,glbRainSceneType)][0];
 	if (aa != 0) {
 		if (++glbRainRelated3 > 0x1F) {
 			WEATHER_INIT(0);
@@ -73,17 +73,12 @@ void SkWinCore::WEATHER_UPDATE(U16 aa)	// aa = 1 when called from timer, aa = 0 
 		glbWeatherDayHourLight = tblOutsideLightByHour[iDayHour];
 		glbRainSpecialNextTick = glbGameTick + C1365_WEATHER_HOUR_TICKS;
 
-		{
-			U8 sMessage[128]; memset(sMessage, 0, 128);
-			sprintf((char*)sMessage, "HOUR: %02d LIGHT=%d (TICK = %d)\n", iDayHour, glbWeatherDayHourLight, glbGameTick + _4976_5c24);
-			DISPLAY_HINT_TEXT(C04_COLOR_CYAN, sMessage);
-		}
 		SkD((DLV_DBG_RAIN, "Update Weather >> lightmod = %d / next tick = %d\n"
 			, glbWeatherDayHourLight
 			, glbRainSpecialNextTick
 			));
 
-		if (glbRainFlagSomething != 0)
+		if (glbEnvironmentIsOutdoor != 0)
 			RECALC_LIGHT_LEVEL();
 	}
 	X16 bp0a = 0;
@@ -91,7 +86,7 @@ void SkWinCore::WEATHER_UPDATE(U16 aa)	// aa = 1 when called from timer, aa = 0 
 	X16 bp12;
 	if (glbRainStormController != 0) {
 		bp10 = (RAND() & 15) + (0x100 - glbRainStormController);
-		bp12 = (glbRainStormController >= 0xcd) ? 0x28 : 7;
+		bp12 = (glbRainStormController >= 0xCD) ? 0x28 : 7;
 		glbRainLevelForSky = U8(glbRainStormController);
 		if (glbRainIntensity == 0) {
 			glbRainIntensity = (RAND16(bp10) <= 7) ? 1 : 0;
@@ -117,7 +112,7 @@ void SkWinCore::WEATHER_UPDATE(U16 aa)	// aa = 1 when called from timer, aa = 0 
 				glbRainLevelForGround++;
 			}
 		}
-		if (glbRainHasThunderImage != 0) {
+		if (glbMapSceneHasThunderImage != 0) {
 			bp0a = (RAND16(bp10) <= bp12) ? 1 : 0;
 		}
 	}
@@ -128,7 +123,7 @@ void SkWinCore::WEATHER_UPDATE(U16 aa)	// aa = 1 when called from timer, aa = 0 
 		glbRainIntensity = 0;
 		glbRainLevelForSky = 1;
 	}
-	if (glbRainFlagSomething == 0)
+	if (glbEnvironmentIsOutdoor == 0)
 		return;
 	if (glbRecalcLightIndicator != 0) {
 		glbRecalcLightIndicator = 0;
@@ -136,7 +131,7 @@ void SkWinCore::WEATHER_UPDATE(U16 aa)	// aa = 1 when called from timer, aa = 0 
 	}
 	// This is a table of 5 distant possible elements; first two are for sky, then ground
 	DistantEnvironment *xEnvElement = &tblEnvironmentElement[0];	// bp04
-	if (glbRainHasCloudSky != 0 && glbRainLevelForSky >= 0x10) {
+	if (glbMapSceneHasCloudSky != 0 && glbRainLevelForSky >= 0x10) {
 		if (glbRainLevelForSky >= 0x80) {
 			glbRainAmbientLightModifier = 1;
 			xEnvElement->envImg = GFX_ENVIRONMENT_IMG_x67_SKY_CLOUDS+2;	// 0x69 Dark clouds
@@ -147,10 +142,10 @@ void SkWinCore::WEATHER_UPDATE(U16 aa)	// aa = 1 when called from timer, aa = 0 
 		else {
 			xEnvElement->envImg = GFX_ENVIRONMENT_IMG_x67_SKY_CLOUDS;		// 0x67 Grey clouds
 		}
-		if (RETRIEVE_ENVIRONMENT_CMD_CD_FW(xEnvElement) != 0)
+		if (ENVIRONMENT_GET_CMD_CD_FW(xEnvElement) != 0)
 			xEnvElement++;
 	}
-	if (glbRainHasWetGround != 0 && glbRainLevelForGround >= 0x40) {
+	if (glbMapSceneHasWetGround != 0 && glbRainLevelForGround >= 0x40) {
 		if (glbRainLevelForGround >= 0xc0) {
 			xEnvElement->envImg = GFX_ENVIRONMENT_IMG_x6A_WET_GROUND+2;	// 0x6C Big water puddles
 		}
@@ -160,7 +155,7 @@ void SkWinCore::WEATHER_UPDATE(U16 aa)	// aa = 1 when called from timer, aa = 0 
 		else {
 			xEnvElement->envImg = GFX_ENVIRONMENT_IMG_x6A_WET_GROUND;		// 0x6A Small water puddles
 		}
-		if (RETRIEVE_ENVIRONMENT_CMD_CD_FW(xEnvElement) != 0)
+		if (ENVIRONMENT_GET_CMD_CD_FW(xEnvElement) != 0)
 			xEnvElement++;
 	}
 	i16 si;
@@ -237,7 +232,7 @@ void SkWinCore::WEATHER_UPDATE(U16 aa)	// aa = 1 when called from timer, aa = 0 
 		}
 		if (bp0e == 0 && RAND01() != 0) {
 			xEnvElement->envImg = U8(RAND16(3)) + GFX_ENVIRONMENT_IMG_x64_THUNDER;	// 0x64 = thunder 1 => 0x66 = thunder 3
-			if (RETRIEVE_ENVIRONMENT_CMD_CD_FW(xEnvElement) != 0) {
+			if (ENVIRONMENT_GET_CMD_CD_FW(xEnvElement) != 0) {
 				bp0a = 1;
 				SOMETHING_WITH_SCALED_RECTANGLES(xEnvElement->cmCD, xEnvElement->cmCD + 1, RAND16(100), &xEnvElement->w4, &xEnvElement->w6);
 				xEnvElement->cmFW = U8(RAND02());
@@ -303,7 +298,7 @@ void SkWinCore::WEATHER_INIT(X16 ww)
 		UPDATE_GLOB_VAR(C064_GLOB_BYTE_00_RAIN, 0, C06_GLOBAL_VAR_OP_NEW_VALUE);
 		glbRainSpecialNextTick = glbGameTick +5;
 		glbRainAmbientLightModifier = 0;
-		glbRainFlagSomething = 0;
+		glbEnvironmentIsOutdoor = 0;
 		X32 iTickDelayForRain;	// bp04
 		if (glbStartQuickRain != 0) {
 			glbRainLevelForGround = 0;

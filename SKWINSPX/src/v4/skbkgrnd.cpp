@@ -14,8 +14,8 @@
 
 
 //^3DF7:075F
-// SPX: _3df7_075f renamed RETRIEVE_ENVIRONMENT_CMD_CD_FW
-X16 SkWinCore::RETRIEVE_ENVIRONMENT_CMD_CD_FW(DistantEnvironment *pDistEnv)
+// SPX: _3df7_075f renamed ENVIRONMENT_GET_CMD_CD_FW
+X16 SkWinCore::ENVIRONMENT_GET_CMD_CD_FW(DistantEnvironment *pDistEnv)
 {
 	ENTER(128);
 	U8 strEnvCmd[128];	// bp08
@@ -32,9 +32,9 @@ X16 SkWinCore::RETRIEVE_ENVIRONMENT_CMD_CD_FW(DistantEnvironment *pDistEnv)
 
 //^32CB:56BC
 // SPX: _32cb_56bc renamed ENVIRONMENT_DRAW_DISTANT_ELEMENT
+// Note: this draws sky / wet ground over regular ceiling / floor gfx
 void SkWinCore::ENVIRONMENT_DRAW_DISTANT_ELEMENT(DistantEnvironment *ref, X16 dir, X16 xx, X16 yy)
 {
-	ENTER(6);
 	X16 iMirrorFlip;	// SPX => bp02 = mirror flip
 	if (ref->cmCD == 0)
 		return;
@@ -90,7 +90,7 @@ void SkWinCore::ENVIRONMENT_DRAW_DISTANT_ELEMENT(DistantEnvironment *ref, X16 di
 		, ref->envImg
 		, iElementRecto
 		));
-	QUERY_TEMP_PICST(iMirrorFlip, iStretchX, iStretchY, 0, 0, 0, iElementRecto, -1, glbSceneColorKey, -1, GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, ref->envImg);
+	QUERY_TEMP_PICST(iMirrorFlip, iStretchX, iStretchY, 0, 0, 0, iElementRecto, -1, glbMapSceneColorKey, -1, GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, ref->envImg);
 	glbTempPicture.iXDisp += di;
 	glbTempPicture.iYDisp += si;
 	DRAW_TEMP_PICST();        
@@ -175,11 +175,11 @@ void SkWinCore::ENVIRONMENT_DISPLAY_ELEMENTS(X16 dir, X16 xx, X16 yy)
 	ENTER(134);
 	X16 di = xx; // xpos
 	X16 si = yy; // ypos
-	DistantEnvironment *bp04;
-	if (glbRainFlagSomething != 0) {
-		bp04 = &_4976_5c2a[0];
-		while (bp04->envImg != 0xff) {
-			ENVIRONMENT_DRAW_DISTANT_ELEMENT(bp04++, dir, di, si);
+	DistantEnvironment *pEnvElement;	// bp04
+	if (glbEnvironmentIsOutdoor != 0) {
+		pEnvElement = &tblEnvironmentElement[0];
+		while (pEnvElement->envImg != 0xff) {
+			ENVIRONMENT_DRAW_DISTANT_ELEMENT(pEnvElement++, dir, di, si);
 		}
 	}
 	U8 bp05;
@@ -199,19 +199,19 @@ void SkWinCore::ENVIRONMENT_DISPLAY_ELEMENTS(X16 dir, X16 xx, X16 yy)
 	}
 	if (_4976_592a != 0)
 		return;
-	bp04 = &_4976_5c2a[0];
+	pEnvElement = &tblEnvironmentElement[0];
 	// SPX: Cool! up to 100 distant elements to have in sky/background!
 	// 0x63 contains the horizon graphics ..
 	for (bp05 = 0; bp05 <= 0x63; bp05++) {
 		if ((_4976_592b[bp05 >> 3] & (1 << (bp05 & 7))) == 0)
 			continue;
 		QUERY_GDAT_TEXT(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, bp05, bp0086);
-		if (ENVIRONMENT_SET_DISTANT_ELEMENT(bp04, bp0086, dir, di, si) == 0)
+		if (ENVIRONMENT_SET_DISTANT_ELEMENT(pEnvElement, bp0086, dir, di, si) == 0)
 			continue;
-		bp04->envImg = bp05;
-		bp04->cmCD = QUERY_CMDSTR_TEXT(bp0086, reinterpret_cast<const Bit8u *>(EnvCM_CD2));
-		bp04->cmFW = U8(QUERY_CMDSTR_TEXT(bp0086, reinterpret_cast<const Bit8u *>(EnvCM_FW2)));
-		ENVIRONMENT_DRAW_DISTANT_ELEMENT(bp04, dir, di, si);
+		pEnvElement->envImg = bp05;
+		pEnvElement->cmCD = QUERY_CMDSTR_TEXT(bp0086, reinterpret_cast<const Bit8u *>(EnvCM_CD2));
+		pEnvElement->cmFW = U8(QUERY_CMDSTR_TEXT(bp0086, reinterpret_cast<const Bit8u *>(EnvCM_FW2)));
+		ENVIRONMENT_DRAW_DISTANT_ELEMENT(pEnvElement, dir, di, si);
 	}
 	return;
 }

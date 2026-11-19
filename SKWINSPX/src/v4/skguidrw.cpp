@@ -3637,7 +3637,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 	U16 iFlipImage = 0;	// U16 bp0e = 0; use flip or not
 	U16 si = 0; // defaulting to 0
 	if (bp2a != 0 || (si = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x09_WALL_GFX, bp1f, dtWordValue, GDAT_IMG_COLORKEY_1)) == 0)
-		si = glbSceneColorKey;
+		si = glbMapSceneColorKey;
 	U16 iOrnatePos = 0;	// U16 bp1a
 	U16 iRefPoint = 0;	// U16 bp1e
 	if (bp2a != 0 || (iOrnatePos = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x09_WALL_GFX, bp1f, dtWordValue, GDAT_WALL_ORNATE__POSITION)) == 0) {
@@ -4128,7 +4128,7 @@ void SkWinCore::DRAW_STAIRS_FRONT(i16 xx)
 {
 	ENTER(4);
 	U8 gfxset = glbMapGraphicsSet;	// bp04
-	U16 colorkey = glbSceneColorKey;		// di
+	U16 colorkey = glbMapSceneColorKey;		// di
 	X16 si = (tblCellTilesRoom[xx].xsrd.tfoi[0] != 0) ? 1 : 0;
 	i16 bp02 = _4976_45ae[RCJ(16,xx)][RCJ(2,si)];
 	if (bp02 < 0)
@@ -4693,6 +4693,7 @@ void SkWinCore::DRAW_DUNGEON_GRAPHIC(U8 cls1, U8 cls2, U8 cls4, X16 iRectNo, i16
 	X16 iLocRectNo = iRectNo;	// si
 	ExtendedPicture xExtPict;	// bp013a
 	QUERY_GDAT_SUMMARY_IMAGE(&xExtPict, U8(cls1), U8(cls2), U8(cls4));
+	// Note, this can affect ground/floor.
 	PALETTE_TRANSLATE_WITH_LIGHTING(xExtPict.iPal256, U8(glbViewportLightScale), colorkey, -1, xExtPict.iPaletteSize);
 	xExtPict.colorKeyPassThrough = colorkey;
 	xExtPict.rectNo = iLocRectNo;
@@ -4847,7 +4848,7 @@ void SkWinCore::DRAW_DEFAULT_DOOR_BUTTON(U8 cls1, U8 cls2, U8 cls4, i16 iViewpor
 	QUERY_TEMP_PICST(0, iStretchScale, iStretchScale, 0, 0, iYDistance, 
 		QUERY_GDAT_ENTRY_DATA_INDEX(cls1, cls2, dtWordValue, 8) * 5 + iButtonRectno + 1950,	// SPX: replaced hardcoded class with cls1 to allow more control from caller
 		//QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0C_DOOR_BUTTONS, cls2, dtWordValue, 8) * 5 + iButtonRectno +1950,
-		-1, glbSceneColorKey, -1, cls1, cls2, cls4
+		-1, glbMapSceneColorKey, -1, cls1, cls2, cls4
 		);
 	if (SkCodeParam::bGFXFixModeDM1) {
 		glbTempPicture.iXOffset -= 2;
@@ -4867,7 +4868,7 @@ void SkWinCore::DRAW_DOOR_FRAMES(i16 iViewportCell, X16 iDoorFrameDisplayFlags)	
 	ENTER(16);
 	//i16 si = iViewportCell; // si
 	X8 gfxset = glbMapGraphicsSet;	// bp0f
-	X16 colorkey = glbSceneColorKey;		// di
+	X16 colorkey = glbMapSceneColorKey;		// di
 	ObjectID bp0e = tblCellTilesRoom[iViewportCell].xsrd.tfoi[1];
 	//yy = 7;
 	Door *pDoor = GET_ADDRESS_OF_RECORD0(bp0e);	//*bp04
@@ -5335,7 +5336,7 @@ void SkWinCore::DRAW_STAIRS_SIDE(i16 xx)
 	ENTER(4);
 	i16 di = xx;
 	U8 gfxset = glbMapGraphicsSet;	// bp02
-	i16 bp04 = glbSceneColorKey;
+	i16 bp04 = glbMapSceneColorKey;
 	if (di > 8)
 		return;
 	X16 si = (tblCellTilesRoom[di].xsrd.tfoi[0] != 0) ? 1 : 0;
@@ -5354,7 +5355,7 @@ void SkWinCore::DRAW_PIT_TILE(i16 xx)
 	ENTER(6);
 	i16 si = xx;
 	X8 bp03 = glbMapGraphicsSet;
-	X16 bp06 = glbSceneColorKey;
+	X16 bp06 = glbMapSceneColorKey;
 	i16 bp02 = _4976_4282[RCJ(16,si)];
 	if (bp02 < 0)
 		return;
@@ -5403,7 +5404,7 @@ X16 SkWinCore::DRAW_EXTERNAL_TILE(i16 xx)
 	}
 	X16 bp0e = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0A_FLOOR_GFX, iFloorOrnateID, dtWordValue, GDAT_IMG_COLORKEY_1); // 4
 	if (bp0e == 0) {
-		bp0e = glbSceneColorKey;
+		bp0e = glbMapSceneColorKey;
 	}
 	X16 bp0a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0A_FLOOR_GFX, iFloorOrnateID, dtWordValue, GDAT_FLOOR_ORNATE__POSITION); // 5
 	X16 bp12;
@@ -5497,8 +5498,8 @@ void SkWinCore::DRAW_PIT_ROOF(i16 xx)
 	ENTER(10);
 	i16 si = xx;
 	X8 gfxset = glbMapGraphicsSet;	//bp07
-	X16 bp0a = glbSceneColorKey;
-	if (si > 8 || (glbSceneFlags & 1) == 0)
+	X16 bp0a = glbMapSceneColorKey;
+	if (si > 8 || (glbMapSceneFlags & 1) == 0)
 		return;
 	i16 bp04 = tblCellTilesRoom[si].posx;
 	i16 bp06 = tblCellTilesRoom[si].posy;
@@ -5795,7 +5796,7 @@ void SkWinCore::DRAW_WALL(i16 iViewportCell)	// i16 xx
 {
 	ENTER(12);
 	U8 iMapGfx = glbMapGraphicsSet;	// bp02
-	i16 iColorkey1 = glbSceneColorKey;	// bp06
+	i16 iColorkey1 = glbMapSceneColorKey;	// bp06
 	i8 iXDist = glbTabXAxisDistance[RCJ(23,iViewportCell)];	// bp07
 	i16 iYDist = glbTabYAxisDistance[RCJ(23,iViewportCell)];	// bp0c
 	U8 bp01 = (iYDist > 1) ? GDAT_WALL_ORNATE__DATA_6F : GDAT_WALL_ORNATE__DATA_6E;	// SPX TODO: unknown GDAT values! never seen them in any GDAT
@@ -6065,7 +6066,7 @@ _51d7:
 					if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0E_DOORS, glbMapDoorType[GET_ADDRESS_OF_RECORD0(tblCellTilesRoom[3].xsrd.tfoi[2])->DoorType()], dtWordValue, GDAT_DOOR_NO_FRAMES) == 0) {
 						QUERY_TEMP_PICST(
 							glbGeneralFlipGraphics, 0x2B, 0x2B, 0, 0, 2, QUERY_CREATURE_BLIT_RECTI(3, 2, 0), 0xFFFF, 
-							glbSceneColorKey, -1, GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, 0x06
+							glbMapSceneColorKey, -1, GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, 0x06
 							);
 						DRAW_TEMP_PICST();
 					}
@@ -6188,7 +6189,7 @@ void SkWinCore::DRAW_PLAYER_TILE()
 				Door *door = GET_ADDRESS_OF_RECORD0(tblCellTilesRoom->xsrd.tfoi[1]);	//*bp04
 				if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0E_DOORS, glbMapDoorType[door->DoorType()], dtWordValue, GDAT_DOOR_NO_FRAMES) != 0)
 					break;
-				DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_x06_DOOR_FRAME_FRONT_D1, QUERY_CREATURE_BLIT_RECTI(0, 2, 0), glbSceneColorKey, glbGeneralFlipGraphics);
+				DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, GDAT_GFXSET_x06_DOOR_FRAME_FRONT_D1, QUERY_CREATURE_BLIT_RECTI(0, 2, 0), glbMapSceneColorKey, glbGeneralFlipGraphics);
 				break;
 			}
 		case 0x13://^53CE	// on stairs tile (coming from stairs)
@@ -6196,11 +6197,11 @@ void SkWinCore::DRAW_PLAYER_TILE()
 			DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet
 //					, (si != 0) ? 0x39 : 0x4D
 				, (si != 0) ? GDAT_GFXSET_x39_STAIRS_RAMP_UP_S0_L : GDAT_GFXSET_x4D_STAIRS_RAMP_DOWN_S0_L
-				, (si != 0) ? 0x32B : 0x338, glbSceneColorKey, 0);
+				, (si != 0) ? 0x32B : 0x338, glbMapSceneColorKey, 0);
 			DRAW_DUNGEON_GRAPHIC(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet
 //					, (si != 0) ? 0x3a : 0x4e
 				, (si != 0) ? GDAT_GFXSET_x3A_STAIRS_RAMP_UP_S0_R : GDAT_GFXSET_x4E_STAIRS_RAMP_DOWN_S0_R
-				, (si != 0) ? 0x32C : 0x339, glbSceneColorKey, 0);
+				, (si != 0) ? 0x32C : 0x339, glbMapSceneColorKey, 0);
 			break;
 		case 0x02://^542E
 			DRAW_PIT_TILE(0);

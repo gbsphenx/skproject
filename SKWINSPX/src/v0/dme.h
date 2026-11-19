@@ -1189,15 +1189,15 @@ namespace DM2Internal {
 		U8 b38;
 		U8 b39;
 		U16 wRainFlagSomething;
-		U8 bRainAmbientLightModifier;
-		U8 bRainDirection;
-		U8 bRainStrength;
-		U8 bRainLevelForSky;
-		U8 bRainLevelForGround;
-		U8 bRainMultiplicator;
+		U8 iRainAmbientLightModifier;
+		U8 iRainDirection;
+		U8 iRainIntensity;
+		U8 iRainLevelForSky;
+		U8 iRainLevelForGround;
+		U8 iRainMultiplicator;
 		U16 wRainStormController;
-		U8 bRainRelated3;
-		U8 bRainRelated2;
+		U8 iRainRelated3;
+		U8 iRainRelated2;
 		U32 dwRainSpecialNextTick;
 	};
 	// when allocated, shelf_memory should have a 2 more bytes before to store its data length as i16
@@ -2492,7 +2492,7 @@ namespace DM2Internal {
 	};
 	// sk4be2, loaded from 01-02-07 (raw07), last table of 512 bytes, 256 * 2
 	struct sk4be2Palette { // 2 bytes
-		U8 b0;			// @0	// b0
+		U8 b0;			// @0	// b0	// row line of palette ? i.e index 6E gives 6
 		U8 b1;			// @1	// b1
 	};	// is it used for dungeon light translation ?
 	// sk4bde, loaded from 01-02-07 (raw07), result of 3 tables within this item
@@ -3096,7 +3096,7 @@ namespace DM2Internal {
 		C83_tty_MagicMap		= 0x53, // DM1/CSBWin 83 Magic Map
 // SPX: not originally in DM2
 //...........................
-		ttyWeather			= 0x54,	// tty54 (84)
+		C84_TIME_EVENT_WEATHER			= 0x54,	// tty54 (84)	/ ttyWeather
 		ttyOrnateAnimator	= 0x55,	// tty55 (85)
 		ttyTickGenerator	= 0x56,	// tty56 (86)
 		ttyWallButton		= 0x57,	// tty57 (87) restore wall button to released state

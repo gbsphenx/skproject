@@ -55,6 +55,8 @@ bool SkCodeParam::bGameModeExtended = false;
 bool SkCodeParam::bRandomInitChampion = false;
 bool SkCodeParam::bAllowFreeObjectMove = false;	// activated with custom scripted dungeon, to allow any object to be put into the dungeon from commands
 
+bool SkCodeParam::bEnhancementDayNightOutsideLight = true;
+
 bool SkCodeParam::bUseDM2ExtendedMode = true;
 bool SkCodeParam::bUsePowerDebug = true;
 bool SkCodeParam::bUseFixedMode = true;
@@ -75,7 +77,7 @@ bool SkCodeParam::bUseCustomSpells = false;	// Start FALSE. This is automaticall
 bool SkCodeParam::bUnlimitedCharges = false;
 bool SkCodeParam::bNoTimer = false;
 
-bool SkCodeParam::bDebugInfiniteSpells = false;
+bool SkCodeParam::bDebugInfiniteSpells = true;
 bool SkCodeParam::bDebugGFXNoWalls = false;			// don't display solid walls
 bool SkCodeParam::bDebugGFXNoInterWalls = false;	// don't display interwalls
 bool SkCodeParam::bDebugGFXNoDoors = false;		// don't display doors

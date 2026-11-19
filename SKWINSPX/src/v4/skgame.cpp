@@ -333,7 +333,7 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 		di += glbPrecomputedLight;	// SPX: is some sort of precalculed light level (depending on door and such?)
 		di += glbGlobalSpellEffects.Light;
 		di = di + QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_x67_AMBIANT_LIGHT);
-		if (glbRainFlagSomething != 0) {
+		if (glbEnvironmentIsOutdoor != 0) {
 			di += tLightLevelTable[RCJ(6,BETWEEN_VALUE(0, glbRainAmbientLightModifier + glbWeatherDayHourLight, 5))];
 		}
 		if (SkCodeParam::bUseFixedMode && di < 0)
@@ -350,7 +350,7 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 		if (glbLightLevel < bp0a) {
 			glbLightLevel = bp0a;
 		}
-		if (glbRainFlagSomething != 0) {
+		if (glbEnvironmentIsOutdoor != 0) {
 			if (glbRecalcLightIndicator != 0) {
 				glbLightLevel = 0;
 			}

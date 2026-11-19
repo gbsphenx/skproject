@@ -692,7 +692,7 @@ enum SkillLevel {
 //------------------------------------------------------------------------------
 // Images
 #define GDAT_GFXSET_FLOOR							0x00
-#define GDAT_GFXSET_CEIL							0x01
+#define GDAT_GFXSET_CEILING							0x01
 
 #define GDAT_GFXSET_x03_LETTERS						0x03
 
@@ -814,6 +814,11 @@ enum SkillLevel {
 #define GFX_ENVIRONMENT_IMG_x6A_WET_GROUND			0x6A	// 3
 #define GFX_ENVIRONMENT_IMG_x6D_RAIN_SLANTED		0x6D	// 4
 #define GFX_ENVIRONMENT_IMG_x71_RAIN_STRAIGHT		0x71	// 4
+
+#define C1365_WEATHER_HOUR_TICKS    12		// 0x555 d1365
+#define C24_WEATHER_DAY_HOURS		24
+#define C23_WEATHER_LAST_HOUR		23
+
 
 //------------------------------------------------------------------------------
 //	VIEWPORT CELLS DISPLAY

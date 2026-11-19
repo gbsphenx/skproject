@@ -62,6 +62,9 @@ public:
 	static bool bAutoDefaultMaxLight;
 
 	//--- Options
+	static bool bEnhancementDayNightOutsideLight;
+
+	//--- Options
 	static bool bUseDM2ExtendedMode;
 	static bool bUsePowerDebug;
 	static bool bUseFixedMode;

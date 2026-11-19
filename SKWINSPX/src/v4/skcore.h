@@ -322,8 +322,8 @@ protected:
 	U16		glbChampionShowResurrect;			// (_4976_404b) about seeing champion selection ? or resurrection ?
 	X16		_4976_4212;
 	U16		glbMistyMap;		// (_4976_4214) is misty fogged map
-	U16		glbSceneColorKey;		// (_4976_4216) scene colorkey
-	U8	glbMapGraphicsSet;		// (_4976_4218) current dungeon graphics set
+	U16		glbMapSceneColorKey;		// (_4976_4216) scene colorkey
+	U8		glbMapGraphicsSet;		// (_4976_4218) current dungeon graphics set
 	ObjectID	_4976_421a;
 	X16		_4976_467f;
 	X16		_4976_4681;
@@ -698,7 +698,7 @@ protected:
 //	X16		_4976_5974;
 //	X16		_4976_5976;
 //	X16		_4976_5978;
-	U16		glbSceneFlags;	// (_4976_5a7a) flags defined in word 0x65 of graphicsset category
+	U16		glbMapSceneFlags;	// (_4976_5a7a) flags defined in word 0x65 of graphicsset category
 	U32		(*_4976_5a7c)[23];
 	CellTileDetail	*tblCellTilesRoom;	// _4976_5a80
 	U8		(*_4976_5a84)[17]; // (cx,cy)=(17,21). 17*21+1 = 358 bytes
@@ -741,23 +741,23 @@ protected:
 	U32		_4976_5c24;
 	X16		_4976_5c28;
 	DistantEnvironment	tblEnvironmentElement[5];	// _4976_5c2a
-	U8		glbRainHasThunderImage;	// (_4976_5c5c)
-	U8	glbRainFlagSomething;	// (_4976_5c5d)
-	U8	glbRainIntensity;	// (_4976_5c5e) rain strength: 0=no rainfall, 1to15=lv1, 16to63=lv2, 64to127=lv3, 128to255=lv4
-	U8	glbRainRelated3;	// (_4976_5c5f)
-	U8	glbRainLevelForSky;		// (_4976_5c60)
-	U8	glbRainLevelForGround;	// (_4976_5c61)
-	U8	glbRainRelated2;		// (_4976_5c62)
-	U8	glbRainAmbientLightModifier;	// (_4976_5c63) 1 when darker, 0 else
-	U8	glbRainMultiplicator;				// (_4976_5c64) Rain/Thunder related
+	U8		glbMapSceneHasThunderImage;	// (_4976_5c5c)
+	U8		glbEnvironmentIsOutdoor;	// (_4976_5c5d)
+	U8		glbRainIntensity;	// (_4976_5c5e) rain strength: 0=no rainfall, 1to15=lv1, 16to63=lv2, 64to127=lv3, 128to255=lv4
+	U8		glbRainRelated3;	// (_4976_5c5f)
+	U8		glbRainLevelForSky;		// (_4976_5c60)
+	U8		glbRainLevelForGround;	// (_4976_5c61)
+	U8		glbRainRelated2;		// (_4976_5c62)
+	U8		glbRainAmbientLightModifier;	// (_4976_5c63) 1 when darker, 0 else
+	U8		glbRainMultiplicator;				// (_4976_5c64) Rain/Thunder related
 	i16		glbRainStormController; // (_4976_5c66) Rain and storm strength
 	U16		glbWeatherDayHourLight;	// light from day hour
-	U8	glbRainDirection;		// (_4976_5c6a) rain direction
-	U8		glbRainHasRainFall;		// (_4976_5c6b)
-	U8		glbRainHasCloudSky;		// (_4976_5c6c)
-	U32	glbRainSpecialNextTick;	// (_4976_5c6e)
+	U8		glbRainDirection;		// (_4976_5c6a) rain direction
+	U8		glbMapSceneHasRainFall;		// (_4976_5c6b)
+	U8		glbMapSceneHasCloudSky;		// (_4976_5c6c)
+	U32		glbRainSpecialNextTick;	// (_4976_5c6e)
 	X16		glbRainThunderRandom;	// (_4976_5c72)
-	U8		glbRainHasWetGround;	// (_4976_5c74)
+	U8		glbMapSceneHasWetGround;	// (_4976_5c74)
 	U16		glbRainSceneType;	// (_4976_5c76) WordValue:66
 	U16		glbNextFreeMementIndex;		// (_4976_5c78) next index of free entry mement
 	X16		_4976_5c7a;
@@ -1615,8 +1615,13 @@ protected:
 	void VIDEO_MEM_MOVE(SRECT *prc, i16 yy);	// _00eb_069a
 	void SCROLLBOX_MESSAGE(); // _44c8_1c99
 	void _3929_07e1(U16 xx, U16 yy);
-	void _3929_0826();
-	void _3929_0914_HINT_TEXT();
+	
+	//--- Hint Text
+	void HINT_TEXT_3929_0826();	// _3929_0826
+	void HINT_TEXT_3929_0914();	// _3929_0914
+
+
+
 	void PRINT_SYSERR_TEXT(U16 dstx, U16 dsty, U16 clr1, U16 clr2, U8 *str);
 	void DRAW_HINT_TEXT(U16 clr1, U8 *str); // _3929_0929 renamed DRAW_HINT_TEXT
 	void DISPLAY_HINT_TEXT(U16 color, const U8 *str);
@@ -1701,11 +1706,15 @@ protected:
 	void MAKE_BUTTON_CLICKABLE(SRECT *prc, U8 xx, U8 yy);	// _32cb_0a4c
 	void QUERY_GDAT_IMAGE_METRICS(U8 cls1, U8 cls2, U8 cls4, i16 *pcx, i16 *pcy);
 	U8 SKCHR_TO_SCRIPTCHR(U8 xx);
+
+	//--- Palette
 	U8 *PALETTE_TRANSLATE_WITH_LIGHTING(U8 *localpal, i8 xx, i16 colorkey1, i16 colorkey2, i16 palentcnt);	// _0b36_037e
 	void PALETTE_SOMETHING_32cb_0804(U8 *localpal, i16 cls4, U16 colorkey1, i16 colorkey2, U16 palentcnt);	// _32cb_0804
+	U8 *GET_LOCAL_PALETTE_32cb_0649(U8 iGDatCls1Category, U8 iGDatCls2MainItemId, U8 iGDatCls4EntryId, i16 iTransparentColorKey);	// _32cb_0649
+	void PALETTE_APPLY_FOG_OR_SHADE_EXT(U8 *pLocalPal, i16 iLightDepth, U16 colorkey1, i16 colorkey2, U16 palentcnt, U8 cls1, U8 cls2, U8 cls4); // SPX: Addition
+
 	U16 QUERY_MULTILAYERS_PIC(ExtendedPicture *ref, U8 cls1, U8 cls2, U8 cls4, U16 horzRes, U16 vertRes, i16 zz, U16 mirrorflip, i16 colorkey1, U16 colorkey2);
 	
-	U8 *GET_LOCAL_PALETTE_32cb_0649(U8 iGDatCls1Category, U8 iGDatCls2MainItemId, U8 iGDatCls4EntryId, i16 iTransparentColorKey);	// _32cb_0649
 	void FIRE_UPDATE_BLIT_PALETTE(const U8 *localpal);
 	void FIRE_BLIT_TO_MEMORY_ROW_4TO8BPP_NOKEY(U16 offSrc, U16 offDst, U16 size);
 	U16 _44c8_1e1a(U8 *xx, U16 yy);
@@ -2102,7 +2111,6 @@ protected:
 	U8 WEATHER_GET_HOUR_OF_DAY();	// SPX, not in V4, added.
 	
 	
-	X16 RETRIEVE_ENVIRONMENT_CMD_CD_FW(DistantEnvironment *pDistEnv);
 	X16 SOMETHING_WITH_SCALED_RECTANGLES(X16 rcno1, X16 rcno2, X16 scale, X16 *ss, X16 *tt);	// _098d_04c7
 	
 	void LOAD_LOCALLEVEL_DYN();	//*	interesting stuff in there
@@ -2114,10 +2122,12 @@ protected:
 	void DRAW_DUNGEON_GRAPHIC(U8 cls1, U8 cls2, U8 cls4, X16 rectno, i16 colorkey, U16 mirrorflip);
 	void DRAW_RESET_SOME_RECTANGLE();	// _098d_0c45
 
+	//--- Environment (sky, wet ground, distant elements)
 	void ENVIRONMENT_DRAW_DISTANT_ELEMENT(DistantEnvironment *ref, X16 dir, X16 xx, X16 yy);
 	i16 ENVIRONMENT_COMPUTE_DISTANCE(X16 dir, i16 *xx, i16 *yy, X16 xl, X16 yl);	// _32cb_54ce
 	X16 ENVIRONMENT_SET_DISTANT_ELEMENT(DistantEnvironment *ref, U8 *str, X16 dir, X16 xx, X16 yy);
 	void ENVIRONMENT_DISPLAY_ELEMENTS(X16 dir, X16 xx, X16 yy);
+	X16 ENVIRONMENT_GET_CMD_CD_FW(DistantEnvironment *pDistEnv);
 
 
 	void GET_SOME_VIEWPORT_INFO_TELEPORTER();	// _32cb_5c67

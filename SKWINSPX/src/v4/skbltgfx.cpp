@@ -217,7 +217,10 @@ _08fe:
 	glbTempPicture.w26 = pp;
 	glbTempPicture.pb44 = glbBackBuffViewport;
 	glbTempPicture.colorKeyPassThrough = colorkey1;
-	PALETTE_SOMETHING_32cb_0804(glbTempPicture.iPal256, di, colorkey1, colorkey2, glbTempPicture.iPaletteSize);
+	if (SkCodeParam::bEnhancementDayNightOutsideLight)
+		PALETTE_APPLY_FOG_OR_SHADE_EXT(glbTempPicture.iPal256, di, colorkey1, colorkey2, glbTempPicture.iPaletteSize, cls1, cls2, cls4);
+	else	// original
+		PALETTE_SOMETHING_32cb_0804(glbTempPicture.iPal256, di, colorkey1, colorkey2, glbTempPicture.iPaletteSize);
 	QUERY_PICST_IT(&glbTempPicture);
 	return;
 }
@@ -240,7 +243,7 @@ U8 *SkWinCore::PALETTE_TRANSLATE_WITH_LIGHTING(U8 *pLocalPal, i8 xx, i16 colorke
 //		return pLocalPal;
 	if (SkCodeParam::bDM2SegaGDATDetected)	// working only on 16 col palettes
 		return pLocalPal;
-	ENTER(8);
+
 	if (pLocalPal != NULL && xx != 0) {
 		xx = U8(max_value(0, 64 -xx));	// xx
 		for (i16 iColorIdx = 0; iColorIdx < palentcnt; iColorIdx++) {	// bp02
@@ -268,6 +271,46 @@ U8 *SkWinCore::PALETTE_TRANSLATE_WITH_LIGHTING(U8 *pLocalPal, i8 xx, i16 colorke
 	}
 	return pLocalPal;
 }
+
+// SPX: Addition: Extension of PALETTE_SOMETHING_32cb_0804 to manage gfx item + light
+void SkWinCore::PALETTE_APPLY_FOG_OR_SHADE_EXT(U8 *pLocalPal, i16 iLightDepth, U16 colorkey1, i16 colorkey2, U16 palentcnt, U8 cls1, U8 cls2, U8 cls4)
+{
+	// iLightDepth from 0 to 4 ~= distance to player ?
+	U16 di = palentcnt;
+	i16 iLightShade;	// This is the light of objects seen in distance; 0 = full light to 64 = full dark
+	if (cd.pi.glbIsPlayerMoving != 0) {
+		if (iLightDepth < 0) {
+			iLightShade = max_value(-glbViewportLightScale, _4976_421b[RCJ(6,-iLightDepth)]);
+			iLightDepth = 1;
+		}
+		else {
+			iLightShade = _4976_4221[RCJ(5,iLightDepth)];
+			iLightDepth += 9;
+		}
+	}
+	else {
+		iLightShade = _4976_4226[RCJ(5,iLightDepth)];
+	}
+	// SPX: That part is for translating palette in case of 'fog'
+	if (!SkCodeParam::bDisableFogEffect && QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dt07, U8(iLightDepth)) != 0) {
+		TRANSLATE_PALETTE(pLocalPal, GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, U8(iLightDepth), di);
+		PALETTE_TRANSLATE_WITH_LIGHTING(pLocalPal, i8(glbViewportLightScale), colorkey1, colorkey2, di);
+	}
+	else {
+		i16 iGlobalLightScene = glbViewportLightScale;	// 0 = full light to 64 = full dark
+		// In case of sky to be displayed, it must not be affected by the globallight(from player), but external light from day/night cycle.
+		i16 iSkyLight = glbWeatherDayHourLight*10; // source range from 1 (light) to 5 (dark) => 10 to 50
+		if (cls1 == GDAT_CATEGORY_x17_ENVIRONMENT && (
+			(cls4 >= GFX_ENVIRONMENT_IMG_x67_SKY_CLOUDS && cls4 <= (GFX_ENVIRONMENT_IMG_x67_SKY_CLOUDS+2)) ||	// sky element
+			(cls4 >= 0 && cls4 <= 0x63) )	// distant element in sky (castle / towers)
+			)
+			iGlobalLightScene = iSkyLight;
+		
+		PALETTE_TRANSLATE_WITH_LIGHTING(pLocalPal, 64 -U8(((64 - iLightShade) * (64 - iGlobalLightScene)) >> 6), colorkey1, colorkey2, di);
+	}
+	return;
+}
+
 
 //^32CB:0804
 // SPX: _32cb_0804 renamed PALETTE_SOMETHING_32cb_0804
@@ -586,7 +629,6 @@ void SkWinCore::_44c8_1e43(U8 *src, U8 *dst, U8 *zz, SRECT *prc, U16 ss, U16 tt,
 // SPX: _32cb_0649 renamed GET_LOCAL_PALETTE_32cb_0649
 U8 *SkWinCore::GET_LOCAL_PALETTE_32cb_0649(U8 iGDatCls1Category, U8 iGDatCls2MainItemId, U8 iGDatCls4EntryId, i16 iTransparentColorKey)
 {
-	ENTER(6);
 	U8 *pLocalPal16 = QUERY_GDAT_IMAGE_LOCALPAL(iGDatCls1Category, iGDatCls2MainItemId, iGDatCls4EntryId);	// bp04
 	i16 iPalIndexCount;	// bp06
 	if (pLocalPal16 == NULL) {
@@ -601,6 +643,7 @@ U8 *SkWinCore::GET_LOCAL_PALETTE_32cb_0649(U8 iGDatCls1Category, U8 iGDatCls2Mai
 		COPY_MEMORY(pLocalPal16, tblSubstituteHazeCloudRainPal, 16);
 		iPalIndexCount = 16;
 	}
+	// This palette changes seems to be used at least for rain
 	return PALETTE_TRANSLATE_WITH_LIGHTING(tblSubstituteHazeCloudRainPal, U8(glbViewportLightScale), iTransparentColorKey, -1, iPalIndexCount);
 }
 

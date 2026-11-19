@@ -52,6 +52,12 @@ void SKDOS_UPDATE_VRAM_TEST_TITLE();
 #include <sys/farptr.h>
 
 #endif // __DJGPP__
+
+#ifdef __WATCOMC__
+#include <i86.h>
+#include <dos.h>
+#endif // __WATCOMC__
+
 //..............................................................................
 
 #define DOS_VGA_SEGMENT	0xA0000
@@ -68,6 +74,8 @@ void SKDOS_SET_VIDEO_MODE_VGA_16()
 #endif // __DJGPP__
 }
 
+//..............................................................................
+
 void SKDOS_SET_VIDEO_MODE_VGA()
 {
 #ifdef __DJGPP__
@@ -82,7 +90,20 @@ void SKDOS_SET_VIDEO_MODE_VGA()
     regs.h.al = DOS_INT_VGA_256_COLOR_MODE; 
     int86(VIDEO_INT, &regs, &regs);
 #endif // __DJGPP__
+
+#ifdef __WATCOMC__
+
+	union REGPACK regs;
+
+	regs.h.ah = 0x00;
+	regs.h.al = DOS_INT_VGA_256_COLOR_MODE;
+
+	intr(VIDEO_INT, &regs);
+
+#endif
 }
+
+//..............................................................................
 
 void SKDOS_RESET_VIDEO_MODE()
 {

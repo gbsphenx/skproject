@@ -414,7 +414,7 @@ extern X32 _4976_4684[4]; //Rr
 extern X32 _4976_4694[8]; //Rr
 extern X32 _4976_46b4[8]; //Rr
 extern X32 _4976_46d4[8]; //Rr
-extern i8 _4976_4764[24]; //Rr
+extern i8 tblOutsideLightByHour[24]; //Rr	(_4976_4764)
 extern i8 tlbRainRelated[128]; //Rr	(_4976_477c)
 extern X16 _4976_481a[15]; //Rr
 extern U8 _4976_483f[5]; //Rr

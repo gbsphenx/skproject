@@ -14,10 +14,11 @@
 //#endif // defined(_USE_MFC80) || defined(_USE_MFC60)
 
 //^3929:0826
-void SkWinCore::_3929_0826()
+// SPX: _3929_0826 renamed HINT_TEXT_3929_0826
+void SkWinCore::HINT_TEXT_3929_0826()
 {
 	ENTER(0);
-	FIRE_HIDE_MOUSE_CURSOR();
+	FIRE_HIDE_MOUSE_CURSOR();	// SPX: commented to remove the flickering mouse
 	FIRE_FILL_SCREEN_RECT(RECT_015_BOTTOM_MESSAGE_3_LINES, glbPaletteT16[C00_COLOR_BLACK]);
 	FIRE_SHOW_MOUSE_CURSOR();
 	_3929_07e1(0, 0);
@@ -29,10 +30,10 @@ void SkWinCore::_3929_0826()
 
 
 //^3929:0914
-void SkWinCore::_3929_0914_HINT_TEXT()
+void SkWinCore::HINT_TEXT_3929_0914()
 {
 	ENTER(0);
-	_3929_0826();
+	HINT_TEXT_3929_0826();
 	tblTimerTickRemoveHintMessage[0] = -1;
 	return;
 }
@@ -67,9 +68,54 @@ void DM2_gfxmain_3929_0914(void)
  */
 
 
+//^44C8:1C99
+// SPX: _44c8_1c99 renamed SCROLLBOX_MESSAGE
+// That should roll 1 row of old message
+void SkWinCore::SCROLLBOX_MESSAGE()
+{
+	FIRE_HIDE_MOUSE_CURSOR(); // SPX: commented to remove the flickering mouse
+	SRECT bp08;
+	QUERY_EXPANDED_RECT(RECT_015_BOTTOM_MESSAGE_3_LINES, &bp08);
+	VIDEO_MEM_MOVE(&bp08, _4976_0140) INDIRECT_CALL;
+	bp08.y = bp08.y +bp08.cy -1 - _4976_0130 +1;
+	FIRE_BLIT_PICTURE(
+		_4976_5c08,
+		NULL,
+		&bp08,
+		0,
+		0,
+		_4976_013e,
+		glbScreenWidth,
+		-1,
+		0,
+		IMG_8_BPP,
+		IMG_8_BPP,
+		NULL	// no palette
+		);
+	FIRE_SHOW_MOUSE_CURSOR();
+	return;
+}
+
+//^3929:07E1
+void SkWinCore::_3929_07e1(U16 xx, U16 yy)
+{
+	ENTER(0);
+	i16 di = xx;
+	U16 si = yy;
+	if (di < 0)
+		di = 0;
+	_4976_475c = min_value(di * _4976_0126, _4976_013e - _4976_0126);
+	if (si < 0 || si >= 1)
+		si = 0;
+	glbTimerTickRemoveHintMessageIndex = si;
+	_4976_5c06 = 0;
+	return;
+}
+
+
 
 //^3929:0BA6
-void SkWinCore::PRINT_SYSERR_TEXT(Bit16u dstx, Bit16u dsty, Bit16u clr1, Bit16u clr2, Bit8u *str)
+void SkWinCore::PRINT_SYSERR_TEXT(U16 dstx, U16 dsty, U16 clr1, U16 clr2, U8 *str)
 {
 	DRAW_STRING(_4976_4964, -1, glbScreenWidth, dstx, dsty+1, clr1, clr2, str, IMG_8_BPP);
 }
@@ -78,7 +124,6 @@ void SkWinCore::PRINT_SYSERR_TEXT(Bit16u dstx, Bit16u dsty, Bit16u clr1, Bit16u 
 // SPX _3929_0929 renamed DRAW_HINT_TEXT
 void SkWinCore::DRAW_HINT_TEXT(U16 clr1, U8 *str)
 {
-	ENTER(8);
 	SRECT bp08;
 	QUERY_EXPANDED_RECT(RECT_015_BOTTOM_MESSAGE_3_LINES, &bp08);
 	if (_4976_5c06 != 0) {
@@ -95,7 +140,7 @@ void SkWinCore::DRAW_HINT_TEXT(U16 clr1, U8 *str)
 			);
 	}
 	else {
-		FIRE_HIDE_MOUSE_CURSOR();
+		FIRE_HIDE_MOUSE_CURSOR();	// SPX: commented to remove the flickering mouse
 		PRINT_SYSERR_TEXT(
 			bp08.x + _4976_475c,
 			glbTimerTickRemoveHintMessageIndex * _4976_013a +bp08.y + _4976_0130 - _4976_0136 + _4976_5c12 -1,
@@ -111,7 +156,7 @@ void SkWinCore::DRAW_HINT_TEXT(U16 clr1, U8 *str)
 
 //^3929:09FB
 // SPX: _3929_09fb renamed DISPLAY_HINT_TEXT
-void SkWinCore::DISPLAY_HINT_TEXT(Bit16u color, const U8 *str) //#DS=4976
+void SkWinCore::DISPLAY_HINT_TEXT(U16 color, const U8 *str) //#DS=4976
 {
 	ENTER(102);
 	//U16 si = color;
@@ -126,7 +171,7 @@ void SkWinCore::DISPLAY_HINT_TEXT(Bit16u color, const U8 *str) //#DS=4976
 		U8 bp66[100]; memset(bp66,0,100);
 		U16 di = _3929_04e2_DRAW_TEXT_STRINGS(str, bp66, &bp02, _4976_013e - _4976_475c);	// _4976_013e - _4976_475c somehow can move text to left (thus out of screen)
 		if (str[bp02] == '\n') {
-			_3929_0914_HINT_TEXT();
+			HINT_TEXT_3929_0914();
 			DRAW_HINT_TEXT(absoluteColor, bp66);
 			_4976_475c = 0;
 			bp02++;
@@ -134,7 +179,7 @@ void SkWinCore::DISPLAY_HINT_TEXT(Bit16u color, const U8 *str) //#DS=4976
 		}
 		if (str[bp02] != 0) {
 			DRAW_HINT_TEXT(absoluteColor, bp66);
-			_3929_0914_HINT_TEXT();
+			HINT_TEXT_3929_0914();
 			_4976_475c = 12;
 			continue;
 		}
@@ -152,7 +197,6 @@ void SkWinCore::DISPLAY_HINT_TEXT(Bit16u color, const U8 *str) //#DS=4976
 // SPX : _3929_0b5a renamed DISPLAY_HINT_NEW_LINE
 void SkWinCore::DISPLAY_HINT_NEW_LINE()
 {
-	ENTER(0);
 	DISPLAY_HINT_TEXT(C00_COLOR_BLACK, const_cast<U8 *>(strEndLine));
 	return;
 }
@@ -161,7 +205,6 @@ void SkWinCore::DISPLAY_HINT_NEW_LINE()
 // SPX: _2405_00c9 renamed DISPLAY_TAKEN_ITEM_NAME
 void SkWinCore::DISPLAY_TAKEN_ITEM_NAME(ObjectID rl)
 {
-	ENTER(0);
 	DISPLAY_HINT_NEW_LINE();
 	DISPLAY_HINT_TEXT(C13_COLOR_LIGHTER_GRAY, GET_ITEM_NAME(rl));
 	return;
@@ -199,7 +242,6 @@ void SkWinCore::DRAW_TEXT_TO_BACKBUFF(i16 xx, i16 yy, U8 *str)
 // SPX: _2066_33c4 renamed COPY_STRING_2066_33c4
 void SkWinCore::COPY_STRING_2066_33c4(U8 *str, U16 yy) 
 {
-	ENTER(0);
 	SK_STRCPY(str, _4976_3b68);
 	str[5] = yy + 0x30;
 	return;
@@ -211,7 +253,6 @@ void SkWinCore::DIALOG_SAVEGAMES_NAMES(i16 iSelectedSavegame)
 {
 	int iColorText = C09_COLOR_ORANGE;
 	int iColorTextHighlighted = C11_COLOR_YELLOW;
-	ENTER(10);
 
 	if (SkCodeParam::bDM2V5Mode) {
 		iColorText = C11_COLOR_YELLOW;
@@ -245,7 +286,6 @@ void SkWinCore::DIALOG_SAVEGAMES_NAMES(i16 iSelectedSavegame)
 // _2066_3820 renamed DIALOG_2066_3820
 void SkWinCore::DIALOG_2066_3820(U8 *xx, U16 yy)
 {
-	ENTER(8);
 	SRECT bp08;
 	QUERY_EXPANDED_RECT(RECT_453, &bp08);
 	DRAW_DIALOGUE_PICT(QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x1A_DIALOG_BOXES, 0x81, 0x00), glbBackBuffViewport, &bp08, 
@@ -265,7 +305,6 @@ void SkWinCore::DIALOG_2066_3820(U8 *xx, U16 yy)
 //^3E74:5B7C
 void SkWinCore::_3e74_5b7c_KEYBOARD(U16 xx)
 {
-	ENTER(20);
 	_476d_05b6_KEYBOARD(xx);
 	if (_4976_484d++ == _4976_484f[RCJ(4,_4976_484d)]) {
 		if (_4976_484f[RCJ(4,_4976_484d)] != 0)
@@ -296,17 +335,17 @@ void SkWinCore::_3e74_5b7c_KEYBOARD(U16 xx)
 
 //^3929:04E2
 // _3929_04e2 renamed _3929_04e2_DRAW_TEXT_STRINGS
-Bit16u SkWinCore::_3929_04e2_DRAW_TEXT_STRINGS(const Bit8u *strIn, Bit8u *strOut, Bit16u *textPos, i16 maxWidth)
+U16 SkWinCore::_3929_04e2_DRAW_TEXT_STRINGS(const U8 *strIn, U8 *strOut, U16 *textPos, i16 maxWidth)
 {
-	Bit16u si = *textPos;
+	U16 si = *textPos;
 	i16 bp02 = 0;
-	Bit16u di = 0;
-	Bit16u bp04 = 0xffff;
-    Bit16u bp06 = 0;
-	Bit16u bp08 = 0;
-	Bit8u bp0d;
+	U16 di = 0;
+	U16 bp04 = 0xFFFF;
+    U16 bp06 = 0;
+	U16 bp08 = 0;
+	U8 bp0d;
 	SkTextFont *bp0c;
-	if (QUERY_MBCS_PRESENCE(strIn) != 0 || _4976_475e != 0xff) {
+	if (QUERY_MBCS_PRESENCE(strIn) != 0 || _4976_475e != 0xFF) {
 		if (_4976_475e == 0xff) {
 			_4976_475e = 1;
 		}
@@ -325,7 +364,7 @@ Bit16u SkWinCore::_3929_04e2_DRAW_TEXT_STRINGS(const Bit8u *strIn, Bit8u *strOut
 				break;
 			}
 			bp0d = strIn[si];
-			Bit8u bp0e;
+			U8 bp0e;
 			if (bp0d >= 0xf0) {
 				bp0e = strIn[si +1];
 			}
@@ -345,7 +384,7 @@ Bit16u SkWinCore::_3929_04e2_DRAW_TEXT_STRINGS(const Bit8u *strIn, Bit8u *strOut
 					bp08 = bp02;
 				}
 			}
-			Bit8u bp0f;
+			U8 bp0f;
 			bp0c = QUERY_CHAR_METRICS(_4976_475e, bp0d, bp0e, &bp0f);
 			if (bp0c == NULL) {
 				si++;
@@ -403,20 +442,20 @@ _0654:
 }
 
 //^3929:00E6
-const Bit8u *SkWinCore::DRAW_MBCS_STR(
-	const Bit8u *str, 
-	Bit8u *dst, 
+const U8 *SkWinCore::DRAW_MBCS_STR(
+	const U8 *str, 
+	U8 *dst, 
 	i16 zz, 
-	Bit8u *ww, 
-	Bit16u clr1, 
-	Bit16u clr2, 
-	Bit16u *xx, 
-	Bit16u *yy, 
-	Bit16u dstpitch, 
-	Bit16u dstbpp
+	U8 *ww, 
+	U16 clr1, 
+	U16 clr2, 
+	U16 *xx, 
+	U16 *yy, 
+	U16 dstpitch, 
+	U16 dstbpp
 ) {
-	Bit8u bp0b = *str++;
-	Bit8u bp0c;
+	U8 bp0b = *str++;
+	U8 bp0c;
 	if (bp0b >= 0xF0) {
 		bp0c = *str;
 		str++;
@@ -432,7 +471,7 @@ const Bit8u *SkWinCore::DRAW_MBCS_STR(
 		bp0c = bp0b;
 		bp0b = 0;
 	}
-	Bit8u bp0d;
+	U8 bp0d;
 	SkTextFont *bp04 = QUERY_CHAR_METRICS(*ww, bp0b, bp0c, &bp0d);
 	if (bp04 == NULL)
 		return str;
@@ -442,7 +481,7 @@ const Bit8u *SkWinCore::DRAW_MBCS_STR(
 	// Therefore, we check if the font exist; if not, just leave for now.
 	int iItemSize = QUERY_GDAT_ENTRY_DATA_LENGTH(GDAT_CATEGORY_x01_INTERFACE_GENERAL, 0x01, dtImage, 0x00);
 	if (iItemSize <= 0)
-	//	return (const Bit8u*) "?";	// this will lead to an infinite loop when displaying HIT damage
+	//	return (const U8*) "?";	// this will lead to an infinite loop when displaying HIT damage
 		return str;
 
 	U8 *bp08 = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x01_INTERFACE_GENERAL, *ww, bp0d);	// 0x1C
@@ -468,8 +507,8 @@ const Bit8u *SkWinCore::DRAW_MBCS_STR(
 			bp08 = QUERY_GDAT_IMAGE_ENTRY_BUFF(0x001c, *ww, bp0d);
 			if (clr1 != 0 || clr2 != 15) {
 				U8 *bp12 = bp08;
-				U16 di = ((Bit16u *)bp08)[-2];
-				U16 si = ((Bit16u *)bp08)[-1];
+				U16 di = ((U16 *)bp08)[-2];
+				U16 si = ((U16 *)bp08)[-1];
 				goto _02e5;
 			}
 		}
@@ -478,7 +517,7 @@ const Bit8u *SkWinCore::DRAW_MBCS_STR(
 				| 0x4000 
 				| ((clr2 & 0x000f) << 4) 
 				| ((clr1 & 0x000f)     );
-			Bit16u bp1a;
+			U16 bp1a;
 			if (ADD_CACHE_HASH(bp16, &bp1a) != 0) {
 				bp08 = QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp1a);
 			}
@@ -489,9 +528,9 @@ const Bit8u *SkWinCore::DRAW_MBCS_STR(
 				bp12 = QUERY_GDAT_IMAGE_ENTRY_BUFF(0x1c, *ww, bp0d);
 				bp08 = QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(bp1a);
 _02e5:
-				Bit8u bp3a[16]; // 3a-2b
-				bp3a[ 0] = (Bit8u)clr2;
-				bp3a[15] = (Bit8u)clr1;
+				U8 bp3a[16]; // 3a-2b
+				bp3a[ 0] = (U8)clr2;
+				bp3a[15] = (U8)clr1;
 				FIRE_STRETCH_BLIT_TO_MEMORY_4TO4BPP(bp12, bp08, di, si, di, si, bp3a);
 			}
 			if (_4976_5d76 != 0) {
@@ -530,12 +569,12 @@ _02e5:
 
 
 //^470A:0008
-Bit8u *SkWinCore::QUERY_FONT(i8 input, Bit8u fore, Bit8u back)
+U8 *SkWinCore::QUERY_FONT(i8 input, U8 fore, U8 back)
 {
-	Bit8u bp02 = fore << 4;
-	Bit8u bp03 = back << 4;
-	Bit16u si = 0;
-	Bit16u di = 0;
+	U8 bp02 = fore << 4;
+	U8 bp03 = back << 4;
+	U16 si = 0;
+	U16 di = 0;
 	for (; di < 6; di++) {
 		U8 bp01 = _4976_5c0e[(di << 7) + input];
 		i8 bp06;
@@ -549,20 +588,20 @@ Bit8u *SkWinCore::QUERY_FONT(i8 input, Bit8u fore, Bit8u back)
 
 //^470A:0089
 void SkWinCore::DRAW_STRING(
-	Bit8u *dst, 
-	Bit16u ss, 
-	Bit16u dstpitch, 
-	Bit16u dstx, 
-	Bit16u dsty, 
-	Bit16u clr1,					// front color (cyan, white, etc..)
-	Bit16u clr2,					// shadow color (generally black)
-	const Bit8u *str, 
-	Bit16u dstbpp
+	U8 *dst, 
+	U16 ss, 
+	U16 dstpitch, 
+	U16 dstx, 
+	U16 dsty, 
+	U16 clr1,					// front color (cyan, white, etc..)
+	U16 clr2,					// shadow color (generally black)
+	const U8 *str, 
+	U16 dstbpp
 ) {
-	Bit16u di = dstbpp;
+	U16 di = dstbpp;
 	if (*str == 0)
 		return;
-	Bit16u si;
+	U16 si;
 	if ((clr2 & 0x4000) != 0) {
 		clr2 &= 0xBFFF;
 		si = clr2;
@@ -573,7 +612,7 @@ void SkWinCore::DRAW_STRING(
 	SRECT bp08;
 	bp08.x = dstx;
 	if (QUERY_MBCS_PRESENCE(str) != 0) {
-		Bit8u bp09 = 1;
+		U8 bp09 = 1;
 		dsty -= 14;
 		if (si != 0xFFFF) {
             clr2 |= 0x4000;
@@ -583,10 +622,10 @@ void SkWinCore::DRAW_STRING(
 		} while (*str != 0);
 	}
 	else {
-		Bit8u bp1a[16];
+		U8 bp1a[16];
 		if (di != 4) {
-			bp1a[0] = (Bit8u)clr1;
-			bp1a[1] = (Bit8u)clr2;
+			bp1a[0] = (U8)clr1;
+			bp1a[1] = (U8)clr2;
 			clr1 = 0;
 			clr2 = 1;
 			if (si != 0xFFFF) {
@@ -604,7 +643,7 @@ void SkWinCore::DRAW_STRING(
 		bp08.y = (dsty + _4976_0124) - (bp08.cy - 1);
 		bp08.cx = _4976_0126;
 		do {
-			FIRE_BLIT_PICTURE(QUERY_FONT(*str, (Bit8u)clr1, (Bit8u)clr2), dst, &bp08, 0, 0, 5, dstpitch, si, 0, 4, di, bp1a);
+			FIRE_BLIT_PICTURE(QUERY_FONT(*str, (U8)clr1, (U8)clr2), dst, &bp08, 0, 0, 5, dstpitch, si, 0, 4, di, bp1a);
 			bp08.x += _4976_0126;
 			str++;
 		} while (*str != 0);
@@ -612,7 +651,7 @@ void SkWinCore::DRAW_STRING(
 }
 
 //^3929:0B6C
-void SkWinCore::DRAW_VP_STR(Bit16u dstx, Bit16u dsty, Bit16u clr1, const Bit8u *str)
+void SkWinCore::DRAW_VP_STR(U16 dstx, U16 dsty, U16 clr1, const U8 *str)
 {
 	// draw text to dungeon/inventory viewport.
 	// draw dialogue text such as.
@@ -637,7 +676,7 @@ void SkWinCore::DRAW_VP_STR(Bit16u dstx, Bit16u dsty, Bit16u clr1, const Bit8u *
 
 
 //^0CEE:159B
-void SkWinCore::QUERY_MESSAGE_TEXT(U8 *str, ObjectID rl, Bit16u ww)
+void SkWinCore::QUERY_MESSAGE_TEXT(U8 *str, ObjectID rl, U16 ww)
 {
 	ENTER(154);
 	U16 si = 0;
@@ -707,10 +746,10 @@ _1678:
 						*bp04 = 0;
 						const U8 *bp08;
 						if (di == 30) {
-							bp08 = reinterpret_cast<const Bit8u *>(_4976_0262[bp12]);
+							bp08 = reinterpret_cast<const U8 *>(_4976_0262[bp12]);
 						}
 						else {
-							bp08 = reinterpret_cast<const Bit8u *>(_4976_0362[bp12]);
+							bp08 = reinterpret_cast<const U8 *>(_4976_0362[bp12]);
 						}
 						SK_STRCAT(bp04, bp08);
 						bp04 += SK_STRLEN(bp08);
@@ -757,7 +796,7 @@ _1678:
 
 
 //^2759:006D
-Bit16u SkWinCore::QUERY_CMDSTR_TEXT(const Bit8u *cmdStr, const Bit8u *name)
+U16 SkWinCore::QUERY_CMDSTR_TEXT(const U8 *cmdStr, const U8 *name)
 {
 	// returns value of name in cmdstr.
 	// for example, returns 0 if you query "WH" for "зи:CM4SK4BZ2TR3TA-2EX5PB38DM40".
@@ -775,13 +814,13 @@ Bit16u SkWinCore::QUERY_CMDSTR_TEXT(const Bit8u *cmdStr, const Bit8u *name)
 		if (cmdStr[0] == '=') {
 			cmdStr++;
 		}
-		Bit16u di = 0;
+		U16 di = 0;
 		if (cmdStr[0] == '-') {
 			cmdStr++;
 			di = 1;
 		}
 
-		Bit8u bp01;
+		U8 bp01;
 		while ((bp01 = cmdStr[0]) >= '0' && bp01 <= '9') {
 			si = bp01 +(si * 10) - '0';
 			cmdStr++;
@@ -794,16 +833,16 @@ Bit16u SkWinCore::QUERY_CMDSTR_TEXT(const Bit8u *cmdStr, const Bit8u *name)
 }
 
 //^2759:0101
-Bit16u SkWinCore::QUERY_CMDSTR_ENTRY(Bit8u cls1, Bit8u cls2, Bit8u cls4, Bit16u cmdNum)
+U16 SkWinCore::QUERY_CMDSTR_ENTRY(U8 cls1, U8 cls2, U8 cls4, U16 cmdNum)
 {
 	ENTER(132);
-	Bit8u bp0084[128];
-	Bit8u *bp04;
+	U8 bp0084[128];
+	U8 *bp04;
 	if (cmdNum >= 18 || *(bp04 = QUERY_GDAT_TEXT(cls1, cls2, cls4, bp0084)) == 0) {
 		return 0;
 	}
 	else {
-		return QUERY_CMDSTR_TEXT(bp04, reinterpret_cast<const Bit8u *>(ItemCommandsTable[cmdNum]));
+		return QUERY_CMDSTR_TEXT(bp04, reinterpret_cast<const U8 *>(ItemCommandsTable[cmdNum]));
 	}
 }
 
