@@ -21,7 +21,7 @@ X16 SkWinCore::ENVIRONMENT_GET_CMD_CD_FW(DistantEnvironment *pDistEnv)
 	U8 strEnvCmd[128];	// bp08
 	if (QUERY_GDAT_TEXT(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, pDistEnv->envImg, strEnvCmd)[0] == 0)
 		return 0;
-	pDistEnv->cmCD = QUERY_CMDSTR_TEXT(strEnvCmd, reinterpret_cast<const U8 *>(EnvCM_CD));
+ 	pDistEnv->cmCD = QUERY_CMDSTR_TEXT(strEnvCmd, reinterpret_cast<const U8 *>(EnvCM_CD));
 	pDistEnv->w6 = pDistEnv->w4 = 0;
 	pDistEnv->cmFW = U8(QUERY_CMDSTR_TEXT(strEnvCmd, reinterpret_cast<const U8 *>(EnvCM_FW)));
 	pDistEnv->iScaleStretchY = pDistEnv->iScaleStretchX = C64_IMAGE_SCALE_100_PCT;
@@ -176,8 +176,8 @@ void SkWinCore::ENVIRONMENT_DISPLAY_ELEMENTS(X16 dir, X16 xx, X16 yy)
 	X16 di = xx; // xpos
 	X16 si = yy; // ypos
 	DistantEnvironment *pEnvElement;	// bp04
-	if (glbEnvironmentIsOutdoor != 0) {
-		pEnvElement = &tblEnvironmentElement[0];
+	if (cd.ge.glbEnvironmentIsOutdoor != 0) {
+		pEnvElement = &cd.ge.tblEnvironmentElement[0];
 		while (pEnvElement->envImg != 0xff) {
 			ENVIRONMENT_DRAW_DISTANT_ELEMENT(pEnvElement++, dir, di, si);
 		}
@@ -199,7 +199,7 @@ void SkWinCore::ENVIRONMENT_DISPLAY_ELEMENTS(X16 dir, X16 xx, X16 yy)
 	}
 	if (_4976_592a != 0)
 		return;
-	pEnvElement = &tblEnvironmentElement[0];
+	pEnvElement = &cd.ge.tblEnvironmentElement[0];
 	// SPX: Cool! up to 100 distant elements to have in sky/background!
 	// 0x63 contains the horizon graphics ..
 	for (bp05 = 0; bp05 <= 0x63; bp05++) {

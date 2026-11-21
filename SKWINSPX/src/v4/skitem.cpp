@@ -124,46 +124,47 @@ U16 SkWinCore::GET_ITEM_MAX_CHARGE(ObjectID recordLink)
 }
 
 //^0CEE:29EC
-U16 SkWinCore::ADD_ITEM_CHARGE(ObjectID recordLink, i16 delta)
+// If delta == 0, then it acts as querying the current number of charges of the item
+U16 SkWinCore::ITEM_ADD_CHARGES(ObjectID oidItem, i16 iDeltaCharges)
 {
-	U16 si = 0;
-	if (recordLink == OBJECT_NULL)
-		return si;
-	GenericRecord *bp04 = (GenericRecord *)GET_ADDRESS_OF_RECORD(recordLink);
-	U16 bp06 = recordLink.DBType();
-	U16 di;
-	switch (bp06) {
+	U16 iNbCharges = 0;	// si
+	if (oidItem == OBJECT_NULL)
+		return iNbCharges;
+	GenericRecord *pItem = (GenericRecord *)GET_ADDRESS_OF_RECORD(oidItem);	// bp04
+	U16 iCategory = oidItem.DBType();	// bp04
+	U16 iMaxPossibleCharges;	// di
+	switch (iCategory) {
 		case dbWeapon:
-			si = reinterpret_cast<Weapon *>(bp04)->Charges();
-			di = 15;	// SPX: could call GET_ITEM_MAX_CHARGE for this
+			iNbCharges = reinterpret_cast<Weapon *>(pItem)->Charges();
+			iMaxPossibleCharges = 15;	// SPX: could call GET_ITEM_MAX_CHARGE for this
 			break;
 		case dbCloth:
-			si = reinterpret_cast<Cloth *>(bp04)->Charges();
-			di = 15;	// SPX: could call GET_ITEM_MAX_CHARGE for this
+			iNbCharges = reinterpret_cast<Cloth *>(pItem)->Charges();
+			iMaxPossibleCharges = 15;	// SPX: could call GET_ITEM_MAX_CHARGE for this
 			break;
 		case dbMiscellaneous_item:
-			si = reinterpret_cast<Miscellaneous_item *>(bp04)->Compass();
-			di = 3;		// SPX: could call GET_ITEM_MAX_CHARGE for this
+			iNbCharges = reinterpret_cast<Miscellaneous_item *>(pItem)->Compass();
+			iMaxPossibleCharges = 3;		// SPX: could call GET_ITEM_MAX_CHARGE for this
 			break;
 		default:
-			return si;
+			return iNbCharges;
 	}
-	si += delta;
-	si = BETWEEN_VALUE(0, si, di);
-	switch (bp06) {
+	iNbCharges += iDeltaCharges;
+	iNbCharges = BETWEEN_VALUE(0, iNbCharges, iMaxPossibleCharges);
+	switch (iCategory) {
 		case dbWeapon:
-			reinterpret_cast<Weapon *>(bp04)->Charges(si);
+			reinterpret_cast<Weapon *>(pItem)->Charges(iNbCharges);
 			break;
 		case dbCloth:
-			reinterpret_cast<Cloth *>(bp04)->Charges(si);
+			reinterpret_cast<Cloth *>(pItem)->Charges(iNbCharges);
 			break;
 		case dbMiscellaneous_item:
-			reinterpret_cast<Miscellaneous_item *>(bp04)->Compass(si);
+			reinterpret_cast<Miscellaneous_item *>(pItem)->Compass(iNbCharges);
 			break;
 		default:
-			return si;
+			return iNbCharges;
 	}
-	return si;
+	return iNbCharges;
 }
 
 
@@ -430,9 +431,9 @@ U16 SkWinCore::IS_MISCITEM_DRINK_WATER(ObjectID rlMiscItem)
 	ObjectID si = rlMiscItem;
 	if (true
 		&& (QUERY_GDAT_DBSPEC_WORD_VALUE(si, 0) & 1) != 0
-		&& ADD_ITEM_CHARGE(si, 0) != 0
+		&& ITEM_ADD_CHARGES(si, 0) != 0
 	) {
-		ADD_ITEM_CHARGE(si, -1);
+		ITEM_ADD_CHARGES(si, -1);
 		if (si == cd.pi.glbLeaderHandPossession.object) {
 			TAKE_OBJECT(si, 0);
 		}

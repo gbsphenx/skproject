@@ -66,6 +66,10 @@ Bit16u SkWinCore::SPECIAL_UI_KEY_TRANSFORMATION()
 				cd.mk.mice_btn = 1; // left button
 				(this->*_int33_mouse_callback)();
 				break;
+	// Debug: use W to reset weather situation
+			case 0x0011:	// 17 'w'
+				WEATHER_DEBUG_RESET_STATE(SkCodeParam::iDebugWeatherState++);
+				break;
 	// Debug: use V to show validate mements
 			case 0x002F:	// 47 'v'
 				ValidateMements(true);

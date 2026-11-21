@@ -2642,7 +2642,7 @@ U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, U16 xx)
 	U16 color = C04_COLOR_CYAN;
 
 	if (CHECK_ITEM_CAN_USE_CHARGES(si) != 0) {
-		i16 iNbCharges = ADD_ITEM_CHARGE(si, 0);	/// di
+		i16 iNbCharges = ITEM_ADD_CHARGES(si, 0);	/// di
 		if (iNbCharges != 0) {
 			rune = RUNE_GOR;
 			// SPX addition for hard coded waterskin and tankard
@@ -2746,7 +2746,7 @@ U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, U16 xx)
 		if (!SkCodeParam::bUseDM2ExtendedMode)
 			return 1;
 
-		iNbCharges = ADD_ITEM_CHARGE(si, 0);
+		iNbCharges = ITEM_ADD_CHARGES(si, 0);
 		//printf("Number of charges = %d\n", iNbCharges);
 
 		// Money value
@@ -2754,7 +2754,7 @@ U16 SkWinCore::DRAW_ITEM_SURVEY(ObjectID recordLink, U16 xx)
 		statValue = QUERY_GDAT_DBSPEC_WORD_VALUE(si, GDAT_ITEM_STATS_MONEY_VALUE);
 		itemValue += statValue;
 		statValue = QUERY_GDAT_DBSPEC_WORD_VALUE(si, GDAT_ITEM_BONUS_MONEY_PER_CHARGE);
-		itemValue += (statValue * ADD_ITEM_CHARGE(si, 0));
+		itemValue += (statValue * ITEM_ADD_CHARGES(si, 0));
 		SK_LTOA10(itemValue, strMoneyValue);
 		pstr = strMoneyValue;
 		while (*pstr != 0)
@@ -6141,7 +6141,7 @@ void SkWinCore::DRAW_MIRRORED_PIC(const U8 *blitSrc, U8 *blitDst)
 // SPX: _32cb_0b11 renamed DRAW_RAIN
 void SkWinCore::DRAW_RAIN()
 {
-	if (glbRainIntensity == 0 || tlbRainScene[RCJ(5,glbRainSceneType)][2] == 0)
+	if (cd.ge.glbRainIntensity == 0 || cd.ge.tlbRainScene[RCJ(5,cd.ge.glbRainSceneType)][2] == 0)
 		return;
 	i16 iViewportWidth = glbViewportWidth;	// bp0a
 	i16 iViewportHeight = glbViewportHeight;	// bp0c
@@ -6247,10 +6247,10 @@ void SkWinCore::DISPLAY_VIEWPORT(U16 dir, i16 xx, i16 yy)
 		MessageLoop(false);
 	}
 	IBMIO_USER_INPUT_CHECK();	// <<<<
-	// SPX: glbLightLevel is between 0 (light) and 5 (dark). Palette is thereafter controlled by value between 0 (light) and 64 (dark)
+	// SPX: glbPartyLightLevel is between 0 (light) and 5 (dark). Palette is thereafter controlled by value between 0 (light) and 64 (dark)
 	// Having *10 makes 0 to 50 -> loss of darkest colors. Having *13 makes 0 to 65 -> full range (full darkness)
-	glbViewportLightScale = glbLightLevel * 10;	
-	//glbViewportLightScale = glbLightLevel * 12;	// SPX: * 13 seems more appropriate to get darkest values
+	glbViewportLightScale = glbPartyLightLevel * 10;	
+	//glbViewportLightScale = glbPartyLightLevel * 12;	// SPX: * 13 seems more appropriate to get darkest values
 	_4976_5aa0 = dir;
 	_4976_5a9c = xx;
 	_4976_5a9e = yy;

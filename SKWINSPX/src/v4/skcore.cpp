@@ -1578,7 +1578,7 @@ _020e:
 							iImageID = iImageID + cd.pi.glbPlayerDir;
 							break;
 						case 3:	// charged rate (i.e. waterskin)
-							iChargeVal = ADD_ITEM_CHARGE(recordLink, 0);
+							iChargeVal = ITEM_ADD_CHARGES(recordLink, 0);
 							if (iChargeVal == 0)
 								break;
 							iImageID = ((iMaxFrames * iChargeVal) / GET_ITEM_MAX_CHARGE(recordLink)) + iImageID;
@@ -1592,7 +1592,7 @@ _020e:
 						case 4:
 _027d:
 							xx = (iAnimBehaviour & 0x00E0) >> 5;
-							iChargeVal = ADD_ITEM_CHARGE(recordLink, 0);
+							iChargeVal = ITEM_ADD_CHARGES(recordLink, 0);
 							if (iChargeVal == 0)
 								break;
 							iImageID = (((iMaxFrames / xx) * iChargeVal) / (GET_ITEM_MAX_CHARGE(recordLink) +1)) * xx + (iRandSeedTick % yy) + iImageID + 1;
@@ -4908,7 +4908,7 @@ _1f19:
 			if ((_4976_3932[RCJ(28,bp0c->b7)] & 0x20) != 0) {
 				bp6e = (glbGlobalSpellEffects.Invisibility != 0 && (glbAIDef->w0_a_a() == 0) ? 1 : 0);
 				if (bp6e == 0) {
-					bp70 = (glbLightLevel != 0 && glbGlobalSpellEffects.Light < 0 && (glbAIDef->w0_b_b() == 0) ? 1 : 0);
+					bp70 = (glbPartyLightLevel != 0 && glbGlobalSpellEffects.Light < 0 && (glbAIDef->w0_b_b() == 0) ? 1 : 0);
 					if (bp70 == 0) {
 						break;
 					}
@@ -4933,7 +4933,7 @@ _1f19:
 				if (false
 					|| bp3c > 4
 					||(bp6e != 0 && ((bp76 & 15) -(4 -bp3c) <= (glbAIDef->w20 & 15) || (bp76 & 0x4000) != 0))
-					||(bp70 != 0 && ((glbLightLevel * bp3c) -((bp76 >> 8) & 7) > (glbAIDef->w20 & 15)))
+					||(bp70 != 0 && ((glbPartyLightLevel * bp3c) -((bp76 >> 8) & 7) > (glbAIDef->w20 & 15)))
 				) {
 					if ((bp76 & 0x0070) != 0) {
 						bp0c->b0 = -1;
@@ -5911,17 +5911,17 @@ _1045:
 	sGameVar.wPlayerThrowCounter = glbPlayerThrowCounter;
 	sGameVar.w34 = _4976_4c0c;
 
-	sGameVar.wRainFlagSomething = glbEnvironmentIsOutdoor;
-	sGameVar.iRainAmbientLightModifier = glbRainAmbientLightModifier;
-	sGameVar.iRainDirection = glbRainDirection;
-	sGameVar.iRainIntensity = glbRainIntensity;
-	sGameVar.iRainLevelForSky = glbRainLevelForSky;
-	sGameVar.iRainLevelForGround = glbRainLevelForGround;
-	sGameVar.iRainMultiplicator = glbRainMultiplicator;
-	sGameVar.wRainStormController = glbRainStormController;
-	sGameVar.iRainRelated3 = glbRainRelated3;
-	sGameVar.iRainRelated2 = glbRainRelated2;
-	sGameVar.dwRainSpecialNextTick = glbRainSpecialNextTick;
+	sGameVar.wRainFlagSomething = cd.ge.glbEnvironmentIsOutdoor;
+	sGameVar.iRainAmbientLightModifier = cd.ge.glbRainAmbientLightModifier;
+	sGameVar.iRainDirection = cd.ge.glbRainDirection;
+	sGameVar.iRainIntensity = cd.ge.glbRainIntensity;
+	sGameVar.iRainLevelForSky = cd.ge.glbRainLevelForSky;
+	sGameVar.iRainLevelForGround = cd.ge.glbRainLevelForGround;
+	sGameVar.iRainMultiplicator = cd.ge.glbRainMultiplicator;
+	sGameVar.wRainStormController = cd.ge.glbRainStormController;
+	sGameVar.iRainRelated3 = cd.ge.glbRainRelated3;
+	sGameVar.iRainRelated2 = cd.ge.glbRainRelated2;
+	sGameVar.dwRainSpecialNextTick = cd.ge.glbRainSpecialNextTick;
 
 	s_testSKSave.StartWrite(FILE_TELL(glbDataFileHandle));
 
@@ -9445,17 +9445,17 @@ _2e5b:
 			_4976_4c00 = t1.w30;
 			glbPlayerThrowCounter = t1.wPlayerThrowCounter;
 			_4976_4c0c = t1.w34;
-			glbEnvironmentIsOutdoor = (U8)t1.wRainFlagSomething;
-			glbRainAmbientLightModifier = t1.iRainAmbientLightModifier;
-			glbRainDirection = t1.iRainDirection;	// rain dir.
-			glbRainIntensity = t1.iRainIntensity;	// rain str.
-			glbRainLevelForSky = t1.iRainLevelForSky;
-			glbRainLevelForGround = t1.iRainLevelForGround;
-			glbRainMultiplicator = t1.iRainMultiplicator;
-			glbRainStormController = t1.wRainStormController;
-			glbRainRelated3 = t1.iRainRelated3;
-			glbRainRelated2 = t1.iRainRelated2;
-			glbRainSpecialNextTick = t1.dwRainSpecialNextTick;
+			cd.ge.glbEnvironmentIsOutdoor = (U8)t1.wRainFlagSomething;
+			cd.ge.glbRainAmbientLightModifier = t1.iRainAmbientLightModifier;
+			cd.ge.glbRainDirection = t1.iRainDirection;	// rain dir.
+			cd.ge.glbRainIntensity = t1.iRainIntensity;	// rain str.
+			cd.ge.glbRainLevelForSky = t1.iRainLevelForSky;
+			cd.ge.glbRainLevelForGround = t1.iRainLevelForGround;
+			cd.ge.glbRainMultiplicator = t1.iRainMultiplicator;
+			cd.ge.glbRainStormController = t1.wRainStormController;
+			cd.ge.glbRainRelated3 = t1.iRainRelated3;
+			cd.ge.glbRainRelated2 = t1.iRainRelated2;
+			cd.ge.glbRainSpecialNextTick = t1.dwRainSpecialNextTick;
 			SkD((DLV_DBG_GAME_LOAD, "Read Game Variables (Flags / Bytes / Words) ...\n"));
 			if (SUPPRESS_READER(glbIngameGlobVarFlags, _4976_3956, 1, 8, 1) != 0)
 				break;
@@ -10597,8 +10597,8 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 	
 	SkD((DLV_DBG_INIT, "LOAD_LOCALLEVEL_DYN: Part 6\n"));
 
-	glbRainSceneType = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_x66_SCENE_RAIN);	// 0x66
-	if (_4976_5bee[0] == 0 && tlbRainScene[RCJ(5,glbRainSceneType)][0] != 0) {
+	cd.ge.glbRainSceneType = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_x66_SCENE_RAIN);	// 0x66
+	if (_4976_5bee[0] == 0 && cd.ge.tlbRainScene[RCJ(5,cd.ge.glbRainSceneType)][0] != 0) {
 		MARK_DYN_LOAD(0x0D30FFFF); // Mark: Missiles, thunder, all, all
 	}
 
@@ -10674,10 +10674,10 @@ void SkWinCore::LOAD_LOCALLEVEL_DYN()
 	if (glbNewMap_4976_5c8a == 0)
 		LOAD_MISCITEM();
 	
-	glbMapSceneHasThunderImage = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_THUNDER_1)); // 0x64 thunder
-	glbMapSceneHasWetGround = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_WETGROUND_1)); // 0x6a wet floor
-	glbMapSceneHasCloudSky = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_CLOUDSKY_1)); // 0x67 ceil cloud
-	glbMapSceneHasRainFall = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_RAINFALL_STRAIGHT_1)); // 0x71 vertical direct rain fall
+	cd.ge.glbMapSceneHasThunderImage = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_THUNDER_1)); // 0x64 thunder
+	cd.ge.glbMapSceneHasWetGround = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_WETGROUND_1)); // 0x6a wet floor
+	cd.ge.glbMapSceneHasCloudSky = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_CLOUDSKY_1)); // 0x67 ceil cloud
+	cd.ge.glbMapSceneHasRainFall = U8(QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, dtImage, GDAT_ENVWTH_RAINFALL_STRAIGHT_1)); // 0x71 vertical direct rain fall
 	glbMapSceneColorKey = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_x64_SCENE_COLORKEY); // colorkey
     glbMapSceneFlags = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_x65_SCENE_FLAGS);
     
@@ -15048,15 +15048,15 @@ _00a4:
 		{
 			U8 iDayHour = WEATHER_GET_HOUR_OF_DAY();
 			U8 sMessage[128]; memset(sMessage, 0, 128);
-			sprintf((char*)sMessage, "HOUR: %02d DARKNESS=%d (TICK = %d)\n", iDayHour, glbWeatherDayHourLight, glbGameTick + _4976_5c24);
+			sprintf((char*)sMessage, "HOUR: %02d DARKNESS=%d (TICK = %d)\n", iDayHour, cd.ge.glbWeatherDayHourLight, glbGameTick + _4976_5c24);
 			DISPLAY_HINT_TEXT(C04_COLOR_CYAN, sMessage);
 		}
 		WEATHER_UPDATE(0);
 		
 		SkD((DLV_DBG_RAIN, "Loop (Rain) >> lvl=%03d / strm=%03d / wet=%03d (r2:%d r3:%d mlt:%d) / tick=%d\n"
-			, glbRainIntensity, glbRainStormController
-			, glbRainLevelForGround
-			, glbRainRelated2, glbRainRelated3, glbRainMultiplicator
+			, cd.ge.glbRainIntensity, cd.ge.glbRainStormController
+			, cd.ge.glbRainLevelForGround
+			, cd.ge.glbRainRelated2, cd.ge.glbRainRelated3, cd.ge.glbRainMultiplicator
 			, glbGameTick
 			));
 
@@ -15447,6 +15447,7 @@ SkWinCore::SkWinCore()
 #include <kskval1.h>
 	//}}INIT_SKVAL1
 
+
 #pragma warning(push)
 #pragma warning(disable: 4309)
 #include <kskval2.h>
@@ -15588,7 +15589,7 @@ SkWinCore::SkWinCore()
 	zeroMem(glbIngameGlobVarFlags, sizeof(glbIngameGlobVarFlags));
 	zeroMem(glbIngameGlobVarBytes, sizeof(glbIngameGlobVarBytes));
 	zeroMem(glbIngameGlobVarWords, sizeof(glbIngameGlobVarWords));
-	glbStartQuickRain = 1;
+	cd.ge.glbStartQuickRain = 1;
 	glbTimer_4976_4762 = -1;
 	_4976_4c08 = 0;
 	glbMap_4976_4c12 = 0;
@@ -15661,7 +15662,7 @@ SkWinCore::SkWinCore()
 	zeroMem(glbChampionsBodyFlags, sizeof(glbChampionsBodyFlags));
 	zeroMem(_4976_4fd8, sizeof(_4976_4fd8));
 	zeroMem(&glbGlobalSpellEffects, sizeof(glbGlobalSpellEffects));
-	zeroMem(&tblEnvironmentElement, sizeof(tblEnvironmentElement));
+	zeroMem(&cd.ge.tblEnvironmentElement, sizeof(cd.ge.tblEnvironmentElement));
 	zeroMem(_089c_02c0, sizeof(_089c_02c0));
 	zeroMem(_089c_025a, sizeof(_089c_025a));
 	zeroMem(_089c_0090, sizeof(_089c_0090)); _089c_0090[0] = -1;

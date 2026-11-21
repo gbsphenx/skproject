@@ -56,6 +56,7 @@ bool SkCodeParam::bRandomInitChampion = false;
 bool SkCodeParam::bAllowFreeObjectMove = false;	// activated with custom scripted dungeon, to allow any object to be put into the dungeon from commands
 
 bool SkCodeParam::bEnhancementDayNightOutsideLight = true;
+UINT SkCodeParam::iDebugWeatherState = 0;
 
 bool SkCodeParam::bUseDM2ExtendedMode = true;
 bool SkCodeParam::bUsePowerDebug = true;

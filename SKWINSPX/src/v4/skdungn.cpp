@@ -2100,7 +2100,7 @@ void SkWinCore::PLACE_OR_REMOVE_OBJECT_IN_ROOM(i16 xpos, i16 ypos, ObjectID reco
 			&& QUERY_CLS1_FROM_RECORD(recordLink) == GDAT_CATEGORY_x15_MISCELLANEOUS
 			&& QUERY_CLS2_FROM_RECORD(recordLink) == GET_CHAMPION_BONES_ITEM_ID()) {	// Was Misc 0 = someone's bones in DM2 / SPX: I changed to function to get the proper Bones ID depending on DM2 or DM1 mode
 			//^2FCF:2730
-			i16 bp2e = ADD_ITEM_CHARGE(recordLink, 0);
+			i16 bp2e = ITEM_ADD_CHARGES(recordLink, 0);
 			//^2FCF:273F
 			if (bp2e < 0 || bp2e >= cd.pi.glbChampionsCount)
 				//^2FCF:274E

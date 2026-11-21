@@ -1301,11 +1301,11 @@ void SkWinCore::ACTIVATE_ITEM_TELEPORT(Timer *ref, Actuator *pr4, ObjectID rl, X
 								// SPX: There I wonder why the DEALLOC comes first ? ... I inverted the order in fixed mode
 								if (!SkCodeParam::bUseFixedMode) {
 									DEALLOC_RECORD(bp0e);
-									CHAMPION_RESURRECT(ADD_ITEM_CHARGE(bp0e, 0));
+									CHAMPION_RESURRECT(ITEM_ADD_CHARGES(bp0e, 0));
 								}
 								else if (SkCodeParam::bUseFixedMode)
 								{
-									CHAMPION_RESURRECT(ADD_ITEM_CHARGE(bp0e, 0));
+									CHAMPION_RESURRECT(ITEM_ADD_CHARGES(bp0e, 0));
 									DEALLOC_RECORD(bp0e);
 								}
 								continue;
@@ -1361,7 +1361,6 @@ void SkWinCore::ACTIVATE_ITEM_TELEPORT(Timer *ref, Actuator *pr4, ObjectID rl, X
 // SPX: _3a15_15d8 renamed ACTIVATE_INVERSE_FLAG
 void SkWinCore::ACTIVATE_INVERSE_FLAG(Timer *ref, Actuator *pr4) 
 {
-	ENTER(0);
 	// SPX: supposedly, ActionType would be between 0 to 2 giving either "bit flag operation" (0 (set), 1 (clear), 2 (invert)) or "value set" (3 (add), 4 (minus), 5 (none))
 	UPDATE_GLOB_VAR(pr4->ActuatorData(), 1, ((pr4->RevertEffect() != 0) ? C03_GLOBAL_VAR_OP_ADD : C00_GLOBAL_VAR_OP_FLAG_SET) + ref->ActionType());
 	//UPDATE_GLOB_VAR(pr4->ActuatorData(), 1, ((pr4->RevertEffect() != 0) ? 3 : 0) + ref->ActionType());
@@ -1373,20 +1372,14 @@ void SkWinCore::ACTIVATE_INVERSE_FLAG(Timer *ref, Actuator *pr4)
 // This checks the flag value then triggers destination trigger.
 void SkWinCore::ACTIVATE_TEST_FLAG(Timer *ref, Actuator *pr4)
 {
-	//^3A15:1650
-	ENTER(0);
-	//^3A15:1655
 	U16 si = ref->b9_0_0();
 	X16 di = (GET_GLOB_VAR(pr4->ActuatorData()) != 0) ? 1 : 0;
-	//^3A15:1681
 	if (false
 		|| ((pr4->RevertEffect() != di) && (si == 0 || si == 2))
 		|| ((pr4->RevertEffect() == di) && (si == 1))
 	) {
-		//^3A15:16B1
 		INVOKE_ACTUATOR(pr4, (pr4->OnceOnlyActuator() != 0) ? pr4->ActionType() : ref->ActionType(), 0);
 	}
-	//^3A15:16E8
 	return;
 }
 
@@ -2540,7 +2533,7 @@ void SkWinCore::TIME_EVENT_PROCESS_RESURRECTION(Timer *pEvent)
 					&& oidCurrent.Dir() == bonesPos 
 					&& QUERY_CLS1_FROM_RECORD(oidCurrent) == GDAT_CATEGORY_x15_MISCELLANEOUS
 					&& QUERY_CLS2_FROM_RECORD(oidCurrent) == GET_CHAMPION_BONES_ITEM_ID()	// bones item (SPX: was hard coded 0, for DM1 compatibility, I changed using a function to get the correct item ID)
-					&& ADD_ITEM_CHARGE(oidCurrent, 0) == iChampionIdx
+					&& ITEM_ADD_CHARGES(oidCurrent, 0) == iChampionIdx
 				) {
 					CUT_RECORD_FROM(oidCurrent, NULL, bonesX, bonesY);
 					DEALLOC_RECORD(oidCurrent);
@@ -2706,16 +2699,16 @@ void SkWinCore::PROCESS_TIMER_AMBIENT_SOUND(Timer *ref)
 
 	U16 rainLevel = 0;
 	U16 iSoundID = 0x80;
-	if (glbRainIntensity >= RAIN_THRESHOLD_x80_LEVEL_3) {
+	if (cd.ge.glbRainIntensity >= RAIN_THRESHOLD_x80_LEVEL_3) {
 		rainLevel = C04_RAIN_POWERLEVEL_STRONGEST;
 	}
-	else if (glbRainIntensity >= RAIN_THRESHOLD_x40_LEVEL_2) {
+	else if (cd.ge.glbRainIntensity >= RAIN_THRESHOLD_x40_LEVEL_2) {
 		rainLevel = C03_RAIN_POWERLEVEL_STRONG;
 	}
-	else if (glbRainIntensity >= RAIN_THRESHOLD_x10_LEVEL_1) {
+	else if (cd.ge.glbRainIntensity >= RAIN_THRESHOLD_x10_LEVEL_1) {
 		rainLevel = C02_RAIN_POWERLEVEL_MEDIUM;
 	}
-	else if (glbRainIntensity > RAIN_THRESHOLD_x00_LEVEL_0 && glbRainIntensity < RAIN_THRESHOLD_x10_LEVEL_1) {
+	else if (cd.ge.glbRainIntensity > RAIN_THRESHOLD_x00_LEVEL_0 && cd.ge.glbRainIntensity < RAIN_THRESHOLD_x10_LEVEL_1) {
 		rainLevel = C01_RAIN_POWERLEVEL_SMALL;
 	}
 	iSoundID = 0x70 + rainLevel;
@@ -2729,7 +2722,7 @@ void SkWinCore::PROCESS_TIMER_AMBIENT_SOUND(Timer *ref)
 
 	//static int iRainSoundCount = 0;
 	SkD((DLV_DBG_RAIN, "Tick %d / Playing Rain sound %02x ! (rain level = %d, rain strength = %d) | Map: %d / GfxSet: %d\n",
-		glbGameTick, iSoundID, rainLevel, glbRainIntensity, cd.pi.glbPlayerMap, glbMapGraphicsSet));
+		glbGameTick, iSoundID, rainLevel, cd.ge.glbRainIntensity, cd.pi.glbPlayerMap, glbMapGraphicsSet));
 	
 	// Generate sound
 	if (SkCodeParam::bUseExtendedSound)

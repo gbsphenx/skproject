@@ -281,6 +281,39 @@ typedef struct {
 #define tblChampionSquad (&glbChampionTable[1])
 
 //..............................................................................
+// cd.ge.
+typedef struct {
+	DistantEnvironment	tblEnvironmentElement[5];	// _4976_5c2a
+	U8		glbMapSceneHasThunderImage;	// (_4976_5c5c)
+	U8		glbEnvironmentIsOutdoor;	// (_4976_5c5d)
+	U8		glbRainIntensity;	// (_4976_5c5e) rain strength: 0=no rainfall, 1to15=lv1, 16to63=lv2, 64to127=lv3, 128to255=lv4
+	U8		glbRainRelated3;	// (_4976_5c5f)
+	U8		glbRainLevelForSky;		// (_4976_5c60)
+	U8		glbRainLevelForGround;	// (_4976_5c61)
+	U8		glbRainRelated2;		// (_4976_5c62)
+	U8		glbRainAmbientLightModifier;	// (_4976_5c63) 1 when darker, 0 else
+	U8		glbRainMultiplicator;				// (_4976_5c64) Rain/Thunder related
+	i16		glbRainStormController; // (_4976_5c66) Rain and storm strength
+	U16		glbWeatherDayHourLight;	// light from day hour
+	U8		glbRainDirection;		// (_4976_5c6a) rain direction
+	U8		glbMapSceneHasRainFall;		// (_4976_5c6b)
+	U8		glbMapSceneHasCloudSky;		// (_4976_5c6c)
+	U32		glbRainSpecialNextTick;	// (_4976_5c6e)
+	X16		glbRainThunderRandom;	// (_4976_5c72)
+	U8		glbMapSceneHasWetGround;	// (_4976_5c74)
+	U16		glbRainSceneType;	// (_4976_5c76) WordValue:66	
+	X16		glbStartQuickRain;			// (_4976_47fc)
+	X16		glbThunderJustCast;	// (_4976_47fe)
+	X16		glbStormPrevious;		// (_4976_5c28)
+
+
+	i8		tlbRainRelated[128]; //Rr	(_4976_477c)
+	U8		tlbRainScene[5][4]; //Rr	// (_4976_41fe)
+} SKCoreGameEnvironment;
+
+
+
+//..............................................................................
 
 // cd.dm1.
 typedef struct {
@@ -323,7 +356,9 @@ typedef struct {
 
 	SKCoreGameGeneral		gg;
 	SKCoreGameState			gs;
+	SKCoreGameEnvironment	ge;
 	SKCodePlayerInfo		pi;
+
 
 } SKCoreData;
 

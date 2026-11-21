@@ -473,7 +473,7 @@ U16 SkWinCore::IS_ITEM_HAND_ACTIVABLE(U16 player, ObjectID recordLink, i16 yy)
 			if (SkCodeParam::bUnlimitedCharges == true)
 				bp0c = 0;
 			if (bp0c == 18) {	// ?
-				if (ADD_ITEM_CHARGE(si, 0) == 0) {
+				if (ITEM_ADD_CHARGES(si, 0) == 0) {
 					goto _0425;
 				}
 				continue;
@@ -482,7 +482,7 @@ U16 SkWinCore::IS_ITEM_HAND_ACTIVABLE(U16 player, ObjectID recordLink, i16 yy)
 				bp0c = 1;
 			if (bp0c == 0)
 				goto _0425;
-			if (ADD_ITEM_CHARGE(si, 0) >= bp0c)
+			if (ITEM_ADD_CHARGES(si, 0) >= bp0c)
 				goto _0425;
 			continue;
 		}
@@ -1114,7 +1114,7 @@ U16 SkWinCore::CHAMPION_COMPUTE_ATTACK_DAMAGE(Champion *pChampion, U16 iChampion
 			valPb &= 0x7fff;
 			if (bp04->w0_5_5() == 0 || bp0e != 0) {
 				if (false
-					|| USE_DEXTERITY_ATTRIBUTE(iChampionIdx) > (((RAND() & 31) + bp04->Defense +bp0c +(glbLightLevel << 1) -16) >> 1)
+					|| USE_DEXTERITY_ATTRIBUTE(iChampionIdx) > (((RAND() & 31) + bp04->Defense +bp0c +(glbPartyLightLevel << 1) -16) >> 1)
 					|| RAND02() == 0
 					|| USE_LUCK_ATTRIBUTE(pChampion, 75 -valPb) != 0
 				) {
@@ -2600,9 +2600,9 @@ void SkWinCore::BURN_PLAYER_LIGHTING_ITEMS()
 			ObjectID oItem = OBJECT_NULL; // SPX: add default init
 			if ((QUERY_GDAT_DBSPEC_WORD_VALUE(oItem = xChampion->Possess(iInventorySlot), 0) & ITEM_FLAG_PRODUCE_LIGHT) == 0) // if item does not have 0x10 flag, then it does not produces light.
 				continue;
-			if (ADD_ITEM_CHARGE(oItem, 0) == 0)	// get current charge, if = 0, then do nothing
+			if (ITEM_ADD_CHARGES(oItem, 0) == 0)	// get current charge, if = 0, then do nothing
 				continue;
-			if (ADD_ITEM_CHARGE(oItem, -1) == 0) // decrease one charge
+			if (ITEM_ADD_CHARGES(oItem, -1) == 0) // decrease one charge
 				SET_ITEM_IMPORTANCE(oItem, 0);
 			bRecomputeLight = 1;	// Item charge has been changed
 		}

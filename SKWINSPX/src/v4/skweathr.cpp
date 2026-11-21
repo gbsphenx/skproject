@@ -19,27 +19,27 @@
 //^32CB:0AA6
 void SkWinCore::WEATHER_QUERY_RAINFALL_IMAGEID(U8 *iRainImageID, U16 *isMirrored)
 {
-	*isMirrored = (glbRainDirection - _4976_5aa0) & 3;
+	*isMirrored = (cd.ge.glbRainDirection - _4976_5aa0) & 3;
 	// SPX: 0x71 is vertical rain view / 0x6D is side rain view
 	U8 iImageID = (*isMirrored == 0 || *isMirrored == 2) ? GFX_ENVIRONMENT_IMG_x71_RAIN_STRAIGHT : GFX_ENVIRONMENT_IMG_x6D_RAIN_SLANTED;
 	U16 iRainLevel = C00_RAIN_POWERLEVEL_NONE;	// dx
-	if (glbRainIntensity >= RAIN_THRESHOLD_x80_LEVEL_3) {
+	if (cd.ge.glbRainIntensity >= RAIN_THRESHOLD_x80_LEVEL_3) {
 		iRainLevel = C03_RAIN_POWERLEVEL_STRONG;
 	}
-	else if (glbRainIntensity >= RAIN_THRESHOLD_x40_LEVEL_2) {
+	else if (cd.ge.glbRainIntensity >= RAIN_THRESHOLD_x40_LEVEL_2) {
 		iRainLevel = C02_RAIN_POWERLEVEL_MEDIUM;
 	}
-	else if (glbRainIntensity >= RAIN_THRESHOLD_x10_LEVEL_1) {
+	else if (cd.ge.glbRainIntensity >= RAIN_THRESHOLD_x10_LEVEL_1) {
 		iRainLevel = C01_RAIN_POWERLEVEL_SMALL;
 	}
-	else if (glbRainIntensity > RAIN_THRESHOLD_x00_LEVEL_0 && glbRainIntensity < RAIN_THRESHOLD_x10_LEVEL_1) {
+	else if (cd.ge.glbRainIntensity > RAIN_THRESHOLD_x00_LEVEL_0 && cd.ge.glbRainIntensity < RAIN_THRESHOLD_x10_LEVEL_1) {
 		iRainLevel = C00_RAIN_POWERLEVEL_NONE;
 	}
 	*iRainImageID = iImageID + U8(iRainLevel);
 	return;
 }
 
-// SPX: Not in V4, added for convienence
+// SPX: Not originally in V4, added for convienence
 U8 SkWinCore::WEATHER_GET_HOUR_OF_DAY()
 {
 	return RCJ(24,((glbGameTick + _4976_5c24) / C1365_WEATHER_HOUR_TICKS) % C24_WEATHER_DAY_HOURS);
@@ -50,93 +50,93 @@ U8 SkWinCore::WEATHER_GET_HOUR_OF_DAY()
 void SkWinCore::WEATHER_UPDATE(U16 aa)	// aa = 1 when called from timer, aa = 0 else
 {
 	ENTER(46);
-	glbEnvironmentIsOutdoor = tlbRainScene[RCJ(5,glbRainSceneType)][0];
+	cd.ge.glbEnvironmentIsOutdoor = cd.ge.tlbRainScene[RCJ(5,cd.ge.glbRainSceneType)][0];
 	if (aa != 0) {
-		if (++glbRainRelated3 > 0x1F) {
+		if (++cd.ge.glbRainRelated3 > 0x1F) {
 			WEATHER_INIT(0);
 			return;
 		}
 
 		SkD((DLV_DBG_RAIN, "Update Weather >> cnt = %03d + %03d (idx1:%d idx2:%d pw:%d)\n"
-			, glbRainLevelForGround, tlbRainRelated[RCJ(128,glbRainRelated2 + glbRainRelated3)]
-			, glbRainRelated2, glbRainRelated3, glbRainMultiplicator
+			, cd.ge.glbRainLevelForGround, cd.ge.tlbRainRelated[RCJ(128,cd.ge.glbRainRelated2 + cd.ge.glbRainRelated3)]
+			, cd.ge.glbRainRelated2, cd.ge.glbRainRelated3, cd.ge.glbRainMultiplicator
 			));
 
-		_4976_5c28 = glbRainStormController;
-		glbRainStormController += tlbRainRelated[RCJ(128,glbRainRelated2 + glbRainRelated3)] * glbRainMultiplicator;
-		glbRainStormController = BETWEEN_VALUE(0, glbRainStormController, 255);
+		cd.ge.glbStormPrevious = cd.ge.glbRainStormController;
+		cd.ge.glbRainStormController += cd.ge.tlbRainRelated[RCJ(128, cd.ge.glbRainRelated2 + cd.ge.glbRainRelated3)] * cd.ge.glbRainMultiplicator;
+		cd.ge.glbRainStormController = BETWEEN_VALUE(0, cd.ge.glbRainStormController, 255);
 		WEATHER_SET_TIME_EVENT(U32(RAND16(0x100)) + 0x32);	// RAND16(256) + 50
 		return;
 	}
-	if (glbGameTick >= glbRainSpecialNextTick) {
+	if (glbGameTick >= cd.ge.glbRainSpecialNextTick) {
 		U8 iDayHour = WEATHER_GET_HOUR_OF_DAY();
-		glbWeatherDayHourLight = tblOutsideLightByHour[iDayHour];
-		glbRainSpecialNextTick = glbGameTick + C1365_WEATHER_HOUR_TICKS;
+		cd.ge.glbWeatherDayHourLight = tblOutsideLightByHour[iDayHour];
+		cd.ge.glbRainSpecialNextTick = glbGameTick + C1365_WEATHER_HOUR_TICKS;
 
 		SkD((DLV_DBG_RAIN, "Update Weather >> lightmod = %d / next tick = %d\n"
-			, glbWeatherDayHourLight
-			, glbRainSpecialNextTick
+			, cd.ge.glbWeatherDayHourLight
+			, cd.ge.glbRainSpecialNextTick
 			));
 
-		if (glbEnvironmentIsOutdoor != 0)
+		if (cd.ge.glbEnvironmentIsOutdoor != 0)
 			RECALC_LIGHT_LEVEL();
 	}
 	X16 bp0a = 0;
 	X16 bp10;
 	X16 bp12;
-	if (glbRainStormController != 0) {
-		bp10 = (RAND() & 15) + (0x100 - glbRainStormController);
-		bp12 = (glbRainStormController >= 0xCD) ? 0x28 : 7;
-		glbRainLevelForSky = U8(glbRainStormController);
-		if (glbRainIntensity == 0) {
-			glbRainIntensity = (RAND16(bp10) <= 7) ? 1 : 0;
+	if (cd.ge.glbRainStormController != 0) {
+		bp10 = (RAND() & 15) + (0x100 - cd.ge.glbRainStormController);
+		bp12 = (cd.ge.glbRainStormController >= 0xCD) ? 0x28 : 7;
+		cd.ge.glbRainLevelForSky = U8(cd.ge.glbRainStormController);
+		if (cd.ge.glbRainIntensity == 0) {
+			cd.ge.glbRainIntensity = (RAND16(bp10) <= 7) ? 1 : 0;
 		}
 		else {
-			glbRainIntensity = U8(glbRainStormController);
+			cd.ge.glbRainIntensity = U8(cd.ge.glbRainStormController);
 		}
 
 		SkD((DLV_DBG_RAIN, "Update Weather >> lvl=%03d / cnt=%03d (v1:%d v2:%d pw:%d) / tick=%d\n"
-			, glbRainIntensity
-			, glbRainLevelForGround
-			, glbRainRelated2, glbRainRelated3, glbRainMultiplicator
+			, cd.ge.glbRainIntensity
+			, cd.ge.glbRainLevelForGround
+			, cd.ge.glbRainRelated2, cd.ge.glbRainRelated3, cd.ge.glbRainMultiplicator
 			, glbGameTick
 			));
 
-		if (glbRainIntensity != 0 && glbRainLevelForGround < 0xff) {
+		if (cd.ge.glbRainIntensity != 0 && cd.ge.glbRainLevelForGround < 0xff) {
 			if (false
-				|| (glbRainIntensity >= RAIN_THRESHOLD_x80_LEVEL_3)
-				|| (glbRainIntensity >= RAIN_THRESHOLD_x40_LEVEL_2 || (glbGameTick & 1) == 0)
-				|| (glbRainIntensity >= RAIN_THRESHOLD_x10_LEVEL_1 || (glbGameTick % 3) == 0)
+				|| (cd.ge.glbRainIntensity >= RAIN_THRESHOLD_x80_LEVEL_3)
+				|| (cd.ge.glbRainIntensity >= RAIN_THRESHOLD_x40_LEVEL_2 || (glbGameTick & 1) == 0)
+				|| (cd.ge.glbRainIntensity >= RAIN_THRESHOLD_x10_LEVEL_1 || (glbGameTick % 3) == 0)
 				|| (U16(glbGameTick & 3) == 0)
 			) {
-				glbRainLevelForGround++;
+				cd.ge.glbRainLevelForGround++;
 			}
 		}
-		if (glbMapSceneHasThunderImage != 0) {
+		if (cd.ge.glbMapSceneHasThunderImage != 0) {
 			bp0a = (RAND16(bp10) <= bp12) ? 1 : 0;
 		}
 	}
 	else {
-		if (glbRainLevelForGround > 0 && (glbGameTick % 3) == 0)
-			--glbRainLevelForGround;
+		if (cd.ge.glbRainLevelForGround > 0 && (glbGameTick % 3) == 0)
+			--cd.ge.glbRainLevelForGround;
 		bp0a = (RAND16(0x40) == 0) ? 1 : 0;
-		glbRainIntensity = 0;
-		glbRainLevelForSky = 1;
+		cd.ge.glbRainIntensity = 0;
+		cd.ge.glbRainLevelForSky = 1;
 	}
-	if (glbEnvironmentIsOutdoor == 0)
+	if (cd.ge.glbEnvironmentIsOutdoor == 0)
 		return;
 	if (glbRecalcLightIndicator != 0) {
 		glbRecalcLightIndicator = 0;
 		RECALC_LIGHT_LEVEL();
 	}
 	// This is a table of 5 distant possible elements; first two are for sky, then ground
-	DistantEnvironment *xEnvElement = &tblEnvironmentElement[0];	// bp04
-	if (glbMapSceneHasCloudSky != 0 && glbRainLevelForSky >= 0x10) {
-		if (glbRainLevelForSky >= 0x80) {
-			glbRainAmbientLightModifier = 1;
+	DistantEnvironment *xEnvElement = &cd.ge.tblEnvironmentElement[0];	// bp04
+	if (cd.ge.glbMapSceneHasCloudSky != 0 && cd.ge.glbRainLevelForSky >= 0x10) {
+		if (cd.ge.glbRainLevelForSky >= 0x80) {
+			cd.ge.glbRainAmbientLightModifier = 1;
 			xEnvElement->envImg = GFX_ENVIRONMENT_IMG_x67_SKY_CLOUDS+2;	// 0x69 Dark clouds
 		}
-		else if (glbRainLevelForSky >= 0x40) {
+		else if (cd.ge.glbRainLevelForSky >= 0x40) {
 			xEnvElement->envImg = GFX_ENVIRONMENT_IMG_x67_SKY_CLOUDS+1;	// 0x68 Medium clouds
 		}
 		else {
@@ -145,11 +145,11 @@ void SkWinCore::WEATHER_UPDATE(U16 aa)	// aa = 1 when called from timer, aa = 0 
 		if (ENVIRONMENT_GET_CMD_CD_FW(xEnvElement) != 0)
 			xEnvElement++;
 	}
-	if (glbMapSceneHasWetGround != 0 && glbRainLevelForGround >= 0x40) {
-		if (glbRainLevelForGround >= 0xc0) {
+	if (cd.ge.glbMapSceneHasWetGround != 0 && cd.ge.glbRainLevelForGround >= 0x40) {
+		if (cd.ge.glbRainLevelForGround >= 0xc0) {
 			xEnvElement->envImg = GFX_ENVIRONMENT_IMG_x6A_WET_GROUND+2;	// 0x6C Big water puddles
 		}
-		else if (glbRainLevelForGround >= 0x80) {
+		else if (cd.ge.glbRainLevelForGround >= 0x80) {
 			xEnvElement->envImg = GFX_ENVIRONMENT_IMG_x6A_WET_GROUND+1;	// 0x6B Medium water puddles
 		}
 		else {
@@ -163,15 +163,16 @@ void SkWinCore::WEATHER_UPDATE(U16 aa)	// aa = 1 when called from timer, aa = 0 
 //	printf("glbRainStormController = %d (%d / %d) \n", glbRainStormController, 0x3c, 0xb6);
 	if (bp0a != 0) {
 		bp0a = 0;
-		X16 bp18 = (glbRainStormController < 0xB6) ? 1 : 0;
+		X16 bp18 = (cd.ge.glbRainStormController < 0xB6) ? 1 : 0;
 		if (bp18 != 0) {
 			UPDATE_GLOB_VAR(C064_GLOB_BYTE_00_RAIN, 0x0, C06_GLOBAL_VAR_OP_NEW_VALUE);
 		}
 		X16 bp0e = 0;
-		if (glbRainStormController >= 0x3c && RAND02() != 0) {
+		if (cd.ge.glbRainStormController >= 0x3c && RAND02() != 0) {
 			bp0e = 8;
 			// SPX: 0x6C only found in ROOF set
 			X16 bp16 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_x6C_THUNDER_POSITION);	// 0x6C
+			// This specific value in original DM2 is at x=10, y=09 (0x0A09), which is the exact position of the Lightning Rod machine.
 			if (bp16 != 0) {
 				// SPX: Will animate the Lightning Rod machine
 				INVOKE_MESSAGE(di = (bp16 >> 8), si = (bp16 & 0xFF), 0, 0, glbGameTick +1);
@@ -192,12 +193,12 @@ void SkWinCore::WEATHER_UPDATE(U16 aa)	// aa = 1 when called from timer, aa = 0 
 					TELE_inf bp1e;
 					if (GET_TELEPORTER_DETAIL(&bp1e, U8(di), U8(si)) != 0)
 						continue;
-					if (cd.pi.glbPlayerMap == glbCurrentMapIndex && cd.pi.glbPlayerPosX == di && cd.pi.glbPlayerPosY == si && glbRainStormController < 0xb6)
+					if (cd.pi.glbPlayerMap == glbCurrentMapIndex && cd.pi.glbPlayerPosX == di && cd.pi.glbPlayerPosY == si && cd.ge.glbRainStormController < 0xb6)
 						continue;
 					if (glbGameTick < 0x1770)
 						continue;
 					//printf("glbRainThunderRandom (static random?)= %d  over global 0x40 = %d\n", glbRainThunderRandom, GET_GLOB_VAR(0x40));
-					if (GET_GLOB_VAR(0x40) <= glbRainThunderRandom)
+					if (GET_GLOB_VAR(0x40) <= cd.ge.glbRainThunderRandom)
 						continue;
 					ObjectID bp14 = GET_CREATURE_AT(di, si);
 					AIDefinition *bp08;
@@ -214,7 +215,7 @@ void SkWinCore::WEATHER_UPDATE(U16 aa)	// aa = 1 when called from timer, aa = 0 
 								continue;
 						}
 					}
-					CREATE_CLOUD(OBJECT_EFFECT_THUNDER, glbRainStormController, di, si, 255);
+					CREATE_CLOUD(OBJECT_EFFECT_THUNDER, cd.ge.glbRainStormController, di, si, 255);
 					if (glbChampionInventory == 0 && cd.pi.glbIsPlayerSleeping == 0)
 						break;
 					if (bp18 != 0)
@@ -230,6 +231,7 @@ void SkWinCore::WEATHER_UPDATE(U16 aa)	// aa = 1 when called from timer, aa = 0 
 				} while (--bp0e != 0);
 			}
 		}
+		// show_lightning
 		if (bp0e == 0 && RAND01() != 0) {
 			xEnvElement->envImg = U8(RAND16(3)) + GFX_ENVIRONMENT_IMG_x64_THUNDER;	// 0x64 = thunder 1 => 0x66 = thunder 3
 			if (ENVIRONMENT_GET_CMD_CD_FW(xEnvElement) != 0) {
@@ -240,22 +242,22 @@ void SkWinCore::WEATHER_UPDATE(U16 aa)	// aa = 1 when called from timer, aa = 0 
 			}
 		}
 		if (bp0a != 0) {
-			if (glbThunderJustCast == 0) {
+			if (cd.ge.glbThunderJustCast == 0) {
 				X16 bp0c;
-				if (glbRainStormController == 0) {
+				if (cd.ge.glbRainStormController == 0) {
 					bp0c = RAND16(10) + 5;
 				}
 				else {
-					bp0c = 0x4C - (glbRainStormController / glbRainMultiplicator);
+					bp0c = 0x4C - (cd.ge.glbRainStormController / cd.ge.glbRainMultiplicator);
 				}
 				bp0c = BETWEEN_VALUE(1, bp0c, 15);
 				//SPX: Get sound of distant thunder
 				QUEUE_NOISE_GEN1(GDAT_CATEGORY_x17_ENVIRONMENT, glbMapGraphicsSet, SOUND_DEFAULT_STORM, 0x19, 0x40, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, bp0c);
 				SkD((DLV_DBG_THUNDER, "Thunder at distance %d!\n", bp0c));
-				glbThunderJustCast = 1;
+				cd.ge.glbThunderJustCast = 1;
 			}
 			else {
-				glbThunderJustCast = 0;
+				cd.ge.glbThunderJustCast = 0;
 			}
 		}
 		glbRecalcLightIndicator = 1;
@@ -286,44 +288,75 @@ void SkWinCore::WEATHER_UPDATE(U16 aa)	// aa = 1 when called from timer, aa = 0 
 //^3DF7:0037
 // SPX: some sort of init, called from read_structure
 // _3df7_0037 renamed WEATHER_INIT
-void SkWinCore::WEATHER_INIT(X16 ww)
+void SkWinCore::WEATHER_INIT(X16 iKeepState)
 {
-	ENTER(4);
-	if (ww != 0) {
-		_4976_5c28 = 0;
-		if (glbRainMultiplicator == 0)
-			glbRainMultiplicator = 1;
+	if (iKeepState != 0) {
+		cd.ge.glbStormPrevious = 0;
+		if (cd.ge.glbRainMultiplicator == 0)
+			cd.ge.glbRainMultiplicator = 1;
 	}
 	else {
 		UPDATE_GLOB_VAR(C064_GLOB_BYTE_00_RAIN, 0, C06_GLOBAL_VAR_OP_NEW_VALUE);
-		glbRainSpecialNextTick = glbGameTick +5;
-		glbRainAmbientLightModifier = 0;
-		glbEnvironmentIsOutdoor = 0;
+		cd.ge.glbRainSpecialNextTick = glbGameTick +5;
+		cd.ge.glbRainAmbientLightModifier = 0;
+		cd.ge.glbEnvironmentIsOutdoor = 0;
 		X32 iTickDelayForRain;	// bp04
-		if (glbStartQuickRain != 0) {
-			glbRainLevelForGround = 0;
+		if (cd.ge.glbStartQuickRain != 0) {
+			cd.ge.glbRainLevelForGround = 0;
 			iTickDelayForRain = RAND16(0x1F4);	// 0x1F4 = 500
-			glbRainRelated2 = 3;
-			glbRainMultiplicator = 1;
+			cd.ge.glbRainRelated2 = 3;
+			cd.ge.glbRainMultiplicator = 1;
 		}
 		else {
 			iTickDelayForRain = RAND16(0x1F40) +0x1F4;	// RAND16(8000) + 500
-			glbRainRelated2 = U8(RAND02());
-			glbRainMultiplicator = RAND16(3) +1;
+			cd.ge.glbRainRelated2 = U8(RAND02());
+			cd.ge.glbRainMultiplicator = RAND16(3) +1;
 		}
-		glbRainLevelForSky = 1;
-		glbRainIntensity = 0;
-		glbRainStormController = 0;
-		_4976_5c28 = 0;
-		glbRainDirection = U8(RAND02());
+		cd.ge.glbRainLevelForSky = 1;
+		cd.ge.glbRainIntensity = 0;
+		cd.ge.glbRainStormController = 0;
+		cd.ge.glbStormPrevious = 0;
+		cd.ge.glbRainDirection = U8(RAND02());
 		// SPX: This might be the initial rain timer : NOPE, it must be still called ingame (when there is no rain)
 		WEATHER_SET_TIME_EVENT(iTickDelayForRain);
 	}
-	glbRainThunderRandom = RAND16(3) +2;
+	cd.ge.glbRainThunderRandom = RAND16(3) +2;
 	//glbWeatherDayHourLight = tblOutsideLightByHour[RCJ(24,((glbGameTick + _4976_5c24) / 0x555) % 0x18)];
-	glbWeatherDayHourLight = tblOutsideLightByHour[WEATHER_GET_HOUR_OF_DAY()];
-	glbStartQuickRain = 0;
+	cd.ge.glbWeatherDayHourLight = tblOutsideLightByHour[WEATHER_GET_HOUR_OF_DAY()];
+	cd.ge.glbStartQuickRain = 0;
 	return;
+}
+
+// SPX: new
+void SkWinCore::WEATHER_DEBUG_RESET_STATE(U8 iState)
+{
+	SkCodeParam::iDebugWeatherState = SkCodeParam::iDebugWeatherState%2;
+	if (SkCodeParam::iDebugWeatherState == 0)
+	{
+		cd.ge.glbRainMultiplicator = 0;
+		cd.ge.glbStartQuickRain = 0;
+		cd.ge.glbRainDirection = U8(RAND02());
+		cd.ge.glbRainLevelForSky = 0;
+		cd.ge.glbRainIntensity = 0;
+		cd.ge.glbRainStormController = 0;
+		cd.ge.glbRainRelated2 = U8(RAND02());
+		cd.ge.glbRainAmbientLightModifier = 0;
+		UPDATE_GLOB_VAR(C064_GLOB_BYTE_00_RAIN, 0, C06_GLOBAL_VAR_OP_NEW_VALUE);
+	}
+	else if (SkCodeParam::iDebugWeatherState == 1)
+	{
+		cd.ge.glbRainMultiplicator = 3;
+		cd.ge.glbStartQuickRain = 1;
+		cd.ge.glbRainDirection = U8(RAND02());
+		cd.ge.glbRainLevelForSky = 4;
+		cd.ge.glbRainIntensity = 0xFF;
+		cd.ge.glbRainStormController = 255;
+		cd.ge.glbRainRelated2 = U8(RAND02());
+		cd.ge.glbRainAmbientLightModifier = 0;
+		cd.ge.glbRainLevelForGround = 0;
+		cd.ge.glbRainSpecialNextTick = glbGameTick + 1;
+		UPDATE_GLOB_VAR(C064_GLOB_BYTE_00_RAIN, 100, C06_GLOBAL_VAR_OP_NEW_VALUE);
+	}
 }
 
 

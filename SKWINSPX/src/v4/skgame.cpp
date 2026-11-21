@@ -91,13 +91,13 @@ i32 SkWinCore::QUERY_ITEM_VALUE(ObjectID recordLink, Bit8u cls4)
 	if (cls4 == 1) { // 0x01 -> Weight in Kg (x10)
 		i32 bp0c = QUERY_GDAT_DBSPEC_WORD_VALUE(si, 0x34); // 0x34 -> Max charge count
 		if (bp0c > 0) {
-			bp08 += ADD_ITEM_CHARGE(si, 0) * bp0c;
+			bp08 += ITEM_ADD_CHARGES(si, 0) * bp0c;
 		}
 	}
 	if (cls4 == 2) { // 0x02 -> Money value
 		i32 bp0c = QUERY_GDAT_DBSPEC_WORD_VALUE(si, GDAT_ITEM_BONUS_MONEY_PER_CHARGE); // 0x35 -> Additional money value per charge??
 		if (bp0c > 0) {
-			bp08 += ADD_ITEM_CHARGE(si, 0) * bp0c;
+			bp08 += ITEM_ADD_CHARGES(si, 0) * bp0c;
 		}
 		if (si.DBType() == dbPotion && bp08 > 1) {
 			bp08 /= 2;
@@ -288,28 +288,28 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 		sprintf((char*)message, "PRECOMP LIGHT %d\n", glbPrecomputedLight);
 		//DISPLAY_HINT_TEXT(COLOR_YELLOW, message);
 	}
-	ENTER(28);
+
 	if (dunMapsHeaders[cd.pi.glbPlayerMap].Difficulty() == 0) {
-		glbLightLevel = 1;
+		glbPartyLightLevel = 1;
 		if (SkCodeParam::bAutoDefaultMaxLight)
-			glbLightLevel = 0;
+			glbPartyLightLevel = 0;
 	}
 	else {
-		U16 itemLightBonus[9];		// (bp1c) SPX: light bonus for holded item (1) + items in hand (2*4)
+		U16 itemLightBonus[9];		// (bp1c) SPX: light bonus for holded item (1) + items in hand (2 hands * 4 champions)
 		ZERO_MEMORY(itemLightBonus, 9);
 		U16 bonusIndex = 0;	// bp06
 		// Give light bonus for item currently in hand (if any)
 		if ((QUERY_GDAT_DBSPEC_WORD_VALUE(cd.pi.glbLeaderHandPossession.object, GDAT_ITEM_STATS_GEN_FLAGS) & ITEM_FLAG_PRODUCE_LIGHT) != 0) {
-			itemLightBonus[bonusIndex] = ADD_ITEM_CHARGE(cd.pi.glbLeaderHandPossession.object, 0);
+			itemLightBonus[bonusIndex] = ITEM_ADD_CHARGES(cd.pi.glbLeaderHandPossession.object, 0);
 			bonusIndex++;
 		}
-		U16 si;
+		U16 si; // si
 		// Pass through all items in hands
-		for (si=0; si < cd.pi.glbChampionsCount; si++) {
-			for (U16 bp04=0; bp04 <= 1; bp04++) {
-				U16 bp08;
-				if ((QUERY_GDAT_DBSPEC_WORD_VALUE(bp08 = tblChampionSquad[si].Possess(bp04), GDAT_ITEM_STATS_GEN_FLAGS) & ITEM_FLAG_PRODUCE_LIGHT) != 0) {
-					itemLightBonus[bonusIndex] = ADD_ITEM_CHARGE(bp08, 0);
+		for (U16 iChampionIndex = 0; iChampionIndex < cd.pi.glbChampionsCount; iChampionIndex++) {
+			for (U16 iHandSlot = 0; iHandSlot <= 1; iHandSlot++) {	// bp04
+				ObjectID oidItem;	// U16 bp08
+				if ((QUERY_GDAT_DBSPEC_WORD_VALUE(oidItem = tblChampionSquad[iChampionIndex].Possess(iHandSlot), GDAT_ITEM_STATS_GEN_FLAGS) & ITEM_FLAG_PRODUCE_LIGHT) != 0) {
+					itemLightBonus[bonusIndex] = ITEM_ADD_CHARGES(oidItem, 0);
 					bonusIndex++;
 				}
 			}
@@ -333,33 +333,33 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 		di += glbPrecomputedLight;	// SPX: is some sort of precalculed light level (depending on door and such?)
 		di += glbGlobalSpellEffects.Light;
 		di = di + QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_x67_AMBIANT_LIGHT);
-		if (glbEnvironmentIsOutdoor != 0) {
-			di += tLightLevelTable[RCJ(6,BETWEEN_VALUE(0, glbRainAmbientLightModifier + glbWeatherDayHourLight, 5))];
+		if (cd.ge.glbEnvironmentIsOutdoor != 0) {
+			di += tLightLevelTable[RCJ(6,BETWEEN_VALUE(0, cd.ge.glbRainAmbientLightModifier + cd.ge.glbWeatherDayHourLight, 5))];
 		}
 		if (SkCodeParam::bUseFixedMode && di < 0)
 			di = 0;
 		// Light threshold is at 100 for the brighter light => lightlevel = 5.
-		for (glbLightLevel=0; glbLightLevel <= 5; glbLightLevel++) {
-			if (tLightLevelTable[RCJ(6,glbLightLevel)] < di)
+		for (glbPartyLightLevel=0; glbPartyLightLevel <= 5; glbPartyLightLevel++) {
+			if (tLightLevelTable[RCJ(6,glbPartyLightLevel)] < di)
 				break;
 		}
 		// SPX: Get the highest default light (from wallset type)
-		i16 bp0a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_x68_HIGHEST_LIGHT_LEVEL);
+		i16 bp0a = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_x68_HIGHEST_LIGHT_LEVEL);	// bp0a
 		if (SkCodeParam::bAutoDefaultMaxLight)
 			bp0a = 0;
-		if (glbLightLevel < bp0a) {
-			glbLightLevel = bp0a;
+		if (glbPartyLightLevel < bp0a) {
+			glbPartyLightLevel = bp0a;
 		}
-		if (glbEnvironmentIsOutdoor != 0) {
+		if (cd.ge.glbEnvironmentIsOutdoor != 0) {
 			if (glbRecalcLightIndicator != 0) {
-				glbLightLevel = 0;
+				glbPartyLightLevel = 0;
 			}
 		}
 	}
-	glbLightLevel -= (glbLightModifier > 12) ? 1 : 0;
-	glbLightLevel = BETWEEN_VALUE(0, glbLightLevel, 5);	// SPX: minimum is 5 ? but it can be even darker with 6
+	glbPartyLightLevel -= (glbLightModifier > 12) ? 1 : 0;
+	glbPartyLightLevel = BETWEEN_VALUE(0, glbPartyLightLevel, 5);	// SPX: minimum is 5 ? but it can be even darker with 6
 	if (SkCodeParam::bFullLight)	// SPX: debug feature added to always get full light
-		glbLightLevel = 0;
+		glbPartyLightLevel = 0;
 }
 
 
@@ -369,7 +369,6 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 // SPX: _1031_0000 renamed RETURN_1
 U16 SkWinCore::RETURN_1(sk1891 *ref)
 {
-	ENTER(0);
 	return 1;
 }
 
@@ -377,7 +376,6 @@ U16 SkWinCore::RETURN_1(sk1891 *ref)
 // SPX: _1031_0008 renamed IS_GAME_ENDED
 U16 SkWinCore::IS_GAME_ENDED(sk1891 *ref)
 {
-	ENTER(0);
 	return (ref->b1 == cd.gg.glbGameHasEnded) ? 1 : 0;
 }
 
@@ -385,7 +383,6 @@ U16 SkWinCore::IS_GAME_ENDED(sk1891 *ref)
 // _1031_0023
 U16 SkWinCore::_1031_0023_PFN12_02(sk1891 *ref)
 {
-	ENTER(0);
 	return (ref->b1 == _4976_4bd2) ? 1 : 0;
 }
 
@@ -472,7 +469,6 @@ U16 SkWinCore::UPDATE_GLOB_VAR(U16 iGlobalVar, U16 iOpValue, U16 iOperator)
 	// op == 4: var -= newval
 	// op == 6: var = newval
 
-	ENTER(0);
 	U16 iSetValue = iOpValue;	// di
 	U16 iCurrentValue = GET_GLOB_VAR(iGlobalVar);	// si
 	switch (iOperator) {
@@ -809,10 +805,10 @@ U16 SkWinCore::PROCEED_COMMAND_SLOT(i16 cmdSlot)
 				iNbChargesToConsume = 15;	// an item has 15 charges at max, then consume all
 			}
 			if (iNbChargesToConsume != C17_CHARGES_REQUIRED_NO_DECREASE && iNbChargesToConsume != C18_CHARGES_AVAILABLE_WHEN_NONE) {	// !=17 && != 18
-				ADD_ITEM_CHARGE(glbChampionItemInUse, -iNbChargesToConsume);
+				ITEM_ADD_CHARGES(glbChampionItemInUse, -iNbChargesToConsume);
 			}
 			if (true
-				&& ADD_ITEM_CHARGE(glbChampionItemInUse, 0) == 0
+				&& ITEM_ADD_CHARGES(glbChampionItemInUse, 0) == 0
 				&& (QUERY_GDAT_DBSPEC_WORD_VALUE(glbChampionItemInUse, 0x00) & 0x0800) != 0
 			) {
 				REMOVE_POSSESSION(iChampionIndex, glbSelectedHandAction);
@@ -975,7 +971,7 @@ void SkWinCore::MOVE_RECORD_AT_WALL(U16 xx, U16 yy, U16 dir, ObjectID rlUnk, Obj
 				break;
 			}
 			if ((QUERY_GDAT_DBSPEC_WORD_VALUE(si, 0) & 1) != 0) {
-				ADD_ITEM_CHARGE(si, C15_CHARGES_MAX_15);
+				ITEM_ADD_CHARGES(si, C15_CHARGES_MAX_15);
 				bp2a = 1;
 				bp34 = si;
 				break;
@@ -1052,7 +1048,7 @@ checkactuator:
 					break;
 
 				case ACTUATOR_TYPE_CHARGED_ITEM_WATCHER: // 0x15 -> 'Activator, charged item watcher'
-					if (ADD_ITEM_CHARGE(si, 0) == 0)
+					if (ITEM_ADD_CHARGES(si, 0) == 0)
 						break;
 
 					goto _1cb6;
@@ -1269,7 +1265,7 @@ _1d4d:
 								continue;
 							APPEND_RECORD_TO(si = ObjectID(si, bp10), NULL, xx, yy);
 						}
-						ADD_ITEM_CHARGE(si, 15);
+						ITEM_ADD_CHARGES(si, 15);
 						MOVE_RECORD_TO(si, xx, yy, -1, 0);
 						bp34 = si;
 					}
@@ -1355,7 +1351,7 @@ _1d4d:
 								continue;
 							APPEND_RECORD_TO(si = ObjectID(si, bp10), NULL, xx, yy);
 						}
-						ADD_ITEM_CHARGE(si, 15);
+						ITEM_ADD_CHARGES(si, 15);
 						MOVE_RECORD_TO(si, xx, yy, -1, 0);
 
 						SkD((DLV_TWEET, "Tweet: You (x:%d, y:%d, map:%d) have taken %s from wall \n"
@@ -1572,7 +1568,7 @@ void SkWinCore::ADD_BACKGROUND_LIGHT_FROM_TILE(i16 aa, U16 bb, i16 xx, i16 yy, U
 			bp10 = ((si & 0x8000) != 0) ? 1 : 0;
 			si &= 0x7fff;
 			if (QUERY_GDAT_ENTRY_DATA_INDEX(9, bp0b, dtWordValue, 0x63) != 0) {
-				bp1e = BETWEEN_VALUE(0, glbRainAmbientLightModifier + glbWeatherDayHourLight, 5);
+				bp1e = BETWEEN_VALUE(0, cd.ge.glbRainAmbientLightModifier + cd.ge.glbWeatherDayHourLight, 5);
 				bp12 = (tLightLevelTable[RCJ(6,bp1e)] * si) / 0x64 +bp12;
 				break;
 			}
@@ -1602,7 +1598,7 @@ void SkWinCore::ADD_BACKGROUND_LIGHT_FROM_TILE(i16 aa, U16 bb, i16 xx, i16 yy, U
 			si &= 0x7fff;
 			TELE_inf bp1c;
 			if (GET_TELEPORTER_DETAIL(&bp1c, U8(xx), U8(yy)) != 0) {
-				bp1e = BETWEEN_VALUE(0, glbRainAmbientLightModifier + glbWeatherDayHourLight, 5);
+				bp1e = BETWEEN_VALUE(0, cd.ge.glbRainAmbientLightModifier + cd.ge.glbWeatherDayHourLight, 5);
 				bp12 = (tLightLevelTable[RCJ(6,bp1e)] * si) / 0x64 +bp12;
 				goto _0519;
 			}
@@ -2710,7 +2706,7 @@ void SkWinCore::MOVE_ITEM_TO(ObjectID rl, Actuator *pr4, i16 xposFrm, i16 yposFr
 			default: //^_1e22 // di is still uninit. BUG?
 				break;
 		}
-		ADD_ITEM_CHARGE(si, di);
+		ITEM_ADD_CHARGES(si, di);
 	}
 	if ((GET_TILE_VALUE(xposTo, yposTo) >> 5) != ttWall) {
 		dir = RAND16(4);

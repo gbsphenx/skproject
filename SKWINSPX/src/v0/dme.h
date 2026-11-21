@@ -2858,13 +2858,13 @@ namespace DM2Internal {
 	};
 	// SPX: sk5c2a renamed DistantEnvironment
 	struct DistantEnvironment { // 10 bytes
-		X8 envImg;			// b0	: for sky image, distant thunder and wet ground
-		X8 cmFW;			// b1 env command FW
+		X8	envImg;			// b0	: for sky image, distant thunder and wet ground
+		X8	cmFW;			// b1 env command FW
 		X16 cmCD;			// w2 env command CD
-		X16 w4;				// w4 offset ?
+		X16	w4;				// w4 offset ?
 		X16 w6;				// w6
-		U8 iScaleStretchX;				// b8
-		U8 iScaleStretchY;				// b9
+		U8	iScaleStretchX;				// b8
+		U8	iScaleStretchY;				// b9
 	};
 	// 
 	struct TGDATFileHeader { // (skfh4) 4 bytes

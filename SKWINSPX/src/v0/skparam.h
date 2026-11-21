@@ -61,8 +61,9 @@ public:
 
 	static bool bAutoDefaultMaxLight;
 
-	//--- Options
+	//--- Weather Options
 	static bool bEnhancementDayNightOutsideLight;
+	static UINT iDebugWeatherState;
 
 	//--- Options
 	static bool bUseDM2ExtendedMode;

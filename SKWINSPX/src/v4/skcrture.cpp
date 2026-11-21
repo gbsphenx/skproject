@@ -2751,7 +2751,7 @@ U16 SkWinCore::_14cd_2807_CREATURE(ObjectID *ref, skxxxi *pv)
 			GET_DISTINCTIVE_ITEMTYPE(*ref), 
 			glbCurrentThinkingCreatureRec->CreatureType(), 
 			glbCurrentThinkingCreatureRec->iAnimSeq, pv->w4, pv->w6, 
-			(pv->w8 != 0) ? ADD_ITEM_CHARGE(*ref, 0) : 0xffff);
+			(pv->w8 != 0) ? ITEM_ADD_CHARGES(*ref, 0) : 0xffff);
 	}
 	return 0;
 }
@@ -4111,7 +4111,7 @@ i16 SkWinCore::CREATURE_ATTACKS_CHAMPION(Creature *ref, U16 iChampionIdx)
 		di = 0;
 	}
 	else {
-		di = glbLightLevel << 1;
+		di = glbPartyLightLevel << 1;
 	}
 	X16 bp0c = AIdef->Defense;
 	if (iAIb28 == 9) {

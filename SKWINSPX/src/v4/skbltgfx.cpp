@@ -299,7 +299,7 @@ void SkWinCore::PALETTE_APPLY_FOG_OR_SHADE_EXT(U8 *pLocalPal, i16 iLightDepth, U
 	else {
 		i16 iGlobalLightScene = glbViewportLightScale;	// 0 = full light to 64 = full dark
 		// In case of sky to be displayed, it must not be affected by the globallight(from player), but external light from day/night cycle.
-		i16 iSkyLight = glbWeatherDayHourLight*10; // source range from 1 (light) to 5 (dark) => 10 to 50
+		i16 iSkyLight = cd.ge.glbWeatherDayHourLight*10; // source range from 1 (light) to 5 (dark) => 10 to 50
 		if (cls1 == GDAT_CATEGORY_x17_ENVIRONMENT && (
 			(cls4 >= GFX_ENVIRONMENT_IMG_x67_SKY_CLOUDS && cls4 <= (GFX_ENVIRONMENT_IMG_x67_SKY_CLOUDS+2)) ||	// sky element
 			(cls4 >= 0 && cls4 <= 0x63) )	// distant element in sky (castle / towers)
@@ -654,7 +654,7 @@ U8 *SkWinCore::GET_LOCAL_PALETTE_32cb_0649(U8 iGDatCls1Category, U8 iGDatCls2Mai
 void SkWinCore::DRAW_RAIN_32cb_0c7d(ExtendedPicture *ref, U16 xx, U16 yy)
 {
 	ENTER(16);
-	if (glbRainIntensity == 0) {
+	if (cd.ge.glbRainIntensity == 0) {
 		FILL_ENTIRE_PICT(reinterpret_cast<U8 *>(QUERY_MEMENT_BUFF_FROM_CACHE_INDEX(xx)), ref->iPal256[yy]);
 		return;
 	}

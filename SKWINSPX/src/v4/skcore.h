@@ -338,8 +338,6 @@ protected:
 	U16		_4976_475c;
 	U8	_4976_475e;
 	i16	glbTimer_4976_4762;				// (_4976_4762) timer related ?
-	X16		glbStartQuickRain;			// (_4976_47fc)
-	X16		glbThunderJustCast;	// (_4976_47fe)
 	X8		glbFireUnknownGLCK;		// (_4976_4806)
 	U16		glbRawDataNoAllocated;	// (_4976_4807)
 	U16	_4976_4809;
@@ -422,7 +420,7 @@ protected:
 	U16		glbSomePosY_4c30;	// (_4976_4c30) a y?
 	i16		_4976_4c32;
 	i16		_4976_4c34;
-	U16		glbLightLevel; // light level2? // SPX: _4976_4c36 renamed glbLightLevel
+	U16		glbPartyLightLevel; // light level2? // SPX: _4976_4c36 renamed glbLightLevel
 	U16		glbShowItemStats;		// (_4976_4c38)
 	U16		glbShowMousePointer;	// (_4976_4c3a) ShowCursor16572
 	//U16	glbChampionsCount;				// (_4976_4c3c) player count
@@ -739,26 +737,7 @@ protected:
 	U16		glbTimersCount;				// (_4976_5c1e) timer count?
 	Timer	*glbTimersTable;	// (_4976_5c20) timer entities?
 	U32		_4976_5c24;
-	X16		_4976_5c28;
-	DistantEnvironment	tblEnvironmentElement[5];	// _4976_5c2a
-	U8		glbMapSceneHasThunderImage;	// (_4976_5c5c)
-	U8		glbEnvironmentIsOutdoor;	// (_4976_5c5d)
-	U8		glbRainIntensity;	// (_4976_5c5e) rain strength: 0=no rainfall, 1to15=lv1, 16to63=lv2, 64to127=lv3, 128to255=lv4
-	U8		glbRainRelated3;	// (_4976_5c5f)
-	U8		glbRainLevelForSky;		// (_4976_5c60)
-	U8		glbRainLevelForGround;	// (_4976_5c61)
-	U8		glbRainRelated2;		// (_4976_5c62)
-	U8		glbRainAmbientLightModifier;	// (_4976_5c63) 1 when darker, 0 else
-	U8		glbRainMultiplicator;				// (_4976_5c64) Rain/Thunder related
-	i16		glbRainStormController; // (_4976_5c66) Rain and storm strength
-	U16		glbWeatherDayHourLight;	// light from day hour
-	U8		glbRainDirection;		// (_4976_5c6a) rain direction
-	U8		glbMapSceneHasRainFall;		// (_4976_5c6b)
-	U8		glbMapSceneHasCloudSky;		// (_4976_5c6c)
-	U32		glbRainSpecialNextTick;	// (_4976_5c6e)
-	X16		glbRainThunderRandom;	// (_4976_5c72)
-	U8		glbMapSceneHasWetGround;	// (_4976_5c74)
-	U16		glbRainSceneType;	// (_4976_5c76) WordValue:66
+
 	U16		glbNextFreeMementIndex;		// (_4976_5c78) next index of free entry mement
 	X16		_4976_5c7a;
 //	U16		glbMemRAMAudioStuff;	// (_4976_5c7c)
@@ -1218,7 +1197,7 @@ protected:
 
 	//-------------- Items functions
 	U16 QUERY_ITEM_MONEY_VALUE(ObjectID oItem);
-	U16 ADD_ITEM_CHARGE(ObjectID recordLink, i16 delta);
+	U16 ITEM_ADD_CHARGES(ObjectID recordLink, i16 delta);	// ADD_ITEM_CHARGE
 	U16 IS_CONTAINER_MONEYBOX(ObjectID recordLink);
 	U16 QUERY_GDAT_DBSPEC_WORD_VALUE(ObjectID rl, U8 cls4);
 	i32 QUERY_ITEM_VALUE(ObjectID recordLink, U8 cls4);
@@ -1651,6 +1630,7 @@ protected:
 	
 	void DRAW_TRANSPARENT_STATIC_PIC(U8 cls1, U8 cls2, U8 cls4, U16 rectno, U16 colorkey);
 	
+	//--- Global Variables
 	U16 GET_GLOB_VAR(U16 iGlobalVar);
 	U16 UPDATE_GLOB_VAR(U16 iGlobalVar, U16 iOpValue, U16 iOperator);	// GLOBAL VAR
 
@@ -2105,10 +2085,12 @@ protected:
 	
 	//--- Weather / Day & Night
 	void WEATHER_SET_TIME_EVENT(U32 tickDelta);	// SET_TIMER_WEATHER
-	void WEATHER_INIT(X16 ww);	// _3df7_0037 / INIT_WEATHER_RAIN
+	void WEATHER_INIT(X16 iKeepState);	// _3df7_0037 / INIT_WEATHER_RAIN
 	void WEATHER_UPDATE(U16 aa);
 	void WEATHER_QUERY_RAINFALL_IMAGEID(U8 *iRainImageID, U16 *isMirrored);	// QUERY_RAINFALL_PARAM
 	U8 WEATHER_GET_HOUR_OF_DAY();	// SPX, not in V4, added.
+
+	void WEATHER_DEBUG_RESET_STATE(U8 iState);
 	
 	
 	X16 SOMETHING_WITH_SCALED_RECTANGLES(X16 rcno1, X16 rcno2, X16 scale, X16 *ss, X16 *tt);	// _098d_04c7

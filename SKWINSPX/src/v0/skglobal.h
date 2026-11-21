@@ -362,7 +362,7 @@ extern U8 tblItemStackDisplace[16][2]; //Rr  (_4976_41b0)
 extern i8 _4976_41de[8]; //Rr
 extern U8 _4976_41e6[7]; //Rr
 extern U8 _4976_41ed[17]; //Rr
-extern U8 tlbRainScene[5][4]; //Rr	// _4976_41fe
+//extern U8 tlbRainScene[5][4]; //Rr	// _4976_41fe
 extern i8 _4976_421b[6]; //Rr
 extern i8 _4976_4221[5]; //Rr
 extern i8 _4976_4226[5]; //Rr
@@ -415,7 +415,7 @@ extern X32 _4976_4694[8]; //Rr
 extern X32 _4976_46b4[8]; //Rr
 extern X32 _4976_46d4[8]; //Rr
 extern i8 tblOutsideLightByHour[24]; //Rr	(_4976_4764)
-extern i8 tlbRainRelated[128]; //Rr	(_4976_477c)
+//extern i8 tlbRainRelated[128]; //Rr	(_4976_477c)
 extern X16 _4976_481a[15]; //Rr
 extern U8 _4976_483f[5]; //Rr
 extern i8 _4976_484f[4]; //Rr
