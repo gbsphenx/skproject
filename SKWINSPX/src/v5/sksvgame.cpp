@@ -1418,7 +1418,10 @@ i16 DM2_GAME_LOAD(void)
   s_hex30 s29_3c;
   bool bypass = false;
   bool dontload = false;
-  bool boolrg6;
+  // Tracks whether loading fell back from the primary save to its backup.
+  // DM2_GAME_LOAD is also called after a party-death restart, outside the
+  // resume-game selection path, where this flag would otherwise be unset.
+  bool boolrg6 = false;
 
   i16 wordrg11 = 0;
 
@@ -1548,7 +1551,7 @@ _DEBUG_SHOW_BIGPOOL();
   i32 longrg1;
   if (ddat.cd.mo.glbSpecialScreen == _MENU_SCREEN__RESUME_GAME_SELECT || ddat.savegamel2)
   {
-    if (boolrg6) // TODO: uninitialized possible? (yes! restart after party died)
+    if (boolrg6)
       DM2_FILE_RENAME(DM2_FORMAT_SKSTR(gdat.filename6, UPCAST(t_text, NULL)), DM2_FORMAT_SKSTR(gdat.filename5, UPCAST(t_text, NULL)));
     longrg1 = 1;
   }
