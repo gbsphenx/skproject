@@ -799,6 +799,8 @@ enum SkillLevel {
 
 #define GDAT_GFXSET_x72								0x72	// Unknown ?
 
+
+
 //------------------------------------------------------------------------------
 //	ENVIRONMENT / WEATHER ATTRIBUTES or GRAPHICS
 //------------------------------------------------------------------------------
@@ -818,7 +820,10 @@ enum SkillLevel {
 #define C1365_WEATHER_HOUR_TICKS    12		// 0x555 d1365
 #define C24_WEATHER_DAY_HOURS		24
 #define C23_WEATHER_LAST_HOUR		23
+#define C00_WEATHER_FIRST_HOUR		0
 
+#define C182_STORM_MEDIUM_THRESHOLD	0xB6	// 182, below that value, a storm intensity is WEAK and will not strike the party
+#define C060_STORM_WEAK_THRESHOLD	0x3C	// 60, below that value, no lightning should be visible
 
 //------------------------------------------------------------------------------
 //	VIEWPORT CELLS DISPLAY
@@ -1074,6 +1079,9 @@ enum SkillLevel {
 //------------------------------------------------------------------------------
 //	ITEMS STATS & ATTRIBUTES
 //------------------------------------------------------------------------------
+
+#define C6_ITEM_HAND_LIGHT_SHIFT			6
+
 // Index of item selection within GDAT2 categories
 
 #define GDAT_ITEM_STATS_GEN_FLAGS			0x00
@@ -1447,8 +1455,8 @@ enum SkillLevel {
 // - 0x40 to 0x7F	64 bytes values (stored in glbIngameGlobVarBytes)
 // - 0x80 to 0xBF	64 2-bytes word values (stored in glbIngameGlobVarWords)
 //#define GLOB_BYTE_00									0x40
-#define C064_GLOB_BYTE_00_RAIN							0x40
-#define C065_GLOB_BYTE_01_CLOUD							0x41
+#define C064_GLOBAL_BYTE_00_STORM_STRONG				0x40
+#define C065_GLOBAL_BYTE_01_STRIKE_SEEN					0x41
 //#define GLOB_BYTE_02									0x42	// Used in attack failure ..
 #define C066_GLOB_BYTE_02_CHAMPION						0x42
 #define C067_GLOB_BYTE_03_CHAMPION_NEED_AMMO			0x43
@@ -1781,6 +1789,7 @@ typedef enum
 
 #define TILE_FLAG_FLOOR_RANDOM			11
 
+#define C32_MAP_TILE_MAX				32	// a regular map contains 32*32 tiles at most
 
 //------------------------------------------------------------------------------
 //	TELEPORTER
@@ -2024,6 +2033,8 @@ typedef enum
 #define C050_EXPLOSION_FLUXCAGE            50
 #define C100_EXPLOSION_REBIRTH_STEP1      100
 #define C101_EXPLOSION_REBIRTH_STEP2      101
+
+#define C255_EXPLOSION_AT_CENTER			255
 
 /* For F0313_CHAMPION_GetWoundDefense */
 #define MASK0x0000_DO_NOT_USE_SHARP_DEFENSE 0x0000

@@ -547,139 +547,6 @@ void SkWinCore::_075f_0182(ObjectID rl, X16 xx, X16 yy)
 	return;
 }
 
-//^075F:0255
-void SkWinCore::CREATE_CLOUD(ObjectID rl, U16 ww, U16 xx, U16 yy, U16 ss)
-{
-	//^075F:0255
-	ENTER(36);
-	//^075F:025B
-	i16 si = ww;
-	ObjectID di = ALLOC_NEW_RECORD(dbCloud);
-	if (di == OBJECT_NULL)
-		return;
-	//^075F:0270
-	Cloud *bp04 = GET_ADDRESS_OF_RECORDF(di);
-	X16 bp0e;
-	X16 bp10;
-	if (xx <= 255) {
-		bp0e = xx;
-		bp10 = yy;
-	}
-	else {
-		bp0e = xx & 0xff;
-		bp10 = yy & 0xff;
-		xx >>= 8;
-		xx--;
-		yy >>= 8;
-	}
-	//^075F:02AF
-	if (ss == 0xff) {
-		bp04->b2_7_7(1);
-	}
-	else {
-		bp04->b2_7_7(0);
-		di.Dir(ss);
-	}
-	bp04->CloudType(U8(rl.MissileType()));
-	bp04->b3_0_f(U8(si));
-	X16 bp14;
-	if (glbCurrentMapIndex == glbMap_4c28 && xx == glbSomePosX_4c2e && yy == glbSomePosY_4c30) {
-		bp14 = 255;
-	}
-	else {
-		bp14 = min_value(255, (si >> 1) +0x80);
-	}
-	//^075F:0332
-	QUEUE_NOISE_GEN2(GDAT_CATEGORY_x0D_SPELL_MISSILES, bp04->CloudType(), SOUND_STD_EXPLOSION, 0xfe, xx, yy, 1, 0x6c, U8(bp14));
-	APPEND_RECORD_TO(di, NULL, xx, yy);
-	U16 bp12;
-	if (rl == OBJECT_EFFECT_CLOUD_REBIRTH) {	// oFFE4
-		bp12 = 5;
-	}
-	else if (rl == OBJECT_EFFECT_REFLECTOR) {	// oFF8E
-		bp12 = si >> 1;
-	}
-	else {
-		bp12 = 1;
-	}
-	//^075F:038E
-	Timer bp24;
-	bp24.SetMap(glbCurrentMapIndex);
-	bp24.SetTick(bp12 +glbGameTick);
-	bp24.TimerType(ttyCloud);
-	bp24.actor = TIMER_ACTOR__00;
-	bp24.w8 = di;
-	bp24.XcoordB(U8(xx));
-	bp24.YcoordB(U8(yy));
-	QUEUE_TIMER(&bp24);
-	//^075F:03DA
-	//if (rl == oFF82 || rl == oFF80 || rl == oFFB0 || rl == oFFB1) {
-	if (rl == OBJECT_EFFECT_LIGHTNING 
-		|| rl == OBJECT_EFFECT_FIREBALL 
-		|| rl == OBJECT_EFFECT_THUNDER 
-		|| rl == OBJECT_EFFECT_ELECTRIC_SHOCK) {
-		//^075F:03F5
-		i16 bp18 = xx = bp0e;
-		i16 bp1a = yy = bp10;
-		X16 bp16 = 1;
-		si = (si >> 1) +1;
-		si += RAND16(si) +1;
-		bp14 = si;
-		//^075F:0420
-		// SPX: TODO Did I misreplaced something? This does rl == FF80 || rl == FF80 .. ???
-		if (rl == OBJECT_EFFECT_FIREBALL || rl == OBJECT_EFFECT_FIREBALL || (si >>= 1) != 0) {
-			//^075F:0437
-			if (glbCurrentMapIndex == glbMap_4c28 && xx == glbSomePosX_4c2e && yy == glbSomePosY_4c30) {
-				ATTACK_PARTY(si, 0x3f, 1);
-			}
-			//^075F:045F
-			di = GET_CREATURE_AT(xx, yy);
-			if (di != OBJECT_NULL) {
-				//^075F:0476
-_0476:
-				if (CREATURE_1c9a_0958(di) == 0) {
-					//^075F:0481
-					Creature *bp0c = GET_ADDRESS_OF_RECORD4(di);
-					AIDefinition *bp08 = QUERY_CREATURE_AI_SPEC_FROM_TYPE(bp0c->CreatureType());
-					if (bp08->w24_c_c() == 0 || rl == OBJECT_EFFECT_FIREBALL) {
-						//^075F:04B3
-						bp12 = bp08->GetFireResistance();
-						if (bp12 != 15) {
-							//^075F:04C8
-							if (bp08->w0_5_5() != 0)
-								si >>= 1;
-							si -= RAND16((bp12 << 1) +1);
-							if (si > 0) {
-								ATTACK_CREATURE(di, xx, yy, 0x200d, 0x64, si);
-							}
-						}
-					}
-				}
-			}
-			//^075F:04FC
-			if (bp16 != 0) {
-				//^075F:0502
-				di = GET_CREATURE_1c9a_03cf(&bp18, &bp1a, ss);
-				if (di != OBJECT_NULL && (bp18 != bp0e || bp1a != bp10)) {
-					xx = bp18;
-					yy = bp18;
-					bp16 = 0;
-					si = bp14 >> 1;
-					goto _0476;
-				}
-			}
-		}
-		//^075F:0549
-		if (glbCurrentMapIndex == cd.pi.glbPlayerMap) {
-			glbDoLightCheck = 1;
-		}
-	}
-	//^075F:0558
-	_075f_0182(rl, bp0e, bp10);
-}
-
-
-
 
 
 
@@ -908,9 +775,7 @@ X16 SkWinCore::_1c9a_17c7(U8 xx, U8 yy, U8 zz)
 //^075F:18FD
 void SkWinCore::PROCESS_CLOUD(Timer *ref)
 {
-	//^075F:18FD
 	ENTER(18);
-	//^075F:1903
 	X16 di = ref->XcoordB();
 	X16 si = ref->YcoordB();
 	Cloud *bp04 = GET_ADDRESS_OF_RECORD(ref->id8())->castToCloud();
@@ -918,56 +783,41 @@ void SkWinCore::PROCESS_CLOUD(Timer *ref)
 		//^075F:1938
 		X16 bp06 = CALC_CLOUD_DAMAGE(ref->id8(), GET_TILE_RECORD_LINK(di, si));
 		if (bp06 != 0) {
-			//^075F:1956
 			ATTACK_DOOR(di, si, bp06, 1, 0);
 		}
 	}
-	//^075F:1967
 	X16 bp06 = bp04->CloudType();
 	if (bp06 != (missileTeleporter) && bp06 != (missileFireball) && bp06 != (missileLightning)) {
-		//^075F:198E
 		if (glbCurrentMapIndex == glbMap_4c28 && di == glbSomePosX_4c2e && si == glbSomePosY_4c30) {
-			//^075F:19A3
 			bp06 = CALC_CLOUD_DAMAGE(ref->id8(), OBJECT_NULL);
 			if (bp06 != 0) {
-				//^075F:19B9
 				ATTACK_PARTY(bp06, 0, 0);
 			}
 		}
-		//^075F:19C8
 		ObjectID bp08 = GET_CREATURE_AT(di, si);
 		if (bp08 != OBJECT_NULL) {
-			//^075F:19D9
 			if (CREATURE_1c9a_0958(bp08) == 0) {
-				//^075F:19E6
 				bp06 = CALC_CLOUD_DAMAGE(ref->id8(), bp08);
 				if (bp06 != 0) {
-					//^075F:19FD
 					ATTACK_CREATURE(bp08, di, si, 0x200d, 0x64, bp06);
 				}
 			}
 		}
-		//^075F:1A12
 		Timer bp12;
 		switch (bp04->CloudType()) {
 		case 0x64: //^_1a2e
-			//^075F:1A2E
 			// SPX: Explosion spell sound
 			QUEUE_NOISE_GEN2(GDAT_CATEGORY_x0D_SPELL_MISSILES, bp04->CloudType(), SOUND_STD_EXPLOSION, 0xfe, di, si, 1, 0x6c, 0xc8);
 			bp04->CloudType(bp04->CloudType() +1);
 			goto _1aae;
 		case missileDustCloud: // 0x28: //^_1a6b
-			//^075F:1A6B
 			if (bp04->b3_0_f() <= 55)
 				break;
 			bp04->b3_0_f(bp04->b3_0_f() -40);
 			goto _1aae;
 		case missilePoisonCloud: // 7: //^_1a86
-			//^075F:1A86
 			if (bp04->b3_0_f() >= 6) {
-				//^075F:1A95
 				bp04->b3_0_f(bp04->b3_0_f() -3);
-				//^075F:1AAE
 _1aae:
 				bp12 = *ref;
 				bp12.SetTick(bp12.GetTick() +1);
@@ -977,17 +827,15 @@ _1aae:
 			break;
 		}
 	}
-	//^075F:1AD7
 	if (glbCurrentMapIndex == cd.pi.glbPlayerMap) {
-		if (bp04->CloudType() == (missileLightning) || bp04->CloudType() == (missileFireball) || bp04->CloudType() == (missileThunderBolt)) {
-			//^075F:1B06
+		if (bp04->CloudType() == (missileLightning) || 
+			bp04->CloudType() == (missileFireball) || 
+			bp04->CloudType() == (C48_EXPLOSION_THUNDERBOLT)) {
 			glbDoLightCheck = 1;
 		}
 	}
-	//^075F:1B0C
     CUT_RECORD_FROM(ref->id8(), NULL, di, si);
 	DEALLOC_RECORD(ref->id8());
-	//^075F:1B2E
 	return;
 }
 //^3A15:0D10
@@ -2521,7 +2369,7 @@ void SkWinCore::TIME_EVENT_PROCESS_RESURRECTION(Timer *pEvent)
 	ObjectID oidCurrent;	// si
 	switch (iResurrectionStep) {
 		case C2_RESURRECT_STEP_SMOKE:
-			CREATE_CLOUD(OBJECT_EFFECT_CLOUD_REBIRTH, 0, bonesX, bonesY, bonesPos);	// oFFE4
+			CLOUD_EXPLOSION_CREATE(OBJECT_EFFECT_CLOUD_REBIRTH, 0, bonesX, bonesY, bonesPos);	// oFFE4
 			pEvent->SetTick(pEvent->GetTick() + C5_RESURRECT_SMOKE_DURATION);
 			iResurrectionStep--;
 			pEvent->ActionType(U8(iResurrectionStep)); // SPX: fix
@@ -2677,7 +2525,7 @@ void SkWinCore::CONTINUE_ORNATE_NOISE(Timer *ref)
 				X16 iPosX = ref->Xcoord();
 				X16 iPosY = ref->Ycoord();
 
-				CREATE_CLOUD(OBJECT_EFFECT_POISON_CLOUD, iSpellPower, iPosX, iPosY, 255);
+				CLOUD_EXPLOSION_CREATE(OBJECT_EFFECT_POISON_CLOUD, iSpellPower, iPosX, iPosY, 255);
 			} // end poison rift
 
 		}

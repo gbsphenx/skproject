@@ -3816,7 +3816,7 @@ i16 SkWinCore::DRAW_WALL_ORNATE(i16 cellPos, i16 yy, i16 zz)
 				);
 		}
 		bp01d6.iPaletteSize = C016_GDAT_PALETTE_SIZE_16;
-		PALETTE_SOMETHING_32cb_0804(bp01d6.iPal256, U8(iYDist), si, -1, bp01d6.iPaletteSize);
+		PALETTE_APPLY_FOG_OR_SHADE(bp01d6.iPal256, U8(iYDist), si, -1, bp01d6.iPaletteSize);
 		bp01d6.pb44 = glbBackBuffViewport;
 		bp01d6.rectNo = iRectno;
 		bp01d6.w26 = iRefPoint;
@@ -4694,7 +4694,16 @@ void SkWinCore::DRAW_DUNGEON_GRAPHIC(U8 cls1, U8 cls2, U8 cls4, X16 iRectNo, i16
 	ExtendedPicture xExtPict;	// bp013a
 	QUERY_GDAT_SUMMARY_IMAGE(&xExtPict, U8(cls1), U8(cls2), U8(cls4));
 	// Note, this can affect ground/floor.
-	PALETTE_TRANSLATE_WITH_LIGHTING(xExtPict.iPal256, U8(glbViewportLightScale), colorkey, -1, xExtPict.iPaletteSize);
+	if (SkCodeParam::bEnhancementDayNightOutsideLight) {
+		i16 iGroundSkyLightScale = glbViewportLightScale;	// ground is not affected
+		// In case of day/night, the sky (standard ceiling) does not follow the party global light
+		if (cls1 == GDAT_CATEGORY_x08_GRAPHICSSET && cls4 == GDAT_GFXSET_CEILING)
+			iGroundSkyLightScale = cd.ge.glbWeatherDayHourLight*10; // source range from 1 (light) to 5 (dark) => 10 to 50
+
+		PALETTE_TRANSLATE_WITH_LIGHTING(xExtPict.iPal256, U8(iGroundSkyLightScale), colorkey, -1, xExtPict.iPaletteSize);
+	}
+	else // original
+		PALETTE_TRANSLATE_WITH_LIGHTING(xExtPict.iPal256, U8(glbViewportLightScale), colorkey, -1, xExtPict.iPaletteSize);
 	xExtPict.colorKeyPassThrough = colorkey;
 	xExtPict.rectNo = iLocRectNo;
 	xExtPict.pb44 = glbBackBuffViewport;

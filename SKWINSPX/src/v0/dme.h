@@ -1753,7 +1753,7 @@ namespace DM2Internal {
 		U8 iItemID;	// ID within DB
 	};
 
-	// SPX: sk03a2 renamed AIDefinition
+	// SPX: sk03a2 renamed AIDefinition	=> CreatureStatsDefinition
 	struct AIDefinition { // 36 bytes
 		U16 w0AIFlags;		// @0 // flags
 		U8 ArmorClass;	// U8 b2;		// @2	// armor/defense
@@ -3203,7 +3203,7 @@ namespace DM2Internal {
 
 		missileTeleporter	= 14,
 		missileDustCloud	= 0x28,		// 40
-		missileThunderBolt	= 0x30,		// 48
+		C48_EXPLOSION_THUNDERBOLT	= 0x30,		// 48
 	};
 	// Player ability 7
 	enum {

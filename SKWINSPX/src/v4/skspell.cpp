@@ -197,7 +197,7 @@ U16 SkWinCore::CHAMPION_CAST_SPELL(U16 iChampionIdx, SpellDefinition *ref, U16 p
 					cd.pi.glbPlayerDir
 					);
 				if (si == OBJECT_NULL)	// SPX: Summon failed? create a cloud
-					CREATE_CLOUD(OBJECT_EFFECT_CLOUD, 0x6E, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 255);	// oFFA8
+					CLOUD_EXPLOSION_CREATE(OBJECT_EFFECT_CLOUD, 0x6E, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, C255_EXPLOSION_AT_CENTER);	// oFFA8
 				break;
 			}
 		case C3_SPELL_TYPE_GENERAL: // 3: enchantments + general
@@ -275,7 +275,7 @@ _25e8:
 					break;
 
 				case C14_SPELL_ENCHANTMENT_SPELL_REFLECTOR:	// Spell reflector : oFF8E
-					CREATE_CLOUD(
+					CLOUD_EXPLOSION_CREATE(
 						OBJECT_EFFECT_REFLECTOR, 
 						BETWEEN_VALUE(21, ((bp06 << 1) +4) * (power +2), 255),
 						cd.pi.glbPlayerPosX,

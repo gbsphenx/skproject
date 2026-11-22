@@ -42,7 +42,7 @@ void SkWinCore::WEATHER_QUERY_RAINFALL_IMAGEID(U8 *iRainImageID, U16 *isMirrored
 // SPX: Not originally in V4, added for convienence
 U8 SkWinCore::WEATHER_GET_HOUR_OF_DAY()
 {
-	return RCJ(24,((glbGameTick + _4976_5c24) / C1365_WEATHER_HOUR_TICKS) % C24_WEATHER_DAY_HOURS);
+	return RCJ(24,((glbGameTick + cd.ge.glbDayTimeTicksOffset) / C1365_WEATHER_HOUR_TICKS) % C24_WEATHER_DAY_HOURS);
 }
 
 //^3DF7:014D
@@ -125,8 +125,8 @@ void SkWinCore::WEATHER_UPDATE(U16 aa)	// aa = 1 when called from timer, aa = 0 
 	}
 	if (cd.ge.glbEnvironmentIsOutdoor == 0)
 		return;
-	if (glbRecalcLightIndicator != 0) {
-		glbRecalcLightIndicator = 0;
+	if (cd.ge.glbLightningFlash != 0) {
+		cd.ge.glbLightningFlash = 0;
 		RECALC_LIGHT_LEVEL();
 	}
 	// This is a table of 5 distant possible elements; first two are for sky, then ground
@@ -163,70 +163,77 @@ void SkWinCore::WEATHER_UPDATE(U16 aa)	// aa = 1 when called from timer, aa = 0 
 //	printf("glbRainStormController = %d (%d / %d) \n", glbRainStormController, 0x3c, 0xb6);
 	if (bp0a != 0) {
 		bp0a = 0;
-		X16 bp18 = (cd.ge.glbRainStormController < 0xB6) ? 1 : 0;
-		if (bp18 != 0) {
-			UPDATE_GLOB_VAR(C064_GLOB_BYTE_00_RAIN, 0x0, C06_GLOBAL_VAR_OP_NEW_VALUE);
+		X16 iIsWeakStorm = (cd.ge.glbRainStormController < C182_STORM_MEDIUM_THRESHOLD) ? 1 : 0;	// bp18
+		if (iIsWeakStorm != 0) {
+			UPDATE_GLOB_VAR(C064_GLOBAL_BYTE_00_STORM_STRONG, 0x00, C06_GLOBAL_VAR_OP_NEW_VALUE);
 		}
 		X16 bp0e = 0;
-		if (cd.ge.glbRainStormController >= 0x3c && RAND02() != 0) {
+		if (cd.ge.glbRainStormController >= C060_STORM_WEAK_THRESHOLD && RAND02() != 0) {
 			bp0e = 8;
 			// SPX: 0x6C only found in ROOF set
-			X16 bp16 = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_x6C_THUNDER_POSITION);	// 0x6C
+			X16 xLightningRodPosition = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_x6C_THUNDER_POSITION);	// bp16, 0x6C
+			i16 iLightningRodPosX = 0;
+			i16 iLightningRodPosY = 0;
 			// This specific value in original DM2 is at x=10, y=09 (0x0A09), which is the exact position of the Lightning Rod machine.
-			if (bp16 != 0) {
+			if (xLightningRodPosition != 0) {	// If a Lightning Rod position is specified, it will capture the Lightning.
 				// SPX: Will animate the Lightning Rod machine
-				INVOKE_MESSAGE(di = (bp16 >> 8), si = (bp16 & 0xFF), 0, 0, glbGameTick +1);
+				INVOKE_MESSAGE(iLightningRodPosX = (xLightningRodPosition >> 8), iLightningRodPosY = (xLightningRodPosition & 0xFF), 0, 0, glbGameTick +1);
 				// SPX: and get sound of thunder
-				QUEUE_NOISE_GEN2(GDAT_CATEGORY_x0D_SPELL_MISSILES, missileThunderBolt, SOUND_STD_EXPLOSION, 0xFE, di, si, 1, 0x6c, U8(RAND16(0x20)));
+				QUEUE_NOISE_GEN2(GDAT_CATEGORY_x0D_SPELL_MISSILES, C48_EXPLOSION_THUNDERBOLT, SOUND_STD_EXPLOSION, 0xFE, iLightningRodPosX, iLightningRodPosY, 1, 0x6C, U8(RAND16(0x20)));
 			}
 			else {
-				do {
-					di = RAND16(0x20);
-					si = RAND16(0x20);
-					if (di < 0 || di >= glbCurrentMapWidth || si < 0 || si >= glbCurrentMapHeight)
+				do {	// lightning_strike
+					i8 iStrikePosX = i8(RAND16(C32_MAP_TILE_MAX));	// di
+					i8 iStrikePosY = i8(RAND16(C32_MAP_TILE_MAX));	// si
+					if (iStrikePosX < 0 || iStrikePosX >= glbCurrentMapWidth || iStrikePosY < 0 || iStrikePosY >= glbCurrentMapHeight)
 						continue;
-					//printf("Thunder located at :%d %d\n", di, si);
-					ExtendedTileInfo bp2e;
-					SUMMARIZE_STONE_ROOM(&bp2e, 0, di, si);
-					if (bp2e.w0 != 1)
+					//printf("Thunder located at :%d %d\n", iStrikePosX, iStrikePosY);
+					ExtendedTileInfo xTileInfo;	// bp2e
+					SUMMARIZE_STONE_ROOM(&xTileInfo, 0, iStrikePosX, iStrikePosY);
+					if (xTileInfo.w0 != 1)
 						continue;
+					// Check "lightning_strike" as the continue condition seems different
 					TELE_inf bp1e;
-					if (GET_TELEPORTER_DETAIL(&bp1e, U8(di), U8(si)) != 0)
+					if (GET_TELEPORTER_DETAIL(&bp1e, U8(iStrikePosX), U8(iStrikePosY)) != 0)
 						continue;
-					if (cd.pi.glbPlayerMap == glbCurrentMapIndex && cd.pi.glbPlayerPosX == di && cd.pi.glbPlayerPosY == si && cd.ge.glbRainStormController < 0xb6)
+					if (cd.pi.glbPlayerMap == glbCurrentMapIndex && cd.pi.glbPlayerPosX == iStrikePosX 
+							&& cd.pi.glbPlayerPosY == iStrikePosY && cd.ge.glbRainStormController < C182_STORM_MEDIUM_THRESHOLD)
 						continue;
-					if (glbGameTick < 0x1770)
+					// Before a certain game tick time, thunder can not strike on party
+					if (glbGameTick < 0x1770)	// 6000 for V4, this is 12000 for V5
 						continue;
 					//printf("glbRainThunderRandom (static random?)= %d  over global 0x40 = %d\n", glbRainThunderRandom, GET_GLOB_VAR(0x40));
-					if (GET_GLOB_VAR(0x40) <= cd.ge.glbRainThunderRandom)
+					if (GET_GLOB_VAR(C064_GLOBAL_BYTE_00_STORM_STRONG) <= cd.ge.glbRainThunderRandom)
 						continue;
-					ObjectID bp14 = GET_CREATURE_AT(di, si);
-					AIDefinition *bp08;
-					i16 bp0c;
-					if (bp14 != OBJECT_NULL) {
-						bp08 = QUERY_CREATURE_AI_SPEC_FROM_RECORD(bp14);
-						if (bp08->ArmorClass == AI_DEF_ARMOR_MAX)
+					ObjectID oidCreature = GET_CREATURE_AT(iStrikePosX, iStrikePosY);	// bp14
+					AIDefinition *pCreatureStats;	// bp08
+					i16 iPlayerDistanceToStrikePos;	// bp0c
+					if (oidCreature != OBJECT_NULL) {
+						pCreatureStats = QUERY_CREATURE_AI_SPEC_FROM_RECORD(oidCreature);
+						if (pCreatureStats->ArmorClass == AI_DEF_ARMOR_MAX)
 							continue;
-						bp0c = CALC_SQUARE_DISTANCE(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, di, si);
-						if (bp0c > 2) {
-							if (bp0c > 3)
+						iPlayerDistanceToStrikePos = CALC_SQUARE_DISTANCE(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, iStrikePosX, iStrikePosY);
+						if (iPlayerDistanceToStrikePos > 2) {
+							if (iPlayerDistanceToStrikePos > 3)
 								continue;
-							if (CALC_VECTOR_DIR(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, di, si) != cd.pi.glbPlayerDir)
+							if (CALC_VECTOR_DIR(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, iStrikePosX, iStrikePosY) != cd.pi.glbPlayerDir)
 								continue;
 						}
 					}
-					CREATE_CLOUD(OBJECT_EFFECT_THUNDER, cd.ge.glbRainStormController, di, si, 255);
+					// Then, if near and seen by player, a THUNDER explosion is created
+					CLOUD_EXPLOSION_CREATE(OBJECT_EFFECT_THUNDER, cd.ge.glbRainStormController, iStrikePosX, iStrikePosY, C255_EXPLOSION_AT_CENTER);
+					printf("Thunder created @ %02d,%02d\n", iStrikePosX, iStrikePosY);
 					if (glbChampionInventory == 0 && cd.pi.glbIsPlayerSleeping == 0)
 						break;
-					if (bp18 != 0)
+					if (iIsWeakStorm != 0)
 						break;
-					// SPX: glbPlayerPosX = x1, glbPlayerPosY = y1, di = x2, si = y2
-					bp0c = CALC_SQUARE_DISTANCE(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, di, si);
-					if (bp0c > 3)
+					// SPX: glbPlayerPosX = x1, glbPlayerPosY = y1, iStrikePosX = x2, iStrikePosY = y2
+					iPlayerDistanceToStrikePos = CALC_SQUARE_DISTANCE(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, iStrikePosX, iStrikePosY);
+					if (iPlayerDistanceToStrikePos > 3)
 						break;
-					if (CALC_VECTOR_DIR(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, di, si) != cd.pi.glbPlayerDir)
+					if (CALC_VECTOR_DIR(cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, iStrikePosX, iStrikePosY) != cd.pi.glbPlayerDir)
 						break;
-					UPDATE_GLOB_VAR(C065_GLOB_BYTE_01_CLOUD, 1, C03_GLOBAL_VAR_OP_ADD);
+					UPDATE_GLOB_VAR(C065_GLOBAL_BYTE_01_STRIKE_SEEN, 1, C03_GLOBAL_VAR_OP_ADD);
 					break;
 				} while (--bp0e != 0);
 			}
@@ -260,7 +267,7 @@ void SkWinCore::WEATHER_UPDATE(U16 aa)	// aa = 1 when called from timer, aa = 0 
 				cd.ge.glbThunderJustCast = 0;
 			}
 		}
-		glbRecalcLightIndicator = 1;
+		cd.ge.glbLightningFlash = 1;
 		RECALC_LIGHT_LEVEL();
 	}
 	xEnvElement->envImg = 0xFF;
@@ -296,7 +303,7 @@ void SkWinCore::WEATHER_INIT(X16 iKeepState)
 			cd.ge.glbRainMultiplicator = 1;
 	}
 	else {
-		UPDATE_GLOB_VAR(C064_GLOB_BYTE_00_RAIN, 0, C06_GLOBAL_VAR_OP_NEW_VALUE);
+		UPDATE_GLOB_VAR(C064_GLOBAL_BYTE_00_STORM_STRONG, 0, C06_GLOBAL_VAR_OP_NEW_VALUE);
 		cd.ge.glbRainSpecialNextTick = glbGameTick +5;
 		cd.ge.glbRainAmbientLightModifier = 0;
 		cd.ge.glbEnvironmentIsOutdoor = 0;
@@ -341,7 +348,7 @@ void SkWinCore::WEATHER_DEBUG_RESET_STATE(U8 iState)
 		cd.ge.glbRainStormController = 0;
 		cd.ge.glbRainRelated2 = U8(RAND02());
 		cd.ge.glbRainAmbientLightModifier = 0;
-		UPDATE_GLOB_VAR(C064_GLOB_BYTE_00_RAIN, 0, C06_GLOBAL_VAR_OP_NEW_VALUE);
+		UPDATE_GLOB_VAR(C064_GLOBAL_BYTE_00_STORM_STRONG, 0, C06_GLOBAL_VAR_OP_NEW_VALUE);
 	}
 	else if (SkCodeParam::iDebugWeatherState == 1)
 	{
@@ -355,7 +362,7 @@ void SkWinCore::WEATHER_DEBUG_RESET_STATE(U8 iState)
 		cd.ge.glbRainAmbientLightModifier = 0;
 		cd.ge.glbRainLevelForGround = 0;
 		cd.ge.glbRainSpecialNextTick = glbGameTick + 1;
-		UPDATE_GLOB_VAR(C064_GLOB_BYTE_00_RAIN, 100, C06_GLOBAL_VAR_OP_NEW_VALUE);
+		UPDATE_GLOB_VAR(C064_GLOBAL_BYTE_00_STORM_STRONG, 100, C06_GLOBAL_VAR_OP_NEW_VALUE);
 	}
 }
 

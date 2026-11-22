@@ -4824,10 +4824,10 @@ void SkWinCore::CREATURE_TRANSFORM()
 			U8 bp08 = RAND16(5);
 			if (bp08 == 4)
 				bp08 = 255;
-			CREATE_CLOUD(OBJECT_EFFECT_DISPELL, RAND16(156) +100, iTargetPosX, iTargetPosY, bp08);	// oFF83
+			CLOUD_EXPLOSION_CREATE(OBJECT_EFFECT_DISPELL, RAND16(156) +100, iTargetPosX, iTargetPosY, bp08);	// oFF83
 		}
 		if (bp07 >= 1) {
-			CREATE_CLOUD(OBJECT_EFFECT_CLOUD, bp07 * 85, iTargetPosX, iTargetPosY, 255);	// oFFA8
+			CLOUD_EXPLOSION_CREATE(OBJECT_EFFECT_CLOUD, bp07 * 85, iTargetPosX, iTargetPosY, C255_EXPLOSION_AT_CENTER);	// oFFA8
 		}
 		if (bp07 < 3) {
 			QUEUE_NOISE_GEN1(GDAT_CATEGORY_x03_MESSAGES, 0, SOUND_MINION_TRANSFORMS, 0x6C, 0xC8, iTargetPosX, iTargetPosY, 1);
@@ -4849,7 +4849,7 @@ void SkWinCore::CREATURE_TRANSFORM()
 		}
 	}
 	else {	// just explode
-		CREATE_CLOUD(OBJECT_EFFECT_CLOUD, 255, iTargetPosX, iTargetPosY, 255);	// oFFA8
+		CLOUD_EXPLOSION_CREATE(OBJECT_EFFECT_CLOUD, 255, iTargetPosX, iTargetPosY, 255);	// oFFA8
 		QUEUE_NOISE_GEN1(GDAT_CATEGORY_x03_MESSAGES, 0, SOUND_STD_EXPLOSION, 0x6C, 0xC8, iTargetPosX, iTargetPosY, 1);
 	}
 	return;
@@ -4865,7 +4865,7 @@ X16 SkWinCore::CREATURE_EXPLODE_OR_SUMMON()
 		X16 iShootStrength = glbAIDef->GetShootStrength() + 1;	// si
 		iShootStrength = RAND16(iShootStrength) + iShootStrength;
 		iShootStrength += RAND16(iShootStrength);
-		CREATE_CLOUD(OBJECT_EFFECT_FIREBALL, BETWEEN_VALUE(0x14, iShootStrength, 255), // 20 to 255
+		CLOUD_EXPLOSION_CREATE(OBJECT_EFFECT_FIREBALL, BETWEEN_VALUE(0x14, iShootStrength, 255), // 20 to 255
 			glbCreatureTimerGetX, glbCreatureTimerGetY, 255);
 		
 		// SPX: I removed this condition because in case of FLAME ORB, it does not throw anything, but wants to kill itself after one explosion.
@@ -5156,8 +5156,8 @@ _0a6a:
 						break;
 				}
 				//^13E4:0AD2
-				//CREATE_CLOUD(OBJECT_EFFECT_CLOUD, si, glbCreatureTimer.XcoordB(), glbCreatureTimer.YcoordB(), 0xff);	// oFFA8
-				CREATE_CLOUD(OBJECT_EFFECT_CLOUD, iCloudPower, glbCreatureTimer.XcoordB(), glbCreatureTimer.YcoordB(), 0xFF);	// oFFA8
+				//CLOUD_EXPLOSION_CREATE(OBJECT_EFFECT_CLOUD, si, glbCreatureTimer.XcoordB(), glbCreatureTimer.YcoordB(), 0xff);	// oFFA8
+				CLOUD_EXPLOSION_CREATE(OBJECT_EFFECT_CLOUD, iCloudPower, glbCreatureTimer.XcoordB(), glbCreatureTimer.YcoordB(), 0xFF);	// oFFA8
 			}
 		}
 		//^13E4:0AEC

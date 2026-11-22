@@ -220,7 +220,7 @@ _08fe:
 	if (SkCodeParam::bEnhancementDayNightOutsideLight)
 		PALETTE_APPLY_FOG_OR_SHADE_EXT(glbTempPicture.iPal256, di, colorkey1, colorkey2, glbTempPicture.iPaletteSize, cls1, cls2, cls4);
 	else	// original
-		PALETTE_SOMETHING_32cb_0804(glbTempPicture.iPal256, di, colorkey1, colorkey2, glbTempPicture.iPaletteSize);
+		PALETTE_APPLY_FOG_OR_SHADE(glbTempPicture.iPal256, di, colorkey1, colorkey2, glbTempPicture.iPaletteSize);
 	QUERY_PICST_IT(&glbTempPicture);
 	return;
 }
@@ -299,12 +299,16 @@ void SkWinCore::PALETTE_APPLY_FOG_OR_SHADE_EXT(U8 *pLocalPal, i16 iLightDepth, U
 	else {
 		i16 iGlobalLightScene = glbViewportLightScale;	// 0 = full light to 64 = full dark
 		// In case of sky to be displayed, it must not be affected by the globallight(from player), but external light from day/night cycle.
-		i16 iSkyLight = cd.ge.glbWeatherDayHourLight*10; // source range from 1 (light) to 5 (dark) => 10 to 50
+		i16 iSkyLightScale = cd.ge.glbWeatherDayHourLight*10; // source range from 1 (light) to 5 (dark) => 10 to 50
+		if (cd.ge.glbLightningFlash) {	// if there is some lightning in the sky
+			iSkyLightScale = BETWEEN_VALUE(0, iSkyLightScale - 20, 63);	// shift 2 level light
+			iSkyLightScale = 0; // full light
+		}
 		if (cls1 == GDAT_CATEGORY_x17_ENVIRONMENT && (
 			(cls4 >= GFX_ENVIRONMENT_IMG_x67_SKY_CLOUDS && cls4 <= (GFX_ENVIRONMENT_IMG_x67_SKY_CLOUDS+2)) ||	// sky element
 			(cls4 >= 0 && cls4 <= 0x63) )	// distant element in sky (castle / towers)
 			)
-			iGlobalLightScene = iSkyLight;
+			iGlobalLightScene = iSkyLightScale;
 		
 		PALETTE_TRANSLATE_WITH_LIGHTING(pLocalPal, 64 -U8(((64 - iLightShade) * (64 - iGlobalLightScene)) >> 6), colorkey1, colorkey2, di);
 	}
@@ -313,8 +317,8 @@ void SkWinCore::PALETTE_APPLY_FOG_OR_SHADE_EXT(U8 *pLocalPal, i16 iLightDepth, U
 
 
 //^32CB:0804
-// SPX: _32cb_0804 renamed PALETTE_SOMETHING_32cb_0804
-void SkWinCore::PALETTE_SOMETHING_32cb_0804(U8 *pLocalPal, i16 cls4, U16 colorkey1, i16 colorkey2, U16 palentcnt)
+// SPX: _32cb_0804 renamed PALETTE_APPLY_FOG_OR_SHADE
+void SkWinCore::PALETTE_APPLY_FOG_OR_SHADE(U8 *pLocalPal, i16 cls4, U16 colorkey1, i16 colorkey2, U16 palentcnt)
 {
 	ENTER(0);
 	U16 di = palentcnt;

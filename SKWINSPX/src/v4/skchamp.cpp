@@ -2935,7 +2935,7 @@ U16 SkWinCore::CHAMPION_ENGAGE_COMMAND(U16 iChampionIdx, i16 cmdSlot)
 			break;
 
 		case CmSpellReflection: // 7
-			CREATE_CLOUD(OBJECT_EFFECT_REFLECTOR, max_value(2, si), cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 255);
+			CLOUD_EXPLOSION_CREATE(OBJECT_EFFECT_REFLECTOR, max_value(2, si), cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, C255_EXPLOSION_AT_CENTER);
 			break;
 
 		case CmAuraOfSpeed: // 9
@@ -3158,7 +3158,7 @@ _1ed8:
 				}
 				bp2c >>= 2;
 				bp26 >>= 1;
-				CREATE_CLOUD(OBJECT_EFFECT_CLOUD, 0x6e, bp1e, bp20, 255);
+				CLOUD_EXPLOSION_CREATE(OBJECT_EFFECT_CLOUD, 0x6e, bp1e, bp20, 255);
 				break;
 
 //_1f6b:
@@ -3184,7 +3184,7 @@ _ReleaseMinion:
 _CreateMinion:
 			if (CREATE_MINION(bp3c, si >> 3, (cd.pi.glbPlayerDir +2) & 3, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, cd.pi.glbPlayerMap, bp2e, cd.pi.glbPlayerDir) != OBJECT_NULL)
 				break;
-			CREATE_CLOUD(OBJECT_EFFECT_CLOUD, 0x6E, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 255);
+			CLOUD_EXPLOSION_CREATE(OBJECT_EFFECT_CLOUD, 0x6E, cd.pi.glbPlayerPosX, cd.pi.glbPlayerPosY, 255);
 			break;
 
 		case CmTeleport: // 54

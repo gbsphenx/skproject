@@ -305,7 +305,9 @@ typedef struct {
 	X16		glbStartQuickRain;			// (_4976_47fc)
 	X16		glbThunderJustCast;	// (_4976_47fe)
 	X16		glbStormPrevious;		// (_4976_5c28)
+	U16		glbLightningFlash;	// (_4976_4bf8)
 
+	U32		glbDayTimeTicksOffset;		// (_4976_5c24) day time (ticks) offset --> that tells the game start at 8 AM
 
 	i8		tlbRainRelated[128]; //Rr	(_4976_477c)
 	U8		tlbRainScene[5][4]; //Rr	// (_4976_41fe)

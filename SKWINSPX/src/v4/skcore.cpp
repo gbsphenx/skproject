@@ -8723,8 +8723,10 @@ int SkWinCore::READ_DUNGEON_STRUCTURE(X16 isNewGame)
 		}
 	}
 
-	SkD((DLV_DBG_GAME_LOAD, "Read Some Random Value from GDAT ??? ...\n"));
-	_4976_5c24 = BETWEEN_VALUE(0, QUERY_GDAT_ENTRY_DATA_INDEX(0x03, 0x00, 0x0B, 0x00), 23) * 0x0555UL;
+	//--- Read starting hour of the adventure (original value is 8 => 8 AM)
+	cd.ge.glbDayTimeTicksOffset = BETWEEN_VALUE(C00_WEATHER_FIRST_HOUR, 
+												QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x03_MESSAGES, 0x00, fmtWordVal, 0x00),
+												C23_WEATHER_LAST_HOUR) * C1365_WEATHER_HOUR_TICKS;
 
 	if (_4976_3b5d != 0) {
 		INIT_TIMERS();
@@ -11001,7 +11003,7 @@ X16 SkWinCore::DIR_FROM_5x5_POS(X16 _5x5)
 
 
 //^32CB:2D8C
-// SPX: _32cb_2d8c renamed _32cb_2d8c_DRAW_TILE
+// SPX: _32cb_2d8c renamed _32cb_2d8c_DRAW_TILE / CLOUD EXPLOSION
 void SkWinCore::_32cb_2d8c_DRAW_TILE(ObjectID rl, X16 iViewportCell, X32 aa)
 {
 	//^32CB:2D8C
@@ -11028,10 +11030,10 @@ void SkWinCore::_32cb_2d8c_DRAW_TILE(ObjectID rl, X16 iViewportCell, X32 aa)
 				//^32CB:2DE3
 				i16 bp18 = rl.Dir();
 				Cloud *bp08 = GET_ADDRESS_OF_RECORDF(rl);
-				X8 bp15 = bp08->CloudType();
-				if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x0D_SPELL_MISSILES, bp15, dtImage, 0x14) != 0) {	// specifically to handle "reflector" haze
+				X8 iCloudExplosionType = bp08->CloudType();	// bp15
+				if (QUERY_GDAT_ENTRY_IF_LOADABLE(GDAT_CATEGORY_x0D_SPELL_MISSILES, iCloudExplosionType, dtImage, 0x14) != 0) {	// specifically to handle "reflector" haze
 					if (si == 4) {
-						DRAW_TELEPORTER_TILE(di, GDAT_CATEGORY_x0D_SPELL_MISSILES, bp15);
+						DRAW_TELEPORTER_TILE(di, GDAT_CATEGORY_x0D_SPELL_MISSILES, iCloudExplosionType);
 					}
 					continue;
 				}
@@ -11040,9 +11042,9 @@ void SkWinCore::_32cb_2d8c_DRAW_TILE(ObjectID rl, X16 iViewportCell, X32 aa)
 					continue;
 				//^32CB:2E6A
 				X16 bp26 = 0;
-				X16 bp0e = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0D_SPELL_MISSILES, bp15, dtWordValue, 0) & RAND02();
+				X16 bp0e = QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0D_SPELL_MISSILES, iCloudExplosionType, dtWordValue, 0) & RAND02();
 				X16 bp14;
-				if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0D_SPELL_MISSILES, bp15, dtWordValue, C65_GDAT_IMG_SPELL_EXPLOSION_FRONT) != 0) {
+				if (QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x0D_SPELL_MISSILES, iCloudExplosionType, dtWordValue, C65_GDAT_IMG_SPELL_EXPLOSION_FRONT) != 0) {
 					//^32CB:2EA3
 					bp14 = 0xff;
 				}
@@ -11052,8 +11054,8 @@ void SkWinCore::_32cb_2d8c_DRAW_TILE(ObjectID rl, X16 iViewportCell, X32 aa)
 				}
 				if (di == 0) {	// if explosion/cloud is on the player's tile
 					bp26 = 1;
-					if (bp15 == 0x30) {
-						UPDATE_GLOB_VAR(C065_GLOB_BYTE_01_CLOUD, 1, C03_GLOBAL_VAR_OP_ADD);
+					if (iCloudExplosionType == C48_EXPLOSION_THUNDERBOLT) {
+						UPDATE_GLOB_VAR(C065_GLOBAL_BYTE_01_STRIKE_SEEN, 1, C03_GLOBAL_VAR_OP_ADD);
 					}
 					else {
 						//^32CB:2EDA
@@ -11065,8 +11067,8 @@ _2eda:
 							if (bp18 > 3)
 								iCloudInsideVisualSize++;
 						}
-						U8 *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x0D_SPELL_MISSILES, bp15, U8(iCloudInsideVisualSize) + C66_GDAT_IMG_SPELL_EXPLOSION_INSIDE_LOW);
-						ALLOC_IMAGE_MEMENT(GDAT_CATEGORY_x0D_SPELL_MISSILES, bp15, iCloudInsideVisualSize + C66_GDAT_IMG_SPELL_EXPLOSION_INSIDE_LOW);
+						U8 *bp04 = QUERY_GDAT_IMAGE_ENTRY_BUFF(GDAT_CATEGORY_x0D_SPELL_MISSILES, iCloudExplosionType, U8(iCloudInsideVisualSize) + C66_GDAT_IMG_SPELL_EXPLOSION_INSIDE_LOW);
+						ALLOC_IMAGE_MEMENT(GDAT_CATEGORY_x0D_SPELL_MISSILES, iCloudExplosionType, iCloudInsideVisualSize + C66_GDAT_IMG_SPELL_EXPLOSION_INSIDE_LOW);
 						//X16 bp24 = READ_UI16(bp04,-2) * READ_UI16(bp04,-4);
 						X16 bp24 = READ_IMGBUFF_HEIGHT(bp04) * READ_IMGBUFF_WIDTH(bp04);
 						SRECT bp2e;
@@ -11079,14 +11081,14 @@ _2eda:
 							RAND16(bp24 -0x28),
 							glbViewportWidth,
 							0,
-							GET_LOCAL_PALETTE_32cb_0649(GDAT_CATEGORY_x0D_SPELL_MISSILES, bp15, iCloudInsideVisualSize + C66_GDAT_IMG_SPELL_EXPLOSION_INSIDE_LOW, 0)
+							GET_LOCAL_PALETTE_32cb_0649(GDAT_CATEGORY_x0D_SPELL_MISSILES, iCloudExplosionType, iCloudInsideVisualSize + C66_GDAT_IMG_SPELL_EXPLOSION_INSIDE_LOW, 0)
 							);
 						continue;
 					}
 				}
 				else {
-					if (bp15 == 0x30) {
-						UPDATE_GLOB_VAR(C064_GLOB_BYTE_00_RAIN, 1, C03_GLOBAL_VAR_OP_ADD);
+					if (iCloudExplosionType == C48_EXPLOSION_THUNDERBOLT) {
+						UPDATE_GLOB_VAR(C064_GLOBAL_BYTE_00_STORM_STRONG, 1, C03_GLOBAL_VAR_OP_ADD);
 					}
 					if (bp1c == 0 && si >= 3)
 						continue;
@@ -11107,7 +11109,7 @@ _2eda:
 				i16 bp22 = _4976_418e[RCJ(6,bp1c)][2 -(bp20 / 5)];
 				X16 bp10 = QUERY_CREATURE_BLIT_RECTI(di, bp1e, cd.pi.glbPlayerDir) |0x8000;
 				X16 bp12 = (max_value(0x30, bp14 +1) * bp22) >> 8;
-				DRAW_SOME_CLOUD_EXPLOSION(bp15, bp12, bp0e, bp10);
+				DRAW_SOME_CLOUD_EXPLOSION(iCloudExplosionType, bp12, bp0e, bp10);
 				i16 bp0a = bp14 -0xa0;
 				if (bp0a > 0) {
 					bp0a = 0xc0 - bp0a;
@@ -12606,12 +12608,12 @@ _0f82:
 		di = glbTimersTable[bp08->TimerIndex()].Direction();
 		bp1c = bp08->EnergyRemaining();
 	}
-	CREATE_CLOUD(
+	CLOUD_EXPLOSION_CREATE(
 		si,
 		bp14,
 		bp22,
 		bp24,
-		(si == OBJECT_EFFECT_POISON_CLOUD || si == OBJECT_EFFECT_ZO_SPELL || si == OBJECT_EFFECT_ZO_2) ? 255 : dir
+		(si == OBJECT_EFFECT_POISON_CLOUD || si == OBJECT_EFFECT_ZO_SPELL || si == OBJECT_EFFECT_ZO_2) ? C255_EXPLOSION_AT_CENTER : dir
 		);
 _113b:
 	CUT_RECORD_FROM(rlMissile, NULL, bp22, bp24);
@@ -15048,7 +15050,7 @@ _00a4:
 		{
 			U8 iDayHour = WEATHER_GET_HOUR_OF_DAY();
 			U8 sMessage[128]; memset(sMessage, 0, 128);
-			sprintf((char*)sMessage, "HOUR: %02d DARKNESS=%d (TICK = %d)\n", iDayHour, cd.ge.glbWeatherDayHourLight, glbGameTick + _4976_5c24);
+			sprintf((char*)sMessage, "HOUR: %02d DARKNESS=%d (TICK = %d)\n", iDayHour, cd.ge.glbWeatherDayHourLight, glbGameTick + cd.ge.glbDayTimeTicksOffset);
 			DISPLAY_HINT_TEXT(C04_COLOR_CYAN, sMessage);
 		}
 		WEATHER_UPDATE(0);

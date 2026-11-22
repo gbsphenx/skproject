@@ -297,50 +297,53 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 	else {
 		U16 itemLightBonus[9];		// (bp1c) SPX: light bonus for holded item (1) + items in hand (2 hands * 4 champions)
 		ZERO_MEMORY(itemLightBonus, 9);
-		U16 bonusIndex = 0;	// bp06
+		U16 iMaxLightItemSlot = 0;	// bp06
 		// Give light bonus for item currently in hand (if any)
 		if ((QUERY_GDAT_DBSPEC_WORD_VALUE(cd.pi.glbLeaderHandPossession.object, GDAT_ITEM_STATS_GEN_FLAGS) & ITEM_FLAG_PRODUCE_LIGHT) != 0) {
-			itemLightBonus[bonusIndex] = ITEM_ADD_CHARGES(cd.pi.glbLeaderHandPossession.object, 0);
-			bonusIndex++;
+			itemLightBonus[iMaxLightItemSlot] = ITEM_ADD_CHARGES(cd.pi.glbLeaderHandPossession.object, 0);
+			iMaxLightItemSlot++;
 		}
-		U16 si; // si
+		U16 iItemIndex = 0; // si
 		// Pass through all items in hands
 		for (U16 iChampionIndex = 0; iChampionIndex < cd.pi.glbChampionsCount; iChampionIndex++) {
 			for (U16 iHandSlot = 0; iHandSlot <= 1; iHandSlot++) {	// bp04
 				ObjectID oidItem;	// U16 bp08
 				if ((QUERY_GDAT_DBSPEC_WORD_VALUE(oidItem = tblChampionSquad[iChampionIndex].Possess(iHandSlot), GDAT_ITEM_STATS_GEN_FLAGS) & ITEM_FLAG_PRODUCE_LIGHT) != 0) {
-					itemLightBonus[bonusIndex] = ITEM_ADD_CHARGES(oidItem, 0);
-					bonusIndex++;
+					itemLightBonus[iMaxLightItemSlot] = ITEM_ADD_CHARGES(oidItem, 0);
+					iMaxLightItemSlot++;
 				}
 			}
 		}
 		//for (si=0; bonusIndex -1 > si; si++) {
-		// One pass of bubble sort, what for ?
-		for (si=0; si < bonusIndex -1; si++) {
-			if (itemLightBonus[si] > itemLightBonus[si +1]) {
-				U16 bp04 = itemLightBonus[si];
-				itemLightBonus[si] = itemLightBonus[si +1];
-				itemLightBonus[si +1] = bp04;
+		// One pass of bubble sort, moves up by one slot the brightest item
+		for (iItemIndex = 0; iItemIndex < iMaxLightItemSlot - 1; iItemIndex++) {
+			if (itemLightBonus[iItemIndex] > itemLightBonus[iItemIndex +1]) {
+				U16 iTempSlotValue = itemLightBonus[iItemIndex];	// bp04
+				itemLightBonus[iItemIndex] = itemLightBonus[iItemIndex +1];
+				itemLightBonus[iItemIndex + 1] = iTempSlotValue;
 			}
 		}
-		U16 bp02 = 6;
-		i16 di = 0;	// SPX (2016-11-02) replacing unsigned by signed to hold negative light (with use of darkness) and hit minimum threshold
+		U16 iLightShift = C6_ITEM_HAND_LIGHT_SHIFT;	// bp02
+		// iTotalLightAmount supposed to be being 0 (dark) to 100 (full light)
+		i16 iTotalLightAmount = 0;	// SPX (2016-11-02) replacing unsigned by signed to hold negative light (with use of darkness) and hit minimum threshold
 		// SPX: This is strange ... does that mean that each new value to add is decreased by its position on the light bonus table?
-		for (di=0, si=0; si < bonusIndex; si++) {
-			di += (tLightLevelItem[RCJ(16,itemLightBonus[si])] << bp02) >> 6;
-			bp02 = max_value(0, bp02 -1);
+		for (iTotalLightAmount = 0, iItemIndex = 0; iItemIndex < iMaxLightItemSlot; iItemIndex++) {
+			iTotalLightAmount += (tLightLevelItem[RCJ(16,itemLightBonus[iItemIndex])] << iLightShift) >> C6_ITEM_HAND_LIGHT_SHIFT;
+			iLightShift = max_value(0, iLightShift - 1);
 		}
-		di += glbPrecomputedLight;	// SPX: is some sort of precalculed light level (depending on door and such?)
-		di += glbGlobalSpellEffects.Light;
-		di = di + QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_x67_AMBIANT_LIGHT);
+
+		iTotalLightAmount += glbPrecomputedLight;	// SPX: is some sort of precalculed light level (depending on door and such?)
+		iTotalLightAmount += glbGlobalSpellEffects.Light;
+		// light bonus from gdat, only found for VOID with value 99
+		iTotalLightAmount = iTotalLightAmount + QUERY_GDAT_ENTRY_DATA_INDEX(GDAT_CATEGORY_x08_GRAPHICSSET, glbMapGraphicsSet, dtWordValue, GDAT_GFXSET_x67_AMBIANT_LIGHT);
 		if (cd.ge.glbEnvironmentIsOutdoor != 0) {
-			di += tLightLevelTable[RCJ(6,BETWEEN_VALUE(0, cd.ge.glbRainAmbientLightModifier + cd.ge.glbWeatherDayHourLight, 5))];
+			iTotalLightAmount += tLightLevelTable[RCJ(6,BETWEEN_VALUE(0, cd.ge.glbRainAmbientLightModifier + cd.ge.glbWeatherDayHourLight, 5))];
 		}
-		if (SkCodeParam::bUseFixedMode && di < 0)
-			di = 0;
+		if (SkCodeParam::bUseFixedMode && iTotalLightAmount < 0)
+			iTotalLightAmount = 0;
 		// Light threshold is at 100 for the brighter light => lightlevel = 5.
-		for (glbPartyLightLevel=0; glbPartyLightLevel <= 5; glbPartyLightLevel++) {
-			if (tLightLevelTable[RCJ(6,glbPartyLightLevel)] < di)
+		for (glbPartyLightLevel = 0; glbPartyLightLevel <= 5; glbPartyLightLevel++) {
+			if (tLightLevelTable[RCJ(6,glbPartyLightLevel)] < iTotalLightAmount)
 				break;
 		}
 		// SPX: Get the highest default light (from wallset type)
@@ -351,12 +354,19 @@ void SkWinCore::RECALC_LIGHT_LEVEL()
 			glbPartyLightLevel = bp0a;
 		}
 		if (cd.ge.glbEnvironmentIsOutdoor != 0) {
-			if (glbRecalcLightIndicator != 0) {
-				glbPartyLightLevel = 0;
+			if (cd.ge.glbLightningFlash != 0) {
+				if (SkCodeParam::bEnhancementDayNightOutsideLight) {
+					//if (glbPartyLightLevel > 1)
+					//	glbPartyLightLevel--;
+					;
+					glbPartyLightLevel = 0;
+				}
+				else
+					glbPartyLightLevel = 0;	// this means full light when there is a lightning
 			}
 		}
 	}
-	glbPartyLightLevel -= (glbLightModifier > 12) ? 1 : 0;
+	glbPartyLightLevel -= (glbLightModifier > 12) ? 1 : 0;	// if glbLightModifier > 12, then make one level more light
 	glbPartyLightLevel = BETWEEN_VALUE(0, glbPartyLightLevel, 5);	// SPX: minimum is 5 ? but it can be even darker with 6
 	if (SkCodeParam::bFullLight)	// SPX: debug feature added to always get full light
 		glbPartyLightLevel = 0;

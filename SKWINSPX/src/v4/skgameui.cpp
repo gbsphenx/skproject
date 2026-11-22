@@ -66,6 +66,12 @@ Bit16u SkWinCore::SPECIAL_UI_KEY_TRANSFORMATION()
 				cd.mk.mice_btn = 1; // left button
 				(this->*_int33_mouse_callback)();
 				break;
+
+	// Debug: use E to switch some enhanced features vs original
+			case 0x0012:	// 18 'e'
+				SkCodeParam::bEnhancementDayNightOutsideLight = !SkCodeParam::bEnhancementDayNightOutsideLight;
+				printf("DayNight enhancement : %d\n", SkCodeParam::bEnhancementDayNightOutsideLight); 
+				break;
 	// Debug: use W to reset weather situation
 			case 0x0011:	// 17 'w'
 				WEATHER_DEBUG_RESET_STATE(SkCodeParam::iDebugWeatherState++);

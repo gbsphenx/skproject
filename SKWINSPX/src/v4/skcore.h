@@ -392,7 +392,6 @@ protected:
 	//U16	glbPlayerMap;	// (_4976_4bf4) current player map #
 	//U16	glbPlayerDir;	// (_4976_4bf6) current player dir (0,1,2,3=N,E,S,W)
 	U16		glbPlayerSpecialStairsDir;	// SPX: added this for special behaviour going stairs for BW
-	U16		glbRecalcLightIndicator;	// (_4976_4bf8)
 	//i16		glbPlayerPosX;	// (_4976_4bfa) current player x-axis (column)
 //	U16		glbNextChampionNumber;		// (_4976_4bfc) Related to champions count ?
 	U16		_4976_4bfe;
@@ -736,7 +735,6 @@ protected:
 	U16		*glbTimerNextEntries;			// (_4976_5c1a) next timer entries to be proceeded
 	U16		glbTimersCount;				// (_4976_5c1e) timer count?
 	Timer	*glbTimersTable;	// (_4976_5c20) timer entities?
-	U32		_4976_5c24;
 
 	U16		glbNextFreeMementIndex;		// (_4976_5c78) next index of free entry mement
 	X16		_4976_5c7a;
@@ -1689,7 +1687,7 @@ protected:
 
 	//--- Palette
 	U8 *PALETTE_TRANSLATE_WITH_LIGHTING(U8 *localpal, i8 xx, i16 colorkey1, i16 colorkey2, i16 palentcnt);	// _0b36_037e
-	void PALETTE_SOMETHING_32cb_0804(U8 *localpal, i16 cls4, U16 colorkey1, i16 colorkey2, U16 palentcnt);	// _32cb_0804
+	void PALETTE_APPLY_FOG_OR_SHADE(U8 *localpal, i16 cls4, U16 colorkey1, i16 colorkey2, U16 palentcnt);	// _32cb_0804
 	U8 *GET_LOCAL_PALETTE_32cb_0649(U8 iGDatCls1Category, U8 iGDatCls2MainItemId, U8 iGDatCls4EntryId, i16 iTransparentColorKey);	// _32cb_0649
 	void PALETTE_APPLY_FOG_OR_SHADE_EXT(U8 *pLocalPal, i16 iLightDepth, U16 colorkey1, i16 colorkey2, U16 palentcnt, U8 cls1, U8 cls2, U8 cls4); // SPX: Addition
 
@@ -2041,7 +2039,6 @@ protected:
 
 	
 	void _075f_0182(ObjectID rl, X16 xx, X16 yy);
-	void CREATE_CLOUD(ObjectID rl, U16 ww, U16 xx, U16 yy, U16 ss);
 	void BUILD_5x5_POS(i16 xx, i16 yy, U16 ww, U16 *x2, U16 *y2);	// _098d_000f
 	void DRAW_ARROW_PANEL(); // _29ee_000f renamed DRAW_ARROW_PANEL
 	U16 IS_OBJECT_FLOATING(ObjectID rl);
@@ -2188,7 +2185,6 @@ protected:
 	void PROCESS_QUEUED_DEALLOC_RECORD();
 	void QUEUE_DEALLOC_RECORD(ObjectID recordLink);
 	void DEALLOC_RECORD(ObjectID recordLink);
-	U16 PROJECTILE_GET_IMPACT_ATTACK(Missile *ref, ObjectID recordLink);	// _075f_06bd
 	U16 _RAND01();
 	U16 MISSILE_HIT_075f_0af9(i16 u16tileType, i16 xpos, i16 ypos, U16 dir, ObjectID rlMissile); // 075f_0af9
 	void _2fcf_0234(i16 xposFrom, i16 yposFrom, i16 xposTo, i16 yposTo);
@@ -2203,6 +2199,9 @@ protected:
 	// ItemDB 0x0E : Projectile
 	void PROJECTILE_DESTROY(ObjectID rlMissile, ObjectID *prlDropTo, i16 xposDropTo, i16 yposDropTo);
 	void PROJECTILE_PROCESS_EVENT(Timer *ref);	// STEP_MISSILE
+	U16 PROJECTILE_GET_IMPACT_ATTACK(Missile *ref, ObjectID recordLink);	// _075f_06bd
+	void CLOUD_EXPLOSION_CREATE(ObjectID rl, U16 ww, U16 xx, U16 yy, U16 ss);
+	
 
 
 	ObjectID RECYCLE_A_RECORD_FROM_THE_WORLD(U16 itemdb, U8 itemtype);
